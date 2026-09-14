@@ -48,3 +48,17 @@
 - `ci`: CI 配置变更
 - `chore`: 其他不修改源码的变更
 - `revert`: 回退提交
+
+## Agent skills
+
+### Issue tracker
+
+issue 统一记录在 GitHub Issues（flowduet/flowduet），通过 `gh` CLI 读写。详见 `docs/agents/issue-tracker.md`。
+
+### Triage labels
+
+Triage 标签沿用五个规范角色名（needs-triage / needs-info / ready-for-agent / ready-for-human / wontfix）。详见 `docs/agents/triage-labels.md`。
+
+### Domain docs
+
+单上下文布局：根目录 `CONTEXT.md` + `docs/adr/` 决策记录。详见 `docs/agents/domain.md`。
