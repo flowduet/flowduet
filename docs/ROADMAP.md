@@ -4,9 +4,21 @@
 
 - [x] GitHub org `flowduet` + 仓库 `flowduet/flowduet`
 - [x] LICENSE（Apache-2.0）
-- [ ] npm org `flowduet`（网页建 org 时确认 scope 可用——**最不可逆的坑，优先做**）
+- [x] npm org `flowduet`（2026-09-18 确认已建立）
 - [ ] npm 裸名 `flowduet` 占位包 0.0.0（org 名与裸包名是两个命名空间，可选但建议）
 - [ ] 域名 `flowduet.dev` / Gitee 镜像（不急，v1 像样后再说）
+
+## 迭代一 · Step 0 收尾 + Step 1 全量（2026-09-18 → 09-30）
+
+2026-09-18 grilling 会话收敛的执行口径（9 项决策无遗留分歧）：
+
+- **范围**：Step 0 收尾（裸名占位包）+ Step 1 全量（脚手架 + 三条测试链 + 部署冒烟）；不搭界面，playground 不进本迭代。
+- **出口标准**：Step 1 完成标准 + 发布链路打通（`@flowduet/core` 0.0.x 上 npm）。
+- **冒烟口径**：完成标准以**本地 Docker 的 Flowable 6.8 真实部署成功**为准；CI 冒烟 job 同迭代搭好但设为 `workflow_dispatch` 手动触发（仅 6.8）；7.2 / 8.0 冒烟按原计划留到 v1。
+- **基准文件口径**：手写最小合法 XML 进自动化测试，部署成功兜底其合法性；flowable-ui 6.8 Modeler 导出仅作一次性人工参照，不进测试。
+- **发包口径**：本机 npm 人工首发（changesets 管版本号），CI 自动发包（NPM_TOKEN）等正式 release 流程再上。
+- **工程口径**：ESLint 9 flat + Prettier；Node 22 LTS + pnpm 10（`packageManager` 钉死）；本地不加 git hooks；`packages/designer`、`packages/form-create`、`apps/playground` 仅 README 占位。
+- **协作口径**：任务拆 GitHub Issues 挂里程碑 `iteration-1`，feature 分支 → PR → develop。
 
 ## Step 1 · 内核地基（目标 1–2 周）
 
@@ -14,11 +26,11 @@
 
 - 脚手架：pnpm monorepo（`packages/core` 起步，其余目录占位）+ Vite + Vitest + TS 严格模式 + changesets + GitHub Actions（lint + test）
 - 三条红→绿测试链：
-  1. **编译合同**：`compile(model)` 输入最小流程（开始 → 用户任务 → 排他网关 → 两分支 → 结束），输出与 golden file 一致的 flowable 方言 XML（命名空间声明、`flowable:assignee`、`bpmndi` 布局一个不能少）
+  1. **编译合同**：`compile(model)` 输入最小流程（开始 → 用户任务 → 排他网关 → 两分支 → 结束），输出与基准文件一致的 flowable 方言 XML（命名空间声明、`flowable:assignee`、`bpmndi` 布局一个不能少）
   2. **往返保真**：`parse(xml) → model → compile()` 语义等价（**全项目最高优先级不变量**）
   3. **适配器合同**：适配器接口（命名空间前缀、扩展属性注入点、任务类型映射），Flowable 6.8 方言首个实例
 - 接缝声明：`BpmnModel`（moddle 树包装）/ `Compiler` / `Parser` / `DiLayout`（v0 恒等映射用画布坐标，自动布局在 Step 3）
-- **完成标准**：`pnpm test` 全绿 + CI 绿 + golden XML 经 Flowable 6.8 REST 部署接口**真实部署成功**（定海神针——商业价值成立的物理事实）
+- **完成标准**：`pnpm test` 全绿 + CI 绿 + 基准 XML 经 Flowable 6.8 REST 部署接口**真实部署成功**（定海神针——商业价值成立的物理事实）
 
 ## v1 · 审批流核心子集
 
