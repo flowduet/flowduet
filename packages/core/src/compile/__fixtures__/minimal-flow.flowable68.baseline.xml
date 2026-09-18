@@ -29,7 +29,7 @@
     </bpmn:sequenceFlow>
   </bpmn:process>
   <bpmndi:BPMNDiagram id="leave_approval_di">
-    <bpmndi:BPMNPlane id="leave_approval_plane" bpmnElement="leave_approval" isHorizontal="true">
+    <bpmndi:BPMNPlane id="leave_approval_plane" bpmnElement="leave_approval">
       <bpmndi:BPMNShape id="start_di" bpmnElement="start">
         <dc:Bounds x="160" y="60" width="36" height="36" />
       </bpmndi:BPMNShape>

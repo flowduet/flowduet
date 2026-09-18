@@ -30,5 +30,10 @@ declare module "bpmn-moddle" {
     constructor(additionalPackages?: Record<string, unknown>);
     create(type: string, attrs?: object): ModdleElement;
     toXML(element: ModdleElement, options?: ModdleToXmlOptions): Promise<ModdleToXmlResult>;
+    fromXML(
+      xml: string,
+      typeName?: string,
+      options?: object,
+    ): Promise<{ rootElement: ModdleElement; references?: unknown[]; warnings?: string[] }>;
   }
 }

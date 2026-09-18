@@ -22,7 +22,6 @@ export class IdentityDiLayout implements DiLayout {
     const plane = moddle.create("bpmndi:BPMNPlane", {
       id: `${processId}_plane`,
       bpmnElement: process,
-      isHorizontal: true,
     });
     const diagram = moddle.create("bpmndi:BPMNDiagram", {
       id: `${processId}_di`,
@@ -50,6 +49,7 @@ export class IdentityDiLayout implements DiLayout {
       }
     }
 
-    pushMany(model.definitions, "rootElements", diagram);
+    // diagrams 是 BPMNDiagram 的规范归宿（moddle 元模型里它不是 bpmn:RootElement）
+    pushMany(model.definitions, "diagrams", diagram);
   }
 }
