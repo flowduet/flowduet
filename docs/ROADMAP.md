@@ -5,7 +5,7 @@
 - [x] GitHub org `flowduet` + 仓库 `flowduet/flowduet`
 - [x] LICENSE（Apache-2.0）
 - [x] npm org `flowduet`（2026-09-18 确认已建立）
-- [ ] npm 裸名 `flowduet` 占位包 0.0.0（org 名与裸包名是两个命名空间，可选但建议）
+- [x] npm 裸名 `flowduet` 占位包 0.0.0（2026-09-18 已发布，包源在 `npm/flowduet/`）
 - [ ] 域名 `flowduet.dev` / Gitee 镜像（不急，v1 像样后再说）
 
 ## 迭代一 · Step 0 收尾 + Step 1 全量（2026-09-18 → 09-30）

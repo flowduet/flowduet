@@ -1,0 +1,18 @@
+{
+  "name": "flowduet",
+  "version": "0.0.0",
+  "description": "Placeholder package. FlowDuet's real packages are published under the @flowduet scope (e.g. @flowduet/core).",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/flowduet/flowduet.git"
+  },
+  "homepage": "https://github.com/flowduet/flowduet",
+  "keywords": [
+    "flowduet",
+    "placeholder"
+  ],
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
+  }
+}
