@@ -29,5 +29,8 @@
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
     "test": "vitest run"
+  },
+  "dependencies": {
+    "bpmn-moddle": "^10.2.0"
   }
 }
