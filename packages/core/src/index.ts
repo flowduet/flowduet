@@ -22,5 +22,8 @@ export type { DiLayout } from "./layout/di-layout";
 export { compile } from "./compile/compiler";
 export type { CompileOptions } from "./compile/compiler";
 
+export { parse } from "./parse/parser";
+export type { ParseOptions } from "./parse/parser";
+
 export { flowableAdapter } from "./adapter/flowable-adapter";
 export type { EngineAdapter } from "./adapter/flowable-adapter";
