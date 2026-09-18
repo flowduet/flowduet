@@ -1,0 +1,5 @@
+# npm/flowduet 裸名占位包刻意不进 workspace：手工管理版本，
+# 避免 changesets 把它纳入发布矩阵。
+packages:
+  - packages/*
+  - apps/*
