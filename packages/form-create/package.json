@@ -1,0 +1,7 @@
+{
+  "name": "@flowduet/form-create",
+  "private": true,
+  "version": "0.0.0",
+  "description": "FormCreate 深度集成（占位，v1 阶段建立）",
+  "scripts": {}
+}
