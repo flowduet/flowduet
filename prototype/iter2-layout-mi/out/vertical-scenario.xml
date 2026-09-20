@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:flowable="http://flowable.org/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="vertical_scenario_defs" targetNamespace="http://flowduet.dev/bpmn">
+  <bpmn:process id="vertical_scenario" name="竖排推导场景" isExecutable="true">
+    <bpmn:startEvent id="start" name="开始">
+      <bpmn:outgoing>f_s_init</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:userTask id="initiate" name="发起申请" flowable:assignee="${initiator}">
+      <bpmn:incoming>f_s_init</bpmn:incoming>
+      <bpmn:outgoing>f_init_c1</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="cond1_fork" name="金额判断">
+      <bpmn:incoming>f_init_c1</bpmn:incoming>
+      <bpmn:outgoing>f_c1_par</bpmn:outgoing>
+      <bpmn:outgoing>f_c1_dir</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:parallelGateway id="par_fork" name="并行开始">
+      <bpmn:incoming>f_c1_par</bpmn:incoming>
+      <bpmn:outgoing>f_par_cs</bpmn:outgoing>
+      <bpmn:outgoing>f_par_hr</bpmn:outgoing>
+      <bpmn:outgoing>f_par_seq</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:parallelGateway id="par_join" name="并行结束">
+      <bpmn:incoming>f_cs_join</bpmn:incoming>
+      <bpmn:incoming>f_hr_pj</bpmn:incoming>
+      <bpmn:incoming>f_seq_join</bpmn:incoming>
+      <bpmn:outgoing>f_pj_j1</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:userTask id="hr_approve" name="HR 审批" flowable:assignee="${hr}">
+      <bpmn:incoming>f_par_hr</bpmn:incoming>
+      <bpmn:outgoing>f_hr_pj</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="director_approve" name="总监审批" flowable:assignee="${director}">
+      <bpmn:incoming>f_c1_dir</bpmn:incoming>
+      <bpmn:outgoing>f_dir_c2</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="cond2_fork" name="是否通过">
+      <bpmn:incoming>f_dir_c2</bpmn:incoming>
+      <bpmn:outgoing>f_c2_rect</bpmn:outgoing>
+      <bpmn:outgoing>f_c2_arch</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:exclusiveGateway id="cond2_join" name="汇聚">
+      <bpmn:incoming>f_rect_j2</bpmn:incoming>
+      <bpmn:incoming>f_arch_j2</bpmn:incoming>
+      <bpmn:outgoing>f_j2_j1</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="rectify" name="整改" flowable:assignee="${owner}">
+      <bpmn:incoming>f_c2_rect</bpmn:incoming>
+      <bpmn:outgoing>f_rect_j2</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="archive_review" name="归档复核" flowable:assignee="${auditor}">
+      <bpmn:incoming>f_c2_arch</bpmn:incoming>
+      <bpmn:outgoing>f_arch_j2</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="cond1_join" name="汇聚">
+      <bpmn:incoming>f_pj_j1</bpmn:incoming>
+      <bpmn:incoming>f_j2_j1</bpmn:incoming>
+      <bpmn:outgoing>f_j1_end</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:endEvent id="end" name="结束">
+      <bpmn:incoming>f_j1_end</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:userTask id="counter_sign" name="部门会签" flowable:assignee="${assignee}">
+      <bpmn:incoming>f_par_cs</bpmn:incoming>
+      <bpmn:outgoing>f_cs_join</bpmn:outgoing>
+      <bpmn:multiInstanceLoopCharacteristics flowable:collection="${approvers}" flowable:elementVariable="assignee">
+        <bpmn:completionCondition xsi:type="bpmn:tFormalExpression">${nrOfCompletedInstances == nrOfInstances}</bpmn:completionCondition>
+      </bpmn:multiInstanceLoopCharacteristics>
+    </bpmn:userTask>
+    <bpmn:userTask id="sequential_sign" name="逐级审批" flowable:assignee="${assignee}">
+      <bpmn:incoming>f_par_seq</bpmn:incoming>
+      <bpmn:outgoing>f_seq_join</bpmn:outgoing>
+      <bpmn:multiInstanceLoopCharacteristics isSequential="true" flowable:collection="${chain}" flowable:elementVariable="assignee" />
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="f_c1_par" sourceRef="cond1_fork" targetRef="par_fork" />
+    <bpmn:sequenceFlow id="f_par_cs" sourceRef="par_fork" targetRef="counter_sign" />
+    <bpmn:sequenceFlow id="f_par_hr" sourceRef="par_fork" targetRef="hr_approve" />
+    <bpmn:sequenceFlow id="f_par_seq" sourceRef="par_fork" targetRef="sequential_sign" />
+    <bpmn:sequenceFlow id="f_cs_join" sourceRef="counter_sign" targetRef="par_join" />
+    <bpmn:sequenceFlow id="f_hr_pj" sourceRef="hr_approve" targetRef="par_join" />
+    <bpmn:sequenceFlow id="f_seq_join" sourceRef="sequential_sign" targetRef="par_join" />
+    <bpmn:sequenceFlow id="f_pj_j1" sourceRef="par_join" targetRef="cond1_join" />
+    <bpmn:sequenceFlow id="f_s_init" sourceRef="start" targetRef="initiate" />
+    <bpmn:sequenceFlow id="f_init_c1" sourceRef="initiate" targetRef="cond1_fork" />
+    <bpmn:sequenceFlow id="f_c1_dir" sourceRef="cond1_fork" targetRef="director_approve" />
+    <bpmn:sequenceFlow id="f_dir_c2" sourceRef="director_approve" targetRef="cond2_fork" />
+    <bpmn:sequenceFlow id="f_c2_rect" sourceRef="cond2_fork" targetRef="rectify">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${!passed}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="f_rect_j2" sourceRef="rectify" targetRef="cond2_join" />
+    <bpmn:sequenceFlow id="f_c2_arch" sourceRef="cond2_fork" targetRef="archive_review">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${passed}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="f_arch_j2" sourceRef="archive_review" targetRef="cond2_join" />
+    <bpmn:sequenceFlow id="f_j2_j1" sourceRef="cond2_join" targetRef="cond1_join" />
+    <bpmn:sequenceFlow id="f_j1_end" sourceRef="cond1_join" targetRef="end" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="vertical_scenario_di">
+    <bpmndi:BPMNPlane id="vertical_scenario_plane" bpmnElement="vertical_scenario">
+      <bpmndi:BPMNShape id="start_di" bpmnElement="start">
+        <dc:Bounds x="452" y="40" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="initiate_di" bpmnElement="initiate">
+        <dc:Bounds x="420" y="136" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="cond1_fork_di" bpmnElement="cond1_fork">
+        <dc:Bounds x="445" y="276" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="par_fork_di" bpmnElement="par_fork">
+        <dc:Bounds x="255" y="396" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="par_join_di" bpmnElement="par_join">
+        <dc:Bounds x="255" y="666" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="hr_approve_di" bpmnElement="hr_approve">
+        <dc:Bounds x="230" y="516" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="director_approve_di" bpmnElement="director_approve">
+        <dc:Bounds x="705" y="396" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="cond2_fork_di" bpmnElement="cond2_fork">
+        <dc:Bounds x="730" y="536" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="cond2_join_di" bpmnElement="cond2_join">
+        <dc:Bounds x="730" y="806" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="rectify_di" bpmnElement="rectify">
+        <dc:Bounds x="610" y="656" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="archive_review_di" bpmnElement="archive_review">
+        <dc:Bounds x="800" y="656" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="cond1_join_di" bpmnElement="cond1_join">
+        <dc:Bounds x="445" y="926" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="end_di" bpmnElement="end">
+        <dc:Bounds x="452" y="1036" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="counter_sign_di" bpmnElement="counter_sign">
+        <dc:Bounds x="40" y="516" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="sequential_sign_di" bpmnElement="sequential_sign">
+        <dc:Bounds x="420" y="516" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="f_c1_par_di" bpmnElement="f_c1_par">
+        <di:waypoint x="461.6666666666667" y="326" />
+        <di:waypoint x="461.6666666666667" y="361" />
+        <di:waypoint x="280" y="361" />
+        <di:waypoint x="280" y="396" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f_par_cs_di" bpmnElement="f_par_cs">
+        <di:waypoint x="267.5" y="446" />
+        <di:waypoint x="267.5" y="481" />
+        <di:waypoint x="90" y="481" />
+        <di:waypoint x="90" y="516" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f_par_hr_di" bpmnElement="f_par_hr">
+        <di:waypoint x="280" y="446" />
+        <di:waypoint x="280" y="516" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f_par_seq_di" bpmnElement="f_par_seq">
+        <di:waypoint x="292.5" y="446" />
+        <di:waypoint x="292.5" y="481" />
+        <di:waypoint x="470" y="481" />
+        <di:waypoint x="470" y="516" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f_cs_join_di" bpmnElement="f_cs_join">
+        <di:waypoint x="90" y="596" />
+        <di:waypoint x="90" y="631" />
+        <di:waypoint x="267.5" y="631" />
+        <di:waypoint x="267.5" y="666" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f_hr_pj_di" bpmnElement="f_hr_pj">
+        <di:waypoint x="280" y="596" />
+        <di:waypoint x="280" y="666" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f_seq_join_di" bpmnElement="f_seq_join">
+        <di:waypoint x="470" y="596" />
+        <di:waypoint x="470" y="631" />
+        <di:waypoint x="292.5" y="631" />
+        <di:waypoint x="292.5" y="666" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f_pj_j1_di" bpmnElement="f_pj_j1">
+        <di:waypoint x="280" y="716" />
+        <di:waypoint x="280" y="821" />
+        <di:waypoint x="461.6666666666667" y="821" />
+        <di:waypoint x="461.6666666666667" y="926" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f_s_init_di" bpmnElement="f_s_init">
+        <di:waypoint x="470" y="76" />
+        <di:waypoint x="470" y="136" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f_init_c1_di" bpmnElement="f_init_c1">
+        <di:waypoint x="470" y="216" />
+        <di:waypoint x="470" y="276" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f_c1_dir_di" bpmnElement="f_c1_dir">
+        <di:waypoint x="478.3333333333333" y="326" />
+        <di:waypoint x="478.3333333333333" y="361" />
+        <di:waypoint x="755" y="361" />
+        <di:waypoint x="755" y="396" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f_dir_c2_di" bpmnElement="f_dir_c2">
+        <di:waypoint x="755" y="476" />
+        <di:waypoint x="755" y="536" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f_c2_rect_di" bpmnElement="f_c2_rect">
+        <di:waypoint x="746.6666666666666" y="586" />
+        <di:waypoint x="746.6666666666666" y="621" />
+        <di:waypoint x="660" y="621" />
+        <di:waypoint x="660" y="656" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f_rect_j2_di" bpmnElement="f_rect_j2">
+        <di:waypoint x="660" y="736" />
+        <di:waypoint x="660" y="771" />
+        <di:waypoint x="746.6666666666666" y="771" />
+        <di:waypoint x="746.6666666666666" y="806" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f_c2_arch_di" bpmnElement="f_c2_arch">
+        <di:waypoint x="763.3333333333334" y="586" />
+        <di:waypoint x="763.3333333333334" y="621" />
+        <di:waypoint x="850" y="621" />
+        <di:waypoint x="850" y="656" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f_arch_j2_di" bpmnElement="f_arch_j2">
+        <di:waypoint x="850" y="736" />
+        <di:waypoint x="850" y="771" />
+        <di:waypoint x="763.3333333333334" y="771" />
+        <di:waypoint x="763.3333333333334" y="806" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f_j2_j1_di" bpmnElement="f_j2_j1">
+        <di:waypoint x="755" y="856" />
+        <di:waypoint x="755" y="891" />
+        <di:waypoint x="478.3333333333333" y="891" />
+        <di:waypoint x="478.3333333333333" y="926" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f_j1_end_di" bpmnElement="f_j1_end">
+        <di:waypoint x="470" y="976" />
+        <di:waypoint x="470" y="1036" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
