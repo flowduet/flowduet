@@ -281,11 +281,20 @@ export class BpmnModel {
       }
       throw new Error(`任务 ${spec.id}：完成方式三档已固化完成条件，不开放覆盖`);
     }
-    if (spec.collection.trim() === "") {
+    // ApprovalMode 仅靠 TS 类型约束；JS 调用方或 as any 绕过时，非法 mode 会静默
+    // 落出空 body 的 completionCondition——运行时守卫兜底，与下方空白校验同层
+    if (!APPROVAL_MODES.includes(spec.mode)) {
+      throw new Error(
+        `任务 ${spec.id} 的 mode 必须是 ${APPROVAL_MODES.join("/")} 之一，实际是 ${String(spec.mode)}`,
+      );
+    }
+    if (typeof spec.collection !== "string" || spec.collection.trim() === "") {
       throw new Error(`任务 ${spec.id} 的 collection 不能为空白`);
     }
-    const elementVariable = spec.elementVariable ?? DEFAULT_ELEMENT_VARIABLE;
-    if (elementVariable.trim() === "") {
+    // 前后空白原样落盘会让引擎按带空格变量名解析集合、静默取不到值——统一 trim 后再用
+    const collection = spec.collection.trim();
+    const elementVariable = (spec.elementVariable ?? DEFAULT_ELEMENT_VARIABLE).trim();
+    if (elementVariable === "") {
       throw new Error(`任务 ${spec.id} 的 elementVariable 不能为空白`);
     }
     const task = this.#addNode("bpmn:UserTask", spec);
@@ -294,7 +303,7 @@ export class BpmnModel {
     const loop = this.#state.moddle.create("bpmn:MultiInstanceLoopCharacteristics", {
       isSequential: spec.mode === "sequential",
     });
-    loop.set("collection", spec.collection);
+    loop.set("collection", collection);
     loop.set("elementVariable", elementVariable);
     if (spec.mode !== "sequential") {
       loop.set(

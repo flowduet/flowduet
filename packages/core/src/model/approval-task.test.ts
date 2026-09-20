@@ -63,6 +63,44 @@ describe("addApprovalTask 守卫（三档固化，不开放覆盖）", () => {
       }),
     ).toThrow(/elementVariable 不能为空白/);
   });
+
+  it("mode 非法值（绕过 TS 类型）即抛错，不静默落盘", () => {
+    expect(() =>
+      createModel().addApprovalTask({
+        id: "t",
+        collection: "approvers",
+        // 模拟 JS 调用方或 as any 绕过类型约束
+        mode: "bogus" as unknown as "all",
+        shape: SHAPE,
+      }),
+    ).toThrow(/mode 必须是 all\/any\/sequential 之一/);
+  });
+
+  it("collection 缺省（绕过 TS 类型）报语义化错误而非裸 TypeError", () => {
+    expect(() =>
+      createModel().addApprovalTask({
+        id: "t",
+        collection: undefined as unknown as string,
+        mode: "all",
+        shape: SHAPE,
+      }),
+    ).toThrow(/collection 不能为空白/);
+  });
+
+  it("collection/elementVariable 前后空白 trim 后落盘（引擎按变量名解析，带空格会静默取不到值）", async () => {
+    const xml = await compile(
+      createModel().addApprovalTask({
+        id: "t",
+        collection: "  approvers  ",
+        mode: "all",
+        shape: SHAPE,
+        elementVariable: "  reviewer  ",
+      }),
+    );
+    expect(xml).toContain('flowable:collection="approvers"');
+    expect(xml).toContain('flowable:elementVariable="reviewer"');
+    expect(xml).toContain('flowable:assignee="${reviewer}"');
+  });
 });
 
 describe("addApprovalTask 语义", () => {
