@@ -13,6 +13,7 @@ export type {
   NodeSpec,
   Point,
   SequenceFlowSpec,
+  TaskSpec,
   UserTaskSpec,
 } from "./model/bpmn-model";
 
@@ -26,4 +27,6 @@ export { parse } from "./parse/parser";
 export type { ParseOptions } from "./parse/parser";
 
 export { flowableAdapter } from "./adapter/flowable-adapter";
-export type { EngineAdapter } from "./adapter/flowable-adapter";
+export { assertAdapterContract } from "./adapter/adapter-contract";
+export { TASK_KINDS } from "./adapter/engine-adapter";
+export type { EngineAdapter, TaskKind, TaskTypeMapping } from "./adapter/engine-adapter";

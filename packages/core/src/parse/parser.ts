@@ -1,5 +1,5 @@
 import { BpmnModdle } from "bpmn-moddle";
-import type { EngineAdapter } from "../adapter/flowable-adapter";
+import type { EngineAdapter } from "../adapter/engine-adapter";
 import { BpmnModel } from "../model/bpmn-model";
 
 export interface ParseOptions {
@@ -20,5 +20,5 @@ export async function parse(xml: string, options: ParseOptions): Promise<BpmnMod
   }
   const moddle = new BpmnModdle(options.adapter.additionalPackages);
   const { rootElement } = await moddle.fromXML(xml);
-  return BpmnModel.fromParsed(moddle, rootElement);
+  return BpmnModel.fromParsed(moddle, rootElement, options.adapter);
 }

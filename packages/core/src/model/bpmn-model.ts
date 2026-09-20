@@ -1,6 +1,6 @@
 import { BpmnModdle } from "bpmn-moddle";
 import type { ModdleElement } from "bpmn-moddle";
-import type { EngineAdapter } from "../adapter/flowable-adapter";
+import type { EngineAdapter, TaskKind } from "../adapter/engine-adapter";
 import { pushMany } from "../util/moddle-utils";
 
 /** 画布形状（DI v0 恒等布局的坐标来源） */
@@ -40,6 +40,9 @@ export interface UserTaskSpec extends NodeSpec {
   assignee?: string;
 }
 
+/** 通用任务建模参数（assignee 仅对用户类任务有意义） */
+export type TaskSpec = UserTaskSpec;
+
 export interface SequenceFlowSpec {
   id: string;
   name?: string;
@@ -57,6 +60,8 @@ interface ModelState {
   moddle: InstanceType<typeof BpmnModdle>;
   definitions: ModdleElement;
   process: ModdleElement;
+  /** 绑定的引擎适配器；解析恢复的模型可能未知（addTask 会拒绝） */
+  adapter: EngineAdapter | undefined;
   nodes: Map<string, ModdleElement>;
   flows: Map<string, ModdleElement>;
   shapes: Map<string, CanvasShape>;
@@ -99,6 +104,7 @@ export class BpmnModel {
       moddle,
       definitions,
       process,
+      adapter: spec.adapter,
       nodes: new Map(),
       flows: new Map(),
       shapes: new Map(),
@@ -114,6 +120,7 @@ export class BpmnModel {
   static fromParsed(
     moddle: InstanceType<typeof BpmnModdle>,
     definitions: ModdleElement,
+    adapter?: EngineAdapter,
   ): BpmnModel {
     const rootElements = (definitions.get("rootElements") as ModdleElement[] | undefined) ?? [];
     const process = rootElements.find((el) => el.$type === "bpmn:Process");
@@ -174,6 +181,7 @@ export class BpmnModel {
       moddle,
       definitions,
       process,
+      adapter,
       nodes,
       flows,
       shapes,
@@ -210,12 +218,34 @@ export class BpmnModel {
   }
 
   addUserTask(spec: UserTaskSpec): this {
-    const element = this.#addNode("bpmn:UserTask", spec);
+    return this.addTask("user", spec);
+  }
+
+  /**
+   * 引擎中立的任务建模：经适配器的任务类型映射（合同点三）落成方言任务。
+   * 这是"任务类型映射"的消费点——映射由适配器声明，而非写死在内核。
+   */
+  addTask(kind: TaskKind, spec: TaskSpec): this {
+    const adapter = this.#state.adapter;
+    if (adapter === undefined) {
+      throw new Error("模型未绑定引擎适配器（解析恢复的树请经 parse(xml, { adapter }) 包装）");
+    }
+    const mapping = adapter.taskTypeMapping[kind];
+    if (mapping === undefined) {
+      throw new Error(`适配器 ${adapter.id} 未定义任务类型映射：${kind}`);
+    }
+    const element = this.#addNode(mapping.elementType, spec);
     if (spec.assignee !== undefined) {
       if (spec.assignee.trim() === "") {
-        throw new Error(`用户任务 ${spec.id} 的 assignee 不能为空白`);
+        throw new Error(`任务 ${spec.id} 的 assignee 不能为空白`);
+      }
+      if (mapping.elementType !== "bpmn:UserTask") {
+        throw new Error(`任务类型 ${kind} 的方言形态是 ${mapping.elementType}，不支持 assignee`);
       }
       element.set("assignee", spec.assignee);
+    }
+    for (const [attr, value] of Object.entries(mapping.attributes ?? {})) {
+      element.set(attr, value);
     }
     return this;
   }
