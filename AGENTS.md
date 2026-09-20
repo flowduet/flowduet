@@ -27,7 +27,7 @@
 当前身处中国大陆网络环境，下载或访问外部资源时**优先使用国内镜像源**，避免直连境外源长时间超时。
 
 | 资源 | 镜像 / 方式 |
-|------|-------------|
+| ------ | ------------- |
 | Homebrew | 清华 TUNA 或中科大 USTC 镜像源 |
 | pip | `https://pypi.tuna.tsinghua.edu.cn/simple` |
 | npm | `https://registry.npmmirror.com` |
@@ -46,10 +46,14 @@
 ```text
 <type>[optional scope]: <中文描述>
 
-[body]
+[required body]
 
 [optional footer(s)]
 ```
+
+### BREAKING CHANGE
+
+在脚注中包含 BREAKING CHANGE: 或 <类型>(范围) 后面有一个 ! 的提交，表示引入了破坏性 API 变更（这和语义化版本中的 MAJOR 相对应）。 破坏性变更可以是任意 类型 提交的一部分
 
 ### Type 类型
 
