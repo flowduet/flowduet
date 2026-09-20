@@ -78,32 +78,36 @@ if [ "$ready" -ne 1 ]; then
 fi
 echo "✓ 引擎就绪（${i}s）"
 
-echo "▶ 部署基准 XML ..."
-RESP_FILE="$(mktemp)"
-HTTP_CODE=$(curl -s -o "$RESP_FILE" -w "%{http_code}" -u "$SMOKE_USER:$SMOKE_PASS" \
-  -F "file=@$BASELINE;filename=leave-approval.bpmn20.xml" \
-  "$API")
-if [ "$HTTP_CODE" != "201" ] && [ "$HTTP_CODE" != "200" ]; then
-  echo "✗ 部署失败 HTTP $HTTP_CODE：" >&2
-  cat "$RESP_FILE" >&2
-  exit 1
-fi
-DEPLOY_ID=$(python3 -c "import json,sys; print(json.load(open(sys.argv[1]))['id'])" "$RESP_FILE")
-rm -f "$RESP_FILE"
-echo "✓ 部署成功 id=$DEPLOY_ID"
-
-# 流程定义出现 = 引擎完成 XSD 解析与校验并注册（比部署本身更强的证据）
-DEFS=$(curl -sf -u "$SMOKE_USER:$SMOKE_PASS" "$API/../process-definitions?size=100")
-COUNT=$(python3 -c "
+# 部署一份基准 XML 并断言流程定义注册（注册 = 引擎完成 XSD 解析校验，比部署更强的证据）
+deploy_extra() { # $1=基准文件路径或名字 $2=上传文件名（须以 .bpmn20.xml 结尾） $3=期望流程定义 key
+  local file resp code defs count
+  if [ -f "$1" ]; then file="$1"; else file="$REPO_ROOT/packages/core/src/compile/__fixtures__/$1"; fi
+  resp="$(mktemp)"
+  code=$(curl -s -o "$resp" -w "%{http_code}" -u "$SMOKE_USER:$SMOKE_PASS" \
+    -F "file=@${file};filename=$2" \
+    "$API")
+  if [ "$code" != "201" ] && [ "$code" != "200" ]; then
+    echo "✗ $2 部署失败 HTTP ${code}：" >&2
+    cat "$resp" >&2
+    rm -f "$resp"
+    exit 1
+  fi
+  rm -f "$resp"
+  defs="$(curl -sf -u "$SMOKE_USER:$SMOKE_PASS" "$API/../process-definitions?size=100")"
+  count=$(python3 -c "
 import json, sys
 data = json.loads(sys.argv[1])['data']
-print(sum(1 for d in data if d.get('key') == 'leave_approval'))
-" "$DEFS")
-if [ "$COUNT" -lt 1 ]; then
-  echo "✗ 部署已登记但流程定义 leave_approval 未注册" >&2
-  exit 1
-fi
-echo "✓ 流程定义已注册（leave_approval × ${COUNT}）"
+print(sum(1 for d in data if d.get('key') == sys.argv[2]))
+" "$defs" "$3")
+  if [ "$count" -lt 1 ]; then
+    echo "✗ 部署已登记但流程定义 $3 未注册" >&2
+    exit 1
+  fi
+  echo "✓ $3 部署并注册（× ${count}）"
+}
+
+echo "▶ 部署基准 XML ..."
+deploy_extra "$BASELINE" "leave-approval.bpmn20.xml" "leave_approval"
 
 # 运行时断言：启动实例并核对 assignee——flowable: 属性只有真实执行才被验证。
 # 教训：命名空间 URI 写错时部署注册照常通过，assignee 静默为空（2026-09-20 原型实锤）。
@@ -134,5 +138,11 @@ else
   echo "✗ 运行时断言失败:flowable:assignee 未生效(命名空间/属性通道异常)" >&2
   exit 1
 fi
+
+# ── 分支结构基准（issue #20）：并行分裂-汇合 + 默认分支排他网关，部署注册 ──
+# 运行时语义（并行同时推进/默认分支兜底）属引擎行为，部署注册即本票验收口径
+echo "▶ 分支结构基准：部署两份 ..."
+deploy_extra "parallel-flow.flowable68.baseline.xml" "parallel-flow.bpmn20.xml" "parallel_flow"
+deploy_extra "default-branch.flowable68.baseline.xml" "default-branch.bpmn20.xml" "default_branch"
 
 echo "✅ 冒烟通过：FlowDuet 编译产物被 Flowable 6.8 真实部署并解析（容器 $CONTAINER 已停止）"

@@ -5,6 +5,10 @@ import { BpmnModel } from "../model/bpmn-model.js";
 import { compile } from "../compile/compiler.js";
 import { parse } from "./parser.js";
 import { buildMinimalFlow } from "../compile/__fixtures__/minimal-flow.js";
+import {
+  buildDefaultBranchFlow,
+  buildParallelFlow,
+} from "../compile/__fixtures__/branching-flows.js";
 
 /**
  * 往返保真（ROADMAP Step 1 测试链 2，全项目最高优先级不变量，ADR-0002）：
@@ -179,6 +183,22 @@ describe("往返保真（parse → model → compile 语义等价）", () => {
 
     const task = findFlowElement(model, "manager_approval");
     expect(task.get("assignee")).toBe("${manager}");
+  });
+
+  it("并行分裂-汇合往返逐字一致", async () => {
+    const { first, second } = await roundTrip(buildParallelFlow);
+    expect(second).toBe(first);
+  });
+
+  it("默认流转往返逐字一致：网关 default 引用等价恢复且不产生条件", async () => {
+    const { first, second } = await roundTrip(buildDefaultBranchFlow);
+    expect(second).toBe(first);
+
+    const model = await parse(first, { adapter: flowableAdapter });
+    const gateway = findFlowElement(model, "decision");
+    const defaultFlow = gateway.get("default") as ModdleElement;
+    expect(defaultFlow.get("id")).toBe("flow_rejected");
+    expect(defaultFlow.get("conditionExpression")).toBeUndefined();
   });
 
   it("空白 XML 拒绝解析", async () => {
