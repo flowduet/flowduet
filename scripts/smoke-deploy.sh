@@ -83,7 +83,7 @@ echo "✓ 引擎就绪（${i}s）"
 # ── 通用断言件（部署注册 / 启动实例 / 任务查询）──
 
 # 部署一份 XML 并断言流程定义完成注册（比部署本身更强的证据：引擎完成了解析校验）
-deploy_and_check() { # $1=文件路径 $2=上传文件名 $3=期望流程定义 key
+deploy_and_check() { # $1=文件路径 $2=上传文件名（须以 .bpmn20.xml 结尾） $3=期望流程定义 key
   local file="$1" upload_name="$2" defkey="$3" resp code defs count
   resp="$(mktemp)"
   # 引擎要求上传文件名以 .bpmn20.xml/.bpmn/.bar/.zip 结尾
@@ -97,7 +97,11 @@ deploy_and_check() { # $1=文件路径 $2=上传文件名 $3=期望流程定义 
     exit 1
   fi
   rm -f "$resp"
-  defs="$(curl -sf -u "$SMOKE_USER:$SMOKE_PASS" "$API/../process-definitions?size=100")"
+  # local 赋值会吞掉 curl 的非零退出码，必须拆开判断，否则引擎异常时静默退出
+  if ! defs="$(curl -sf -u "$SMOKE_USER:$SMOKE_PASS" "$API/../process-definitions?size=100")"; then
+    echo "✗ 查询流程定义列表失败（引擎异常？）：$API/../process-definitions" >&2
+    exit 1
+  fi
   count=$(python3 -c "
 import json, sys
 data = json.loads(sys.argv[1])['data']
@@ -142,7 +146,12 @@ deploy_and_check "$BASELINE" "leave-approval.bpmn20.xml" "leave_approval"
 # 教训：命名空间 URI 写错时部署注册照常通过，assignee 静默为空（2026-09-20 原型实锤）。
 echo "▶ 运行时断言:启动实例(manager=王经理)并核对 assignee ..."
 PID="$(start_instance leave_approval '[{"name":"manager","type":"string","value":"王经理"}]')"
-if query_tasks "$PID" | python3 -c "
+# curl 失败时管道会把空输入喂给 python，报 JSON 解析错而掩盖真实原因——先落变量再判
+TASKS_JSON="$(query_tasks "$PID")" || {
+  echo "✗ 查询任务列表失败（引擎异常？）：$RUNTIME_API/tasks?processInstanceId=$PID" >&2
+  exit 1
+}
+if printf '%s' "$TASKS_JSON" | python3 -c "
 import json, sys
 tasks = json.load(sys.stdin)['data']
 ok = len(tasks) == 1 and tasks[0].get('assignee') == '王经理'
@@ -228,5 +237,11 @@ else
   echo "✗ 依次运行时断言失败:串行语义未生效" >&2
   exit 1
 fi
+
+# ── 分支结构基准（issue #20）：并行分裂-汇合 + 默认分支排他网关，部署注册 ──
+# 运行时语义（并行同时推进/默认分支兜底）属引擎行为，部署注册即本票验收口径
+echo "▶ 分支结构基准：部署两份 ..."
+deploy_and_check "$FIXTURE_DIR/parallel-flow.flowable68.baseline.xml" "parallel-flow.bpmn20.xml" "parallel_flow"
+deploy_and_check "$FIXTURE_DIR/default-branch.flowable68.baseline.xml" "default-branch.bpmn20.xml" "default_branch"
 
 echo "✅ 冒烟通过：FlowDuet 编译产物被 Flowable 6.8 真实部署并解析（容器 $CONTAINER 已停止）"

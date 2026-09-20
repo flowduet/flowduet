@@ -83,8 +83,14 @@ export interface SequenceFlowSpec {
   /** 必须是已登记的流节点 id */
   sourceRef: string;
   targetRef: string;
-  /** 排他网关分支条件（FormalExpression 体）；无条件的默认流转不传 */
+  /** 排他网关分支条件（FormalExpression 体）；默认流转不传条件 */
   condition?: string;
+  /**
+   * 标记本分支为源排他网关的默认流转（「其余情况」）。
+   * 调用面归分支（钉钉式抽屉心智），内核落 BPMN 语义：写源网关 default
+   * 引用属性。与 condition 互斥；源必须是排他网关；同网关至多一条。
+   */
+  default?: boolean;
   /** 画布折线，至少 2 个点；DI v0 恒等布局直接采用 */
   waypoints: [Point, Point, ...Point[]];
 }
@@ -263,6 +269,11 @@ export class BpmnModel {
     return this;
   }
 
+  addParallelGateway(spec: NodeSpec): this {
+    this.#addNode("bpmn:ParallelGateway", spec);
+    return this;
+  }
+
   addUserTask(spec: UserTaskSpec): this {
     return this.addTask("user", spec);
   }
@@ -360,6 +371,20 @@ export class BpmnModel {
         `连线 ${spec.id} 的端点不存在：sourceRef=${spec.sourceRef}, targetRef=${spec.targetRef}`,
       );
     }
+    // 默认流转三重守卫：语义互斥、源限定排他网关、同网关唯一（R2 决策）
+    if (spec.default === true) {
+      if (spec.condition !== undefined) {
+        throw new Error(
+          `默认流转 ${spec.id} 不能同时携带条件表达式（默认分支是"其余情况"，语义互斥）`,
+        );
+      }
+      if (source.$type !== "bpmn:ExclusiveGateway") {
+        throw new Error(`默认流转 ${spec.id} 的源必须是排他网关，实际是 ${source.$type}`);
+      }
+      if (source.get("default") !== undefined) {
+        throw new Error(`排他网关 ${spec.sourceRef} 已有默认流转，连线 ${spec.id} 不得重复标记`);
+      }
+    }
     if (spec.condition !== undefined && spec.condition.trim() === "") {
       throw new Error(`连线 ${spec.id} 的 condition 不能为空白`);
     }
@@ -375,6 +400,10 @@ export class BpmnModel {
         "conditionExpression",
         this.#state.moddle.create("bpmn:FormalExpression", { body: spec.condition }),
       );
+    }
+    if (spec.default === true) {
+      // default 是网关的 isReference 属性：存元素对象，序列化为连线 id 文本
+      source.set("default", flow);
     }
     // BPMN 要求流节点维护 incoming/outgoing 双向引用；二者是 isReference 的
     // SequenceFlow 引用，必须存元素对象，moddle 序列化时才解析为连线 id 文本
