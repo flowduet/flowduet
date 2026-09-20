@@ -1,6 +1,6 @@
 import { BpmnModdle } from "bpmn-moddle";
-import type { EngineAdapter } from "../adapter/engine-adapter";
-import { BpmnModel } from "../model/bpmn-model";
+import type { EngineAdapter } from "../adapter/engine-adapter.js";
+import { BpmnModel } from "../model/bpmn-model.js";
 
 export interface ParseOptions {
   /**

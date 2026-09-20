@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest";
 import type { ModdleElement } from "bpmn-moddle";
-import { flowableAdapter } from "../adapter/flowable-adapter";
-import { BpmnModel } from "../model/bpmn-model";
-import { compile } from "../compile/compiler";
-import { parse } from "./parser";
-import { buildMinimalFlow } from "../compile/__fixtures__/minimal-flow";
+import { flowableAdapter } from "../adapter/flowable-adapter.js";
+import { BpmnModel } from "../model/bpmn-model.js";
+import { compile } from "../compile/compiler.js";
+import { parse } from "./parser.js";
+import { buildMinimalFlow } from "../compile/__fixtures__/minimal-flow.js";
 
 /**
  * 往返保真（ROADMAP Step 1 测试链 2，全项目最高优先级不变量，ADR-0002）：

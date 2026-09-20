@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { assertAdapterContract } from "./adapter-contract";
-import { flowableAdapter } from "./flowable-adapter";
-import { BpmnModel } from "../model/bpmn-model";
-import { compile } from "../compile/compiler";
-import { parse } from "../parse/parser";
+import { assertAdapterContract } from "./adapter-contract.js";
+import { flowableAdapter } from "./flowable-adapter.js";
+import { BpmnModel } from "../model/bpmn-model.js";
+import { compile } from "../compile/compiler.js";
+import { parse } from "../parse/parser.js";
 
 const SHAPE = { x: 160, y: 160, width: 100, height: 80 };
 

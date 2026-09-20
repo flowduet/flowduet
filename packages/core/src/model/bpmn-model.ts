@@ -1,7 +1,7 @@
 import { BpmnModdle } from "bpmn-moddle";
 import type { ModdleElement } from "bpmn-moddle";
-import type { EngineAdapter, TaskKind } from "../adapter/engine-adapter";
-import { pushMany } from "../util/moddle-utils";
+import type { EngineAdapter, TaskKind } from "../adapter/engine-adapter.js";
+import { pushMany } from "../util/moddle-utils.js";
 
 /** 画布形状（DI v0 恒等布局的坐标来源） */
 export interface CanvasShape {

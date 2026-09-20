@@ -1,5 +1,13 @@
 # @flowduet/core
 
+## 0.1.1
+
+### Patch Changes
+
+- 修复发布产物的 ESM 兼容性：源码相对导入补全 `.js` 扩展名。此前 dist 在
+  Node 原生 ESM 下无法导入（tsc 不改写导入路径，extensionless 仅在打包器
+  解析下可用），由发布后的真实安装验证发现；CI 新增产物导入检查防回归。
+
 ## 0.1.0
 
 ### Minor Changes
