@@ -105,4 +105,34 @@ if [ "$COUNT" -lt 1 ]; then
 fi
 echo "✓ 流程定义已注册（leave_approval × ${COUNT}）"
 
+# 运行时断言：启动实例并核对 assignee——flowable: 属性只有真实执行才被验证。
+# 教训：命名空间 URI 写错时部署注册照常通过，assignee 静默为空（2026-09-20 原型实锤）。
+RUNTIME_API="http://localhost:$SMOKE_PORT$API_PATH/runtime"
+echo "▶ 运行时断言:启动实例(manager=王经理)并核对 assignee ..."
+START_FILE="$(mktemp)"
+START_CODE=$(curl -s -o "$START_FILE" -w "%{http_code}" -u "$SMOKE_USER:$SMOKE_PASS" \
+  -H "Content-Type: application/json" \
+  -d '{"processDefinitionKey":"leave_approval","variables":[{"name":"manager","type":"string","value":"王经理"}]}' \
+  "$RUNTIME_API/process-instances")
+if [ "$START_CODE" != "201" ]; then
+  echo "✗ 实例启动失败 HTTP $START_CODE:" >&2
+  cat "$START_FILE" >&2
+  rm -f "$START_FILE"
+  exit 1
+fi
+PID=$(python3 -c "import json,sys; print(json.load(open(sys.argv[1]))['id'])" "$START_FILE")
+rm -f "$START_FILE"
+if curl -sf -u "$SMOKE_USER:$SMOKE_PASS" "$RUNTIME_API/tasks?processInstanceId=$PID" | python3 -c "
+import json, sys
+tasks = json.load(sys.stdin)['data']
+ok = len(tasks) == 1 and tasks[0].get('assignee') == '王经理'
+print(f\"  任务 {tasks[0]['name'] if tasks else '-'} assignee={tasks[0].get('assignee') if tasks else '-'}\")
+sys.exit(0 if ok else 1)
+"; then
+  echo "✓ assignee 通道生效(王经理)"
+else
+  echo "✗ 运行时断言失败:flowable:assignee 未生效(命名空间/属性通道异常)" >&2
+  exit 1
+fi
+
 echo "✅ 冒烟通过：FlowDuet 编译产物被 Flowable 6.8 真实部署并解析（容器 $CONTAINER 已停止）"

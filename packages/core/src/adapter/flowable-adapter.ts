@@ -1,9 +1,16 @@
 import type { EngineAdapter, TaskKind, TaskTypeMapping } from "./engine-adapter.js";
 
-/** flowable 命名空间与扩展属性的 moddle 描述符（XML 方言跨 6/7/8 基本稳定，ADR-0005） */
+/**
+ * flowable 命名空间与扩展属性的 moddle 描述符（XML 方言跨 6/7/8 基本稳定，ADR-0005）。
+ *
+ * ⚠ uri 必须是 http://flowable.org/bpmn（引擎常量 FLOWABLE_EXTENSIONS_NAMESPACE），
+ * 官方文档写的 http://flowable.org/bpm 会让引擎读不到任何 flowable: 属性——
+ * 部署校验报 missing-collection、assignee 运行时全丢且无报错（2026-09-20 原型
+ * 部署+启动实例实锤，分支 prototype/iter2-vertical-layout-mi）。
+ */
 const flowablePackage = {
   name: "Flowable",
-  uri: "http://flowable.org/bpm",
+  uri: "http://flowable.org/bpmn",
   prefix: "flowable",
   xml: { tagAlias: "lowerCase" },
   types: [
