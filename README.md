@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="docs/assets/logo/icon-192.png" width="120" alt="FlowDuet LOGO：一树两冠">
+</p>
+
 # FlowDuet
 
 > 双视图流程设计器 —— 钉钉式审批视图与 BPMN 自由画布，共享同一棵流程模型树。
