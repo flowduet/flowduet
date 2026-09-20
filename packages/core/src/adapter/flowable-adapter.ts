@@ -1,22 +1,6 @@
-/**
- * Flowable 引擎适配器 v0。
- *
- * 正式的适配器接口与合同测试在适配器合同 issue 中固化；
- * 当前只包含编译合同所需的最小扩展属性：用户任务的 flowable:assignee。
- * flowable XML 方言（命名空间 + 扩展属性）跨 6/7/8 基本稳定（ADR-0005）。
- */
+import type { EngineAdapter, TaskKind, TaskTypeMapping } from "./engine-adapter";
 
-export interface EngineAdapter {
-  /** 适配器标识（引擎方言名） */
-  readonly id: string;
-  /**
-   * 注入 bpmn-moddle 的扩展包描述符：方言命名空间与扩展属性 schema。
-   * 这是 ADR-0005 "适配器三收敛点" 中前两点的物理载体。
-   */
-  readonly additionalPackages: Record<string, unknown>;
-}
-
-/** flowable 命名空间与扩展属性的 moddle 描述符 */
+/** flowable 命名空间与扩展属性的 moddle 描述符（XML 方言跨 6/7/8 基本稳定，ADR-0005） */
 const flowablePackage = {
   name: "Flowable",
   uri: "http://flowable.org/bpm",
@@ -28,10 +12,30 @@ const flowablePackage = {
       extends: ["bpmn:UserTask"],
       properties: [{ name: "assignee", isAttr: true, type: "String" }],
     },
+    {
+      name: "ServiceTask",
+      extends: ["bpmn:ServiceTask"],
+      properties: [{ name: "type", isAttr: true, type: "String" }],
+    },
   ],
 };
 
+/**
+ * Flowable 任务类型映射。
+ * BPMN 2.0 没有邮件任务，Flowable 的邮件 = ServiceTask + flowable:type="mail"，
+ * 这正是"任务类型映射"收敛点存在的理由：语义任务与方言形态解耦。
+ */
+const flowableTaskTypeMapping: Readonly<Record<TaskKind, TaskTypeMapping>> = {
+  user: { elementType: "bpmn:UserTask" },
+  service: { elementType: "bpmn:ServiceTask" },
+  script: { elementType: "bpmn:ScriptTask" },
+  mail: { elementType: "bpmn:ServiceTask", attributes: { type: "mail" } },
+};
+
+/** Flowable 6.8 基准的首个适配器实例（对准方言即一代覆盖 6.x–8.x） */
 export const flowableAdapter: EngineAdapter = {
   id: "flowable",
+  namespacePrefix: "flowable",
   additionalPackages: { flowable: flowablePackage },
+  taskTypeMapping: flowableTaskTypeMapping,
 };
