@@ -1,6 +1,6 @@
 {
   "name": "@flowduet/core",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "FlowDuet 内核：BPMN 模型树 + Parser/Compiler + 引擎适配器",
   "license": "Apache-2.0",
   "type": "module",

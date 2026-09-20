@@ -1,0 +1,19 @@
+# @flowduet/core
+
+## 0.1.0
+
+### Minor Changes
+
+- 49b692c: 适配器接口正式化（ADR-0005 三收敛点）：命名空间前缀、扩展属性 schema、任务类型映射。
+  合同以 `assertAdapterContract` 随包发布（纯断言、不依赖测试框架），任何适配器实现可直接复用；
+  `BpmnModel.addTask(kind)` 消费任务类型映射，邮件任务按 Flowable 习惯落成
+  ServiceTask + flowable:type="mail"。
+- 56cc000: 新增 ROADMAP Step 1 接缝的最小实现：模型树包装（BpmnModel）、编译器（compile）、
+  恒等 DI 布局（IdentityDiLayout）与 Flowable 适配器（扩展属性描述符）。
+  编译合同测试以手写基准文件锁定最小流程（开始 → 用户任务 → 排他网关 → 两分支 → 结束）
+  的 Flowable 6.8 方言输出：命名空间声明、flowable:assignee、bpmndi 一个不能少。
+- e075358: 部署冒烟链路：`pnpm smoke` 一键完成「启动 Flowable 6.8 容器 → REST 部署基准
+  XML → 断言流程定义注册」，CI 侧以 workflow_dispatch 手动触发的同名 job 承载。
+- f126d96: 新增解析接缝 `parse(xml, { adapter })`：方言 XML → 模型树（语义元素 + bpmndi 几何恢复）。
+  编译器幂等化：重复编译不再叠加 DI 段。往返保真不变量（parse → model → compile 语义等价）
+  以最小流程与三个变体（分支交换 / 线性流程 / 审批链加签）逐字一致锁定。
