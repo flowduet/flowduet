@@ -244,4 +244,16 @@ echo "▶ 分支结构基准：部署两份 ..."
 deploy_and_check "$FIXTURE_DIR/parallel-flow.flowable68.baseline.xml" "parallel-flow.bpmn20.xml" "parallel_flow"
 deploy_and_check "$FIXTURE_DIR/default-branch.flowable68.baseline.xml" "default-branch.bpmn20.xml" "default_branch"
 
+# ── 抄送基准（issue #21）：ServiceTask + ccTo + 占位 delegate，部署注册 ──
+# 知会行为由宿主绑定 bean（flowduetCcTask）实现，本地无宿主 bean，
+# 执行语义文档化给宿主，冒烟只验部署合法性（占位 delegate 引用不阻止部署）
+#
+# 宿主集成手动验收清单（绑定 bean 后执行）：
+#   1. 宿主应用注册名为 flowduetCcTask 的 JavaDelegate / ActivityBehavior bean
+#   2. 部署 cc-flow 流程定义并启动流程实例
+#   3. 推进到抄送节点，验证 bean 被调用且 ccTo 属性正确传入
+#   4. 确认流程不因知会行为阻塞（知会不阻塞是 R3 决策核心语义）
+echo "▶ 抄送基准：部署 ..."
+deploy_and_check "$FIXTURE_DIR/cc-flow.flowable68.baseline.xml" "cc-flow.bpmn20.xml" "cc_flow"
+
 echo "✅ 冒烟通过：FlowDuet 编译产物被 Flowable 6.8 真实部署并解析（容器 $CONTAINER 已停止）"

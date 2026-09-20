@@ -10,6 +10,7 @@ import {
   buildDefaultBranchFlow,
   buildParallelFlow,
 } from "../compile/__fixtures__/branching-flows.js";
+import { buildCcFlow } from "../compile/__fixtures__/cc-flow.js";
 import { APPROVAL_MODES } from "../model/bpmn-model.js";
 
 /**
@@ -223,6 +224,11 @@ describe("往返保真（parse → model → compile 语义等价）", () => {
     const defaultFlow = gateway.get("default") as ModdleElement;
     expect(defaultFlow.get("id")).toBe("flow_rejected");
     expect(defaultFlow.get("conditionExpression")).toBeUndefined();
+  });
+
+  it("抄送任务往返逐字一致：ccTo 与占位 delegate 引用等价恢复", async () => {
+    const { first, second } = await roundTrip(buildCcFlow);
+    expect(second).toBe(first);
   });
 
   it("空白 XML 拒绝解析", async () => {

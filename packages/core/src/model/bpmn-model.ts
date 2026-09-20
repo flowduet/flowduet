@@ -40,8 +40,20 @@ export interface UserTaskSpec extends NodeSpec {
   assignee?: string;
 }
 
-/** 通用任务建模参数（assignee 仅对用户类任务有意义） */
-export type TaskSpec = UserTaskSpec;
+/**
+ * 抄送任务建模参数（R3 决策：经引擎中立任务映射落 ServiceTask + 扩展属性）。
+ * 收件人是字面量逗号分隔（"张三,李四"）或运行时表达式（"${ccUsers}"），
+ * 单属性承载——XML 属性单值，多值不拆属性。
+ *
+ * 宿主合同：方言写占位 delegate 引用 ${flowduetCcTask}——部署合法不要求
+ * bean 在场，但执行到抄送节点需要宿主绑定该 bean 实现知会行为（ADR-0004）。
+ */
+export interface CcTaskSpec extends NodeSpec {
+  recipients: string;
+}
+
+/** addTask 的建模参数（用户任务与抄送任务的并集） */
+export type TaskSpec = UserTaskSpec | CcTaskSpec;
 
 /** 多实例审批的完成方式三档（CONTEXT.md：会签 / 或签 / 依次审批） */
 export type ApprovalMode = "all" | "any" | "sequential";
@@ -331,8 +343,11 @@ export class BpmnModel {
   /**
    * 引擎中立的任务建模：经适配器的任务类型映射（合同点三）落成方言任务。
    * 这是"任务类型映射"的消费点——映射由适配器声明，而非写死在内核。
+   * 抄送（cc）的方言形态带占位 delegate 引用，执行需宿主绑定 bean（见 CcTaskSpec）。
    */
-  addTask(kind: TaskKind, spec: TaskSpec): this {
+  addTask(kind: "cc", spec: CcTaskSpec): this;
+  addTask(kind: Exclude<TaskKind, "cc">, spec: UserTaskSpec): this;
+  addTask(kind: TaskKind, spec: UserTaskSpec | CcTaskSpec): this {
     const adapter = this.#state.adapter;
     if (adapter === undefined) {
       throw new Error("模型未绑定引擎适配器（解析恢复的树请经 parse(xml, { adapter }) 包装）");
@@ -342,14 +357,28 @@ export class BpmnModel {
       throw new Error(`适配器 ${adapter.id} 未定义任务类型映射：${kind}`);
     }
     const element = this.#addNode(mapping.elementType, spec);
-    if (spec.assignee !== undefined) {
-      if (spec.assignee.trim() === "") {
+    const assignee = "assignee" in spec ? spec.assignee : undefined;
+    if (assignee !== undefined) {
+      if (assignee.trim() === "") {
         throw new Error(`任务 ${spec.id} 的 assignee 不能为空白`);
       }
       if (mapping.elementType !== "bpmn:UserTask") {
         throw new Error(`任务类型 ${kind} 的方言形态是 ${mapping.elementType}，不支持 assignee`);
       }
-      element.set("assignee", spec.assignee);
+      element.set("assignee", assignee);
+    }
+    if (kind === "cc") {
+      // 仅靠 TS 类型约束不够（JS 调用方可绕过）；收件人带空白落盘会让
+      // 引擎按带空格的表达式/名单解析，静默取不到人——统一校验并 trim
+      const recipients = "recipients" in spec ? spec.recipients : undefined;
+      if (typeof recipients !== "string" || recipients.trim() === "") {
+        throw new Error(`抄送任务 ${spec.id} 的 recipients 不能为空白`);
+      }
+      // ccTo 是语义名，方言前缀由适配器描述符绑定（与 assignee 同一机制）
+      element.set("ccTo", recipients.trim());
+    } else if ("recipients" in spec) {
+      // 对称守卫：JS 调用方可能绕过 TS 类型，把 recipients 传给非 cc 任务
+      throw new Error(`任务类型 ${kind} 不支持 recipients（仅抄送任务支持）`);
     }
     for (const [attr, value] of Object.entries(mapping.attributes ?? {})) {
       element.set(attr, value);
