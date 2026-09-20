@@ -1,0 +1,21 @@
+name: Smoke
+
+on:
+  # 迭代一口径：冒烟不挂 PR 流程，手动触发（7.2 / 8.0 冒烟按 ADR-0005 留到 v1）
+  workflow_dispatch:
+
+jobs:
+  deploy-smoke:
+    name: Flowable 6.8 部署冒烟
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      - run: bash scripts/smoke-deploy.sh
