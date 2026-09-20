@@ -1,7 +1,7 @@
 import { BpmnModdle } from "bpmn-moddle";
 import type { ModdleElement } from "bpmn-moddle";
 import type { EngineAdapter, TaskKind } from "../adapter/engine-adapter.js";
-import { pushMany } from "../util/moddle-utils.js";
+import { pushMany, removeFromArray } from "../util/moddle-utils.js";
 
 /** 画布形状（DI v0 恒等布局的坐标来源） */
 export interface CanvasShape {
@@ -452,6 +452,54 @@ export class BpmnModel {
       this.#state.waypoints.set(spec.id, spec.waypoints);
     }
     return this;
+  }
+
+  /** 移除一条连线：流程元素、双向引用、网关 default 引用与登记表同步清理 */
+  removeSequenceFlow(id: string): this {
+    const flow = this.#state.flows.get(id);
+    if (flow === undefined) {
+      throw new Error(`连线 ${id} 不存在`);
+    }
+    removeFromArray(this.#state.process, "flowElements", flow);
+    const source = flow.get("sourceRef") as ModdleElement;
+    const target = flow.get("targetRef") as ModdleElement;
+    removeFromArray(source, "outgoing", flow);
+    removeFromArray(target, "incoming", flow);
+    if (source.get("default") === flow) {
+      source.set("default", undefined);
+    }
+    this.#state.flows.delete(id);
+    this.#state.waypoints.delete(id);
+    return this;
+  }
+
+  /** 移除一个节点及其全部关联连线（级联）；开始/结束事件的去留由调用方决定 */
+  removeNode(id: string): this {
+    const node = this.#state.nodes.get(id);
+    if (node === undefined) {
+      throw new Error(`节点 ${id} 不存在`);
+    }
+    const incoming = [...((node.get("incoming") as ModdleElement[] | undefined) ?? [])];
+    const outgoing = [...((node.get("outgoing") as ModdleElement[] | undefined) ?? [])];
+    for (const flow of [...incoming, ...outgoing]) {
+      this.removeSequenceFlow(flow.get("id") as string);
+    }
+    removeFromArray(this.#state.process, "flowElements", node);
+    this.#state.nodes.delete(id);
+    this.#state.shapes.delete(id);
+    return this;
+  }
+
+  /**
+   * 语义元素读访问器（节点与连线）：抽屉等编辑面经此直接读写模型字段
+   * （R4 决策——视图无独立状态，字段变更直达模型树）。
+   */
+  elementOf(id: string): ModdleElement {
+    const element = this.#state.nodes.get(id) ?? this.#state.flows.get(id);
+    if (element === undefined) {
+      throw new Error(`元素 ${id} 不存在`);
+    }
+    return element;
   }
 
   shapeOf(id: string): CanvasShape {
