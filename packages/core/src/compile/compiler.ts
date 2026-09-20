@@ -18,6 +18,7 @@ function stripDi(model: BpmnModel): void {
       roots.filter((el) => el.$type !== "bpmndi:BPMNDiagram"),
     );
   }
+  // 依赖 moddle 对空 diagrams 数组不序列化的行为；moddle 升级时需回归验证
   definitions.set("diagrams", []);
 }
 

@@ -164,6 +164,18 @@ export class BpmnModel {
       break;
     }
 
+    // 多 process 场景下，若 diagram 指向非第一个 process，几何信息会静默丢失；
+    // 显式警告，避免后续 compile 时 IdentityDiLayout.attach 抛错难以定位
+    if (shapes.size === 0 && waypoints.size === 0) {
+      const flowElements = (process.get("flowElements") as ModdleElement[] | undefined) ?? [];
+      if (flowElements.length > 0) {
+        console.warn(
+          "[BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；" +
+            "多 process 场景请确保 diagram 指向第一个 bpmn:Process",
+        );
+      }
+    }
+
     const nodes = new Map<string, ModdleElement>();
     const flows = new Map<string, ModdleElement>();
     const flowElements = (process.get("flowElements") as ModdleElement[] | undefined) ?? [];
@@ -251,6 +263,9 @@ export class BpmnModel {
   }
 
   addSequenceFlow(spec: SequenceFlowSpec): this {
+    if (spec.waypoints.length < 2) {
+      throw new Error(`连线 ${spec.id} 的 waypoints 至少需要 2 个点`);
+    }
     if (this.#state.flows.has(spec.id) || this.#state.nodes.has(spec.id)) {
       throw new Error(`重复的元素 id: ${spec.id}`);
     }
