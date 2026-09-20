@@ -29,7 +29,8 @@ SMOKE_PASS="${SMOKE_PASS:-test}"
 SMOKE_TIMEOUT="${SMOKE_TIMEOUT:-180}"
 
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-BASELINE="$REPO_ROOT/packages/core/src/compile/__fixtures__/minimal-flow.flowable68.baseline.xml"
+FIXTURE_DIR="$REPO_ROOT/packages/core/src/compile/__fixtures__"
+BASELINE="$FIXTURE_DIR/minimal-flow.flowable68.baseline.xml"
 if [ ! -f "$BASELINE" ]; then
   echo "✗ 找不到基准文件：$BASELINE" >&2
   exit 1
@@ -48,6 +49,7 @@ case "$SMOKE_IMAGE" in
 esac
 SMOKE_USER="${SMOKE_USER:-$DEFAULT_USER}"
 API="http://localhost:$SMOKE_PORT$API_PATH/repository/deployments"
+RUNTIME_API="http://localhost:$SMOKE_PORT$API_PATH/runtime"
 
 CONTAINER="flowduet-smoke-$(date +%s)"
 cleanup() {
@@ -78,51 +80,69 @@ if [ "$ready" -ne 1 ]; then
 fi
 echo "✓ 引擎就绪（${i}s）"
 
-echo "▶ 部署基准 XML ..."
-RESP_FILE="$(mktemp)"
-HTTP_CODE=$(curl -s -o "$RESP_FILE" -w "%{http_code}" -u "$SMOKE_USER:$SMOKE_PASS" \
-  -F "file=@$BASELINE;filename=leave-approval.bpmn20.xml" \
-  "$API")
-if [ "$HTTP_CODE" != "201" ] && [ "$HTTP_CODE" != "200" ]; then
-  echo "✗ 部署失败 HTTP $HTTP_CODE：" >&2
-  cat "$RESP_FILE" >&2
-  exit 1
-fi
-DEPLOY_ID=$(python3 -c "import json,sys; print(json.load(open(sys.argv[1]))['id'])" "$RESP_FILE")
-rm -f "$RESP_FILE"
-echo "✓ 部署成功 id=$DEPLOY_ID"
+# ── 通用断言件（部署注册 / 启动实例 / 任务查询）──
 
-# 流程定义出现 = 引擎完成 XSD 解析与校验并注册（比部署本身更强的证据）
-DEFS=$(curl -sf -u "$SMOKE_USER:$SMOKE_PASS" "$API/../process-definitions?size=100")
-COUNT=$(python3 -c "
+# 部署一份 XML 并断言流程定义完成注册（比部署本身更强的证据：引擎完成了解析校验）
+deploy_and_check() { # $1=文件路径 $2=上传文件名 $3=期望流程定义 key
+  local file="$1" upload_name="$2" defkey="$3" resp code defs count
+  resp="$(mktemp)"
+  # 引擎要求上传文件名以 .bpmn20.xml/.bpmn/.bar/.zip 结尾
+  code=$(curl -s -o "$resp" -w "%{http_code}" -u "$SMOKE_USER:$SMOKE_PASS" \
+    -F "file=@${file};filename=${upload_name}" \
+    "$API")
+  if [ "$code" != "201" ] && [ "$code" != "200" ]; then
+    echo "✗ ${upload_name} 部署失败 HTTP ${code}：" >&2
+    cat "$resp" >&2
+    rm -f "$resp"
+    exit 1
+  fi
+  rm -f "$resp"
+  defs="$(curl -sf -u "$SMOKE_USER:$SMOKE_PASS" "$API/../process-definitions?size=100")"
+  count=$(python3 -c "
 import json, sys
 data = json.loads(sys.argv[1])['data']
-print(sum(1 for d in data if d.get('key') == 'leave_approval'))
-" "$DEFS")
-if [ "$COUNT" -lt 1 ]; then
-  echo "✗ 部署已登记但流程定义 leave_approval 未注册" >&2
-  exit 1
-fi
-echo "✓ 流程定义已注册（leave_approval × ${COUNT}）"
+print(sum(1 for d in data if d.get('key') == sys.argv[2]))
+" "$defs" "$defkey")
+  if [ "$count" -lt 1 ]; then
+    echo "✗ 部署已登记但流程定义 ${defkey} 未注册" >&2
+    exit 1
+  fi
+  echo "✓ ${defkey} 部署并注册"
+}
+
+# 启动实例并输出实例 id；$2 是 variables 的 JSON 数组字面量
+start_instance() { # $1=流程定义 key $2=variables JSON 数组
+  local start_file start_code
+  start_file="$(mktemp)"
+  start_code=$(curl -s -o "$start_file" -w "%{http_code}" -u "$SMOKE_USER:$SMOKE_PASS" \
+    -H "Content-Type: application/json" \
+    -d "{\"processDefinitionKey\":\"$1\",\"variables\":$2}" \
+    "$RUNTIME_API/process-instances")
+  if [ "$start_code" != "201" ]; then
+    echo "✗ 实例启动失败 HTTP ${start_code}（$1）:" >&2
+    cat "$start_file" >&2
+    rm -f "$start_file"
+    exit 1
+  fi
+  python3 -c "import json,sys; print(json.load(open(sys.argv[1]))['id'])" "$start_file"
+  rm -f "$start_file"
+}
+
+# 查询实例的活动任务（JSON），供后续 python 断言消费
+query_tasks() { # $1=实例 id
+  curl -sf -u "$SMOKE_USER:$SMOKE_PASS" "$RUNTIME_API/tasks?processInstanceId=$1&size=50"
+}
+
+# ── 基准主流程（单人审批）──
+
+echo "▶ 部署基准 XML ..."
+deploy_and_check "$BASELINE" "leave-approval.bpmn20.xml" "leave_approval"
 
 # 运行时断言：启动实例并核对 assignee——flowable: 属性只有真实执行才被验证。
 # 教训：命名空间 URI 写错时部署注册照常通过，assignee 静默为空（2026-09-20 原型实锤）。
-RUNTIME_API="http://localhost:$SMOKE_PORT$API_PATH/runtime"
 echo "▶ 运行时断言:启动实例(manager=王经理)并核对 assignee ..."
-START_FILE="$(mktemp)"
-START_CODE=$(curl -s -o "$START_FILE" -w "%{http_code}" -u "$SMOKE_USER:$SMOKE_PASS" \
-  -H "Content-Type: application/json" \
-  -d '{"processDefinitionKey":"leave_approval","variables":[{"name":"manager","type":"string","value":"王经理"}]}' \
-  "$RUNTIME_API/process-instances")
-if [ "$START_CODE" != "201" ]; then
-  echo "✗ 实例启动失败 HTTP $START_CODE:" >&2
-  cat "$START_FILE" >&2
-  rm -f "$START_FILE"
-  exit 1
-fi
-PID=$(python3 -c "import json,sys; print(json.load(open(sys.argv[1]))['id'])" "$START_FILE")
-rm -f "$START_FILE"
-if curl -sf -u "$SMOKE_USER:$SMOKE_PASS" "$RUNTIME_API/tasks?processInstanceId=$PID" | python3 -c "
+PID="$(start_instance leave_approval '[{"name":"manager","type":"string","value":"王经理"}]')"
+if query_tasks "$PID" | python3 -c "
 import json, sys
 tasks = json.load(sys.stdin)['data']
 ok = len(tasks) == 1 and tasks[0].get('assignee') == '王经理'
@@ -132,6 +152,80 @@ sys.exit(0 if ok else 1)
   echo "✓ assignee 通道生效(王经理)"
 else
   echo "✗ 运行时断言失败:flowable:assignee 未生效(命名空间/属性通道异常)" >&2
+  exit 1
+fi
+
+# ── 多实例审批三档（issue #19）：三份基准部署 + 三档运行时断言 ──
+# 会签：集合展开为并行实例（3 任务逐人）；或签：任一完成即终止其余实例；
+# 依次：串行实例同一时刻只有队首审批人。
+# ⚠ 已知引擎行为：REST 以 type=json 数组注入集合时，元素变量是 JsonNode
+# 字符串元素的 toString()——assignee 会带字面引号（"刘备"）。宿主经 Java
+# API 传 Collection<String> 时为裸值；冒烟验证的是「集合展开 + 逐实例
+# 解析出互不相同的审批人」这一通道语义，引号是 REST 载荷形态的副作用。
+echo "▶ 多实例三档：部署三份基准 ..."
+deploy_and_check "$FIXTURE_DIR/mi-all.flowable68.baseline.xml" "mi-all.bpmn20.xml" "mi_all"
+deploy_and_check "$FIXTURE_DIR/mi-any.flowable68.baseline.xml" "mi-any.bpmn20.xml" "mi_any"
+deploy_and_check "$FIXTURE_DIR/mi-sequential.flowable68.baseline.xml" "mi-sequential.bpmn20.xml" "mi_sequential"
+
+APPROVERS_JSON='[{"name":"approvers","type":"json","value":["刘备","关羽","张飞"]}]'
+
+echo "▶ 运行时断言:会签展开为 3 个逐人任务 ..."
+MI_ALL_PID="$(start_instance mi_all "$APPROVERS_JSON")"
+if query_tasks "$MI_ALL_PID" | python3 -c "
+import json, sys
+tasks = json.load(sys.stdin)['data']
+assignees = sorted(t.get('assignee') or '' for t in tasks)
+print(f'  会签任务数 = {len(tasks)}, assignee = {assignees}')
+sys.exit(0 if len(tasks) == 3 and assignees == ['\"关羽\"', '\"刘备\"', '\"张飞\"'] else 1)
+"; then
+  echo "✓ 会签逐人 assignee 通道生效（刘备/关羽/张飞）"
+else
+  echo "✗ 会签运行时断言失败:集合未按 3 人展开或 assignee 丢失" >&2
+  exit 1
+fi
+
+echo "▶ 运行时断言:或签——完成任一任务即终止其余实例 ..."
+MI_ANY_PID="$(start_instance mi_any "$APPROVERS_JSON")"
+ANY_TASK_ID="$(query_tasks "$MI_ANY_PID" | python3 -c "
+import json, sys
+tasks = json.load(sys.stdin)['data']
+print(tasks[0]['id'] if tasks else '')
+")"
+if [ -z "$ANY_TASK_ID" ]; then
+  echo "✗ 或签实例未展开任务（集合解析异常）" >&2
+  exit 1
+fi
+COMPLETE_CODE=$(curl -s -o /dev/null -w "%{http_code}" -u "$SMOKE_USER:$SMOKE_PASS" \
+  -H "Content-Type: application/json" -d '{"action":"complete"}' \
+  "$RUNTIME_API/tasks/$ANY_TASK_ID")
+if [ "$COMPLETE_CODE" != "200" ]; then
+  echo "✗ 或签任务完成操作失败 HTTP ${COMPLETE_CODE}（task=${ANY_TASK_ID}）" >&2
+  exit 1
+fi
+if query_tasks "$MI_ANY_PID" | python3 -c "
+import json, sys
+tasks = json.load(sys.stdin)['data']
+print(f'  或签完成任务后剩余任务数 = {len(tasks)}（期望 0:任一完成即终止其余实例）')
+sys.exit(0 if len(tasks) == 0 else 1)
+"; then
+  echo "✓ 或签完成条件生效（任一同意即通过节点）"
+else
+  echo "✗ 或签运行时断言失败:完成一个任务后其余实例未被终止" >&2
+  exit 1
+fi
+
+echo "▶ 运行时断言:依次审批串行——同一时刻仅队首审批人 ..."
+MI_SEQ_PID="$(start_instance mi_sequential '[{"name":"chain","type":"json","value":["刘备","关羽","张飞"]}]')"
+if query_tasks "$MI_SEQ_PID" | python3 -c "
+import json, sys
+tasks = json.load(sys.stdin)['data']
+assignees = [t.get('assignee') or '' for t in tasks]
+print(f'  依次任务数 = {len(tasks)}, assignee = {assignees}')
+sys.exit(0 if len(tasks) == 1 and assignees == ['\"刘备\"'] else 1)
+"; then
+  echo "✓ 依次串行生效（当前仅刘备待办）"
+else
+  echo "✗ 依次运行时断言失败:串行语义未生效" >&2
   exit 1
 fi
 

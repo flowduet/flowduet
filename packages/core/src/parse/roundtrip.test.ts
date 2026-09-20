@@ -5,6 +5,8 @@ import { BpmnModel } from "../model/bpmn-model.js";
 import { compile } from "../compile/compiler.js";
 import { parse } from "./parser.js";
 import { buildMinimalFlow } from "../compile/__fixtures__/minimal-flow.js";
+import { buildMiFlow } from "../compile/__fixtures__/mi-flow.js";
+import { APPROVAL_MODES } from "../model/bpmn-model.js";
 
 /**
  * 往返保真（ROADMAP Step 1 测试链 2，全项目最高优先级不变量，ADR-0002）：
@@ -179,6 +181,28 @@ describe("往返保真（parse → model → compile 语义等价）", () => {
 
     const task = findFlowElement(model, "manager_approval");
     expect(task.get("assignee")).toBe("${manager}");
+  });
+
+  describe("多实例审批三档", () => {
+    for (const mode of APPROVAL_MODES) {
+      it(`${mode} 档往返逐字一致（loopCharacteristics 与方言属性等价恢复）`, async () => {
+        const { first, second } = await roundTrip(() => buildMiFlow(mode));
+        expect(second).toBe(first);
+      });
+    }
+
+    it("parse 恢复多实例结构与方言属性", async () => {
+      const xml = await compile(buildMiFlow("all"));
+      const model = await parse(xml, { adapter: flowableAdapter });
+      const task = findFlowElement(model, "counter_sign");
+      expect(task.get("assignee")).toBe("${assignee}");
+      const loop = task.get("loopCharacteristics") as ModdleElement;
+      expect(loop.$type).toBe("bpmn:MultiInstanceLoopCharacteristics");
+      expect(loop.get("collection")).toBe("approvers");
+      expect(loop.get("elementVariable")).toBe("assignee");
+      const condition = loop.get("completionCondition") as ModdleElement;
+      expect(condition.get("body")).toBe("${nrOfCompletedInstances == nrOfInstances}");
+    });
   });
 
   it("空白 XML 拒绝解析", async () => {

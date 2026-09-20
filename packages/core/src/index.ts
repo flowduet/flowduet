@@ -6,8 +6,10 @@
  */
 export const CORE_VERSION = "0.1.2" as const;
 
-export { BpmnModel } from "./model/bpmn-model.js";
+export { APPROVAL_MODES, BpmnModel } from "./model/bpmn-model.js";
 export type {
+  ApprovalMode,
+  ApprovalTaskSpec,
   BpmnModelSpec,
   CanvasShape,
   NodeSpec,
