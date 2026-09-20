@@ -32,7 +32,11 @@ export interface BpmnModelSpec {
 export interface NodeSpec {
   id: string;
   name?: string;
-  shape: CanvasShape;
+  /**
+   * 画布形状。钉钉式纵向编辑天然无坐标（#22 起可选）：
+   * 缺省时恒等布局在 compile 处诚实抛错，导出请用 verticalDiLayout 推导。
+   */
+  shape?: CanvasShape;
 }
 
 export interface UserTaskSpec extends NodeSpec {
@@ -103,8 +107,12 @@ export interface SequenceFlowSpec {
    * 引用属性。与 condition 互斥；源必须是排他网关；同网关至多一条。
    */
   default?: boolean;
-  /** 画布折线，至少 2 个点；DI v0 恒等布局直接采用 */
-  waypoints: [Point, Point, ...Point[]];
+  /**
+   * 画布折线，至少 2 个点；恒等布局直接采用。
+   * 钉钉式纵向编辑不传（#22 起可选）：缺省时恒等布局在 compile 处
+   * 诚实抛错，导出请用 verticalDiLayout 推导。
+   */
+  waypoints?: [Point, Point, ...Point[]];
 }
 
 /** 模型树的全部可变状态；私有字段收敛于此，使"从解析树包装"成为可能 */
@@ -387,7 +395,7 @@ export class BpmnModel {
   }
 
   addSequenceFlow(spec: SequenceFlowSpec): this {
-    if (spec.waypoints.length < 2) {
+    if (spec.waypoints !== undefined && spec.waypoints.length < 2) {
       throw new Error(`连线 ${spec.id} 的 waypoints 至少需要 2 个点`);
     }
     if (this.#state.flows.has(spec.id) || this.#state.nodes.has(spec.id)) {
@@ -440,7 +448,9 @@ export class BpmnModel {
     pushMany(target, "incoming", flow);
     pushMany(this.#state.process, "flowElements", flow);
     this.#state.flows.set(spec.id, flow);
-    this.#state.waypoints.set(spec.id, spec.waypoints);
+    if (spec.waypoints !== undefined) {
+      this.#state.waypoints.set(spec.id, spec.waypoints);
+    }
     return this;
   }
 
@@ -472,7 +482,9 @@ export class BpmnModel {
     const element = this.#state.moddle.create(type, { id: spec.id, name: spec.name });
     pushMany(this.#state.process, "flowElements", element);
     this.#state.nodes.set(spec.id, element);
-    this.#state.shapes.set(spec.id, spec.shape);
+    if (spec.shape !== undefined) {
+      this.#state.shapes.set(spec.id, spec.shape);
+    }
     return element;
   }
 }

@@ -256,4 +256,10 @@ deploy_and_check "$FIXTURE_DIR/default-branch.flowable68.baseline.xml" "default-
 echo "▶ 抄送基准：部署 ..."
 deploy_and_check "$FIXTURE_DIR/cc-flow.flowable68.baseline.xml" "cc-flow.bpmn20.xml" "cc_flow"
 
+# ── 竖排布局场景（issue #22）：五类节点全谱 + 多层嵌套，零坐标建模经
+# verticalDiLayout 推导 DI——钉钉式导出形态的部署验证（产物与测试同步守卫）
+LAYOUT_FIXTURES="$REPO_ROOT/packages/core/src/layout/__fixtures__"
+echo "▶ 竖排布局场景：部署 ..."
+deploy_and_check "$LAYOUT_FIXTURES/vertical-scenario.xml" "vertical-scenario.bpmn20.xml" "vertical_scenario"
+
 echo "✅ 冒烟通过：FlowDuet 编译产物被 Flowable 6.8 真实部署并解析（容器 $CONTAINER 已停止）"
