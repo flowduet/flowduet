@@ -1,0 +1,60 @@
+# 路线图
+
+## Step 0 · 占坑 ✅（2026-09-14）
+
+- [x] GitHub org `flowduet` + 仓库 `flowduet/flowduet`
+- [x] LICENSE（Apache-2.0）
+- [x] npm org `flowduet`（2026-09-18 确认已建立）
+- [x] npm 裸名 `flowduet` 占位包 0.0.0（2026-09-18 已发布，包源在 `npm/flowduet/`）
+- [ ] 域名 `flowduet.dev` / Gitee 镜像（不急，v1 像样后再说）
+
+## 迭代一 · Step 0 收尾 + Step 1 全量（2026-09-18 → 09-30）
+
+2026-09-18 grilling 会话收敛的执行口径（9 项决策无遗留分歧）：
+
+- **范围**：Step 0 收尾（裸名占位包）+ Step 1 全量（脚手架 + 三条测试链 + 部署冒烟）；不搭界面，playground 不进本迭代。
+- **出口标准**：Step 1 完成标准 + 发布链路打通（`@flowduet/core` 0.0.x 上 npm）。
+- **冒烟口径**：完成标准以**本地 Docker 的 Flowable 6.8 真实部署成功**为准；CI 冒烟 job 同迭代搭好但设为 `workflow_dispatch` 手动触发（仅 6.8）；7.2 / 8.0 冒烟按原计划留到 v1。
+- **基准文件口径**：手写最小合法 XML 进自动化测试，部署成功兜底其合法性；flowable-ui 6.8 Modeler 导出仅作一次性人工参照，不进测试。
+- **发包口径**：本机 npm 人工首发（changesets 管版本号），CI 自动发包（NPM_TOKEN）等正式 release 流程再上。
+- **工程口径**：ESLint（flat config，实装 v10）+ Prettier；Node 22 LTS + pnpm 10（`packageManager` 钉死）；本地不加 git hooks；`packages/designer`、`packages/form-create`、`apps/playground` 以 README + 私有 package.json 占位（2026-09-20 review 调整，私有包不进 changesets 发布矩阵）。
+- **协作口径**：任务拆 GitHub Issues 挂里程碑 `iteration-1`，feature 分支 → PR → develop。
+
+## Step 1 · 内核地基（目标 1–2 周）
+
+**不搭界面。** 全项目最硬的假设是"我们编译出的 XML 能被 Flowable 真实部署执行"，先用 TDD 把最小闭环立起来。
+
+- 脚手架：pnpm monorepo（`packages/core` 起步，其余目录占位）+ Vite + Vitest + TS 严格模式 + changesets + GitHub Actions（lint + test）
+- 三条红→绿测试链：
+  1. **编译合同**：`compile(model)` 输入最小流程（开始 → 用户任务 → 排他网关 → 两分支 → 结束），输出与基准文件一致的 flowable 方言 XML（命名空间声明、`flowable:assignee`、`bpmndi` 布局一个不能少）
+  2. **往返保真**：`parse(xml) → model → compile()` 语义等价（**全项目最高优先级不变量**）
+  3. **适配器合同**：适配器接口（命名空间前缀、扩展属性注入点、任务类型映射），Flowable 6.8 方言首个实例
+- 接缝声明：`BpmnModel`（moddle 树包装）/ `Compiler` / `Parser` / `DiLayout`（v0 恒等映射用画布坐标，自动布局在 Step 3）
+- **完成标准**：`pnpm test` 全绿 + CI 绿 + 基准 XML 经 Flowable 6.8 REST 部署接口**真实部署成功**（定海神针——商业价值成立的物理事实）
+
+## v1 · 审批流核心子集
+
+- 元素：开始/结束事件、用户/服务/脚本任务、排他 + 并行 + 包容网关、多实例会签、内嵌子流程、定时边界事件
+- 面板：监听器、扩展属性、表单绑定协议
+- 视图：钉钉式递归组件视图 + Vue-Flow 画布，互切即换投影（ADR-0003）
+- DI：画布坐标直映射；钉钉式导出走自动布局器
+- 适配器：Flowable（6.8 / 7.2 / 8.0 部署冒烟）
+- 表单：`@flowduet/form-create`（MIT 版设计器 EP 基座 + 8 框架渲染绑定，ADR-0006）
+- 交付：npm 双形态 + playground + 文档站
+
+## v1.x（按社区需求排序）
+
+- 官方开源 Antd / Vant 版表单设计器基座接入
+- Naive / Arco / TDesign：FcDesigner dragRule 规则包自研（零 fork）
+- Camunda 命名空间适配器（ADR-0005 未关闭此门）
+- DI 自动布局强化（层次 / 泳道）
+
+## 明确不做（v1）
+
+消息/信号/错误/升级事件、事件子流程、事务子流程、补偿、CMMN/DMN、FcDesigner Pro 集成（License 红线，见 ADR-0006）。
+
+## 风险清单（常看常新）
+
+1. **XML 往返保真是持久战**——moddle 复用已砍掉最大风险，但 Flowable 扩展属性适配与自动布局器仍是月级工作；
+2. **v1 纪律是生死线**——双形态 + 表单内置都在推着范围膨胀，4–6 个月的预期经不起任何一次"顺手加个消息事件"；
+3. **开源隐形税**——每周 ≥10h 里有 2–3h 属于 issue / 文档 / demo，预算内留出。

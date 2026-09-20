@@ -1,0 +1,7 @@
+{
+  "name": "@flowduet/designer",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Vue 3 设计器（占位，v1 阶段建立）",
+  "scripts": {}
+}

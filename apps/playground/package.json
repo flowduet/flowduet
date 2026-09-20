@@ -1,0 +1,7 @@
+{
+  "name": "@flowduet/playground",
+  "private": true,
+  "version": "0.0.0",
+  "description": "可独立部署的演示应用（占位，v1 阶段建立）",
+  "scripts": {}
+}
