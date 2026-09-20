@@ -52,8 +52,8 @@ export interface CcTaskSpec extends NodeSpec {
   recipients: string;
 }
 
-/** 用户类任务的建模参数（assignee 仅对用户任务有意义；抄送见 CcTaskSpec） */
-export type TaskSpec = UserTaskSpec;
+/** addTask 的建模参数（用户任务与抄送任务的并集） */
+export type TaskSpec = UserTaskSpec | CcTaskSpec;
 
 /** 多实例审批的完成方式三档（CONTEXT.md：会签 / 或签 / 依次审批） */
 export type ApprovalMode = "all" | "any" | "sequential";
@@ -376,6 +376,9 @@ export class BpmnModel {
       }
       // ccTo 是语义名，方言前缀由适配器描述符绑定（与 assignee 同一机制）
       element.set("ccTo", recipients.trim());
+    } else if ("recipients" in spec) {
+      // 对称守卫：JS 调用方可能绕过 TS 类型，把 recipients 传给非 cc 任务
+      throw new Error(`任务类型 ${kind} 不支持 recipients（仅抄送任务支持）`);
     }
     for (const [attr, value] of Object.entries(mapping.attributes ?? {})) {
       element.set(attr, value);

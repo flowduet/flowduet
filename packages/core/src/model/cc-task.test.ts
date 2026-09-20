@@ -39,14 +39,26 @@ describe('addTask("cc") 守卫', () => {
   });
 
   it("抄送任务不支持 assignee（ServiceTask 形态）", () => {
+    // 模拟 JS 调用方给 cc 任务传 assignee（绕过 TS 类型）
     expect(() =>
       createModel().addTask("cc", {
         id: "t",
         recipients: "张三",
         assignee: "${manager}",
         shape: SHAPE,
-      }),
+      } as unknown as CcTaskSpec),
     ).toThrow(/不支持 assignee/);
+  });
+
+  it("非 cc 任务携带 recipients 即抛错（对称守卫）", () => {
+    // 模拟 JS 调用方把 recipients 传给非 cc 任务（绕过 TS 类型）
+    expect(() =>
+      createModel().addTask("service", {
+        id: "t",
+        recipients: "张三",
+        shape: SHAPE,
+      } as unknown as import("./bpmn-model.js").UserTaskSpec),
+    ).toThrow(/不支持 recipients/);
   });
 });
 
