@@ -22,7 +22,12 @@ const flowablePackage = {
     {
       name: "ServiceTask",
       extends: ["bpmn:ServiceTask"],
-      properties: [{ name: "type", isAttr: true, type: "String" }],
+      properties: [
+        { name: "type", isAttr: true, type: "String" },
+        // 抄送占位 delegate（宿主绑定 bean 实现知会，R3 决策）与收件人属性
+        { name: "delegateExpression", isAttr: true, type: "String" },
+        { name: "ccTo", isAttr: true, type: "String" },
+      ],
     },
     {
       // 多实例会签/或签/依次的集合与逐实例变量（原型 6.8 部署 + 启动 + 逐人
@@ -41,12 +46,15 @@ const flowablePackage = {
  * Flowable 任务类型映射。
  * BPMN 2.0 没有邮件任务，Flowable 的邮件 = ServiceTask + flowable:type="mail"，
  * 这正是"任务类型映射"收敛点存在的理由：语义任务与方言形态解耦。
+ * 抄送同理（R3 决策）：ServiceTask + 占位 delegate 引用——约定 bean 名
+ * flowduetCcTask，宿主绑定后实现知会行为；部署合法不要求 bean 在场。
  */
 const flowableTaskTypeMapping: Readonly<Record<TaskKind, TaskTypeMapping>> = {
   user: { elementType: "bpmn:UserTask" },
   service: { elementType: "bpmn:ServiceTask" },
   script: { elementType: "bpmn:ScriptTask" },
   mail: { elementType: "bpmn:ServiceTask", attributes: { type: "mail" } },
+  cc: { elementType: "bpmn:ServiceTask", attributes: { delegateExpression: "${flowduetCcTask}" } },
 };
 
 /** Flowable 6.8 基准的首个适配器实例（对准方言即一代覆盖 6.x–8.x） */

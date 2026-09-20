@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:flowable="http://flowable.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="cc_flow_defs" targetNamespace="http://flowduet.dev/bpmn">
+  <bpmn:process id="cc_flow" name="抄送知会" isExecutable="true">
+    <bpmn:startEvent id="start" name="开始">
+      <bpmn:outgoing>f_start_approval</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:userTask id="manager_approval" name="经理审批" flowable:assignee="${manager}">
+      <bpmn:incoming>f_start_approval</bpmn:incoming>
+      <bpmn:outgoing>f_approval_cc</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:serviceTask id="cc_notify" name="抄送知会" flowable:delegateExpression="${flowduetCcTask}" flowable:ccTo="张三,李四">
+      <bpmn:incoming>f_approval_cc</bpmn:incoming>
+      <bpmn:outgoing>f_cc_end</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="end" name="结束">
+      <bpmn:incoming>f_cc_end</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="f_start_approval" sourceRef="start" targetRef="manager_approval" />
+    <bpmn:sequenceFlow id="f_approval_cc" sourceRef="manager_approval" targetRef="cc_notify" />
+    <bpmn:sequenceFlow id="f_cc_end" sourceRef="cc_notify" targetRef="end" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="cc_flow_di">
+    <bpmndi:BPMNPlane id="cc_flow_plane" bpmnElement="cc_flow">
+      <bpmndi:BPMNShape id="start_di" bpmnElement="start">
+        <dc:Bounds x="160" y="60" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="manager_approval_di" bpmnElement="manager_approval">
+        <dc:Bounds x="140" y="160" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="cc_notify_di" bpmnElement="cc_notify">
+        <dc:Bounds x="140" y="300" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="end_di" bpmnElement="end">
+        <dc:Bounds x="172" y="440" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="f_start_approval_di" bpmnElement="f_start_approval">
+        <di:waypoint x="178" y="96" />
+        <di:waypoint x="178" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f_approval_cc_di" bpmnElement="f_approval_cc">
+        <di:waypoint x="190" y="240" />
+        <di:waypoint x="190" y="300" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f_cc_end_di" bpmnElement="f_cc_end">
+        <di:waypoint x="190" y="380" />
+        <di:waypoint x="190" y="440" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

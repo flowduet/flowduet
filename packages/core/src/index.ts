@@ -12,6 +12,7 @@ export type {
   ApprovalTaskSpec,
   BpmnModelSpec,
   CanvasShape,
+  CcTaskSpec,
   NodeSpec,
   Point,
   SequenceFlowSpec,

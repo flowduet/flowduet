@@ -68,4 +68,17 @@ describe("适配器合同（ADR-0005 三收敛点）", () => {
     expect(xml).toContain('flowable:elementVariable="assignee"');
     expect(xml).toContain("flowable:assignee=");
   });
+
+  it("抄送经中立映射落 ServiceTask，ccTo 是扩展属性注入点的首个真实消费者", async () => {
+    const xml = await compile(
+      BpmnModel.create({ processId: "contract_cc", adapter: flowableAdapter }).addTask("cc", {
+        id: "cc_notify",
+        recipients: "张三,李四",
+        shape: SHAPE,
+      }),
+    );
+    expect(xml).toContain('<bpmn:serviceTask id="cc_notify"');
+    expect(xml).toContain('flowable:ccTo="张三,李四"');
+    expect(xml).toContain('flowable:delegateExpression="${flowduetCcTask}"');
+  });
 });

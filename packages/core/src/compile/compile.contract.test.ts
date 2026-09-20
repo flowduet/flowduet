@@ -4,6 +4,7 @@ import { compile } from "./compiler.js";
 import { buildMinimalFlow } from "./__fixtures__/minimal-flow.js";
 import { buildMiFlow } from "./__fixtures__/mi-flow.js";
 import { buildDefaultBranchFlow, buildParallelFlow } from "./__fixtures__/branching-flows.js";
+import { buildCcFlow } from "./__fixtures__/cc-flow.js";
 import { APPROVAL_MODES } from "../model/bpmn-model.js";
 import type { ApprovalMode } from "../model/bpmn-model.js";
 
@@ -43,6 +44,14 @@ describe("编译合同（Flowable 6.8 方言）", () => {
       '<bpmn:exclusiveGateway id="decision" name="是否同意" default="flow_rejected">',
     );
     expect(xml).toBe(readBaseline("default-branch.flowable68.baseline.xml"));
+  });
+
+  it("抄送任务输出与基准文件逐字一致", async () => {
+    const xml = await compile(buildCcFlow());
+    // 抄送 = ServiceTask + 扩展属性收件人 + 占位 delegate 引用（R3 决策）
+    expect(xml).toContain('flowable:ccTo="张三,李四"');
+    expect(xml).toContain('flowable:delegateExpression="${flowduetCcTask}"');
+    expect(xml).toBe(readBaseline("cc-flow.flowable68.baseline.xml"));
   });
 
   describe("多实例审批三档", () => {
