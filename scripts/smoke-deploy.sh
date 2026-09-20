@@ -79,7 +79,8 @@ fi
 echo "✓ 引擎就绪（${i}s）"
 
 # 部署一份基准 XML 并断言流程定义注册（注册 = 引擎完成 XSD 解析校验，比部署更强的证据）
-deploy_extra() { # $1=基准文件路径或名字 $2=上传文件名（须以 .bpmn20.xml 结尾） $3=期望流程定义 key
+# 注意：函数名与签名与 PR #28（feat/19）的通用断言件保持一致，合并时无烟冲突
+deploy_and_check() { # $1=基准文件路径或名字 $2=上传文件名（须以 .bpmn20.xml 结尾） $3=期望流程定义 key
   local file resp code defs count
   if [ -f "$1" ]; then file="$1"; else file="$REPO_ROOT/packages/core/src/compile/__fixtures__/$1"; fi
   resp="$(mktemp)"
@@ -93,7 +94,11 @@ deploy_extra() { # $1=基准文件路径或名字 $2=上传文件名（须以 .b
     exit 1
   fi
   rm -f "$resp"
-  defs="$(curl -sf -u "$SMOKE_USER:$SMOKE_PASS" "$API/../process-definitions?size=100")"
+  # local 赋值会吞掉 curl 的非零退出码，必须拆开判断，否则引擎异常时静默退出
+  if ! defs="$(curl -sf -u "$SMOKE_USER:$SMOKE_PASS" "$API/../process-definitions?size=100")"; then
+    echo "✗ 查询流程定义列表失败（引擎异常？）：$API/../process-definitions" >&2
+    exit 1
+  fi
   count=$(python3 -c "
 import json, sys
 data = json.loads(sys.argv[1])['data']
@@ -107,7 +112,7 @@ print(sum(1 for d in data if d.get('key') == sys.argv[2]))
 }
 
 echo "▶ 部署基准 XML ..."
-deploy_extra "$BASELINE" "leave-approval.bpmn20.xml" "leave_approval"
+deploy_and_check "$BASELINE" "leave-approval.bpmn20.xml" "leave_approval"
 
 # 运行时断言：启动实例并核对 assignee——flowable: 属性只有真实执行才被验证。
 # 教训：命名空间 URI 写错时部署注册照常通过，assignee 静默为空（2026-09-20 原型实锤）。
@@ -126,7 +131,12 @@ if [ "$START_CODE" != "201" ]; then
 fi
 PID=$(python3 -c "import json,sys; print(json.load(open(sys.argv[1]))['id'])" "$START_FILE")
 rm -f "$START_FILE"
-if curl -sf -u "$SMOKE_USER:$SMOKE_PASS" "$RUNTIME_API/tasks?processInstanceId=$PID" | python3 -c "
+# curl 失败时管道会把空输入喂给 python，报 JSON 解析错而掩盖真实原因——先落变量再判
+TASKS_JSON="$(curl -sf -u "$SMOKE_USER:$SMOKE_PASS" "$RUNTIME_API/tasks?processInstanceId=$PID")" || {
+  echo "✗ 查询任务列表失败（引擎异常？）：$RUNTIME_API/tasks?processInstanceId=$PID" >&2
+  exit 1
+}
+if printf '%s' "$TASKS_JSON" | python3 -c "
 import json, sys
 tasks = json.load(sys.stdin)['data']
 ok = len(tasks) == 1 and tasks[0].get('assignee') == '王经理'
@@ -142,7 +152,7 @@ fi
 # ── 分支结构基准（issue #20）：并行分裂-汇合 + 默认分支排他网关，部署注册 ──
 # 运行时语义（并行同时推进/默认分支兜底）属引擎行为，部署注册即本票验收口径
 echo "▶ 分支结构基准：部署两份 ..."
-deploy_extra "parallel-flow.flowable68.baseline.xml" "parallel-flow.bpmn20.xml" "parallel_flow"
-deploy_extra "default-branch.flowable68.baseline.xml" "default-branch.bpmn20.xml" "default_branch"
+deploy_and_check "parallel-flow.flowable68.baseline.xml" "parallel-flow.bpmn20.xml" "parallel_flow"
+deploy_and_check "default-branch.flowable68.baseline.xml" "default-branch.bpmn20.xml" "default_branch"
 
 echo "✅ 冒烟通过：FlowDuet 编译产物被 Flowable 6.8 真实部署并解析（容器 $CONTAINER 已停止）"
