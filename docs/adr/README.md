@@ -12,5 +12,6 @@
 | [0005](0005-engine-adapter-strategy.md) | 引擎适配策略：内核 + 可插拔适配器 | Accepted | 2026-09-14 |
 | [0006](0006-formcreate-integration.md) | 表单集成：FormCreate 深度内置、分包落地 | Accepted | 2026-09-14 |
 | [0007](0007-delivery-and-naming.md) | 交付形态、工程约定与命名（FlowDuet / Apache-2.0） | Accepted | 2026-09-14 |
+| [0008](0008-logo-visual-identity.md) | 视觉标识（LOGO）：一树两冠 | Accepted | 2026-09-20 |
 
 来源：2026-09-14 的选型 grilling 会话（11 项决策全部收敛，无遗留分歧）。
