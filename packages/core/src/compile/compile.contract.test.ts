@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import { compile } from "./compiler";
-import { buildMinimalFlow } from "./__fixtures__/minimal-flow";
+import { compile } from "./compiler.js";
+import { buildMinimalFlow } from "./__fixtures__/minimal-flow.js";
 
 /** 基准文件：手写意图，合法性由部署冒烟（ci issue）兜底 */
 const baseline = readFileSync(

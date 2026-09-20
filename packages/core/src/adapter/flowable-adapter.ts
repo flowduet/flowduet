@@ -1,4 +1,4 @@
-import type { EngineAdapter, TaskKind, TaskTypeMapping } from "./engine-adapter";
+import type { EngineAdapter, TaskKind, TaskTypeMapping } from "./engine-adapter.js";
 
 /** flowable 命名空间与扩展属性的 moddle 描述符（XML 方言跨 6/7/8 基本稳定，ADR-0005） */
 const flowablePackage = {

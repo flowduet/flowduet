@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import { CORE_VERSION } from "./index";
+import { CORE_VERSION } from "./index.js";
 
 describe("@flowduet/core 冒烟", () => {
   it("入口模块可加载", () => {

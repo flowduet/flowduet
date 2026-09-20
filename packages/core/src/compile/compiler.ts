@@ -1,7 +1,7 @@
 import type { ModdleElement } from "bpmn-moddle";
-import type { BpmnModel } from "../model/bpmn-model";
-import { IdentityDiLayout } from "../layout/di-layout";
-import type { DiLayout } from "../layout/di-layout";
+import type { BpmnModel } from "../model/bpmn-model.js";
+import { IdentityDiLayout } from "../layout/di-layout.js";
+import type { DiLayout } from "../layout/di-layout.js";
 
 export interface CompileOptions {
   /** 缺省用恒等布局（画布坐标直映射，v0 口径）；钉钉式导出换自动布局器 */

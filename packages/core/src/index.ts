@@ -4,9 +4,9 @@
  * 导出的都是 ROADMAP 声明的接缝：BpmnModel（moddle 树包装）/ Compiler /
  * DiLayout / 引擎适配器。冒烟版本号供集成方做健康检查。
  */
-export const CORE_VERSION = "0.1.0" as const;
+export const CORE_VERSION = "0.1.1" as const;
 
-export { BpmnModel } from "./model/bpmn-model";
+export { BpmnModel } from "./model/bpmn-model.js";
 export type {
   BpmnModelSpec,
   CanvasShape,
@@ -15,18 +15,18 @@ export type {
   SequenceFlowSpec,
   TaskSpec,
   UserTaskSpec,
-} from "./model/bpmn-model";
+} from "./model/bpmn-model.js";
 
-export { IdentityDiLayout } from "./layout/di-layout";
-export type { DiLayout } from "./layout/di-layout";
+export { IdentityDiLayout } from "./layout/di-layout.js";
+export type { DiLayout } from "./layout/di-layout.js";
 
-export { compile } from "./compile/compiler";
-export type { CompileOptions } from "./compile/compiler";
+export { compile } from "./compile/compiler.js";
+export type { CompileOptions } from "./compile/compiler.js";
 
-export { parse } from "./parse/parser";
-export type { ParseOptions } from "./parse/parser";
+export { parse } from "./parse/parser.js";
+export type { ParseOptions } from "./parse/parser.js";
 
-export { flowableAdapter } from "./adapter/flowable-adapter";
-export { assertAdapterContract } from "./adapter/adapter-contract";
-export { TASK_KINDS } from "./adapter/engine-adapter";
-export type { EngineAdapter, TaskKind, TaskTypeMapping } from "./adapter/engine-adapter";
+export { flowableAdapter } from "./adapter/flowable-adapter.js";
+export { assertAdapterContract } from "./adapter/adapter-contract.js";
+export { TASK_KINDS } from "./adapter/engine-adapter.js";
+export type { EngineAdapter, TaskKind, TaskTypeMapping } from "./adapter/engine-adapter.js";

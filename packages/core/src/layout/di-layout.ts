@@ -1,6 +1,6 @@
 import type { ModdleElement } from "bpmn-moddle";
-import type { BpmnModel } from "../model/bpmn-model";
-import { pushMany } from "../util/moddle-utils";
+import type { BpmnModel } from "../model/bpmn-model.js";
+import { pushMany } from "../util/moddle-utils.js";
 
 /**
  * DI 布局接缝（ROADMAP 接缝之一）：
