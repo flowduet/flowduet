@@ -69,6 +69,10 @@
 - `chore`: 其他不修改源码的变更
 - `revert`: 回退提交
 
+### 发版 Tag 规范
+
+npm 发版的 git tag 统一使用 changesets 原生格式 `<包名>@<版本>`(如 `@flowduet/core@0.1.2`),不用 `v` 前缀裸版本——多包仓库中带包名的 tag 才无歧义。tag 由 `changeset publish` 自动生成,不手动另打。
+
 ## Agent skills
 
 ### Issue tracker
