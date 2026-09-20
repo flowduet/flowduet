@@ -4,7 +4,7 @@
  * 导出的都是 ROADMAP 声明的接缝：BpmnModel（moddle 树包装）/ Compiler /
  * DiLayout / 引擎适配器。冒烟版本号供集成方做健康检查。
  */
-export const CORE_VERSION = "0.1.1" as const;
+export const CORE_VERSION = "0.1.2" as const;
 
 export { BpmnModel } from "./model/bpmn-model.js";
 export type {
