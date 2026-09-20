@@ -54,4 +54,18 @@ describe("适配器合同（ADR-0005 三收敛点）", () => {
     const model = await parse(xml, { adapter: flowableAdapter });
     expect(() => model.addTask("service", { id: "svc", name: "服务", shape: SHAPE })).not.toThrow();
   });
+
+  it("多实例描述符扩展：collection/elementVariable 以方言前缀序列化（合同点二）", async () => {
+    const xml = await compile(
+      BpmnModel.create({ processId: "contract_mi", adapter: flowableAdapter }).addApprovalTask({
+        id: "counter_sign",
+        collection: "approvers",
+        mode: "all",
+        shape: SHAPE,
+      }),
+    );
+    expect(xml).toContain('flowable:collection="approvers"');
+    expect(xml).toContain('flowable:elementVariable="assignee"');
+    expect(xml).toContain("flowable:assignee=");
+  });
 });

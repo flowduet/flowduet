@@ -43,6 +43,40 @@ export interface UserTaskSpec extends NodeSpec {
 /** 通用任务建模参数（assignee 仅对用户类任务有意义） */
 export type TaskSpec = UserTaskSpec;
 
+/** 多实例审批的完成方式三档（CONTEXT.md：会签 / 或签 / 依次审批） */
+export type ApprovalMode = "all" | "any" | "sequential";
+
+/** 完成方式三档全集（测试与工具枚举用） */
+export const APPROVAL_MODES: readonly ApprovalMode[] = ["all", "any", "sequential"];
+
+/** 内核按档固化的完成条件（Flowable 多实例内置变量；原型实测形态） */
+const COMPLETION_CONDITIONS: Readonly<Record<Exclude<ApprovalMode, "sequential">, string>> = {
+  all: "${nrOfCompletedInstances == nrOfInstances}",
+  any: "${nrOfCompletedInstances >= 1}",
+};
+
+/** 单实例内引用"当前审批人"的元素变量默认名 */
+const DEFAULT_ELEMENT_VARIABLE = "assignee";
+
+/**
+ * 多实例审批任务建模参数。完成方式是 BPMN 标准多实例语义（非方言差异），
+ * 故不经任务类型映射、直建用户任务；方言属性（collection/elementVariable）
+ * 由适配器描述符绑定前缀，与 assignee 同一机制。
+ */
+export interface ApprovalTaskSpec extends NodeSpec {
+  /** 审批人集合表达式，裸变量名（如 "approvers"，运行时流程变量注入） */
+  collection: string;
+  /** 完成方式：会签（全员同意）/ 或签（任一同意）/ 依次审批（按序逐人） */
+  mode: ApprovalMode;
+  /** 逐实例元素变量名（任务内引用当前审批人），默认 "assignee" */
+  elementVariable?: string;
+  /**
+   * 不支持——三档完成条件由内核固化，传入即抛错。
+   * 字段保留在类型上是为了让误用的调用方在运行时得到明确报错而非静默忽略。
+   */
+  completionCondition?: string;
+}
+
 export interface SequenceFlowSpec {
   id: string;
   name?: string;
@@ -231,6 +265,56 @@ export class BpmnModel {
 
   addUserTask(spec: UserTaskSpec): this {
     return this.addTask("user", spec);
+  }
+
+  /**
+   * 多实例审批任务（会签/或签/依次，CONTEXT.md 三档术语）。
+   * 三档完成条件内核固化（依次档语义上无完成条件）；per-instance 指派用
+   * ${元素变量} 表达式，集合用裸变量名在运行时注入。
+   * XML 形态经 Flowable 6.8 部署 + 启动 + 逐人 assignee 实测
+   * （分支 prototype/iter2-vertical-layout-mi）。
+   */
+  addApprovalTask(spec: ApprovalTaskSpec): this {
+    if (spec.completionCondition !== undefined) {
+      if (spec.mode === "sequential") {
+        throw new Error(`任务 ${spec.id}：依次审批没有完成条件（逐人跑完即通过），不允许覆盖`);
+      }
+      throw new Error(`任务 ${spec.id}：完成方式三档已固化完成条件，不开放覆盖`);
+    }
+    // ApprovalMode 仅靠 TS 类型约束；JS 调用方或 as any 绕过时，非法 mode 会静默
+    // 落出空 body 的 completionCondition——运行时守卫兜底，与下方空白校验同层
+    if (!APPROVAL_MODES.includes(spec.mode)) {
+      throw new Error(
+        `任务 ${spec.id} 的 mode 必须是 ${APPROVAL_MODES.join("/")} 之一，实际是 ${String(spec.mode)}`,
+      );
+    }
+    if (typeof spec.collection !== "string" || spec.collection.trim() === "") {
+      throw new Error(`任务 ${spec.id} 的 collection 不能为空白`);
+    }
+    // 前后空白原样落盘会让引擎按带空格变量名解析集合、静默取不到值——统一 trim 后再用
+    const collection = spec.collection.trim();
+    const elementVariable = (spec.elementVariable ?? DEFAULT_ELEMENT_VARIABLE).trim();
+    if (elementVariable === "") {
+      throw new Error(`任务 ${spec.id} 的 elementVariable 不能为空白`);
+    }
+    const task = this.#addNode("bpmn:UserTask", spec);
+    task.set("assignee", `\${${elementVariable}}`);
+    // isSequential=false 是 XSD 缺省，moddle 序列化时省略（bpmn.io 同款）
+    const loop = this.#state.moddle.create("bpmn:MultiInstanceLoopCharacteristics", {
+      isSequential: spec.mode === "sequential",
+    });
+    loop.set("collection", collection);
+    loop.set("elementVariable", elementVariable);
+    if (spec.mode !== "sequential") {
+      loop.set(
+        "completionCondition",
+        this.#state.moddle.create("bpmn:FormalExpression", {
+          body: COMPLETION_CONDITIONS[spec.mode],
+        }),
+      );
+    }
+    task.set("loopCharacteristics", loop);
+    return this;
   }
 
   /**

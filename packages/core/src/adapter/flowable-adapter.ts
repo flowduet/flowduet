@@ -24,6 +24,16 @@ const flowablePackage = {
       extends: ["bpmn:ServiceTask"],
       properties: [{ name: "type", isAttr: true, type: "String" }],
     },
+    {
+      // 多实例会签/或签/依次的集合与逐实例变量（原型 6.8 部署 + 启动 + 逐人
+      // assignee 实测；Camunda 方言同名属性，跨方言可沿用此内核落法）
+      name: "MultiInstanceLoopCharacteristics",
+      extends: ["bpmn:MultiInstanceLoopCharacteristics"],
+      properties: [
+        { name: "collection", isAttr: true, type: "String" },
+        { name: "elementVariable", isAttr: true, type: "String" },
+      ],
+    },
   ],
 };
 
