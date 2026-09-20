@@ -84,7 +84,7 @@ function pushMap(map: Map<string, ModdleElement[]>, key: string, value: ModdleEl
 /** 索引访问的非空收敛（长度已由调用方校验，此断言仅为类型收窄服务） */
 function nonNull<T>(value: T | undefined, what: string): T {
   if (value === undefined) {
-    throw new Error(`内部断言失败：${what}不应为空`);
+    throw new Error(`竖排布局前提不满足：${what}不应为空`);
   }
   return value;
 }
@@ -107,9 +107,16 @@ function walkChain(
 } {
   let cur = firstFlow.get("targetRef") as ModdleElement;
   const items: BlockTreeNode[] = [];
+  // 链上已访问元素：循环图（任务间回跳）不在竖排推导服务范围，
+  // 重复访问即显式抛错，避免无限循环挂死进程
+  const visited = new Set<string>();
 
   for (;;) {
     const id = cur.get("id") as string;
+    if (visited.has(id)) {
+      throw new Error(`竖排推导不支持循环结构：元素 ${id} 在链上被重复访问`);
+    }
+    visited.add(id);
     const outs = graph.outgoing.get(id) ?? [];
     const ins = graph.incoming.get(id) ?? [];
 
@@ -121,6 +128,13 @@ function walkChain(
     if (isGateway(cur) && outs.length > 1) {
       // fork：逐分支递归，良构下各分支收敛到同一 join
       const walked = outs.map((flow) => walkChain(flow, graph));
+      walked.forEach(({ items: branch }, i) => {
+        if (branch.length === 0) {
+          throw new Error(
+            `分支块 ${id} 的第 ${i + 1} 条分支为空（fork 直连 join），竖排布局不支持`,
+          );
+        }
+      });
       const joins = walked.map((w) => w.join);
       if (
         joins.some((j) => j === undefined) ||
@@ -162,6 +176,8 @@ function walkChain(
 /**
  * 主入口：模型树 → 块结构树（顶层主链）。
  * 钉钉式递归组件与坐标推导共用此读视图（公开导出，只依赖模型树）。
+ * 推导仅从唯一开始事件可达的图形出发；不可达元素/连线不在块树中，
+ * 由调用方（verticalDiLayout）显式拒绝——竖排推导不服务半残几何。
  */
 export function deriveBlockTree(model: BpmnModel): BlockTreeNode[] {
   const flowElements = (model.process.get("flowElements") as ModdleElement[]) ?? [];
@@ -218,11 +234,15 @@ export function layoutVertical(tree: BlockTreeNode[], flows: FlowTable): LayoutR
   const shapes = new Map<string, CanvasShape>();
   const waypoints = new Map<string, Point[]>();
 
+  // (source|target) → flowId 复合索引：布局期按端点查连线为 O(1)
+  const flowIndex = new Map<string, string>();
+  for (const [id, f] of flows) flowIndex.set(`${f.source}|${f.target}`, id);
   const flowIdOf = (source: string, target: string): string => {
-    for (const [id, f] of flows) {
-      if (f.source === source && f.target === target) return id;
+    const id = flowIndex.get(`${source}|${target}`);
+    if (id === undefined) {
+      throw new Error(`布局找不到连线：${source} → ${target}`);
     }
-    throw new Error(`布局找不到连线：${source} → ${target}`);
+    return id;
   };
 
   /** 正交连线：同列直线，异列走中位水平线 */
@@ -372,6 +392,20 @@ export function verticalDiLayout(): DiLayout {
 
       const tree = deriveBlockTree(model);
       const { shapes, waypoints } = layoutVertical(tree, flows);
+
+      // 块树只覆盖从开始事件可达的图形；不可达元素/连线若静默投影会产出
+      // 空 Bounds/空折线的半残 DI——竖排推导的适用边界在此显式拒绝
+      for (const el of flowElements) {
+        const id = el.get("id") as string;
+        if (el.$type === "bpmn:SequenceFlow") {
+          if (!waypoints.has(id)) {
+            throw new Error(`竖排布局仅支持从开始事件可达的图形，连线 ${id} 不在块树中`);
+          }
+        } else if (!shapes.has(id)) {
+          throw new Error(`竖排布局仅支持从开始事件可达的图形，元素 ${id} 不在块树中`);
+        }
+      }
+
       projectDiagram(model, { shapes, waypoints });
     },
   };
