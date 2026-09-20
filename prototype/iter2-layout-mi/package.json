@@ -1,0 +1,8 @@
+{
+  "name": "prototype-iter2-layout-mi",
+  "private": true,
+  "description": "[PROTOTYPE] 迭代二 throwaway:竖排坐标推导 + 多实例三档手感验证,不入 workspace、不发布",
+  "scripts": {
+    "play": "vitest run"
+  }
+}

@@ -1,0 +1,521 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>[PROTOTYPE] 迭代二:竖排坐标推导 + 多实例三档</title>
+    <style>
+      :root {
+        --accent: #0e7490;
+        --ink: #1e293b;
+        --muted: #64748b;
+        --line: #e2e8f0;
+        --bg: #f8fafc;
+        --card: #ffffff;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        color: var(--ink);
+        background: var(--bg);
+        font:
+          15px/1.7 system-ui,
+          "PingFang SC",
+          "Microsoft YaHei",
+          sans-serif;
+      }
+      header {
+        padding: 28px 32px 18px;
+        max-width: 1280px;
+        margin: 0 auto;
+      }
+      h1 {
+        font-size: 20px;
+        margin: 0 0 6px;
+      }
+      h1 .tag {
+        font-size: 12px;
+        color: var(--accent);
+        border: 1px solid var(--accent);
+        border-radius: 4px;
+        padding: 1px 6px;
+        vertical-align: 3px;
+        margin-right: 8px;
+      }
+      header p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 14px;
+      }
+      main {
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 0 32px 40px;
+      }
+      section.card {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 20px 24px;
+        margin-bottom: 20px;
+      }
+      h2 {
+        font-size: 16px;
+        margin: 0 0 12px;
+      }
+      .columns {
+        display: flex;
+        gap: 20px;
+        align-items: flex-start;
+        flex-wrap: wrap;
+      }
+      .canvas-pane {
+        flex: 1 1 460px;
+        min-width: 420px;
+      }
+      .xml-pane {
+        flex: 1 1 520px;
+        min-width: 460px;
+      }
+      .svg-wrap {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        overflow: auto;
+        background:
+          linear-gradient(90deg, #f1f5f9 1px, transparent 1px) 0 0 / 24px 24px,
+          linear-gradient(#f1f5f9 1px, transparent 1px) 0 0 / 24px 24px,
+          #fff;
+        max-height: 720px;
+      }
+      .svg-wrap svg {
+        display: block;
+      }
+      .tabs {
+        display: flex;
+        gap: 6px;
+        margin-bottom: 10px;
+        flex-wrap: wrap;
+      }
+      .tabs button {
+        border: 1px solid var(--line);
+        background: #fff;
+        color: var(--muted);
+        padding: 5px 14px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 13px;
+      }
+      .tabs button.active {
+        background: var(--accent);
+        border-color: var(--accent);
+        color: #fff;
+      }
+      pre.xml {
+        background: #0f172a;
+        color: #e2e8f0;
+        border-radius: 8px;
+        padding: 16px;
+        font:
+          12px/1.6 ui-monospace,
+          SFMono-Regular,
+          Menlo,
+          monospace;
+        overflow: auto;
+        max-height: 620px;
+        margin: 0;
+        white-space: pre;
+      }
+      .copy-btn {
+        margin-top: 8px;
+        border: 1px solid var(--line);
+        background: #fff;
+        color: var(--muted);
+        padding: 4px 12px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 13px;
+      }
+      .copy-btn:hover {
+        color: var(--accent);
+        border-color: var(--accent);
+      }
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        font-size: 13.5px;
+      }
+      th,
+      td {
+        border: 1px solid var(--line);
+        padding: 8px 12px;
+        text-align: left;
+        vertical-align: top;
+      }
+      th {
+        background: var(--bg);
+        color: var(--muted);
+        font-weight: 600;
+        white-space: nowrap;
+      }
+      td.good {
+        color: #047857;
+      }
+      td.bad {
+        color: #b91c1c;
+      }
+      pre.code {
+        background: var(--bg);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 14px 16px;
+        font:
+          12.5px/1.65 ui-monospace,
+          SFMono-Regular,
+          Menlo,
+          monospace;
+        overflow: auto;
+      }
+      .tree {
+        font:
+          13px/1.7 ui-monospace,
+          SFMono-Regular,
+          Menlo,
+          monospace;
+        white-space: pre;
+        color: var(--muted);
+      }
+      .verdict {
+        border-left: 3px solid var(--accent);
+        padding: 2px 0 2px 14px;
+        margin: 10px 0 0;
+      }
+      .legend {
+        color: var(--muted);
+        font-size: 12.5px;
+        margin-top: 8px;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>
+        <span class="tag">PROTOTYPE</span>FlowDuet 迭代二原型:竖排坐标推导(问题 A)+
+        多实例三档编译(问题 B)
+      </h1>
+      <p>
+        问题 A:内核 shape 必填 vs 钉钉式纵向编辑无坐标——推导算法放哪、调用面什么样。问题
+        B:会签/或签/依次三档的 moddle 落法与 API 手感。下图全部由真实推导产物渲染,XML 由真实 moddle
+        序列化。
+      </p>
+    </header>
+    <main>
+      <section class="card">
+        <div class="columns">
+          <div class="canvas-pane">
+            <h2>竖排推导观感(15 节点 · 18 连线 · 条件/并行双层嵌套)</h2>
+            <div class="svg-wrap"><svg id="svg"></svg></div>
+            <p class="legend">
+              圆 = 开始/结束 · 菱形 = 网关(×排他 +并行) · 圆角矩形 =
+              审批(「会签」「逐级」为多实例档)。判据①:嵌套块坐标互不重叠、正交连线可读,并可复制 XML
+              贴 bpmn.io 复核。
+            </p>
+          </div>
+          <div class="xml-pane">
+            <h2>导出 XML(真实 moddle 序列化)</h2>
+            <div class="tabs">
+              <button data-x="scenario" class="active">竖排场景</button>
+              <button data-x="all">会签档</button>
+              <button data-x="any">或签档</button>
+              <button data-x="sequential">依次档</button>
+            </div>
+            <pre class="xml" id="xmlpre"></pre>
+            <button class="copy-btn" id="copybtn">复制当前 XML(可贴 bpmn.io 在线 demo 复核)</button>
+            <p class="legend">四份产物均已通过 Flowable 6.8 REST 真实部署冒烟(见分支提交记录)。</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>问题 A · 推导出的块结构树(deriveBlockTree,视图递归组件可共用)</h2>
+        <div class="tree" id="tree"></div>
+      </section>
+
+      <section class="card">
+        <h2>问题 A · 三个落点的对比结论</h2>
+        <table>
+          <tr>
+            <th>落点</th>
+            <th>调用面</th>
+            <th>判据② 只依赖模型树</th>
+            <th>致命伤 / 代价</th>
+          </tr>
+          <tr>
+            <td>① 内核 BpmnModel.layoutVertically()</td>
+            <td><code>model.layoutVertically()</code> 写回 shapes/waypoints 私有注册表</td>
+            <td class="good">满足</td>
+            <td class="bad">
+              要为布局器开几何注册表的写入口——内部状态外泄;推导代码进内核,模型类继续膨胀
+            </td>
+          </tr>
+          <tr>
+            <td>② designer 视图层自算</td>
+            <td>视图渲染时顺手算坐标,提交前塞回 spec.shape</td>
+            <td class="bad">不满足</td>
+            <td class="bad">
+              编译合同 / parse→compile 往返 /
+              部署冒烟都不经过视图——几何断供;要补就得写回模型,又回到①
+            </td>
+          </tr>
+          <tr>
+            <td>③ 独立 layout 模块(DiLayout 第二实现)</td>
+            <td><code>compile(model, { diLayout: verticalDiLayout() })</code></td>
+            <td class="good">满足(attach 只读 process 图)</td>
+            <td>
+              代价:内核唯一必须的改动是 NodeSpec.shape
+              改可选(哑坐标反例试过,不成立);块树推导函数须从 layout 模块公开导出供视图共用
+            </td>
+          </tr>
+        </table>
+        <p class="verdict">
+          <strong>倾向:落点③。</strong>compiler.ts 的 diLayout
+          接缝与注释本就预留了「钉钉式导出换自动布局器」;shape
+          可选化后,恒等布局遇缺坐标节点抛错(诚实),竖排布局器成为零视图依赖的第二实现。deriveBlockTree(图→块树)与
+          layoutVertical(块树→几何)是两个可独立测的纯函数,视图层(钉钉式递归组件)只消费前者。
+        </p>
+        <pre class="code">
+// 成稿后的调用面草图(钉钉式视图 → 导出):
+const model = BpmnModel.create({ processId, adapter })   // shape 全部不传
+  .addStartEvent({ id: "start", name: "开始" })
+  .addApprovalTask({ id: "cs", name: "部门会签", collection: "${approvers}", mode: "all" })
+  .addSequenceFlow({ id: "f", sourceRef: "start", targetRef: "cs" });
+
+const xml = await compile(model, { diLayout: verticalDiLayout() });
+// 钉钉式递归组件渲染:import { deriveBlockTree } from "@flowduet/core"</pre>
+      </section>
+
+      <section class="card">
+        <h2>问题 B · 三档 API 手感与 XML 形态</h2>
+        <table>
+          <tr>
+            <th>档位</th>
+            <th>语义</th>
+            <th>XML 形态(已部署 + 启动验证)</th>
+          </tr>
+          <tr>
+            <td>all 会签</td>
+            <td>全员同意才通过</td>
+            <td>
+              非串行多实例 + <code>flowable:collection="approvers"</code> +
+              <code>completionCondition ${nrOfCompletedInstances == nrOfInstances}</code>
+            </td>
+          </tr>
+          <tr>
+            <td>any 或签</td>
+            <td>任一人同意即通过</td>
+            <td>与会签同构,完成条件换 <code>${nrOfCompletedInstances &gt;= 1}</code></td>
+          </tr>
+          <tr>
+            <td>sequential 依次</td>
+            <td>按序逐人,全员完成即通过</td>
+            <td><code>isSequential="true"</code> + collection,无完成条件(自闭合元素)</td>
+          </tr>
+        </table>
+        <pre class="code">
+// 候选内核 API(一次调用,三档枚举;元素变量默认 "assignee"):
+model.addApprovalTask({
+  id: "counter_sign", name: "部门会签",
+  collection: "approvers",          // 审批人集合:裸变量名,运行时流程变量注入
+  mode: "all",                      // "all" 会签 | "any" 或签 | "sequential" 依次
+});
+
+// 固化 vs 覆盖:completionCondition 内核按档固化,不开放覆盖——
+// sequential 档传覆盖直接抛错(原型已验证该守卫);真有自定义需求再议,先不给口子。</pre>
+        <p class="verdict">
+          <strong>要点:</strong>① per-instance 指派 = <code>flowable:assignee="${assignee}"</code> +
+          <code>flowable:elementVariable</code>,已启动实例逐人验证(刘备/关羽/张飞各领一单);② ⚠
+          命名空间大坑:Flowable 6.8 引擎读方言属性用
+          <code>http://flowable.org/bpmn</code>(引擎常量),官方文档写的
+          <code>http://flowable.org/bpm</code> 会让全部 flowable:
+          属性静默失联——正式适配器与基准文件正是错误 URI(迭代一遗留,折回修正);③ 非串行档
+          isSequential=false 为 XSD 缺省,moddle 序列化按缺省省略(bpmn.io 同款行为,合法)。
+        </p>
+      </section>
+
+      <section class="card">
+        <h2>试过不成立的走法(反例)</h2>
+        <ul style="margin: 0; padding-left: 20px; font-size: 14px; line-height: 2">
+          <li>
+            <strong>flowable 命名空间用官方文档的 <code>http://flowable.org/bpm</code></strong
+            >:6.8 引擎读方言属性用 <code>http://flowable.org/bpmn</code>(引擎常量),URI 差一个字母 →
+            部署校验报 missing-collection、assignee/elementVariable 运行时全丢,且手写文档原样 XML
+            同样失败(与 moddle 无关)。手写同构 XML 双向验证锁定根因。
+          </li>
+          <li>
+            <strong>loopDataInputRef 纯标准子元素落法</strong>:部署通过,但 parse 时文本引用无 id
+            可解析 → 往返 compile 后静默丢失集合——破坏内核最高优先级不变量,否决。
+          </li>
+          <li>
+            <strong>外挂函数建模(不改内核)</strong>:绕过 addXxx 直接挂 moddle 元素 →
+            不在注册表,addSequenceFlow 端点校验直接拒绝;多实例 API 必须进 BpmnModel 方法面。
+          </li>
+          <li>
+            <strong>哑坐标绕行</strong>:建模时传占位 shape + 布局器覆盖 → 调用面骗人,shape
+            参数没有意义(本原型的场景就是用哑坐标搭的,别扭感第一手)。
+          </li>
+          <li>
+            <strong>loopCardinality 表达人数</strong>:BPMN 里它是 Expression 元素(非属性,set
+            字符串直接序列化崩溃),且拿不到 per-instance 审批人;动态选人只有集合表达式同构。
+          </li>
+          <li>
+            <strong>分支不收敛的图</strong>(分支各自撞
+            end):良构检查显式抛错「未良构收敛」——钉钉式画不出这种图,推导宁可拒绝也不出重叠几何。
+          </li>
+        </ul>
+      </section>
+    </main>
+    <script id="data" type="application/json">
+      __DATA__
+    </script>
+    <script>
+      const DATA = JSON.parse(document.getElementById("data").textContent);
+
+      // —— SVG 渲染 ——
+      const NS = "http://www.w3.org/2000/svg";
+      const svg = document.getElementById("svg");
+      svg.setAttribute("viewBox", `0 0 ${DATA.size.width} ${DATA.size.height}`);
+      svg.setAttribute("width", Math.min(DATA.size.width, 560));
+      svg.setAttribute(
+        "height",
+        (Math.min(DATA.size.width, 560) * DATA.size.height) / DATA.size.width,
+      );
+
+      const defs = document.createElementNS(NS, "defs");
+      defs.innerHTML = `<marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#64748b"/></marker>`;
+      svg.appendChild(defs);
+
+      for (const f of DATA.flows) {
+        const pl = document.createElementNS(NS, "polyline");
+        pl.setAttribute("points", f.points.map((p) => `${p.x},${p.y}`).join(" "));
+        pl.setAttribute("fill", "none");
+        pl.setAttribute("stroke", "#94a3b8");
+        pl.setAttribute("stroke-width", "1.6");
+        pl.setAttribute("marker-end", "url(#arrow)");
+        svg.appendChild(pl);
+        if (f.name) {
+          const mid = f.points[Math.floor(f.points.length / 2) - 1] || f.points[0];
+          const t = document.createElementNS(NS, "text");
+          t.setAttribute("x", mid.x + 8);
+          t.setAttribute("y", mid.y - 6);
+          t.setAttribute("font-size", "12");
+          t.setAttribute("fill", "#0e7490");
+          t.textContent = f.name;
+          svg.appendChild(t);
+        }
+      }
+
+      for (const n of DATA.nodes) {
+        const s = n.shape;
+        const g = document.createElementNS(NS, "g");
+        if (n.type === "bpmn:StartEvent" || n.type === "bpmn:EndEvent") {
+          const c = document.createElementNS(NS, "circle");
+          const isStart = n.type === "bpmn:StartEvent";
+          c.setAttribute("cx", s.x + s.width / 2);
+          c.setAttribute("cy", s.y + s.height / 2);
+          c.setAttribute("r", s.width / 2);
+          c.setAttribute("fill", isStart ? "#ecfdf5" : "#fef2f2");
+          c.setAttribute("stroke", isStart ? "#059669" : "#dc2626");
+          c.setAttribute("stroke-width", "2");
+          g.appendChild(c);
+          label(g, s.x + s.width / 2, s.y + s.height + 14, n.name);
+        } else if (n.type === "bpmn:ExclusiveGateway" || n.type === "bpmn:ParallelGateway") {
+          const cx = s.x + s.width / 2,
+            cy = s.y + s.height / 2,
+            r = s.width / 2;
+          const poly = document.createElementNS(NS, "polygon");
+          poly.setAttribute(
+            "points",
+            `${cx},${cy - r} ${cx + r},${cy} ${cx},${cy + r} ${cx - r},${cy}`,
+          );
+          poly.setAttribute("fill", "#fffbeb");
+          poly.setAttribute("stroke", "#d97706");
+          poly.setAttribute("stroke-width", "2");
+          g.appendChild(poly);
+          const path = document.createElementNS(NS, "path");
+          path.setAttribute("stroke", "#b45309");
+          path.setAttribute("stroke-width", "1.8");
+          path.setAttribute("fill", "none");
+          if (n.type === "bpmn:ExclusiveGateway") {
+            path.setAttribute(
+              "d",
+              `M${cx - 7},${cy - 7} L${cx + 7},${cy + 7} M${cx + 7},${cy - 7} L${cx - 7},${cy + 7}`,
+            );
+          } else {
+            path.setAttribute(
+              "d",
+              `M${cx},${cy - 8} L${cx},${cy + 8} M${cx - 8},${cy} L${cx + 8},${cy}`,
+            );
+          }
+          g.appendChild(path);
+          label(g, cx, s.y + s.height + 14, n.name);
+        } else {
+          const rect = document.createElementNS(NS, "rect");
+          rect.setAttribute("x", s.x);
+          rect.setAttribute("y", s.y);
+          rect.setAttribute("width", s.width);
+          rect.setAttribute("height", s.height);
+          rect.setAttribute("rx", "8");
+          rect.setAttribute("fill", n.mi ? "#ecfeff" : "#eff6ff");
+          rect.setAttribute("stroke", n.mi ? "#0891b2" : "#3b82f6");
+          rect.setAttribute("stroke-width", "1.8");
+          g.appendChild(rect);
+          label(g, s.x + s.width / 2, s.y + s.height / 2 + 5, n.name, n.mi);
+        }
+        svg.appendChild(g);
+      }
+
+      function label(g, x, y, text, badge) {
+        const t = document.createElementNS(NS, "text");
+        t.setAttribute("x", x);
+        t.setAttribute("y", y);
+        t.setAttribute("text-anchor", "middle");
+        t.setAttribute("font-size", "12.5");
+        t.setAttribute("fill", "#1e293b");
+        t.textContent = text;
+        g.appendChild(t);
+        if (badge) {
+          const b = document.createElementNS(NS, "text");
+          b.setAttribute("x", x);
+          b.setAttribute("y", y + 15);
+          b.setAttribute("text-anchor", "middle");
+          b.setAttribute("font-size", "10.5");
+          b.setAttribute("fill", "#0891b2");
+          b.textContent =
+            badge === "all" ? "多实例 · 会签" : badge === "any" ? "多实例 · 或签" : "多实例 · 依次";
+          g.appendChild(b);
+        }
+      }
+
+      // —— XML 面板 ——
+      const pre = document.getElementById("xmlpre");
+      const buttons = document.querySelectorAll(".tabs button");
+      function showXml(key) {
+        pre.textContent = DATA.xmls[key];
+        buttons.forEach((b) => b.classList.toggle("active", b.dataset.x === key));
+      }
+      buttons.forEach((b) => b.addEventListener("click", () => showXml(b.dataset.x)));
+      showXml("scenario");
+      document.getElementById("copybtn").addEventListener("click", async (e) => {
+        await navigator.clipboard.writeText(pre.textContent);
+        e.target.textContent = "已复制 ✓";
+        setTimeout(
+          () => (e.target.textContent = "复制当前 XML(可贴 bpmn.io 在线 demo 复核)"),
+          1500,
+        );
+      });
+
+      document.getElementById("tree").textContent = DATA.tree;
+    </script>
+  </body>
+</html>
