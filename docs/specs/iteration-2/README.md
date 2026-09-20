@@ -33,7 +33,21 @@
 - **命名空间缺陷已结案**：flowable URI 修正为 `http://flowable.org/bpmn`，core 0.1.2 已发，冒烟已带运行时断言（PR #18）——迭代二干净起步。
 - **成稿补充决策**（grilling R1–R5）：默认流转 = 分支侧标记 + 三重守卫；抄送 = `addTask("cc")` 中立映射 + `flowable:ccTo` 单属性 + 占位 delegate bean；designer = 直接读写模型树 + 块树重推导；接缝 = 内核扩既有四面 + designer 仅一条顶层组件接缝。
 
-流程纪律（v1 起）：spec 成稿 → 拆自包含票（挂里程碑 `iteration-2`）→ 每票新会话 `/implement` → feature 分支 → PR → develop。
+### 票索引（GitHub Issues，2026-09-20 拆定，挂本里程碑）
+
+| 票 | 内容 | 被阻塞于 |
+| --- | --- | --- |
+| [#19](https://github.com/flowduet/flowduet/issues/19) | core：多实例用户任务三档 | — |
+| [#20](https://github.com/flowduet/flowduet/issues/20) | core：并行网关与默认流转 | — |
+| [#21](https://github.com/flowduet/flowduet/issues/21) | core：抄送任务 | — |
+| [#22](https://github.com/flowduet/flowduet/issues/22) | core：竖排布局器与可选几何 | — |
+| [#23](https://github.com/flowduet/flowduet/issues/23) | designer：包骨架与审批节点闭环 | #22 |
+| [#24](https://github.com/flowduet/flowduet/issues/24) | designer：分支块交互（条件/并行） | #20 #23 |
+| [#25](https://github.com/flowduet/flowduet/issues/25) | designer：多人审批与抄送抽屉 | #19 #21 #23 |
+| [#26](https://github.com/flowduet/flowduet/issues/26) | designer：BPMN 只读投影（砍序第一位） | #22 #23 |
+| [#27](https://github.com/flowduet/flowduet/issues/27) | 收官：宿主三区 + core 0.2.0 / designer alpha | #24 #25 #26 |
+
+流程纪律（v1 起）：每票新会话 `/implement` → feature 分支 → PR → develop；frontier = #19 #20 #21 #22 四张可并行开工。
 
 ## 出口标准
 
