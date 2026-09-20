@@ -33,7 +33,8 @@ const vocab = computed(
 const summary = computed(() => {
   const el = props.node.element;
   if (el.$type === "bpmn:UserTask") {
-    return String(el.get("assignee") ?? "未配置审批人");
+    const assignee = el.get("assignee");
+    return assignee === undefined ? "未配置审批人" : `审批人 ${String(assignee)}`;
   }
   if (el.$type === "bpmn:ServiceTask") {
     return `抄送：${String(el.get("ccTo") ?? "")}`;

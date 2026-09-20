@@ -69,7 +69,9 @@ function insertable(item: BlockTreeNode): boolean {
 </template>
 
 <style scoped>
+/* 卡间连接：短竖线串起「+」按钮（视觉定稿的 connector line 形态） */
 .insert-btn {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -83,6 +85,24 @@ function insertable(item: BlockTreeNode): boolean {
   font-size: 14px;
   line-height: 1;
   cursor: pointer;
+}
+
+.insert-btn::before,
+.insert-btn::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  width: 1px;
+  height: 5px;
+  background: #c0c4cc;
+}
+
+.insert-btn::before {
+  top: -5px;
+}
+
+.insert-btn::after {
+  bottom: -5px;
 }
 
 .insert-btn:hover {
