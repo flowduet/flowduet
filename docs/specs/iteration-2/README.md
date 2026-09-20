@@ -17,15 +17,21 @@
 - **验收宿主**（`apps/playground`）：最小页面挂载 designer，含 XML 导出预览。
 - **冒烟扩展**：新元素基准文件全谱过 Flowable 6.8 部署冒烟。
 
-## Spec 索引（拆票前逐份成稿）
+## Spec 索引（2026-09-20 全部成稿）
 
 | Spec | 内容 | 状态 |
 | --- | --- | --- |
-| [multi-instance-user-task.md](./multi-instance-user-task.md) | 内核：多实例用户任务三档（会签/或签/依次） | 骨架 |
-| [parallel-gateway.md](./parallel-gateway.md) | 内核：并行网关 + 排他网关默认分支 | 骨架 |
-| [cc-task.md](./cc-task.md) | 内核：抄送 = 服务任务 + 适配器扩展属性 | 骨架 |
-| [dingtalk-view-mvp.md](./dingtalk-view-mvp.md) | 钉钉式视图：递归组件 + 抽屉 + playground 宿主 | 骨架 |
-| [bpmn-readonly-projection.md](./bpmn-readonly-projection.md) | Vue-Flow 只读投影 | 骨架 |
+| [multi-instance-user-task.md](./multi-instance-user-task.md) | 内核：多实例用户任务三档（会签/或签/依次） | 成稿 |
+| [parallel-gateway.md](./parallel-gateway.md) | 内核：并行网关 + 排他网关默认分支 | 成稿 |
+| [cc-task.md](./cc-task.md) | 内核：抄送 = 服务任务 + 适配器扩展属性 | 成稿 |
+| [dingtalk-view-mvp.md](./dingtalk-view-mvp.md) | 钉钉式视图：递归组件 + 抽屉 + playground 宿主 | 成稿 |
+| [bpmn-readonly-projection.md](./bpmn-readonly-projection.md) | Vue-Flow 只读投影 | 成稿 |
+
+### 原型与决策折回注记（2026-09-20）
+
+- **原型收官**：分支 `prototype/iter2-vertical-layout-mi`（primary source）。竖排布局 = `DiLayout` 第二实现（`verticalDiLayout()` + `deriveBlockTree` 公开导出，内核仅 `shape`/`waypoints` 可选化）；多实例 = `addApprovalTask` 语义 API、三档固化（原型实测 6.8 部署 + 启动 + assignee 逐人全过）。
+- **命名空间缺陷已结案**：flowable URI 修正为 `http://flowable.org/bpmn`，core 0.1.2 已发，冒烟已带运行时断言（PR #18）——迭代二干净起步。
+- **成稿补充决策**（grilling R1–R5）：默认流转 = 分支侧标记 + 三重守卫；抄送 = `addTask("cc")` 中立映射 + `flowable:ccTo` 单属性 + 占位 delegate bean；designer = 直接读写模型树 + 块树重推导；接缝 = 内核扩既有四面 + designer 仅一条顶层组件接缝。
 
 流程纪律（v1 起）：spec 成稿 → 拆自包含票（挂里程碑 `iteration-2`）→ 每票新会话 `/implement` → feature 分支 → PR → develop。
 
