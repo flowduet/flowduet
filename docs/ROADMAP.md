@@ -17,7 +17,7 @@
 - **冒烟口径**：完成标准以**本地 Docker 的 Flowable 6.8 真实部署成功**为准；CI 冒烟 job 同迭代搭好但设为 `workflow_dispatch` 手动触发（仅 6.8）；7.2 / 8.0 冒烟按原计划留到 v1。
 - **基准文件口径**：手写最小合法 XML 进自动化测试，部署成功兜底其合法性；flowable-ui 6.8 Modeler 导出仅作一次性人工参照，不进测试。
 - **发包口径**：本机 npm 人工首发（changesets 管版本号），CI 自动发包（NPM_TOKEN）等正式 release 流程再上。
-- **工程口径**：ESLint 9 flat + Prettier；Node 22 LTS + pnpm 10（`packageManager` 钉死）；本地不加 git hooks；`packages/designer`、`packages/form-create`、`apps/playground` 仅 README 占位。
+- **工程口径**：ESLint（flat config，实装 v10）+ Prettier；Node 22 LTS + pnpm 10（`packageManager` 钉死）；本地不加 git hooks；`packages/designer`、`packages/form-create`、`apps/playground` 以 README + 私有 package.json 占位（2026-09-20 review 调整，私有包不进 changesets 发布矩阵）。
 - **协作口径**：任务拆 GitHub Issues 挂里程碑 `iteration-1`，feature 分支 → PR → develop。
 
 ## Step 1 · 内核地基（目标 1–2 周）
