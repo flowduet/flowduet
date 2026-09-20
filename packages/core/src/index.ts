@@ -22,6 +22,8 @@ export type {
 
 export { IdentityDiLayout } from "./layout/di-layout.js";
 export type { DiLayout } from "./layout/di-layout.js";
+export { deriveBlockTree, verticalDiLayout } from "./layout/vertical-layout.js";
+export type { BlockTreeNode } from "./layout/vertical-layout.js";
 
 export { compile } from "./compile/compiler.js";
 export type { CompileOptions } from "./compile/compiler.js";

@@ -54,4 +54,4 @@ BPMN 可编辑画布、监听器/扩展属性高级面板、表单绑定协议�
 
 ## Further Notes
 
-竖排布局器（`verticalDiLayout`）正式化落 core 的 layout 模块（与恒等布局并列），designer 只消费 `deriveBlockTree`——该跨包边界对只读投影 spec 同样适用；`shape` 可选化是内核唯一配合改动。
+竖排布局器（`verticalDiLayout`）正式化落 core 的 layout 模块（与恒等布局并列），designer 只消费 `deriveBlockTree`——该跨包边界对只读投影 spec 同样适用；`shape`/`waypoints` 可选化是内核的配合改动（恒等布局遇缺坐标/折线在 compile 处诚实抛错）。
