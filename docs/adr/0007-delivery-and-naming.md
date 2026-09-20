@@ -12,14 +12,14 @@
 
 ### 命名核查记录（2026-09-14）
 
-| 候选 | npm 裸名 | GitHub 同名 | 结论 |
-|---|---|---|---|
-| **flowduet** | ✅ 可用 | ✅ 无任何同名账号 | **选定** |
-| flowprism | ✅ 可用 | ⚠️ 2020 年休眠空壳 org（0 仓库） | 备选 |
-| flowlens / flowdelta / flowbridge / irisflow / flowtao | ✅ 可用 | 各有零散账号 | 备选 |
-| duoflow | ✅ 可用 | ❌ 活跃用户 + duoflow.org | 弃 |
-| flowcraft / uniflow / bpmn-vue / flowsmith / deltaflow | ❌ npm 已占 | — | 出局 |
-| flowvue | ✅ 可用 | ✅ | 主动弃：与依赖库 Vue Flow 混淆 |
+| 候选                                                   | npm 裸名    | GitHub 同名                      | 结论                           |
+| ------------------------------------------------------ | ----------- | -------------------------------- | ------------------------------ |
+| **flowduet**                                           | ✅ 可用     | ✅ 无任何同名账号                | **选定**                       |
+| flowprism                                              | ✅ 可用     | ⚠️ 2020 年休眠空壳 org（0 仓库） | 备选                           |
+| flowlens / flowdelta / flowbridge / irisflow / flowtao | ✅ 可用     | 各有零散账号                     | 备选                           |
+| duoflow                                                | ✅ 可用     | ❌ 活跃用户 + duoflow.org        | 弃                             |
+| flowcraft / uniflow / bpmn-vue / flowsmith / deltaflow | ❌ npm 已占 | —                                | 出局                           |
+| flowvue                                                | ✅ 可用     | ✅                               | 主动弃：与依赖库 Vue Flow 混淆 |
 
 ## 后果
 
