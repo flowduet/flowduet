@@ -35,3 +35,5 @@ export { flowableAdapter } from "./adapter/flowable-adapter.js";
 export { assertAdapterContract } from "./adapter/adapter-contract.js";
 export { TASK_KINDS } from "./adapter/engine-adapter.js";
 export type { EngineAdapter, TaskKind, TaskTypeMapping } from "./adapter/engine-adapter.js";
+/** moddle 元素类型：elementOf 等编辑访问器的返回契约（见 bpmn-moddle） */
+export type { ModdleElement } from "bpmn-moddle";
