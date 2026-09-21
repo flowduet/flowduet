@@ -174,3 +174,110 @@ describe("NodeDrawer 节点缺失防御", () => {
     wrapper.unmount();
   });
 });
+
+describe("分支块交互（#24）", () => {
+  /** 开始 → 前置 → 条件块{ 支1:审批A；支2:审批B } → 结束 */
+  function buildBranching(): BpmnModel {
+    return BpmnModel.create({ processId: "designer_branch", adapter: flowableAdapter })
+      .addStartEvent({ id: "start", name: "开始" })
+      .addUserTask({ id: "before", name: "前置" })
+      .addExclusiveGateway({ id: "fork1", name: "金额判断" })
+      .addUserTask({ id: "a_node", name: "审批A", assignee: "${a}" })
+      .addUserTask({ id: "b_node", name: "审批B", assignee: "${b}" })
+      .addExclusiveGateway({ id: "join1", name: "汇聚" })
+      .addEndEvent({ id: "end", name: "结束" })
+      .addSequenceFlow({ id: "f0", sourceRef: "start", targetRef: "before" })
+      .addSequenceFlow({ id: "f1", sourceRef: "before", targetRef: "fork1" })
+      .addSequenceFlow({ id: "fa", sourceRef: "fork1", targetRef: "a_node" })
+      .addSequenceFlow({ id: "fb", sourceRef: "fork1", targetRef: "b_node" })
+      .addSequenceFlow({ id: "fa_j", sourceRef: "a_node", targetRef: "join1" })
+      .addSequenceFlow({ id: "fb_j", sourceRef: "b_node", targetRef: "join1" })
+      .addSequenceFlow({ id: "fj", sourceRef: "join1", targetRef: "end" });
+  }
+
+  function mountDesigner(model: BpmnModel) {
+    return mount(DingtalkDesigner, { props: { model }, attachTo: document.body });
+  }
+
+  it("块容器渲染：标签 + 两条支路 + 块头操作按钮", () => {
+    const model = buildBranching();
+    const wrapper = mountDesigner(model);
+    expect(wrapper.findAll('[data-test="branch-block"]')).toHaveLength(1);
+    expect(wrapper.findAll('[data-test^="branch-head-"]')).toHaveLength(2);
+    expect(wrapper.find('[data-test="add-branch-fork1"]').exists()).toBe(true);
+    expect(wrapper.find('[data-test="block-delete-fork1"]').exists()).toBe(true);
+    wrapper.unmount();
+  });
+
+  it("加支路：块树分支数 +1，导出 XML 含新支路且竖排推导可用", async () => {
+    const model = buildBranching();
+    const wrapper = mountDesigner(model);
+    await wrapper.find('[data-test="add-branch-fork1"]').trigger("click");
+    expect(wrapper.findAll('[data-test^="branch-head-"]')).toHaveLength(3);
+
+    const xml = await exportXml(model);
+    expect(xml).toContain('id="branch_node_1"');
+    expect(xml).toContain("<bpmndi:BPMNDiagram");
+    wrapper.unmount();
+  });
+
+  it("删支路：块树与导出同步收缩", async () => {
+    const model = buildBranching();
+    const wrapper = mountDesigner(model);
+    await wrapper.find('[data-test="add-branch-fork1"]').trigger("click");
+    await wrapper.find('[data-test="remove-branch-fork1-1"]').trigger("click");
+    expect(wrapper.findAll('[data-test^="branch-head-"]')).toHaveLength(2);
+
+    const xml = await exportXml(model);
+    expect(xml).not.toContain('id="b_node"');
+    expect(xml).toContain('id="a_node"');
+    wrapper.unmount();
+  });
+
+  it("删整块：容器消失，前后直连且导出可推导", async () => {
+    const model = buildBranching();
+    const wrapper = mountDesigner(model);
+    await wrapper.find('[data-test="block-delete-fork1"]').trigger("click");
+    expect(wrapper.findAll('[data-test="branch-block"]')).toHaveLength(0);
+    expect(wrapper.findAll('[data-test="node-card"]')).toHaveLength(3); // start/before/end
+
+    const xml = await exportXml(model);
+    expect(xml).not.toContain('id="fork1"');
+    expect(xml).toContain("<bpmndi:BPMNDiagram");
+    wrapper.unmount();
+  });
+
+  it("默认分支：标记呈现 + 默认流转落 XML（无条件出线）", async () => {
+    const model = buildBranching();
+    const wrapper = mountDesigner(model);
+    await wrapper.find('[data-test="default-toggle-fork1-1"]').trigger("click");
+    expect(wrapper.find('[data-test="branch-head-fork1-1"]').text()).toContain("默认");
+
+    const xml = await exportXml(model);
+    expect(xml).toContain('default="fb"');
+    expect(xml).not.toContain(
+      'id="fb" name="审批B" flowable:assignee="${b}">\n      <bpmn:conditionExpression',
+    );
+    wrapper.unmount();
+  });
+
+  it("条件抽屉：支路头点击开抽屉，条件表达式写回 FormalExpression", async () => {
+    const model = buildBranching();
+    const wrapper = mountDesigner(model);
+    await wrapper.find('[data-test="branch-head-fork1-0"]').trigger("click");
+    await flushPromises();
+
+    const conditionInput = document.querySelector<HTMLInputElement>(
+      '[data-test="drawer-condition"]',
+    );
+    expect(conditionInput).not.toBeNull();
+    await setValue(conditionInput!, "${amount > 1000}");
+    (document.querySelector('[data-test="drawer-save"]') as HTMLElement).click();
+    await flushPromises();
+
+    const xml = await exportXml(model);
+    expect(xml).toContain("amount &gt; 1000");
+    expect(xml).toContain("conditionExpression");
+    wrapper.unmount();
+  });
+});

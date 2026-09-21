@@ -16,11 +16,18 @@ const model = BpmnModel.create({
 })
   .addStartEvent({ id: "start", name: "开始" })
   .addUserTask({ id: "approval_1", name: "经理审批", assignee: "${manager}" })
-  .addUserTask({ id: "approval_2", name: "总监审批", assignee: "${director}" })
+  .addExclusiveGateway({ id: "fork1", name: "金额判断" })
+  .addUserTask({ id: "a_node", name: "总监审批", assignee: "${director}" })
+  .addUserTask({ id: "b_node", name: "财务复核", assignee: "${finance}" })
+  .addExclusiveGateway({ id: "join1", name: "汇聚" })
   .addEndEvent({ id: "end", name: "结束" })
   .addSequenceFlow({ id: "f1", sourceRef: "start", targetRef: "approval_1" })
-  .addSequenceFlow({ id: "f2", sourceRef: "approval_1", targetRef: "approval_2" })
-  .addSequenceFlow({ id: "f3", sourceRef: "approval_2", targetRef: "end" });
+  .addSequenceFlow({ id: "f2", sourceRef: "approval_1", targetRef: "fork1" })
+  .addSequenceFlow({ id: "fa", sourceRef: "fork1", targetRef: "a_node" })
+  .addSequenceFlow({ id: "fb", sourceRef: "fork1", targetRef: "b_node" })
+  .addSequenceFlow({ id: "fa_j", sourceRef: "a_node", targetRef: "join1" })
+  .addSequenceFlow({ id: "fb_j", sourceRef: "b_node", targetRef: "join1" })
+  .addSequenceFlow({ id: "fj", sourceRef: "join1", targetRef: "end" });
 
 const xml = ref("");
 const error = ref("");
