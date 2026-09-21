@@ -33,15 +33,17 @@ const vocab = computed(
 const summary = computed(() => {
   const el = props.node.element;
   if (el.$type === "bpmn:UserTask") {
+    // 多实例审批优先于单人摘要：addApprovalTask 落的也是 bpmn:UserTask，
+    // 若不先判 loopCharacteristics，多人分支永不可达（#25 多人扩展依赖此处）
+    const loop = el.get("loopCharacteristics") as { get(key: string): unknown } | undefined;
+    if (loop !== undefined) {
+      return `多人 · 集合 ${String(loop.get("collection") ?? "")}`;
+    }
     const assignee = el.get("assignee");
     return assignee === undefined ? "未配置审批人" : `审批人 ${String(assignee)}`;
   }
   if (el.$type === "bpmn:ServiceTask") {
     return `抄送：${String(el.get("ccTo") ?? "")}`;
-  }
-  const loop = el.get("loopCharacteristics") as { get(key: string): unknown } | undefined;
-  if (loop !== undefined) {
-    return `多人 · 集合 ${String(loop.get("collection") ?? "")}`;
   }
   return "";
 });

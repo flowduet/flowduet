@@ -13,16 +13,25 @@ function incomingOf(model: BpmnModel, nodeId: string): ModdleElement[] {
   return (model.elementOf(nodeId).get("incoming") as ModdleElement[] | undefined) ?? [];
 }
 
-/** 生成不与现有元素冲突的审批节点 id（确定性序列，便于测试与调试） */
-export function nextNodeId(model: BpmnModel): string {
+/**
+ * 探测第一个未被占用的元素 id（确定性序列，便于测试与调试）。
+ * elementOf 对不存在的 id 抛错——此处正是借「抛错」判定 id 空闲（非误用异常）；
+ * 内核若后续提供 hasElement(id) 非抛出式探测，应同步切换。
+ */
+function nextFreeId(model: BpmnModel, prefix: string): string {
   for (let i = 1; ; i++) {
-    const id = `approval_${i}`;
+    const id = `${prefix}${i}`;
     try {
       model.elementOf(id);
     } catch {
       return id;
     }
   }
+}
+
+/** 生成不与现有元素冲突的审批节点 id */
+export function nextNodeId(model: BpmnModel): string {
+  return nextFreeId(model, "approval_");
 }
 
 /**
@@ -70,8 +79,24 @@ export function removeApprovalNode(model: BpmnModel, nodeId: string): void {
   if (incoming.length === 1 && outgoing.length === 1) {
     const prevId = (incoming[0]!.get("sourceRef") as ModdleElement).get("id") as string;
     const nextId = (outgoing[0]!.get("targetRef") as ModdleElement).get("id") as string;
+    // 分支块内唯一节点（前驱是多出边 fork、后继是多入边 join）：relay 会把 fork
+    // 直连到配对 join，产出空分支，deriveBlockTree 渲染期显式抛错、视图崩溃。
+    // 此处拒绝删除并保持模型不被改动；分支块的删除语义（块级删除等）属 #24。
+    const prevIsFork = outgoingOf(model, prevId).length > 1;
+    const nextIsJoin = incomingOf(model, nextId).length > 1;
+    if (prevIsFork && nextIsJoin) {
+      throw new Error(
+        `节点 ${nodeId} 是分支块内唯一节点，删除会产生空分支（fork 直连 join），竖排推导不支持；分支块删除语义属 #24`,
+      );
+    }
     model.removeNode(nodeId);
-    model.addSequenceFlow({ id: `flow_${nodeId}_relay`, sourceRef: prevId, targetRef: nextId });
+    // 重链连线 id 走统一探测：节点 id 会被 nextNodeId 回收，若沿用
+    // flow_${nodeId}_relay 定名，「删→他处插→再删」会撞已登记的旧重链连线
+    model.addSequenceFlow({
+      id: nextFreeId(model, "flow_relay_"),
+      sourceRef: prevId,
+      targetRef: nextId,
+    });
     return;
   }
   model.removeNode(nodeId);

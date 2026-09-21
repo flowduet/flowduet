@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
 import { ElButton, ElDrawer, ElForm, ElFormItem, ElInput } from "element-plus";
-import type { BpmnModel } from "@flowduet/core";
+import type { BpmnModel, ModdleElement } from "@flowduet/core";
 
 /**
  * 审批节点配置抽屉（分段选项卡式的最小集：节点名 + 审批人；
@@ -23,33 +23,45 @@ const visible = defineModel<boolean>({ default: false });
 const name = ref("");
 const assignee = ref("");
 
-const isTask = computed(() => {
-  if (props.nodeId === undefined) return false;
-  return props.model.elementOf(props.nodeId).$type === "bpmn:UserTask";
-});
+/**
+ * 取当前抽屉指向的模型元素；节点已被宿主删除时返回 undefined。
+ * isTask / 回填 watch / save 三处共享这一防御口径，避免渲染期抛未捕获异常。
+ */
+function currentNode(): ModdleElement | undefined {
+  if (props.nodeId === undefined) return undefined;
+  try {
+    return props.model.elementOf(props.nodeId);
+  } catch {
+    return undefined;
+  }
+}
+
+const isTask = computed(() => currentNode()?.$type === "bpmn:UserTask");
 
 watch(
   () => [props.nodeId, visible.value] as const,
   () => {
-    if (visible.value && props.nodeId !== undefined) {
-      const el = props.model.elementOf(props.nodeId);
-      name.value = String(el.get("name") ?? "");
-      assignee.value = String(el.get("assignee") ?? "");
-    }
+    if (!visible.value) return;
+    const el = currentNode();
+    if (el === undefined) return;
+    name.value = String(el.get("name") ?? "");
+    assignee.value = String(el.get("assignee") ?? "");
   },
 );
 
 function save(): void {
   if (props.nodeId === undefined) return;
-  // 抽屉打开期间宿主可能已删除该节点——不在此抛未捕获异常
-  try {
-    const el = props.model.elementOf(props.nodeId);
-    el.set("name", name.value.trim() === "" ? undefined : name.value);
-    el.set("assignee", assignee.value.trim() === "" ? undefined : assignee.value);
-  } catch {
+  const el = currentNode();
+  if (el === undefined) {
+    // 抽屉打开期间宿主可能已删除该节点——不在此抛未捕获异常
     visible.value = false;
     return;
   }
+  // trim 后再落盘：前后空白原样进 XML 会让引擎按带空格变量名解析、静默取不到人
+  const trimmedName = name.value.trim();
+  const trimmedAssignee = assignee.value.trim();
+  el.set("name", trimmedName === "" ? undefined : trimmedName);
+  el.set("assignee", trimmedAssignee === "" ? undefined : trimmedAssignee);
   visible.value = false;
   emit("saved");
 }

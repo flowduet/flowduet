@@ -47,6 +47,8 @@ function openNode(nodeId: string): void {
 function deleteNode(nodeId: string): void {
   removeApprovalNode(model.value, nodeId);
   if (activeId.value === nodeId) {
+    // 清掉 stale 引用：activeId 残留会让回收该 id 的新卡片凭空亮起 active 描边
+    activeId.value = undefined;
     drawerVisible.value = false;
   }
   refresh();
