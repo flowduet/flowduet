@@ -18,11 +18,11 @@ PR #34 评审加固（#25 复核遗留）：修复两处静默型数据损坏缺
 - `NodeDrawer` 补 `elementVariable` 缓冲（评审 W-1）：回填 + 保存透传给 `convertApprovalToMulti`/`setApprovalMode`，避免多人节点保存后元素变量名被静默重置为 `DEFAULT_ELEMENT_VARIABLE`、`assignee` 表达式被改写导致流程内引用旧变量名的表单/监听器全部失效。
 - `NodeDrawer` 单↔多切换审批人缓冲暂存/恢复（评审 S-3）：同会话内误点后切回不丢字段（`lastSingleAssignee` / `lastCollection` 两个 ref）；抽屉关闭重开后作废，避免跨会话污染。
 - `NodeDrawer` 集合变量校验错误文案改为明确 ASCII-only（评审 S-4）：`审批人集合变量名仅支持英文字母/数字/下划线（如 approvers 或 dept.approvers），不接受 ${...} 表达式或逗号名单`。
-- `NodeCard` TYPE_VOCAB 补 `bpmn:ServiceTask` + `ccTo` 判定（评审 W-5）：抄送节点专属「抄」字形 + 中性灰蓝底色（`#6b7a99`），与审批任务的「审」 + 靛蓝拉开声部；与 #26 BPMN 只读画布的抄送色系一致，双视图上形成同一语义的颜色回忆。
-- `operations.ts` DI 丢失已知限制注释改写为诚实描述（评审 W-6）：明确 `IdentityDiLayout` 抛错（诚实失败）与 `resolveCanvasGeometry` 全图降级（导入布局整体作废），登记 #27/#35 追踪需求。
+- `NodeCard` TYPE_VOCAB 补 `bpmn:ServiceTask` + `ccTo` 判定（评审 W-5、PR #37 复核 3.1）：抄送节点专属「抄」字形 + 中性灰蓝底色（`#6b7a99`），与审批任务的「审」 + 靛蓝拉开声部。#26 spec 只定义珊瑚橙 `#F76547` 强调色、无抄送色系；若 #26 落地时为抄送节点引入配色，建议对齐此灰蓝以维持双视图同一语义的颜色回忆（待 #26 落地核验）。
+- `operations.ts` DI 丢失已知限制注释改写为诚实描述（评审 W-6、PR #37 复核 3.1）：明确 `IdentityDiLayout.attach` 调 `shapeOf` 缺 shape 直接抛错（诚实失败）；#26 只读画布按 spec「几何零计算：`shapeOf`/`waypointsOf` 直映射」，缺坐标同样沿 `shapeOf` 抛错，并非此前注释里写的「全图降级竖排」（该函数在代码与 #26 spec 中均不存在）。登记 #27/#35 追踪需求。
 - `exportXml` 前置草稿扫描（评审 S-5）：拒绝抄送占位收件人（`CC_RECIPIENTS_PLACEHOLDER`）与多实例空集合变量导出，避免部署合法但运行时静默失效的脏数据；全模型系统性校验另立 #35。
 - `index.ts` 导出 `CC_RECIPIENTS_PLACEHOLDER`（评审 S-5）：宿主可经此常量识别 `exportXml` 抛错中的占位串（做 i18n / 用户引导），或自建导出前校验时对齐 designer 内置扫描口径。
-- 测试补 15 例回归：C-1（依次档携条件抽屉级 + operations 级）、W-1（elementVariable 透传）、W-2（非法 mode / 非字符串 collection）、W-5（抄送卡片字形）、S-2（formKey 单↔多清空对称、档间切换全矩阵、抄送链首/链尾插入位置）、S-3（单↔多缓冲暂存/恢复）、S-4（错误文案）、S-5（exportXml 拒绝占位串 + 空 collection）。
+- 测试补 25 例回归（core +8 / designer +17）：core 侧 8 例 formKey 合同测试（cc/mail/service/script 拒 formKey、user 对照、trim、空白守卫）；designer 侧 17 例——C-1（依次档携条件抽屉级 + operations 级）、W-1（elementVariable 透传）、W-2（非法 mode / 非字符串 collection）、W-5（抄送卡片字形）、S-2（formKey 单↔多清空对称、档间切换全矩阵、抄送链首/链尾插入位置）、S-3（单↔多缓冲暂存/恢复）、S-4（错误文案）、S-5（exportXml 拒绝占位串 + 空 collection）。
 
 **文档**：
 

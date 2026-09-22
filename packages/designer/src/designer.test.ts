@@ -586,6 +586,48 @@ describe("多人审批与抄送（#25）", () => {
     wrapper.unmount();
   });
 
+  it("单↔多切换缓冲跨会话作废（PR #37 复核 3.2）：关闭重开后不恢复上次会话的旧值", async () => {
+    const model = buildChain(); // approval_1 初始 assignee: "${manager}"
+    const wrapper = mountDesigner(model);
+
+    // 第一次会话：改为 ${director}（不保存）→ 切会签暂存 → 填 approvers → 不保存直接关闭
+    await wrapper.findAll('[data-test="node-card"]')[1]!.trigger("click");
+    await flushPromises();
+    await setValue(
+      document.querySelector<HTMLInputElement>('[data-test="drawer-assignee"]')!,
+      "${director}",
+    );
+    await wrapper.find('[data-test="kind-all"]').trigger("click");
+    await setValue(
+      document.querySelector<HTMLInputElement>('[data-test="drawer-assignee"]')!,
+      "approvers",
+    );
+    (document.querySelector('[data-test="drawer-cancel"]') as HTMLElement).click();
+    await flushPromises();
+
+    // 第二次会话：重新打开 → 字段显示模型当前值（未保存过，仍是 ${manager}）
+    await wrapper.findAll('[data-test="node-card"]')[1]!.trigger("click");
+    await flushPromises();
+    expect(document.querySelector<HTMLInputElement>('[data-test="drawer-assignee"]')!.value).toBe(
+      "${manager}",
+    );
+
+    // 直接切会签：字段应为空——不恢复上次会话的 approvers
+    await wrapper.find('[data-test="kind-all"]').trigger("click");
+    await flushPromises();
+    expect(document.querySelector<HTMLInputElement>('[data-test="drawer-assignee"]')!.value).toBe(
+      "",
+    );
+
+    // 直接切回单签：字段应为 ${manager}（本次会话内暂存的当前模型值）——不恢复上次会话的 ${director}
+    await wrapper.find('[data-test="kind-single"]').trigger("click");
+    await flushPromises();
+    expect(document.querySelector<HTMLInputElement>('[data-test="drawer-assignee"]')!.value).toBe(
+      "${manager}",
+    );
+    wrapper.unmount();
+  });
+
   it("非法集合变量错误文案明确 ASCII-only（评审 S-4）", async () => {
     const model = buildChain();
     const wrapper = mountDesigner(model);

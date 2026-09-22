@@ -164,7 +164,7 @@ describe("fail-fast 前置校验（#25 评审 W3）", () => {
   it("convertApprovalToMulti 携带纯空白 formKey 抛错，且不破坏模型", () => {
     const model = buildChain();
     insertApprovalAfter(model, "before", { name: "审批" });
-    // 模拟绕过内核守卫直接写入的非法 formKey（内核 #setFormKey 正常路径到不了）
+    // 模拟绕过内核守卫直接写入的非法 formKey（内核 normalizeFormKey 正常路径到不了）
     model.elementOf("approval_1").set("formKey", "   ");
     expect(() =>
       convertApprovalToMulti(model, "approval_1", { collection: "approvers", mode: "all" }),
