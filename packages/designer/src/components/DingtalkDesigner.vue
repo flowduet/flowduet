@@ -6,7 +6,9 @@ import BlockNodeList from "./BlockNodeList.vue";
 import NodeDrawer from "./NodeDrawer.vue";
 import {
   addBranchToBlock,
+  CC_RECIPIENTS_PLACEHOLDER,
   insertApprovalAfter,
+  insertCcAfter,
   isDefaultBranch,
   removeApprovalNode,
   removeBlock,
@@ -94,8 +96,15 @@ function runGuarded(action: () => void): void {
   }
 }
 
-function insertAfter(nodeId: string): void {
-  runGuarded(() => insertApprovalAfter(model.value, nodeId));
+function insertAfter(kind: "approval" | "cc", nodeId: string): void {
+  runGuarded(() => {
+    if (kind === "cc") {
+      // 新抄送默认收件人占位，抽屉里改成真实名单（空白/占位保存均被守卫拦截）
+      insertCcAfter(model.value, nodeId, { recipients: CC_RECIPIENTS_PLACEHOLDER });
+    } else {
+      insertApprovalAfter(model.value, nodeId);
+    }
+  });
 }
 
 function openNode(nodeId: string): void {

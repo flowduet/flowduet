@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { BlockTreeNode, BpmnModel } from "@flowduet/core";
+import { ElDropdown, ElDropdownItem, ElDropdownMenu } from "element-plus";
 import NodeCard from "./NodeCard.vue";
 import BlockNodeList from "./BlockNodeList.vue";
 import { branchHeadFlowId } from "../operations.js";
@@ -25,7 +26,7 @@ defineProps<{
 defineEmits<{
   open: [nodeId: string];
   delete: [nodeId: string];
-  insert: [nodeId: string];
+  insert: [kind: "approval" | "cc", nodeId: string];
   addBranch: [forkId: string];
   removeBranch: [forkId: string, branchIndex: number];
   setDefault: [forkId: string, branchIndex: number | null];
@@ -50,15 +51,24 @@ function insertable(item: BlockTreeNode): boolean {
           @open="$emit('open', item.id)"
           @delete="$emit('delete', item.id)"
         />
-        <button
+        <ElDropdown
           v-if="insertable(item)"
-          class="insert-btn"
           :data-test="`insert-after-${item.id}`"
-          title="在此后添加审批节点"
-          @click="$emit('insert', item.id)"
+          trigger="click"
+          @command="(kind: 'approval' | 'cc') => $emit('insert', kind, item.id)"
         >
-          +
-        </button>
+          <button class="insert-btn" :data-test="`insert-btn-${item.id}`" title="在此后添加节点">
+            +
+          </button>
+          <template #dropdown>
+            <ElDropdownMenu>
+              <ElDropdownItem command="approval" data-test="insert-kind-approval"
+                >审批节点</ElDropdownItem
+              >
+              <ElDropdownItem command="cc" data-test="insert-kind-cc">抄送节点</ElDropdownItem>
+            </ElDropdownMenu>
+          </template>
+        </ElDropdown>
       </template>
       <div v-else class="branch-block" :data-gateway="item.gateway" data-test="branch-block">
         <div class="branch-block-head">
@@ -130,7 +140,7 @@ function insertable(item: BlockTreeNode): boolean {
               :default-index-by-fork="defaultIndexByFork"
               @open="$emit('open', $event)"
               @delete="$emit('delete', $event)"
-              @insert="$emit('insert', $event)"
+              @insert="(kind: 'approval' | 'cc', nid: string) => $emit('insert', kind, nid)"
               @add-branch="$emit('addBranch', $event)"
               @remove-branch="(fid, idx) => $emit('removeBranch', fid, idx)"
               @set-default="(fid, idx) => $emit('setDefault', fid, idx)"

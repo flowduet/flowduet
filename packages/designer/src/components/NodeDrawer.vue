@@ -1,13 +1,22 @@
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
 import { ElButton, ElDrawer, ElForm, ElFormItem, ElInput } from "element-plus";
-import type { BpmnModel, ModdleElement } from "@flowduet/core";
-import { setBranchCondition } from "../operations.js";
+import type { ApprovalMode, BpmnModel, ModdleElement } from "@flowduet/core";
+import {
+  CC_RECIPIENTS_PLACEHOLDER,
+  convertApprovalToMulti,
+  convertMultiToSingle,
+  readApprovalMulti,
+  setApprovalMode,
+  setBranchCondition,
+} from "../operations.js";
 
 /**
- * 审批节点配置抽屉（分段选项卡式的最小集：节点名 + 审批人；
- * 完成方式三档属 #25）。读写直接落模型字段——表单只是字段缓冲，
- * 保存即写回，无独立状态可失同步（toRaw 由父组件统一完成）。
+ * 节点配置抽屉（#23 最小集 + #25 字段面）。读写直接落模型——表单只是
+ * 字段缓冲，保存即写回，无独立状态可失同步。
+ *
+ * 形态自适应：审批任务（单签/多人三档 + formKey 占位）、抄送任务（收件人）、
+ * 分支头连线（条件表达式）。单人↔多人经 operations 的同 id 转换（保连通）。
  */
 const props = defineProps<{
   model: BpmnModel;
@@ -17,7 +26,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   saved: [];
-  /** 守卫抛错的可读消息（#24 评审 W4）：由宿主接入内联提示通道，不冒泡炸视图 */
+  /** 守卫抛错的可读消息：由宿主接入内联提示通道，不冒泡炸视图 */
   error: [message: string];
 }>();
 
@@ -25,6 +34,11 @@ const visible = defineModel<boolean>({ default: false });
 
 const name = ref("");
 const assignee = ref("");
+const formKey = ref("");
+const condition = ref("");
+const recipients = ref("");
+/** 完成方式：single = 单签（单实例）；三档 = 多实例（审批人字段变集合变量） */
+const approvalKind = ref<"single" | ApprovalMode>("single");
 
 /**
  * 取当前抽屉指向的模型元素；节点已被宿主删除时返回 undefined。
@@ -40,6 +54,10 @@ function currentNode(): ModdleElement | undefined {
 }
 
 const isTask = computed(() => currentNode()?.$type === "bpmn:UserTask");
+const isCcTask = computed(() => {
+  const el = currentNode();
+  return el?.$type === "bpmn:ServiceTask" && el.get("ccTo") !== undefined;
+});
 
 // ── 条件分支抽屉（#24）：点支路头连线时呈现条件表达式字段 ──
 const isBranchHead = computed(() => {
@@ -48,7 +66,36 @@ const isBranchHead = computed(() => {
   return (el.get("sourceRef") as ModdleElement).$type === "bpmn:ExclusiveGateway";
 });
 
-const condition = ref("");
+const KIND_OPTIONS: { key: "single" | ApprovalMode; label: string; hint: string }[] = [
+  { key: "single", label: "单签", hint: "一人审批" },
+  { key: "all", label: "会签", hint: "全员同意才通过" },
+  { key: "any", label: "或签", hint: "任一人同意即通过" },
+  { key: "sequential", label: "依次", hint: "按顺序逐人审批" },
+];
+
+/**
+ * 集合变量应是裸标识符（运行时注入名单，如 approvers，可带点路径）。
+ * ${...} 表达式或逗号名单是单签语义的值，切多人时若沿用会被当集合名落盘，
+ * 运行时 collection 求值不到 Collection 直接抛错（#25 评审 S1）。
+ */
+function isCollectionVariable(value: string): boolean {
+  return /^[A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*)*$/.test(value);
+}
+
+/**
+ * 用户点完成方式卡片：单↔多切换时清空审批人缓冲。
+ * 该字段语义在「字面 assignee」与「集合变量名」之间翻转——不清空会让旧语义
+ * 值被当新语义落盘（多→单把集合名当字面 assignee，单→多把 ${manager} 当集合名）。
+ * 只在用户交互时触发，不走 watch，避免打开抽屉回填多实例时被误清（#25 评审 C1/S1）。
+ */
+function selectKind(kind: "single" | ApprovalMode): void {
+  const prev = approvalKind.value;
+  if (prev === kind) return;
+  approvalKind.value = kind;
+  if ((prev === "single") !== (kind === "single")) {
+    assignee.value = "";
+  }
+}
 
 watch(
   () => [props.nodeId, visible.value] as const,
@@ -58,12 +105,35 @@ watch(
     if (el === undefined) return;
     name.value = String(el.get("name") ?? "");
     assignee.value = String(el.get("assignee") ?? "");
+    formKey.value = String(el.get("formKey") ?? "");
+    recipients.value = String(el.get("ccTo") ?? "");
     condition.value =
       (el.get("conditionExpression") as ModdleElement | undefined)?.get("body") !== undefined
         ? String((el.get("conditionExpression") as ModdleElement).get("body"))
         : "";
+    const multi = readMultiSafe();
+    approvalKind.value = multi === null ? "single" : multi.mode;
+    if (multi !== null) {
+      // 集合变量回填到审批人字段（多人形态下该字段即集合名）
+      assignee.value = multi.collection;
+    }
   },
 );
+
+/**
+ * 回填期安全读取多实例形态：非内核固化完成条件（多见于外部导入 XML）时
+ * readApprovalMulti 会抛错，此处捕获转 error emit，不猜语义。save() 会再次读取并
+ * 同样抛错拦截，避免把多人节点静默转成单人（#25 评审 W2）。
+ */
+function readMultiSafe(): ReturnType<typeof readApprovalMulti> {
+  if (props.nodeId === undefined) return null;
+  try {
+    return readApprovalMulti(props.model, props.nodeId);
+  } catch (e) {
+    emit("error", e instanceof Error ? e.message : String(e));
+    return null;
+  }
+}
 
 function save(): void {
   if (props.nodeId === undefined) return;
@@ -73,9 +143,10 @@ function save(): void {
     visible.value = false;
     return;
   }
-  // #24 评审 W4：条件写回可能因守卫抛错（如默认流转不得携条件）——先校验后写，
-  // 避免半写模型（name 已落、condition 未落）；抛错时不写名、不关抽屉、不发 saved，
-  // 而是经 error emit 接入宿主的内联可读提示（AC#2「UI 呈现可读错误」）。
+
+  const trimmedName = name.value.trim();
+
+  // ── 分支条件抽屉（#24）：只有 name + condition，条件写回可能因守卫抛错 ──
   if (isBranchHead.value) {
     try {
       setBranchCondition(props.model, props.nodeId, condition.value);
@@ -83,12 +154,76 @@ function save(): void {
       emit("error", e instanceof Error ? e.message : String(e));
       return;
     }
+    // 条件写成功后才写 name，避免半写模型（#25 评审 C2）
+    el.set("name", trimmedName === "" ? undefined : trimmedName);
+    visible.value = false;
+    emit("saved");
+    return;
   }
-  // trim 后再落盘：前后空白原样进 XML 会让引擎按带空格变量名解析、静默取不到人
-  const trimmedName = name.value.trim();
+
   const trimmedAssignee = assignee.value.trim();
-  el.set("name", trimmedName === "" ? undefined : trimmedName);
-  el.set("assignee", trimmedAssignee === "" ? undefined : trimmedAssignee);
+  const trimmedFormKey = formKey.value.trim();
+  const trimmedRecipients = recipients.value.trim();
+
+  // ── 前置校验（一律不写模型）：任一条不过即 emit error 返回，模型零变更 ──
+  if (isTask.value && approvalKind.value !== "single") {
+    if (trimmedAssignee === "") {
+      emit("error", "多人审批需要填写审批人集合变量名（运行时注入名单）");
+      return;
+    }
+    if (!isCollectionVariable(trimmedAssignee)) {
+      emit("error", "多人审批的审批人字段是集合变量名（如 approvers），不是表达式或逗号名单");
+      return;
+    }
+  } else if (isCcTask.value) {
+    // 空白与插入占位串都拦：占位落盘会让运行时查无此人、静默丢知会（#25 评审 W4）
+    if (trimmedRecipients === "" || trimmedRecipients === CC_RECIPIENTS_PLACEHOLDER) {
+      emit("error", "抄送收件人不能为空白或占位文本（字面量逗号分隔或表达式）");
+      return;
+    }
+  }
+
+  // ── 校验通过后才写模型 ──
+  if (isTask.value) {
+    // 完成方式分流：single 走单实例；三档走多实例（单人→转换，档间→直改）。
+    // 结构性转换已 fail-fast 校验，抛错时 name 尚未写、模型未被破坏（#25 评审 C2/W3）。
+    try {
+      if (approvalKind.value === "single") {
+        if (readApprovalMulti(props.model, props.nodeId) !== null) {
+          convertMultiToSingle(props.model, props.nodeId);
+        }
+      } else {
+        const multi = readApprovalMulti(props.model, props.nodeId);
+        if (multi === null) {
+          convertApprovalToMulti(props.model, props.nodeId, {
+            collection: trimmedAssignee,
+            mode: approvalKind.value,
+          });
+        } else {
+          setApprovalMode(props.model, props.nodeId, {
+            collection: trimmedAssignee,
+            mode: approvalKind.value,
+          });
+        }
+      }
+    } catch (e) {
+      emit("error", e instanceof Error ? e.message : String(e));
+      return;
+    }
+    // 转换可能同 id 重建节点——统一取当前元素，name 与字段最后写
+    const current = currentNode();
+    if (current !== undefined) {
+      current.set("name", trimmedName === "" ? undefined : trimmedName);
+      if (approvalKind.value === "single") {
+        current.set("assignee", trimmedAssignee === "" ? undefined : trimmedAssignee);
+      }
+      // 单/多两形态同口径：formKey 清空保存同样落盘（不残留旧值）
+      current.set("formKey", trimmedFormKey === "" ? undefined : trimmedFormKey);
+    }
+  } else if (isCcTask.value) {
+    el.set("name", trimmedName === "" ? undefined : trimmedName);
+    el.set("ccTo", trimmedRecipients);
+  }
   visible.value = false;
   emit("saved");
 }
@@ -97,7 +232,7 @@ function save(): void {
 <template>
   <ElDrawer
     v-model="visible"
-    :title="isBranchHead ? '分支条件' : '审批节点'"
+    :title="isBranchHead ? '分支条件' : isCcTask ? '抄送节点' : '审批节点'"
     size="360px"
     data-test="node-drawer"
   >
@@ -105,11 +240,44 @@ function save(): void {
       <ElFormItem label="节点名称">
         <ElInput v-model="name" data-test="drawer-name" placeholder="如：经理审批" />
       </ElFormItem>
-      <ElFormItem label="审批人">
+      <ElFormItem :label="approvalKind === 'single' ? '审批人' : '审批人（集合变量）'">
         <ElInput
           v-model="assignee"
           data-test="drawer-assignee"
-          placeholder="如 ${manager} 或 张三"
+          :placeholder="
+            approvalKind === 'single' ? '如 ${manager} 或 张三' : '如 approvers，运行时注入名单'
+          "
+        />
+      </ElFormItem>
+      <ElFormItem label="完成方式">
+        <div class="kind-cards" data-test="kind-cards">
+          <button
+            v-for="option in KIND_OPTIONS"
+            :key="option.key"
+            class="kind-card"
+            :class="{ 'kind-card--on': approvalKind === option.key }"
+            :data-test="`kind-${option.key}`"
+            type="button"
+            @click="selectKind(option.key)"
+          >
+            <span class="kind-card-label">{{ option.label }}</span>
+            <span class="kind-card-hint">{{ option.hint }}</span>
+          </button>
+        </div>
+      </ElFormItem>
+      <ElFormItem label="表单标识（占位）">
+        <ElInput v-model="formKey" data-test="drawer-formkey" placeholder="如 leave_form_v1" />
+      </ElFormItem>
+    </ElForm>
+    <ElForm v-else-if="isCcTask" label-position="top">
+      <ElFormItem label="节点名称">
+        <ElInput v-model="name" data-test="drawer-name" placeholder="如：抄送知会" />
+      </ElFormItem>
+      <ElFormItem label="收件人">
+        <ElInput
+          v-model="recipients"
+          data-test="drawer-recipients"
+          placeholder="字面量逗号分隔（张三,李四）或表达式（${ccUsers}）"
         />
       </ElFormItem>
     </ElForm>
@@ -132,3 +300,47 @@ function save(): void {
     </template>
   </ElDrawer>
 </template>
+
+<style scoped>
+/* 完成方式三档卡片（视觉定稿：分段选项卡式，选中态靛蓝描边） */
+.kind-cards {
+  display: flex;
+  gap: 6px;
+  width: 100%;
+}
+
+.kind-card {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 6px;
+  border: 1px solid #dcdfe6;
+  border-radius: 6px;
+  background: #fff;
+  cursor: pointer;
+  text-align: center;
+}
+
+.kind-card--on {
+  border-color: #2d3e97;
+  background: rgba(45, 62, 151, 0.06);
+  outline: 1px solid #2d3e97;
+}
+
+.kind-card-label {
+  font-size: 13px;
+  color: #303133;
+}
+
+.kind-card-hint {
+  font-size: 10px;
+  color: #909399;
+}
+
+.drawer-empty {
+  color: #909399;
+  font-size: 13px;
+  padding: 12px 0;
+}
+</style>

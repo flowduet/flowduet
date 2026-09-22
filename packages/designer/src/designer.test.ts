@@ -4,6 +4,7 @@ import { flushPromises, mount } from "@vue/test-utils";
 import { BpmnModel, flowableAdapter } from "@flowduet/core";
 import DingtalkDesigner from "./components/DingtalkDesigner.vue";
 import NodeDrawer from "./components/NodeDrawer.vue";
+import { CC_RECIPIENTS_PLACEHOLDER } from "./operations.js";
 import { exportXml } from "./export.js";
 
 /**
@@ -30,6 +31,19 @@ function buildMultiInstanceChain(): BpmnModel {
     .addSequenceFlow({ id: "f2", sourceRef: "approval_mi", targetRef: "end" });
 }
 
+/** 「+」现在是类型菜单：点触发器开菜单，再点菜单项（teleport 到 body） */
+async function insertViaMenu(
+  wrapper: ReturnType<typeof mount>,
+  afterId: string,
+  kind: "approval" | "cc" = "approval",
+): Promise<void> {
+  await wrapper.find(`[data-test="insert-btn-${afterId}"]`).trigger("click");
+  await flushPromises();
+  const item = document.querySelector(`[data-test="insert-kind-${kind}"]`);
+  if (item instanceof HTMLElement) item.click();
+  await flushPromises();
+}
+
 function mountDesigner(model: BpmnModel) {
   return mount(DingtalkDesigner, { props: { model }, attachTo: document.body });
 }
@@ -53,7 +67,7 @@ describe("DingtalkDesigner 审批节点闭环", () => {
   it("卡间「+」插入审批节点：块树与导出 XML 同步反映（零坐标导出带 DI）", async () => {
     const model = buildChain();
     const wrapper = mountDesigner(model);
-    await wrapper.find('[data-test="insert-after-approval_1"]').trigger("click");
+    await insertViaMenu(wrapper, "approval_1");
     expect(wrapper.findAll('[data-test="node-card"]')).toHaveLength(4);
     expect(wrapper.text()).toContain("审批节点");
 
@@ -89,7 +103,7 @@ describe("DingtalkDesigner 审批节点闭环", () => {
   it("删除中段节点：前后重链，导出链完整", async () => {
     const model = buildChain();
     const wrapper = mountDesigner(model);
-    await wrapper.find('[data-test="insert-after-approval_1"]').trigger("click");
+    await insertViaMenu(wrapper, "approval_1");
     // 删除新插入的中段节点（approval_2 夹在 approval_1 与 end 之间）
     await wrapper.find('[data-test="node-delete-approval_2"]').trigger("click");
     expect(wrapper.findAll('[data-test="node-card"]')).toHaveLength(3);
@@ -136,7 +150,7 @@ describe("DingtalkDesigner 审批节点闭环", () => {
     await wrapper.find('[data-test="node-delete-approval_1"]').trigger("click");
     await flushPromises();
     // 插入新节点：nextNodeId 回收 approval_1
-    await wrapper.find('[data-test="insert-after-start"]').trigger("click");
+    await insertViaMenu(wrapper, "start");
     await flushPromises();
     // 回收 id 的新卡片不应处于 active 态
     expect(wrapper.findAll(".node-card--active")).toHaveLength(0);
@@ -364,6 +378,137 @@ describe("分支块交互（#24）", () => {
     await flushPromises();
     // 回收 id 的新卡片不应处于 active 态
     expect(wrapper.findAll(".node-card--active")).toHaveLength(0);
+    wrapper.unmount();
+  });
+});
+
+describe("多人审批与抄送（#25）", () => {
+  it("「+」菜单插入抄送节点：抽屉配收件人后导出 ccTo 与占位 delegate", async () => {
+    const model = buildChain();
+    const wrapper = mountDesigner(model);
+    await insertViaMenu(wrapper, "approval_1", "cc");
+    expect(wrapper.findAll('[data-test="node-card"]')).toHaveLength(4);
+
+    // 打开抄送抽屉（新节点是 ServiceTask），配收件人
+    const ccCard = wrapper
+      .findAll('[data-test="node-card"]')
+      .filter((w) => w.text().includes("抄送节点"))[0];
+    expect(ccCard).toBeDefined();
+    await ccCard!.trigger("click");
+    await flushPromises();
+    const recipients = document.querySelector<HTMLInputElement>('[data-test="drawer-recipients"]');
+    expect(recipients).not.toBeNull();
+    await setValue(recipients!, "张三,李四");
+    (document.querySelector('[data-test="drawer-save"]') as HTMLElement).click();
+    await flushPromises();
+
+    const xml = await exportXml(model);
+    expect(xml).toContain('flowable:ccTo="张三,李四"');
+    expect(xml).toContain('flowable:delegateExpression="${flowduetCcTask}"');
+    wrapper.unmount();
+  });
+
+  it("抽屉切会签：单人任务转多实例，导出多实例形态", async () => {
+    const model = buildChain();
+    const wrapper = mountDesigner(model);
+    await wrapper.findAll('[data-test="node-card"]')[1]!.trigger("click");
+    await flushPromises();
+
+    await wrapper.find('[data-test="kind-all"]').trigger("click");
+    const assignee = document.querySelector<HTMLInputElement>('[data-test="drawer-assignee"]');
+    await setValue(assignee!, "approvers");
+    (document.querySelector('[data-test="drawer-save"]') as HTMLElement).click();
+    await flushPromises();
+
+    const xml = await exportXml(model);
+    expect(xml).toContain('flowable:collection="approvers"');
+    expect(xml).toContain("nrOfCompletedInstances == nrOfInstances");
+    // 抽屉已关（EP Drawer 传送节点在 happy-dom 里残留，只查 open 态）
+    expect(document.querySelector(".el-drawer.open")).toBeNull();
+    wrapper.unmount();
+  });
+
+  it("会签切回单签：多实例移除，审批人留空（集合名不被当字面 assignee 落盘）", async () => {
+    const model = buildChain();
+    const wrapper = mountDesigner(model);
+    await wrapper.findAll('[data-test="node-card"]')[1]!.trigger("click");
+    await flushPromises();
+    await wrapper.find('[data-test="kind-all"]').trigger("click");
+    await setValue(
+      document.querySelector<HTMLInputElement>('[data-test="drawer-assignee"]')!,
+      "approvers",
+    );
+    (document.querySelector('[data-test="drawer-save"]') as HTMLElement).click();
+    await flushPromises();
+
+    // 再次打开抽屉：完成方式回显会签；切回单签保存
+    await wrapper.findAll('[data-test="node-card"]')[1]!.trigger("click");
+    await flushPromises();
+    expect(wrapper.find('[data-test="kind-all"]').classes()).toContain("kind-card--on");
+    await wrapper.find('[data-test="kind-single"]').trigger("click");
+    (document.querySelector('[data-test="drawer-save"]') as HTMLElement).click();
+    await flushPromises();
+
+    const xml = await exportXml(model);
+    expect(xml).not.toContain("multiInstanceLoopCharacteristics");
+    // C1 回归：多→单切换清空了集合变量缓冲，不能把 "approvers" 当字面 assignee 落盘
+    expect(xml).not.toContain('flowable:assignee="approvers"');
+    expect(model.elementOf("approval_1").get("assignee")).toBeUndefined();
+    wrapper.unmount();
+  });
+
+  it("切会签但审批人填成表达式：S1 形态校验拦截，模型不变", async () => {
+    const model = buildChain();
+    const wrapper = mountDesigner(model);
+    await wrapper.findAll('[data-test="node-card"]')[1]!.trigger("click");
+    await flushPromises();
+    await wrapper.find('[data-test="kind-all"]').trigger("click");
+    await setValue(
+      document.querySelector<HTMLInputElement>('[data-test="drawer-assignee"]')!,
+      "${manager}",
+    );
+    (document.querySelector('[data-test="drawer-save"]') as HTMLElement).click();
+    await flushPromises();
+
+    expect(wrapper.find('[data-test="action-error"]').text()).toContain("集合变量名");
+    // 校验失败：不落多实例、抽屉不关
+    expect(model.elementOf("approval_1").get("loopCharacteristics")).toBeUndefined();
+    wrapper.unmount();
+  });
+
+  it("插入抄送后不改收件人直接保存：W4 守卫拦截占位串，模型保持占位", async () => {
+    const model = buildChain();
+    const wrapper = mountDesigner(model);
+    await insertViaMenu(wrapper, "approval_1", "cc");
+    const ccCard = wrapper
+      .findAll('[data-test="node-card"]')
+      .filter((w) => w.text().includes("抄送节点"))[0];
+    await ccCard!.trigger("click");
+    await flushPromises();
+    // 不动收件人（仍是插入占位串），直接保存
+    (document.querySelector('[data-test="drawer-save"]') as HTMLElement).click();
+    await flushPromises();
+
+    expect(wrapper.find('[data-test="action-error"]').text()).toContain("抄送收件人");
+    // 守卫拦截：ccTo 仍是占位串，未被“保存”成真实名单
+    expect(model.elementOf("cc_1").get("ccTo")).toBe(CC_RECIPIENTS_PLACEHOLDER);
+    wrapper.unmount();
+  });
+
+  it("formKey 占位字段读写落模型", async () => {
+    const model = buildChain();
+    const wrapper = mountDesigner(model);
+    await wrapper.findAll('[data-test="node-card"]')[1]!.trigger("click");
+    await flushPromises();
+    await setValue(
+      document.querySelector<HTMLInputElement>('[data-test="drawer-formkey"]')!,
+      "leave_form_v1",
+    );
+    (document.querySelector('[data-test="drawer-save"]') as HTMLElement).click();
+    await flushPromises();
+
+    const xml = await exportXml(model);
+    expect(xml).toContain('flowable:formKey="leave_form_v1"');
     wrapper.unmount();
   });
 });
