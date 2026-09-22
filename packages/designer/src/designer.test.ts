@@ -323,4 +323,47 @@ describe("分支块交互（#24）", () => {
     expect(flow.get("name")).toBeUndefined();
     wrapper.unmount();
   });
+
+  it("抽屉守卫错误在下次成功保存后清除（二轮 W1：不留陈旧横幅）", async () => {
+    const model = buildBranching();
+    const wrapper = mountDesigner(model);
+    await wrapper.find('[data-test="default-toggle-fork1-0"]').trigger("click");
+    await wrapper.find('[data-test="branch-head-fork1-0"]').trigger("click");
+    await flushPromises();
+    const conditionInput = document.querySelector<HTMLInputElement>(
+      '[data-test="drawer-condition"]',
+    );
+    // 先造一次守卫错误（默认流转携条件）
+    await setValue(conditionInput!, "${amount > 1000}");
+    (document.querySelector('[data-test="drawer-save"]') as HTMLElement).click();
+    await flushPromises();
+    expect(wrapper.find('[data-test="action-error"]').exists()).toBe(true);
+    // 清空条件再次保存 → 保存成功 → 横幅清除
+    await setValue(conditionInput!, "");
+    (document.querySelector('[data-test="drawer-save"]') as HTMLElement).click();
+    await flushPromises();
+    expect(wrapper.find('[data-test="action-error"]').exists()).toBe(false);
+    wrapper.unmount();
+  });
+
+  it("删除含 active 节点的支路后重置 activeId（二轮 W2：回收 id 的新卡片不亮描边）", async () => {
+    const model = buildBranching();
+    const wrapper = mountDesigner(model);
+    // 加支路得 branch_node_1（3 支路）
+    await wrapper.find('[data-test="add-branch-fork1"]').trigger("click");
+    await flushPromises();
+    // start/before/a_node/b_node/branch_node_1/end → 点开第 5 张卡使其成为 active
+    await wrapper.findAll('[data-test="node-card"]')[4]!.trigger("click");
+    await flushPromises();
+    expect(wrapper.findAll(".node-card--active")).toHaveLength(1);
+    // 删除支路 3（含 branch_node_1）
+    await wrapper.find('[data-test="remove-branch-fork1-2"]').trigger("click");
+    await flushPromises();
+    // 再加支路：nextFreeId 回收 branch_node_1
+    await wrapper.find('[data-test="add-branch-fork1"]').trigger("click");
+    await flushPromises();
+    // 回收 id 的新卡片不应处于 active 态
+    expect(wrapper.findAll(".node-card--active")).toHaveLength(0);
+    wrapper.unmount();
+  });
 });

@@ -360,6 +360,11 @@ export function setBranchCondition(model: BpmnModel, flowId: string, condition: 
   if (source.$type !== "bpmn:ExclusiveGateway") {
     throw new Error(`连线 ${flowId} 的源不是排他网关，无条件可配`);
   }
+  // #24 二轮评审 S1：只有分支 fork（多出边）的出线可配条件——汇聚网关（join）单出线的
+  // 引擎语义不同，放行会让其他调用方误写；UI 只从支路头进入，此处收紧公开 API 契约。
+  if (outgoingOf(model, source.get("id") as string).length <= 1) {
+    throw new Error(`连线 ${flowId} 的源是汇聚侧网关（单出线），只有分支 fork 的出线可配条件`);
+  }
   const trimmed = condition.trim();
   if (trimmed === "") {
     flow.set("conditionExpression", undefined);

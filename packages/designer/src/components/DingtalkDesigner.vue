@@ -51,7 +51,9 @@ const tree = computed<BlockTreeNode[]>(() => treeResult.value.items);
 watch(
   () => treeResult.value.error,
   (err) => {
-    if (err !== "") actionError.value = err;
+    // 双向同步（#24 二轮评审 W1）：模型从坏恢复（err 变 ""）时同样清掉旧横幅，
+    // 不让陈旧错误残留在画布上。
+    actionError.value = err;
   },
 );
 
@@ -119,7 +121,10 @@ function addBranch(forkId: string): void {
 }
 
 function removeBranchFrom(forkId: string, branchIndex: number): void {
-  runGuarded(() => removeBranch(model.value, forkId, branchIndex));
+  runGuarded(() => {
+    removeBranch(model.value, forkId, branchIndex);
+    clearStaleActive();
+  });
 }
 
 function applyDefault(forkId: string, branchIndex: number | null): void {
@@ -127,7 +132,25 @@ function applyDefault(forkId: string, branchIndex: number | null): void {
 }
 
 function removeBlockAt(forkId: string): void {
-  runGuarded(() => removeBlock(model.value, forkId));
+  runGuarded(() => {
+    removeBlock(model.value, forkId);
+    clearStaleActive();
+  });
+}
+
+/**
+ * 块级删除后的 stale active 清理（#24 二轮评审 W2）：被删支路/块可能包含当前 active
+ * 元素（节点或支路头连线）——activeId 滞留会让 id 回收后的新卡片凭空亮起 active 描边，
+ * 与 deleteNode 的清理口径一致。仅在守卫后的成功路径调用；元素仍在时为 no-op。
+ */
+function clearStaleActive(): void {
+  if (activeId.value === undefined) return;
+  try {
+    model.value.elementOf(activeId.value);
+  } catch {
+    activeId.value = undefined;
+    drawerVisible.value = false;
+  }
 }
 
 /** 支路头点击：抽屉切到条件编辑形态（activeId 指向支路头连线） */
@@ -141,6 +164,12 @@ function openBranchConfig(flowId: string | undefined): void {
 /** 抽屉守卫抛错接入内联提示（#24 评审 W4） */
 function onDrawerError(message: string): void {
   actionError.value = message;
+}
+
+/** 抽屉保存成功：清掉上一次守卫错误横幅（#24 二轮评审 W1），再触发重算 */
+function onDrawerSaved(): void {
+  actionError.value = "";
+  refresh();
 }
 </script>
 
@@ -165,7 +194,7 @@ function onDrawerError(message: string): void {
       v-model="drawerVisible"
       :model="model"
       :node-id="activeId"
-      @saved="refresh"
+      @saved="onDrawerSaved"
       @error="onDrawerError"
     />
   </div>

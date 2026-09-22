@@ -7,6 +7,7 @@ import {
   removeApprovalNode,
   removeBlock,
   removeBranch,
+  setBranchCondition,
   setDefaultBranch,
 } from "./operations.js";
 import { exportXml } from "./export.js";
@@ -381,5 +382,85 @@ describe("嵌套删除回归（#24 评审 C1/C2/C3）", () => {
     }
     // 未被拒绝前导出仍可用
     expect(deriveBlockTree(model).find((n) => n.kind === "block")).toBeDefined();
+  });
+
+  /** 二轮评审边界：外层支路内串行两个嵌套块（块 → 块），验证 C3 守卫不误杀 */
+  function buildSerialBlocks(): BpmnModel {
+    return BpmnModel.create({ processId: "serial_blocks", adapter: flowableAdapter })
+      .addStartEvent({ id: "start" })
+      .addUserTask({ id: "before" })
+      .addExclusiveGateway({ id: "outer_fork" })
+      .addExclusiveGateway({ id: "fa" })
+      .addUserTask({ id: "a1" })
+      .addUserTask({ id: "a2" })
+      .addExclusiveGateway({ id: "ja" })
+      .addExclusiveGateway({ id: "fb" })
+      .addUserTask({ id: "b1" })
+      .addUserTask({ id: "b2" })
+      .addExclusiveGateway({ id: "jb" })
+      .addUserTask({ id: "x_node" })
+      .addExclusiveGateway({ id: "outer_join" })
+      .addEndEvent({ id: "end" })
+      .addSequenceFlow({ id: "f0", sourceRef: "start", targetRef: "before" })
+      .addSequenceFlow({ id: "f1", sourceRef: "before", targetRef: "outer_fork" })
+      .addSequenceFlow({ id: "fx", sourceRef: "outer_fork", targetRef: "x_node" })
+      .addSequenceFlow({ id: "fia", sourceRef: "outer_fork", targetRef: "fa" })
+      .addSequenceFlow({ id: "fa1", sourceRef: "fa", targetRef: "a1" })
+      .addSequenceFlow({ id: "fa2", sourceRef: "fa", targetRef: "a2" })
+      .addSequenceFlow({ id: "fa1j", sourceRef: "a1", targetRef: "ja" })
+      .addSequenceFlow({ id: "fa2j", sourceRef: "a2", targetRef: "ja" })
+      .addSequenceFlow({ id: "faj_b", sourceRef: "ja", targetRef: "fb" })
+      .addSequenceFlow({ id: "fb1", sourceRef: "fb", targetRef: "b1" })
+      .addSequenceFlow({ id: "fb2", sourceRef: "fb", targetRef: "b2" })
+      .addSequenceFlow({ id: "fb1j", sourceRef: "b1", targetRef: "jb" })
+      .addSequenceFlow({ id: "fb2j", sourceRef: "b2", targetRef: "jb" })
+      .addSequenceFlow({ id: "fbj_oj", sourceRef: "jb", targetRef: "outer_join" })
+      .addSequenceFlow({ id: "fx_oj", sourceRef: "x_node", targetRef: "outer_join" })
+      .addSequenceFlow({ id: "foj_e", sourceRef: "outer_join", targetRef: "end" });
+  }
+
+  it("支路首节点即嵌套块：删该支路级联完整且导出可用（二轮评审边界）", async () => {
+    const model = buildBlockAsWholeBranch();
+    addBranchToBlock(model, "outer_fork"); // 外层 3 支后才允许删支
+    removeBranch(model, "outer_fork", 1); // 删「整块即支路」的支 2
+    for (const id of ["inner_fork", "inner_join", "r_node", "arch_node"]) {
+      expect(() => model.elementOf(id)).toThrow();
+    }
+    expect(() => model.elementOf("x_node")).not.toThrow();
+    const xml = await exportXml(model);
+    expect(xml).toContain("<bpmndi:BPMNDiagram");
+  });
+
+  it("串行双块：删后块仅收缩该块，前块与外层完好（C3 守卫不误杀）", async () => {
+    const model = buildSerialBlocks();
+    removeBlock(model, "fb"); // prev 是 ja（单出边 join），不应触发空分支守卫
+    for (const id of ["fb", "jb", "b1", "b2"]) {
+      expect(() => model.elementOf(id)).toThrow();
+    }
+    for (const id of ["fa", "ja", "a1", "a2", "x_node", "outer_fork", "outer_join"]) {
+      expect(() => model.elementOf(id)).not.toThrow();
+    }
+    expect(await exportXml(model)).toContain("<bpmndi:BPMNDiagram");
+  });
+
+  it("串行双块：删前块仅收缩该块，后块成为支路首且导出可用（C3 守卫不误杀）", async () => {
+    const model = buildSerialBlocks();
+    removeBlock(model, "fa"); // next 是 fb（单入边 fork），不应触发空分支守卫
+    for (const id of ["fa", "ja", "a1", "a2"]) {
+      expect(() => model.elementOf(id)).toThrow();
+    }
+    for (const id of ["fb", "jb", "b1", "b2", "x_node"]) {
+      expect(() => model.elementOf(id)).not.toThrow();
+    }
+    expect(await exportXml(model)).toContain("<bpmndi:BPMNDiagram");
+  });
+});
+
+describe("分支条件守卫（#24 二轮评审 S1）", () => {
+  it("汇聚网关出线拒绝配条件：只有分支 fork 的出线可配", () => {
+    const model = buildBranching();
+    expect(() => setBranchCondition(model, "fj", "${x > 1}")).toThrow(/汇聚/);
+    // fork 出线不受影响
+    expect(() => setBranchCondition(model, "fa", "${x > 1}")).not.toThrow();
   });
 });
