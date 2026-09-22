@@ -87,8 +87,12 @@ export function removeApprovalNode(model: BpmnModel, nodeId: string): void {
     const prevIsFork = outgoingOf(model, prevId).length > 1;
     const nextIsJoin = incomingOf(model, nextId).length > 1;
     if (prevIsFork && nextIsJoin) {
+      // 面向用户的可读提示（#24 评审 S7）：不暴露内部 API 名，指向 UI 上的操作入口
+      const rawName = model.elementOf(nodeId).get("name");
+      const label =
+        rawName === undefined || String(rawName).trim() === "" ? nodeId : String(rawName);
       throw new Error(
-        `节点 ${nodeId} 是分支块内唯一节点，删除会产生空分支（fork 直连 join），竖排推导不支持；请用块级操作 removeBranch / removeBlock`,
+        `「${label}」是分支内唯一节点，删除会留下空分支（fork 直连 join）；请改用「删除分支」或「删块」`,
       );
     }
     model.removeNode(nodeId);
@@ -130,7 +134,13 @@ function findBlock(
 function resolveFork(
   model: BpmnModel,
   forkId: string,
-): { fork: ModdleElement; joinId: string; branchCount: number } {
+): {
+  fork: ModdleElement;
+  joinId: string;
+  branchCount: number;
+  /** 全量 fork→join 配对（良构图上一次建表，供级联删除查表；#24 评审 S6：不再重复推导） */
+  joinMap: Map<string, string>;
+} {
   let fork: ModdleElement;
   try {
     fork = model.elementOf(forkId);
@@ -140,11 +150,15 @@ function resolveFork(
   if (fork.$type !== "bpmn:ExclusiveGateway" && fork.$type !== "bpmn:ParallelGateway") {
     throw new Error(`节点 ${forkId} 不是网关，分支块操作只对 fork 网关生效`);
   }
-  const block = findBlock(deriveBlockTree(model), forkId);
+  // 块树只推导一次：既定位 fork 的配对 join，又建全量 fork→join 表供级联删除复用
+  const tree = deriveBlockTree(model);
+  const block = findBlock(tree, forkId);
   if (block === undefined) {
     throw new Error(`网关 ${forkId} 不是分支块（单出边网关）或图不良构`);
   }
-  return { fork, joinId: block.joinId, branchCount: block.branches.length };
+  const joinMap = new Map<string, string>();
+  collectJoinMap(tree, joinMap);
+  return { fork, joinId: block.joinId, branchCount: block.branches.length, joinMap };
 }
 
 /**
@@ -210,14 +224,17 @@ function removeBranchChain(
           removeBranchChain(model, childFirst, nestedJoinId, joinMap);
         }
       }
-      // 嵌套 join 出边唯一（钉钉式保证）——先取出边再删（嵌套 fork 与 join 一并清）
-      const joinOuts = outgoingOf(model, nestedJoinId);
+      // 嵌套 join 出边唯一（钉钉式保证）。#24 评审 C2：outgoingOf 返回的是 moddle 上的
+      // 活数组引用，removeNode 会 splice 清空它——必须在删之前把「首元素的 targetRef id」
+      // 取成值，否则删完再读 joinOuts[0] 恒为 undefined，嵌套块之后的节点会静默漏删。
+      const joinOutFlow = outgoingOf(model, nestedJoinId)[0];
+      const afterNestedId =
+        joinOutFlow === undefined
+          ? undefined
+          : ((joinOutFlow.get("targetRef") as ModdleElement).get("id") as string);
       model.removeNode(curId);
       model.removeNode(nestedJoinId);
-      curId =
-        joinOuts[0] === undefined
-          ? undefined
-          : ((joinOuts[0].get("targetRef") as ModdleElement).get("id") as string);
+      curId = afterNestedId;
       continue;
     }
     const next = outs[0];
@@ -234,9 +251,7 @@ function removeBranchChain(
  * 级联删除该支路全部节点与连线；块至少保留两条支路。
  */
 export function removeBranch(model: BpmnModel, forkId: string, branchIndex: number): void {
-  const { joinId, branchCount } = resolveFork(model, forkId);
-  const joinMap = new Map<string, string>();
-  collectJoinMap(deriveBlockTree(model), joinMap);
+  const { joinId, branchCount, joinMap } = resolveFork(model, forkId);
   const branchFlows = outgoingOf(model, forkId);
   const flow = branchFlows[branchIndex];
   if (flow === undefined) {
@@ -246,17 +261,10 @@ export function removeBranch(model: BpmnModel, forkId: string, branchIndex: numb
     throw new Error(`分支块 ${forkId} 至少需要两条支路`);
   }
   const firstNodeId = (flow.get("targetRef") as ModdleElement).get("id") as string;
-  // 沿支路链级联删除直到 join（嵌套块的删除经块级操作或递归支路删除覆盖）
-  let curId: string | undefined = firstNodeId;
-  while (curId !== undefined && curId !== joinId) {
-    const outs = outgoingOf(model, curId);
-    const next = outs[0];
-    model.removeNode(curId);
-    curId =
-      next === undefined
-        ? undefined
-        : ((next.get("targetRef") as ModdleElement).get("id") as string);
-  }
+  // #24 评审 C1：删「含嵌套块的支路」必须走与 removeBlock 同一套递归级联，
+  // 否则只沿 outs[0] 下行会漏删嵌套 fork 的其余子支路、泄漏孤儿节点、导出永久失败。
+  // 校验（越界 / 至少两支）已全部前置，动刀前模型仍良构。
+  removeBranchChain(model, firstNodeId, joinId, joinMap);
 }
 
 /**
@@ -264,9 +272,7 @@ export function removeBranch(model: BpmnModel, forkId: string, branchIndex: numb
  * fork 必须恰有一条入边（主链中间的块）；入边不唯一时拒绝。
  */
 export function removeBlock(model: BpmnModel, forkId: string): void {
-  const { joinId } = resolveFork(model, forkId);
-  const joinMap = new Map<string, string>();
-  collectJoinMap(deriveBlockTree(model), joinMap);
+  const { joinId, joinMap } = resolveFork(model, forkId);
   const incoming = incomingOf(model, forkId);
   if (incoming.length !== 1) {
     throw new Error(`分支块 ${forkId} 的入边数是 ${incoming.length}，块级删除要求恰在主链中间`);
@@ -278,6 +284,16 @@ export function removeBlock(model: BpmnModel, forkId: string): void {
     throw new Error(`join ${joinId} 出边必须唯一（钉钉式生成保证）`);
   }
   const nextId = (joinOut.get("targetRef") as ModdleElement).get("id") as string;
+  // #24 评审 C3：本块若正是外层某支路的全部内容（前驱是外层 fork、后继是外层 join），
+  // 重链 prev→next 会产出「外层 fork 直连外层 join」的空分支——deriveBlockTree 渲染期抛错、
+  // 模型不可逆损坏。与 removeApprovalNode 的空分支防护同口径，在任何 removeNode 之前拒绝。
+  const prevIsFork = outgoingOf(model, prevId).length > 1;
+  const nextIsJoin = incomingOf(model, nextId).length > 1;
+  if (prevIsFork && nextIsJoin) {
+    throw new Error(
+      `分支块 ${forkId} 是外层支路的全部内容，删块会留下空分支（fork 直连 join）；请改删外层支路，或先在支路内保留一个节点`,
+    );
+  }
   // 先删全部支路（引用 fork/join 的连线随之清理），再删 fork/join，最后重链
   const branchFlows = [...outgoingOf(model, forkId)];
   for (const flow of branchFlows) {
@@ -361,17 +377,31 @@ export function setBranchCondition(model: BpmnModel, flowId: string, condition: 
  * 支路头连线 id（#24）：fork → 指定支路首元素的出线。
  * 与 removeBranch 同一定位语义（出边序 = 支路渲染序）。
  */
-export function branchHeadFlowId(model: BpmnModel, forkId: string, branchIndex: number): string {
-  const flow = outgoingOf(model, forkId)[branchIndex];
-  if (flow === undefined) {
-    throw new Error(`分支块 ${forkId} 的支路 ${branchIndex + 1} 不存在`);
+export function branchHeadFlowId(
+  model: BpmnModel,
+  forkId: string,
+  branchIndex: number,
+): string | undefined {
+  // #24 评审 S8：读函数改为非抛出式——调用点（模板事件/渲染）拿到 undefined 即安全降级，
+  // 不让半损态模型的异常冒进渲染期或事件处理器。
+  let flow: ModdleElement | undefined;
+  try {
+    flow = outgoingOf(model, forkId)[branchIndex];
+  } catch {
+    return undefined;
   }
-  return flow.get("id") as string;
+  return flow === undefined ? undefined : (flow.get("id") as string);
 }
 
-/** 判定支路是否为默认分支（渲染「· 默认」标记用；非排他网关恒 false） */
+/** 判定支路是否为默认分支（渲染「· 默认」标记用；非排他网关或查不到恒 false） */
 export function isDefaultBranch(model: BpmnModel, forkId: string, branchIndex: number): boolean {
-  const gateway = model.elementOf(forkId);
+  // 非抛出式（#24 评审 S8）：渲染期直接调用，查不到元素即返回 false，不带异常进渲染
+  let gateway: ModdleElement;
+  try {
+    gateway = model.elementOf(forkId);
+  } catch {
+    return false;
+  }
   if (gateway.$type !== "bpmn:ExclusiveGateway") return false;
   const flow = outgoingOf(model, forkId)[branchIndex];
   return flow !== undefined && gateway.get("default") === flow;

@@ -2,7 +2,7 @@
 import type { BlockTreeNode, BpmnModel } from "@flowduet/core";
 import NodeCard from "./NodeCard.vue";
 import BlockNodeList from "./BlockNodeList.vue";
-import { branchHeadFlowId, isDefaultBranch } from "../operations.js";
+import { branchHeadFlowId } from "../operations.js";
 
 /**
  * 递归块树渲染：元素出卡片，块出着色容器（浅靛蓝容器 + 左轨 + 标签，
@@ -15,6 +15,11 @@ defineProps<{
   /** exactOptional 下显式传 undefined 是合法形态（未选中节点时） */
   activeId?: string | undefined;
   model: BpmnModel;
+  /**
+   * 默认态映射（forkId → 默认支路序），由宿主一次算好随递归下传（#24 评审 S8）：
+   * 避免每条支路在模板里重复调读函数，也彻底避开渲染期抛错风险。
+   */
+  defaultIndexByFork: Map<string, number>;
 }>();
 
 defineEmits<{
@@ -25,7 +30,7 @@ defineEmits<{
   removeBranch: [forkId: string, branchIndex: number];
   setDefault: [forkId: string, branchIndex: number | null];
   removeBlock: [forkId: string];
-  branchConfig: [flowId: string];
+  branchConfig: [flowId: string | undefined];
 }>();
 
 function insertable(item: BlockTreeNode): boolean {
@@ -64,15 +69,15 @@ function insertable(item: BlockTreeNode): boolean {
             v-for="(branch, i) in item.gateway === 'exclusive' ? item.branches : []"
             :key="`d${i}`"
             class="default-toggle"
-            :class="{ 'default-toggle--on': isDefaultBranch(model, item.forkId, i) }"
+            :class="{ 'default-toggle--on': defaultIndexByFork.get(item.forkId) === i }"
             :data-test="`default-toggle-${item.forkId}-${i}`"
             :title="
-              isDefaultBranch(model, item.forkId, i)
+              defaultIndexByFork.get(item.forkId) === i
                 ? '点击取消默认（其余情况无兜底支路）'
                 : '把该支路设为默认（其余情况走此支路）'
             "
             @click="
-              $emit('setDefault', item.forkId, isDefaultBranch(model, item.forkId, i) ? null : i)
+              $emit('setDefault', item.forkId, defaultIndexByFork.get(item.forkId) === i ? null : i)
             "
           >
             默认{{ i + 1 }}
@@ -105,7 +110,7 @@ function insertable(item: BlockTreeNode): boolean {
                 title="配置此分支的条件表达式"
                 @click="$emit('branchConfig', branchHeadFlowId(model, item.forkId, i))"
               >
-                支路 {{ i + 1 }}{{ isDefaultBranch(model, item.forkId, i) ? " · 默认" : "" }}
+                支路 {{ i + 1 }}{{ defaultIndexByFork.get(item.forkId) === i ? " · 默认" : "" }}
               </button>
               <span v-else class="branch-tag">支路 {{ i + 1 }}</span>
               <button
@@ -122,6 +127,7 @@ function insertable(item: BlockTreeNode): boolean {
               :items="branch"
               :active-id="activeId"
               :model="model"
+              :default-index-by-fork="defaultIndexByFork"
               @open="$emit('open', $event)"
               @delete="$emit('delete', $event)"
               @insert="$emit('insert', $event)"

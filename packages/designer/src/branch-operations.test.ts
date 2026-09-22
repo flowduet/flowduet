@@ -1,3 +1,4 @@
+// @vitest-environment happy-dom
 import { describe, expect, it } from "vitest";
 import { BpmnModel, flowableAdapter } from "@flowduet/core";
 import { deriveBlockTree } from "@flowduet/core";
@@ -8,11 +9,12 @@ import {
   removeBranch,
   setDefaultBranch,
 } from "./operations.js";
+import { exportXml } from "./export.js";
 
 /**
  * 分支块交互（#24）：块内加支路 / 删支路 / 删整块 / 默认分支切换。
- * 契约基于 deriveBlockTree 的块树读视图（与渲染共用），编辑后块树必须
- * 反映正确——导出由既有链保证。
+ * 契约基于 deriveBlockTree 的块树读视图（与渲染共用），编辑后块树必须反映正确；
+ * 嵌套删除的导出一致性（#24 评审 C1/C2/C3 回归）在文件末尾直接断言 exportXml。
  */
 
 /** 最小条件分支：开始 → fork{ 条件A→审批A；条件B→审批B } → join → 结束 */
@@ -230,5 +232,154 @@ describe("嵌套块删除（评审修复：递归级联）", () => {
     ]) {
       expect(() => model.elementOf(id)).toThrow();
     }
+  });
+});
+
+describe("嵌套删除回归（#24 评审 C1/C2/C3）", () => {
+  /**
+   * C1 场景：外层排他块三支，第 3 支内含一个嵌套排他块
+   * （支路内容 = y_node → 内层块{r,arch}，非整支即块）。
+   */
+  function buildOuterWithNestedBranch(): BpmnModel {
+    return BpmnModel.create({ processId: "nested_branch", adapter: flowableAdapter })
+      .addStartEvent({ id: "start" })
+      .addUserTask({ id: "before" })
+      .addExclusiveGateway({ id: "outer_fork" })
+      .addUserTask({ id: "p_node" })
+      .addUserTask({ id: "q_node" })
+      .addUserTask({ id: "y_node" })
+      .addExclusiveGateway({ id: "inner_fork" })
+      .addUserTask({ id: "r_node" })
+      .addUserTask({ id: "arch_node" })
+      .addExclusiveGateway({ id: "inner_join" })
+      .addExclusiveGateway({ id: "outer_join" })
+      .addEndEvent({ id: "end" })
+      .addSequenceFlow({ id: "f0", sourceRef: "start", targetRef: "before" })
+      .addSequenceFlow({ id: "f1", sourceRef: "before", targetRef: "outer_fork" })
+      .addSequenceFlow({ id: "fp", sourceRef: "outer_fork", targetRef: "p_node" })
+      .addSequenceFlow({ id: "fq", sourceRef: "outer_fork", targetRef: "q_node" })
+      .addSequenceFlow({ id: "fy", sourceRef: "outer_fork", targetRef: "y_node" })
+      .addSequenceFlow({ id: "fp_j", sourceRef: "p_node", targetRef: "outer_join" })
+      .addSequenceFlow({ id: "fq_j", sourceRef: "q_node", targetRef: "outer_join" })
+      .addSequenceFlow({ id: "fy_i", sourceRef: "y_node", targetRef: "inner_fork" })
+      .addSequenceFlow({ id: "fi_r", sourceRef: "inner_fork", targetRef: "r_node" })
+      .addSequenceFlow({ id: "fi_a", sourceRef: "inner_fork", targetRef: "arch_node" })
+      .addSequenceFlow({ id: "fr_j", sourceRef: "r_node", targetRef: "inner_join" })
+      .addSequenceFlow({ id: "fa_j", sourceRef: "arch_node", targetRef: "inner_join" })
+      .addSequenceFlow({ id: "fij_oj", sourceRef: "inner_join", targetRef: "outer_join" })
+      .addSequenceFlow({ id: "foj_e", sourceRef: "outer_join", targetRef: "end" });
+  }
+
+  /** C2 场景：支路 = y_node → 内层块{r,arch} → z_node（嵌套块之后还有节点） */
+  function buildNestedThenNode(): BpmnModel {
+    return BpmnModel.create({ processId: "nested_then_node", adapter: flowableAdapter })
+      .addStartEvent({ id: "start" })
+      .addUserTask({ id: "before" })
+      .addExclusiveGateway({ id: "outer_fork" })
+      .addUserTask({ id: "x_node" })
+      .addUserTask({ id: "y_node" })
+      .addExclusiveGateway({ id: "inner_fork" })
+      .addUserTask({ id: "r_node" })
+      .addUserTask({ id: "arch_node" })
+      .addExclusiveGateway({ id: "inner_join" })
+      .addUserTask({ id: "z_node" })
+      .addExclusiveGateway({ id: "outer_join" })
+      .addEndEvent({ id: "end" })
+      .addSequenceFlow({ id: "f0", sourceRef: "start", targetRef: "before" })
+      .addSequenceFlow({ id: "f1", sourceRef: "before", targetRef: "outer_fork" })
+      .addSequenceFlow({ id: "fx", sourceRef: "outer_fork", targetRef: "x_node" })
+      .addSequenceFlow({ id: "fy", sourceRef: "outer_fork", targetRef: "y_node" })
+      .addSequenceFlow({ id: "fx_j", sourceRef: "x_node", targetRef: "outer_join" })
+      .addSequenceFlow({ id: "fy_i", sourceRef: "y_node", targetRef: "inner_fork" })
+      .addSequenceFlow({ id: "fi_r", sourceRef: "inner_fork", targetRef: "r_node" })
+      .addSequenceFlow({ id: "fi_a", sourceRef: "inner_fork", targetRef: "arch_node" })
+      .addSequenceFlow({ id: "fr_j", sourceRef: "r_node", targetRef: "inner_join" })
+      .addSequenceFlow({ id: "fa_j", sourceRef: "arch_node", targetRef: "inner_join" })
+      .addSequenceFlow({ id: "fij_z", sourceRef: "inner_join", targetRef: "z_node" })
+      .addSequenceFlow({ id: "fz_j", sourceRef: "z_node", targetRef: "outer_join" })
+      .addSequenceFlow({ id: "foj_e", sourceRef: "outer_join", targetRef: "end" });
+  }
+
+  /** C3 场景：外层排他块的第 2 支全部内容就是一个内层并行块（playground demo 同构） */
+  function buildBlockAsWholeBranch(): BpmnModel {
+    return BpmnModel.create({ processId: "block_as_branch", adapter: flowableAdapter })
+      .addStartEvent({ id: "start" })
+      .addUserTask({ id: "before" })
+      .addExclusiveGateway({ id: "outer_fork" })
+      .addUserTask({ id: "x_node" })
+      .addParallelGateway({ id: "inner_fork" })
+      .addUserTask({ id: "r_node" })
+      .addUserTask({ id: "arch_node" })
+      .addParallelGateway({ id: "inner_join" })
+      .addExclusiveGateway({ id: "outer_join" })
+      .addEndEvent({ id: "end" })
+      .addSequenceFlow({ id: "f0", sourceRef: "start", targetRef: "before" })
+      .addSequenceFlow({ id: "f1", sourceRef: "before", targetRef: "outer_fork" })
+      .addSequenceFlow({ id: "fx", sourceRef: "outer_fork", targetRef: "x_node" })
+      .addSequenceFlow({ id: "fi", sourceRef: "outer_fork", targetRef: "inner_fork" })
+      .addSequenceFlow({ id: "fx_j", sourceRef: "x_node", targetRef: "outer_join" })
+      .addSequenceFlow({ id: "fi_r", sourceRef: "inner_fork", targetRef: "r_node" })
+      .addSequenceFlow({ id: "fi_a", sourceRef: "inner_fork", targetRef: "arch_node" })
+      .addSequenceFlow({ id: "fr_j", sourceRef: "r_node", targetRef: "inner_join" })
+      .addSequenceFlow({ id: "fa_j", sourceRef: "arch_node", targetRef: "inner_join" })
+      .addSequenceFlow({ id: "fij_oj", sourceRef: "inner_join", targetRef: "outer_join" })
+      .addSequenceFlow({ id: "foj_e", sourceRef: "outer_join", targetRef: "end" });
+  }
+
+  it("C1：删「含嵌套块的支路」递归级联——无孤儿节点且导出可用", async () => {
+    const model = buildOuterWithNestedBranch();
+    removeBranch(model, "outer_fork", 2);
+    // 支路内嵌套块全部内容级联删除（旧实现会漏删 arch_node 成孤儿）
+    for (const id of ["y_node", "inner_fork", "r_node", "arch_node", "inner_join"]) {
+      expect(() => model.elementOf(id)).toThrow();
+    }
+    for (const id of ["outer_fork", "outer_join", "p_node", "q_node"]) {
+      expect(() => model.elementOf(id)).not.toThrow();
+    }
+    expect(blockOf(model).branches).toHaveLength(2);
+    // AC#5 导出一致：不抛且不含被删节点
+    const xml = await exportXml(model);
+    expect(xml).not.toContain('id="arch_node"');
+    expect(xml).toContain("<bpmndi:BPMNDiagram");
+  });
+
+  it("C2：删整块时嵌套块之后的节点不被漏删（活数组 splice 陷阱）", async () => {
+    const model = buildNestedThenNode();
+    removeBlock(model, "outer_fork");
+    for (const id of [
+      "outer_fork",
+      "outer_join",
+      "x_node",
+      "y_node",
+      "inner_fork",
+      "inner_join",
+      "r_node",
+      "arch_node",
+      "z_node",
+    ]) {
+      expect(() => model.elementOf(id)).toThrow();
+    }
+    const xml = await exportXml(model);
+    expect(xml).not.toContain('id="z_node"');
+    expect(xml).toContain("<bpmndi:BPMNDiagram");
+  });
+
+  it("C3：删「作为外层支路全部内容」的嵌套块被拒绝且模型不变", () => {
+    const model = buildBlockAsWholeBranch();
+    expect(() => removeBlock(model, "inner_fork")).toThrow(/空分支/);
+    // validate-then-mutate：守卫在任何 removeNode 之前，模型完好
+    for (const id of [
+      "inner_fork",
+      "inner_join",
+      "r_node",
+      "arch_node",
+      "outer_fork",
+      "outer_join",
+      "x_node",
+    ]) {
+      expect(() => model.elementOf(id)).not.toThrow();
+    }
+    // 未被拒绝前导出仍可用
+    expect(deriveBlockTree(model).find((n) => n.kind === "block")).toBeDefined();
   });
 });

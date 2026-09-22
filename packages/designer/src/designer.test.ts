@@ -294,4 +294,33 @@ describe("分支块交互（#24）", () => {
     expect(xml).toContain("conditionExpression");
     wrapper.unmount();
   });
+
+  it("条件抽屉守卫（W4）：给默认支路写条件被拦截，呈现可读错误且不半写模型", async () => {
+    const model = buildBranching();
+    const wrapper = mountDesigner(model);
+    // 先把支路1（fa）设为默认流转
+    await wrapper.find('[data-test="default-toggle-fork1-0"]').trigger("click");
+    // 再打开支路1的条件抽屉，填入条件并保存
+    await wrapper.find('[data-test="branch-head-fork1-0"]').trigger("click");
+    await flushPromises();
+    const nameInput = document.querySelector<HTMLInputElement>('[data-test="drawer-name"]');
+    const conditionInput = document.querySelector<HTMLInputElement>(
+      '[data-test="drawer-condition"]',
+    );
+    expect(conditionInput).not.toBeNull();
+    await setValue(nameInput!, "改个名");
+    await setValue(conditionInput!, "${amount > 1000}");
+    (document.querySelector('[data-test="drawer-save"]') as HTMLElement).click();
+    await flushPromises();
+
+    // 守卫抛错经 error emit 接入内联提示（AC#2：UI 呈现可读错误）
+    const errEl = wrapper.find('[data-test="action-error"]');
+    expect(errEl.exists()).toBe(true);
+    expect(errEl.text()).toContain("默认流转");
+    // 未半写：条件未落、名称也未落（先校验后写）
+    const flow = model.elementOf("fa");
+    expect(flow.get("conditionExpression")).toBeUndefined();
+    expect(flow.get("name")).toBeUndefined();
+    wrapper.unmount();
+  });
 });

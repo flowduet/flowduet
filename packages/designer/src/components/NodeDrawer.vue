@@ -17,6 +17,8 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   saved: [];
+  /** 守卫抛错的可读消息（#24 评审 W4）：由宿主接入内联提示通道，不冒泡炸视图 */
+  error: [message: string];
 }>();
 
 const visible = defineModel<boolean>({ default: false });
@@ -71,15 +73,22 @@ function save(): void {
     visible.value = false;
     return;
   }
+  // #24 评审 W4：条件写回可能因守卫抛错（如默认流转不得携条件）——先校验后写，
+  // 避免半写模型（name 已落、condition 未落）；抛错时不写名、不关抽屉、不发 saved，
+  // 而是经 error emit 接入宿主的内联可读提示（AC#2「UI 呈现可读错误」）。
+  if (isBranchHead.value) {
+    try {
+      setBranchCondition(props.model, props.nodeId, condition.value);
+    } catch (e) {
+      emit("error", e instanceof Error ? e.message : String(e));
+      return;
+    }
+  }
   // trim 后再落盘：前后空白原样进 XML 会让引擎按带空格变量名解析、静默取不到人
   const trimmedName = name.value.trim();
   const trimmedAssignee = assignee.value.trim();
   el.set("name", trimmedName === "" ? undefined : trimmedName);
   el.set("assignee", trimmedAssignee === "" ? undefined : trimmedAssignee);
-  if (isBranchHead.value) {
-    // 条件字段（仅排他网关支路头）：空串=清条件；与默认标记互斥由操作守卫兜底
-    setBranchCondition(props.model, props.nodeId, condition.value);
-  }
   visible.value = false;
   emit("saved");
 }
