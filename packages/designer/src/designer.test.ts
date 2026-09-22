@@ -261,6 +261,20 @@ describe("分支块交互（#24）", () => {
     wrapper.unmount();
   });
 
+  it("默认开关 toggle：再次点击当前默认支路的按钮即取消默认", async () => {
+    const model = buildBranching();
+    const wrapper = mountDesigner(model);
+    await wrapper.find('[data-test="default-toggle-fork1-1"]').trigger("click");
+    expect(await exportXml(model)).toContain('default="fb"');
+    // 再点同一支路 → 取消默认
+    await wrapper.find('[data-test="default-toggle-fork1-1"]').trigger("click");
+    const xml = await exportXml(model);
+    expect(xml).not.toContain("default=");
+    // 支路头标记同步消失
+    expect(wrapper.find('[data-test="branch-head-fork1-1"]').text()).not.toContain("默认");
+    wrapper.unmount();
+  });
+
   it("条件抽屉：支路头点击开抽屉，条件表达式写回 FormalExpression", async () => {
     const model = buildBranching();
     const wrapper = mountDesigner(model);

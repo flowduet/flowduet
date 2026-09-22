@@ -100,7 +100,7 @@ describe("removeBranch", () => {
 
   it("支路索引越界即抛错", () => {
     const model = buildBranching();
-    expect(() => removeBranch(model, "fork1", 5)).toThrow(/支路 5 不存在/);
+    expect(() => removeBranch(model, "fork1", 5)).toThrow(/支路 6 不存在/);
   });
 });
 

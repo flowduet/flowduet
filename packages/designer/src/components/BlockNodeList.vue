@@ -64,9 +64,16 @@ function insertable(item: BlockTreeNode): boolean {
             v-for="(branch, i) in item.gateway === 'exclusive' ? item.branches : []"
             :key="`d${i}`"
             class="default-toggle"
+            :class="{ 'default-toggle--on': isDefaultBranch(model, item.forkId, i) }"
             :data-test="`default-toggle-${item.forkId}-${i}`"
-            title="把该支路设为默认（其余情况走此支路）"
-            @click="$emit('setDefault', item.forkId, i)"
+            :title="
+              isDefaultBranch(model, item.forkId, i)
+                ? '点击取消默认（其余情况无兜底支路）'
+                : '把该支路设为默认（其余情况走此支路）'
+            "
+            @click="
+              $emit('setDefault', item.forkId, isDefaultBranch(model, item.forkId, i) ? null : i)
+            "
           >
             默认{{ i + 1 }}
           </button>
@@ -222,10 +229,19 @@ function insertable(item: BlockTreeNode): boolean {
   cursor: pointer;
 }
 
+.default-toggle--on {
+  background: #2d3e97;
+  color: #fff;
+}
+
 .default-toggle:hover,
 .block-btn:hover,
 .add-branch-btn:hover {
   background: rgba(45, 62, 151, 0.2);
+}
+
+.default-toggle--on:hover {
+  background: #3d4fae;
 }
 
 .block-btn {

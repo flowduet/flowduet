@@ -17,16 +17,25 @@ const model = BpmnModel.create({
   .addStartEvent({ id: "start", name: "开始" })
   .addUserTask({ id: "approval_1", name: "经理审批", assignee: "${manager}" })
   .addExclusiveGateway({ id: "fork1", name: "金额判断" })
+  // 支 1：小额走总监单审
   .addUserTask({ id: "a_node", name: "总监审批", assignee: "${director}" })
-  .addUserTask({ id: "b_node", name: "财务复核", assignee: "${finance}" })
+  // 支 2：大额走并行块（财务与法务同时复核）
+  .addParallelGateway({ id: "pfork", name: "并行开始" })
+  .addParallelGateway({ id: "pjoin", name: "并行结束" })
+  .addUserTask({ id: "fin_node", name: "财务复核", assignee: "${finance}" })
+  .addUserTask({ id: "legal_node", name: "法务复核", assignee: "${legal}" })
   .addExclusiveGateway({ id: "join1", name: "汇聚" })
   .addEndEvent({ id: "end", name: "结束" })
   .addSequenceFlow({ id: "f1", sourceRef: "start", targetRef: "approval_1" })
   .addSequenceFlow({ id: "f2", sourceRef: "approval_1", targetRef: "fork1" })
   .addSequenceFlow({ id: "fa", sourceRef: "fork1", targetRef: "a_node" })
-  .addSequenceFlow({ id: "fb", sourceRef: "fork1", targetRef: "b_node" })
+  .addSequenceFlow({ id: "fb", sourceRef: "fork1", targetRef: "pfork" })
+  .addSequenceFlow({ id: "fp_fin", sourceRef: "pfork", targetRef: "fin_node" })
+  .addSequenceFlow({ id: "fp_legal", sourceRef: "pfork", targetRef: "legal_node" })
+  .addSequenceFlow({ id: "fin_pj", sourceRef: "fin_node", targetRef: "pjoin" })
+  .addSequenceFlow({ id: "legal_pj", sourceRef: "legal_node", targetRef: "pjoin" })
+  .addSequenceFlow({ id: "pj_j1", sourceRef: "pjoin", targetRef: "join1" })
   .addSequenceFlow({ id: "fa_j", sourceRef: "a_node", targetRef: "join1" })
-  .addSequenceFlow({ id: "fb_j", sourceRef: "b_node", targetRef: "join1" })
   .addSequenceFlow({ id: "fj", sourceRef: "join1", targetRef: "end" });
 
 const xml = ref("");

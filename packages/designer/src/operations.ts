@@ -240,7 +240,7 @@ export function removeBranch(model: BpmnModel, forkId: string, branchIndex: numb
   const branchFlows = outgoingOf(model, forkId);
   const flow = branchFlows[branchIndex];
   if (flow === undefined) {
-    throw new Error(`分支块 ${forkId} 的支路 ${branchIndex} 不存在`);
+    throw new Error(`分支块 ${forkId} 的支路 ${branchIndex + 1} 不存在`);
   }
   if (branchCount <= 2) {
     throw new Error(`分支块 ${forkId} 至少需要两条支路`);
@@ -313,13 +313,13 @@ export function setDefaultBranch(
   }
   const flow = outgoingOf(model, forkId)[branchIndex];
   if (flow === undefined) {
-    throw new Error(`分支块 ${forkId} 的支路 ${branchIndex} 不存在`);
+    throw new Error(`分支块 ${forkId} 的支路 ${branchIndex + 1} 不存在`);
   }
   // 切换语义：直接覆盖引用（同块唯一由「覆盖」天然保证）；
   // 真正的守卫面是「默认流转不得带条件」——给已配条件的支路点默认即抛错
   const condition = flow.get("conditionExpression");
   if (condition !== undefined) {
-    throw new Error(`支路 ${branchIndex} 携带条件表达式，不能设为默认流转`);
+    throw new Error(`支路 ${branchIndex + 1} 携带条件表达式，不能设为默认流转`);
   }
   fork.set("default", flow);
 }
@@ -364,7 +364,7 @@ export function setBranchCondition(model: BpmnModel, flowId: string, condition: 
 export function branchHeadFlowId(model: BpmnModel, forkId: string, branchIndex: number): string {
   const flow = outgoingOf(model, forkId)[branchIndex];
   if (flow === undefined) {
-    throw new Error(`分支块 ${forkId} 的支路 ${branchIndex} 不存在`);
+    throw new Error(`分支块 ${forkId} 的支路 ${branchIndex + 1} 不存在`);
   }
   return flow.get("id") as string;
 }
