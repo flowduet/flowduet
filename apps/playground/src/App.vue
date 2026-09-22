@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import { ElButton } from "element-plus";
+import { ElButton, ElRadioGroup, ElRadioButton } from "element-plus";
 import { BpmnModel, flowableAdapter } from "@flowduet/core";
-import { DingtalkDesigner, exportXml } from "@flowduet/designer";
+import { BpmnCanvas, DingtalkDesigner, exportXml } from "@flowduet/designer";
 
 /**
  * Playground 编辑区（#23）：挂 designer 组件的最小验收宿主。
@@ -38,6 +38,7 @@ const model = BpmnModel.create({
   .addSequenceFlow({ id: "fa_j", sourceRef: "a_node", targetRef: "join1" })
   .addSequenceFlow({ id: "fj", sourceRef: "join1", targetRef: "end" });
 
+const view = ref<"dingtalk" | "bpmn">("dingtalk");
 const xml = ref("");
 const error = ref("");
 
@@ -55,11 +56,17 @@ async function doExport(): Promise<void> {
   <div class="playground">
     <header class="playground-header">
       <h1>FlowDuet Playground</h1>
+      <ElRadioGroup v-model="view" data-test="view-switch" size="small">
+        <ElRadioButton value="dingtalk" data-test="view-dingtalk">钉钉式</ElRadioButton>
+        <ElRadioButton value="bpmn" data-test="view-bpmn">BPMN 视图</ElRadioButton>
+      </ElRadioGroup>
       <ElButton type="primary" data-test="export-btn" @click="doExport">导出 XML</ElButton>
     </header>
     <main class="playground-main">
       <section class="playground-editor">
-        <DingtalkDesigner :model="model" />
+        <!-- 互切 = 同一模型实例换投影组件；v-if 挂卸即重挂，读视图总是最新 -->
+        <DingtalkDesigner v-if="view === 'dingtalk'" :model="model" />
+        <BpmnCanvas v-else :model="model" />
       </section>
       <section v-if="xml || error" class="playground-xml">
         <pre v-if="xml" data-test="xml-preview">{{ xml }}</pre>
