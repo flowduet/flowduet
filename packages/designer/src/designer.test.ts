@@ -4,6 +4,7 @@ import { flushPromises, mount } from "@vue/test-utils";
 import { BpmnModel, flowableAdapter } from "@flowduet/core";
 import DingtalkDesigner from "./components/DingtalkDesigner.vue";
 import NodeDrawer from "./components/NodeDrawer.vue";
+import { CC_RECIPIENTS_PLACEHOLDER } from "./operations.js";
 import { exportXml } from "./export.js";
 
 /**
@@ -427,7 +428,7 @@ describe("多人审批与抄送（#25）", () => {
     wrapper.unmount();
   });
 
-  it("会签切回单签：多实例移除，集合回填摘要位", async () => {
+  it("会签切回单签：多实例移除，审批人留空（集合名不被当字面 assignee 落盘）", async () => {
     const model = buildChain();
     const wrapper = mountDesigner(model);
     await wrapper.findAll('[data-test="node-card"]')[1]!.trigger("click");
@@ -450,6 +451,47 @@ describe("多人审批与抄送（#25）", () => {
 
     const xml = await exportXml(model);
     expect(xml).not.toContain("multiInstanceLoopCharacteristics");
+    // C1 回归：多→单切换清空了集合变量缓冲，不能把 "approvers" 当字面 assignee 落盘
+    expect(xml).not.toContain('flowable:assignee="approvers"');
+    expect(model.elementOf("approval_1").get("assignee")).toBeUndefined();
+    wrapper.unmount();
+  });
+
+  it("切会签但审批人填成表达式：S1 形态校验拦截，模型不变", async () => {
+    const model = buildChain();
+    const wrapper = mountDesigner(model);
+    await wrapper.findAll('[data-test="node-card"]')[1]!.trigger("click");
+    await flushPromises();
+    await wrapper.find('[data-test="kind-all"]').trigger("click");
+    await setValue(
+      document.querySelector<HTMLInputElement>('[data-test="drawer-assignee"]')!,
+      "${manager}",
+    );
+    (document.querySelector('[data-test="drawer-save"]') as HTMLElement).click();
+    await flushPromises();
+
+    expect(wrapper.find('[data-test="action-error"]').text()).toContain("集合变量名");
+    // 校验失败：不落多实例、抽屉不关
+    expect(model.elementOf("approval_1").get("loopCharacteristics")).toBeUndefined();
+    wrapper.unmount();
+  });
+
+  it("插入抄送后不改收件人直接保存：W4 守卫拦截占位串，模型保持占位", async () => {
+    const model = buildChain();
+    const wrapper = mountDesigner(model);
+    await insertViaMenu(wrapper, "approval_1", "cc");
+    const ccCard = wrapper
+      .findAll('[data-test="node-card"]')
+      .filter((w) => w.text().includes("抄送节点"))[0];
+    await ccCard!.trigger("click");
+    await flushPromises();
+    // 不动收件人（仍是插入占位串），直接保存
+    (document.querySelector('[data-test="drawer-save"]') as HTMLElement).click();
+    await flushPromises();
+
+    expect(wrapper.find('[data-test="action-error"]').text()).toContain("抄送收件人");
+    // 守卫拦截：ccTo 仍是占位串，未被“保存”成真实名单
+    expect(model.elementOf("cc_1").get("ccTo")).toBe(CC_RECIPIENTS_PLACEHOLDER);
     wrapper.unmount();
   });
 

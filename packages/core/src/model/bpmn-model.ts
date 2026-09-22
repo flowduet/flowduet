@@ -74,8 +74,12 @@ export const COMPLETION_CONDITIONS: Readonly<Record<Exclude<ApprovalMode, "seque
     any: "${nrOfCompletedInstances >= 1}",
   };
 
-/** 单实例内引用"当前审批人"的元素变量默认名 */
-const DEFAULT_ELEMENT_VARIABLE = "assignee";
+/**
+ * 单实例内引用"当前审批人"的元素变量默认名。
+ * 公开导出：designer 侧 setApprovalMode 直改档时须复用同一默认名，
+ * 避免本地复刻字面量导致内外核分叉（#25 评审 W1）。
+ */
+export const DEFAULT_ELEMENT_VARIABLE = "assignee";
 
 /**
  * 多实例审批任务建模参数。完成方式是 BPMN 标准多实例语义（非方言差异），

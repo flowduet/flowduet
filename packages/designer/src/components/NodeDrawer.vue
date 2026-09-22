@@ -3,6 +3,7 @@ import { computed, ref, watch } from "vue";
 import { ElButton, ElDrawer, ElForm, ElFormItem, ElInput } from "element-plus";
 import type { ApprovalMode, BpmnModel, ModdleElement } from "@flowduet/core";
 import {
+  CC_RECIPIENTS_PLACEHOLDER,
   convertApprovalToMulti,
   convertMultiToSingle,
   readApprovalMulti,
@@ -72,6 +73,30 @@ const KIND_OPTIONS: { key: "single" | ApprovalMode; label: string; hint: string 
   { key: "sequential", label: "依次", hint: "按顺序逐人审批" },
 ];
 
+/**
+ * 集合变量应是裸标识符（运行时注入名单，如 approvers，可带点路径）。
+ * ${...} 表达式或逗号名单是单签语义的值，切多人时若沿用会被当集合名落盘，
+ * 运行时 collection 求值不到 Collection 直接抛错（#25 评审 S1）。
+ */
+function isCollectionVariable(value: string): boolean {
+  return /^[A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*)*$/.test(value);
+}
+
+/**
+ * 用户点完成方式卡片：单↔多切换时清空审批人缓冲。
+ * 该字段语义在「字面 assignee」与「集合变量名」之间翻转——不清空会让旧语义
+ * 值被当新语义落盘（多→单把集合名当字面 assignee，单→多把 ${manager} 当集合名）。
+ * 只在用户交互时触发，不走 watch，避免打开抽屉回填多实例时被误清（#25 评审 C1/S1）。
+ */
+function selectKind(kind: "single" | ApprovalMode): void {
+  const prev = approvalKind.value;
+  if (prev === kind) return;
+  approvalKind.value = kind;
+  if ((prev === "single") !== (kind === "single")) {
+    assignee.value = "";
+  }
+}
+
 watch(
   () => [props.nodeId, visible.value] as const,
   () => {
@@ -86,7 +111,7 @@ watch(
       (el.get("conditionExpression") as ModdleElement | undefined)?.get("body") !== undefined
         ? String((el.get("conditionExpression") as ModdleElement).get("body"))
         : "";
-    const multi = props.nodeId !== undefined ? readApprovalMulti(props.model, props.nodeId) : null;
+    const multi = readMultiSafe();
     approvalKind.value = multi === null ? "single" : multi.mode;
     if (multi !== null) {
       // 集合变量回填到审批人字段（多人形态下该字段即集合名）
@@ -94,6 +119,21 @@ watch(
     }
   },
 );
+
+/**
+ * 回填期安全读取多实例形态：非内核固化完成条件（多见于外部导入 XML）时
+ * readApprovalMulti 会抛错，此处捕获转 error emit，不猜语义。save() 会再次读取并
+ * 同样抛错拦截，避免把多人节点静默转成单人（#25 评审 W2）。
+ */
+function readMultiSafe(): ReturnType<typeof readApprovalMulti> {
+  if (props.nodeId === undefined) return null;
+  try {
+    return readApprovalMulti(props.model, props.nodeId);
+  } catch (e) {
+    emit("error", e instanceof Error ? e.message : String(e));
+    return null;
+  }
+}
 
 function save(): void {
   if (props.nodeId === undefined) return;
@@ -103,8 +143,10 @@ function save(): void {
     visible.value = false;
     return;
   }
-  // 条件写回可能因守卫抛错——先校验后写，避免半写模型；抛错经 error emit
-  // 接入宿主内联提示（不写名、不关抽屉、不发 saved）
+
+  const trimmedName = name.value.trim();
+
+  // ── 分支条件抽屉（#24）：只有 name + condition，条件写回可能因守卫抛错 ──
   if (isBranchHead.value) {
     try {
       setBranchCondition(props.model, props.nodeId, condition.value);
@@ -112,29 +154,45 @@ function save(): void {
       emit("error", e instanceof Error ? e.message : String(e));
       return;
     }
+    // 条件写成功后才写 name，避免半写模型（#25 评审 C2）
+    el.set("name", trimmedName === "" ? undefined : trimmedName);
+    visible.value = false;
+    emit("saved");
+    return;
   }
-  const trimmedName = name.value.trim();
-  el.set("name", trimmedName === "" ? undefined : trimmedName);
 
+  const trimmedAssignee = assignee.value.trim();
+  const trimmedFormKey = formKey.value.trim();
+  const trimmedRecipients = recipients.value.trim();
+
+  // ── 前置校验（一律不写模型）：任一条不过即 emit error 返回，模型零变更 ──
+  if (isTask.value && approvalKind.value !== "single") {
+    if (trimmedAssignee === "") {
+      emit("error", "多人审批需要填写审批人集合变量名（运行时注入名单）");
+      return;
+    }
+    if (!isCollectionVariable(trimmedAssignee)) {
+      emit("error", "多人审批的审批人字段是集合变量名（如 approvers），不是表达式或逗号名单");
+      return;
+    }
+  } else if (isCcTask.value) {
+    // 空白与插入占位串都拦：占位落盘会让运行时查无此人、静默丢知会（#25 评审 W4）
+    if (trimmedRecipients === "" || trimmedRecipients === CC_RECIPIENTS_PLACEHOLDER) {
+      emit("error", "抄送收件人不能为空白或占位文本（字面量逗号分隔或表达式）");
+      return;
+    }
+  }
+
+  // ── 校验通过后才写模型 ──
   if (isTask.value) {
-    // 完成方式分流：single 走单实例；三档走多实例（单人→转换，档间→直改）
-    const trimmedAssignee = assignee.value.trim();
-    const trimmedFormKey = formKey.value.trim();
+    // 完成方式分流：single 走单实例；三档走多实例（单人→转换，档间→直改）。
+    // 结构性转换已 fail-fast 校验，抛错时 name 尚未写、模型未被破坏（#25 评审 C2/W3）。
     try {
       if (approvalKind.value === "single") {
         if (readApprovalMulti(props.model, props.nodeId) !== null) {
           convertMultiToSingle(props.model, props.nodeId);
         }
-        const current = currentNode();
-        if (current !== undefined) {
-          current.set("assignee", trimmedAssignee === "" ? undefined : trimmedAssignee);
-          current.set("formKey", trimmedFormKey === "" ? undefined : trimmedFormKey);
-        }
       } else {
-        if (trimmedAssignee === "") {
-          emit("error", "多人审批需要填写审批人集合变量名（运行时注入名单）");
-          return;
-        }
         const multi = readApprovalMulti(props.model, props.nodeId);
         if (multi === null) {
           convertApprovalToMulti(props.model, props.nodeId, {
@@ -147,23 +205,23 @@ function save(): void {
             mode: approvalKind.value,
           });
         }
-        const current = currentNode();
-        if (current !== undefined) {
-          // 与单人分支同口径：清空保存同样落盘（多人形态 formKey 不残留旧值）
-          current.set("formKey", trimmedFormKey === "" ? undefined : trimmedFormKey);
-        }
       }
     } catch (e) {
       emit("error", e instanceof Error ? e.message : String(e));
       return;
     }
-  } else if (isCcTask.value) {
-    // 抄送收件人必填（空收件人的抄送执行会静默丢知会）
-    const trimmedRecipients = recipients.value.trim();
-    if (trimmedRecipients === "") {
-      emit("error", "抄送收件人不能为空白（字面量逗号分隔或表达式）");
-      return;
+    // 转换可能同 id 重建节点——统一取当前元素，name 与字段最后写
+    const current = currentNode();
+    if (current !== undefined) {
+      current.set("name", trimmedName === "" ? undefined : trimmedName);
+      if (approvalKind.value === "single") {
+        current.set("assignee", trimmedAssignee === "" ? undefined : trimmedAssignee);
+      }
+      // 单/多两形态同口径：formKey 清空保存同样落盘（不残留旧值）
+      current.set("formKey", trimmedFormKey === "" ? undefined : trimmedFormKey);
     }
+  } else if (isCcTask.value) {
+    el.set("name", trimmedName === "" ? undefined : trimmedName);
     el.set("ccTo", trimmedRecipients);
   }
   visible.value = false;
@@ -200,7 +258,7 @@ function save(): void {
             :class="{ 'kind-card--on': approvalKind === option.key }"
             :data-test="`kind-${option.key}`"
             type="button"
-            @click="approvalKind = option.key"
+            @click="selectKind(option.key)"
           >
             <span class="kind-card-label">{{ option.label }}</span>
             <span class="kind-card-hint">{{ option.hint }}</span>
