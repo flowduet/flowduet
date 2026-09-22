@@ -15,6 +15,11 @@ const props = defineProps<{
   data?: { waypoints?: Point[] };
 }>();
 
+// 本组件模板是 <polyline> + <polygon> 双根 fragment；VueFlow 会把整包 edge 元数据
+// （id/source/target/marker*/…）作为透传属性下传，fragment 无单一根可继承 →
+// 每条边刷 "Extraneous non-props attributes" 告警。这些属性 SVG 上用不到，关掉继承即可。
+defineOptions({ inheritAttrs: false });
+
 const points = computed(() =>
   edgePolylinePoints(
     props.data?.waypoints,

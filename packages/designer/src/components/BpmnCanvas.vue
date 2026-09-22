@@ -4,6 +4,7 @@ import { VueFlow } from "@vue-flow/core";
 import type { EdgeTypesObject, NodeTypesObject } from "@vue-flow/core";
 import type { BpmnModel, ModdleElement } from "@flowduet/core";
 import { resolveCanvasGeometry } from "../geometry.js";
+import type { CanvasGeometry } from "../geometry.js";
 import BpmnNode from "./BpmnNode.vue";
 import BpmnEdge from "./BpmnEdge.vue";
 import { READONLY_FLOW_PROPS } from "../canvas-props.js";
@@ -22,7 +23,17 @@ const props = defineProps<{
 // toRaw 解 Vue 代理（宿主 reactive store 会让内核私有字段无法穿越）
 const modelRaw = computed(() => toRaw(props.model));
 
-const geometry = computed(() => resolveCanvasGeometry(modelRaw.value));
+// 只读投影同样可失败：半损/非良构模型（缺坐标且含不可达元素、循环、多开始事件等）
+// 会让竖排推导抛错。computed 内不做副作用（lint: vue/no-side-effects-in-computed-properties），
+// 只返回 null + 错误信息；模板据此渲染可读错误态，而非让异常冒泡炸渲染树（白屏）。
+// 与钉钉式视图 DingtalkDesigner 的 { items, error } 降级口径一致。
+const geometryResult = computed<{ geometry: CanvasGeometry | null; error: string }>(() => {
+  try {
+    return { geometry: resolveCanvasGeometry(modelRaw.value), error: "" };
+  } catch (e) {
+    return { geometry: null, error: e instanceof Error ? e.message : String(e) };
+  }
+});
 
 type FlowNode = {
   id: string;
@@ -33,12 +44,14 @@ type FlowNode = {
 };
 
 const nodes = computed<FlowNode[]>(() => {
+  const geo = geometryResult.value.geometry;
+  if (geo === null) return [];
   const flowElements = (modelRaw.value.process.get("flowElements") as ModdleElement[]) ?? [];
   const list: FlowNode[] = [];
   for (const element of flowElements) {
     if (element.$type === "bpmn:SequenceFlow") continue;
     const id = element.get("id") as string;
-    const shape = geometry.value.shapes.get(id);
+    const shape = geo.shapes.get(id);
     if (shape === undefined) continue;
     list.push({
       id,
@@ -52,6 +65,8 @@ const nodes = computed<FlowNode[]>(() => {
 });
 
 const edges = computed(() => {
+  const geo = geometryResult.value.geometry;
+  if (geo === null) return [];
   const flowElements = (modelRaw.value.process.get("flowElements") as ModdleElement[]) ?? [];
   const list: {
     id: string;
@@ -63,7 +78,7 @@ const edges = computed(() => {
   for (const element of flowElements) {
     if (element.$type !== "bpmn:SequenceFlow") continue;
     const id = element.get("id") as string;
-    const waypoints: { x: number; y: number }[] | undefined = geometry.value.waypoints.get(id);
+    const waypoints: { x: number; y: number }[] | undefined = geo.waypoints.get(id);
     list.push({
       id,
       source: (element.get("sourceRef") as ModdleElement).get("id") as string,
@@ -83,7 +98,11 @@ const edgeTypes = { "bpmn-edge": markRaw(BpmnEdge) } as unknown as EdgeTypesObje
 
 <template>
   <div class="bpmn-canvas" data-test="bpmn-canvas">
+    <p v-if="geometryResult.error" class="canvas-error" data-test="canvas-error" role="alert">
+      {{ geometryResult.error }}
+    </p>
     <VueFlow
+      v-else
       :nodes="nodes"
       :edges="edges"
       :node-types="nodeTypes"
@@ -103,5 +122,14 @@ const edgeTypes = { "bpmn-edge": markRaw(BpmnEdge) } as unknown as EdgeTypesObje
   height: 100%;
   min-height: 320px;
   background: #fff;
+}
+
+.canvas-error {
+  margin: 0;
+  padding: 8px 12px;
+  border-radius: 6px;
+  background: rgba(229, 72, 77, 0.08);
+  color: #c45656;
+  font-size: 12px;
 }
 </style>

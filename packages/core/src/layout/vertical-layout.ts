@@ -369,43 +369,57 @@ export function layoutVertical(tree: BlockTreeNode[], flows: FlowTable): LayoutR
   return { shapes, waypoints };
 }
 
-// ---------- 第三层：DiLayout 接缝第二实现 ----------
+// ---------- 第三层：完整推导入口（导出与只读投影共用） ----------
 
 /**
- * 竖排自动布局器：attach 时从模型树推导几何并经共用出口投影 bpmndi，
- * 不读 BpmnModel 的几何注册表（那正是"shape 可选化"要松绑的东西）。
+ * 竖排推导的完整入口：模型树 → 几何（每节点 CanvasShape + 每连线 waypoints），
+ * 含适用边界断言。XML 导出（verticalDiLayout）与只读投影画布（designer 的
+ * resolveCanvasGeometry）共用此函数——同一推导链、同一可达性守卫，保证两侧对
+ * 同一模型的接受/拒绝口径一致：不可达图形在导出与画布都显式抛错，不出现
+ * 「画布静默丢图、导出拒绝」的不对称。
+ */
+export function deriveVerticalGeometry(model: BpmnModel): LayoutResult {
+  const flowElements = (model.process.get("flowElements") as ModdleElement[]) ?? [];
+
+  const flows: FlowTable = new Map();
+  for (const el of flowElements) {
+    if (el.$type !== "bpmn:SequenceFlow") continue;
+    flows.set(el.get("id") as string, {
+      source: (el.get("sourceRef") as ModdleElement).get("id") as string,
+      target: (el.get("targetRef") as ModdleElement).get("id") as string,
+    });
+  }
+
+  const tree = deriveBlockTree(model);
+  const { shapes, waypoints } = layoutVertical(tree, flows);
+
+  // 块树只覆盖从开始事件可达的图形；不可达元素/连线若静默投影会产出
+  // 空 Bounds/空折线的半残几何——竖排推导的适用边界在此显式拒绝
+  for (const el of flowElements) {
+    const id = el.get("id") as string;
+    if (el.$type === "bpmn:SequenceFlow") {
+      if (!waypoints.has(id)) {
+        throw new Error(`竖排布局仅支持从开始事件可达的图形，连线 ${id} 不在块树中`);
+      }
+    } else if (!shapes.has(id)) {
+      throw new Error(`竖排布局仅支持从开始事件可达的图形，元素 ${id} 不在块树中`);
+    }
+  }
+
+  return { shapes, waypoints };
+}
+
+// ---------- 第四层：DiLayout 接缝第二实现 ----------
+
+/**
+ * 竖排自动布局器：attach 时经 deriveVerticalGeometry 推导几何并通过共用出口投影
+ * bpmndi，不读 BpmnModel 的几何注册表（那正是"shape 可选化"要松绑的东西）。
  * 调用面：compile(model, { diLayout: verticalDiLayout() })。
  */
 export function verticalDiLayout(): DiLayout {
   return {
     attach(model: BpmnModel): void {
-      const flowElements = (model.process.get("flowElements") as ModdleElement[]) ?? [];
-
-      const flows: FlowTable = new Map();
-      for (const el of flowElements) {
-        if (el.$type !== "bpmn:SequenceFlow") continue;
-        flows.set(el.get("id") as string, {
-          source: (el.get("sourceRef") as ModdleElement).get("id") as string,
-          target: (el.get("targetRef") as ModdleElement).get("id") as string,
-        });
-      }
-
-      const tree = deriveBlockTree(model);
-      const { shapes, waypoints } = layoutVertical(tree, flows);
-
-      // 块树只覆盖从开始事件可达的图形；不可达元素/连线若静默投影会产出
-      // 空 Bounds/空折线的半残 DI——竖排推导的适用边界在此显式拒绝
-      for (const el of flowElements) {
-        const id = el.get("id") as string;
-        if (el.$type === "bpmn:SequenceFlow") {
-          if (!waypoints.has(id)) {
-            throw new Error(`竖排布局仅支持从开始事件可达的图形，连线 ${id} 不在块树中`);
-          }
-        } else if (!shapes.has(id)) {
-          throw new Error(`竖排布局仅支持从开始事件可达的图形，元素 ${id} 不在块树中`);
-        }
-      }
-
+      const { shapes, waypoints } = deriveVerticalGeometry(model);
       projectDiagram(model, { shapes, waypoints });
     },
   };

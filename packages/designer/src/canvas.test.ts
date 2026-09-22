@@ -70,6 +70,7 @@ describe("BpmnCanvas 只读投影", () => {
       elementsSelectable: false,
       connectOnClick: false,
       deleteKeyCode: null,
+      selectionKeyCode: null,
       zoomOnScroll: true,
       panOnDrag: true,
     });
@@ -89,5 +90,23 @@ describe("BpmnCanvas 只读投影", () => {
     await flushPromises();
     expect(second.text()).toContain("改会签");
     second.unmount();
+  });
+
+  it("半损模型（不可达元素）：渲染可读错误态而非白屏（W-2）", async () => {
+    // 缺坐标 + 孤立节点 → 竖排推导守卫抛错；画布应降级为错误横幅，不炸渲染树
+    const orphan = BpmnModel.create({ processId: "canvas_orphan", adapter: flowableAdapter })
+      .addStartEvent({ id: "start" })
+      .addUserTask({ id: "t1", name: "主链任务" })
+      .addEndEvent({ id: "end" })
+      .addUserTask({ id: "orphan", name: "孤立任务" })
+      .addSequenceFlow({ id: "f1", sourceRef: "start", targetRef: "t1" })
+      .addSequenceFlow({ id: "f2", sourceRef: "t1", targetRef: "end" });
+    const wrapper = mount(BpmnCanvas, { props: { model: orphan }, attachTo: document.body });
+    await flushPromises();
+    expect(wrapper.find('[data-test="canvas-error"]').exists()).toBe(true);
+    expect(wrapper.text()).toContain("不在块树中");
+    // 错误态下不渲染任何节点词汇（VueFlow 未挂载）
+    expect(wrapper.find('[data-test="canvas-bpmn:StartEvent"]').exists()).toBe(false);
+    wrapper.unmount();
   });
 });

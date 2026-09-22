@@ -10,6 +10,8 @@ export const READONLY_FLOW_PROPS = {
   connectOnClick: false,
   /** 键盘删除禁用（null = 不绑定删除键） */
   deleteKeyCode: null,
+  /** 框选禁用（null = 不绑定框选键）：Shift+拖拽不再渲染橡皮筋框，与只读语义一致 */
+  selectionKeyCode: null,
   zoomOnScroll: true,
   panOnDrag: true,
 } as const;
