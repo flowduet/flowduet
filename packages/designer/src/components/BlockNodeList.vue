@@ -1,24 +1,36 @@
 <script setup lang="ts">
-import type { BlockTreeNode } from "@flowduet/core";
+import type { BlockTreeNode, BpmnModel } from "@flowduet/core";
 import NodeCard from "./NodeCard.vue";
 import BlockNodeList from "./BlockNodeList.vue";
+import { branchHeadFlowId } from "../operations.js";
 
 /**
  * 递归块树渲染：元素出卡片，块出着色容器（浅靛蓝容器 + 左轨 + 标签，
  * 视觉定稿见 docs/assets/design/iteration-2/dingtalk-editor.png）。
- * 卡间「+」按钮只在链元素（单出边）后出现——网关等多出边元素的
- * 分支内插入属 #24。块内分支交互（加支路/折叠）同属 #24。
+ * #24 块交互：块头带「+ 分支」「删块」；支路多于两支时可删支；
+ * 条件块的支路头带默认开关。fork/join 网关自身不出卡片（容器即其呈现）。
  */
 defineProps<{
   items: BlockTreeNode[];
   /** exactOptional 下显式传 undefined 是合法形态（未选中节点时） */
   activeId?: string | undefined;
+  model: BpmnModel;
+  /**
+   * 默认态映射（forkId → 默认支路序），由宿主一次算好随递归下传（#24 评审 S8）：
+   * 避免每条支路在模板里重复调读函数，也彻底避开渲染期抛错风险。
+   */
+  defaultIndexByFork: Map<string, number>;
 }>();
 
 defineEmits<{
   open: [nodeId: string];
   delete: [nodeId: string];
   insert: [nodeId: string];
+  addBranch: [forkId: string];
+  removeBranch: [forkId: string, branchIndex: number];
+  setDefault: [forkId: string, branchIndex: number | null];
+  removeBlock: [forkId: string];
+  branchConfig: [flowId: string | undefined];
 }>();
 
 function insertable(item: BlockTreeNode): boolean {
@@ -49,17 +61,81 @@ function insertable(item: BlockTreeNode): boolean {
         </button>
       </template>
       <div v-else class="branch-block" :data-gateway="item.gateway" data-test="branch-block">
-        <div class="branch-block-label">
-          {{ item.gateway === "parallel" ? "并行分支" : "条件分支" }}
+        <div class="branch-block-head">
+          <span class="branch-block-label">
+            {{ item.gateway === "parallel" ? "并行分支" : "条件分支" }}
+          </span>
+          <button
+            v-for="(branch, i) in item.gateway === 'exclusive' ? item.branches : []"
+            :key="`d${i}`"
+            class="default-toggle"
+            :class="{ 'default-toggle--on': defaultIndexByFork.get(item.forkId) === i }"
+            :data-test="`default-toggle-${item.forkId}-${i}`"
+            :title="
+              defaultIndexByFork.get(item.forkId) === i
+                ? '点击取消默认（其余情况无兜底支路）'
+                : '把该支路设为默认（其余情况走此支路）'
+            "
+            @click="
+              $emit('setDefault', item.forkId, defaultIndexByFork.get(item.forkId) === i ? null : i)
+            "
+          >
+            默认{{ i + 1 }}
+          </button>
+          <span class="branch-block-spacer" />
+          <button
+            class="add-branch-btn"
+            :data-test="`add-branch-${item.forkId}`"
+            title="添加分支"
+            @click="$emit('addBranch', item.forkId)"
+          >
+            + 分支
+          </button>
+          <button
+            class="block-btn"
+            :data-test="`block-delete-${item.forkId}`"
+            title="删除整块（前后直连）"
+            @click="$emit('removeBlock', item.forkId)"
+          >
+            删块
+          </button>
         </div>
         <div class="branch-block-branches">
           <div v-for="(branch, i) in item.branches" :key="i" class="branch-block-branch">
+            <div class="branch-head">
+              <button
+                v-if="item.gateway === 'exclusive'"
+                class="branch-tag branch-tag--btn"
+                :data-test="`branch-head-${item.forkId}-${i}`"
+                title="配置此分支的条件表达式"
+                @click="$emit('branchConfig', branchHeadFlowId(model, item.forkId, i))"
+              >
+                支路 {{ i + 1 }}{{ defaultIndexByFork.get(item.forkId) === i ? " · 默认" : "" }}
+              </button>
+              <span v-else class="branch-tag">支路 {{ i + 1 }}</span>
+              <button
+                v-if="item.branches.length > 2"
+                class="branch-remove"
+                :data-test="`remove-branch-${item.forkId}-${i}`"
+                title="删除此支路"
+                @click="$emit('removeBranch', item.forkId, i)"
+              >
+                ×
+              </button>
+            </div>
             <BlockNodeList
               :items="branch"
               :active-id="activeId"
+              :model="model"
+              :default-index-by-fork="defaultIndexByFork"
               @open="$emit('open', $event)"
               @delete="$emit('delete', $event)"
               @insert="$emit('insert', $event)"
+              @add-branch="$emit('addBranch', $event)"
+              @remove-branch="(fid, idx) => $emit('removeBranch', fid, idx)"
+              @set-default="(fid, idx) => $emit('setDefault', fid, idx)"
+              @remove-block="$emit('removeBlock', $event)"
+              @branch-config="$emit('branchConfig', $event)"
             />
           </div>
         </div>
@@ -129,10 +205,54 @@ function insertable(item: BlockTreeNode): boolean {
   background: #2d3e97;
 }
 
+.branch-block-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+
 .branch-block-label {
   font-size: 12px;
   color: #2d3e97;
-  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+.branch-block-spacer {
+  flex: 1;
+}
+
+.default-toggle,
+.block-btn,
+.add-branch-btn {
+  border: none;
+  border-radius: 4px;
+  background: rgba(45, 62, 151, 0.1);
+  color: #2d3e97;
+  font-size: 11px;
+  padding: 2px 8px;
+  cursor: pointer;
+}
+
+.default-toggle--on {
+  background: #2d3e97;
+  color: #fff;
+}
+
+.default-toggle:hover,
+.block-btn:hover,
+.add-branch-btn:hover {
+  background: rgba(45, 62, 151, 0.2);
+}
+
+.default-toggle--on:hover {
+  background: #3d4fae;
+}
+
+.block-btn {
+  color: #b4884d;
+  background: rgba(180, 136, 77, 0.12);
 }
 
 .branch-block-branches {
@@ -144,5 +264,39 @@ function insertable(item: BlockTreeNode): boolean {
 .branch-block-branch {
   flex: 1;
   min-width: 0;
+}
+
+.branch-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.branch-tag {
+  font-size: 11px;
+  color: #909399;
+}
+
+.branch-tag--btn {
+  border: none;
+  background: none;
+  padding: 0 2px;
+  cursor: pointer;
+  color: #2d3e97;
+}
+
+.branch-tag--btn:hover {
+  text-decoration: underline;
+}
+
+.branch-remove {
+  border: none;
+  background: none;
+  color: #c45656;
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 4px;
 }
 </style>
