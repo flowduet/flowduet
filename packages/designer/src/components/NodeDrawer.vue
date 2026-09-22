@@ -39,6 +39,19 @@ const condition = ref("");
 const recipients = ref("");
 /** 完成方式：single = 单签（单实例）；三档 = 多实例（审批人字段变集合变量） */
 const approvalKind = ref<"single" | ApprovalMode>("single");
+/**
+ * 逐实例元素变量名缓冲（评审 W-1）：readApprovalMulti 返回后回填，
+ * save 时透传给 convertApprovalToMulti / setApprovalMode。不透传会让
+ * setApprovalMode 回落 DEFAULT_ELEMENT_VARIABLE，静默改写 assignee 表达式，
+ * 流程内引用原变量名的表单/监听器/后续节点全部失效。
+ */
+const elementVariable = ref<string | undefined>(undefined);
+/**
+ * 单↔多切换时暂存的旧审批人值（评审 S-3）：同一抽屉会话内误点后切回不丢字段。
+ * 只存在内存 ref，不持久化到模型；抽屉关闭重开后以模型当前形态为准。
+ */
+const lastSingleAssignee = ref<string | undefined>(undefined);
+const lastCollection = ref<string | undefined>(undefined);
 
 /**
  * 取当前抽屉指向的模型元素；节点已被宿主删除时返回 undefined。
@@ -77,14 +90,16 @@ const KIND_OPTIONS: { key: "single" | ApprovalMode; label: string; hint: string 
  * 集合变量应是裸标识符（运行时注入名单，如 approvers，可带点路径）。
  * ${...} 表达式或逗号名单是单签语义的值，切多人时若沿用会被当集合名落盘，
  * 运行时 collection 求值不到 Collection 直接抛错（#25 评审 S1）。
+ * ASCII-only 是有意的 UX 收口：JUEL/Java 理论上支持 Unicode 标识符，但只读画布 /
+ * 宿主表单引用一致性上 ASCII 更安全；错误文案需与限制一致（评审 S-4）。
  */
 function isCollectionVariable(value: string): boolean {
   return /^[A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*)*$/.test(value);
 }
 
 /**
- * 用户点完成方式卡片：单↔多切换时清空审批人缓冲。
- * 该字段语义在「字面 assignee」与「集合变量名」之间翻转——不清空会让旧语义
+ * 用户点完成方式卡片：单↔多切换时暂存旧审批人缓冲并尝试恢复同侧旧值（评审 S-3）。
+ * 字段语义在「字面 assignee」与「集合变量名」之间翻转——不暂存/清空会让旧语义
  * 值被当新语义落盘（多→单把集合名当字面 assignee，单→多把 ${manager} 当集合名）。
  * 只在用户交互时触发，不走 watch，避免打开抽屉回填多实例时被误清（#25 评审 C1/S1）。
  */
@@ -92,9 +107,16 @@ function selectKind(kind: "single" | ApprovalMode): void {
   const prev = approvalKind.value;
   if (prev === kind) return;
   approvalKind.value = kind;
-  if ((prev === "single") !== (kind === "single")) {
-    assignee.value = "";
+  const crossedBoundary = (prev === "single") !== (kind === "single");
+  if (!crossedBoundary) return;
+  // 暂存旧侧值：单→多 暂存 assignee；多→单 暂存 collection（同一字段不同语义）
+  if (prev === "single") {
+    lastSingleAssignee.value = assignee.value;
+  } else {
+    lastCollection.value = assignee.value;
   }
+  // 切到新侧：若同会话内曾暂存过该侧的值则恢复，否则置空（避免旧语义污染）
+  assignee.value = (kind === "single" ? lastSingleAssignee.value : lastCollection.value) ?? "";
 }
 
 watch(
@@ -113,9 +135,16 @@ watch(
         : "";
     const multi = readMultiSafe();
     approvalKind.value = multi === null ? "single" : multi.mode;
+    // 重新打开抽屉 = 新会话，上一次暂存的单↔多旧值作废，避免跨会话污染
+    lastSingleAssignee.value = undefined;
+    lastCollection.value = undefined;
     if (multi !== null) {
-      // 集合变量回填到审批人字段（多人形态下该字段即集合名）
+      // 集合变量回填到审批人字段（多人形态下该字段即集合名）；
+      // 元素变量名同步回填，保存时透传避免静默重置（评审 W-1）
       assignee.value = multi.collection;
+      elementVariable.value = multi.elementVariable;
+    } else {
+      elementVariable.value = undefined;
     }
   },
 );
@@ -172,7 +201,11 @@ function save(): void {
       return;
     }
     if (!isCollectionVariable(trimmedAssignee)) {
-      emit("error", "多人审批的审批人字段是集合变量名（如 approvers），不是表达式或逗号名单");
+      // 文案与限制对齐（评审 S-4）：明确 ASCII-only，避免用户误以为字段不接受任何名单
+      emit(
+        "error",
+        "审批人集合变量名仅支持英文字母/数字/下划线（如 approvers 或 dept.approvers），不接受 ${...} 表达式或逗号名单",
+      );
       return;
     }
   } else if (isCcTask.value) {
@@ -187,6 +220,13 @@ function save(): void {
   if (isTask.value) {
     // 完成方式分流：single 走单实例；三档走多实例（单人→转换，档间→直改）。
     // 结构性转换已 fail-fast 校验，抛错时 name 尚未写、模型未被破坏（#25 评审 C2/W3）。
+    // elementVariable 透传（评审 W-1）：不透传则 setApprovalMode 会回落 DEFAULT_ELEMENT_VARIABLE
+    // 静默改写 loop.elementVariable 与 assignee 表达式，流程内引用旧变量名的地方全失效。
+    const multiSpec = {
+      collection: trimmedAssignee,
+      mode: approvalKind.value as ApprovalMode,
+      ...(elementVariable.value !== undefined ? { elementVariable: elementVariable.value } : {}),
+    };
     try {
       if (approvalKind.value === "single") {
         if (readApprovalMulti(props.model, props.nodeId) !== null) {
@@ -195,15 +235,9 @@ function save(): void {
       } else {
         const multi = readApprovalMulti(props.model, props.nodeId);
         if (multi === null) {
-          convertApprovalToMulti(props.model, props.nodeId, {
-            collection: trimmedAssignee,
-            mode: approvalKind.value,
-          });
+          convertApprovalToMulti(props.model, props.nodeId, multiSpec);
         } else {
-          setApprovalMode(props.model, props.nodeId, {
-            collection: trimmedAssignee,
-            mode: approvalKind.value,
-          });
+          setApprovalMode(props.model, props.nodeId, multiSpec);
         }
       }
     } catch (e) {

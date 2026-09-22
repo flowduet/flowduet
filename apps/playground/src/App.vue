@@ -8,6 +8,12 @@ import { DingtalkDesigner, exportXml } from "@flowduet/designer";
  * Playground 编辑区（#23）：挂 designer 组件的最小验收宿主。
  * BPMN 只读区与三区布局属 #27；导出面板用于人工验收
  * 「零坐标建模 → 竖排布局导出合法 bpmndi」。
+ *
+ * 演示场景包含（本 PR 评审 W-4）：
+ *   ・单签审批（经理审批 / 总监审批 / 财务复核 / 法务复核）
+ *   ・多人会签（addApprovalTask + collection="approvers" mode="all"）
+ *   ・抄送知会（addTask("cc") + recipients）
+ * 以便手验 #25 多人审批与抄送的导出部署链路。
  */
 const model = BpmnModel.create({
   processId: "playground_demo",
@@ -16,6 +22,16 @@ const model = BpmnModel.create({
 })
   .addStartEvent({ id: "start", name: "开始" })
   .addUserTask({ id: "approval_1", name: "经理审批", assignee: "${manager}" })
+  // 多人会签（#25）：集合变量 approvers 运行时注入名单，会签完成条件内核固化
+  .addApprovalTask({
+    id: "approval_mi",
+    name: "合同会签",
+    collection: "approvers",
+    mode: "all",
+    formKey: "contract_review_v1",
+  })
+  // 抄送知会（#25）：ServiceTask + flowable:ccTo，部署合法不要求 bean 在场（ADR-0004）
+  .addTask("cc", { id: "cc_1", name: "抄送法务备案", recipients: "张三,李四" })
   .addExclusiveGateway({ id: "fork1", name: "金额判断" })
   // 支 1：小额走总监单审
   .addUserTask({ id: "a_node", name: "总监审批", assignee: "${director}" })
@@ -27,7 +43,9 @@ const model = BpmnModel.create({
   .addExclusiveGateway({ id: "join1", name: "汇聚" })
   .addEndEvent({ id: "end", name: "结束" })
   .addSequenceFlow({ id: "f1", sourceRef: "start", targetRef: "approval_1" })
-  .addSequenceFlow({ id: "f2", sourceRef: "approval_1", targetRef: "fork1" })
+  .addSequenceFlow({ id: "f1b", sourceRef: "approval_1", targetRef: "approval_mi" })
+  .addSequenceFlow({ id: "f1c", sourceRef: "approval_mi", targetRef: "cc_1" })
+  .addSequenceFlow({ id: "f2", sourceRef: "cc_1", targetRef: "fork1" })
   .addSequenceFlow({ id: "fa", sourceRef: "fork1", targetRef: "a_node" })
   .addSequenceFlow({ id: "fb", sourceRef: "fork1", targetRef: "pfork" })
   .addSequenceFlow({ id: "fp_fin", sourceRef: "pfork", targetRef: "fin_node" })

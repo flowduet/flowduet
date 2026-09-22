@@ -30,6 +30,32 @@ describe("insertCcAfter", () => {
     expect(el.get("ccTo")).toBe("张三,李四");
     expect(el.get("delegateExpression")).toBe("${flowduetCcTask}");
   });
+
+  it("链首插入（afterId=start）：前后重链到开始事件（评审 S-2 抄送插入位置边界）", () => {
+    const model = buildChain();
+    insertCcAfter(model, "start", { recipients: "张三" });
+    const el = model.elementOf("cc_1");
+    // start → cc_1 → before → end：cc_1 入边来自 start，出边指向 before
+    const incoming = el.get("incoming") as { get(k: string): unknown }[];
+    const outgoing = el.get("outgoing") as { get(k: string): unknown }[];
+    expect(incoming).toHaveLength(1);
+    expect(outgoing).toHaveLength(1);
+    expect((incoming[0]!.get("sourceRef") as { get(k: string): unknown }).get("id")).toBe("start");
+    expect((outgoing[0]!.get("targetRef") as { get(k: string): unknown }).get("id")).toBe("before");
+  });
+
+  it("链尾插入（afterId=最后一个任务，before end）：任务 → cc → end 链路连通（评审 S-2）", async () => {
+    const model = buildChain();
+    insertCcAfter(model, "before", { recipients: "张三" });
+    const el = model.elementOf("cc_1");
+    const outgoing = el.get("outgoing") as { get(k: string): unknown }[];
+    expect(outgoing).toHaveLength(1);
+    expect((outgoing[0]!.get("targetRef") as { get(k: string): unknown }).get("id")).toBe("end");
+    // 全链仍可竖排推导，不抛错
+    const xml = await compile(model, { diLayout: verticalDiLayout() });
+    expect(xml).toContain('id="cc_1"');
+    expect(xml).toContain("<bpmndi:BPMNDiagram");
+  });
 });
 
 describe("convertApprovalToMulti", () => {
@@ -75,6 +101,22 @@ describe("convertMultiToSingle", () => {
     expect(el.get("assignee")).toBeUndefined();
     const xml = await compile(model, { diLayout: verticalDiLayout() });
     expect(xml).not.toContain("multiInstanceLoopCharacteristics");
+  });
+
+  it("formKey 单↔多两形态清空口径对称（评审 S-2）：多人→单人后清空不留残值", async () => {
+    const model = buildChain();
+    insertApprovalAfter(model, "before", { name: "审批" });
+    model.elementOf("approval_1").set("formKey", "form_v1");
+    convertApprovalToMulti(model, "approval_1", { collection: "approvers", mode: "all" });
+    // 多人形态下清空 formKey
+    model.elementOf("approval_1").set("formKey", undefined);
+    let xml = await compile(model, { diLayout: verticalDiLayout() });
+    expect(xml).not.toContain("formKey");
+    // 转回单人：formKey 仍不存在（口径对称）
+    convertMultiToSingle(model, "approval_1");
+    xml = await compile(model, { diLayout: verticalDiLayout() });
+    expect(xml).not.toContain("formKey");
+    expect(model.elementOf("approval_1").get("formKey")).toBeUndefined();
   });
 
   it("非多实例节点拒绝", () => {
@@ -159,6 +201,84 @@ describe("setApprovalMode（#25 评审 W1/W5）", () => {
     );
   });
 
+  it("档间切换全矩阵（评审 S-2）：会→或→依次→会 loop 形态逐步正确", () => {
+    const model = buildChain();
+    insertApprovalAfter(model, "before");
+    convertApprovalToMulti(model, "approval_1", { collection: "approvers", mode: "all" });
+    const loop = model.elementOf("approval_1").get("loopCharacteristics") as {
+      get(k: string): unknown;
+    };
+
+    // all → any
+    setApprovalMode(model, "approval_1", { collection: "approvers", mode: "any" });
+    expect(loop.get("isSequential")).toBe(false);
+    expect(readApprovalMulti(model, "approval_1")?.mode).toBe("any");
+
+    // any → sequential（固化完成条件必须被清空，isSequential=true）
+    setApprovalMode(model, "approval_1", { collection: "approvers", mode: "sequential" });
+    expect(loop.get("isSequential")).toBe(true);
+    expect(loop.get("completionCondition")).toBeUndefined();
+    expect(readApprovalMulti(model, "approval_1")?.mode).toBe("sequential");
+
+    // sequential → all（回固化完成条件，isSequential=false）
+    setApprovalMode(model, "approval_1", { collection: "approvers", mode: "all" });
+    expect(loop.get("isSequential")).toBe(false);
+    expect(readApprovalMulti(model, "approval_1")?.mode).toBe("all");
+  });
+
+  it("elementVariable 透传：未提供时回落 DEFAULT_ELEMENT_VARIABLE，提供时保留（评审 W-1）", () => {
+    const model = buildChain();
+    insertApprovalAfter(model, "before");
+    convertApprovalToMulti(model, "approval_1", {
+      collection: "approvers",
+      mode: "all",
+      elementVariable: "user",
+    });
+    // 透传 elementVariable：保持 user 不被重置
+    setApprovalMode(model, "approval_1", {
+      collection: "approvers",
+      mode: "any",
+      elementVariable: "user",
+    });
+    const loop = model.elementOf("approval_1").get("loopCharacteristics") as {
+      get(k: string): unknown;
+    };
+    expect(loop.get("elementVariable")).toBe("user");
+    expect(model.elementOf("approval_1").get("assignee")).toBe("${user}");
+    // 不透传：回落默认 assignee
+    setApprovalMode(model, "approval_1", { collection: "approvers", mode: "all" });
+    expect(loop.get("elementVariable")).toBe("assignee");
+    expect(model.elementOf("approval_1").get("assignee")).toBe("${assignee}");
+  });
+
+  it("非法 mode 抛错（评审 W-2），不落出空 body 的 completionCondition", () => {
+    const model = buildChain();
+    insertApprovalAfter(model, "before");
+    convertApprovalToMulti(model, "approval_1", { collection: "approvers", mode: "all" });
+    expect(() =>
+      setApprovalMode(model, "approval_1", {
+        collection: "approvers",
+        mode: "nope" as never,
+      }),
+    ).toThrow(/mode 必须是/);
+    // 模型零变更：仍是会签
+    expect(readApprovalMulti(model, "approval_1")?.mode).toBe("all");
+  });
+
+  it("非字符串 collection 抛错（评审 W-2），不报 TypeError", () => {
+    const model = buildChain();
+    insertApprovalAfter(model, "before");
+    convertApprovalToMulti(model, "approval_1", { collection: "approvers", mode: "all" });
+    expect(() =>
+      setApprovalMode(model, "approval_1", {
+        collection: undefined as unknown as string,
+        mode: "all",
+      }),
+    ).toThrow(/collection 不能为空白/);
+    // 模型零变更
+    expect(readApprovalMulti(model, "approval_1")?.collection).toBe("approvers");
+  });
+
   it("elementVariable 空白抛错（与内核 addApprovalTask 口径对称）", () => {
     const model = buildChain();
     insertApprovalAfter(model, "before");
@@ -184,5 +304,40 @@ describe("readApprovalMulti（#25 评审 W2）", () => {
     };
     loop.get("completionCondition")!.set("body", "${nrOfCompletedInstances >= 10}");
     expect(() => readApprovalMulti(model, "approval_1")).toThrow(/不是内核固化形态/);
+  });
+
+  it("依次档携外部 completionCondition 抛错（评审 C-1），不静默抹除", () => {
+    const model = buildChain();
+    insertApprovalAfter(model, "before");
+    convertApprovalToMulti(model, "approval_1", { collection: "approvers", mode: "sequential" });
+    // 模拟外部编辑后导入的形态：串行多实例 + 早停完成条件（Flowable 合法写法）
+    const loop = model.elementOf("approval_1").get("loopCharacteristics") as {
+      get(k: string): unknown;
+      set(k: string, v: unknown): void;
+    };
+    loop.set(
+      "completionCondition",
+      model.moddle.create("bpmn:FormalExpression", {
+        body: "${nrOfCompletedInstances >= 2}",
+      }),
+    );
+    // 关键守卫：读取时就要报错，不能 early-return“sequential”后让
+    // setApprovalMode 把用户原始条件静默抹除
+    expect(() => readApprovalMulti(model, "approval_1")).toThrow(
+      /依次审批却携 completionCondition/,
+    );
+    // 模型零变更：条件仍在
+    const condAfter = loop.get("completionCondition") as { get(k: string): unknown };
+    expect(String(condAfter.get("body"))).toBe("${nrOfCompletedInstances >= 2}");
+  });
+
+  it("依次档无 completionCondition（内核固化形态）正常返回 sequential", () => {
+    const model = buildChain();
+    insertApprovalAfter(model, "before");
+    convertApprovalToMulti(model, "approval_1", { collection: "approvers", mode: "sequential" });
+    const multi = readApprovalMulti(model, "approval_1");
+    expect(multi).not.toBeNull();
+    expect(multi!.mode).toBe("sequential");
+    expect(multi!.collection).toBe("approvers");
   });
 });

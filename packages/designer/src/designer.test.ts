@@ -4,7 +4,11 @@ import { flushPromises, mount } from "@vue/test-utils";
 import { BpmnModel, flowableAdapter } from "@flowduet/core";
 import DingtalkDesigner from "./components/DingtalkDesigner.vue";
 import NodeDrawer from "./components/NodeDrawer.vue";
-import { CC_RECIPIENTS_PLACEHOLDER } from "./operations.js";
+import {
+  CC_RECIPIENTS_PLACEHOLDER,
+  convertApprovalToMulti,
+  insertApprovalAfter,
+} from "./operations.js";
 import { exportXml } from "./export.js";
 
 /**
@@ -510,5 +514,200 @@ describe("多人审批与抄送（#25）", () => {
     const xml = await exportXml(model);
     expect(xml).toContain('flowable:formKey="leave_form_v1"');
     wrapper.unmount();
+  });
+
+  it("抽屉保存多人节点后 elementVariable 保留（评审 W-1：不静默重置为默认名）", async () => {
+    // 直接建带自定义 elementVariable 的多实例节点（模拟 convertApprovalToMulti 开形参）
+    const model = BpmnModel.create({ processId: "designer_ev", adapter: flowableAdapter })
+      .addStartEvent({ id: "start", name: "开始" })
+      .addApprovalTask({
+        id: "mi1",
+        name: "会签",
+        collection: "approvers",
+        mode: "all",
+        elementVariable: "user",
+      })
+      .addEndEvent({ id: "end", name: "结束" })
+      .addSequenceFlow({ id: "f1", sourceRef: "start", targetRef: "mi1" })
+      .addSequenceFlow({ id: "f2", sourceRef: "mi1", targetRef: "end" });
+    const wrapper = mountDesigner(model);
+    // 点开多人节点抽屉，只改节点名保存
+    await wrapper.findAll('[data-test="node-card"]')[1]!.trigger("click");
+    await flushPromises();
+    await setValue(
+      document.querySelector<HTMLInputElement>('[data-test="drawer-name"]')!,
+      "改名会签",
+    );
+    (document.querySelector('[data-test="drawer-save"]') as HTMLElement).click();
+    await flushPromises();
+
+    const loop = model.elementOf("mi1").get("loopCharacteristics") as { get(k: string): unknown };
+    // 未回落 DEFAULT_ELEMENT_VARIABLE（"assignee"），保留自定义 user
+    expect(loop.get("elementVariable")).toBe("user");
+    expect(model.elementOf("mi1").get("assignee")).toBe("${user}");
+    expect(model.elementOf("mi1").get("name")).toBe("改名会签");
+    wrapper.unmount();
+  });
+
+  it("单↔多切换缓冲暂存/恢复（评审 S-3）：同会话内误点后切回不丢字段", async () => {
+    const model = buildChain();
+    const wrapper = mountDesigner(model);
+    await wrapper.findAll('[data-test="node-card"]')[1]!.trigger("click");
+    await flushPromises();
+
+    // 单签侧填 ${manager}
+    await setValue(
+      document.querySelector<HTMLInputElement>('[data-test="drawer-assignee"]')!,
+      "${manager}",
+    );
+    // 切会签 → 缓冲暂存单签值、多人侧无旧值可恢复→置空
+    await wrapper.find('[data-test="kind-all"]').trigger("click");
+    await flushPromises();
+    expect(document.querySelector<HTMLInputElement>('[data-test="drawer-assignee"]')!.value).toBe(
+      "",
+    );
+    // 会签侧填 approvers
+    await setValue(
+      document.querySelector<HTMLInputElement>('[data-test="drawer-assignee"]')!,
+      "approvers",
+    );
+    // 误点回单签 → 恢复同会话内暂存的 ${manager}
+    await wrapper.find('[data-test="kind-single"]').trigger("click");
+    await flushPromises();
+    expect(document.querySelector<HTMLInputElement>('[data-test="drawer-assignee"]')!.value).toBe(
+      "${manager}",
+    );
+    // 再切会签 → 恢复 approvers
+    await wrapper.find('[data-test="kind-all"]').trigger("click");
+    await flushPromises();
+    expect(document.querySelector<HTMLInputElement>('[data-test="drawer-assignee"]')!.value).toBe(
+      "approvers",
+    );
+    wrapper.unmount();
+  });
+
+  it("非法集合变量错误文案明确 ASCII-only（评审 S-4）", async () => {
+    const model = buildChain();
+    const wrapper = mountDesigner(model);
+    await wrapper.findAll('[data-test="node-card"]')[1]!.trigger("click");
+    await flushPromises();
+    await wrapper.find('[data-test="kind-all"]').trigger("click");
+    await setValue(
+      document.querySelector<HTMLInputElement>('[data-test="drawer-assignee"]')!,
+      "审批人",
+    );
+    (document.querySelector('[data-test="drawer-save"]') as HTMLElement).click();
+    await flushPromises();
+
+    const errText = wrapper.find('[data-test="action-error"]').text();
+    expect(errText).toContain("英文字母");
+    expect(errText).toContain("approvers");
+    // 校验失败：不落多实例
+    expect(model.elementOf("approval_1").get("loopCharacteristics")).toBeUndefined();
+    wrapper.unmount();
+  });
+
+  it("依次档携外部 completionCondition：抽屉保存拦截且模型零变更（评审 C-1）", async () => {
+    const model = BpmnModel.create({ processId: "designer_c1", adapter: flowableAdapter })
+      .addStartEvent({ id: "start", name: "开始" })
+      .addApprovalTask({
+        id: "mi1",
+        name: "依次审批",
+        collection: "approvers",
+        mode: "sequential",
+      })
+      .addEndEvent({ id: "end", name: "结束" })
+      .addSequenceFlow({ id: "f1", sourceRef: "start", targetRef: "mi1" })
+      .addSequenceFlow({ id: "f2", sourceRef: "mi1", targetRef: "end" });
+    // 模拟外部导入形态：串行多实例 + 早停完成条件（Flowable 合法写法）
+    const loop = model.elementOf("mi1").get("loopCharacteristics") as {
+      set(k: string, v: unknown): void;
+      get(k: string): unknown;
+    };
+    loop.set(
+      "completionCondition",
+      model.moddle.create("bpmn:FormalExpression", {
+        body: "${nrOfCompletedInstances >= 2}",
+      }),
+    );
+
+    const wrapper = mountDesigner(model);
+    await wrapper.findAll('[data-test="node-card"]')[1]!.trigger("click");
+    await flushPromises();
+    // 抽屉回填时即报错（readMultiSafe 捕获抛错并 emit）
+    expect(wrapper.find('[data-test="action-error"]').exists()).toBe(true);
+    // 只改节点名保存：save 内 readApprovalMulti 再次报错拦截
+    await setValue(document.querySelector<HTMLInputElement>('[data-test="drawer-name"]')!, "新名");
+    (document.querySelector('[data-test="drawer-save"]') as HTMLElement).click();
+    await flushPromises();
+
+    // 模型零变更：条件仍在、name 未被写、loop 未被抹除
+    const condAfter = loop.get("completionCondition") as { get(k: string): unknown };
+    expect(String(condAfter.get("body"))).toBe("${nrOfCompletedInstances >= 2}");
+    expect(model.elementOf("mi1").get("name")).toBe("依次审批");
+    wrapper.unmount();
+  });
+
+  it("抄送卡片字形为「抄」而非「审」（评审 W-5）", async () => {
+    const model = buildChain();
+    const wrapper = mountDesigner(model);
+    await insertViaMenu(wrapper, "approval_1", "cc");
+    const ccCard = wrapper
+      .findAll('[data-test="node-card"]')
+      .filter((w) => w.text().includes("抄送节点"))[0];
+    expect(ccCard).toBeDefined();
+    expect(ccCard!.find('[data-test="node-glyph"]').text()).toBe("抄");
+    expect(ccCard!.classes()).toContain("node-card--cc");
+    wrapper.unmount();
+  });
+});
+
+describe("exportXml 草稿 fail-fast（评审 S-5）", () => {
+  /**
+   * #25 引入的两个「插入即带占位」形态可绕过抽屉直接导出：
+   * exportXml 前置扫描拒绝部署合法但运行时静默失效的脏数据。
+   * 全模型系统性校验另立 #35。
+   */
+  it("抄送节点占位收件人未改：导出前报错，不产出部署后静默丢知会的 XML", async () => {
+    const model = buildChain();
+    const wrapper = mountDesigner(model);
+    await insertViaMenu(wrapper, "approval_1", "cc");
+    // 不开抽屉配置，直接导出
+    await expect(exportXml(model)).rejects.toThrow(/占位串/);
+    await expect(exportXml(model)).rejects.toThrow(/抄送节点/);
+    wrapper.unmount();
+  });
+
+  it("抄送节点填真实名单后：导出放行", async () => {
+    const model = buildChain();
+    const wrapper = mountDesigner(model);
+    await insertViaMenu(wrapper, "approval_1", "cc");
+    const ccCard = wrapper
+      .findAll('[data-test="node-card"]')
+      .filter((w) => w.text().includes("抄送节点"))[0];
+    await ccCard!.trigger("click");
+    await flushPromises();
+    await setValue(
+      document.querySelector<HTMLInputElement>('[data-test="drawer-recipients"]')!,
+      "张三,李四",
+    );
+    (document.querySelector('[data-test="drawer-save"]') as HTMLElement).click();
+    await flushPromises();
+
+    const xml = await exportXml(model);
+    expect(xml).toContain('flowable:ccTo="张三,李四"');
+    wrapper.unmount();
+  });
+
+  it("多实例集合变量空白（宿主直写脏数据）：导出前报错", async () => {
+    const model = buildChain();
+    insertApprovalAfter(model, "approval_1", { name: "会签" });
+    convertApprovalToMulti(model, "approval_2", { collection: "approvers", mode: "all" });
+    // 模拟宿主绕开守卫直写脏数据
+    const loop = model.elementOf("approval_2").get("loopCharacteristics") as {
+      set(k: string, v: unknown): void;
+    };
+    loop.set("collection", "   ");
+    await expect(exportXml(model)).rejects.toThrow(/集合变量为空白/);
   });
 });

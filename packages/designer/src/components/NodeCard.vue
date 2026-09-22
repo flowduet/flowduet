@@ -13,7 +13,14 @@ const emit = defineEmits<{
   delete: [nodeId: string];
 }>();
 
-/** 事件/任务/网关的最小视觉词汇（卡片层，画布词汇属 #26），单一分派表 */
+/**
+ * 事件/任务/网关的最小视觉词汇（卡片层，画布词汇属 #26），单一分派表。
+ * 抄送任务（ServiceTask + ccTo）用专属「抄」字形与中性灰蓝底色，与审批任务（「审」 + 靛蓝）
+ * 在钉钉式列表中形成可辨识的类型差异（评审 W-5）；上下文：抄送不阻塞流程推进（CONTEXT.md），
+ * 沿用审批任务字形会错标类型语义。
+ * 非抄送的 ServiceTask（service/mail）当前无钉钉式列表入口（适配器只开放 user/cc），
+ * 若后续引入可再拆一个 ccOnly 判定。
+ */
 const TYPE_VOCAB: Record<string, { glyph: string; cls: string; deletable?: boolean }> = {
   "bpmn:StartEvent": { glyph: "起", cls: "node-card--start" },
   "bpmn:EndEvent": { glyph: "终", cls: "node-card--end" },
@@ -21,14 +28,24 @@ const TYPE_VOCAB: Record<string, { glyph: string; cls: string; deletable?: boole
   "bpmn:ParallelGateway": { glyph: "并", cls: "node-card--gateway" },
 };
 
-const vocab = computed(
-  () =>
-    TYPE_VOCAB[props.node.element.$type] ?? {
-      glyph: "审",
-      cls: "node-card--task",
-      deletable: true,
-    },
-);
+/**
+ *  ServiceTask 拆抄送/非抄送：ccTo 存在即抄送（适配器写入的语义标记）。
+ *  当前非抄送 ServiceTask 无列表入口，兜底归到“任务”字形（审）。
+ */
+function resolveVocab(el: { $type: string; get(key: string): unknown }): {
+  glyph: string;
+  cls: string;
+  deletable?: boolean;
+} {
+  const mapped = TYPE_VOCAB[el.$type];
+  if (mapped !== undefined) return mapped;
+  if (el.$type === "bpmn:ServiceTask" && el.get("ccTo") !== undefined) {
+    return { glyph: "抄", cls: "node-card--cc", deletable: true };
+  }
+  return { glyph: "审", cls: "node-card--task", deletable: true };
+}
+
+const vocab = computed(() => resolveVocab(props.node.element));
 
 const summary = computed(() => {
   const el = props.node.element;
@@ -106,6 +123,12 @@ const summary = computed(() => {
 .node-card--gateway {
   width: 200px;
   justify-content: center;
+}
+
+/* 抄送卡片专属配色（评审 W-5）：中性灰蓝，与审批任务的靛蓝、开始/结束的绿/红拉开声部；
+   与 #26 BPMN 只读画布中抄送节点的色系一致，双视图上可形成同一语义的颜色回忆 */
+.node-card--cc .node-card-glyph {
+  background: #6b7a99;
 }
 
 .node-card-glyph {

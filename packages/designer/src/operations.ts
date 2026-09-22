@@ -466,8 +466,10 @@ export function insertCcAfter(
 }
 
 /**
- * 校验从旧元素携带的 formKey：纯空白时内核 #setFormKey 会在 removeNode 之后才抛错，
- * 留下断链模型——破坏性操作前 fail-fast（补齐 #25 评审 W3 的 formKey 盲区）。
+ * 校验从旧元素携带的 formKey：内核 normalizeFormKey 已前置校验空白（评审 S-1），
+ * 此处保留为纵深防御：旧元素可能由宿主经 elementOf().set("formKey", "   ")
+ * 直接写入（绕开内核守卫），转换前拦下避免同 id 重建时抛错
+ * 但新节点已登、连线未接的半写模型。removeNode 是破坏性操作，fail-fast 先于它。
  */
 function assertCarriedFormKey(nodeId: string, formKey: unknown): void {
   if (formKey !== undefined && String(formKey).trim() === "") {
@@ -517,10 +519,14 @@ export function convertApprovalToMulti(
   const formKey = el.get("formKey");
   assertCarriedFormKey(nodeId, formKey);
   // removeNode 会级联删两侧连线——先记端点，重建任务后原样接回。
-  // 已知限制（#25 评审 S2）：removeNode 同时丢弃 shape，removeSequenceFlow 丢弃
-  // 两侧 waypoints。钉钉式纵向视图恒走 verticalDiLayout 推导，无影响；但若模型
-  // 经 parse() 带 DI 导入、再被 BPMN 只读画布（IdentityDiLayout）消费，该节点 DI
-  // 会静默丢失。补回需内核暴露 setShape/setWaypoints 写入口（跨包改动），暂缓。
+  // 已知限制（#25 评审 S2、本 PR 评审 W-6）：removeNode 同时丢弃 shape，
+  // removeSequenceFlow 丢弃两侧 waypoints。下游两条路径均非静默丢失：
+  //   ・IdentityDiLayout.attach 调 model.shapeOf(id) 缺 shape 直接抛错（诚实失败）；
+  //   ・#26 resolveCanvasGeometry 是全图二选一：任一元素缺坐标 → 整图降级走
+  //     竖排推导，导入布局整体作废（非仅该节点）。
+  // 钉钉式纵向视图恒走 verticalDiLayout 推导，主链路无影响；带 DI 导入 +
+  // 抽屉转换 + 只读画布消费时布局降级需 #27/#35 追踪（内核需暴露
+  // setShape/setWaypoints 写入口，转换时保留 DI；跨包改动，暂缓）。
   model.removeNode(nodeId);
   model.addApprovalTask({
     id: nodeId,
@@ -563,8 +569,9 @@ export function convertMultiToSingle(model: BpmnModel, nodeId: string): void {
   const name = el.get("name");
   const formKey = el.get("formKey");
   assertCarriedFormKey(nodeId, formKey);
-  // 已知限制（#25 评审 S2）：removeNode 丢弃 shape、removeSequenceFlow 丢弃两侧
-  // waypoints；纵向视图无影响，带 DI 导入后被只读画布消费时该节点 DI 会丢失。
+  // 已知限制（#25 评审 S2、本 PR 评审 W-6）：removeNode 丢弃 shape、removeSequenceFlow
+  // 丢弃两侧 waypoints；下游两条消费路径均非静默丢失（IdentityDiLayout 抛错 /
+  // #26 只读画布整图降级竖排）。纵向视图无影响，导入图转换后布局降级需 #27/#35 追踪。
   model.removeNode(nodeId);
   // 集合变量不回填摘要位：留空由用户在抽屉补填具体审批人
   //（回填字面量会让导出带无效 assignee，运行时静默取不到人）。
@@ -600,7 +607,16 @@ export function setApprovalMode(
   if (el.$type !== "bpmn:UserTask" || loop === undefined) {
     throw new Error(`节点 ${nodeId} 不是多人审批任务`);
   }
-  if (spec.collection.trim() === "") {
+  // fail-fast 与 convertApprovalToMulti / 内核 addApprovalTask 同口径（评审 W-2）：
+  // 非法 mode 会落出空 body 的 completionCondition + isSequential:false，即内核
+  // addApprovalTask#L324-L330 注释里点名要防的失效形态；非字符串 collection
+  // 报 TypeError 会以技术噪音形式冒到抽屉。
+  if (!APPROVAL_MODES.includes(spec.mode)) {
+    throw new Error(
+      `任务 ${nodeId} 的 mode 必须是 ${APPROVAL_MODES.join("/")} 之一，实际是 ${String(spec.mode)}`,
+    );
+  }
+  if (typeof spec.collection !== "string" || spec.collection.trim() === "") {
     throw new Error(`任务 ${nodeId} 的 collection 不能为空白`);
   }
   // 默认名与内核 addApprovalTask 同源（#25 评审 W1）；空白守卫与内核口径对称（W5）。
@@ -634,9 +650,19 @@ export function readApprovalMulti(
   if (el.$type !== "bpmn:UserTask" || loop === undefined) return null;
   const collection = String(loop.get("collection") ?? "");
   const elementVariable = String(loop.get("elementVariable") ?? DEFAULT_ELEMENT_VARIABLE);
-  if (loop.get("isSequential") === true) return { collection, mode: "sequential", elementVariable };
+  // 完成条件读取上移到 isSequential 判定之前：依次档也可能携带外部完成条件
+  // （串行多实例 + 早停完成条件是 Flowable 合法写法），若不拦截会被
+  // setApprovalMode 的 completionCondition=undefined 静默抹除（评审 C-1）。
   const condition = loop.get("completionCondition") as ModdleElement | undefined;
   const body = condition === undefined ? "" : String(condition.get("body") ?? "").trim();
+  if (loop.get("isSequential") === true) {
+    if (body !== "") {
+      throw new Error(
+        `节点 ${nodeId} 是依次审批却携 completionCondition「${body}」，不是内核固化形态，请在 BPMN 视图核对`,
+      );
+    }
+    return { collection, mode: "sequential", elementVariable };
+  }
   // 全等比对内核固化常量，不用子串 includes 反推（避免 ">= 10" 等误判，#25 评审 W2）。
   if (body === COMPLETION_CONDITIONS.any) return { collection, mode: "any", elementVariable };
   // 空 body（无完成条件的非依次形态）归为 all，与内核默认对齐。
