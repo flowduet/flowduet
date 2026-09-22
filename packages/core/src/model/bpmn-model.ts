@@ -140,6 +140,20 @@ interface ModelState {
 const DEFAULT_TARGET_NAMESPACE = "http://flowduet.dev/bpmn";
 
 /**
+ * formKey 字段归一化：空白拒绝 + trim 后落盘（与 assignee/ccTo 口径对齐）。
+ * 抽为纯函数便于 addTask/addApprovalTask 在 #addNode 之前前置校验（评审 S-1）：
+ * 抛错时不留半写节点，下游无需再写补偿型 fail-fast。
+ */
+function normalizeFormKey(id: string, formKey: string | undefined): string | undefined {
+  if (formKey === undefined) return undefined;
+  const trimmed = formKey.trim();
+  if (trimmed === "") {
+    throw new Error(`任务 ${id} 的 formKey 不能为空白`);
+  }
+  return trimmed;
+}
+
+/**
  * BPMN 模型树包装（ROADMAP 接缝之一）。
  *
  * moddle 树是唯一事实源（ADR-0002）；本类只做四件事：
@@ -337,9 +351,14 @@ export class BpmnModel {
     if (elementVariable === "") {
       throw new Error(`任务 ${spec.id} 的 elementVariable 不能为空白`);
     }
+    // formKey 空白校验前置到 #addNode 之前：抛错时不留半写节点（评审 S-1）
+    const formKey = normalizeFormKey(spec.id, spec.formKey);
     const task = this.#addNode("bpmn:UserTask", spec);
     task.set("assignee", `\${${elementVariable}}`);
-    this.#setFormKey(task, spec.id, spec.formKey);
+    // addApprovalTask 直建 UserTask，元素类型天然合法，无需再做映射校验
+    if (formKey !== undefined) {
+      task.set("formKey", formKey);
+    }
     // isSequential=false 是 XSD 缺省，moddle 序列化时省略（bpmn.io 同款）
     const loop = this.#state.moddle.create("bpmn:MultiInstanceLoopCharacteristics", {
       isSequential: spec.mode === "sequential",
@@ -374,7 +393,7 @@ export class BpmnModel {
     if (mapping === undefined) {
       throw new Error(`适配器 ${adapter.id} 未定义任务类型映射：${kind}`);
     }
-    const element = this.#addNode(mapping.elementType, spec);
+    // 所有校验前置到 #addNode 之前：任一守卫抛错时不留半写节点（评审 S-1）
     const assignee = "assignee" in spec ? spec.assignee : undefined;
     if (assignee !== undefined) {
       if (assignee.trim() === "") {
@@ -383,13 +402,18 @@ export class BpmnModel {
       if (mapping.elementType !== "bpmn:UserTask") {
         throw new Error(`任务类型 ${kind} 的方言形态是 ${mapping.elementType}，不支持 assignee`);
       }
-      element.set("assignee", assignee);
     }
-    this.#setFormKey(
-      element,
+    const formKey = normalizeFormKey(
       spec.id,
       "formKey" in spec ? (spec as UserTaskSpec).formKey : undefined,
     );
+    // formKey 仅在适配器为其声明了扩展属性的元素类型上合法（当前只有 UserTask）：
+    // 未声明的类型上直写会落进 moddle $attrs、序列化时丢掉 flowable 前缀，
+    // 产出 schema 非法 XML——引擎侧静默忽略，严格校验器报未知属性（评审 C-2）
+    if (formKey !== undefined && mapping.elementType !== "bpmn:UserTask") {
+      throw new Error(`任务类型 ${kind} 的方言形态是 ${mapping.elementType}，不支持 formKey`);
+    }
+    let recipientsTrimmed: string | undefined;
     if (kind === "cc") {
       // 仅靠 TS 类型约束不够（JS 调用方可绕过）；收件人带空白落盘会让
       // 引擎按带空格的表达式/名单解析，静默取不到人——统一校验并 trim
@@ -397,11 +421,22 @@ export class BpmnModel {
       if (typeof recipients !== "string" || recipients.trim() === "") {
         throw new Error(`抄送任务 ${spec.id} 的 recipients 不能为空白`);
       }
-      // ccTo 是语义名，方言前缀由适配器描述符绑定（与 assignee 同一机制）
-      element.set("ccTo", recipients.trim());
+      recipientsTrimmed = recipients.trim();
     } else if ("recipients" in spec) {
       // 对称守卫：JS 调用方可能绕过 TS 类型，把 recipients 传给非 cc 任务
       throw new Error(`任务类型 ${kind} 不支持 recipients（仅抄送任务支持）`);
+    }
+    // 前置校验全通过后再动模型
+    const element = this.#addNode(mapping.elementType, spec);
+    if (assignee !== undefined) {
+      element.set("assignee", assignee);
+    }
+    if (formKey !== undefined) {
+      element.set("formKey", formKey);
+    }
+    if (recipientsTrimmed !== undefined) {
+      // ccTo 是语义名，方言前缀由适配器描述符绑定（与 assignee 同一机制）
+      element.set("ccTo", recipientsTrimmed);
     }
     for (const [attr, value] of Object.entries(mapping.attributes ?? {})) {
       element.set(attr, value);
@@ -536,15 +571,6 @@ export class BpmnModel {
   /** 用建树时绑定的 moddle 实例序列化（保证方言扩展包在场） */
   toXML(options?: { format?: boolean; preamble?: boolean }): Promise<{ xml: string }> {
     return this.#state.moddle.toXML(this.#state.definitions, options);
-  }
-
-  /** formKey 写入的统一口径（addTask 与 addApprovalTask 共用） */
-  #setFormKey(element: ModdleElement, id: string, formKey: string | undefined): void {
-    if (formKey === undefined) return;
-    if (formKey.trim() === "") {
-      throw new Error(`任务 ${id} 的 formKey 不能为空白`);
-    }
-    element.set("formKey", formKey);
   }
 
   #addNode(type: string, spec: NodeSpec): ModdleElement {
