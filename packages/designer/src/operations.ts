@@ -1,4 +1,10 @@
-import type { BpmnModel, ModdleElement, UserTaskSpec } from "@flowduet/core";
+import type {
+  ApprovalMode,
+  ApprovalTaskSpec,
+  BpmnModel,
+  ModdleElement,
+  UserTaskSpec,
+} from "@flowduet/core";
 import { deriveBlockTree } from "@flowduet/core";
 import type { BlockTreeNode } from "@flowduet/core";
 
@@ -410,4 +416,175 @@ export function isDefaultBranch(model: BpmnModel, forkId: string, branchIndex: n
   if (gateway.$type !== "bpmn:ExclusiveGateway") return false;
   const flow = outgoingOf(model, forkId)[branchIndex];
   return flow !== undefined && gateway.get("default") === flow;
+}
+
+// ---------- 多人审批与抄送（#25）：类型化插入 + 多实例双向转换 ----------
+
+/**
+ * 在链元素之后插入抄送节点（ServiceTask + ccTo 占位 delegate，R3 决策）。
+ * 与 insertApprovalAfter 同一链上插入语义。
+ */
+export function insertCcAfter(
+  model: BpmnModel,
+  afterNodeId: string,
+  spec: { name?: string; recipients: string },
+): string {
+  const outgoing = outgoingOf(model, afterNodeId);
+  if (outgoing.length !== 1) {
+    throw new Error(`节点 ${afterNodeId} 的出边数是 ${outgoing.length}，链上插入要求恰好 1 条`);
+  }
+  const nextFlow = outgoing[0];
+  if (nextFlow === undefined) {
+    throw new Error(`节点 ${afterNodeId} 没有后继连线`);
+  }
+  const nextId = (nextFlow.get("targetRef") as ModdleElement).get("id") as string;
+  const id = nextFreeId(model, "cc_");
+  model.removeSequenceFlow(nextFlow.get("id") as string);
+  model.addTask("cc", { id, name: spec.name ?? "抄送节点", recipients: spec.recipients });
+  model.addSequenceFlow({ id: `flow_${id}_in`, sourceRef: afterNodeId, targetRef: id });
+  model.addSequenceFlow({ id: `flow_${id}_out`, sourceRef: id, targetRef: nextId });
+  return id;
+}
+
+/**
+ * 单人审批 → 多人（多实例）：同 id 重建为 addApprovalTask 形态，前后连线原样保留。
+ * collection 是审批人集合的裸变量名（运行时注入名单，issue #25 口径）。
+ */
+export function convertApprovalToMulti(
+  model: BpmnModel,
+  nodeId: string,
+  spec: Pick<ApprovalTaskSpec, "collection" | "mode" | "elementVariable">,
+): void {
+  const el = model.elementOf(nodeId);
+  if (el.$type !== "bpmn:UserTask") {
+    throw new Error(`节点 ${nodeId} 不是审批任务，不能转为多人审批`);
+  }
+  if (el.get("loopCharacteristics") !== undefined) {
+    throw new Error(`节点 ${nodeId} 已是多人审批`);
+  }
+  const incoming = incomingOf(model, nodeId);
+  const outgoing = outgoingOf(model, nodeId);
+  if (incoming.length !== 1 || outgoing.length !== 1) {
+    throw new Error(
+      `节点 ${nodeId} 不在单链位置（入 ${incoming.length}/出 ${outgoing.length}），不能转换`,
+    );
+  }
+  const prevId = (incoming[0]!.get("sourceRef") as ModdleElement).get("id") as string;
+  const nextId = (outgoing[0]!.get("targetRef") as ModdleElement).get("id") as string;
+  const name = el.get("name");
+  const formKey = el.get("formKey");
+  // removeNode 会级联删两侧连线——先记端点，重建任务后原样接回
+  model.removeNode(nodeId);
+  model.addApprovalTask({
+    id: nodeId,
+    ...(name !== undefined ? { name: String(name) } : {}),
+    collection: spec.collection,
+    mode: spec.mode,
+    ...(spec.elementVariable !== undefined ? { elementVariable: spec.elementVariable } : {}),
+    ...(formKey !== undefined ? { formKey: String(formKey) } : {}),
+  });
+  model.addSequenceFlow({
+    id: nextFreeId(model, "flow_conv_in_"),
+    sourceRef: prevId,
+    targetRef: nodeId,
+  });
+  model.addSequenceFlow({
+    id: nextFreeId(model, "flow_conv_out_"),
+    sourceRef: nodeId,
+    targetRef: nextId,
+  });
+}
+
+/**
+ * 多人（多实例）→ 单人审批：同 id 重建为普通用户任务。
+ * 审批人留空（集合变量无法还原为具体名单，由用户在抽屉补填）。
+ */
+export function convertMultiToSingle(model: BpmnModel, nodeId: string): void {
+  const el = model.elementOf(nodeId);
+  if (el.$type !== "bpmn:UserTask" || el.get("loopCharacteristics") === undefined) {
+    throw new Error(`节点 ${nodeId} 不是多人审批任务`);
+  }
+  const incoming = incomingOf(model, nodeId);
+  const outgoing = outgoingOf(model, nodeId);
+  if (incoming.length !== 1 || outgoing.length !== 1) {
+    throw new Error(`节点 ${nodeId} 不在单链位置，不能转换`);
+  }
+  const prevId = (incoming[0]!.get("sourceRef") as ModdleElement).get("id") as string;
+  const nextId = (outgoing[0]!.get("targetRef") as ModdleElement).get("id") as string;
+  const name = el.get("name");
+  const formKey = el.get("formKey");
+  const loop = el.get("loopCharacteristics") as ModdleElement;
+  const collection = loop.get("collection");
+  model.removeNode(nodeId);
+  const spec: UserTaskSpec = { id: nodeId, ...(name !== undefined ? { name: String(name) } : {}) };
+  if (formKey !== undefined) {
+    spec.formKey = String(formKey);
+  }
+  model.addUserTask(spec);
+  model.addSequenceFlow({
+    id: nextFreeId(model, "flow_conv_in_"),
+    sourceRef: prevId,
+    targetRef: nodeId,
+  });
+  model.addSequenceFlow({
+    id: nextFreeId(model, "flow_conv_out_"),
+    sourceRef: nodeId,
+    targetRef: nextId,
+  });
+  // 集合变量不回填摘要位：留空由用户在抽屉补填具体审批人
+  //（回填字面量会让导出带无效 assignee，运行时静默取不到人）
+  void collection;
+}
+
+/**
+ * 多人审批三档间直改（#25）：改 loop 的 isSequential / completionCondition /
+ * 集合与元素变量，不做节点重建。固化值与内核 COMPLETION_CONDITIONS 同构。
+ */
+export function setApprovalMode(
+  model: BpmnModel,
+  nodeId: string,
+  spec: Pick<ApprovalTaskSpec, "collection" | "mode" | "elementVariable">,
+): void {
+  const el = model.elementOf(nodeId);
+  const loop = el.get("loopCharacteristics") as ModdleElement | undefined;
+  if (el.$type !== "bpmn:UserTask" || loop === undefined) {
+    throw new Error(`节点 ${nodeId} 不是多人审批任务`);
+  }
+  if (spec.collection.trim() === "") {
+    throw new Error(`任务 ${nodeId} 的 collection 不能为空白`);
+  }
+  const elementVariable = (spec.elementVariable ?? "assignee").trim();
+  loop.set("collection", spec.collection.trim());
+  loop.set("elementVariable", elementVariable);
+  el.set("assignee", `\${${elementVariable}}`);
+  if (spec.mode === "sequential") {
+    loop.set("isSequential", true);
+    loop.set("completionCondition", undefined);
+  } else {
+    loop.set("isSequential", false);
+    const conditions: Record<"all" | "any", string> = {
+      all: "${nrOfCompletedInstances == nrOfInstances}",
+      any: "${nrOfCompletedInstances >= 1}",
+    };
+    loop.set(
+      "completionCondition",
+      model.moddle.create("bpmn:FormalExpression", { body: conditions[spec.mode] }),
+    );
+  }
+}
+
+/** 读多人审批的当前形态（抽屉回填用）：非多实例返回 null */
+export function readApprovalMulti(
+  model: BpmnModel,
+  nodeId: string,
+): { collection: string; mode: ApprovalMode; elementVariable: string } | null {
+  const el = model.elementOf(nodeId);
+  const loop = el.get("loopCharacteristics") as ModdleElement | undefined;
+  if (el.$type !== "bpmn:UserTask" || loop === undefined) return null;
+  const collection = String(loop.get("collection") ?? "");
+  const elementVariable = String(loop.get("elementVariable") ?? "assignee");
+  if (loop.get("isSequential") === true) return { collection, mode: "sequential", elementVariable };
+  const condition = loop.get("completionCondition") as ModdleElement | undefined;
+  const body = condition === undefined ? "" : String(condition.get("body") ?? "");
+  return { collection, mode: body.includes(">= 1") ? "any" : "all", elementVariable };
 }

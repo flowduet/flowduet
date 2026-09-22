@@ -42,6 +42,8 @@ export interface NodeSpec {
 export interface UserTaskSpec extends NodeSpec {
   /** 审批人，Flowable 表达式（如 "${manager}"）或字面量 */
   assignee?: string;
+  /** 表单绑定占位（#25 抽屉字段面；Flowable 以 flowable:formKey 序列化） */
+  formKey?: string;
 }
 
 /**
@@ -66,10 +68,11 @@ export type ApprovalMode = "all" | "any" | "sequential";
 export const APPROVAL_MODES: readonly ApprovalMode[] = ["all", "any", "sequential"];
 
 /** 内核按档固化的完成条件（Flowable 多实例内置变量；原型实测形态） */
-const COMPLETION_CONDITIONS: Readonly<Record<Exclude<ApprovalMode, "sequential">, string>> = {
-  all: "${nrOfCompletedInstances == nrOfInstances}",
-  any: "${nrOfCompletedInstances >= 1}",
-};
+export const COMPLETION_CONDITIONS: Readonly<Record<Exclude<ApprovalMode, "sequential">, string>> =
+  {
+    all: "${nrOfCompletedInstances == nrOfInstances}",
+    any: "${nrOfCompletedInstances >= 1}",
+  };
 
 /** 单实例内引用"当前审批人"的元素变量默认名 */
 const DEFAULT_ELEMENT_VARIABLE = "assignee";
@@ -86,6 +89,8 @@ export interface ApprovalTaskSpec extends NodeSpec {
   mode: ApprovalMode;
   /** 逐实例元素变量名（任务内引用当前审批人），默认 "assignee" */
   elementVariable?: string;
+  /** 表单绑定占位（#25 抽屉字段面；Flowable 以 flowable:formKey 序列化） */
+  formKey?: string;
   /**
    * 不支持——三档完成条件由内核固化，传入即抛错。
    * 字段保留在类型上是为了让误用的调用方在运行时得到明确报错而非静默忽略。
@@ -330,6 +335,7 @@ export class BpmnModel {
     }
     const task = this.#addNode("bpmn:UserTask", spec);
     task.set("assignee", `\${${elementVariable}}`);
+    this.#setFormKey(task, spec.id, spec.formKey);
     // isSequential=false 是 XSD 缺省，moddle 序列化时省略（bpmn.io 同款）
     const loop = this.#state.moddle.create("bpmn:MultiInstanceLoopCharacteristics", {
       isSequential: spec.mode === "sequential",
@@ -375,6 +381,11 @@ export class BpmnModel {
       }
       element.set("assignee", assignee);
     }
+    this.#setFormKey(
+      element,
+      spec.id,
+      "formKey" in spec ? (spec as UserTaskSpec).formKey : undefined,
+    );
     if (kind === "cc") {
       // 仅靠 TS 类型约束不够（JS 调用方可绕过）；收件人带空白落盘会让
       // 引擎按带空格的表达式/名单解析，静默取不到人——统一校验并 trim
@@ -521,6 +532,15 @@ export class BpmnModel {
   /** 用建树时绑定的 moddle 实例序列化（保证方言扩展包在场） */
   toXML(options?: { format?: boolean; preamble?: boolean }): Promise<{ xml: string }> {
     return this.#state.moddle.toXML(this.#state.definitions, options);
+  }
+
+  /** formKey 写入的统一口径（addTask 与 addApprovalTask 共用） */
+  #setFormKey(element: ModdleElement, id: string, formKey: string | undefined): void {
+    if (formKey === undefined) return;
+    if (formKey.trim() === "") {
+      throw new Error(`任务 ${id} 的 formKey 不能为空白`);
+    }
+    element.set("formKey", formKey);
   }
 
   #addNode(type: string, spec: NodeSpec): ModdleElement {

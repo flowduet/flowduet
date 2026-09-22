@@ -17,7 +17,11 @@ const flowablePackage = {
     {
       name: "UserTask",
       extends: ["bpmn:UserTask"],
-      properties: [{ name: "assignee", isAttr: true, type: "String" }],
+      properties: [
+        { name: "assignee", isAttr: true, type: "String" },
+        // 表单绑定占位（#25 抽屉字段面；Flowable 习惯：扩展属性 formKey）
+        { name: "formKey", isAttr: true, type: "String" },
+      ],
     },
     {
       name: "ServiceTask",
