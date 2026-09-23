@@ -1,6 +1,6 @@
 ---
 "@flowduet/core": patch
-"@flowduet/designer": minor
+"@flowduet/designer": patch
 ---
 
 PR #34 评审加固（#25 复核遗留）：修复两处静默型数据损坏缺口 + 一批文档/UX/测试补齐。

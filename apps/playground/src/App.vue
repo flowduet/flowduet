@@ -59,6 +59,9 @@ const model = BpmnModel.create({
 const view = ref<"dingtalk" | "bpmn">("dingtalk");
 const xml = ref("");
 const error = ref("");
+/** 画布重挂钥：编辑区 change 时递增，BPMN 只读区随之重渲染（互切零转换的联动形态） */
+const canvasKey = ref(0);
+let exportTimer: ReturnType<typeof setTimeout> | undefined;
 
 async function doExport(): Promise<void> {
   try {
@@ -67,6 +70,13 @@ async function doExport(): Promise<void> {
   } catch (e) {
     error.value = e instanceof Error ? e.message : String(e);
   }
+}
+
+/** 编辑区 change → 画布重挂 + XML 防抖自动刷新（#27 三区联动） */
+function onDesignerChange(): void {
+  canvasKey.value += 1;
+  if (exportTimer !== undefined) clearTimeout(exportTimer);
+  exportTimer = setTimeout(() => void doExport(), 250);
 }
 </script>
 
@@ -83,12 +93,14 @@ async function doExport(): Promise<void> {
     <main class="playground-main">
       <section class="playground-editor">
         <!-- 互切 = 同一模型实例换投影组件；v-if 挂卸即重挂，读视图总是最新 -->
-        <DingtalkDesigner v-if="view === 'dingtalk'" :model="model" />
-        <BpmnCanvas v-else :model="model" />
+        <DingtalkDesigner v-if="view === 'dingtalk'" :model="model" @change="onDesignerChange" />
+        <BpmnCanvas v-else :key="canvasKey" :model="model" />
       </section>
-      <section v-if="xml || error" class="playground-xml">
+      <section class="playground-xml" data-test="xml-zone">
         <pre v-if="xml" data-test="xml-preview">{{ xml }}</pre>
-        <p v-else class="playground-error" data-test="xml-error">{{ error }}</p>
+        <p v-else class="playground-error" data-test="xml-error">
+          {{ error || "点击「导出 XML」或编辑流程后自动生成" }}
+        </p>
       </section>
     </main>
   </div>
@@ -128,7 +140,7 @@ async function doExport(): Promise<void> {
 }
 
 .playground-xml {
-  width: 420px;
+  width: 380px;
   border-left: 1px solid #e4e7ed;
   background: #fff;
   overflow: auto;

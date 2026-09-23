@@ -29,6 +29,8 @@ const props = defineProps<{
   model: BpmnModel;
 }>();
 
+const emit = defineEmits<{ change: [] }>();
+
 const model = computed(() => toRaw(props.model));
 
 const version = ref(0);
@@ -80,6 +82,8 @@ const defaultIndexByFork = computed<Map<string, number>>(() => {
 
 function refresh(): void {
   version.value += 1;
+  // 三区联动通道（#27）：任何编辑成功后通知宿主刷新只读区与 XML 预览
+  emit("change");
 }
 
 /**
