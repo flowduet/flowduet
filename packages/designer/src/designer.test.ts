@@ -217,6 +217,14 @@ describe("分支块交互（#24）", () => {
     return mount(DingtalkDesigner, { props: { model }, attachTo: document.body });
   }
 
+  it("每条支路有引入/引出连接线（#51）", async () => {
+    const wrapper = mountDesigner(buildBranching());
+    // 两支路 → 各一进一出
+    expect(wrapper.findAll('[data-test^="branch-line-in-"]')).toHaveLength(2);
+    expect(wrapper.findAll('[data-test^="branch-line-out-"]')).toHaveLength(2);
+    wrapper.unmount();
+  });
+
   it("块容器渲染：标签 + 两条支路 + 块头操作按钮", () => {
     const model = buildBranching();
     const wrapper = mountDesigner(model);

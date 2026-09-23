@@ -113,6 +113,11 @@ function insertable(item: BlockTreeNode): boolean {
         </div>
         <div class="branch-block-branches">
           <div v-for="(branch, i) in item.branches" :key="i" class="branch-block-branch">
+            <!-- 引入线（#51）：块顶 → 支路，末端向下箭头指向卡片（对照钉钉官方分叉语义） -->
+            <span
+              class="branch-line branch-line--in"
+              :data-test="`branch-line-in-${item.forkId}-${i}`"
+            />
             <div class="branch-head">
               <button
                 v-if="item.gateway === 'exclusive'"
@@ -148,6 +153,11 @@ function insertable(item: BlockTreeNode): boolean {
               @remove-block="$emit('removeBlock', $event)"
               @branch-config="$emit('branchConfig', $event)"
             />
+            <!-- 引出线（#51）：卡片 → 块底，与引入线同轴收拢 -->
+            <span
+              class="branch-line branch-line--out"
+              :data-test="`branch-line-out-${item.forkId}-${i}`"
+            />
           </div>
         </div>
       </div>
@@ -156,6 +166,42 @@ function insertable(item: BlockTreeNode): boolean {
 </template>
 
 <style scoped>
+/* 支路引入/引出连接线（#51）+ 分叉/汇聚横线（用户确认）：
+   每列横段覆盖「列宽 + 列间隙」，相邻列重叠拼成整条横线（免测量列中心）；
+   引入线末端向下箭头指向支路 */
+.branch-line {
+  display: block;
+  width: calc(100% + 12px);
+  height: 24px;
+  margin-left: -6px;
+  position: relative;
+}
+
+/* 引入：顶部分叉横段 + 中轴竖段贯通到卡片顶 + 箭头（线不被标签打断） */
+.branch-line--in {
+  height: 32px;
+  background:
+    linear-gradient(#c0c4cc, #c0c4cc) top center / 100% 1px no-repeat,
+    linear-gradient(#c0c4cc, #c0c4cc) center bottom / 1px 29px no-repeat;
+}
+
+.branch-line--in::after {
+  content: "";
+  position: absolute;
+  bottom: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 3.5px solid transparent;
+  border-top: 5px solid #c0c4cc;
+}
+
+/* 引出：底部汇聚横段 + 中轴竖段 */
+.branch-line--out {
+  background:
+    linear-gradient(#c0c4cc, #c0c4cc) bottom center / 100% 1px no-repeat,
+    linear-gradient(#c0c4cc, #c0c4cc) center top / 1px 21px no-repeat;
+}
+
 /* ElDropdown 根是 inline-flex 收缩盒，需包裹层撑满居中（#27 用户反馈） */
 .insert-wrap {
   display: flex;
@@ -279,17 +325,20 @@ function insertable(item: BlockTreeNode): boolean {
 }
 
 .branch-block-branch {
+  position: relative;
   flex: 1;
   min-width: 0;
 }
 
 .branch-head {
-  /* 标签随卡片同轴居中；删除钮绝对定位右上（#47） */
-  position: relative;
+  /* 标签浮引入线旁右上（用户定稿：线直达卡片顶，#51）；不占流内高度 */
+  position: absolute;
+  top: 2px;
+  right: 0;
   display: flex;
   align-items: center;
-  justify-content: center;
-  margin-bottom: 4px;
+  gap: 4px;
+  z-index: 1;
 }
 
 .branch-tag {
@@ -310,8 +359,6 @@ function insertable(item: BlockTreeNode): boolean {
 }
 
 .branch-remove {
-  position: absolute;
-  right: 0;
   border: none;
   background: none;
   color: #c45656;
