@@ -1,5 +1,11 @@
 # @flowduet/designer
 
+## 0.0.3
+
+### Patch Changes
+
+- 视觉走查七项修复（#41–#47）：分支块窄列卡片溢出（border-box + max-width）、抽屉完成方式四卡文案断行、BPMN 画布 fitView 缩放下限 0.55、任务名称 6–8 字完整显示（含 title 兜底）、连线默认分支/名称短标签、支路标签与卡片同轴。占位提示样式修正随 playground。
+
 ## 0.0.2
 
 ### Patch Changes

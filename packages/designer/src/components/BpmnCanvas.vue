@@ -83,18 +83,28 @@ const edges = computed(() => {
     source: string;
     target: string;
     type: "bpmn-edge";
-    data: { waypoints?: { x: number; y: number }[] | undefined };
+    data: { waypoints?: { x: number; y: number }[] | undefined; label?: string };
   }[] = [];
   for (const element of flowElements) {
     if (element.$type !== "bpmn:SequenceFlow") continue;
     const id = element.get("id") as string;
     const waypoints: { x: number; y: number }[] | undefined = geo.waypoints.get(id);
+    // 连线短标签（#46）：name 优先；排他网关默认分支标「默认」；条件表达式过长不全显
+    const source = element.get("sourceRef") as ModdleElement;
+    const flowName = element.get("name");
+    const isDefault = source.get("default") === element;
+    const label =
+      typeof flowName === "string" && flowName.trim() !== ""
+        ? flowName
+        : isDefault
+          ? "默认"
+          : undefined;
     list.push({
       id,
-      source: (element.get("sourceRef") as ModdleElement).get("id") as string,
+      source: source.get("id") as string,
       target: (element.get("targetRef") as ModdleElement).get("id") as string,
       type: "bpmn-edge",
-      data: { waypoints },
+      data: label === undefined ? { waypoints } : { waypoints, label },
     });
   }
   return list;
@@ -124,7 +134,7 @@ const edgeTypes = { "bpmn-edge": markRaw(BpmnEdge) } as unknown as EdgeTypesObje
       :edge-types="edgeTypes"
       v-bind="READONLY_FLOW_PROPS"
       :fit-view-on-init="true"
-      :min-zoom="0.3"
+      :min-zoom="0.55"
       :max-zoom="2.5"
       data-test="vue-flow"
     />

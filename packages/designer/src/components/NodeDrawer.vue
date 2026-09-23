@@ -79,11 +79,12 @@ const isBranchHead = computed(() => {
   return (el.get("sourceRef") as ModdleElement).$type === "bpmn:ExclusiveGateway";
 });
 
+// hint 统一 4 字：~73px 卡宽下杜绝孤字断行（#43）
 const KIND_OPTIONS: { key: "single" | ApprovalMode; label: string; hint: string }[] = [
   { key: "single", label: "单签", hint: "一人审批" },
-  { key: "all", label: "会签", hint: "全员同意才通过" },
-  { key: "any", label: "或签", hint: "任一人同意即通过" },
-  { key: "sequential", label: "依次", hint: "按顺序逐人审批" },
+  { key: "all", label: "会签", hint: "全员同意" },
+  { key: "any", label: "或签", hint: "任一同意" },
+  { key: "sequential", label: "依次", hint: "顺序逐人" },
 ];
 
 /**
