@@ -46,6 +46,7 @@ function resolveVocab(el: { $type: string; get(key: string): unknown }): {
 }
 
 const vocab = computed(() => resolveVocab(props.node.element));
+const name = computed(() => String(props.node.element.get("name") ?? props.node.id));
 
 const summary = computed(() => {
   const el = props.node.element;
@@ -75,8 +76,8 @@ const summary = computed(() => {
   >
     <span class="node-card-glyph" data-test="node-glyph">{{ vocab.glyph }}</span>
     <span class="node-card-main">
-      <span class="node-card-name">{{ node.element.get("name") ?? node.id }}</span>
-      <span v-if="summary" class="node-card-summary">{{ summary }}</span>
+      <span class="node-card-name" :title="name">{{ name }}</span>
+      <span v-if="summary" class="node-card-summary" :title="summary">{{ summary }}</span>
     </span>
     <button
       v-if="vocab.deletable"
