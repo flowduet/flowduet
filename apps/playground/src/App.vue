@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { onUnmounted, ref } from "vue";
 import { ElButton, ElRadioGroup, ElRadioButton } from "element-plus";
 import { BpmnModel, flowableAdapter } from "@flowduet/core";
 import { BpmnCanvas, DingtalkDesigner, exportXml } from "@flowduet/designer";
@@ -74,22 +74,39 @@ const error = ref("");
 /** 画布重挂钥：编辑区 change 时递增，BPMN 只读区随之重渲染（互切零转换的联动形态） */
 const canvasKey = ref(0);
 let exportTimer: ReturnType<typeof setTimeout> | undefined;
+let exportRevision = 0;
 
 async function doExport(): Promise<void> {
+  if (exportTimer !== undefined) clearTimeout(exportTimer);
+  exportTimer = undefined;
+  const revision = ++exportRevision;
+  xml.value = "";
+  error.value = "";
   try {
-    error.value = "";
-    xml.value = await exportXml(model);
+    const result = await exportXml(model);
+    if (revision === exportRevision) xml.value = result;
   } catch (e) {
-    error.value = e instanceof Error ? e.message : String(e);
+    if (revision === exportRevision) {
+      error.value = e instanceof Error ? e.message : String(e);
+    }
   }
 }
 
 /** 编辑区 change → 画布重挂 + XML 防抖自动刷新（#27 三区联动） */
 function onDesignerChange(): void {
   canvasKey.value += 1;
+  // 编辑一发生，旧导出结果就不再代表当前模型；递增序号使迟到的 Promise 失效。
+  exportRevision += 1;
+  xml.value = "";
+  error.value = "";
   if (exportTimer !== undefined) clearTimeout(exportTimer);
   exportTimer = setTimeout(() => void doExport(), 250);
 }
+
+onUnmounted(() => {
+  exportRevision += 1;
+  if (exportTimer !== undefined) clearTimeout(exportTimer);
+});
 </script>
 
 <template>
@@ -113,7 +130,7 @@ function onDesignerChange(): void {
         <p v-if="error" class="playground-error" data-test="xml-error">
           {{ error }}
         </p>
-        <p v-else class="playground-hint" data-test="xml-hint">
+        <p v-else-if="!xml" class="playground-hint" data-test="xml-hint">
           点击「导出 XML」或编辑流程后自动生成
         </p>
       </section>
@@ -172,6 +189,7 @@ function onDesignerChange(): void {
 .playground-error {
   color: #e5484d;
   font-size: 13px;
+  white-space: pre-wrap;
 }
 
 .playground-hint {

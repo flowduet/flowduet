@@ -1,5 +1,9 @@
-# playground（占位）
+# Playground
 
-可独立部署的演示应用，兼作文档站示例（ADR-0007 双形态交付）。
+双视图演示宿主：钉钉式视图编辑与 BPMN 只读视图共享同一棵模型树，右侧预览当前流程的 XML。
+草稿未通过 designer 导出校验时，预览区显示错误；补齐配置后自动恢复 XML。
 
-按迭代一口径（Step 1 不搭界面），应用脚手架在 v1 阶段建立；本目录当前仅为占位。
+```sh
+pnpm --filter @flowduet/playground dev
+pnpm --filter @flowduet/playground test
+```
