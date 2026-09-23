@@ -1,4 +1,5 @@
 export { default as DingtalkDesigner } from "./components/DingtalkDesigner.vue";
+export { default as BpmnCanvas } from "./components/BpmnCanvas.vue";
 export { exportXml } from "./export.js";
 /**
  * 抄送节点插入时的收件人占位串（#25 评审 W4 单一出处；本 PR 评审 S-5 补导出）。
