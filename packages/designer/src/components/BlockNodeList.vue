@@ -166,23 +166,43 @@ function insertable(item: BlockTreeNode): boolean {
 </template>
 
 <style scoped>
-/* 支路引入/引出连接线（#51）+ 分叉/汇聚横线（用户确认）：
-   每列横段覆盖「列宽 + 列间隙」，相邻列重叠拼成整条横线（免测量列中心）；
-   引入线末端向下箭头指向支路 */
+/* 各列横段在相邻列的间隙中相接；首尾列只画中心以内的半段。 */
 .branch-line {
   display: block;
   width: calc(100% + 12px);
-  height: 24px;
   margin-left: -6px;
   position: relative;
 }
 
-/* 引入：顶部分叉横段 + 中轴竖段贯通到卡片顶 + 箭头（线不被标签打断） */
 .branch-line--in {
   height: 32px;
-  background:
-    linear-gradient(#c0c4cc, #c0c4cc) top center / 100% 1px no-repeat,
-    linear-gradient(#c0c4cc, #c0c4cc) center bottom / 1px 29px no-repeat;
+  background: linear-gradient(#8c9bb5, #8c9bb5) center bottom / 1px 32px no-repeat;
+}
+
+.branch-line--in::before,
+.branch-line--out::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: #8c9bb5;
+}
+
+.branch-line--in::before {
+  top: 0;
+}
+
+.branch-line--out::before {
+  bottom: 0;
+}
+
+.branch-block-branch:first-child > .branch-line::before {
+  left: 50%;
+}
+
+.branch-block-branch:last-child > .branch-line::before {
+  right: 50%;
 }
 
 .branch-line--in::after {
@@ -192,14 +212,14 @@ function insertable(item: BlockTreeNode): boolean {
   left: 50%;
   transform: translateX(-50%);
   border: 3.5px solid transparent;
-  border-top: 5px solid #c0c4cc;
+  border-top: 5px solid #8c9bb5;
 }
 
-/* 引出：底部汇聚横段 + 中轴竖段 */
+/* 较短支路的引出线填满剩余高度，让嵌套分支与相邻支路在同一高度汇合。 */
 .branch-line--out {
-  background:
-    linear-gradient(#c0c4cc, #c0c4cc) bottom center / 100% 1px no-repeat,
-    linear-gradient(#c0c4cc, #c0c4cc) center top / 1px 21px no-repeat;
+  flex: 1;
+  min-height: 24px;
+  background: linear-gradient(#8c9bb5, #8c9bb5) center / 1px 100% no-repeat;
 }
 
 /* ElDropdown 根是 inline-flex 收缩盒，需包裹层撑满居中（#27 用户反馈） */
@@ -233,7 +253,7 @@ function insertable(item: BlockTreeNode): boolean {
   left: 50%;
   width: 1px;
   height: 5px;
-  background: #c0c4cc;
+  background: #8c9bb5;
 }
 
 .insert-btn::before {
@@ -250,6 +270,7 @@ function insertable(item: BlockTreeNode): boolean {
 }
 
 .branch-block {
+  --branch-label-space: 24px;
   position: relative;
   margin: 8px 0;
   padding: 10px 12px 10px 16px;
@@ -269,11 +290,24 @@ function insertable(item: BlockTreeNode): boolean {
 }
 
 .branch-block-head {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 6px;
-  margin-bottom: 8px;
+  margin-bottom: var(--branch-label-space);
   flex-wrap: wrap;
+}
+
+/* 块头高度可随按钮换行变化，引入线仍从上个节点贯通到分叉横线。 */
+.branch-block-head::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: -18px;
+  bottom: calc(-1 * var(--branch-label-space));
+  width: 1px;
+  background: #8c9bb5;
+  pointer-events: none;
 }
 
 .branch-block-label {
@@ -319,25 +353,51 @@ function insertable(item: BlockTreeNode): boolean {
 }
 
 .branch-block-branches {
+  position: relative;
   display: flex;
   gap: 12px;
-  align-items: flex-start;
+  align-items: stretch;
+}
+
+.branch-block-branches::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  width: 1px;
+  height: 18px;
+  background: #8c9bb5;
+  pointer-events: none;
+}
+
+.branch-block-branches::before {
+  content: "";
+  position: absolute;
+  top: calc(100% + 13px);
+  left: calc(50% - 3px);
+  border: 3px solid transparent;
+  border-top: 5px solid #8c9bb5;
+  pointer-events: none;
 }
 
 .branch-block-branch {
   position: relative;
+  display: flex;
+  flex-direction: column;
   flex: 1;
   min-width: 0;
 }
 
 .branch-head {
-  /* 标签浮引入线旁右上（用户定稿：线直达卡片顶，#51）；不占流内高度 */
+  /* 标签在横线之上、对准本支路中心，不遮挡箭头与竖线。 */
   position: absolute;
-  top: 2px;
-  right: 0;
+  top: -20px;
+  left: 50%;
+  transform: translateX(-50%);
   display: flex;
   align-items: center;
   gap: 4px;
+  white-space: nowrap;
   z-index: 1;
 }
 
