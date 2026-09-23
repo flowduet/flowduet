@@ -10,6 +10,7 @@ import {
   insertApprovalAfter,
 } from "./operations.js";
 import { exportXml } from "./export.js";
+import { exportConfiguredXml } from "../test-support/export-configured-xml.js";
 
 /**
  * 组件一致性冒烟（外部行为级）：操作后块树与导出 XML 反映正确。
@@ -83,7 +84,9 @@ describe("DingtalkDesigner 审批节点闭环", () => {
     expect(wrapper.findAll('[data-test="node-card"]')).toHaveLength(4);
     expect(wrapper.text()).toContain("审批节点");
 
-    const xml = await exportXml(model);
+    await expect(exportXml(model)).rejects.toThrow(/审批节点.*审批人/);
+    model.elementOf("approval_2").set("assignee", "${director}");
+    const xml = await exportConfiguredXml(model);
     expect(xml).toContain('id="approval_2"');
     expect(xml).toContain("<bpmndi:BPMNDiagram");
     wrapper.unmount();
@@ -106,7 +109,7 @@ describe("DingtalkDesigner 审批节点闭环", () => {
     (document.querySelector('[data-test="drawer-save"]') as HTMLElement).click();
     await flushPromises();
 
-    const xml = await exportXml(model);
+    const xml = await exportConfiguredXml(model);
     expect(xml).toContain('name="总监审批"');
     expect(xml).toContain('flowable:assignee="${director}"');
     wrapper.unmount();
@@ -120,7 +123,7 @@ describe("DingtalkDesigner 审批节点闭环", () => {
     await wrapper.find('[data-test="node-delete-approval_2"]').trigger("click");
     expect(wrapper.findAll('[data-test="node-card"]')).toHaveLength(3);
 
-    const xml = await exportXml(model);
+    const xml = await exportConfiguredXml(model);
     expect(xml).not.toContain('id="approval_2"');
     // 重链后整图仍可竖排推导（渲染本身即验证）且 start→…→end 连通
     expect(xml).toContain('sourceRef="approval_1"');
@@ -277,7 +280,7 @@ describe("分支块交互（#24）", () => {
     await wrapper.find('[data-test="add-branch-fork1"]').trigger("click");
     expect(wrapper.findAll('[data-test^="branch-head-"]')).toHaveLength(3);
 
-    const xml = await exportXml(model);
+    const xml = await exportConfiguredXml(model);
     expect(xml).toContain('id="branch_node_1"');
     expect(xml).toContain("<bpmndi:BPMNDiagram");
     wrapper.unmount();
@@ -290,7 +293,7 @@ describe("分支块交互（#24）", () => {
     await wrapper.find('[data-test="remove-branch-fork1-1"]').trigger("click");
     expect(wrapper.findAll('[data-test^="branch-head-"]')).toHaveLength(2);
 
-    const xml = await exportXml(model);
+    const xml = await exportConfiguredXml(model);
     expect(xml).not.toContain('id="b_node"');
     expect(xml).toContain('id="a_node"');
     wrapper.unmount();
@@ -303,7 +306,7 @@ describe("分支块交互（#24）", () => {
     expect(wrapper.findAll('[data-test="branch-block"]')).toHaveLength(0);
     expect(wrapper.findAll('[data-test="node-card"]')).toHaveLength(3); // start/before/end
 
-    const xml = await exportXml(model);
+    const xml = await exportConfiguredXml(model);
     expect(xml).not.toContain('id="fork1"');
     expect(xml).toContain("<bpmndi:BPMNDiagram");
     wrapper.unmount();
@@ -315,7 +318,7 @@ describe("分支块交互（#24）", () => {
     await wrapper.find('[data-test="default-toggle-fork1-1"]').trigger("click");
     expect(wrapper.find('[data-test="branch-head-fork1-1"]').text()).toContain("默认");
 
-    const xml = await exportXml(model);
+    const xml = await exportConfiguredXml(model);
     expect(xml).toContain('default="fb"');
     expect(xml).not.toContain(
       'id="fb" name="审批B" flowable:assignee="${b}">\n      <bpmn:conditionExpression',
@@ -327,10 +330,10 @@ describe("分支块交互（#24）", () => {
     const model = buildBranching();
     const wrapper = mountDesigner(model);
     await wrapper.find('[data-test="default-toggle-fork1-1"]').trigger("click");
-    expect(await exportXml(model)).toContain('default="fb"');
+    expect(await exportConfiguredXml(model)).toContain('default="fb"');
     // 再点同一支路 → 取消默认
     await wrapper.find('[data-test="default-toggle-fork1-1"]').trigger("click");
-    const xml = await exportXml(model);
+    const xml = await exportConfiguredXml(model);
     expect(xml).not.toContain("default=");
     // 支路头标记同步消失
     expect(wrapper.find('[data-test="branch-head-fork1-1"]').text()).not.toContain("默认");
@@ -351,7 +354,7 @@ describe("分支块交互（#24）", () => {
     (document.querySelector('[data-test="drawer-save"]') as HTMLElement).click();
     await flushPromises();
 
-    const xml = await exportXml(model);
+    const xml = await exportConfiguredXml(model);
     expect(xml).toContain("amount &gt; 1000");
     expect(xml).toContain("conditionExpression");
     wrapper.unmount();
@@ -450,7 +453,7 @@ describe("多人审批与抄送（#25）", () => {
     (document.querySelector('[data-test="drawer-save"]') as HTMLElement).click();
     await flushPromises();
 
-    const xml = await exportXml(model);
+    const xml = await exportConfiguredXml(model);
     expect(xml).toContain('flowable:ccTo="张三,李四"');
     expect(xml).toContain('flowable:delegateExpression="${flowduetCcTask}"');
     wrapper.unmount();
@@ -468,7 +471,7 @@ describe("多人审批与抄送（#25）", () => {
     (document.querySelector('[data-test="drawer-save"]') as HTMLElement).click();
     await flushPromises();
 
-    const xml = await exportXml(model);
+    const xml = await exportConfiguredXml(model);
     expect(xml).toContain('flowable:collection="approvers"');
     expect(xml).toContain("nrOfCompletedInstances == nrOfInstances");
     // 抽屉已关（EP Drawer 传送节点在 happy-dom 里残留，只查 open 态）
@@ -497,11 +500,13 @@ describe("多人审批与抄送（#25）", () => {
     (document.querySelector('[data-test="drawer-save"]') as HTMLElement).click();
     await flushPromises();
 
+    // C1 回归：多→单切换清空了集合变量缓冲，不能把 "approvers" 当字面 assignee 落盘
+    expect(model.elementOf("approval_1").get("assignee")).toBeUndefined();
+    await expect(exportXml(model)).rejects.toThrow(/经理审批.*审批人/);
+    model.elementOf("approval_1").set("assignee", "${director}");
     const xml = await exportXml(model);
     expect(xml).not.toContain("multiInstanceLoopCharacteristics");
-    // C1 回归：多→单切换清空了集合变量缓冲，不能把 "approvers" 当字面 assignee 落盘
     expect(xml).not.toContain('flowable:assignee="approvers"');
-    expect(model.elementOf("approval_1").get("assignee")).toBeUndefined();
     wrapper.unmount();
   });
 
@@ -555,7 +560,7 @@ describe("多人审批与抄送（#25）", () => {
     (document.querySelector('[data-test="drawer-save"]') as HTMLElement).click();
     await flushPromises();
 
-    const xml = await exportXml(model);
+    const xml = await exportConfiguredXml(model);
     expect(xml).toContain('flowable:formKey="leave_form_v1"');
     wrapper.unmount();
   });
@@ -748,12 +753,7 @@ describe("多人审批与抄送（#25）", () => {
   });
 });
 
-describe("exportXml 草稿 fail-fast（评审 S-5）", () => {
-  /**
-   * #25 引入的两个「插入即带占位」形态可绕过抽屉直接导出：
-   * exportXml 前置扫描拒绝部署合法但运行时静默失效的脏数据。
-   * 全模型系统性校验另立 #35。
-   */
+describe("exportXml 草稿校验", () => {
   it("抄送节点占位收件人未改：导出前报错，不产出部署后静默丢知会的 XML", async () => {
     const model = buildChain();
     const wrapper = mountDesigner(model);
@@ -780,7 +780,7 @@ describe("exportXml 草稿 fail-fast（评审 S-5）", () => {
     (document.querySelector('[data-test="drawer-save"]') as HTMLElement).click();
     await flushPromises();
 
-    const xml = await exportXml(model);
+    const xml = await exportConfiguredXml(model);
     expect(xml).toContain('flowable:ccTo="张三,李四"');
     wrapper.unmount();
   });

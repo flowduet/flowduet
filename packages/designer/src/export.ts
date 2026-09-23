@@ -1,42 +1,75 @@
-import { compile, verticalDiLayout } from "@flowduet/core";
+import { compile, flowableAdapter, verticalDiLayout } from "@flowduet/core";
 import type { BpmnModel, ModdleElement } from "@flowduet/core";
 import { CC_RECIPIENTS_PLACEHOLDER } from "./operations.js";
 
-/**
- * 草稿字段扫描（评审 S-5）：#25 引入的两处「插入即带占位」形态可绕过抽屉直接导出——
- *   ・抄送节点插入时 ccTo = CC_RECIPIENTS_PLACEHOLDER，抽屉守卫只在保存路径生效；
- *   ・多→单切换留空 assignee 的 UserTask，或多实例集合变量被宿主直接改空。
- * 部署不报错、运行时静默丢知会/取不到人，属可导出的脏数据。
- * 全模型系统性校验另立 #35；此处只拦 #25 自己引入的两个源头，成本低、口径明确。
- */
+function labelOf(element: ModdleElement): string {
+  const id = String(element.get("id") ?? "");
+  const name = String(element.get("name") ?? "").trim();
+  return name !== "" && name !== id ? `${name}（${id}）` : id;
+}
+
+/** 草稿允许留在模型树中，只有导出时统一收集所有缺失配置。 */
 function assertNoDraftFields(model: BpmnModel): void {
   const elements = (model.process.get("flowElements") as ModdleElement[] | undefined) ?? [];
+  const errors: string[] = [];
   for (const el of elements) {
-    const label = String(el.get("name") ?? el.get("id") ?? "");
+    const label = labelOf(el);
     if (el.$type === "bpmn:ServiceTask") {
       const ccTo = el.get("ccTo");
-      // 非抄送 ServiceTask（当前适配器不产出，防御宿主直写）跳过
-      if (ccTo === undefined) continue;
-      if (String(ccTo).trim() === CC_RECIPIENTS_PLACEHOLDER) {
-        throw new Error(`抄送节点「${label}」的收件人仍是插入占位串，请在抽屉填真实名单后再导出`);
+      const ccDelegate = flowableAdapter.taskTypeMapping.cc.attributes?.delegateExpression;
+      // 收件人属性可能被导入模型或宿主直写清除，仍按抄送 delegate 识别该节点。
+      if (
+        ccTo === undefined &&
+        (ccDelegate === undefined || el.get("delegateExpression") !== ccDelegate)
+      ) {
+        continue;
+      }
+      if (typeof ccTo !== "string" || ccTo.trim() === "") {
+        errors.push(`抄送节点「${label}」的收件人为空白，请在抽屉补填后再导出`);
+      } else if (ccTo.trim() === CC_RECIPIENTS_PLACEHOLDER) {
+        errors.push(`抄送节点「${label}」的收件人仍是插入占位串，请在抽屉填真实名单后再导出`);
       }
       continue;
     }
     if (el.$type === "bpmn:UserTask") {
       const loop = el.get("loopCharacteristics") as ModdleElement | undefined;
-      if (loop === undefined) continue;
+      if (loop?.$type !== "bpmn:MultiInstanceLoopCharacteristics") {
+        if (String(el.get("assignee") ?? "").trim() === "") {
+          errors.push(`单签审批节点「${label}」的审批人为空白，请在抽屉补填后再导出`);
+        }
+        continue;
+      }
       const collection = String(loop.get("collection") ?? "").trim();
       if (collection === "") {
-        throw new Error(`多人审批节点「${label}」的集合变量为空白，请在抽屉补填后再导出`);
+        errors.push(`多人审批节点「${label}」的集合变量为空白，请在抽屉补填后再导出`);
+      }
+    }
+    if (el.$type === "bpmn:ExclusiveGateway") {
+      const outgoing = (el.get("outgoing") as ModdleElement[] | undefined) ?? [];
+      if (outgoing.length <= 1) continue;
+      const defaultFlow = el.get("default");
+      for (const flow of outgoing) {
+        const branchLabel = labelOf(flow);
+        const expression = flow.get("conditionExpression") as ModdleElement | undefined;
+        if (flow === defaultFlow) {
+          if (expression !== undefined) {
+            errors.push(`默认支路「${branchLabel}」不能携带条件，请清除表达式后再导出`);
+          }
+          continue;
+        }
+        if (String(expression?.get("body") ?? "").trim() === "") {
+          errors.push(`条件分支「${branchLabel}」未设置条件，请配置表达式或设为默认支路`);
+        }
       }
     }
   }
+  if (errors.length > 0) throw new Error(errors.join("\n"));
 }
 
 /**
  * XML 导出入口（顶层组件接缝的一部分）：
  * 钉钉式编辑无画布坐标，导出固定走竖排布局推导 DI。
- * 前置草稿扫描（评审 S-5）：拒绝部署合法但运行时静默失效的形态。
+ * 前置草稿扫描拒绝部署合法但运行时无法按用户配置执行的形态。
  */
 export async function exportXml(model: BpmnModel): Promise<string> {
   assertNoDraftFields(model);
