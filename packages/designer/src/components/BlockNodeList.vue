@@ -273,7 +273,7 @@ function insertable(item: BlockTreeNode): boolean {
   --branch-label-space: 24px;
   position: relative;
   margin: 8px 0;
-  padding: 10px 12px 10px 16px;
+  padding: 10px 12px;
   border-radius: 8px;
   background: rgba(45, 62, 151, 0.06);
 }
