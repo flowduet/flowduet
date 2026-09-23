@@ -84,28 +84,36 @@ const edges = computed(() => {
     source: string;
     target: string;
     type: "bpmn-edge";
-    data: { waypoints?: { x: number; y: number }[] | undefined; label?: string };
+    data: { waypoints?: { x: number; y: number }[] | undefined; label?: string; detail?: string };
   }[] = [];
   for (const element of flowElements) {
     if (element.$type !== "bpmn:SequenceFlow") continue;
     const id = element.get("id") as string;
     const waypoints: { x: number; y: number }[] | undefined = geo.waypoints.get(id);
-    // 连线短标签（#46）：name 优先；排他网关默认分支标「默认」；条件表达式过长不全显
+    // 连线短标签用于浏览结构，原始条件留在 detail 供只读查看。
     const source = element.get("sourceRef") as ModdleElement;
     const flowName = element.get("name");
     const isDefault = source.get("default") === element;
+    const expression = element.get("conditionExpression") as ModdleElement | undefined;
+    const condition = String(expression?.get("body") ?? "").trim();
+    const shortCondition = condition.length > 28 ? `${condition.slice(0, 27)}…` : condition;
     const label =
       typeof flowName === "string" && flowName.trim() !== ""
-        ? flowName
+        ? `${flowName.trim()}${isDefault ? " · 默认" : ""}`
         : isDefault
           ? "默认"
-          : undefined;
+          : shortCondition || undefined;
     list.push({
       id,
       source: source.get("id") as string,
       target: (element.get("targetRef") as ModdleElement).get("id") as string,
       type: "bpmn-edge",
-      data: label === undefined ? { waypoints } : { waypoints, label },
+      data:
+        label === undefined
+          ? { waypoints }
+          : condition === ""
+            ? { waypoints, label }
+            : { waypoints, label, detail: condition },
     });
   }
   return list;

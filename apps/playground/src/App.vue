@@ -33,9 +33,9 @@ const model = BpmnModel.create({
   // 抄送知会（#25）：ServiceTask + flowable:ccTo，部署合法不要求 bean 在场（ADR-0004）
   .addTask("cc", { id: "cc_1", name: "抄送法务备案", recipients: "张三,李四" })
   .addExclusiveGateway({ id: "fork1", name: "金额判断" })
-  // 支 1：小额走总监单审
+  // 支 1：未命中大额条件时走总监单审
   .addUserTask({ id: "a_node", name: "总监审批", assignee: "${director}" })
-  // 支 2：大额走并行块（财务与法务同时复核）
+  // 支 2：金额大于 1000 时走并行块（财务与法务同时复核）
   .addParallelGateway({ id: "pfork", name: "并行开始" })
   .addParallelGateway({ id: "pjoin", name: "并行结束" })
   .addUserTask({ id: "fin_node", name: "财务复核", assignee: "${finance}" })
@@ -46,8 +46,20 @@ const model = BpmnModel.create({
   .addSequenceFlow({ id: "f1b", sourceRef: "approval_1", targetRef: "approval_mi" })
   .addSequenceFlow({ id: "f1c", sourceRef: "approval_mi", targetRef: "cc_1" })
   .addSequenceFlow({ id: "f2", sourceRef: "cc_1", targetRef: "fork1" })
-  .addSequenceFlow({ id: "fa", sourceRef: "fork1", targetRef: "a_node" })
-  .addSequenceFlow({ id: "fb", sourceRef: "fork1", targetRef: "pfork" })
+  .addSequenceFlow({
+    id: "fa",
+    name: "常规审批",
+    sourceRef: "fork1",
+    targetRef: "a_node",
+    default: true,
+  })
+  .addSequenceFlow({
+    id: "fb",
+    name: "大额复核",
+    sourceRef: "fork1",
+    targetRef: "pfork",
+    condition: "${amount > 1000}",
+  })
   .addSequenceFlow({ id: "fp_fin", sourceRef: "pfork", targetRef: "fin_node" })
   .addSequenceFlow({ id: "fp_legal", sourceRef: "pfork", targetRef: "legal_node" })
   .addSequenceFlow({ id: "fin_pj", sourceRef: "fin_node", targetRef: "pjoin" })

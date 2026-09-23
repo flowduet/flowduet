@@ -61,6 +61,32 @@ describe("BpmnCanvas 只读投影", () => {
     wrapper.unmount();
   });
 
+  it("条件出线可查看表达式，默认出线保留兜底标记", async () => {
+    const model = buildModel();
+    model.elementOf("f3").set("name", "大额复核");
+    model
+      .elementOf("f3")
+      .set(
+        "conditionExpression",
+        model.moddle.create("bpmn:FormalExpression", { body: "${amount > 1000}" }),
+      );
+    model.elementOf("f4").set("name", "常规审批");
+    model.elementOf("fork").set("default", model.elementOf("f4"));
+
+    const wrapper = mount(BpmnCanvas, { props: { model }, attachTo: document.body });
+    await flushPromises();
+    const labels = wrapper.findAll('[data-test="canvas-edge-label"]');
+    expect(labels.some((label) => label.text().includes("大额复核"))).toBe(true);
+    expect(labels.some((label) => label.text().includes("常规审批 · 默认"))).toBe(true);
+    expect(
+      labels.some((label) => {
+        const title = label.find("title");
+        return title.exists() && title.text() === "${amount > 1000}";
+      }),
+    ).toBe(true);
+    wrapper.unmount();
+  });
+
   it("只读配置清单逐一核验（AC1：编辑面全部禁用，缩放平移保留）", () => {
     // 单一出处常量即组件实际 v-bind 的配置，断言常量即可回归只读边界
     expect(READONLY_FLOW_PROPS).toMatchObject({

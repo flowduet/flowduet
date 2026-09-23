@@ -12,7 +12,7 @@ const props = defineProps<{
   sourceY: number;
   targetX: number;
   targetY: number;
-  data?: { waypoints?: Point[]; label?: string };
+  data?: { waypoints?: Point[]; label?: string; detail?: string };
 }>();
 
 /** 标签锚点：折线中点（无折线时取直线中点） */
@@ -70,6 +70,7 @@ const arrowPoints = computed(() =>
     class="bpmn-edge-label"
     data-test="canvas-edge-label"
   >
+    <title v-if="data?.detail">{{ data.detail }}</title>
     {{ data.label }}
   </text>
 </template>
