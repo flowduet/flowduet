@@ -32,7 +32,12 @@
 - 接缝声明：`BpmnModel`（moddle 树包装）/ `Compiler` / `Parser` / `DiLayout`（v0 恒等映射用画布坐标，自动布局在 Step 3）
 - **完成标准**：`pnpm test` 全绿 + CI 绿 + 基准 XML 经 Flowable 6.8 REST 部署接口**真实部署成功**（定海神针——商业价值成立的物理事实）
 
-## 迭代二 · 钉钉式视图 MVP（2026-10-08 → 10-22）
+## 迭代二 · 钉钉式视图 MVP ✅（2026-09-20 规划 → 09-23 完成，提前近一个月）
+
+> 实际收敛：九项决策不变；功能票 #19–#26 全部合并（两轮用户评审加固叠加）；出口标准五条全过——
+> 五类全谱流程经 UI 编辑导出并在 6.8 真实部署+启动+会签运行时验证（`docs/specs/iteration-2/ACCEPTANCE.md`）、
+> 只读投影互切零转换、测试 78+93 全绿、`@flowduet/core` 0.2.0 + `@flowduet/designer` 0.0.2 已发 npm。
+> 视觉定稿补充：BPMN 画布词汇经用户真机反馈全 SVG 化（网关符号互换缺陷根治）。
 
 2026-09-20 grilling 会话收敛的执行口径（九项决策无遗留分歧；总纲与 spec 索引见 `docs/specs/iteration-2/README.md`）：
 

@@ -51,24 +51,25 @@ function insertable(item: BlockTreeNode): boolean {
           @open="$emit('open', item.id)"
           @delete="$emit('delete', item.id)"
         />
-        <ElDropdown
-          v-if="insertable(item)"
-          :data-test="`insert-after-${item.id}`"
-          trigger="click"
-          @command="(kind: 'approval' | 'cc') => $emit('insert', kind, item.id)"
-        >
-          <button class="insert-btn" :data-test="`insert-btn-${item.id}`" title="在此后添加节点">
-            +
-          </button>
-          <template #dropdown>
-            <ElDropdownMenu>
-              <ElDropdownItem command="approval" data-test="insert-kind-approval"
-                >审批节点</ElDropdownItem
-              >
-              <ElDropdownItem command="cc" data-test="insert-kind-cc">抄送节点</ElDropdownItem>
-            </ElDropdownMenu>
-          </template>
-        </ElDropdown>
+        <div v-if="insertable(item)" class="insert-wrap">
+          <ElDropdown
+            :data-test="`insert-after-${item.id}`"
+            trigger="click"
+            @command="(kind: 'approval' | 'cc') => $emit('insert', kind, item.id)"
+          >
+            <button class="insert-btn" :data-test="`insert-btn-${item.id}`" title="在此后添加节点">
+              +
+            </button>
+            <template #dropdown>
+              <ElDropdownMenu>
+                <ElDropdownItem command="approval" data-test="insert-kind-approval"
+                  >审批节点</ElDropdownItem
+                >
+                <ElDropdownItem command="cc" data-test="insert-kind-cc">抄送节点</ElDropdownItem>
+              </ElDropdownMenu>
+            </template>
+          </ElDropdown>
+        </div>
       </template>
       <div v-else class="branch-block" :data-gateway="item.gateway" data-test="branch-block">
         <div class="branch-block-head">
@@ -155,6 +156,12 @@ function insertable(item: BlockTreeNode): boolean {
 </template>
 
 <style scoped>
+/* ElDropdown 根是 inline-flex 收缩盒，需包裹层撑满居中（#27 用户反馈） */
+.insert-wrap {
+  display: flex;
+  justify-content: center;
+}
+
 /* 卡间连接：短竖线串起「+」按钮（视觉定稿的 connector line 形态） */
 .insert-btn {
   position: relative;
