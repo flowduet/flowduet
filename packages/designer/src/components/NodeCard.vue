@@ -92,10 +92,12 @@ const summary = computed(() => {
 
 <style scoped>
 .node-card {
+  box-sizing: border-box;
   display: flex;
   align-items: center;
   gap: 10px;
   width: 280px;
+  max-width: 100%;
   margin: 0 auto;
   padding: 10px 12px;
   border-radius: 8px;

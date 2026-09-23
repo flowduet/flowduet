@@ -98,8 +98,11 @@ function onDesignerChange(): void {
       </section>
       <section class="playground-xml" data-test="xml-zone">
         <pre v-if="xml" data-test="xml-preview">{{ xml }}</pre>
-        <p v-else class="playground-error" data-test="xml-error">
-          {{ error || "点击「导出 XML」或编辑流程后自动生成" }}
+        <p v-if="error" class="playground-error" data-test="xml-error">
+          {{ error }}
+        </p>
+        <p v-else class="playground-hint" data-test="xml-hint">
+          点击「导出 XML」或编辑流程后自动生成
         </p>
       </section>
     </main>
@@ -156,6 +159,11 @@ function onDesignerChange(): void {
 
 .playground-error {
   color: #e5484d;
+  font-size: 13px;
+}
+
+.playground-hint {
+  color: #909399;
   font-size: 13px;
 }
 </style>

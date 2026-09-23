@@ -91,7 +91,7 @@ const miMarker = computed<"parallel" | "sequential" | null>(() => {
           <line x1="5.2" y1="10.8" x2="3.4" y2="12.6" />
         </g>
       </svg>
-      <span class="bpmn-task-name">{{ label || "未命名" }}</span>
+      <span class="bpmn-task-name" :title="label">{{ label || "未命名" }}</span>
       <span v-if="miMarker" class="bpmn-mi" :data-test="`mi-${miMarker}`" title="多人审批">
         <i /><i /><i />
       </span>
@@ -181,8 +181,9 @@ const miMarker = computed<"parallel" | "sequential" | null>(() => {
 }
 
 .bpmn-task-name {
-  max-width: 70%;
-  font-size: 12px;
+  /* 100px 任务框内尽量容纳 6–8 字常见名称（内核布局尺寸被基准锁定，只能侧适配） */
+  max-width: 88%;
+  font-size: 11px;
   color: #303133;
   white-space: nowrap;
   overflow: hidden;

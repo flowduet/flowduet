@@ -284,9 +284,11 @@ function insertable(item: BlockTreeNode): boolean {
 }
 
 .branch-head {
+  /* 标签随卡片同轴居中；删除钮绝对定位右上（#47） */
+  position: relative;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   margin-bottom: 4px;
 }
 
@@ -308,6 +310,8 @@ function insertable(item: BlockTreeNode): boolean {
 }
 
 .branch-remove {
+  position: absolute;
+  right: 0;
   border: none;
   background: none;
   color: #c45656;
