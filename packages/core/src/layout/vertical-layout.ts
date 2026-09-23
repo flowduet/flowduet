@@ -255,6 +255,35 @@ export function layoutVertical(tree: BlockTreeNode[], flows: FlowTable): LayoutR
     }
   };
 
+  /**
+   * Z 形引入（#49）：fork 出线即折——横段贴 fork 且按支路序错开（防多支重叠），
+   * 引入段（横段 → 支路首元素顶）拉长到 ~45px+，线明确接进卡片。
+   * 间隙过小（嵌套紧凑块）退化直线，防 Z 形自交。
+   */
+  const routeZIn = (flowId: string, from: Point, to: Point, segIndex: number): void => {
+    const seg = 8 * (segIndex + 1);
+    if (Math.abs(from.x - to.x) < 0.5 || to.y - from.y < seg + 8) {
+      waypoints.set(flowId, [from, to]);
+    } else {
+      waypoints.set(flowId, [
+        from,
+        { x: from.x, y: from.y + seg },
+        { x: to.x, y: from.y + seg },
+        to,
+      ]);
+    }
+  };
+
+  /** Z 形引出（#49）：join 入线即折——引出段拉长，横段贴 join 按支路序错开 */
+  const routeZOut = (flowId: string, from: Point, to: Point, segIndex: number): void => {
+    const seg = 8 * (segIndex + 1);
+    if (Math.abs(from.x - to.x) < 0.5 || to.y - from.y < seg + 8) {
+      waypoints.set(flowId, [from, to]);
+    } else {
+      waypoints.set(flowId, [from, { x: from.x, y: to.y - seg }, { x: to.x, y: to.y - seg }, to]);
+    }
+  };
+
   // 链宽 = 最宽项；块宽 = 分支列宽之和 + 列间隙（不小于网关自身）
   const widthOfChain = (items: BlockTreeNode[]): number =>
     Math.max(...items.map((item) => widthOfItem(item)));
@@ -322,13 +351,14 @@ export function layoutVertical(tree: BlockTreeNode[], flows: FlowTable): LayoutR
         branchBottoms.push(placeChain(branch, colCx, branchTop));
         branchLasts.push(nonNull(branch[branch.length - 1], "分支末项"));
 
-        // fork 底边出点沿边错开 → 分支首元素顶
+        // fork 底边出点沿边错开 → 分支首元素顶（Z 形引入，#49）
         const first = nonNull(branch[0], "分支首项");
         const forkOutX = forkX + ((i + 1) * GATEWAY.width) / (n + 1);
-        route(
+        routeZIn(
           flowIdOf(item.forkId, entryIdOf(first)),
           { x: forkOutX, y: forkBottom },
           entryAnchorOf(first, shapes),
+          i,
         );
       });
 
@@ -337,10 +367,13 @@ export function layoutVertical(tree: BlockTreeNode[], flows: FlowTable): LayoutR
         // 分支末元素底 → join 顶边入点沿边错开（to.y 用真实 joinTop）
         const joinInX = forkX + ((i + 1) * GATEWAY.width) / (n + 1);
         const last = nonNull(branchLasts[i], "分支末项登记");
-        route(flowIdOf(exitIdOf(last), item.joinId), exitAnchorOf(last, shapes), {
-          x: joinInX,
-          y: joinTop,
-        });
+        // Z 形引出（#49）：引出段拉长、横段贴 join 错开
+        routeZOut(
+          flowIdOf(exitIdOf(last), item.joinId),
+          exitAnchorOf(last, shapes),
+          { x: joinInX, y: joinTop },
+          i,
+        );
       });
       shapes.set(item.joinId, {
         x: forkX,
