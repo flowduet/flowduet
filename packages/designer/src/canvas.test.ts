@@ -3,7 +3,9 @@ import { describe, expect, it } from "vitest";
 import { flushPromises, mount } from "@vue/test-utils";
 import { BpmnModel, flowableAdapter } from "@flowduet/core";
 import BpmnCanvas from "./components/BpmnCanvas.vue";
+import DingtalkDesigner from "./components/DingtalkDesigner.vue";
 import { READONLY_FLOW_PROPS } from "./canvas-props.js";
+import { exportXml } from "./export.js";
 
 /**
  * 只读投影组件冒烟（#26）：同一模型实例的画布呈现——节点词汇、
@@ -85,6 +87,48 @@ describe("BpmnCanvas 只读投影", () => {
       }),
     ).toBe(true);
     wrapper.unmount();
+  });
+
+  it("抽屉修改条件后，钉钉式、BPMN 与导出 XML 读取同一规则", async () => {
+    const model = buildModel();
+    const editor = mount(DingtalkDesigner, { props: { model }, attachTo: document.body });
+    await editor.find('[data-test="default-toggle-fork-1"]').trigger("click");
+    await editor.find('[data-test="branch-head-fork-0"]').trigger("click");
+    await flushPromises();
+
+    const nameInput = document.querySelector<HTMLInputElement>('[data-test="drawer-name"]');
+    const conditionInput = document.querySelector<HTMLInputElement>(
+      '[data-test="drawer-condition"]',
+    );
+    expect(nameInput).not.toBeNull();
+    expect(conditionInput).not.toBeNull();
+    nameInput!.value = "大额复核";
+    nameInput!.dispatchEvent(new Event("input", { bubbles: true }));
+    conditionInput!.value = "${amount > 1000}";
+    conditionInput!.dispatchEvent(new Event("input", { bubbles: true }));
+    await flushPromises();
+    (document.querySelector('[data-test="drawer-save"]') as HTMLElement).click();
+    await flushPromises();
+
+    expect(editor.find('[data-test="branch-head-fork-0"]').text()).toContain("${amount > 1000}");
+    expect(editor.find('[data-test="branch-head-fork-1"]').text()).toContain("其他情况（默认）");
+
+    const canvas = mount(BpmnCanvas, { props: { model }, attachTo: document.body });
+    await flushPromises();
+    const labels = canvas.findAll('[data-test="canvas-edge-label"]');
+    expect(labels.some((label) => label.text().includes("大额复核"))).toBe(true);
+    expect(
+      labels.some((label) => {
+        const title = label.find("title");
+        return title.exists() && title.text() === "${amount > 1000}";
+      }),
+    ).toBe(true);
+
+    const xml = await exportXml(model);
+    expect(xml).toContain('default="f4"');
+    expect(xml).toContain("amount &gt; 1000");
+    canvas.unmount();
+    editor.unmount();
   });
 
   it("只读配置清单逐一核验（AC1：编辑面全部禁用，缩放平移保留）", () => {
