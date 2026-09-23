@@ -114,7 +114,7 @@ const miMarker = computed<"parallel" | "sequential" | null>(() => {
   justify-content: center;
   width: 100%;
   height: 100%;
-  /* 事件/网关的名称标签挂在框外下方（标准 BPMN 习惯） */
+  /* 事件/网关的名称放在侧边，避开竖向进入/引出线。 */
   overflow: visible;
 }
 
@@ -218,8 +218,9 @@ const miMarker = computed<"parallel" | "sequential" | null>(() => {
 
 .bpmn-label {
   position: absolute;
-  top: 100%;
-  margin-top: 2px;
+  top: 50%;
+  left: calc(100% + 8px);
+  transform: translateY(-50%);
   font-size: 11px;
   color: #606266;
   white-space: nowrap;

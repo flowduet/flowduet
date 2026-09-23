@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { computed, markRaw, toRaw } from "vue";
+import { computed, markRaw, ref, toRaw } from "vue";
 import { VueFlow } from "@vue-flow/core";
-import type { EdgeTypesObject, NodeTypesObject } from "@vue-flow/core";
+import type { EdgeTypesObject, NodeTypesObject, VueFlowStore } from "@vue-flow/core";
 import type { BpmnModel, ModdleElement } from "@flowduet/core";
-import { resolveCanvasGeometry } from "../geometry.js";
+import { initialCanvasViewport, resolveCanvasGeometry } from "../geometry.js";
 import type { CanvasGeometry } from "../geometry.js";
 import BpmnNode from "./BpmnNode.vue";
 import BpmnEdge from "./BpmnEdge.vue";
@@ -29,6 +29,7 @@ const props = defineProps<{
 
 // toRaw 解 Vue 代理（宿主 reactive store 会让内核私有字段无法穿越）
 const modelRaw = computed(() => toRaw(props.model));
+const canvasElement = ref<HTMLElement | null>(null);
 
 // 只读投影同样可失败：半损/非良构模型（缺坐标且含不可达元素、循环、多开始事件等）
 // 会让竖排推导抛错。computed 内不做副作用（lint: vue/no-side-effects-in-computed-properties），
@@ -114,10 +115,22 @@ const edges = computed(() => {
 // 经 markRaw 注册并以 slot 渲染实际节点；类型断言收敛在注册边界一处。
 const nodeTypes = { bpmn: markRaw(BpmnNode) } as unknown as NodeTypesObject;
 const edgeTypes = { "bpmn-edge": markRaw(BpmnEdge) } as unknown as EdgeTypesObject;
+
+function initializeViewport(instance: VueFlowStore): void {
+  const geometry = geometryResult.value.geometry;
+  const width = canvasElement.value?.getBoundingClientRect().width ?? 0;
+  if (geometry === null) return;
+  const viewport = initialCanvasViewport(geometry, width);
+  if (viewport !== null) {
+    void instance.setViewport(viewport).catch((error: unknown) => {
+      console.warn("无法设置 BPMN 初始视角", error);
+    });
+  }
+}
 </script>
 
 <template>
-  <div class="bpmn-canvas" data-test="bpmn-canvas">
+  <div ref="canvasElement" class="bpmn-canvas" data-test="bpmn-canvas">
     <p
       v-if="geometryResult.geometry === null"
       class="canvas-error"
@@ -133,10 +146,11 @@ const edgeTypes = { "bpmn-edge": markRaw(BpmnEdge) } as unknown as EdgeTypesObje
       :node-types="nodeTypes"
       :edge-types="edgeTypes"
       v-bind="READONLY_FLOW_PROPS"
-      :fit-view-on-init="true"
+      :fit-view-on-init="false"
       :min-zoom="0.55"
       :max-zoom="2.5"
       data-test="vue-flow"
+      @pane-ready="initializeViewport"
     />
   </div>
 </template>

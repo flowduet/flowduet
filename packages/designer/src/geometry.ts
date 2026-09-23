@@ -50,6 +50,44 @@ export function resolveCanvasGeometry(model: BpmnModel): CanvasGeometry {
 }
 
 /**
+ * 竖长流程的初始视角优先保证节点文字可读，并从流程顶部开始展示。
+ * 宽度不足时允许横向平移，避免为了全图入框把文字压到不可读尺寸。
+ */
+export function initialCanvasViewport(
+  geometry: CanvasGeometry,
+  viewportWidth: number,
+): { x: number; y: number; zoom: number } | null {
+  if (!Number.isFinite(viewportWidth) || viewportWidth <= 0) return null;
+  let left = Infinity;
+  let right = -Infinity;
+  let top = Infinity;
+  for (const shape of geometry.shapes.values()) {
+    if (
+      !Number.isFinite(shape.x) ||
+      !Number.isFinite(shape.y) ||
+      !Number.isFinite(shape.width) ||
+      !Number.isFinite(shape.height) ||
+      shape.width <= 0 ||
+      shape.height <= 0
+    ) {
+      continue;
+    }
+    left = Math.min(left, shape.x);
+    right = Math.max(right, shape.x + shape.width);
+    top = Math.min(top, shape.y);
+  }
+  if (left === Infinity) return null;
+
+  const widthFit = (viewportWidth - 48) / (right - left);
+  const zoom = Math.min(1.2, Math.max(1.1, widthFit));
+  return {
+    x: viewportWidth / 2 - ((left + right) / 2) * zoom,
+    y: 24 - top * zoom,
+    zoom,
+  };
+}
+
+/**
  * 边折线：waypoints ≥2 时返回其副本，否则退化为 source→target 直线。
  * 返回副本而非入参数组引用——本函数是公开纯函数，调用方对结果 push/sort
  * 不得回写污染模型内核的 waypoints 注册表。
