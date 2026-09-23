@@ -1,6 +1,11 @@
 import { describe, expect, it } from "vitest";
 import { BpmnModel, flowableAdapter } from "@flowduet/core";
-import { edgeArrowPoints, edgePolylinePoints, resolveCanvasGeometry } from "./geometry.js";
+import {
+  edgeArrowPoints,
+  edgePolylinePoints,
+  initialCanvasViewport,
+  resolveCanvasGeometry,
+} from "./geometry.js";
 
 /**
  * 只读投影的几何来源（#26）：优先直读 DI 登记表（shapeOf/waypointsOf
@@ -66,6 +71,30 @@ describe("resolveCanvasGeometry", () => {
       .addSequenceFlow({ id: "f1", sourceRef: "start", targetRef: "t1" })
       .addSequenceFlow({ id: "f2", sourceRef: "t1", targetRef: "end" });
     expect(() => resolveCanvasGeometry(model)).toThrow(/元素 orphan 不在块树中/);
+  });
+});
+
+describe("BPMN 初始视角", () => {
+  it("保持可读缩放并将流程顶部放在画布留白内", () => {
+    const geometry = {
+      shapes: new Map([
+        ["start", { x: 160, y: 40, width: 36, height: 36 }],
+        ["task", { x: 120, y: 136, width: 100, height: 80 }],
+      ]),
+      waypoints: new Map(),
+      source: "registry" as const,
+    };
+    expect(initialCanvasViewport(geometry, 800)).toEqual({ x: 196, y: -24, zoom: 1.2 });
+  });
+
+  it("宽流程保留文字可读的最小缩放，空画布尺寸不计算视角", () => {
+    const geometry = {
+      shapes: new Map([["wide", { x: 0, y: 40, width: 1200, height: 80 }]]),
+      waypoints: new Map(),
+      source: "registry" as const,
+    };
+    expect(initialCanvasViewport(geometry, 800)?.zoom).toBe(1.1);
+    expect(initialCanvasViewport(geometry, 0)).toBeNull();
   });
 });
 
