@@ -7,12 +7,12 @@
 > 双视图流程设计器 —— 钉钉式审批视图与 BPMN 自由画布，共享同一棵流程模型树。
 > Dual-view workflow designer (DingTalk-style approval view + BPMN canvas) sharing one BPMN model tree. For Vue 3 & TypeScript.
 
-🚧 **设计阶段，v0 未发布。** 当前进展与计划见 [ROADMAP](docs/ROADMAP.md)。
+🚧 **预发布阶段。** `@flowduet/core` 与 `@flowduet/designer` 已发布 0.x 版本；当前进展与计划见 [ROADMAP](docs/ROADMAP.md)，发版流程见 [贡献指南](CONTRIBUTING.md)。
 
 ## 核心理念
 
 - **一棵模型树，两种视图**：BPMN XML（moddle 模型树）是唯一事实源。钉钉式纵向审批视图与 Vue-Flow 画布只是它的两种投影，任何一种视图导出的都是合法可执行的 BPMN 2.0 XML。
-- **引擎无关内核 + 适配器**：内核只面向标准 BPMN；引擎差异（命名空间、扩展属性）做成可插拔适配器。首发 Flowable，验证矩阵覆盖 6.8 / 7.2 / 8.0。
+- **引擎无关内核 + 适配器**：内核只面向标准 BPMN；引擎差异（命名空间、扩展属性）做成可插拔适配器。首发 Flowable，目前以 6.8 部署冒烟验收；7.2 / 8.0 留待后续验证。
 - **TypeScript-first，Vue 3 原生**：画布与交互层完全自研（Vue-Flow），不封装 bpmn-js；XML 模型层站在 bpmn.io 的 MIT 库（bpmn-moddle）上——与 bpmn-js 同构的分层方式。
 
 ## 包结构规划（monorepo）
