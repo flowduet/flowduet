@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { BlockTreeNode, BpmnModel } from "@flowduet/core";
+import type { BlockTreeNode, BpmnModel, ModdleElement } from "@flowduet/core";
 import { ElDropdown, ElDropdownItem, ElDropdownMenu } from "element-plus";
 import NodeCard from "./NodeCard.vue";
 import BlockNodeList from "./BlockNodeList.vue";
@@ -11,7 +11,7 @@ import { branchHeadFlowId } from "../operations.js";
  * #24 块交互：块头带「+ 分支」「删块」；支路多于两支时可删支；
  * 条件块的支路头带默认开关。fork/join 网关自身不出卡片（容器即其呈现）。
  */
-defineProps<{
+const props = defineProps<{
   items: BlockTreeNode[];
   /** exactOptional 下显式传 undefined 是合法形态（未选中节点时） */
   activeId?: string | undefined;
@@ -38,6 +38,24 @@ function insertable(item: BlockTreeNode): boolean {
   if (item.kind === "block") return false;
   const outgoing = (item.element.get("outgoing") as unknown[]) ?? [];
   return outgoing.length === 1;
+}
+
+function branchDisplay(forkId: string, index: number): { name: string; detail: string } {
+  const fallback = { name: `支路 ${index + 1}`, detail: "未设置条件" };
+  const flowId = branchHeadFlowId(props.model, forkId, index);
+  if (flowId === undefined) return fallback;
+  try {
+    const flow = props.model.elementOf(flowId);
+    const name = String(flow.get("name") ?? "").trim() || fallback.name;
+    if (props.defaultIndexByFork.get(forkId) === index) {
+      return { name, detail: "其他情况（默认）" };
+    }
+    const condition = flow.get("conditionExpression") as ModdleElement | undefined;
+    const detail = String(condition?.get("body") ?? "").trim() || fallback.detail;
+    return { name, detail };
+  } catch {
+    return fallback;
+  }
 }
 </script>
 
@@ -123,10 +141,11 @@ function insertable(item: BlockTreeNode): boolean {
                 v-if="item.gateway === 'exclusive'"
                 class="branch-tag branch-tag--btn"
                 :data-test="`branch-head-${item.forkId}-${i}`"
-                title="配置此分支的条件表达式"
+                :title="`${branchDisplay(item.forkId, i).name}：${branchDisplay(item.forkId, i).detail}；点击配置此分支`"
                 @click="$emit('branchConfig', branchHeadFlowId(model, item.forkId, i))"
               >
-                支路 {{ i + 1 }}{{ defaultIndexByFork.get(item.forkId) === i ? " · 默认" : "" }}
+                <span class="branch-tag-name">{{ branchDisplay(item.forkId, i).name }}</span>
+                <span class="branch-tag-detail">{{ branchDisplay(item.forkId, i).detail }}</span>
               </button>
               <span v-else class="branch-tag">支路 {{ i + 1 }}</span>
               <button
@@ -399,6 +418,49 @@ function insertable(item: BlockTreeNode): boolean {
   gap: 4px;
   white-space: nowrap;
   z-index: 1;
+}
+
+/* 条件标签保留两行，位于分叉横线之上。 */
+.branch-block[data-gateway="exclusive"] {
+  --branch-label-space: 42px;
+}
+
+.branch-block[data-gateway="exclusive"]
+  > .branch-block-branches
+  > .branch-block-branch
+  > .branch-head {
+  top: -38px;
+  width: calc(100% - 8px);
+  justify-content: center;
+}
+
+.branch-block[data-gateway="exclusive"] .branch-tag--btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 0;
+  max-width: calc(100% - 18px);
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.92);
+  line-height: 1.3;
+}
+
+.branch-tag-name,
+.branch-tag-detail {
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.branch-tag-name {
+  font-weight: 600;
+}
+
+.branch-tag-detail {
+  color: #5e6f91;
 }
 
 .branch-tag {

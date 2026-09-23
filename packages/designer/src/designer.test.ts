@@ -243,6 +243,34 @@ describe("分支块交互（#24）", () => {
     wrapper.unmount();
   });
 
+  it("条件支路展示模型中的名称、条件和默认兜底语义", () => {
+    const model = buildBranching();
+    const defaultFlow = model.elementOf("fa");
+    const conditionalFlow = model.elementOf("fb");
+    model.elementOf("fork1").set("default", defaultFlow);
+    defaultFlow.set("name", "总监审批支路");
+    conditionalFlow.set("name", "大额复核");
+    conditionalFlow.set(
+      "conditionExpression",
+      model.moddle.create("bpmn:FormalExpression", { body: "${amount > 1000}" }),
+    );
+
+    const wrapper = mountDesigner(model);
+    const left = wrapper.find('[data-test="branch-head-fork1-0"]').text();
+    const right = wrapper.find('[data-test="branch-head-fork1-1"]').text();
+    expect(left).toContain("总监审批支路");
+    expect(left).toContain("其他情况（默认）");
+    expect(right).toContain("大额复核");
+    expect(right).toContain("${amount > 1000}");
+    wrapper.unmount();
+  });
+
+  it("无条件且非默认的支路明确提示尚未配置", () => {
+    const wrapper = mountDesigner(buildBranching());
+    expect(wrapper.find('[data-test="branch-head-fork1-0"]').text()).toContain("未设置条件");
+    wrapper.unmount();
+  });
+
   it("加支路：块树分支数 +1，导出 XML 含新支路且竖排推导可用", async () => {
     const model = buildBranching();
     const wrapper = mountDesigner(model);
