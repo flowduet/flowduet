@@ -109,4 +109,20 @@ describe("BpmnCanvas 只读投影", () => {
     expect(wrapper.find('[data-test="canvas-bpmn:StartEvent"]').exists()).toBe(false);
     wrapper.unmount();
   });
+
+  it("原地刷新：宿主递增 version prop 触发几何重算（W-b）", async () => {
+    // 与「互切零转换」的重挂路径并列：挂载期间原地编辑后递增 version 即原地重算，
+    // 无需重挂——#27 三区布局边编辑边看预览的刷新接缝。
+    const model = buildModel();
+    const wrapper = mount(BpmnCanvas, { props: { model, version: 0 }, attachTo: document.body });
+    await flushPromises();
+    expect(wrapper.text()).toContain("部门会签");
+
+    // 宿主原地编辑模型（不重挂）→ 递增 version 触发重算
+    model.elementOf("counter_sign").set("name", "改会签");
+    await wrapper.setProps({ version: 1 });
+    await flushPromises();
+    expect(wrapper.text()).toContain("改会签");
+    wrapper.unmount();
+  });
 });

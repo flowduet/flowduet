@@ -15,9 +15,16 @@ import { READONLY_FLOW_PROPS } from "../canvas-props.js";
  *
  * 只读配置见 READONLY_FLOW_PROPS（canvas-props.ts 单一出处，测试断言该常量）；
  * 编辑面全部禁用，缩放/平移保留。
+ *
+ * 刷新合同：几何只依赖 model 的**身份**——toRaw 后对 moddle 树的原地读写不经
+ * Vue 响应式通道，宿主在挂载期间原地改模型不会自动重算。刷新二选一：
+ *  ① 重挂 / 换 model 实例（playground 互切走此路径，互切零转换成立）；
+ *  ② 传 version prop，原地改后递增它触发重算（#27 三区布局边编辑边看预览用）。
  */
 const props = defineProps<{
   model: BpmnModel;
+  /** 原地刷新接缝：宿主在挂载期间原地改模型后递增此值触发几何重算（缺省＝仅重挂/换实例刷新） */
+  version?: number;
 }>();
 
 // toRaw 解 Vue 代理（宿主 reactive store 会让内核私有字段无法穿越）
@@ -27,7 +34,10 @@ const modelRaw = computed(() => toRaw(props.model));
 // 会让竖排推导抛错。computed 内不做副作用（lint: vue/no-side-effects-in-computed-properties），
 // 只返回 null + 错误信息；模板据此渲染可读错误态，而非让异常冒泡炸渲染树（白屏）。
 // 与钉钉式视图 DingtalkDesigner 的 { items, error } 降级口径一致。
+// 模板分支用数据态（geometry === null）而非文案态（error 非空）：任何异常一律不挂 VueFlow，
+// 即便错误信息为空串也不会静默丢图。
 const geometryResult = computed<{ geometry: CanvasGeometry | null; error: string }>(() => {
+  void props.version; // 建立对 version 的依赖：宿主原地改模型后递增即触发本 computed 重算
   try {
     return { geometry: resolveCanvasGeometry(modelRaw.value), error: "" };
   } catch (e) {
@@ -98,7 +108,12 @@ const edgeTypes = { "bpmn-edge": markRaw(BpmnEdge) } as unknown as EdgeTypesObje
 
 <template>
   <div class="bpmn-canvas" data-test="bpmn-canvas">
-    <p v-if="geometryResult.error" class="canvas-error" data-test="canvas-error" role="alert">
+    <p
+      v-if="geometryResult.geometry === null"
+      class="canvas-error"
+      data-test="canvas-error"
+      role="alert"
+    >
       {{ geometryResult.error }}
     </p>
     <VueFlow
