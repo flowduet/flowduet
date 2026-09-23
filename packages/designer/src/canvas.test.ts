@@ -5,7 +5,7 @@ import { BpmnModel, flowableAdapter } from "@flowduet/core";
 import BpmnCanvas from "./components/BpmnCanvas.vue";
 import DingtalkDesigner from "./components/DingtalkDesigner.vue";
 import { READONLY_FLOW_PROPS } from "./canvas-props.js";
-import { exportXml } from "./export.js";
+import { exportConfiguredXml } from "../test-support/export-configured-xml.js";
 
 /**
  * 只读投影组件冒烟（#26）：同一模型实例的画布呈现——节点词汇、
@@ -124,7 +124,7 @@ describe("BpmnCanvas 只读投影", () => {
       }),
     ).toBe(true);
 
-    const xml = await exportXml(model);
+    const xml = await exportConfiguredXml(model);
     expect(xml).toContain('default="f4"');
     expect(xml).toContain("amount &gt; 1000");
     canvas.unmount();

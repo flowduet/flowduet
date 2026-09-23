@@ -10,7 +10,7 @@ import {
   setBranchCondition,
   setDefaultBranch,
 } from "./operations.js";
-import { exportXml } from "./export.js";
+import { exportConfiguredXml } from "../test-support/export-configured-xml.js";
 
 /**
  * 分支块交互（#24）：块内加支路 / 删支路 / 删整块 / 默认分支切换。
@@ -339,7 +339,7 @@ describe("嵌套删除回归（#24 评审 C1/C2/C3）", () => {
     }
     expect(blockOf(model).branches).toHaveLength(2);
     // AC#5 导出一致：不抛且不含被删节点
-    const xml = await exportXml(model);
+    const xml = await exportConfiguredXml(model);
     expect(xml).not.toContain('id="arch_node"');
     expect(xml).toContain("<bpmndi:BPMNDiagram");
   });
@@ -360,7 +360,7 @@ describe("嵌套删除回归（#24 评审 C1/C2/C3）", () => {
     ]) {
       expect(() => model.elementOf(id)).toThrow();
     }
-    const xml = await exportXml(model);
+    const xml = await exportConfiguredXml(model);
     expect(xml).not.toContain('id="z_node"');
     expect(xml).toContain("<bpmndi:BPMNDiagram");
   });
@@ -427,7 +427,7 @@ describe("嵌套删除回归（#24 评审 C1/C2/C3）", () => {
       expect(() => model.elementOf(id)).toThrow();
     }
     expect(() => model.elementOf("x_node")).not.toThrow();
-    const xml = await exportXml(model);
+    const xml = await exportConfiguredXml(model);
     expect(xml).toContain("<bpmndi:BPMNDiagram");
   });
 
@@ -440,7 +440,7 @@ describe("嵌套删除回归（#24 评审 C1/C2/C3）", () => {
     for (const id of ["fa", "ja", "a1", "a2", "x_node", "outer_fork", "outer_join"]) {
       expect(() => model.elementOf(id)).not.toThrow();
     }
-    expect(await exportXml(model)).toContain("<bpmndi:BPMNDiagram");
+    expect(await exportConfiguredXml(model)).toContain("<bpmndi:BPMNDiagram");
   });
 
   it("串行双块：删前块仅收缩该块，后块成为支路首且导出可用（C3 守卫不误杀）", async () => {
@@ -452,7 +452,7 @@ describe("嵌套删除回归（#24 评审 C1/C2/C3）", () => {
     for (const id of ["fb", "jb", "b1", "b2", "x_node"]) {
       expect(() => model.elementOf(id)).not.toThrow();
     }
-    expect(await exportXml(model)).toContain("<bpmndi:BPMNDiagram");
+    expect(await exportConfiguredXml(model)).toContain("<bpmndi:BPMNDiagram");
   });
 });
 
