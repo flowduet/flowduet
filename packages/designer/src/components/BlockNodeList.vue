@@ -113,6 +113,11 @@ function insertable(item: BlockTreeNode): boolean {
         </div>
         <div class="branch-block-branches">
           <div v-for="(branch, i) in item.branches" :key="i" class="branch-block-branch">
+            <!-- 引入线（#51）：块顶 → 支路，末端向下箭头指向卡片（对照钉钉官方分叉语义） -->
+            <span
+              class="branch-line branch-line--in"
+              :data-test="`branch-line-in-${item.forkId}-${i}`"
+            />
             <div class="branch-head">
               <button
                 v-if="item.gateway === 'exclusive'"
@@ -148,6 +153,11 @@ function insertable(item: BlockTreeNode): boolean {
               @remove-block="$emit('removeBlock', $event)"
               @branch-config="$emit('branchConfig', $event)"
             />
+            <!-- 引出线（#51）：卡片 → 块底，与引入线同轴收拢 -->
+            <span
+              class="branch-line branch-line--out"
+              :data-test="`branch-line-out-${item.forkId}-${i}`"
+            />
           </div>
         </div>
       </div>
@@ -156,6 +166,62 @@ function insertable(item: BlockTreeNode): boolean {
 </template>
 
 <style scoped>
+/* 各列横段在相邻列的间隙中相接；首尾列只画中心以内的半段。 */
+.branch-line {
+  display: block;
+  width: calc(100% + 12px);
+  margin-left: -6px;
+  position: relative;
+}
+
+.branch-line--in {
+  height: 32px;
+  background: linear-gradient(#8c9bb5, #8c9bb5) center bottom / 1px 32px no-repeat;
+}
+
+.branch-line--in::before,
+.branch-line--out::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: #8c9bb5;
+}
+
+.branch-line--in::before {
+  top: 0;
+}
+
+.branch-line--out::before {
+  bottom: 0;
+}
+
+.branch-block-branch:first-child > .branch-line::before {
+  left: 50%;
+}
+
+.branch-block-branch:last-child > .branch-line::before {
+  right: 50%;
+}
+
+.branch-line--in::after {
+  content: "";
+  position: absolute;
+  bottom: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 3.5px solid transparent;
+  border-top: 5px solid #8c9bb5;
+}
+
+/* 较短支路的引出线填满剩余高度，让嵌套分支与相邻支路在同一高度汇合。 */
+.branch-line--out {
+  flex: 1;
+  min-height: 24px;
+  background: linear-gradient(#8c9bb5, #8c9bb5) center / 1px 100% no-repeat;
+}
+
 /* ElDropdown 根是 inline-flex 收缩盒，需包裹层撑满居中（#27 用户反馈） */
 .insert-wrap {
   display: flex;
@@ -187,7 +253,7 @@ function insertable(item: BlockTreeNode): boolean {
   left: 50%;
   width: 1px;
   height: 5px;
-  background: #c0c4cc;
+  background: #8c9bb5;
 }
 
 .insert-btn::before {
@@ -204,9 +270,10 @@ function insertable(item: BlockTreeNode): boolean {
 }
 
 .branch-block {
+  --branch-label-space: 24px;
   position: relative;
   margin: 8px 0;
-  padding: 10px 12px 10px 16px;
+  padding: 10px 12px;
   border-radius: 8px;
   background: rgba(45, 62, 151, 0.06);
 }
@@ -223,11 +290,24 @@ function insertable(item: BlockTreeNode): boolean {
 }
 
 .branch-block-head {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 6px;
-  margin-bottom: 8px;
+  margin-bottom: var(--branch-label-space);
   flex-wrap: wrap;
+}
+
+/* 块头高度可随按钮换行变化，引入线仍从上个节点贯通到分叉横线。 */
+.branch-block-head::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: -18px;
+  bottom: calc(-1 * var(--branch-label-space));
+  width: 1px;
+  background: #8c9bb5;
+  pointer-events: none;
 }
 
 .branch-block-label {
@@ -273,23 +353,52 @@ function insertable(item: BlockTreeNode): boolean {
 }
 
 .branch-block-branches {
+  position: relative;
   display: flex;
   gap: 12px;
-  align-items: flex-start;
+  align-items: stretch;
+}
+
+.branch-block-branches::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  width: 1px;
+  height: 18px;
+  background: #8c9bb5;
+  pointer-events: none;
+}
+
+.branch-block-branches::before {
+  content: "";
+  position: absolute;
+  top: calc(100% + 13px);
+  left: calc(50% - 3px);
+  border: 3px solid transparent;
+  border-top: 5px solid #8c9bb5;
+  pointer-events: none;
 }
 
 .branch-block-branch {
+  position: relative;
+  display: flex;
+  flex-direction: column;
   flex: 1;
   min-width: 0;
 }
 
 .branch-head {
-  /* 标签随卡片同轴居中；删除钮绝对定位右上（#47） */
-  position: relative;
+  /* 标签在横线之上、对准本支路中心，不遮挡箭头与竖线。 */
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  transform: translateX(-50%);
   display: flex;
   align-items: center;
-  justify-content: center;
-  margin-bottom: 4px;
+  gap: 4px;
+  white-space: nowrap;
+  z-index: 1;
 }
 
 .branch-tag {
@@ -310,8 +419,6 @@ function insertable(item: BlockTreeNode): boolean {
 }
 
 .branch-remove {
-  position: absolute;
-  right: 0;
   border: none;
   background: none;
   color: #c45656;
