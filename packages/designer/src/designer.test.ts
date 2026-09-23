@@ -68,6 +68,14 @@ describe("DingtalkDesigner 审批节点闭环", () => {
     wrapper.unmount();
   });
 
+  it("卡片名称和摘要保留可悬停查看的完整文本", () => {
+    const wrapper = mountDesigner(buildChain());
+    const approval = wrapper.findAll('[data-test="node-card"]')[1]!;
+    expect(approval.find(".node-card-name").attributes("title")).toBe("经理审批");
+    expect(approval.find(".node-card-summary").attributes("title")).toBe("审批人 ${manager}");
+    wrapper.unmount();
+  });
+
   it("卡间「+」插入审批节点：块树与导出 XML 同步反映（零坐标导出带 DI）", async () => {
     const model = buildChain();
     const wrapper = mountDesigner(model);
