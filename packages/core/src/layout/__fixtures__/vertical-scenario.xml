@@ -163,14 +163,14 @@
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="f_c1_par_di" bpmnElement="f_c1_par">
         <di:waypoint x="461.6666666666667" y="326" />
-        <di:waypoint x="461.6666666666667" y="361" />
-        <di:waypoint x="280" y="361" />
+        <di:waypoint x="461.6666666666667" y="334" />
+        <di:waypoint x="280" y="334" />
         <di:waypoint x="280" y="396" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="f_par_cs_di" bpmnElement="f_par_cs">
         <di:waypoint x="267.5" y="446" />
-        <di:waypoint x="267.5" y="481" />
-        <di:waypoint x="90" y="481" />
+        <di:waypoint x="267.5" y="454" />
+        <di:waypoint x="90" y="454" />
         <di:waypoint x="90" y="516" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="f_par_hr_di" bpmnElement="f_par_hr">
@@ -179,14 +179,14 @@
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="f_par_seq_di" bpmnElement="f_par_seq">
         <di:waypoint x="292.5" y="446" />
-        <di:waypoint x="292.5" y="481" />
-        <di:waypoint x="470" y="481" />
+        <di:waypoint x="292.5" y="470" />
+        <di:waypoint x="470" y="470" />
         <di:waypoint x="470" y="516" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="f_cs_join_di" bpmnElement="f_cs_join">
         <di:waypoint x="90" y="596" />
-        <di:waypoint x="90" y="631" />
-        <di:waypoint x="267.5" y="631" />
+        <di:waypoint x="90" y="658" />
+        <di:waypoint x="267.5" y="658" />
         <di:waypoint x="267.5" y="666" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="f_hr_pj_di" bpmnElement="f_hr_pj">
@@ -195,20 +195,20 @@
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="f_seq_join_di" bpmnElement="f_seq_join">
         <di:waypoint x="470" y="596" />
-        <di:waypoint x="470" y="631" />
-        <di:waypoint x="292.5" y="631" />
+        <di:waypoint x="470" y="642" />
+        <di:waypoint x="292.5" y="642" />
         <di:waypoint x="292.5" y="666" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="f_pj_j1_di" bpmnElement="f_pj_j1">
         <di:waypoint x="280" y="716" />
-        <di:waypoint x="280" y="891" />
-        <di:waypoint x="461.6666666666667" y="891" />
+        <di:waypoint x="280" y="1058" />
+        <di:waypoint x="461.6666666666667" y="1058" />
         <di:waypoint x="461.6666666666667" y="1066" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="f_c1_dir_di" bpmnElement="f_c1_dir">
         <di:waypoint x="478.3333333333333" y="326" />
-        <di:waypoint x="478.3333333333333" y="361" />
-        <di:waypoint x="755" y="361" />
+        <di:waypoint x="478.3333333333333" y="342" />
+        <di:waypoint x="755" y="342" />
         <di:waypoint x="755" y="396" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="f_dir_cc_di" bpmnElement="f_dir_cc">
@@ -221,32 +221,32 @@
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="f_c2_rect_di" bpmnElement="f_c2_rect">
         <di:waypoint x="746.6666666666666" y="726" />
-        <di:waypoint x="746.6666666666666" y="761" />
-        <di:waypoint x="660" y="761" />
+        <di:waypoint x="746.6666666666666" y="734" />
+        <di:waypoint x="660" y="734" />
         <di:waypoint x="660" y="796" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="f_rect_j2_di" bpmnElement="f_rect_j2">
         <di:waypoint x="660" y="876" />
-        <di:waypoint x="660" y="911" />
-        <di:waypoint x="746.6666666666666" y="911" />
+        <di:waypoint x="660" y="938" />
+        <di:waypoint x="746.6666666666666" y="938" />
         <di:waypoint x="746.6666666666666" y="946" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="f_c2_arch_di" bpmnElement="f_c2_arch">
         <di:waypoint x="763.3333333333334" y="726" />
-        <di:waypoint x="763.3333333333334" y="761" />
-        <di:waypoint x="850" y="761" />
+        <di:waypoint x="763.3333333333334" y="742" />
+        <di:waypoint x="850" y="742" />
         <di:waypoint x="850" y="796" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="f_arch_j2_di" bpmnElement="f_arch_j2">
         <di:waypoint x="850" y="876" />
-        <di:waypoint x="850" y="911" />
-        <di:waypoint x="763.3333333333334" y="911" />
+        <di:waypoint x="850" y="930" />
+        <di:waypoint x="763.3333333333334" y="930" />
         <di:waypoint x="763.3333333333334" y="946" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="f_j2_j1_di" bpmnElement="f_j2_j1">
         <di:waypoint x="755" y="996" />
-        <di:waypoint x="755" y="1031" />
-        <di:waypoint x="478.3333333333333" y="1031" />
+        <di:waypoint x="755" y="1050" />
+        <di:waypoint x="478.3333333333333" y="1050" />
         <di:waypoint x="478.3333333333333" y="1066" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="f_j1_end_di" bpmnElement="f_j1_end">
