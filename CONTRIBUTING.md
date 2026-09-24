@@ -7,6 +7,24 @@
 - CI 在 PR 上跑 Node 22 / 24 双矩阵：`pnpm lint` + `pnpm test` + `pnpm build`，绿了才可合并。
 - 影响公开包 `@flowduet/core` 或 `@flowduet/designer` 的 PR 应附 changeset：运行 `pnpm changeset`，选择实际受影响的包和版本类型。纯文档或仅改私有 Playground 的 PR 不需要发包 changeset。
 
+## Issue 与 PR 内容
+
+Issue 和 PR 的标题、正文使用中文；代码、日志和专有名称保留原文。PR 标题遵循约定式提交格式，例如 `fix(designer): 修复草稿导出校验`。
+
+| 入口                                                   | 填写内容                                                       | 初始标签                      |
+| ------------------------------------------------------ | -------------------------------------------------------------- | ----------------------------- |
+| [PR 模板](.github/pull_request_template.md)            | 解决的问题、修改后的行为、验证结果、关联 Issue                 | 无                            |
+| [缺陷报告](.github/ISSUE_TEMPLATE/bug_report.yml)      | 复现步骤、预期与实际结果、版本及环境；尽量附最小复现文件或截图 | `bug`、`needs-triage`         |
+| [功能建议](.github/ISSUE_TEMPLATE/feature_request.yml) | 使用场景、当前阻碍、期望结果                                   | `enhancement`、`needs-triage` |
+
+验证结果应记录实际执行的命令或手动验证步骤及结果。相关检查未执行时说明原因，不适用时说明依据；不要把计划执行的检查写成已通过。新增依赖及兼容性变化写入“修改后的行为”。
+
+通过 `gh` 或 API 显式提供 PR 正文时，也应先读取 PR 模板并填写上述四项。`/to-spec` 和 `/to-tickets` 生成的规格与实施票沿用各自专用结构，内容仍使用中文，按既有约定标记 `ready-for-agent`，无需重新经过 `needs-triage`。
+
+关联 Issue 时，普通引用使用 `Refs #编号`；完整解决且目标为默认分支时可使用 `Closes #编号` 自动关票。当前 PR 通常合入 `develop`，这一阶段的关票由合入流程核对处理，不能依赖关闭关键词自动完成。参见 [GitHub 关联与自动关票规则](https://docs.github.com/en/issues/tracking-your-work-with-issues/using-issues/linking-a-pull-request-to-an-issue)。
+
+GitHub 原生模板需要进入仓库默认分支后，才会出现在页面创建流程中。当前默认分支为 `main`；模板按项目流程先通过 PR 合入 `develop`，后续同步到 `main` 后生效，CLI/Agent 可提前读取仓库内模板使用。参见 [GitHub Issue 模板说明](https://docs.github.com/en/communities/using-templates-to-encourage-useful-issues-and-pull-requests/configuring-issue-templates-for-your-repository)和 [PR 模板说明](https://docs.github.com/en/communities/using-templates-to-encourage-useful-issues-and-pull-requests/creating-a-pull-request-template-for-your-repository)。
+
 ## 发版（Changesets，人工流程）
 
 当前公开包为 `@flowduet/core` 与 `@flowduet/designer`；`@flowduet/playground` 是私有验收宿主。发包仍由维护者手动执行，CI 不会自动发布。发布期间避免继续向 `develop` 合并其他变更，使版本 PR、npm 产物与 Git tag 指向同一提交。

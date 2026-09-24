@@ -2,6 +2,8 @@
 
 Issues and specs for this repo live as GitHub issues. Use the `gh` CLI for all operations.
 
+创建或编辑 Issue、PR 正文前，读取 [贡献指南的内容约定](../../CONTRIBUTING.md#issue-与-pr-内容)，按其中的语言、模板和标签规则填写。
+
 ## Conventions
 
 - **Create an issue**: `gh issue create --title "..." --body "..."`. Use a heredoc for multi-line bodies.
