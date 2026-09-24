@@ -5,6 +5,7 @@ import { buildMinimalFlow } from "./__fixtures__/minimal-flow.js";
 import { buildMiFlow } from "./__fixtures__/mi-flow.js";
 import { buildDefaultBranchFlow, buildParallelFlow } from "./__fixtures__/branching-flows.js";
 import { buildCcFlow } from "./__fixtures__/cc-flow.js";
+import { buildDefaultFormFlow } from "./__fixtures__/default-form.js";
 import { APPROVAL_MODES } from "../model/bpmn-model.js";
 import type { ApprovalMode } from "../model/bpmn-model.js";
 
@@ -75,5 +76,14 @@ describe("编译合同（Flowable 6.8 方言）", () => {
       expect(xml).not.toContain("completionCondition");
       expect(xml).toBe(MI_BASELINES.sequential);
     });
+  });
+
+  it("默认表单绑定输出与基准逐字一致（flowduet:defaultFormKey + 显式 formKey）", async () => {
+    const xml = await compile(buildDefaultFormFlow());
+    // 默认引用落 process；继承节点（counter_sign）不固化 formKey
+    expect(xml).toContain('flowduet:defaultFormKey="leave_form_v1"');
+    expect(xml).toContain('flowable:formKey="manager_form_v1"');
+    expect(xml).not.toContain('bpmn:userTask id="counter_sign" name="部门会签" flowable:formKey');
+    expect(xml).toBe(readBaseline("default-form.flowable68.baseline.xml"));
   });
 });

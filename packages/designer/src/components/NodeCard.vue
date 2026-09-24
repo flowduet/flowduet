@@ -1,11 +1,14 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import type { BlockTreeNode } from "@flowduet/core";
+import type { NodeFormSummary } from "../form-options.js";
 
-/** 节点卡片：类型图标 + 名称 + 审批人摘要（点击打开抽屉，悬停出删除） */
+/** 节点卡片：类型图标 + 名称 + 审批人/表单摘要（点击打开抽屉，悬停出删除） */
 const props = defineProps<{
   node: Extract<BlockTreeNode, { kind: "element" }>;
   active: boolean;
+  /** 有效表单摘要（#72）：非集成模式为 undefined，不渲染表单行 */
+  formSummary?: NodeFormSummary | undefined;
 }>();
 
 const emit = defineEmits<{
@@ -78,6 +81,14 @@ const summary = computed(() => {
     <span class="node-card-main">
       <span class="node-card-name" :title="name">{{ name }}</span>
       <span v-if="summary" class="node-card-summary" :title="summary">{{ summary }}</span>
+      <span
+        v-if="formSummary"
+        class="node-card-form"
+        :class="{ 'node-card-form--invalid': formSummary.invalid }"
+        :data-test="`node-form-${node.id}`"
+      >
+        {{ formSummary.text }}
+      </span>
     </span>
     <button
       v-if="vocab.deletable"
@@ -176,6 +187,19 @@ const summary = computed(() => {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+/* 有效表单行（#72）：与摘要同层，失效引用转警示色提醒修复 */
+.node-card-form {
+  font-size: 12px;
+  color: #5e6f91;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.node-card-form--invalid {
+  color: #c45656;
 }
 
 .node-card-delete {

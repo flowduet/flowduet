@@ -1,10 +1,17 @@
 import { BpmnModel, flowableAdapter } from "@flowduet/core";
+import type { DesignerFormOption } from "@flowduet/designer";
 import { openDesignDocument, saveDesignDocument } from "./document.js";
 import type {
   FormDefinition,
   OpenDesignDocumentResult,
   SaveDesignDocumentResult,
 } from "./document.js";
+import { collectReferenceIssues } from "./binding.js";
+import { assertFormDefinitionValid } from "./form-schema.js";
+
+/** 表单内容（rules/options 序列化字符串）的最小可编辑初值 */
+const EMPTY_FORM_RULES = "[]";
+const EMPTY_FORM_OPTIONS = "{}";
 
 /** 会话状态：流程模型与表单目录是一个整体，校验通过后整体替换（原子恢复） */
 export interface FlowDesignState {
@@ -93,5 +100,98 @@ export class FlowDesignSession {
     const state: FlowDesignState = { model: result.model, forms: result.forms };
     this.#state = state;
     return state;
+  }
+
+  // ---------- 表单目录管理（#72：创建 / 命名 / 内容编辑） ----------
+
+  /**
+   * 新建表单：生成文档内唯一且稳定的 id（改名不换 ID），内容为空规则。
+   * 返回创建的定义副本；后续经 updateFormContent 写入设计器产物。
+   */
+  createForm(name: string): FormDefinition {
+    const state = this.#requireState();
+    const trimmed = name.trim();
+    if (trimmed === "") {
+      throw new Error("表单名称不能为空白");
+    }
+    const form: FormDefinition = {
+      id: this.#nextFormId(state.forms),
+      name: trimmed,
+      provider: "form-create/element-plus",
+      rules: EMPTY_FORM_RULES,
+      options: EMPTY_FORM_OPTIONS,
+    };
+    this.#state = { model: state.model, forms: [...state.forms, form] };
+    return { ...form };
+  }
+
+  /** 表单改名：名称非空校验；ID 保持不变，已有绑定持续有效 */
+  renameForm(id: string, name: string): void {
+    const state = this.#requireState();
+    const trimmed = name.trim();
+    if (trimmed === "") {
+      throw new Error("表单名称不能为空白");
+    }
+    this.#requireForm(state, id);
+    this.#state = {
+      model: state.model,
+      forms: state.forms.map((form) => (form.id === id ? { ...form, name: trimmed } : form)),
+    };
+  }
+
+  /**
+   * 写入设计器产物：rules / options 必须是可解析且在支持范围内的序列化字符串。
+   * 校验失败时目录不变（不留半写状态）。
+   */
+  updateFormContent(id: string, rules: string, options: string): void {
+    const state = this.#requireState();
+    const next: FormDefinition = {
+      ...this.#requireForm(state, id),
+      rules,
+      options,
+    };
+    // 在副本上做结构校验（含 JSON 可解析与文本字段子集守卫），通过后才落目录
+    assertFormDefinitionValid(
+      next,
+      new Set(state.forms.filter((f) => f.id !== id).map((f) => f.id)),
+    );
+    this.#state = {
+      model: state.model,
+      forms: state.forms.map((form) => (form.id === id ? next : form)),
+    };
+  }
+
+  /** 表单目录的中立摘要（designer 的 formOptions 接缝直接可用） */
+  formOptions(): DesignerFormOption[] {
+    const state = this.#state;
+    return state === undefined ? [] : state.forms.map((form) => ({ id: form.id, name: form.name }));
+  }
+
+  /** 当前引用诊断：默认 / 节点 key 指向目录外定义的失效项（含定位） */
+  get referenceIssues(): string[] {
+    const state = this.#state;
+    return state === undefined ? [] : collectReferenceIssues(state.model, state.forms);
+  }
+
+  #requireState(): FlowDesignState {
+    if (this.#state === undefined) {
+      throw new Error("会话中没有可操作的设计：请先新建设计或打开文档");
+    }
+    return this.#state;
+  }
+
+  #requireForm(state: FlowDesignState, id: string): FormDefinition {
+    const form = state.forms.find((candidate) => candidate.id === id);
+    if (form === undefined) {
+      throw new Error(`表单 ${id} 不存在`);
+    }
+    return form;
+  }
+
+  #nextFormId(existing: readonly FormDefinition[]): string {
+    let index = existing.length + 1;
+    const ids = new Set(existing.map((form) => form.id));
+    while (ids.has(`form_${index}`)) index += 1;
+    return `form_${index}`;
   }
 }

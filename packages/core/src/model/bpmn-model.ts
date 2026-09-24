@@ -1,6 +1,7 @@
 import { BpmnModdle } from "bpmn-moddle";
 import type { ModdleElement } from "bpmn-moddle";
 import type { EngineAdapter, TaskKind } from "../adapter/engine-adapter.js";
+import { packagesWithFlowduet } from "../adapter/flowduet-package.js";
 import { pushMany, removeFromArray } from "../util/moddle-utils.js";
 
 /** 画布形状（DI v0 恒等布局的坐标来源） */
@@ -171,7 +172,7 @@ export class BpmnModel {
     if (spec.processId.trim() === "") {
       throw new Error("processId 不能为空");
     }
-    const moddle = new BpmnModdle(spec.adapter.additionalPackages);
+    const moddle = new BpmnModdle(packagesWithFlowduet(spec.adapter));
     const definitions = moddle.create("bpmn:Definitions", {
       id: spec.definitionsId ?? `${spec.processId}_defs`,
       targetNamespace: spec.targetNamespace ?? DEFAULT_TARGET_NAMESPACE,
@@ -295,6 +296,28 @@ export class BpmnModel {
 
   get process(): ModdleElement {
     return this.#state.process;
+  }
+
+  /**
+   * 流程默认表单引用（ADR-0009）：落在 bpmn:Process 的
+   * flowduet:defaultFormKey，供未单独指定表单的审批节点继承。
+   * XML 是事实源——本访问器只做读写收口与空白守卫。
+   */
+  get defaultFormKey(): string | undefined {
+    return this.#state.process.get("defaultFormKey") as string | undefined;
+  }
+
+  setDefaultFormKey(key: string | undefined): this {
+    if (key === undefined) {
+      this.#state.process.set("defaultFormKey", undefined);
+      return this;
+    }
+    const trimmed = key.trim();
+    if (trimmed === "") {
+      throw new Error("默认表单 key 不能为空白（传 undefined 清除引用）");
+    }
+    this.#state.process.set("defaultFormKey", trimmed);
+    return this;
   }
 
   addStartEvent(spec: NodeSpec): this {

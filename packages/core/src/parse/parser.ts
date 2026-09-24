@@ -1,5 +1,6 @@
 import { BpmnModdle } from "bpmn-moddle";
 import type { EngineAdapter } from "../adapter/engine-adapter.js";
+import { packagesWithFlowduet } from "../adapter/flowduet-package.js";
 import { BpmnModel } from "../model/bpmn-model.js";
 
 export interface ParseOptions {
@@ -20,7 +21,7 @@ export async function parse(xml: string, options: ParseOptions): Promise<BpmnMod
   if (xml.trim() === "") {
     throw new Error("XML 不能为空白");
   }
-  const moddle = new BpmnModdle(options.adapter.additionalPackages);
+  const moddle = new BpmnModdle(packagesWithFlowduet(options.adapter));
   const { rootElement, warnings = [] } = await moddle.fromXML(xml);
   if (options.rejectWarnings && warnings.length > 0) {
     throw new Error(`XML 解析产生警告：${warnings.map((warning) => warning.message).join("\n")}`);

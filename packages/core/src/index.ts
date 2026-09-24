@@ -40,6 +40,10 @@ export type { CompileOptions } from "./compile/compiler.js";
 export { parse } from "./parse/parser.js";
 export type { ParseOptions } from "./parse/parser.js";
 
+export { resolveEffectiveForm, isApprovalTask } from "./model/form-binding.js";
+export type { EffectiveFormRef } from "./model/form-binding.js";
+export { FLOWDUET_PREFIX, FLOWDUET_NAMESPACE_URI } from "./adapter/flowduet-package.js";
+
 export { flowableAdapter } from "./adapter/flowable-adapter.js";
 export { assertAdapterContract } from "./adapter/adapter-contract.js";
 export { TASK_KINDS } from "./adapter/engine-adapter.js";

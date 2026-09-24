@@ -10,7 +10,8 @@
     ".": {
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
-    }
+    },
+    "./style.css": "./dist/form-create.css"
   },
   "files": [
     "dist"
@@ -28,16 +29,26 @@
     "registry": "https://registry.npmjs.org/"
   },
   "scripts": {
-    "build": "tsc -p tsconfig.build.json",
+    "build": "vite build && vue-tsc -p tsconfig.build.json",
     "test": "vitest run"
+  },
+  "peerDependencies": {
+    "vue": "^3.5.0",
+    "element-plus": "^2.11.1"
   },
   "dependencies": {
     "@flowduet/core": "workspace:*",
-    "@flowduet/designer": "workspace:*"
+    "@flowduet/designer": "workspace:*",
+    "@form-create/designer": "3.5.0",
+    "@form-create/element-ui": "3.3.4"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^6.0.9",
+    "@vue/test-utils": "^2.5.1",
     "happy-dom": "^20.14.5",
-    "vitest": "^5.0.1"
+    "vite": "^8.3.0",
+    "vitest": "^5.0.1",
+    "vue": "^3.5.43",
+    "vue-tsc": "^3.3.11"
   }
 }

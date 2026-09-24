@@ -220,3 +220,93 @@ describe("Playground 设计文档闭环（#71：保存 → 打开 → 继续编�
     expect(wrapper.text()).toContain("合同会签");
   });
 });
+
+describe("Playground 默认表单闭环（#72：表单 → 绑定 → 保存 → 打开 → 导出）", () => {
+  it("真实组件串联：新建表单、设默认、下载文档、从文件打开恢复绑定、组合导出含默认引用", async () => {
+    wrapper = mount(App, { attachTo: document.body });
+
+    // 新建最小流程（业务草稿）
+    await wrapper.find('[data-test="new-design-btn"]').trigger("click");
+    await flushPromises();
+
+    // 表单管理：新建「申请单」（内容为空表单——真实设计器的装载与内容保存
+    // 在 form-create 组件测试覆盖，此处验证装配链路）
+    await wrapper.find('[data-test="form-manager-btn"]').trigger("click");
+    await flushPromises();
+    await wrapper.find('[data-test="form-manager-new-name"]').setValue("申请单");
+    await wrapper.find('[data-test="form-manager-create-btn"]').trigger("click");
+    await flushPromises();
+    expect(wrapper.find("[data-test=form-item-form_1]").text()).toContain("申请单");
+
+    // 流程默认表单选择条：设为 form_1；审批卡片显示继承
+    const strip = wrapper.find('[data-test="default-form-select"]');
+    expect(strip.exists()).toBe(true);
+    await strip.setValue("form_1");
+    await flushPromises();
+    expect(wrapper.find('[data-test="node-form-approval_1"]').text()).toContain(
+      "表单：申请单（继承默认）",
+    );
+
+    // 下载设计文档：forms 携带表单，xml 含默认引用
+    const created: Blob[] = [];
+    const objectUrlSpy = vi
+      .spyOn(URL, "createObjectURL")
+      .mockImplementation((blob: Blob): string => {
+        created.push(blob);
+        return "blob:mock";
+      });
+    const clickSpy = vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(() => {});
+    await wrapper.find('[data-test="save-doc-btn"]').trigger("click");
+    await flushPromises();
+    expect(wrapper.find('[data-test="doc-status"]').text()).toContain("已保存设计文档");
+    const document_ = JSON.parse(await created[0]!.text()) as {
+      forms: { id: string; name: string }[];
+      xml: string;
+    };
+    expect(document_.forms).toEqual([expect.objectContaining({ id: "form_1", name: "申请单" })]);
+    expect(document_.xml).toContain('flowduet:defaultFormKey="form_1"');
+    const json = JSON.stringify(document_);
+    clickSpy.mockRestore();
+    objectUrlSpy.mockRestore();
+
+    // 组合部署导出：草稿（审批人未配）被拦截，报告业务待修复项
+    await wrapper.find('[data-test="export-btn"]').trigger("click");
+    await flushPromises();
+    expect(wrapper.find('[data-test="xml-error"]').text()).toContain("审批人");
+
+    // 新建设计替换当前状态，再从文件打开：表单与默认绑定恢复
+    await wrapper.find('[data-test="new-design-btn"]').trigger("click");
+    await flushPromises();
+    expect(wrapper.find('[data-test="node-form-approval_1"]').exists()).toBe(false);
+
+    pickFile(wrapper, json);
+    await wrapper.find('input[data-test="open-doc-input"]').trigger("change");
+    await flushPromises();
+    expect(wrapper.find('[data-test="doc-status"]').text()).toContain("已打开设计文档");
+    expect(wrapper.find('[data-test="node-form-approval_1"]').text()).toContain(
+      "表单：申请单（继承默认）",
+    );
+
+    // 打开后的模型可继续编辑并导出同一绑定（抽屉补审批人后部署导出放行）
+    const approvalCard = wrapper
+      .findAll('[data-test="node-card"]')
+      .find((card) => card.text().includes("审批节点"));
+    await approvalCard!.trigger("click");
+    await flushPromises();
+    const assignee = document.querySelector<HTMLInputElement>('[data-test="drawer-assignee"]');
+    assignee!.value = "${boss}";
+    assignee!.dispatchEvent(new Event("input", { bubbles: true }));
+    await flushPromises();
+    document.querySelector<HTMLElement>('[data-test="drawer-save"]')!.click();
+    await flushPromises();
+    await vi.waitFor(
+      () => {
+        expect(wrapper.find('[data-test="xml-preview"]').text()).toContain(
+          'flowduet:defaultFormKey="form_1"',
+        );
+      },
+      { timeout: 3000 },
+    );
+    expect(wrapper.find('[data-test="xml-error"]').exists()).toBe(false);
+  });
+});

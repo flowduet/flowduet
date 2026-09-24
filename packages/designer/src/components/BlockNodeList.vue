@@ -3,6 +3,7 @@ import type { BlockTreeNode, BpmnModel, ModdleElement } from "@flowduet/core";
 import { ElDropdown, ElDropdownItem, ElDropdownMenu } from "element-plus";
 import NodeCard from "./NodeCard.vue";
 import BlockNodeList from "./BlockNodeList.vue";
+import type { NodeFormSummary } from "../form-options.js";
 import { branchHeadFlowId } from "../operations.js";
 
 /**
@@ -21,6 +22,8 @@ const props = defineProps<{
    * 避免每条支路在模板里重复调读函数，也彻底避开渲染期抛错风险。
    */
   defaultIndexByFork: Map<string, number>;
+  /** 有效表单摘要（#72）：非集成模式传空映射，卡片不展示表单行 */
+  formSummaries: Map<string, NodeFormSummary>;
 }>();
 
 defineEmits<{
@@ -66,6 +69,7 @@ function branchDisplay(forkId: string, index: number): { name: string; detail: s
         <NodeCard
           :node="item"
           :active="item.id === activeId"
+          :form-summary="formSummaries.get(item.id)"
           @open="$emit('open', item.id)"
           @delete="$emit('delete', item.id)"
         />
@@ -163,6 +167,7 @@ function branchDisplay(forkId: string, index: number): { name: string; detail: s
               :active-id="activeId"
               :model="model"
               :default-index-by-fork="defaultIndexByFork"
+              :form-summaries="formSummaries"
               @open="$emit('open', $event)"
               @delete="$emit('delete', $event)"
               @insert="(kind: 'approval' | 'cc', nid: string) => $emit('insert', kind, nid)"

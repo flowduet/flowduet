@@ -262,4 +262,47 @@ LAYOUT_FIXTURES="$REPO_ROOT/packages/core/src/layout/__fixtures__"
 echo "▶ 竖排布局场景：部署 ..."
 deploy_and_check "$LAYOUT_FIXTURES/vertical-scenario.xml" "vertical-scenario.bpmn20.xml" "vertical_scenario"
 
+# ── 默认表单绑定基准（#72）：flowduet:defaultFormKey 落 process（urn:flowduet:bpmn），
+# 单签节点显式 flowable:formKey、多实例节点继承不固化。引擎不识别项目命名空间属性，
+# 但部署解析与实例启动全链路在场是「该编码可被 6.8 接受」的物理证据；若引擎
+# schema 校验拒绝该属性，此处部署失败即触发「停止扩展并修订方案」（ADR-0009）。
+echo "▶ 默认表单绑定基准：部署 ..."
+deploy_and_check "$FIXTURE_DIR/default-form.flowable68.baseline.xml" "default-form.bpmn20.xml" "default_form_flow"
+
+echo "▶ 运行时断言:默认表单流程实例启动、显式 formKey 节点任务可达 ..."
+DF_PID="$(start_instance default_form_flow '[{"name":"manager","type":"string","value":"王经理"},{"name":"approvers","type":"json","value":["刘备","关羽"]}]')"
+if query_tasks "$DF_PID" | python3 -c "
+import json, sys
+tasks = json.load(sys.stdin)['data']
+ok = len(tasks) == 1 and tasks[0].get('assignee') == '王经理'
+print(f\"  首任务 {tasks[0]['name'] if tasks else '-'} assignee={tasks[0].get('assignee') if tasks else '-'}\")
+sys.exit(0 if ok else 1)
+"; then
+  echo "✓ 默认绑定流程运行时通道生效（经理审批可达）"
+else
+  echo "✗ 默认绑定流程运行时断言失败:首个任务未落在显式 formKey 节点" >&2
+  exit 1
+fi
+
+# ── 附加导出物（可选，#72）：SMOKE_EXTRA_XML 提供则一并部署——用于把
+# Playground 当前有效导出物纳入同一次冒烟（process key 自动从 XML 提取）
+if [ -n "${SMOKE_EXTRA_XML:-}" ]; then
+  if [ ! -f "$SMOKE_EXTRA_XML" ]; then
+    echo "✗ SMOKE_EXTRA_XML 指向的文件不存在：$SMOKE_EXTRA_XML" >&2
+    exit 1
+  fi
+  EXTRA_KEY="$(python3 -c "
+import re, sys
+xml = open(sys.argv[1], encoding='utf-8').read()
+m = re.search(r'<bpmn:process id=\"([^\"]+)\"', xml)
+print(m.group(1) if m else '')
+" "$SMOKE_EXTRA_XML")"
+  if [ -z "$EXTRA_KEY" ]; then
+    echo "✗ 无法从 SMOKE_EXTRA_XML 提取 process id：$SMOKE_EXTRA_XML" >&2
+    exit 1
+  fi
+  echo "▶ 附加导出物：部署（process key=${EXTRA_KEY}）..."
+  deploy_and_check "$SMOKE_EXTRA_XML" "extra-export.bpmn20.xml" "$EXTRA_KEY"
+fi
+
 echo "✅ 冒烟通过：FlowDuet 编译产物被 Flowable 6.8 真实部署并解析（容器 $CONTAINER 已停止）"

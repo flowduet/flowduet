@@ -7,6 +7,11 @@ export { default as BpmnCanvas } from "./components/BpmnCanvas.vue";
  */
 export { collectDraftIssues, isCcServiceTask, exportXml } from "./export.js";
 /**
+ * 中立表单选项（#72）：designer 只消费表单目录的 id/name 摘要，
+ * 与表单实现解耦；由表单集成包（@flowduet/form-create）提供内容。
+ */
+export type { DesignerFormOption, NodeFormSummary } from "./form-options.js";
+/**
  * 抄送节点插入时的收件人占位串（#25 评审 W4 单一出处；本 PR 评审 S-5 补导出）。
  * 宿主可经此常量识别 exportXml 抛错中的占位串（做 i18n / 用户引导），
  * 或自建导出前校验时对齐 designer 内置草稿扫描口径。

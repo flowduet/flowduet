@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { computed, ref, toRaw, watch } from "vue";
 import type { BpmnModel, BlockTreeNode } from "@flowduet/core";
-import { deriveBlockTree } from "@flowduet/core";
+import { deriveBlockTree, resolveEffectiveForm } from "@flowduet/core";
 import BlockNodeList from "./BlockNodeList.vue";
 import NodeDrawer from "./NodeDrawer.vue";
+import type { DesignerFormOption, NodeFormSummary } from "../form-options.js";
 import {
   addBranchToBlock,
   CC_RECIPIENTS_PLACEHOLDER,
@@ -27,6 +28,12 @@ import {
  */
 const props = defineProps<{
   model: BpmnModel;
+  /**
+   * 表单目录摘要（#72 中立接缝）：传入即启用表单集成模式——展示流程默认
+   * 表单选择条与审批节点的有效表单摘要；不传（未安装表单包的宿主）则
+   * 完全不出现相关入口，原有纯流程使用方式不变。选项内容与表单实现解耦。
+   */
+  formOptions?: readonly DesignerFormOption[];
 }>();
 
 const emit = defineEmits<{ change: [] }>();
@@ -79,6 +86,56 @@ const defaultIndexByFork = computed<Map<string, number>>(() => {
   walk(tree.value);
   return map;
 });
+
+/** 当前默认 key 是否指向目录中不存在的表单（保留原值供修复，不回退不清除） */
+const defaultFormInvalid = computed<boolean>(() => {
+  void version.value;
+  const options = props.formOptions;
+  const key = model.value.defaultFormKey;
+  if (options === undefined || key === undefined) return false;
+  return !options.some((option) => option.id === key);
+});
+
+/**
+ * 审批节点的有效表单摘要（#72）：显式覆盖优先，否则继承流程默认；网关与
+ * 抄送不参与（无条目即不展示）。失效引用保留 key 展示并标记，供用户修复。
+ */
+const formSummaries = computed<Map<string, NodeFormSummary>>(() => {
+  void version.value;
+  const map = new Map<string, NodeFormSummary>();
+  const options = props.formOptions;
+  if (options === undefined) return map;
+  const walk = (items: BlockTreeNode[]): void => {
+    for (const item of items) {
+      if (item.kind === "block") {
+        item.branches.forEach(walk);
+        continue;
+      }
+      // 非审批节点（网关/抄送/事件）由解析器统一返回 none，无需预判
+      const ref = resolveEffectiveForm(model.value, item.id);
+      if (ref.source === "none" || ref.key === undefined) continue;
+      const name = options.find((option) => option.id === ref.key)?.name;
+      map.set(
+        item.id,
+        name === undefined
+          ? { text: `表单：${ref.key}（引用失效）`, invalid: true }
+          : {
+              text: `表单：${name}（${ref.source === "node" ? "节点指定" : "继承默认"}）`,
+              invalid: false,
+            },
+      );
+    }
+  };
+  walk(tree.value);
+  return map;
+});
+
+function onDefaultFormChange(value: string): void {
+  runGuarded(() => {
+    // 空串即「无」：清除默认引用，继承节点随之回到无表单状态
+    model.value.setDefaultFormKey(value === "" ? undefined : value);
+  });
+}
 
 function refresh(): void {
   version.value += 1;
@@ -189,11 +246,41 @@ function onDrawerSaved(): void {
 <template>
   <div class="dingtalk-designer" data-test="dingtalk-designer">
     <p v-if="actionError" class="action-error" data-test="action-error">{{ actionError }}</p>
+    <!-- 流程默认表单选择条（#72）：仅在表单集成模式（传入 formOptions）出现。
+         原生 select：与钉钉式视图的原生按钮语汇一致，也避开 ElSelect 泛型
+         组件在 vue-tsc 严格检查下的模板推断问题 -->
+    <div v-if="formOptions" class="default-form-bar" data-test="default-form-bar">
+      <span class="default-form-bar-label">流程默认表单</span>
+      <select
+        class="default-form-select"
+        data-test="default-form-select"
+        :value="model.defaultFormKey ?? ''"
+        @change="onDefaultFormChange(($event.target as HTMLSelectElement).value)"
+      >
+        <option value="" data-test="default-form-option-none">无</option>
+        <option
+          v-for="form in formOptions"
+          :key="form.id"
+          :value="form.id"
+          :data-test="`default-form-option-${form.id}`"
+        >
+          {{ form.name }}
+        </option>
+        <!-- key 不在目录中：追加只读项呈现原值，用户可见并可改选修复 -->
+        <option v-if="defaultFormInvalid" :value="model.defaultFormKey">
+          {{ model.defaultFormKey }}（目录外）
+        </option>
+      </select>
+      <span v-if="defaultFormInvalid" class="default-form-invalid" data-test="default-form-invalid">
+        引用失效：key 不在表单目录中，已保留原值供修复
+      </span>
+    </div>
     <BlockNodeList
       :items="tree"
       :active-id="activeId"
       :model="model"
       :default-index-by-fork="defaultIndexByFork"
+      :form-summaries="formSummaries"
       @insert="insertAfter"
       @open="openNode"
       @delete="deleteNode"
@@ -227,5 +314,44 @@ function onDrawerSaved(): void {
   min-height: 100%;
   padding: 24px 16px;
   background: #f5f6f8;
+}
+
+.default-form-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 280px;
+  max-width: 100%;
+  margin: 0 auto 12px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  flex-wrap: wrap;
+}
+
+.default-form-bar-label {
+  font-size: 12px;
+  color: #5e6f91;
+  white-space: nowrap;
+}
+
+.default-form-select {
+  width: 140px;
+  flex: 1;
+  min-width: 100px;
+  height: 26px;
+  padding: 0 4px;
+  border: 1px solid #dcdfe6;
+  border-radius: 4px;
+  background: #fff;
+  color: #303133;
+  font-size: 12px;
+}
+
+.default-form-invalid {
+  flex-basis: 100%;
+  font-size: 11px;
+  color: #c45656;
 }
 </style>

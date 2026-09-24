@@ -7,32 +7,32 @@ import {
   verticalDiLayout,
 } from "@flowduet/core";
 import { collectDraftIssues, isCcServiceTask } from "@flowduet/designer";
+import { assertFormDefinitionValid } from "./form-schema.js";
+import { collectReferenceIssues } from "./binding.js";
 
 /**
  * 流程设计文档（ADR-0009）：外层 JSON 封装单流程 BPMN XML 与文档内全部表单定义。
  * 流程结构与表单绑定以 XML 为事实源，外层不另存第二份可写关系。
- * 本版本（#71）表单目录恒为空——表单设计能力由后续票补齐，
- * 非空表单在保存与打开两侧都明确拒绝，绝不静默丢弃。
+ * #72 起表单目录可携带真实定义（文本字段），尚未绑定的表单也随文档保存。
  */
 export const DESIGN_DOCUMENT_FORMAT = "flowduet.design" as const;
 export const DESIGN_DOCUMENT_VERSION = 1 as const;
 export const DESIGN_DOCUMENT_ENGINE = "flowable" as const;
 
 /**
- * 表单定义。字段按迭代三总规格的首版协议预留：
- * rules / options 由匹配版本的 FormCreate 序列化接口成对保存恢复。
- * 本版本尚无能力产出非空内容，仅作为协议形状与拒绝依据存在。
+ * 表单定义（#72 起携带真实内容）：rules / options 由匹配版本的 FormCreate
+ * 设计器接口成对序列化保存恢复，不能只存规则丢布局与表单配置。
  */
 export interface FormDefinition {
   /** 文档内唯一且稳定；改名不换 ID */
   id: string;
   /** 非空显示名 */
   name: string;
-  /** 提供者标识，首版固定 "form-create/element-plus" */
+  /** 提供者标识，固定 "form-create/element-plus" */
   provider: string;
-  /** FormCreate 序列化字段规则（不能只存规则丢布局与配置） */
+  /** FormCreate 序列化字段规则（JSON 字符串） */
   rules: string;
-  /** 表单配置序列化（与 rules 同接口版本配对） */
+  /** 表单配置序列化（JSON 字符串，与 rules 同接口版本配对） */
   options: string;
 }
 
@@ -42,7 +42,7 @@ export interface FlowDesignDocument {
   engine: typeof DESIGN_DOCUMENT_ENGINE;
   /** 单流程 BPMN XML（含流程结构与表单绑定，保存时生成可恢复 DI） */
   xml: string;
-  /** 文档内全部表单定义（含尚未绑定）；本版本恒为空数组 */
+  /** 文档内全部表单定义（含尚未绑定） */
   forms: FormDefinition[];
 }
 
@@ -50,8 +50,10 @@ export interface SaveDesignDocumentResult {
   document: FlowDesignDocument;
   /** 宿主可直接落盘的 JSON 文本（缩进两格，便于 diff 与人工检查） */
   json: string;
-  /** 业务草稿待修复项：不阻塞保存，部署导出（designer exportXml）会拦截 */
+  /** 业务草稿待修复项：不阻塞保存，部署导出（exportDeployXml）会拦截 */
   pendingIssues: string[];
+  /** 表单引用失效项：同样不阻塞保存（保留 key 的草稿），部署导出会拦截 */
+  referenceIssues: string[];
 }
 
 export interface OpenDesignDocumentResult {
@@ -91,10 +93,10 @@ export async function saveDesignDocument(
   model: BpmnModel,
   forms: readonly FormDefinition[] = [],
 ): Promise<SaveDesignDocumentResult> {
-  if (forms.length > 0) {
-    throw new Error(
-      `表单定义序列化尚未支持：传入 ${forms.length} 张表单，本版本只支持空表单目录，拒绝静默丢弃`,
-    );
+  // 表单定义结构守卫：重复 id、空名、未知提供者、坏 JSON、超范围字段都拒绝保存
+  const knownIds = new Set<string>();
+  for (const form of forms) {
+    assertFormDefinitionValid(form, knownIds);
   }
   const xml = await compile(model, { diLayout: verticalDiLayout() });
   // 可恢复性自证：产物重新解析后必须仍能通过打开侧的结构守卫，防止序列化丢语义
@@ -106,12 +108,14 @@ export async function saveDesignDocument(
     version: DESIGN_DOCUMENT_VERSION,
     engine: DESIGN_DOCUMENT_ENGINE,
     xml,
-    forms: [],
+    forms: forms.map((form) => ({ ...form })),
   };
   return {
     document,
     json: JSON.stringify(document, null, 2),
     pendingIssues: collectDraftIssues(reparsed),
+    // 引用失效不阻塞保存（保留 key 的草稿）；部署导出侧另行阻断
+    referenceIssues: collectReferenceIssues(reparsed, forms),
   };
 }
 
@@ -125,7 +129,7 @@ export async function openDesignDocument(text: string): Promise<OpenDesignDocume
   const model = await parseForRestore(document.xml);
   assertEditableStructure(model, "文档流程超出可编辑范围");
   restoreFlowReferences(model);
-  return { document, model, forms: [] };
+  return { document, model, forms: document.forms };
 }
 
 /**
@@ -196,17 +200,34 @@ function parseEnvelope(text: string): FlowDesignDocument {
   if (!Array.isArray(doc.forms)) {
     throw new Error("设计文档的 forms 字段必须是数组");
   }
-  if (doc.forms.length > 0) {
-    throw new Error(
-      `文档携带 ${doc.forms.length} 张表单定义，表单编辑尚未支持，拒绝打开（不忽略表单后静默打开）`,
-    );
+  // 表单目录逐项校验：结构坏（重复 id / 空 name / 未知提供者 / 坏 JSON / 超范围字段）
+  // 属于无法恢复的内容，明确拒绝打开；引用失效（key 不在目录）不在此列——可作草稿打开
+  const forms: FormDefinition[] = [];
+  const knownIds = new Set<string>();
+  for (const raw of doc.forms) {
+    if (typeof raw !== "object" || raw === null || Array.isArray(raw)) {
+      throw new Error("设计文档的 forms 每一项都必须是表单定义对象");
+    }
+    const entry = raw as Record<string, unknown>;
+    const form: FormDefinition = {
+      id: String(entry.id ?? ""),
+      name: String(entry.name ?? ""),
+      provider: String(entry.provider ?? ""),
+      rules: typeof entry.rules === "string" ? entry.rules : "",
+      options: typeof entry.options === "string" ? entry.options : "",
+    };
+    if (typeof entry.rules !== "string" || typeof entry.options !== "string") {
+      throw new Error(`表单 ${form.id || "（缺 id）"} 的 rules/options 必须是字符串`);
+    }
+    assertFormDefinitionValid(form, knownIds);
+    forms.push(form);
   }
   return {
     format: DESIGN_DOCUMENT_FORMAT,
     version: DESIGN_DOCUMENT_VERSION,
     engine: DESIGN_DOCUMENT_ENGINE,
     xml: doc.xml,
-    forms: [],
+    forms,
   };
 }
 

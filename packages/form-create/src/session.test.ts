@@ -34,16 +34,56 @@ describe("FlowDesignSession", () => {
     await expect(empty.save()).rejects.toThrow("没有可保存的设计");
   });
 
-  it("构造时传入非空表单目录：保存拒绝而非静默丢弃", async () => {
+  it("构造时传入非空表单目录：随会话保存与往返", async () => {
     const form: FormDefinition = {
       id: "form_apply",
       name: "申请单",
       provider: "form-create/element-plus",
-      rules: "[]",
+      rules: JSON.stringify([{ type: "input", field: "reason", title: "事由" }]),
       options: "{}",
     };
     const session = new FlowDesignSession({ model: buildDraftFlow(), forms: [form] });
-    await expect(session.save()).rejects.toThrow("表单定义序列化尚未支持");
+    const { document } = await session.save();
+    expect(document.forms).toEqual([form]);
+    expect(session.formOptions()).toEqual([{ id: "form_apply", name: "申请单" }]);
+  });
+
+  it("表单目录管理：新建/改名/内容编辑，id 稳定且守卫生效", () => {
+    const session = new FlowDesignSession(buildDraftFlow());
+    const created = session.createForm("  申请单  ");
+    expect(created.id).toBe("form_1");
+    expect(created.name).toBe("申请单");
+    expect(session.current?.forms).toHaveLength(1);
+
+    // 改名不换 ID
+    session.renameForm("form_1", "报销单");
+    expect(session.current?.forms[0]).toMatchObject({ id: "form_1", name: "报销单" });
+
+    // 内容写入：合法文本字段通过，超范围/坏 JSON 拒绝且目录不动
+    const rules = JSON.stringify([{ type: "input", field: "amount", title: "金额" }]);
+    session.updateFormContent("form_1", rules, "{}");
+    expect(session.current?.forms[0]?.rules).toBe(rules);
+    expect(() =>
+      session.updateFormContent("form_1", JSON.stringify([{ type: "select", field: "s" }]), "{}"),
+    ).toThrow("只支持文本");
+    expect(session.current?.forms[0]?.rules).toBe(rules);
+    expect(() => session.updateFormContent("form_1", "{bad", "{}")).toThrow("不是合法 JSON");
+
+    // 新建第二张：id 自增不冲突
+    expect(session.createForm("复核单").id).toBe("form_2");
+    expect(() => session.createForm("   ")).toThrow("不能为空白");
+    expect(() => session.renameForm("form_404", "x")).toThrow("不存在");
+  });
+
+  it("引用诊断：默认 key 指向目录外定义时报出且保留（A18）", () => {
+    const session = new FlowDesignSession(buildDraftFlow());
+    session.createForm("申请单");
+    session.current?.model.setDefaultFormKey("missing_form");
+    expect(session.referenceIssues).toHaveLength(1);
+    expect(session.referenceIssues[0]).toContain("missing_form");
+
+    session.current?.model.setDefaultFormKey("form_1");
+    expect(session.referenceIssues).toEqual([]);
   });
 
   it("newDesign 产出最小可编辑流程，天然是业务草稿", async () => {

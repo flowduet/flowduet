@@ -1,24 +1,34 @@
 <script setup lang="ts">
-import { onUnmounted, ref, shallowRef } from "vue";
-import { ElButton, ElRadioGroup, ElRadioButton } from "element-plus";
-import { BpmnModel, flowableAdapter } from "@flowduet/core";
-import { BpmnCanvas, DingtalkDesigner, exportXml } from "@flowduet/designer";
-import { FlowDesignSession } from "@flowduet/form-create";
+import { computed, onUnmounted, ref, shallowRef } from "vue";
+import { ElButton, ElDialog, ElRadioGroup, ElRadioButton } from "element-plus";
+import {
+  BpmnModel,
+  deriveBlockTree,
+  flowableAdapter,
+  isApprovalTask,
+  resolveEffectiveForm,
+} from "@flowduet/core";
+import type { BlockTreeNode } from "@flowduet/core";
+import { BpmnCanvas, DingtalkDesigner } from "@flowduet/designer";
+import {
+  exportDeployXml,
+  FlowDesignSession,
+  FormManager,
+  FormPreview,
+} from "@flowduet/form-create";
+import type { FormDefinition } from "@flowduet/form-create";
 
 /**
  * Playground 编辑区（#23）：挂 designer 组件的最小验收宿主。
  * BPMN 只读区与三区布局属 #27；导出面板用于人工验收
  * 「零坐标建模 → 竖排布局导出合法 bpmndi」。
  *
- * 演示场景包含（本 PR 评审 W-4）：
- *   ・单签审批（经理审批 / 总监审批 / 财务复核 / 法务复核）
- *   ・多人会签（addApprovalTask + collection="approvers" mode="all"）
- *   ・抄送知会（addTask("cc") + recipients）
- * 以便手验 #25 多人审批与抄送的导出部署链路。
- *
  * 设计文档闭环（#71）：FlowDesignSession 承载模型的新建 / 保存 / 原子恢复，
  * Playground 只做文件 I/O（下载 Blob、读 File）与结果展示；
  * 「下载设计文档」（带版本协议）与「导出 XML」（裸部署导出）是两个独立入口。
+ *
+ * 表单集成（#72）：表单目录、默认绑定与预览全部经 form-create 公开组合入口；
+ * 部署导出走组合校验（流程 + 表单引用完整性）。
  */
 function buildDemoModel(): BpmnModel {
   return (
@@ -35,7 +45,6 @@ function buildDemoModel(): BpmnModel {
         name: "合同会签",
         collection: "approvers",
         mode: "all",
-        formKey: "contract_review_v1",
       })
       // 抄送知会（#25）：ServiceTask + flowable:ccTo，部署合法不要求 bean 在场（ADR-0004）
       .addTask("cc", { id: "cc_1", name: "抄送法务备案", recipients: "张三,李四" })
@@ -78,7 +87,7 @@ function buildDemoModel(): BpmnModel {
 }
 
 const demoModel = buildDemoModel();
-/** 组合编辑会话：模型替换的原子性与文档编解码都在会话内，宿主不复制算法 */
+/** 组合编辑会话：模型替换的原子性、文档编解码与表单目录管理都在会话内 */
 const session = new FlowDesignSession(demoModel);
 /** shallowRef 避免深代理模型私有字段（designer 组件内部另做 toRaw 双保险） */
 const model = shallowRef<BpmnModel>(demoModel);
@@ -90,15 +99,111 @@ const error = ref("");
 const canvasKey = ref(0);
 /** 模型整体替换（新建/打开）后的设计器重挂钥：换新实例渲染并重置抽屉状态 */
 const designerKey = ref(0);
-/** 设计文档链路（#71）的保存结果 / 错误反馈 */
+/** 设计文档链路（#71/#72）的保存结果 / 错误反馈 */
 const docStatus = ref("");
 const docError = ref("");
 const fileInput = ref<HTMLInputElement | null>(null);
+/** 表单目录换代钥：会话目录非响应式，目录操作后递增驱动视图重算 */
+const formsTick = ref(0);
+/** 表单管理 / 预览对话框 */
+const managerVisible = ref(false);
+const previewVisible = ref(false);
+const previewNodeId = ref<string | undefined>(undefined);
 let exportTimer: ReturnType<typeof setTimeout> | undefined;
 let exportRevision = 0;
 
 function messageOf(e: unknown): string {
   return e instanceof Error ? e.message : String(e);
+}
+
+/** 表单目录的中立摘要（designer 的 formOptions 接缝） */
+const formOptions = computed(() => {
+  void formsTick.value;
+  return session.formOptions();
+});
+
+/** 表单目录本体（管理面板 prop）：与会话目录同步的响应式视图 */
+const formList = computed(() => {
+  void formsTick.value;
+  return session.current?.forms ?? [];
+});
+
+/** 审批节点清单（预览目标选择用）：从块树取审批节点 */
+const approvalNodes = computed<{ id: string; label: string }[]>(() => {
+  void designerKey.value;
+  const result: { id: string; label: string }[] = [];
+  const walk = (items: BlockTreeNode[]): void => {
+    for (const item of items) {
+      if (item.kind === "block") {
+        item.branches.forEach(walk);
+        continue;
+      }
+      if (!isApprovalTask(item.element)) continue;
+      result.push({
+        id: item.id,
+        label: String(item.element.get("name") ?? item.id) || item.id,
+      });
+    }
+  };
+  try {
+    walk(deriveBlockTree(model.value));
+  } catch {
+    // 半损态模型：目标列表退化为空，不阻塞其他区域
+  }
+  return result;
+});
+
+/** 预览目标的有效表单：解析失败/引用失效时给出可读错误（不回退默认） */
+const previewTarget = computed<
+  { form: FormDefinition; source: "node" | "default"; key: string } | { error: string } | undefined
+>(() => {
+  const nodeId = previewNodeId.value;
+  if (nodeId === undefined) return undefined;
+  void formsTick.value;
+  void designerKey.value;
+  const ref = resolveEffectiveForm(model.value, nodeId);
+  if (ref.source === "none" || ref.key === undefined) {
+    return { error: "该节点未指定表单，也没有可继承的流程默认表单" };
+  }
+  const form = session.current?.forms.find((candidate) => candidate.id === ref.key);
+  if (form === undefined) {
+    return { error: `表单引用失效：key「${ref.key}」不在表单目录中（保留原值，请修复）` };
+  }
+  return { form, source: ref.source, key: ref.key };
+});
+
+/** 引用诊断（保存后/导出前共用口径）：会话目录或模型变动后重算 */
+const referenceIssues = computed<string[]>(() => {
+  void formsTick.value;
+  void designerKey.value;
+  return session.referenceIssues;
+});
+
+function refreshForms(): void {
+  formsTick.value += 1;
+}
+
+function onFormCreate(name: string): void {
+  try {
+    session.createForm(name);
+    refreshForms();
+  } catch (e) {
+    docError.value = messageOf(e);
+  }
+}
+
+function onFormRename(id: string, name: string): void {
+  try {
+    session.renameForm(id, name);
+    refreshForms();
+  } catch (e) {
+    docError.value = messageOf(e);
+  }
+}
+
+function onFormUpdateContent(id: string, rules: string, options: string): void {
+  session.updateFormContent(id, rules, options);
+  refreshForms();
 }
 
 async function doExport(): Promise<void> {
@@ -108,7 +213,7 @@ async function doExport(): Promise<void> {
   xml.value = "";
   error.value = "";
   try {
-    const result = await exportXml(model.value);
+    const result = await exportDeployXml(model.value, session.current?.forms ?? []);
     if (revision === exportRevision) xml.value = result;
   } catch (e) {
     if (revision === exportRevision) {
@@ -132,6 +237,7 @@ function onDesignerChange(): void {
 function adoptModel(next: BpmnModel): void {
   model.value = next;
   designerKey.value += 1;
+  refreshForms();
   onDesignerChange();
 }
 
@@ -158,16 +264,17 @@ function triggerDownload(json: string): void {
   setTimeout(() => URL.revokeObjectURL(url));
 }
 
-/** 下载设计文档：保存允许业务草稿，待修复项随保存结果一并提示 */
+/** 下载设计文档：保存允许业务草稿与引用失效，待修复项随保存结果一并提示 */
 async function onDownloadDocument(): Promise<void> {
   docStatus.value = "";
   docError.value = "";
   try {
-    const { json, pendingIssues } = await session.save();
+    const { json, pendingIssues, referenceIssues: refs } = await session.save();
     triggerDownload(json);
+    const notes = [...pendingIssues, ...refs];
     docStatus.value =
-      pendingIssues.length > 0
-        ? `已保存设计文档；待修复 ${pendingIssues.length} 项（部署导出仍会被拦截）：\n${pendingIssues.join("\n")}`
+      notes.length > 0
+        ? `已保存设计文档；待修复 ${notes.length} 项（部署导出仍会被拦截）：\n${notes.join("\n")}`
         : "已保存设计文档，当前无待修复项";
   } catch (e) {
     docError.value = messageOf(e);
@@ -175,7 +282,7 @@ async function onDownloadDocument(): Promise<void> {
 }
 
 /** 从文件打开：读取失败或校验失败都如实报错，当前编辑不被部分覆盖 */
-async function onOpenFile(event: Event): void {
+async function onOpenFile(event: Event): Promise<void> {
   const input = event.target as HTMLInputElement;
   const file = input.files?.[0];
   // 先取引用再复位选择器：再次选择同一文件也要触发 change
@@ -219,6 +326,8 @@ onUnmounted(() => {
           data-test="open-doc-input"
           @change="onOpenFile"
         />
+        <ElButton data-test="form-manager-btn" @click="managerVisible = true">表单管理</ElButton>
+        <ElButton data-test="form-preview-btn" @click="previewVisible = true">预览表单</ElButton>
         <ElButton type="primary" data-test="save-doc-btn" @click="onDownloadDocument">
           下载设计文档
         </ElButton>
@@ -232,6 +341,7 @@ onUnmounted(() => {
           v-if="view === 'dingtalk'"
           :key="designerKey"
           :model="model"
+          :form-options="formOptions"
           @change="onDesignerChange"
         />
         <BpmnCanvas v-else :key="canvasKey" :model="model" />
@@ -240,6 +350,12 @@ onUnmounted(() => {
         <div v-if="docStatus || docError" class="playground-doc">
           <p v-if="docStatus" data-test="doc-status">{{ docStatus }}</p>
           <p v-if="docError" class="playground-error" data-test="doc-error">{{ docError }}</p>
+        </div>
+        <div v-if="referenceIssues.length > 0" class="playground-doc playground-doc--warn">
+          <p data-test="reference-issues">
+            表单引用待修复 {{ referenceIssues.length }} 项（部署导出会拦截）：
+            {{ referenceIssues.join("；") }}
+          </p>
         </div>
         <pre v-if="xml" data-test="xml-preview">{{ xml }}</pre>
         <p v-if="error" class="playground-error" data-test="xml-error">
@@ -250,6 +366,59 @@ onUnmounted(() => {
         </p>
       </section>
     </main>
+
+    <ElDialog
+      v-model="managerVisible"
+      title="表单管理"
+      width="520px"
+      data-test="form-manager-dialog"
+    >
+      <FormManager
+        :forms="formList"
+        @create="onFormCreate"
+        @rename="onFormRename"
+        @update-content="onFormUpdateContent"
+      />
+    </ElDialog>
+
+    <ElDialog
+      v-model="previewVisible"
+      title="按节点预览表单"
+      width="640px"
+      data-test="form-preview-dialog"
+    >
+      <div class="playground-preview-target">
+        <label for="preview-node">审批节点</label>
+        <select
+          id="preview-node"
+          v-model="previewNodeId"
+          data-test="preview-node-select"
+          :class="{ 'is-empty': approvalNodes.length === 0 }"
+        >
+          <option v-if="approvalNodes.length === 0" :value="undefined" disabled>
+            当前流程没有审批节点
+          </option>
+          <option v-for="node in approvalNodes" :key="node.id" :value="node.id">
+            {{ node.label }}
+          </option>
+        </select>
+      </div>
+      <p
+        v-if="previewTarget && 'error' in previewTarget"
+        class="playground-error"
+        data-test="preview-target-error"
+      >
+        {{ previewTarget.error }}
+      </p>
+      <FormPreview
+        v-else-if="previewTarget && 'form' in previewTarget"
+        :key="previewNodeId"
+        :form="previewTarget.form"
+      />
+      <p v-else class="playground-hint" data-test="preview-target-hint">
+        选择一个审批节点后试填其有效表单。
+      </p>
+    </ElDialog>
   </div>
 </template>
 
@@ -267,6 +436,8 @@ onUnmounted(() => {
   padding: 8px 16px;
   border-bottom: 1px solid #e4e7ed;
   background: #fff;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
 .playground-header h1 {
@@ -279,6 +450,7 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   gap: 8px;
+  flex-wrap: wrap;
 }
 
 /* 文件选择器由工具栏按钮代触发，视觉上隐藏但保留可聚焦性 */
@@ -315,10 +487,37 @@ onUnmounted(() => {
   background: #f5f7fa;
 }
 
+.playground-doc--warn {
+  background: #fdf6ec;
+  border-color: #f3d19e;
+}
+
 .playground-doc p {
   margin: 0;
   font-size: 13px;
   white-space: pre-wrap;
+}
+
+.playground-preview-target {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.playground-preview-target label {
+  font-size: 13px;
+  color: #606266;
+}
+
+.playground-preview-target select {
+  flex: 1;
+  max-width: 260px;
+  height: 28px;
+  border: 1px solid #dcdfe6;
+  border-radius: 4px;
+  padding: 0 6px;
+  font-size: 13px;
 }
 
 .playground-xml pre {

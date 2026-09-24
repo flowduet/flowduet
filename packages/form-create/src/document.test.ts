@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { BpmnModel, deriveBlockTree, flowableAdapter } from "@flowduet/core";
 import { exportXml } from "@flowduet/designer";
+import { collectReferenceIssues } from "./binding.js";
 import {
   DESIGN_DOCUMENT_ENGINE,
   DESIGN_DOCUMENT_FORMAT,
@@ -88,17 +89,85 @@ describe("saveDesignDocument", () => {
     await expect(exportXml(buildConfiguredFlow())).resolves.toContain("bpmn:process");
   });
 
-  it("非空表单目录明确拒绝保存，不静默丢弃", async () => {
-    const form: FormDefinition = {
+  it("非空表单目录随文档保存与往返；未绑定表单同样保留", async () => {
+    const applyForm: FormDefinition = {
       id: "form_apply",
       name: "申请单",
+      provider: "form-create/element-plus",
+      rules: JSON.stringify([
+        {
+          type: "input",
+          field: "reason",
+          title: "申请事由",
+          value: "默认事由",
+          $required: true,
+        },
+      ]),
+      options: JSON.stringify({ labelWidth: "100px" }),
+    };
+    const unboundForm: FormDefinition = {
+      id: "form_backup",
+      name: "备用单",
       provider: "form-create/element-plus",
       rules: "[]",
       options: "{}",
     };
-    await expect(saveDesignDocument(buildDraftFlow(), [form])).rejects.toThrow(
-      "表单定义序列化尚未支持",
+    const model = buildConfiguredFlow();
+    model.setDefaultFormKey("form_apply");
+
+    const { json, document, referenceIssues } = await saveDesignDocument(model, [
+      applyForm,
+      unboundForm,
+    ]);
+    expect(document.forms).toHaveLength(2);
+    expect(referenceIssues).toEqual([]);
+
+    const opened = await openDesignDocument(json);
+    expect(opened.forms.map((form) => form.id)).toEqual(["form_apply", "form_backup"]);
+    // 文本字段、默认值、必填、表单配置往返语义等价（序列化串等价）
+    expect(opened.forms[0]).toEqual(applyForm);
+    expect(opened.model.defaultFormKey).toBe("form_apply");
+  });
+
+  it("结构坏的非空表单明确拒绝保存：重复 id、空名、未知提供者、坏 JSON、超范围字段", async () => {
+    const base = {
+      provider: "form-create/element-plus",
+      rules: "[]",
+      options: "{}",
+    };
+    const good: FormDefinition = { id: "form_a", name: "A", ...base };
+    await expect(
+      saveDesignDocument(buildDraftFlow(), [good, { ...good, name: "重复" }]),
+    ).rejects.toThrow("id 重复");
+    await expect(saveDesignDocument(buildDraftFlow(), [{ ...good, name: "  " }])).rejects.toThrow(
+      "名称不能为空白",
     );
+    await expect(
+      saveDesignDocument(buildDraftFlow(), [{ ...good, provider: "other-vendor/antd" }]),
+    ).rejects.toThrow("只支持 form-create/element-plus");
+    await expect(
+      saveDesignDocument(buildDraftFlow(), [{ ...good, rules: "{not-json" }]),
+    ).rejects.toThrow("rules 不是合法 JSON");
+    await expect(
+      saveDesignDocument(buildDraftFlow(), [
+        {
+          ...good,
+          rules: JSON.stringify([{ type: "select", field: "s1", title: "下拉" }]),
+        },
+      ]),
+    ).rejects.toThrow("只支持文本（input）字段");
+  });
+
+  it("默认引用失效仍可保存为草稿并报告 referenceIssues", async () => {
+    const model = buildConfiguredFlow();
+    model.setDefaultFormKey("missing_form");
+    const { referenceIssues } = await saveDesignDocument(model);
+    expect(referenceIssues).toHaveLength(1);
+    expect(referenceIssues[0]).toContain("missing_form");
+    // 引用失效不阻塞打开（草稿），诊断可在打开后重新计算
+    const { json } = await saveDesignDocument(model);
+    const opened = await openDesignDocument(json);
+    expect(collectReferenceIssues(opened.model, opened.forms)).toHaveLength(1);
   });
 });
 
@@ -177,7 +246,7 @@ describe("openDesignDocument", () => {
     ).rejects.toThrow("forms 字段必须是数组");
   });
 
-  it("非空表单目录明确拒绝打开，不忽略表单后静默打开", async () => {
+  it("结构坏的非空表单目录拒绝打开：非对象项、缺字符串 rules、重复 id、超范围字段", async () => {
     const form: FormDefinition = {
       id: "form_apply",
       name: "申请单",
@@ -186,8 +255,23 @@ describe("openDesignDocument", () => {
       options: "{}",
     };
     await expect(
-      openDesignDocument(wrapDocument(STANDARD_BPMN_XML, { forms: [form] })),
-    ).rejects.toThrow("表单编辑尚未支持");
+      openDesignDocument(wrapDocument(STANDARD_BPMN_XML, { forms: ["not-an-object"] })),
+    ).rejects.toThrow("表单定义对象");
+    await expect(
+      openDesignDocument(wrapDocument(STANDARD_BPMN_XML, { forms: [{ ...form, rules: 42 }] })),
+    ).rejects.toThrow("rules/options 必须是字符串");
+    await expect(
+      openDesignDocument(
+        wrapDocument(STANDARD_BPMN_XML, { forms: [form, { ...form, name: "重" }] }),
+      ),
+    ).rejects.toThrow("id 重复");
+    await expect(
+      openDesignDocument(
+        wrapDocument(STANDARD_BPMN_XML, {
+          forms: [{ ...form, rules: JSON.stringify([{ type: "upload", field: "u1" }]) }],
+        }),
+      ),
+    ).rejects.toThrow("只支持文本（input）字段");
   });
 
   it("坏 XML 拒绝并带上下文前缀", async () => {
