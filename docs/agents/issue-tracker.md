@@ -10,6 +10,7 @@ Issues and specs for this repo live as GitHub issues. Use the `gh` CLI for all o
 - **Comment on an issue**: `gh issue comment <number> --body "..."`
 - **Apply / remove labels**: `gh issue edit <number> --add-label "..."` / `--remove-label "..."`
 - **Close**: `gh issue close <number> --comment "..."`
+- **实施票完成（/implement 收尾）**: 在 issue 上留实现评论——本地提交哈希、实现面、验证证据、边界说明；**不关票**（关票属于合入 / PR 流程）；**不推送分支**，由用户决定何时推送或开 PR。
 
 Infer the repo from `git remote -v`; `gh` does this automatically when run inside a clone.
 
