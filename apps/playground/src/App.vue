@@ -95,8 +95,8 @@ const model = shallowRef<BpmnModel>(demoModel);
 const view = ref<"dingtalk" | "bpmn">("dingtalk");
 const xml = ref("");
 const error = ref("");
-/** 画布重挂钥：编辑区 change 时递增，BPMN 只读区随之重渲染（互切零转换的联动形态） */
-const canvasKey = ref(0);
+/** 模型内容版本：编辑区 change 时递增，驱动画布重挂及宿主派生视图重算 */
+const modelRevision = ref(0);
 /** 模型整体替换（新建/打开）后的设计器重挂钥：换新实例渲染并重置抽屉状态 */
 const designerKey = ref(0);
 /** 设计文档链路（#71/#72）的保存结果 / 错误反馈 */
@@ -130,7 +130,7 @@ const formList = computed(() => {
 
 /** 审批节点清单（预览目标选择用）：从块树取审批节点 */
 const approvalNodes = computed<{ id: string; label: string }[]>(() => {
-  void designerKey.value;
+  void modelRevision.value;
   const result: { id: string; label: string }[] = [];
   const walk = (items: BlockTreeNode[]): void => {
     for (const item of items) {
@@ -160,10 +160,14 @@ const previewTarget = computed<
   const nodeId = previewNodeId.value;
   if (nodeId === undefined) return undefined;
   void formsTick.value;
-  void designerKey.value;
+  void modelRevision.value;
+  if (!approvalNodes.value.some((node) => node.id === nodeId)) return undefined;
   const ref = resolveEffectiveForm(model.value, nodeId);
   if (ref.source === "none" || ref.key === undefined) {
     return { error: "该节点未指定表单，也没有可继承的流程默认表单" };
+  }
+  if (ref.key !== ref.key.trim()) {
+    return { error: `表单引用失效：key「${ref.key}」含首尾空格（保留原值，请修复）` };
   }
   const form = session.current?.forms.find((candidate) => candidate.id === ref.key);
   if (form === undefined) {
@@ -175,7 +179,7 @@ const previewTarget = computed<
 /** 引用诊断（保存后/导出前共用口径）：会话目录或模型变动后重算 */
 const referenceIssues = computed<string[]>(() => {
   void formsTick.value;
-  void designerKey.value;
+  void modelRevision.value;
   return session.referenceIssues;
 });
 
@@ -224,7 +228,13 @@ async function doExport(): Promise<void> {
 
 /** 编辑区 change → 画布重挂 + XML 防抖自动刷新（#27 三区联动） */
 function onDesignerChange(): void {
-  canvasKey.value += 1;
+  modelRevision.value += 1;
+  if (
+    previewNodeId.value !== undefined &&
+    !approvalNodes.value.some((node) => node.id === previewNodeId.value)
+  ) {
+    previewNodeId.value = undefined;
+  }
   // 编辑一发生，旧导出结果就不再代表当前模型；递增序号使迟到的 Promise 失效。
   exportRevision += 1;
   xml.value = "";
@@ -344,7 +354,7 @@ onUnmounted(() => {
           :form-options="formOptions"
           @change="onDesignerChange"
         />
-        <BpmnCanvas v-else :key="canvasKey" :model="model" />
+        <BpmnCanvas v-else :key="modelRevision" :model="model" />
       </section>
       <section class="playground-xml" data-test="xml-zone">
         <div v-if="docStatus || docError" class="playground-doc">

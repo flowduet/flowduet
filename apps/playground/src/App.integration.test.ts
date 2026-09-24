@@ -308,5 +308,81 @@ describe("Playground 默认表单闭环（#72：表单 → 绑定 → 保存 →
       { timeout: 3000 },
     );
     expect(wrapper.find('[data-test="xml-error"]').exists()).toBe(false);
+
+    // 失效默认引用修复后，顶部诊断须随模型原位编辑立即消失。
+    pickFile(
+      wrapper,
+      JSON.stringify({
+        ...document_,
+        xml: document_.xml.replace('defaultFormKey="form_1"', 'defaultFormKey="ghost_form"'),
+      }),
+    );
+    await wrapper.find('input[data-test="open-doc-input"]').trigger("change");
+    await flushPromises();
+    expect(wrapper.find('[data-test="reference-issues"]').text()).toContain("ghost_form");
+    await wrapper.find('[data-test="default-form-select"]').setValue("form_1");
+    await flushPromises();
+    expect(wrapper.find('[data-test="reference-issues"]').exists()).toBe(false);
+
+    // 即使目录恰好存在同样带空格的 ID，该引用仍不允许预览。
+    pickFile(
+      wrapper,
+      JSON.stringify({
+        ...document_,
+        forms: document_.forms.map((form) => ({ ...form, id: " form_1 " })),
+        xml: document_.xml.replace('defaultFormKey="form_1"', 'defaultFormKey=" form_1 "'),
+      }),
+    );
+    await wrapper.find('input[data-test="open-doc-input"]').trigger("change");
+    await flushPromises();
+    await wrapper.find('[data-test="form-preview-btn"]').trigger("click");
+    await flushPromises();
+    await wrapper.find('[data-test="preview-node-select"]').setValue("approval_1");
+    await flushPromises();
+    expect(wrapper.find('[data-test="preview-target-error"]').text()).toContain("引用失效");
+  });
+
+  it("流程新增审批节点后，再次打开预览能选择新节点", async () => {
+    wrapper = mount(App, { attachTo: document.body });
+    await wrapper.find('[data-test="form-preview-btn"]').trigger("click");
+    await flushPromises();
+    const before = document.querySelectorAll('[data-test="preview-node-select"] option').length;
+    const close = document.querySelector<HTMLElement>(
+      '[data-test="form-preview-dialog"] .el-dialog__headerbtn',
+    );
+    expect(close).not.toBeNull();
+    close!.click();
+    await flushPromises();
+
+    await wrapper.find('[data-test="insert-btn-approval_1"]').trigger("click");
+    await flushPromises();
+    document.querySelector<HTMLElement>('[data-test="insert-kind-approval"]')!.click();
+    await flushPromises();
+
+    await wrapper.find('[data-test="form-preview-btn"]').trigger("click");
+    await flushPromises();
+    expect(document.querySelectorAll('[data-test="preview-node-select"] option')).toHaveLength(
+      before + 1,
+    );
+  });
+
+  it("删除当前预览节点后，重新打开预览不会解析已删除的 ID", async () => {
+    wrapper = mount(App, { attachTo: document.body });
+    await wrapper.find('[data-test="form-preview-btn"]').trigger("click");
+    await flushPromises();
+    await wrapper.find('[data-test="preview-node-select"]').setValue("approval_1");
+    await flushPromises();
+    document
+      .querySelector<HTMLElement>('[data-test="form-preview-dialog"] .el-dialog__headerbtn')!
+      .click();
+    await flushPromises();
+
+    await wrapper.find('[data-test="node-delete-approval_1"]').trigger("click");
+    await flushPromises();
+    await wrapper.find('[data-test="form-preview-btn"]').trigger("click");
+    await flushPromises();
+
+    expect(wrapper.find('[data-test="preview-target-hint"]').exists()).toBe(true);
+    expect(wrapper.find('[data-test="preview-node-select"]').text()).not.toContain("经理审批");
   });
 });
