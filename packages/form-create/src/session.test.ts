@@ -75,6 +75,25 @@ describe("FlowDesignSession", () => {
     expect(() => session.renameForm("form_404", "x")).toThrow("不存在");
   });
 
+  it.each([
+    [
+      "重复",
+      [
+        { type: "input", field: "reason" },
+        { type: "input", field: "reason" },
+      ],
+    ],
+    ["缺少", [{ type: "input", title: "申请事由" }]],
+  ])("拒绝字段标识%s的表单内容并保留原定义", (_case, rules) => {
+    const session = new FlowDesignSession(buildDraftFlow());
+    const form = session.createForm("申请单");
+
+    expect(() => session.updateFormContent(form.id, JSON.stringify(rules), "{}")).toThrow(
+      "字段标识",
+    );
+    expect(session.current?.forms[0]?.rules).toBe("[]");
+  });
+
   it("引用诊断：默认 key 指向目录外定义时报出且保留（A18）", () => {
     const session = new FlowDesignSession(buildDraftFlow());
     session.createForm("申请单");
