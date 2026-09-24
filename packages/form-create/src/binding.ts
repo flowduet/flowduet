@@ -1,6 +1,7 @@
 import type { BpmnModel, ModdleElement } from "@flowduet/core";
 import { isApprovalTask } from "@flowduet/core";
 import type { FormDefinition } from "./document.js";
+import { elementLabel } from "./element-label.js";
 
 /**
  * 目录引用诊断（#72，ADR-0009 决策 4）：
@@ -17,25 +18,27 @@ export function collectReferenceIssues(
   const ids = new Set(forms.map((form) => form.id));
 
   const defaultKey = model.defaultFormKey;
-  if (defaultKey !== undefined && !ids.has(defaultKey)) {
+  const defaultProblem = defaultKey === undefined ? undefined : referenceProblem(defaultKey, ids);
+  if (defaultProblem !== undefined) {
     issues.push(
-      `流程默认表单 key「${defaultKey}」不在表单目录中（已保留原值，请修复引用或补建表单）`,
+      `流程默认表单 key「${defaultKey}」${defaultProblem}（已保留原值，请修复引用或补建表单）`,
     );
   }
 
   const flowElements = (model.process.get("flowElements") as ModdleElement[] | undefined) ?? [];
   for (const element of flowElements) {
     if (!isApprovalTask(element)) continue;
-    const key = String(element.get("formKey") ?? "").trim();
-    if (key === "" || ids.has(key)) continue;
+    const key = String(element.get("formKey") ?? "");
+    if (key === "") continue;
+    const problem = referenceProblem(key, ids);
+    if (problem === undefined) continue;
     const label = elementLabel(element);
-    issues.push(`审批节点「${label}」的表单 key「${key}」不在表单目录中（已保留原值，请修复引用）`);
+    issues.push(`审批节点「${label}」的表单 key「${key}」${problem}（已保留原值，请修复引用）`);
   }
   return issues;
 }
 
-function elementLabel(element: ModdleElement): string {
-  const id = String(element.get("id") ?? "");
-  const name = String(element.get("name") ?? "").trim();
-  return name !== "" && name !== id ? `${name}（${id}）` : id;
+function referenceProblem(key: string, ids: ReadonlySet<string>): string | undefined {
+  if (key !== key.trim()) return "含首尾空格";
+  return ids.has(key) ? undefined : "不在表单目录中";
 }

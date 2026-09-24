@@ -93,7 +93,7 @@ const defaultFormInvalid = computed<boolean>(() => {
   const options = props.formOptions;
   const key = model.value.defaultFormKey;
   if (options === undefined || key === undefined) return false;
-  return !options.some((option) => option.id === key);
+  return key !== key.trim() || !options.some((option) => option.id === key);
 });
 
 /**
@@ -114,7 +114,10 @@ const formSummaries = computed<Map<string, NodeFormSummary>>(() => {
       // 非审批节点（网关/抄送/事件）由解析器统一返回 none，无需预判
       const ref = resolveEffectiveForm(model.value, item.id);
       if (ref.source === "none" || ref.key === undefined) continue;
-      const name = options.find((option) => option.id === ref.key)?.name;
+      const name =
+        ref.key === ref.key.trim()
+          ? options.find((option) => option.id === ref.key)?.name
+          : undefined;
       map.set(
         item.id,
         name === undefined
