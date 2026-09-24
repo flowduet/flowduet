@@ -90,6 +90,24 @@ describe("resolveEffectiveForm 有效表单解析", () => {
     expect(resolveEffectiveForm(model, "counter")).toEqual({ source: "none", key: undefined });
   });
 
+  it("保留显式引用原值供目录诊断，不把带空格的 key 当成有效引用", () => {
+    const model = buildModel();
+    model.setDefaultFormKey("form_apply");
+    model.elementOf("solo").set("formKey", " form_apply ");
+
+    expect(resolveEffectiveForm(model, "solo")).toEqual({
+      source: "node",
+      key: " form_apply ",
+    });
+
+    model.elementOf("solo").set("formKey", undefined);
+    model.process.set("defaultFormKey", " form_apply ");
+    expect(resolveEffectiveForm(model, "solo")).toEqual({
+      source: "default",
+      key: " form_apply ",
+    });
+  });
+
   it("或签与依次形态同样参与默认继承，显式覆盖优先", () => {
     // 三种多人形态同构落 bpmn:UserTask（会签已由上例覆盖），逐一验证
     for (const mode of ["any", "sequential"] as const) {

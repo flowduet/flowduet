@@ -106,4 +106,19 @@ describe("审批节点有效表单摘要", () => {
       "node-card-form--invalid",
     );
   });
+
+  it("带首尾空格的 key 即使碰巧匹配目录 ID 也标记失效", async () => {
+    const model = buildModel();
+    model.process.set("defaultFormKey", " form_apply ");
+    wrapper = mount(DingtalkDesigner, {
+      props: { model, formOptions: [{ id: " form_apply ", name: "异常 ID 表单" }] },
+      attachTo: document.body,
+    });
+    await flushPromises();
+
+    expect(wrapper.find('[data-test="default-form-invalid"]').exists()).toBe(true);
+    expect(wrapper.find('[data-test="node-form-counter"]').classes()).toContain(
+      "node-card-form--invalid",
+    );
+  });
 });

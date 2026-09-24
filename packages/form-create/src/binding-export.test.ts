@@ -54,6 +54,18 @@ describe("collectReferenceIssues", () => {
     expect(issues).toHaveLength(1);
     expect(issues[0]).toContain("ghost_default");
   });
+
+  it("带首尾空格的节点引用保留原值并报告错误", () => {
+    const model = buildConfiguredFlow();
+    model.elementOf("solo").set("formKey", " form_apply ");
+
+    expect(collectReferenceIssues(model, [FORM])[0]).toContain("首尾空格");
+    expect(model.elementOf("solo").get("formKey")).toBe(" form_apply ");
+
+    model.elementOf("solo").set("formKey", undefined);
+    model.process.set("defaultFormKey", " form_apply ");
+    expect(collectReferenceIssues(model, [FORM])[0]).toContain("首尾空格");
+  });
 });
 
 describe("exportDeployXml", () => {
@@ -68,6 +80,14 @@ describe("exportDeployXml", () => {
     const model = buildConfiguredFlow();
     model.setDefaultFormKey("ghost_default");
     await expect(exportDeployXml(model, [FORM])).rejects.toThrow("ghost_default");
+  });
+
+  it("带首尾空格的节点引用不被静默修正，部署导出明确拒绝", async () => {
+    const model = buildConfiguredFlow();
+    model.elementOf("solo").set("formKey", " form_apply ");
+
+    await expect(exportDeployXml(model, [FORM])).rejects.toThrow("首尾空格");
+    expect(model.elementOf("solo").get("formKey")).toBe(" form_apply ");
   });
 
   it("草稿与引用问题合并呈报", async () => {

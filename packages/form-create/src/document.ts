@@ -9,6 +9,7 @@ import {
 import { collectDraftIssues, isCcServiceTask } from "@flowduet/designer";
 import { assertFormDefinitionValid } from "./form-schema.js";
 import { collectReferenceIssues } from "./binding.js";
+import { elementLabel } from "./element-label.js";
 
 /**
  * 流程设计文档（ADR-0009）：外层 JSON 封装单流程 BPMN XML 与文档内全部表单定义。
@@ -71,12 +72,6 @@ const SUBSET_ELEMENT_TYPES = new Set([
   "bpmn:UserTask",
   "bpmn:SequenceFlow",
 ]);
-
-function labelOf(element: ModdleElement): string {
-  const id = String(element.get("id") ?? "");
-  const name = String(element.get("name") ?? "").trim();
-  return name !== "" && name !== id ? `${name}（${id}）` : id;
-}
 
 function messageOf(e: unknown): string {
   return e instanceof Error ? e.message : String(e);
@@ -152,7 +147,7 @@ function restoreFlowReferences(model: BpmnModel): void {
     const source = references.get(flow.get("sourceRef") as ModdleElement);
     const target = references.get(flow.get("targetRef") as ModdleElement);
     if (source === undefined || target === undefined) {
-      throw new Error(`顺序流「${labelOf(flow)}」的端点不属于当前流程节点`);
+      throw new Error(`顺序流「${elementLabel(flow)}」的端点不属于当前流程节点`);
     }
     source.outgoing.push(flow);
     target.incoming.push(flow);
@@ -260,7 +255,7 @@ function assertEditableStructure(model: BpmnModel, context: string): void {
     if (SUBSET_ELEMENT_TYPES.has(element.$type)) continue;
     if (isCcServiceTask(element)) continue;
     throw new Error(
-      `${context}：流程元素「${labelOf(element)}」（${element.$type}）超出本编辑器支持的流程子集`,
+      `${context}：流程元素「${elementLabel(element)}」（${element.$type}）超出本编辑器支持的流程子集`,
     );
   }
   try {

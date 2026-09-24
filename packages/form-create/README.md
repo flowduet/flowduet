@@ -33,7 +33,7 @@ import "element-plus/dist/index.css";
 | `xml`     | 单流程 BPMN XML（含绑定引用，保存时生成可恢复 DI）                       |
 | `forms`   | 文档内全部表单定义（含尚未绑定）；当前字段范围仅文本（input）            |
 
-每个表单定义：稳定唯一 `id`（改名不换 ID）、非空 `name`、提供者 `form-create/element-plus`、成对序列化的 `rules` / `options` JSON 字符串。超出文本范围的字段在保存与打开两侧明确拒绝，不静默删减。流程结构与表单绑定以 XML 为事实源，外层不另存第二份可写关系。
+每个表单定义：稳定唯一 `id`（改名不换 ID）、非空 `name`、提供者 `form-create/element-plus`、成对序列化的 `rules` / `options` JSON 字符串。文本字段的 `field` 标识必须非空且在单张表单内唯一；缺失、重复或超出文本范围的字段在保存与打开两侧明确拒绝，不静默删减。流程结构与表单绑定以 XML 为事实源，外层不另存第二份可写关系。
 
 ## 使用
 
@@ -69,7 +69,7 @@ const xml = await exportDeployXml(session.current!.model, session.current!.forms
 
 - 流程默认表单落在 `bpmn:Process` 的 `flowduet:defaultFormKey`（命名空间 `urn:flowduet:bpmn`），由 core 在创建与解析路径统一注册，未使用时编译输出不含该命名空间（既有基准逐字一致）。
 - 只有审批节点（单签与三种多人形态）参与继承；网关与抄送不解析也不展示。节点显式 `flowable:formKey` 优先，且不被默认值覆盖、不因目录缺失被清除；继承结果不逐节点固化。
-- 引用失效（key 不在目录中）：保存与打开允许（保留原 key 的草稿），组合部署导出阻断，相关预览显示错误。
+- 引用失效（key 不在目录中或带首尾空格）：保存与打开允许（保留 XML 原值的草稿），组合部署导出阻断，相关预览显示错误。
 - 默认继承是 FlowDuet 的设计协议——Flowable 引擎不会自动加载或渲染表单，宿主需用公开解析能力自行接入运行时。
 
 ## 保存与部署导出的区别

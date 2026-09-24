@@ -35,11 +35,12 @@ export function resolveEffectiveForm(model: BpmnModel, nodeId: string): Effectiv
   if (!isApprovalTask(element)) {
     return { source: "none", key: undefined };
   }
-  const explicit = String(element.get("formKey") ?? "").trim();
+  // 引用必须与 XML 字面值一致；裁剪后的副本会让预览误判为有效，而部署 XML 仍保留空格。
+  const explicit = String(element.get("formKey") ?? "");
   if (explicit !== "") {
     return { source: "node", key: explicit };
   }
-  const inherited = String(model.defaultFormKey ?? "").trim();
+  const inherited = String(model.defaultFormKey ?? "");
   if (inherited !== "") {
     return { source: "default", key: inherited };
   }
