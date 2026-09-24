@@ -3,6 +3,7 @@
 ## 分支与提交
 
 - 集成分支为 `develop`；feature 分支命名 `feat/<issue 号>-<短横线摘要>`，经 PR（squash）合入。
+- **实施任何 issue 都在独立 feature 分支上施工**：开工第一步从最新 `develop` 切出分支，实现提交全部落在该分支，不直接提交到 `develop`——保证每个票的改动可整体审阅、可单独丢弃或重做。
 - 提交信息遵循 [约定式提交](https://www.conventionalcommits.org/zh-hans/v1.0.0/)，中文描述（详见 AGENTS.md）。
 - CI 在 PR 上跑 Node 22 / 24 双矩阵：`pnpm lint` + `pnpm test` + `pnpm build`，绿了才可合并。
 - 影响公开包 `@flowduet/core` 或 `@flowduet/designer` 的 PR 应附 changeset：运行 `pnpm changeset`，选择实际受影响的包和版本类型。纯文档或仅改私有 Playground 的 PR 不需要发包 changeset。

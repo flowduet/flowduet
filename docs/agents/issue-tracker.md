@@ -2,7 +2,7 @@
 
 Issues and specs for this repo live as GitHub issues. Use the `gh` CLI for all operations.
 
-创建或编辑 Issue、PR 正文前，读取 [贡献指南的内容约定](../../CONTRIBUTING.md#issue-与-pr-内容)，按其中的语言、模板和标签规则填写。
+Before creating or editing issue/PR bodies, read the content conventions in the [contributing guide](../../CONTRIBUTING.md#issue-与-pr-内容) and follow its language, template, and label rules.
 
 ## Conventions
 
@@ -12,7 +12,8 @@ Issues and specs for this repo live as GitHub issues. Use the `gh` CLI for all o
 - **Comment on an issue**: `gh issue comment <number> --body "..."`
 - **Apply / remove labels**: `gh issue edit <number> --add-label "..."` / `--remove-label "..."`
 - **Close**: `gh issue close <number> --comment "..."`
-- **实施票完成（/implement 收尾）**: 在 issue 上留实现评论——本地提交哈希、实现面、验证证据、边界说明；**不关票**（关票属于合入 / PR 流程）；**不推送分支**，由用户决定何时推送或开 PR。
+- **Finish implementing a ticket (/implement wrap-up)**: leave an implementation comment on the issue — local commit hash, what was built, verification evidence, boundary notes; **do not close the issue** (closing belongs to the merge/PR flow); **do not push the branch** — the user decides when to push or open a PR.
+- **Start implementing a ticket (/implement first step)**: branch off the latest `develop` into a dedicated `feat/<issue number>-<kebab-summary>` branch before doing any work; all implementation commits land on that branch, never directly on `develop` (see the branching rules in the [contributing guide](../../CONTRIBUTING.md#分支与提交)).
 
 Infer the repo from `git remote -v`; `gh` does this automatically when run inside a clone.
 
