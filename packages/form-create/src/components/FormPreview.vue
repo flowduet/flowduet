@@ -23,7 +23,7 @@ onBeforeMount(ensureFormCreateInstalled);
 
 const trialValue = ref<Record<string, unknown>>({});
 /** fApi：渲染器挂载后经 update:api 事件交付（form-create v3 约定），用于触发校验 */
-const fApi = ref<{ validate?: (cb: (result: unknown) => void) => void } | null>(null);
+const fApi = ref<{ validate?: (cb: (result: unknown) => void) => unknown } | null>(null);
 const validation = ref<{ ok: boolean; message: string } | null>(null);
 
 // 目标切换即重置：不同表单的试填写入不混在一起
@@ -51,19 +51,26 @@ const option = computed(() =>
 );
 
 function onApi(api: unknown): void {
-  fApi.value = api as { validate?: (cb: (result: unknown) => void) => void };
+  fApi.value = api as { validate?: (cb: (result: unknown) => void) => unknown };
 }
 
 function validate(): void {
   const api = fApi.value?.validate;
   if (typeof api !== "function") return;
-  api.call(fApi.value, (result) => {
+  const updateValidation = (result: unknown): void => {
     // form-create 合同：校验通过回调收字面 true；失败收 truthy 的错误对象
     validation.value =
       result === true
         ? { ok: true, message: "校验通过" }
         : { ok: false, message: "校验未通过：请按字段提示补填（见上方错误信息）" };
-  });
+  };
+  try {
+    // FormCreate 同时用回调反馈结果、用 Promise 表示校验成败；失败时两条通道都会触发。
+    // 消费 Promise 拒绝，避免预览已显示字段错误后仍向浏览器泄漏未处理异常。
+    void Promise.resolve(api.call(fApi.value, updateValidation)).catch(updateValidation);
+  } catch (e) {
+    updateValidation(e);
+  }
 }
 </script>
 
