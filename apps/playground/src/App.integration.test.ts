@@ -79,6 +79,41 @@ describe("Playground 与 designer 的导出链路", () => {
 });
 
 describe("Playground 设计文档闭环（#71：保存 → 打开 → 继续编辑）", () => {
+  it("打开省略节点连线标记的标准 BPMN 后，可通过设计器继续增删节点", async () => {
+    wrapper = mount(App, { attachTo: document.body });
+    const xml = `<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" id="defs" targetNamespace="urn:test">
+      <bpmn:process id="standard_flow" isExecutable="true">
+        <bpmn:startEvent id="s" />
+        <bpmn:userTask id="t" name="原审批" />
+        <bpmn:endEvent id="e" />
+        <bpmn:sequenceFlow id="f1" sourceRef="s" targetRef="t" />
+        <bpmn:sequenceFlow id="f2" sourceRef="t" targetRef="e" />
+      </bpmn:process>
+    </bpmn:definitions>`;
+    pickFile(
+      wrapper,
+      JSON.stringify({ format: "flowduet.design", version: 1, engine: "flowable", xml, forms: [] }),
+    );
+    await wrapper.find('[data-test="open-doc-input"]').trigger("change");
+    await flushPromises();
+    expect(wrapper.find('[data-test="doc-status"]').text()).toContain("已打开设计文档");
+    const count = wrapper.findAll('[data-test="node-card"]').length;
+
+    await wrapper.find('[data-test="insert-btn-t"]').trigger("click");
+    await flushPromises();
+    document.querySelector<HTMLElement>('[data-test="insert-kind-approval"]')!.click();
+    await flushPromises();
+
+    expect(wrapper.find('[data-test="action-error"]').exists()).toBe(false);
+    expect(wrapper.findAll('[data-test="node-card"]')).toHaveLength(count + 1);
+
+    await wrapper.find('[data-test="node-delete-t"]').trigger("click");
+    await flushPromises();
+    expect(wrapper.find('[data-test="action-error"]').exists()).toBe(false);
+    expect(wrapper.findAll('[data-test="node-card"]')).toHaveLength(count);
+    expect(wrapper.text()).not.toContain("原审批");
+  });
+
   it("新建草稿可保存并报告待修复项；配齐后下载文档，从文件打开继续编辑，双视图同一新模型", async () => {
     wrapper = mount(App, { attachTo: document.body });
 

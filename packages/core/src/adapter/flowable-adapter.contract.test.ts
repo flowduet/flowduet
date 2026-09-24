@@ -16,7 +16,7 @@ describe("适配器合同（ADR-0005 三收敛点）", () => {
     const broken = {
       ...flowableAdapter,
       taskTypeMapping: { ...flowableAdapter.taskTypeMapping, mail: undefined },
-    } as typeof flowableAdapter;
+    } as unknown as typeof flowableAdapter;
     await expect(assertAdapterContract(broken)).rejects.toThrow("[合同点三]");
   });
 

@@ -8,6 +8,8 @@ export interface ParseOptions {
    * 扩展包在场。适配器与建模时绑定的必须是同一方言。
    */
   adapter: EngineAdapter;
+  /** 文档恢复可主动拒绝解析警告；默认保持既有宽松解析行为。 */
+  rejectWarnings?: boolean;
 }
 
 /**
@@ -19,6 +21,9 @@ export async function parse(xml: string, options: ParseOptions): Promise<BpmnMod
     throw new Error("XML 不能为空白");
   }
   const moddle = new BpmnModdle(options.adapter.additionalPackages);
-  const { rootElement } = await moddle.fromXML(xml);
+  const { rootElement, warnings = [] } = await moddle.fromXML(xml);
+  if (options.rejectWarnings && warnings.length > 0) {
+    throw new Error(`XML 解析产生警告：${warnings.map((warning) => warning.message).join("\n")}`);
+  }
   return BpmnModel.fromParsed(moddle, rootElement, options.adapter);
 }

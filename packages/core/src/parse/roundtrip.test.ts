@@ -234,6 +234,23 @@ describe("往返保真（parse → model → compile 语义等价）", () => {
   it("空白 XML 拒绝解析", async () => {
     await expect(parse("   ", { adapter: flowableAdapter })).rejects.toThrow("XML 不能为空白");
   });
+
+  it("拒绝警告按需启用，默认解析与无警告 XML 的往返合同保持不变", async () => {
+    const xml = await compile(buildMinimalFlow());
+    const damaged = xml.replace(
+      "</bpmn:process>",
+      '<bpmn:userTask id="manager_approval" /></bpmn:process>',
+    );
+
+    const tolerant = await parse(damaged, { adapter: flowableAdapter });
+    expect(await compile(tolerant)).toBe(xml);
+    await expect(
+      parse(damaged, { adapter: flowableAdapter, rejectWarnings: true }),
+    ).rejects.toThrow("duplicate ID <manager_approval>");
+
+    const restored = await parse(xml, { adapter: flowableAdapter, rejectWarnings: true });
+    expect(await compile(restored)).toBe(xml);
+  });
 });
 
 function findFlowElement(model: BpmnModel, id: string): ModdleElement {

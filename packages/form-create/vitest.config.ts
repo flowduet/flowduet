@@ -9,7 +9,7 @@ import { fileURLToPath } from "node:url";
  */
 export default defineConfig({
   plugins: [vue()],
-  environment: "happy-dom",
+  test: { environment: "happy-dom" },
   resolve: {
     alias: {
       "@flowduet/core": fileURLToPath(new URL("../core/src/index.ts", import.meta.url)),

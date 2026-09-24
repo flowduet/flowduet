@@ -90,4 +90,21 @@ describe("FlowDesignSession", () => {
     expect(session.current?.model).toBe(fresh);
     expect(String(session.current?.model.process.get("id"))).toBe("newer_flow");
   });
+
+  it.each([
+    ["重复 ID", '<bpmn:userTask id="approval_1" name="不能丢失的节点" />'],
+    ["无法识别的元素", '<bpmn:scriptTesk id="unknown_task" name="不能丢失的节点" />'],
+  ])("打开含%s的文档时拒绝解析警告，保留当前设计", async (_label, invalidElement) => {
+    const session = new FlowDesignSession(buildDraftFlow());
+    const previous = session.current;
+    const { document } = await session.save();
+    const damaged = JSON.stringify({
+      ...document,
+      xml: document.xml.replace("</bpmn:process>", `${invalidElement}</bpmn:process>`),
+    });
+
+    await expect(session.open(damaged)).rejects.toThrow("XML 解析产生警告");
+    expect(session.current).toBe(previous);
+    expect((await session.save()).document.xml).toBe(document.xml);
+  });
 });

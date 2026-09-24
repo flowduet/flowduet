@@ -126,6 +126,33 @@ describe("openDesignDocument", () => {
     await expect(openDesignDocument(again.json)).resolves.toBeTruthy();
   });
 
+  it("省略节点连线标记的条件分支恢复后仍报告缺失条件并拦截部署导出", async () => {
+    const original = BpmnModel.create({ processId: "branch_draft", adapter: flowableAdapter })
+      .addStartEvent({ id: "s" })
+      .addExclusiveGateway({ id: "fork" })
+      .addUserTask({ id: "a", assignee: "alice" })
+      .addUserTask({ id: "b", assignee: "bob" })
+      .addExclusiveGateway({ id: "join" })
+      .addEndEvent({ id: "e" })
+      .addSequenceFlow({ id: "f1", sourceRef: "s", targetRef: "fork" })
+      .addSequenceFlow({ id: "fa", sourceRef: "fork", targetRef: "a" })
+      .addSequenceFlow({ id: "fb", sourceRef: "fork", targetRef: "b" })
+      .addSequenceFlow({ id: "f4", sourceRef: "a", targetRef: "join" })
+      .addSequenceFlow({ id: "f5", sourceRef: "b", targetRef: "join" })
+      .addSequenceFlow({ id: "f6", sourceRef: "join", targetRef: "e" });
+    const before = await saveDesignDocument(original);
+    expect(before.pendingIssues).toHaveLength(2);
+    // 标准 BPMN 可以只通过顺序流的端点表达连线关系。
+    const xml = before.document.xml.replace(/<bpmn:(incoming|outgoing)>[\s\S]*?<\/bpmn:\1>/g, "");
+    const { model } = await openDesignDocument(wrapDocument(xml));
+
+    const saved = await saveDesignDocument(model);
+    expect(saved.pendingIssues).toEqual(before.pendingIssues);
+    await expect(exportXml(model)).rejects.toThrow("条件分支");
+    const reopened = await openDesignDocument(saved.json);
+    expect((await saveDesignDocument(reopened.model)).pendingIssues).toEqual(before.pendingIssues);
+  });
+
   it("坏 JSON、非对象、未知格式/版本/引擎、缺 xml、forms 非数组逐一拒绝", async () => {
     await expect(openDesignDocument("{oops")).rejects.toThrow("不是合法 JSON");
     await expect(openDesignDocument("[1,2]")).rejects.toThrow("必须是 JSON 对象");

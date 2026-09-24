@@ -100,6 +100,7 @@ export async function saveDesignDocument(
   // 可恢复性自证：产物重新解析后必须仍能通过打开侧的结构守卫，防止序列化丢语义
   const reparsed = await parseForRestore(xml);
   assertEditableStructure(reparsed, "保存的流程结构无法恢复");
+  restoreFlowReferences(reparsed);
   const document: FlowDesignDocument = {
     format: DESIGN_DOCUMENT_FORMAT,
     version: DESIGN_DOCUMENT_VERSION,
@@ -110,7 +111,7 @@ export async function saveDesignDocument(
   return {
     document,
     json: JSON.stringify(document, null, 2),
-    pendingIssues: collectDraftIssues(model),
+    pendingIssues: collectDraftIssues(reparsed),
   };
 }
 
@@ -123,7 +124,39 @@ export async function openDesignDocument(text: string): Promise<OpenDesignDocume
   const document = parseEnvelope(text);
   const model = await parseForRestore(document.xml);
   assertEditableStructure(model, "文档流程超出可编辑范围");
+  restoreFlowReferences(model);
   return { document, model, forms: [] };
+}
+
+/**
+ * incoming/outgoing 是可省略的节点侧引用；以顺序流端点重建，保证恢复后的
+ * 插入、删除与草稿扫描都读取同一套连线关系，而非把省略误判为没有连线。
+ */
+function restoreFlowReferences(model: BpmnModel): void {
+  const elements = (model.process.get("flowElements") as ModdleElement[] | undefined) ?? [];
+  const references = new Map<
+    ModdleElement,
+    { incoming: ModdleElement[]; outgoing: ModdleElement[] }
+  >();
+  for (const element of elements) {
+    if (element.$type !== "bpmn:SequenceFlow") {
+      references.set(element, { incoming: [], outgoing: [] });
+    }
+  }
+  for (const flow of elements) {
+    if (flow.$type !== "bpmn:SequenceFlow") continue;
+    const source = references.get(flow.get("sourceRef") as ModdleElement);
+    const target = references.get(flow.get("targetRef") as ModdleElement);
+    if (source === undefined || target === undefined) {
+      throw new Error(`顺序流「${labelOf(flow)}」的端点不属于当前流程节点`);
+    }
+    source.outgoing.push(flow);
+    target.incoming.push(flow);
+  }
+  for (const [element, refs] of references) {
+    element.set("incoming", refs.incoming);
+    element.set("outgoing", refs.outgoing);
+  }
 }
 
 function previewValue(value: unknown): string {
@@ -180,7 +213,7 @@ function parseEnvelope(text: string): FlowDesignDocument {
 /** XML → 模型：统一错误出口，解析失败带上上下文前缀 */
 async function parseForRestore(xml: string): Promise<BpmnModel> {
   try {
-    return await parse(xml, { adapter: flowableAdapter });
+    return await parse(xml, { adapter: flowableAdapter, rejectWarnings: true });
   } catch (e) {
     throw new Error(`文档 XML 无法解析：${messageOf(e)}`, { cause: e });
   }
