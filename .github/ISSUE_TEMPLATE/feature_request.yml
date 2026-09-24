@@ -1,0 +1,37 @@
+name: 功能建议
+description: 描述使用场景、当前阻碍和期望结果，帮助评估需求。
+labels: ["enhancement", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        请使用中文填写标题和说明，专有名称可保留原文。
+        先描述要完成的事情，再补充你考虑过的实现方案。
+  - type: textarea
+    id: scenario
+    attributes:
+      label: 使用场景
+      description: 谁会在什么场景下使用这项能力？
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: 当前阻碍
+      description: 目前哪里无法完成或成本较高？已有的替代办法有什么不足？
+    validations:
+      required: true
+  - type: textarea
+    id: outcome
+    attributes:
+      label: 期望结果
+      description: 功能完成后，用户应能完成什么操作，或看到什么变化？
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: 方案或补充材料
+      description: 如有设想、参考示例或相关 Issue，可在此补充。
+    validations:
+      required: false
