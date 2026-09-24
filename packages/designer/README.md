@@ -50,6 +50,7 @@ async function doExport(): Promise<string> {
 - 节点：审批（单签 / 会签 / 或签 / 依次多实例三档）、抄送、条件分支（条件表达式 + 默认分支）、并行分支；
 - 抽屉字段：节点名、审批人（单人为字面量/表达式，多人为集合变量名）、完成方式、条件表达式、抄送收件人、formKey 占位；
 - 导出：`exportXml(model)` 产出 Flowable 方言 XML（合法可执行承诺，部署冒烟兜底）。审批人、抄送收件人或非默认条件支路尚未配置时，草稿仍可编辑，但导出会抛出包含节点或支路 ID 的错误。
+- 草稿扫描：`collectDraftIssues(model)` 返回上述待修复项列表而不抛错，供「保存草稿 + 报告待修复项」的链路（如 `@flowduet/form-create` 的设计文档保存）复用同一口径。
 
 ## License
 

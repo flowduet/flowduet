@@ -11,6 +11,9 @@ export default defineConfig({
       "@flowduet/designer": fileURLToPath(
         new URL("../../packages/designer/src/index.ts", import.meta.url),
       ),
+      "@flowduet/form-create": fileURLToPath(
+        new URL("../../packages/form-create/src/index.ts", import.meta.url),
+      ),
     },
   },
 });

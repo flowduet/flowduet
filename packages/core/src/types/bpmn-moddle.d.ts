@@ -34,6 +34,10 @@ declare module "bpmn-moddle" {
       xml: string,
       typeName?: string,
       options?: object,
-    ): Promise<{ rootElement: ModdleElement; references?: unknown[]; warnings?: string[] }>;
+    ): Promise<{
+      rootElement: ModdleElement;
+      references?: unknown[];
+      warnings?: { message: string }[];
+    }>;
   }
 }

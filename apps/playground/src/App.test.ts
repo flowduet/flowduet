@@ -5,8 +5,14 @@ import App from "./App.vue";
 
 vi.mock("@flowduet/designer", async () => {
   const { defineComponent, h } = await import("vue");
+  // 只替换被测的导出面：exportXml（联动行为）与两个 Vue 组件。
+  // 草稿扫描器与抄送判定谓词取真实实现——@flowduet/form-create 的保存链路
+  // 经 designer 公开入口使用它们，mock 缺席会让保存侧调用 undefined。
+  const actual = await vi.importActual<typeof import("@flowduet/designer")>("@flowduet/designer");
   return {
     exportXml: vi.fn(),
+    collectDraftIssues: actual.collectDraftIssues,
+    isCcServiceTask: actual.isCcServiceTask,
     BpmnCanvas: defineComponent({ render: () => null }),
     DingtalkDesigner: defineComponent({
       emits: ["change"],
@@ -111,5 +117,70 @@ describe("Playground XML 预览", () => {
 
     expect(exportMock).toHaveBeenCalledTimes(1);
     expect(wrapper.find('[data-test="xml-preview"]').text()).toContain("当前流程");
+  });
+});
+
+describe("Playground 设计文档链路（#71）", () => {
+  /** 直接向文件选择器注入 File 并触发 change（happy-dom 下 files 为只读 FileList） */
+  function pickFile(target: ReturnType<typeof mount>, json: string): void {
+    const input = target.find<HTMLInputElement>('input[data-test="open-doc-input"]');
+    Object.defineProperty(input.element, "files", {
+      value: [new File([json], "design.flowduet.json", { type: "application/json" })],
+      configurable: true,
+    });
+  }
+
+  it("新建设计立即刷新导出预览并提示状态", async () => {
+    exportMock.mockResolvedValueOnce("<xml>新流程</xml>");
+    wrapper = mount(App, { attachTo: document.body });
+
+    await wrapper.find('[data-test="new-design-btn"]').trigger("click");
+    expect(wrapper.find('[data-test="doc-status"]').text()).toContain("已新建设计");
+    // 整体替换 = 一次编辑：防抖自动导出走新模型
+    await vi.waitFor(
+      () => {
+        expect(exportMock).toHaveBeenCalledTimes(1);
+      },
+      { timeout: 3000 },
+    );
+    await vi.waitFor(
+      () => {
+        expect(wrapper.find('[data-test="xml-preview"]').text()).toContain("新流程");
+      },
+      { timeout: 3000 },
+    );
+  });
+
+  it("打开坏文档显示错误，不出现成功状态", async () => {
+    wrapper = mount(App, { attachTo: document.body });
+    pickFile(wrapper, "{not-a-json");
+    await wrapper.find('input[data-test="open-doc-input"]').trigger("change");
+    await flushPromises();
+
+    expect(wrapper.find('[data-test="doc-error"]').text()).toContain("不是合法 JSON");
+    expect(wrapper.find('[data-test="doc-status"]').exists()).toBe(false);
+  });
+
+  it("下载设计文档成功后提示保存结果", async () => {
+    const created: Blob[] = [];
+    const objectUrlSpy = vi
+      .spyOn(URL, "createObjectURL")
+      .mockImplementation((blob: Blob): string => {
+        created.push(blob);
+        return "blob:mock";
+      });
+    const clickSpy = vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(() => {});
+    wrapper = mount(App, { attachTo: document.body });
+
+    await wrapper.find('[data-test="save-doc-btn"]').trigger("click");
+    await flushPromises();
+
+    expect(wrapper.find('[data-test="doc-error"]').exists()).toBe(false);
+    expect(wrapper.find('[data-test="doc-status"]').text()).toContain("已保存设计文档");
+    const json = await created[0]!.text();
+    expect(JSON.parse(json).format).toBe("flowduet.design");
+
+    clickSpy.mockRestore();
+    objectUrlSpy.mockRestore();
   });
 });

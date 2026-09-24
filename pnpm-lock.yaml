@@ -47,6 +47,9 @@ importers:
       '@flowduet/designer':
         specifier: workspace:*
         version: link:../../packages/designer
+      '@flowduet/form-create':
+        specifier: workspace:*
+        version: link:../../packages/form-create
       '@vue-flow/core':
         specifier: ^1.48.2
         version: 1.48.2(vue@3.5.43(typescript@5.9.3))
@@ -113,7 +116,24 @@ importers:
         specifier: ^3.3.11
         version: 3.3.11(typescript@5.9.3)
 
-  packages/form-create: {}
+  packages/form-create:
+    dependencies:
+      '@flowduet/core':
+        specifier: workspace:*
+        version: link:../core
+      '@flowduet/designer':
+        specifier: workspace:*
+        version: link:../designer
+    devDependencies:
+      '@vitejs/plugin-vue':
+        specifier: ^6.0.9
+        version: 6.0.9(vite@8.3.0(@types/node@22.20.4)(yaml@2.9.1))(vue@3.5.43(typescript@5.9.3))
+      happy-dom:
+        specifier: ^20.14.5
+        version: 20.14.5
+      vitest:
+        specifier: ^5.0.1
+        version: 5.0.1(@types/node@22.20.4)(happy-dom@20.14.5)(vite@8.3.0(@types/node@22.20.4)(yaml@2.9.1))
 
 packages:
 
