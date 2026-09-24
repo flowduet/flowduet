@@ -8,22 +8,34 @@ function labelOf(element: ModdleElement): string {
   return name !== "" && name !== id ? `${name}（${id}）` : id;
 }
 
-/** 草稿允许留在模型树中，只有导出时统一收集所有缺失配置。 */
-function assertNoDraftFields(model: BpmnModel): void {
+/**
+ * 抄送形态的服务任务判定（#71 起公开）：收件人属性在场，或命中适配器声明的
+ * 抄送占位 delegate 引用。收件人属性可能被导入模型或宿主直写清除，仍按
+ * delegate 识别该节点。草稿扫描与设计文档打开侧的子集校验共用本谓词，
+ * 「什么是抄送节点」的口径单点维护。
+ */
+export function isCcServiceTask(element: ModdleElement): boolean {
+  if (element.$type !== "bpmn:ServiceTask") return false;
+  const ccDelegate = flowableAdapter.taskTypeMapping.cc.attributes?.delegateExpression;
+  return (
+    element.get("ccTo") !== undefined ||
+    (ccDelegate !== undefined && element.get("delegateExpression") === ccDelegate)
+  );
+}
+
+/**
+ * 草稿扫描（#71 起公开）：收集「部署合法但运行时无法按用户配置执行」的待修复项。
+ * 草稿允许留在模型树中——部署导出（exportXml）据此拦截，设计文档保存据此提示，
+ * 两条链路共用同一扫描口径，不各自复制判断。
+ */
+export function collectDraftIssues(model: BpmnModel): string[] {
   const elements = (model.process.get("flowElements") as ModdleElement[] | undefined) ?? [];
   const errors: string[] = [];
   for (const el of elements) {
     const label = labelOf(el);
     if (el.$type === "bpmn:ServiceTask") {
+      if (!isCcServiceTask(el)) continue;
       const ccTo = el.get("ccTo");
-      const ccDelegate = flowableAdapter.taskTypeMapping.cc.attributes?.delegateExpression;
-      // 收件人属性可能被导入模型或宿主直写清除，仍按抄送 delegate 识别该节点。
-      if (
-        ccTo === undefined &&
-        (ccDelegate === undefined || el.get("delegateExpression") !== ccDelegate)
-      ) {
-        continue;
-      }
       if (typeof ccTo !== "string" || ccTo.trim() === "") {
         errors.push(`抄送节点「${label}」的收件人为空白，请在抽屉补填后再导出`);
       } else if (ccTo.trim() === CC_RECIPIENTS_PLACEHOLDER) {
@@ -63,6 +75,12 @@ function assertNoDraftFields(model: BpmnModel): void {
       }
     }
   }
+  return errors;
+}
+
+/** 部署导出的草稿拦截：有待修复项时不产出 XML（保存设计文档不受此限）。 */
+function assertNoDraftFields(model: BpmnModel): void {
+  const errors = collectDraftIssues(model);
   if (errors.length > 0) throw new Error(errors.join("\n"));
 }
 

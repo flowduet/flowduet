@@ -1,7 +1,43 @@
 {
   "name": "@flowduet/form-create",
-  "private": true,
   "version": "0.0.0",
-  "description": "FormCreate 深度集成（占位，v1 阶段建立）",
-  "scripts": {}
+  "description": "FlowDuet 表单集成：流程设计文档编解码与组合编辑装配（迭代三构建中）",
+  "license": "Apache-2.0",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/flowduet/flowduet.git",
+    "directory": "packages/form-create"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@flowduet/core": "workspace:*",
+    "@flowduet/designer": "workspace:*"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^6.0.9",
+    "happy-dom": "^20.14.5",
+    "vitest": "^5.0.1"
+  }
 }
