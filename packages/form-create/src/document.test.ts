@@ -246,7 +246,7 @@ describe("openDesignDocument", () => {
     ).rejects.toThrow("forms 字段必须是数组");
   });
 
-  it("结构坏的非空表单目录拒绝打开：非对象项、缺字符串 rules、重复 id、超范围字段", async () => {
+  it("结构坏的非空表单目录拒绝打开：非对象项、缺字符串 rules、重复 id、重复字段及超范围字段", async () => {
     const form: FormDefinition = {
       id: "form_apply",
       name: "申请单",
@@ -272,6 +272,21 @@ describe("openDesignDocument", () => {
         }),
       ),
     ).rejects.toThrow("只支持文本（input）字段");
+    await expect(
+      openDesignDocument(
+        wrapDocument(STANDARD_BPMN_XML, {
+          forms: [
+            {
+              ...form,
+              rules: JSON.stringify([
+                { type: "input", field: "reason" },
+                { type: "input", field: "reason" },
+              ]),
+            },
+          ],
+        }),
+      ),
+    ).rejects.toThrow("字段标识重复");
   });
 
   it("坏 XML 拒绝并带上下文前缀", async () => {

@@ -121,6 +121,29 @@ describe("FormManager（目录管理面板）", () => {
     expect(wrapper.emitted("rename")).toEqual([["form_apply", "报销单"]]);
   });
 
+  it("空白名称留在管理面板供修正，不丢输入或退出改名", async () => {
+    wrapper = mount(FormManager, { props: { forms: [APPLY_FORM] } });
+    await wrapper.find('[data-test="form-manager-new-name"]').setValue("   ");
+    await wrapper.find('[data-test="form-manager-create-btn"]').trigger("click");
+    expect(wrapper.emitted("create")).toBeUndefined();
+    expect(wrapper.find('[data-test="form-manager-new-name"]').element).toHaveProperty(
+      "value",
+      "   ",
+    );
+    expect(wrapper.find('[data-test="form-manager-name-error"]').text()).toContain(
+      "名称不能为空白",
+    );
+
+    await wrapper.find('[data-test="form-rename-btn-form_apply"]').trigger("click");
+    await wrapper.find('[data-test="form-rename-input-form_apply"]').setValue("   ");
+    await wrapper.find('[data-test="form-manager-rename-ok"]').trigger("click");
+    expect(wrapper.emitted("rename")).toBeUndefined();
+    expect(wrapper.find('[data-test="form-rename-input-form_apply"]').exists()).toBe(true);
+    expect(wrapper.find('[data-test="form-rename-error-form_apply"]').text()).toContain(
+      "名称不能为空白",
+    );
+  });
+
   it("内容守卫前置：超范围字段不 emit 且编辑器保持打开供修正", async () => {
     const manager = mount(FormManager, { props: { forms: [APPLY_FORM] }, attachTo: document.body });
     await manager.find('[data-test="form-edit-btn-form_apply"]').trigger("click");
@@ -143,6 +166,26 @@ describe("FormManager（目录管理面板）", () => {
     );
     expect(manager.find('[data-test="form-manager-edit-dialog"]').exists()).toBe(true);
     manager.unmount();
+  });
+
+  it("重复字段标识不能关闭编辑器或上报保存", async () => {
+    wrapper = mount(FormManager, { props: { forms: [APPLY_FORM] }, attachTo: document.body });
+    await wrapper.find('[data-test="form-edit-btn-form_apply"]').trigger("click");
+    await flushPromises();
+
+    wrapper.findComponent({ name: "FormDesigner" }).vm.$emit(
+      "save",
+      JSON.stringify([
+        { type: "input", field: "reason" },
+        { type: "input", field: "reason" },
+      ]),
+      "{}",
+    );
+    await flushPromises();
+
+    expect(wrapper.emitted("updateContent")).toBeUndefined();
+    expect(wrapper.find('[data-test="form-manager-error"]').text()).toContain("字段标识重复");
+    expect(wrapper.find('[data-test="form-manager-edit-dialog"]').exists()).toBe(true);
   });
 });
 

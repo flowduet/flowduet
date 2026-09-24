@@ -2,7 +2,7 @@
 import { ref } from "vue";
 import { ElButton, ElDialog, ElInput } from "element-plus";
 import type { FormDefinition } from "../document.js";
-import { assertSupportedFieldTypes, parseFormOptions, parseFormRules } from "../form-schema.js";
+import { assertFormDefinitionValid } from "../form-schema.js";
 import FormDesigner from "./FormDesigner.vue";
 
 /**
@@ -24,22 +24,36 @@ const emit = defineEmits<{
 const newName = ref("");
 const renamingId = ref<string | null>(null);
 const renamingValue = ref("");
+const createError = ref("");
+const renameError = ref("");
 const editing = ref<FormDefinition | null>(null);
 const editVisible = ref(false);
 const editError = ref("");
 
 function submitCreate(): void {
+  if (newName.value.trim() === "") {
+    createError.value = "表单名称不能为空白";
+    return;
+  }
+  createError.value = "";
   emit("create", newName.value);
   newName.value = "";
 }
 
 function startRename(id: string, current: string): void {
+  createError.value = "";
+  renameError.value = "";
   renamingId.value = id;
   renamingValue.value = current;
 }
 
 function submitRename(): void {
   if (renamingId.value === null) return;
+  if (renamingValue.value.trim() === "") {
+    renameError.value = "表单名称不能为空白";
+    return;
+  }
+  renameError.value = "";
   emit("rename", renamingId.value, renamingValue.value);
   renamingId.value = null;
 }
@@ -58,8 +72,7 @@ function onDesignerSave(rules: string, options: string): void {
   // 异常，若依赖宿主 updateContent 抛错，这里的 catch 是收不到的死路径。
   // 会话侧重做同一校验（最终事实），此处保证「失败不关编辑器」的交互。
   try {
-    assertSupportedFieldTypes(parseFormRules(rules));
-    parseFormOptions(options);
+    assertFormDefinitionValid({ ...form, rules, options }, new Set());
   } catch (e) {
     editError.value = e instanceof Error ? e.message : String(e);
     return;
@@ -78,6 +91,7 @@ function onDesignerSave(rules: string, options: string): void {
         size="small"
         placeholder="新表单名（如：申请单）"
         data-test="form-manager-new-name"
+        @input="createError = ''"
         @keyup.enter="submitCreate"
       />
       <ElButton
@@ -89,6 +103,10 @@ function onDesignerSave(rules: string, options: string): void {
         新建表单
       </ElButton>
     </div>
+
+    <p v-if="createError" class="form-manager-error" data-test="form-manager-name-error">
+      {{ createError }}
+    </p>
 
     <p v-if="forms.length === 0" class="form-manager-empty" data-test="form-manager-empty">
       尚无表单：新建一张后可在流程中设为默认表单。
@@ -102,12 +120,22 @@ function onDesignerSave(rules: string, options: string): void {
         :data-test="`form-item-${form.id}`"
       >
         <template v-if="renamingId === form.id">
-          <ElInput
-            v-model="renamingValue"
-            size="small"
-            :data-test="`form-rename-input-${form.id}`"
-            @keyup.enter="submitRename"
-          />
+          <span class="form-manager-rename-field">
+            <ElInput
+              v-model="renamingValue"
+              size="small"
+              :data-test="`form-rename-input-${form.id}`"
+              @input="renameError = ''"
+              @keyup.enter="submitRename"
+            />
+            <span
+              v-if="renameError"
+              class="form-manager-error"
+              :data-test="`form-rename-error-${form.id}`"
+            >
+              {{ renameError }}
+            </span>
+          </span>
           <ElButton size="small" data-test="form-manager-rename-ok" @click="submitRename">
             确定
           </ElButton>
@@ -196,6 +224,14 @@ function onDesignerSave(rules: string, options: string): void {
   border: 1px solid #e4e7ed;
   border-radius: 6px;
   background: #fff;
+}
+
+.form-manager-rename-field {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
 }
 
 .form-manager-item-name {

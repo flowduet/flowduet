@@ -90,6 +90,17 @@ export function assertFormDefinitionValid(form: FormDefinition, knownIds: Set<st
       `表单 ${form.id} 的提供者是 ${form.provider}，本版本只支持 form-create/element-plus`,
     );
   }
-  assertSupportedFieldTypes(parseFormRules(form.rules));
+  const rules = parseFormRules(form.rules);
+  assertSupportedFieldTypes(rules);
+  const fields = new Set<string>();
+  for (const rule of rules) {
+    if (typeof rule.field !== "string" || rule.field.trim() === "") {
+      throw new Error(`表单 ${form.id} 的字段标识不能为空白`);
+    }
+    if (fields.has(rule.field)) {
+      throw new Error(`表单 ${form.id} 的字段标识重复：${rule.field}`);
+    }
+    fields.add(rule.field);
+  }
   parseFormOptions(form.options);
 }
