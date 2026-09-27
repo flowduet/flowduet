@@ -308,3 +308,8 @@ $RECYCLE.BIN/
 *.lnk
 
 # End of https://www.toptal.com/developers/gitignore/api/windows,macos,visualstudiocode,jetbrains+all,node
+
+# ZCode 插件运行态（Mimosa 安全扫描 hook 状态、video2code / video-agent-kit 插件标记文件）
+.mimosa/
+.v2c/
+.video_agent/
