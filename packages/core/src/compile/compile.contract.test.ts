@@ -6,6 +6,7 @@ import { buildMiFlow } from "./__fixtures__/mi-flow.js";
 import { buildDefaultBranchFlow, buildParallelFlow } from "./__fixtures__/branching-flows.js";
 import { buildCcFlow } from "./__fixtures__/cc-flow.js";
 import { buildDefaultFormFlow } from "./__fixtures__/default-form.js";
+import { buildFormOverrideFlow } from "./__fixtures__/form-override.js";
 import { APPROVAL_MODES } from "../model/bpmn-model.js";
 import type { ApprovalMode } from "../model/bpmn-model.js";
 
@@ -85,5 +86,33 @@ describe("编译合同（Flowable 6.8 方言）", () => {
     expect(xml).toContain('flowable:formKey="manager_form_v1"');
     expect(xml).not.toContain('bpmn:userTask id="counter_sign" name="部门会签" flowable:formKey');
     expect(xml).toBe(readBaseline("default-form.flowable68.baseline.xml"));
+  });
+
+  it("多表单覆盖输出与基准逐字一致（四形态混布 + 多节点复用同一覆盖 key）", async () => {
+    const xml = await compile(buildFormOverrideFlow());
+    // 默认落 process；覆盖仅在显式节点（会签 + 依次复用 form_review_v1）；
+    // 继承节点（单签 solo_apply、或签 any_audit）不固化 formKey
+    expect(xml).toContain('flowduet:defaultFormKey="form_apply_v1"');
+    expect(xml).toContain(
+      '<bpmn:userTask id="mi_review" name="部门复核" flowable:assignee="${assignee}" flowable:formKey="form_review_v1">',
+    );
+    expect(xml).toContain(
+      '<bpmn:userTask id="seq_sign" name="依次确认" flowable:assignee="${assignee}" flowable:formKey="form_review_v1">',
+    );
+    expect(xml).toContain(
+      '<bpmn:userTask id="solo_apply" name="提交复核" flowable:assignee="${submitter}">',
+    );
+    expect(xml).toContain(
+      '<bpmn:userTask id="any_audit" name="总监抽审" flowable:assignee="${assignee}">',
+    );
+    // 网关与抄送在场但整行无任何表单引用（A19）
+    expect(xml).toContain(
+      '<bpmn:exclusiveGateway id="amount_fork" name="金额判断" default="f_fork_review">',
+    );
+    expect(xml).toContain(
+      '<bpmn:serviceTask id="cc_record" name="抄送备案" flowable:delegateExpression="${flowduetCcTask}" flowable:ccTo="张三,李四">',
+    );
+    expect(xml.match(/flowable:formKey/g)).toHaveLength(2);
+    expect(xml).toBe(readBaseline("form-override.flowable68.baseline.xml"));
   });
 });

@@ -122,3 +122,180 @@ describe("审批节点有效表单摘要", () => {
     );
   });
 });
+
+/**
+ * 审批节点表单覆盖选择（#73）：表单集成模式下，抽屉内的自由文本 formKey
+ * 占位升级为目录选择——继承默认 / 显式覆盖 / 失效 key 保留修复；
+ * 纯流程模式（不传 formOptions）保持自由文本合同（A17）。
+ */
+
+/** 打开指定卡片的配置抽屉（卡片顺序 = buildModel 的链序：start/solo/counter/cc_1/end） */
+async function openCardDrawer(index: number): Promise<void> {
+  await wrapper!.findAll('[data-test="node-card"]')[index]!.trigger("click");
+  await flushPromises();
+}
+
+/** 原生 select 赋值并派发 change（v-model 的 change 通道） */
+async function pickOption(value: string): Promise<void> {
+  const select = document.querySelector<HTMLSelectElement>('[data-test="drawer-form-select"]');
+  if (select === null) throw new Error("抽屉内没有表单选择器");
+  select.value = value;
+  select.dispatchEvent(new Event("change", { bubbles: true }));
+  await flushPromises();
+}
+
+async function saveDrawer(): Promise<void> {
+  (document.querySelector('[data-test="drawer-save"]') as HTMLElement).click();
+  await flushPromises();
+}
+
+describe("审批节点表单覆盖选择（#73）", () => {
+  it("选择覆盖写入 formKey；选回继承清除覆盖恢复继承（A02/A03）", async () => {
+    const model = buildModel();
+    model.setDefaultFormKey("form_apply");
+    wrapper = mountDesigner(model);
+    await flushPromises();
+
+    await openCardDrawer(1); // solo：单签
+    const select = document.querySelector<HTMLSelectElement>('[data-test="drawer-form-select"]');
+    expect(select).not.toBeNull();
+    // 继承选项呈现当前默认表单名，让「继承什么」可见
+    expect(select!.selectedOptions[0]?.text).toContain("继承默认");
+    expect(select!.selectedOptions[0]?.text).toContain("申请单");
+
+    await pickOption("form_review");
+    await saveDrawer();
+    expect(String(model.elementOf("solo").get("formKey"))).toBe("form_review");
+
+    // 重开抽屉选回继承：覆盖清除，节点回到继承默认
+    await openCardDrawer(1);
+    await pickOption("");
+    await saveDrawer();
+    expect(model.elementOf("solo").get("formKey")).toBeUndefined();
+  });
+
+  it("目录外 key 以只读项保留原值，改选即修复（A11）", async () => {
+    const model = buildModel();
+    model.elementOf("solo").set("formKey", "ghost_form");
+    wrapper = mountDesigner(model);
+    await flushPromises();
+
+    await openCardDrawer(1);
+    const select = document.querySelector<HTMLSelectElement>('[data-test="drawer-form-select"]');
+    expect(select!.value).toBe("ghost_form");
+    expect(select!.selectedOptions[0]?.text).toContain("目录外");
+
+    await pickOption("form_apply");
+    await saveDrawer();
+    expect(String(model.elementOf("solo").get("formKey"))).toBe("form_apply");
+  });
+
+  it("同名不同 ID 的表单在默认、覆盖与节点摘要中均可区分（A05）", async () => {
+    const model = buildModel();
+    model.setDefaultFormKey("form_apply_2");
+    model.elementOf("solo").set("formKey", "form_apply");
+    wrapper = mount(DingtalkDesigner, {
+      props: {
+        model,
+        formOptions: [
+          { id: "form_apply", name: "申请单" },
+          { id: "form_apply_2", name: "申请单" },
+          { id: "form_review", name: "复核单" },
+        ],
+      },
+      attachTo: document.body,
+    });
+    await flushPromises();
+
+    const defaultOptions = wrapper
+      .findAll('[data-test="default-form-select"] option')
+      .map((option) => option.text());
+    expect(defaultOptions).toEqual([
+      "无",
+      "申请单（form_apply）",
+      "申请单（form_apply_2）",
+      "复核单",
+    ]);
+    expect(wrapper.find('[data-test="node-form-solo"]').text()).toContain(
+      "申请单（form_apply）（节点指定）",
+    );
+    expect(wrapper.find('[data-test="node-form-counter"]').text()).toContain(
+      "申请单（form_apply_2）（继承默认）",
+    );
+    expect(wrapper.find('[data-test="node-form-solo"]').attributes("title")).toBe(
+      wrapper.find('[data-test="node-form-solo"]').text(),
+    );
+
+    await openCardDrawer(1);
+    const options = Array.from(
+      document.querySelectorAll<HTMLSelectElement>('[data-test="drawer-form-select"] option'),
+    );
+    const labelled = options.map((option) => option.text ?? option.textContent ?? "");
+    expect(labelled[0]).toBe("继承默认（申请单（form_apply_2））");
+    expect(labelled.some((text) => text.includes("申请单（form_apply）"))).toBe(true);
+    expect(labelled.some((text) => text.includes("申请单（form_apply_2）"))).toBe(true);
+  });
+
+  it("多实例审批同样获得覆盖入口；抄送抽屉不出现表单入口（A19）", async () => {
+    const model = buildModel();
+    wrapper = mountDesigner(model);
+    await flushPromises();
+
+    await openCardDrawer(2); // counter：会签
+    expect(document.querySelector('[data-test="drawer-form-select"]')).not.toBeNull();
+    await saveDrawer();
+
+    await openCardDrawer(3); // cc_1：抄送
+    expect(document.querySelector('[data-test="drawer-form-select"]')).toBeNull();
+    expect(document.querySelector('[data-test="drawer-formkey"]')).toBeNull();
+  });
+
+  it("四种审批形态互切后节点 ID 与覆盖 key 均保留（A04）", async () => {
+    const model = buildModel();
+    model.elementOf("solo").set("formKey", "form_review");
+    wrapper = mountDesigner(model);
+    await flushPromises();
+
+    /**
+     * 依次切到每种形态再保存：单↔多边界走同 id 转换（重建节点），
+     * 多人三档之间走 setApprovalMode（原位改 MI）——两条路径都不得丢 formKey。
+     */
+    const switches: { kind: string; needsCollection: boolean }[] = [
+      { kind: "all", needsCollection: true }, // 单签 → 会签（重建）
+      { kind: "any", needsCollection: false }, // 会签 → 或签（档间直改）
+      { kind: "sequential", needsCollection: false }, // 或签 → 依次（档间直改）
+      { kind: "single", needsCollection: false }, // 依次 → 单签（重建）
+    ];
+    for (const step of switches) {
+      await openCardDrawer(1);
+      (document.querySelector(`[data-test="kind-${step.kind}"]`) as HTMLElement).click();
+      await flushPromises();
+      if (step.needsCollection) {
+        const assignee = document.querySelector<HTMLInputElement>('[data-test="drawer-assignee"]');
+        assignee!.value = "approvers";
+        assignee!.dispatchEvent(new Event("input", { bubbles: true }));
+        await flushPromises();
+      }
+      await saveDrawer();
+      expect(String(model.elementOf("solo").get("formKey"))).toBe("form_review");
+    }
+    // 节点 ID 全程未换（同 id 转换而非删旧建新）
+    expect(() => model.elementOf("solo")).not.toThrow();
+  });
+
+  it("纯流程模式：自由文本 formKey 输入保持既有合同（A17）", async () => {
+    const model = buildModel();
+    wrapper = mountDesigner(model, false);
+    await flushPromises();
+
+    await openCardDrawer(1);
+    expect(document.querySelector('[data-test="drawer-form-select"]')).toBeNull();
+    const input = document.querySelector<HTMLInputElement>('[data-test="drawer-formkey"]');
+    expect(input).not.toBeNull();
+    input!.value = "handwritten_form_v1";
+    input!.dispatchEvent(new Event("input", { bubbles: true }));
+    await flushPromises();
+    await saveDrawer();
+    expect(String(model.elementOf("solo").get("formKey"))).toBe("handwritten_form_v1");
+  });
+});

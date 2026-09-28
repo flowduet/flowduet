@@ -320,9 +320,36 @@ describe("Playground 默认表单闭环（#72：表单 → 绑定 → 保存 →
     await wrapper.find('input[data-test="open-doc-input"]').trigger("change");
     await flushPromises();
     expect(wrapper.find('[data-test="reference-issues"]').text()).toContain("ghost_form");
+    // A16（表单语境）：引用失效后导出报当前错误，旧的有效 XML 不再呈现为当前结果
+    await wrapper.find('[data-test="export-btn"]').trigger("click");
+    await flushPromises();
+    expect(wrapper.find('[data-test="xml-error"]').text()).toContain("ghost_form");
+    expect(wrapper.find('[data-test="xml-preview"]').exists()).toBe(false);
     await wrapper.find('[data-test="default-form-select"]').setValue("form_1");
     await flushPromises();
     expect(wrapper.find('[data-test="reference-issues"]').exists()).toBe(false);
+    // 修复后恢复导出（A16 后半）：引用修好后仍需业务配置完整——补上审批人，
+    // 当前配置重新产出有效 XML
+    const ghostCard = wrapper
+      .findAll('[data-test="node-card"]')
+      .find((card) => card.text().includes("审批节点"));
+    await ghostCard!.trigger("click");
+    await flushPromises();
+    const ghostAssignee = document.querySelector<HTMLInputElement>('[data-test="drawer-assignee"]');
+    ghostAssignee!.value = "${boss}";
+    ghostAssignee!.dispatchEvent(new Event("input", { bubbles: true }));
+    await flushPromises();
+    document.querySelector<HTMLElement>('[data-test="drawer-save"]')!.click();
+    await flushPromises();
+    await vi.waitFor(
+      () => {
+        expect(wrapper.find('[data-test="xml-preview"]').text()).toContain(
+          'flowduet:defaultFormKey="form_1"',
+        );
+      },
+      { timeout: 3000 },
+    );
+    expect(wrapper.find('[data-test="xml-error"]').exists()).toBe(false);
 
     // 即使目录恰好存在同样带空格的 ID，该引用仍不允许预览。
     pickFile(
@@ -384,5 +411,257 @@ describe("Playground 默认表单闭环（#72：表单 → 绑定 → 保存 →
 
     expect(wrapper.find('[data-test="preview-target-hint"]').exists()).toBe(true);
     expect(wrapper.find('[data-test="preview-node-select"]').text()).not.toContain("经理审批");
+  });
+});
+
+/**
+ * 多表单管理与节点覆盖闭环（#73）：双表单（默认继承 + 显式覆盖）经真实
+ * 组件串联的创建、绑定、保存打开恢复、删除守卫与预览目标隔离。
+ */
+
+/** 新建设计并在表单管理面板新建多张表单（名称依次传入） */
+async function setupWithForms(names: string[]): Promise<void> {
+  await wrapper!.find('[data-test="new-design-btn"]').trigger("click");
+  await flushPromises();
+  await wrapper!.find('[data-test="form-manager-btn"]').trigger("click");
+  await flushPromises();
+  for (const name of names) {
+    await wrapper!.find('[data-test="form-manager-new-name"]').setValue(name);
+    await wrapper!.find('[data-test="form-manager-create-btn"]').trigger("click");
+    await flushPromises();
+  }
+  document
+    .querySelector<HTMLElement>('[data-test="form-manager-dialog"] .el-dialog__headerbtn')!
+    .click();
+  await flushPromises();
+}
+
+/** 打开指定卡片的配置抽屉（卡片按文本匹配） */
+async function openCardOf(text: string): Promise<void> {
+  const card = wrapper!
+    .findAll('[data-test="node-card"]')
+    .find((candidate) => candidate.text().includes(text));
+  await card!.trigger("click");
+  await flushPromises();
+}
+
+describe("Playground 多表单管理与节点覆盖闭环（#73）", () => {
+  it("双表单：抽屉选覆盖、保存打开后默认/覆盖关系恢复、导出含两处引用", async () => {
+    wrapper = mount(App, { attachTo: document.body });
+    await setupWithForms(["申请单", "复核单"]);
+
+    // 默认 = 申请单；审批节点抽屉选「复核单」显式覆盖
+    await wrapper.find('[data-test="default-form-select"]').setValue("form_1");
+    await flushPromises();
+    await openCardOf("审批节点");
+    const select = document.querySelector<HTMLSelectElement>('[data-test="drawer-form-select"]');
+    expect(select).not.toBeNull();
+    // 继承选项呈现当前默认名，覆盖选项可区分
+    expect(select!.selectedOptions[0]?.text).toContain("继承默认（申请单）");
+    select!.value = "form_2";
+    select!.dispatchEvent(new Event("change", { bubbles: true }));
+    await flushPromises();
+    document.querySelector<HTMLElement>('[data-test="drawer-save"]')!.click();
+    await flushPromises();
+
+    // 卡片摘要：节点指定复核单（不再随默认变化）
+    expect(wrapper.find('[data-test="node-form-approval_1"]').text()).toContain(
+      "表单：复核单（节点指定）",
+    );
+
+    // 保存文档：forms 双表单 + xml 双引用
+    const created: Blob[] = [];
+    const objectUrlSpy = vi
+      .spyOn(URL, "createObjectURL")
+      .mockImplementation((blob: Blob): string => {
+        created.push(blob);
+        return "blob:mock";
+      });
+    const clickSpy = vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(() => {});
+    await wrapper.find('[data-test="save-doc-btn"]').trigger("click");
+    await flushPromises();
+    const document_ = JSON.parse(await created[0]!.text()) as {
+      forms: { id: string }[];
+      xml: string;
+    };
+    clickSpy.mockRestore();
+    objectUrlSpy.mockRestore();
+    expect(document_.forms.map((form) => form.id)).toEqual(["form_1", "form_2"]);
+    expect(document_.xml).toContain('flowduet:defaultFormKey="form_1"');
+    expect(document_.xml).toContain('flowable:formKey="form_2"');
+
+    // 换新设计后从文件打开：默认与覆盖关系逐项恢复
+    await wrapper.find('[data-test="new-design-btn"]').trigger("click");
+    await flushPromises();
+    pickFile(wrapper, JSON.stringify(document_));
+    await wrapper.find('input[data-test="open-doc-input"]').trigger("change");
+    await flushPromises();
+    expect(wrapper.find('[data-test="node-form-approval_1"]').text()).toContain(
+      "表单：复核单（节点指定）",
+    );
+    expect(wrapper.find('[data-test="default-form-select"]').element).toHaveProperty(
+      "value",
+      "form_1",
+    );
+
+    // 补审批人后组合导出：部署 XML 同时携带默认与覆盖引用
+    await openCardOf("审批节点");
+    const assignee = document.querySelector<HTMLInputElement>('[data-test="drawer-assignee"]');
+    assignee!.value = "${boss}";
+    assignee!.dispatchEvent(new Event("input", { bubbles: true }));
+    await flushPromises();
+    document.querySelector<HTMLElement>('[data-test="drawer-save"]')!.click();
+    await flushPromises();
+    await vi.waitFor(
+      () => {
+        expect(wrapper.find('[data-test="xml-preview"]').text()).toContain(
+          'flowable:formKey="form_2"',
+        );
+      },
+      { timeout: 3000 },
+    );
+    expect(wrapper.find('[data-test="xml-preview"]').text()).toContain(
+      'flowduet:defaultFormKey="form_1"',
+    );
+  });
+
+  it("删除守卫：被默认引用拒绝并说明位置，解除引用后可删除（A06）", async () => {
+    wrapper = mount(App, { attachTo: document.body });
+    await setupWithForms(["申请单"]);
+
+    await wrapper.find('[data-test="default-form-select"]').setValue("form_1");
+    await flushPromises();
+
+    // 删除被默认引用的表单：两段确认后错误就地反馈引用位置
+    await wrapper.find('[data-test="form-manager-btn"]').trigger("click");
+    await flushPromises();
+    await wrapper.find('[data-test="form-delete-btn-form_1"]').trigger("click");
+    await flushPromises();
+    await wrapper.find('[data-test="form-delete-confirm-form_1"]').trigger("click");
+    await flushPromises();
+    expect(wrapper.find('[data-test="doc-error"]').text()).toContain("流程默认表单");
+    expect(
+      wrapper.find('[data-test="form-manager-dialog"] [data-test="form-manager-error"]').text(),
+    ).toContain("流程默认表单");
+    expect(wrapper.find('[data-test="form-item-form_1"]').exists()).toBe(true);
+
+    // 解除默认引用后再删：成功，列表清空（上一轮错误横幅随操作自动清除）
+    document
+      .querySelector<HTMLElement>('[data-test="form-manager-dialog"] .el-dialog__headerbtn')!
+      .click();
+    await flushPromises();
+    await wrapper.find('[data-test="default-form-select"]').setValue("");
+    await flushPromises();
+    await wrapper.find('[data-test="form-manager-btn"]').trigger("click");
+    await flushPromises();
+    expect(wrapper.find('[data-test="form-manager-error"]').exists()).toBe(false);
+    await wrapper.find('[data-test="form-delete-btn-form_1"]').trigger("click");
+    await flushPromises();
+    await wrapper.find('[data-test="form-delete-confirm-form_1"]').trigger("click");
+    await flushPromises();
+    expect(wrapper.find('[data-test="form-manager-empty"]').exists()).toBe(true);
+    expect(wrapper.find('[data-test="doc-error"]').exists()).toBe(false);
+    expect(wrapper.find('[data-test="form-manager-error"]').exists()).toBe(false);
+  });
+
+  it("预览多目标：同表单双节点切换清理旧试填值；失效只阻止相关目标（AC5）", async () => {
+    wrapper = mount(App, { attachTo: document.body });
+    await setupWithForms(["申请单"]);
+
+    // 给申请单塞带默认值的字段（经真实 FormDesigner 的保存通道写入目录）
+    await wrapper.find('[data-test="form-manager-btn"]').trigger("click");
+    await flushPromises();
+    await wrapper.find('[data-test="form-edit-btn-form_1"]').trigger("click");
+    await flushPromises();
+    wrapper
+      .findComponent({ name: "FormDesigner" })
+      .vm.$emit(
+        "save",
+        JSON.stringify([{ type: "input", field: "reason", title: "申请事由", value: "默认事由" }]),
+        "{}",
+      );
+    await flushPromises();
+    document
+      .querySelector<HTMLElement>('[data-test="form-manager-dialog"] .el-dialog__headerbtn')!
+      .click();
+    await flushPromises();
+
+    // 默认 = form_1；approval_1 显式覆盖为同一张表单（两个目标同表单不同节点）
+    await wrapper.find('[data-test="default-form-select"]').setValue("form_1");
+    await flushPromises();
+    await openCardOf("审批节点");
+    const select = document.querySelector<HTMLSelectElement>('[data-test="drawer-form-select"]');
+    select!.value = "form_1";
+    select!.dispatchEvent(new Event("change", { bubbles: true }));
+    await flushPromises();
+    document.querySelector<HTMLElement>('[data-test="drawer-save"]')!.click();
+    await flushPromises();
+
+    // 再插入一个继承节点（同样解析到 form_1）
+    await wrapper.find('[data-test="insert-btn-approval_1"]').trigger("click");
+    await flushPromises();
+    document.querySelector<HTMLElement>('[data-test="insert-kind-approval"]')!.click();
+    await flushPromises();
+
+    // 预览覆盖节点：试填写入值
+    await wrapper.find('[data-test="form-preview-btn"]').trigger("click");
+    await flushPromises();
+    await wrapper.find('[data-test="preview-node-select"]').setValue("approval_1");
+    await flushPromises();
+    const input = document.querySelector<HTMLInputElement>(
+      '[data-test="form-preview-render"] input',
+    );
+    expect(input).not.toBeNull();
+    input!.value = "试用内容";
+    input!.dispatchEvent(new Event("input", { bubbles: true }));
+    await flushPromises();
+    expect(wrapper.find('[data-test="form-preview-values"]').text()).toContain("试用内容");
+
+    // 切到继承节点：目标即重挂（同表单也不带入旧试填值）
+    await wrapper.find('[data-test="preview-node-select"]').setValue("approval_2");
+    await flushPromises();
+    expect(wrapper.find('[data-test="form-preview"]').exists()).toBe(true);
+    expect(wrapper.find('[data-test="form-preview-values"]').text()).not.toContain("试用内容");
+
+    // 失效只阻止相关目标：篡改覆盖节点的 key 后重开——
+    // 覆盖节点预览报失效（保留原 key），继承节点仍渲染同一张有效表单
+    const created: Blob[] = [];
+    const objectUrlSpy = vi
+      .spyOn(URL, "createObjectURL")
+      .mockImplementation((blob: Blob): string => {
+        created.push(blob);
+        return "blob:mock";
+      });
+    const clickSpy = vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(() => {});
+    await wrapper.find('[data-test="save-doc-btn"]').trigger("click");
+    await flushPromises();
+    clickSpy.mockRestore();
+    objectUrlSpy.mockRestore();
+    const document_ = JSON.parse(await created[0]!.text()) as { xml: string };
+    pickFile(
+      wrapper,
+      JSON.stringify({
+        ...document_,
+        xml: document_.xml.replace('flowable:formKey="form_1"', 'flowable:formKey="ghost_form"'),
+      }),
+    );
+    document
+      .querySelector<HTMLElement>('[data-test="form-preview-dialog"] .el-dialog__headerbtn')!
+      .click();
+    await flushPromises();
+    await wrapper.find('input[data-test="open-doc-input"]').trigger("change");
+    await flushPromises();
+
+    await wrapper.find('[data-test="form-preview-btn"]').trigger("click");
+    await flushPromises();
+    await wrapper.find('[data-test="preview-node-select"]').setValue("approval_1");
+    await flushPromises();
+    expect(wrapper.find('[data-test="preview-target-error"]').text()).toContain("ghost_form");
+    expect(wrapper.find('[data-test="form-preview-render"]').exists()).toBe(false);
+
+    await wrapper.find('[data-test="preview-node-select"]').setValue("approval_2");
+    await flushPromises();
+    expect(wrapper.find('[data-test="preview-target-error"]').exists()).toBe(false);
+    expect(wrapper.find('[data-test="form-preview-render"]').exists()).toBe(true);
   });
 });

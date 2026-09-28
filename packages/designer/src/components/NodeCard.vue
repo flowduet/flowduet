@@ -85,6 +85,7 @@ const summary = computed(() => {
         v-if="formSummary"
         class="node-card-form"
         :class="{ 'node-card-form--invalid': formSummary.invalid }"
+        :title="formSummary.text"
         :data-test="`node-form-${node.id}`"
       >
         {{ formSummary.text }}

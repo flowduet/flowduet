@@ -121,6 +121,26 @@ describe("FormManager（目录管理面板）", () => {
     expect(wrapper.emitted("rename")).toEqual([["form_apply", "报销单"]]);
   });
 
+  it("删除经两段确认后上抛；取消不上抛（A06 的面板交互）", async () => {
+    wrapper = mount(FormManager, { props: { forms: [APPLY_FORM] } });
+    await flushPromises();
+
+    // 直接点删除只进入确认态，不上抛
+    await wrapper.find('[data-test="form-delete-btn-form_apply"]').trigger("click");
+    expect(wrapper.emitted("delete")).toBeUndefined();
+    expect(wrapper.find('[data-test="form-delete-confirm-form_apply"]').exists()).toBe(true);
+
+    // 取消回到常态
+    await wrapper.find('[data-test="form-delete-cancel-form_apply"]').trigger("click");
+    expect(wrapper.emitted("delete")).toBeUndefined();
+    expect(wrapper.find('[data-test="form-delete-confirm-form_apply"]').exists()).toBe(false);
+
+    // 再点删除并确认：上抛 id，操作归会话（引用守卫在会话侧）
+    await wrapper.find('[data-test="form-delete-btn-form_apply"]').trigger("click");
+    await wrapper.find('[data-test="form-delete-confirm-form_apply"]').trigger("click");
+    expect(wrapper.emitted("delete")).toEqual([["form_apply"]]);
+  });
+
   it("空白名称留在管理面板供修正，不丢输入或退出改名", async () => {
     wrapper = mount(FormManager, { props: { forms: [APPLY_FORM] } });
     await wrapper.find('[data-test="form-manager-new-name"]').setValue("   ");
