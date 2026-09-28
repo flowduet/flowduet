@@ -20,7 +20,7 @@
 
 ### 提交与合入
 
-- **实施任何 issue 都在独立 feature 分支上施工**：开工第一步从最新 `develop` 切出分支，实现提交全部落在该分支，不直接提交到 `develop`——保证每个票的改动可整体审阅、可单独丢弃或重做。
+- **实施任何 issue 都在独立 feature 分支上施工**：开工第一步从最新 `develop` 切出分支，实现提交全部落在该分支，不直接提交到 `develop`——保证每个票的改动可整体审阅、可单独丢弃或重做。本地装有 husky pre-commit 防线：在 `develop` / `main` 上直接 `git commit` 会被拦截并提示切分支（`pnpm install` 经 `prepare` 脚本自动装钩子）。
 - 提交信息遵循 [约定式提交](https://www.conventionalcommits.org/zh-hans/v1.0.0/)，中文描述（详见 AGENTS.md）。
 - CI 在 PR 上跑 Node 22 / 24 双矩阵：`pnpm lint` + `pnpm test` + `pnpm build`，绿了才可合并。
 - 影响公开包 `@flowduet/core` 或 `@flowduet/designer` 的 PR 应附 changeset：运行 `pnpm changeset`，选择实际受影响的包和版本类型。纯文档或仅改私有 Playground 的 PR 不需要发包 changeset。

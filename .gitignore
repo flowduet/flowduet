@@ -313,3 +313,5 @@ $RECYCLE.BIN/
 .mimosa/
 .v2c/
 .video_agent/
+# husky 运行态钩子（用户脚本 .husky/pre-commit 入库，_ 由 prepare 生成）
+.husky/_/
