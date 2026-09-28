@@ -23,7 +23,17 @@
 8. 组合部署导出：XML 双引用在场、无错误
 9. 按节点预览：选中审批节点后真实渲染器在场
 
+## 评审修复后的补充回归（Chrome 153 / CDP，覆盖时间点：57df718 之后）
+
+双轴评审修复（失效 key 保留口径、错误横幅清理）动过已测路径，按约定补真机回归：
+
+1. 注入 `flowable:formKey=" ghost_1 "` 的文档打开后不动选择直接保存：产物 XML 原值保留（` ghost_1 `，不 trim）——「失效 key 不自动清除/修正，改选才是修复动作」成立
+2. 全空白 key（`formKey="   "`）在抽屉选择器中以「（目录外）」只读项呈现，失效原因 UI 可见
+3. 删除守卫拒绝（含位置）→ 解除默认引用 → 再删成功后错误横幅随操作清除、列表清空
+
+插曲记录：首轮复测时保存产物不带空格，排查发现 playground 解析 workspace 包走 `dist/index.js`，评审修复后未重跑 designer build 导致页面仍运行旧 trim 代码（core 探针证实编译层本身保留空格）；重 build 后行为正确。教训：**UI 修复动 workspace 包后必须重新 build 再真机验证**。
+
 ## 自动化
 
-- 全仓 `pnpm lint / test / build` 通过（core 90、designer 124、form-create 53、playground 17，共 284 项）
-- 新增覆盖面：form-override 编译合同与四形态往返断言（core）、覆盖选择 UI 六用例（designer）、删除守卫四用例 + 双表单往返三用例（form-create session）、FormManager 删除交互（form-create components）、双表单闭环 / 删除守卫 / 预览多目标隔离三用例（playground 集成）
+- 全仓 `pnpm lint / test / build` 通过（core 90、designer 124、form-create 53、playground 17，共 284 项；评审修复后 designer 124 + playground 17 复跑全绿）
+- 新增覆盖面：form-override 编译合同与四形态往返断言（core）、覆盖选择 UI 七用例（designer，含四形态互切 A04）、删除守卫四用例 + 双表单往返三用例（form-create session）、FormManager 删除交互（form-create components）、双表单闭环 / 删除守卫 / 预览多目标隔离 / A16 表单语境（playground 集成）
