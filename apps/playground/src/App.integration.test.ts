@@ -540,17 +540,28 @@ describe("Playground 多表单管理与节点覆盖闭环（#73）", () => {
     await wrapper.find('[data-test="form-delete-confirm-form_1"]').trigger("click");
     await flushPromises();
     expect(wrapper.find('[data-test="doc-error"]').text()).toContain("流程默认表单");
+    expect(
+      wrapper.find('[data-test="form-manager-dialog"] [data-test="form-manager-error"]').text(),
+    ).toContain("流程默认表单");
     expect(wrapper.find('[data-test="form-item-form_1"]').exists()).toBe(true);
 
     // 解除默认引用后再删：成功，列表清空（上一轮错误横幅随操作自动清除）
+    document
+      .querySelector<HTMLElement>('[data-test="form-manager-dialog"] .el-dialog__headerbtn')!
+      .click();
+    await flushPromises();
     await wrapper.find('[data-test="default-form-select"]').setValue("");
     await flushPromises();
+    await wrapper.find('[data-test="form-manager-btn"]').trigger("click");
+    await flushPromises();
+    expect(wrapper.find('[data-test="form-manager-error"]').exists()).toBe(false);
     await wrapper.find('[data-test="form-delete-btn-form_1"]').trigger("click");
     await flushPromises();
     await wrapper.find('[data-test="form-delete-confirm-form_1"]').trigger("click");
     await flushPromises();
     expect(wrapper.find('[data-test="form-manager-empty"]').exists()).toBe(true);
     expect(wrapper.find('[data-test="doc-error"]').exists()).toBe(false);
+    expect(wrapper.find('[data-test="form-manager-error"]').exists()).toBe(false);
   });
 
   it("预览多目标：同表单双节点切换清理旧试填值；失效只阻止相关目标（AC5）", async () => {

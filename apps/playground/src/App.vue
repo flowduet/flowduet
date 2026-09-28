@@ -102,6 +102,8 @@ const designerKey = ref(0);
 /** 设计文档链路（#71/#72）的保存结果 / 错误反馈 */
 const docStatus = ref("");
 const docError = ref("");
+/** 表单管理弹窗内的操作错误：引用位置必须在删除操作处可读。 */
+const formManagerError = ref("");
 const fileInput = ref<HTMLInputElement | null>(null);
 /** 表单目录换代钥：会话目录非响应式，目录操作后递增驱动视图重算 */
 const formsTick = ref(0);
@@ -187,45 +189,57 @@ function refreshForms(): void {
   formsTick.value += 1;
 }
 
-/** 表单目录操作的前置清理：成功操作清掉上一次错误，与文档级操作同一惯例 */
-function clearDocError(): void {
+/** 表单目录操作前清除上一次错误，避免修复后仍显示旧位置。 */
+function clearFormError(): void {
   docError.value = "";
+  formManagerError.value = "";
+}
+
+function reportFormError(error: unknown): void {
+  const message = messageOf(error);
+  docError.value = message;
+  formManagerError.value = message;
+}
+
+function openFormManager(): void {
+  formManagerError.value = "";
+  managerVisible.value = true;
 }
 
 function onFormCreate(name: string): void {
-  clearDocError();
+  clearFormError();
   try {
     session.createForm(name);
     refreshForms();
   } catch (e) {
-    docError.value = messageOf(e);
+    reportFormError(e);
   }
 }
 
 function onFormRename(id: string, name: string): void {
-  clearDocError();
+  clearFormError();
   try {
     session.renameForm(id, name);
     refreshForms();
   } catch (e) {
-    docError.value = messageOf(e);
+    reportFormError(e);
   }
 }
 
 function onFormUpdateContent(id: string, rules: string, options: string): void {
-  clearDocError();
+  clearFormError();
   session.updateFormContent(id, rules, options);
   refreshForms();
 }
 
 /** 删除表单：被引用时会被会话拒绝，引用位置随错误就地反馈（A06） */
 function onFormDelete(id: string): void {
-  clearDocError();
+  clearFormError();
   try {
     session.deleteForm(id);
     refreshForms();
   } catch (e) {
-    docError.value = messageOf(e);
+    reportFormError(e);
   }
 }
 
@@ -355,7 +369,7 @@ onUnmounted(() => {
           data-test="open-doc-input"
           @change="onOpenFile"
         />
-        <ElButton data-test="form-manager-btn" @click="managerVisible = true">表单管理</ElButton>
+        <ElButton data-test="form-manager-btn" @click="openFormManager">表单管理</ElButton>
         <ElButton data-test="form-preview-btn" @click="previewVisible = true">预览表单</ElButton>
         <ElButton type="primary" data-test="save-doc-btn" @click="onDownloadDocument">
           下载设计文档
@@ -402,6 +416,14 @@ onUnmounted(() => {
       width="520px"
       data-test="form-manager-dialog"
     >
+      <p
+        v-if="formManagerError"
+        class="playground-error form-manager-action-error"
+        data-test="form-manager-error"
+        role="alert"
+      >
+        {{ formManagerError }}
+      </p>
       <FormManager
         :forms="formList"
         @create="onFormCreate"
@@ -561,6 +583,11 @@ onUnmounted(() => {
   color: #e5484d;
   font-size: 13px;
   white-space: pre-wrap;
+}
+
+.form-manager-action-error {
+  margin: 0 0 12px;
+  overflow-wrap: anywhere;
 }
 
 .playground-hint {
