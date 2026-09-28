@@ -4,7 +4,11 @@ import type { BpmnModel, BlockTreeNode } from "@flowduet/core";
 import { deriveBlockTree, resolveEffectiveForm } from "@flowduet/core";
 import BlockNodeList from "./BlockNodeList.vue";
 import NodeDrawer from "./NodeDrawer.vue";
-import type { DesignerFormOption, NodeFormSummary } from "../form-options.js";
+import {
+  labelFormOptions,
+  type DesignerFormOption,
+  type NodeFormSummary,
+} from "../form-options.js";
 import {
   addBranchToBlock,
   CC_RECIPIENTS_PLACEHOLDER,
@@ -96,6 +100,9 @@ const defaultFormInvalid = computed<boolean>(() => {
   return key !== key.trim() || !options.some((option) => option.id === key);
 });
 
+/** 默认选择与节点摘要共用重名标签，避免同一 ID 在不同入口显示不一致。 */
+const labelledFormOptions = computed(() => labelFormOptions(props.formOptions ?? []));
+
 /**
  * 审批节点的有效表单摘要（#72）：显式覆盖优先，否则继承流程默认；网关与
  * 抄送不参与（无条目即不展示）。失效引用保留 key 展示并标记，供用户修复。
@@ -103,8 +110,8 @@ const defaultFormInvalid = computed<boolean>(() => {
 const formSummaries = computed<Map<string, NodeFormSummary>>(() => {
   void version.value;
   const map = new Map<string, NodeFormSummary>();
-  const options = props.formOptions;
-  if (options === undefined) return map;
+  if (props.formOptions === undefined) return map;
+  const options = labelledFormOptions.value;
   const walk = (items: BlockTreeNode[]): void => {
     for (const item of items) {
       if (item.kind === "block") {
@@ -114,16 +121,16 @@ const formSummaries = computed<Map<string, NodeFormSummary>>(() => {
       // 非审批节点（网关/抄送/事件）由解析器统一返回 none，无需预判
       const ref = resolveEffectiveForm(model.value, item.id);
       if (ref.source === "none" || ref.key === undefined) continue;
-      const name =
+      const label =
         ref.key === ref.key.trim()
-          ? options.find((option) => option.id === ref.key)?.name
+          ? options.find((option) => option.id === ref.key)?.label
           : undefined;
       map.set(
         item.id,
-        name === undefined
+        label === undefined
           ? { text: `表单：${ref.key}（引用失效）`, invalid: true }
           : {
-              text: `表单：${name}（${ref.source === "node" ? "节点指定" : "继承默认"}）`,
+              text: `表单：${label}（${ref.source === "node" ? "节点指定" : "继承默认"}）`,
               invalid: false,
             },
       );
@@ -262,12 +269,12 @@ function onDrawerSaved(): void {
       >
         <option value="" data-test="default-form-option-none">无</option>
         <option
-          v-for="form in formOptions"
+          v-for="form in labelledFormOptions"
           :key="form.id"
           :value="form.id"
           :data-test="`default-form-option-${form.id}`"
         >
-          {{ form.name }}
+          {{ form.label }}
         </option>
         <!-- key 不在目录中：追加只读项呈现原值，用户可见并可改选修复 -->
         <option v-if="defaultFormInvalid" :value="model.defaultFormKey">

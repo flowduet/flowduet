@@ -190,25 +190,48 @@ describe("审批节点表单覆盖选择（#73）", () => {
     expect(String(model.elementOf("solo").get("formKey"))).toBe("form_apply");
   });
 
-  it("同名不同 ID 的表单在选项中附 ID 区分（A05）", async () => {
+  it("同名不同 ID 的表单在默认、覆盖与节点摘要中均可区分（A05）", async () => {
     const model = buildModel();
+    model.setDefaultFormKey("form_apply_2");
+    model.elementOf("solo").set("formKey", "form_apply");
     wrapper = mount(DingtalkDesigner, {
       props: {
         model,
         formOptions: [
           { id: "form_apply", name: "申请单" },
           { id: "form_apply_2", name: "申请单" },
+          { id: "form_review", name: "复核单" },
         ],
       },
       attachTo: document.body,
     });
     await flushPromises();
 
+    const defaultOptions = wrapper
+      .findAll('[data-test="default-form-select"] option')
+      .map((option) => option.text());
+    expect(defaultOptions).toEqual([
+      "无",
+      "申请单（form_apply）",
+      "申请单（form_apply_2）",
+      "复核单",
+    ]);
+    expect(wrapper.find('[data-test="node-form-solo"]').text()).toContain(
+      "申请单（form_apply）（节点指定）",
+    );
+    expect(wrapper.find('[data-test="node-form-counter"]').text()).toContain(
+      "申请单（form_apply_2）（继承默认）",
+    );
+    expect(wrapper.find('[data-test="node-form-solo"]').attributes("title")).toBe(
+      wrapper.find('[data-test="node-form-solo"]').text(),
+    );
+
     await openCardDrawer(1);
     const options = Array.from(
       document.querySelectorAll<HTMLSelectElement>('[data-test="drawer-form-select"] option'),
     );
     const labelled = options.map((option) => option.text ?? option.textContent ?? "");
+    expect(labelled[0]).toBe("继承默认（申请单（form_apply_2））");
     expect(labelled.some((text) => text.includes("申请单（form_apply）"))).toBe(true);
     expect(labelled.some((text) => text.includes("申请单（form_apply_2）"))).toBe(true);
   });

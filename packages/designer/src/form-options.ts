@@ -10,6 +10,18 @@ export interface DesignerFormOption {
   name: string;
 }
 
+/** 同名表单在各选择入口和节点摘要中统一附 ID，避免显示名造成绑定歧义。 */
+export function labelFormOptions(
+  options: readonly DesignerFormOption[],
+): Array<DesignerFormOption & { label: string }> {
+  const nameCount = new Map<string, number>();
+  for (const option of options) nameCount.set(option.name, (nameCount.get(option.name) ?? 0) + 1);
+  return options.map((option) => ({
+    ...option,
+    label: (nameCount.get(option.name) ?? 0) > 1 ? `${option.name}（${option.id}）` : option.name,
+  }));
+}
+
 /**
  * 节点卡片上的有效表单摘要：由 DingtalkDesigner 一次算好随树下发，
  * 卡片只负责呈现（含引用失效标记），不再各自解析。

@@ -2,7 +2,7 @@
 import { computed, ref, watch } from "vue";
 import { ElButton, ElDrawer, ElForm, ElFormItem, ElInput } from "element-plus";
 import type { ApprovalMode, BpmnModel, ModdleElement } from "@flowduet/core";
-import type { DesignerFormOption } from "../form-options.js";
+import { labelFormOptions, type DesignerFormOption } from "../form-options.js";
 import {
   CC_RECIPIENTS_PLACEHOLDER,
   convertApprovalToMulti,
@@ -84,21 +84,15 @@ const isCcTask = computed(() => {
 
 /** 同名不同 ID 的表单附 ID 呈现（A05），让选择界面可区分 */
 const labelledFormOptions = computed(() => {
-  const options = props.formOptions ?? [];
-  const nameCount = new Map<string, number>();
-  for (const option of options) nameCount.set(option.name, (nameCount.get(option.name) ?? 0) + 1);
-  return options.map((option) => ({
-    ...option,
-    label: (nameCount.get(option.name) ?? 0) > 1 ? `${option.name}（${option.id}）` : option.name,
-  }));
+  return labelFormOptions(props.formOptions ?? []);
 });
 
 /** 继承选项文案：把「继承到什么」直接摆进选项（无默认时如实说明） */
 const inheritFormLabel = computed(() => {
   const key = props.model.defaultFormKey;
   if (key === undefined) return "继承默认（当前未设默认表单）";
-  const name = (props.formOptions ?? []).find((option) => option.id === key)?.name;
-  return name === undefined ? `继承默认（${key}）` : `继承默认（${name}）`;
+  const label = labelledFormOptions.value.find((option) => option.id === key)?.label;
+  return label === undefined ? `继承默认（${key}）` : `继承默认（${label}）`;
 });
 
 /** 当前 key 指向目录外定义（或含首尾空格）：保留原值的只读项供修复（A11） */
