@@ -210,6 +210,16 @@ function onFormUpdateContent(id: string, rules: string, options: string): void {
   refreshForms();
 }
 
+/** 删除表单：被引用时会被会话拒绝，引用位置随错误就地反馈（A06） */
+function onFormDelete(id: string): void {
+  try {
+    session.deleteForm(id);
+    refreshForms();
+  } catch (e) {
+    docError.value = messageOf(e);
+  }
+}
+
 async function doExport(): Promise<void> {
   if (exportTimer !== undefined) clearTimeout(exportTimer);
   exportTimer = undefined;
@@ -388,6 +398,7 @@ onUnmounted(() => {
         @create="onFormCreate"
         @rename="onFormRename"
         @update-content="onFormUpdateContent"
+        @delete="onFormDelete"
       />
     </ElDialog>
 
