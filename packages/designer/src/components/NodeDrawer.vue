@@ -2,6 +2,7 @@
 import { computed, ref, watch } from "vue";
 import { ElButton, ElDrawer, ElForm, ElFormItem, ElInput } from "element-plus";
 import type { ApprovalMode, BpmnModel, ModdleElement } from "@flowduet/core";
+import type { DesignerFormOption } from "../form-options.js";
 import {
   CC_RECIPIENTS_PLACEHOLDER,
   convertApprovalToMulti,
@@ -15,13 +16,20 @@ import {
  * 节点配置抽屉（#23 最小集 + #25 字段面）。读写直接落模型——表单只是
  * 字段缓冲，保存即写回，无独立状态可失同步。
  *
- * 形态自适应：审批任务（单签/多人三档 + formKey 占位）、抄送任务（收件人）、
+ * 形态自适应：审批任务（单签/多人三档 + 表单）、抄送任务（收件人）、
  * 分支头连线（条件表达式）。单人↔多人经 operations 的同 id 转换（保连通）。
+ *
+ * 表单字段双形态（#73）：传入 formOptions（表单集成模式）时，formKey 由
+ * 自由文本占位升级为目录选择——继承默认 / 显式覆盖 / 失效 key 只读项保留；
+ * 不传时保持自由文本（纯流程宿主的手写 formKey 合同，A17）。
  */
 const props = defineProps<{
   model: BpmnModel;
   /** exactOptional 下显式传 undefined 是合法形态（未选中节点时） */
   nodeId?: string | undefined;
+  /** 中立表单目录摘要（#73）：传入即启用表单集成模式的覆盖选择；
+   *  exactOptional 下显式传 undefined 是合法形态（纯流程宿主） */
+  formOptions?: readonly DesignerFormOption[] | undefined;
 }>();
 
 const emit = defineEmits<{
@@ -70,6 +78,36 @@ const isTask = computed(() => currentNode()?.$type === "bpmn:UserTask");
 const isCcTask = computed(() => {
   const el = currentNode();
   return el?.$type === "bpmn:ServiceTask" && el.get("ccTo") !== undefined;
+});
+
+// ── 表单覆盖选择（#73，仅表单集成模式）：继承 / 覆盖 / 失效保留 ──
+
+/** 同名不同 ID 的表单附 ID 呈现（A05），让选择界面可区分 */
+const labelledFormOptions = computed(() => {
+  const options = props.formOptions ?? [];
+  const nameCount = new Map<string, number>();
+  for (const option of options) nameCount.set(option.name, (nameCount.get(option.name) ?? 0) + 1);
+  return options.map((option) => ({
+    ...option,
+    label: (nameCount.get(option.name) ?? 0) > 1 ? `${option.name}（${option.id}）` : option.name,
+  }));
+});
+
+/** 继承选项文案：把「继承到什么」直接摆进选项（无默认时如实说明） */
+const inheritFormLabel = computed(() => {
+  const key = props.model.defaultFormKey;
+  if (key === undefined) return "继承默认（当前未设默认表单）";
+  const name = (props.formOptions ?? []).find((option) => option.id === key)?.name;
+  return name === undefined ? `继承默认（${key}）` : `继承默认（${name}）`;
+});
+
+/** 当前 key 指向目录外定义（或含首尾空格）：保留原值的只读项供修复（A11） */
+const overrideKeyInvalid = computed(() => {
+  const options = props.formOptions;
+  if (options === undefined) return false;
+  const key = formKey.value;
+  if (key.trim() === "") return false;
+  return key !== key.trim() || !options.some((option) => option.id === key);
 });
 
 // ── 条件分支抽屉（#24）：点支路头连线时呈现条件表达式字段 ──
@@ -300,7 +338,29 @@ function save(): void {
           </button>
         </div>
       </ElFormItem>
-      <ElFormItem label="表单标识（占位）">
+      <!-- 表单双形态（#73）：集成模式 = 目录选择（原生 select，与默认表单条语汇一致，
+           也规避 ElSelect 泛型组件的 vue-tsc 严格模板检查）；纯流程模式 = 自由文本占位 -->
+      <ElFormItem v-if="formOptions" label="表单">
+        <select
+          class="drawer-form-select"
+          data-test="drawer-form-select"
+          :value="formKey"
+          @change="formKey = ($event.target as HTMLSelectElement).value"
+        >
+          <option value="" data-test="drawer-form-inherit">{{ inheritFormLabel }}</option>
+          <option
+            v-for="form in labelledFormOptions"
+            :key="form.id"
+            :value="form.id"
+            :data-test="`drawer-form-option-${form.id}`"
+          >
+            {{ form.label }}
+          </option>
+          <!-- key 不在目录中：追加只读项呈现原值，用户可见并可改选修复 -->
+          <option v-if="overrideKeyInvalid" :value="formKey">{{ formKey }}（目录外）</option>
+        </select>
+      </ElFormItem>
+      <ElFormItem v-else label="表单标识（占位）">
         <ElInput v-model="formKey" data-test="drawer-formkey" placeholder="如 leave_form_v1" />
       </ElFormItem>
     </ElForm>
@@ -377,5 +437,16 @@ function save(): void {
   color: #909399;
   font-size: 13px;
   padding: 12px 0;
+}
+
+.drawer-form-select {
+  width: 100%;
+  height: 32px;
+  padding: 0 8px;
+  border: 1px solid #dcdfe6;
+  border-radius: 4px;
+  background: #fff;
+  color: #303133;
+  font-size: 13px;
 }
 </style>

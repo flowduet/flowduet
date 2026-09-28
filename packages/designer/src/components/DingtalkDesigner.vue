@@ -297,6 +297,7 @@ function onDrawerSaved(): void {
       v-model="drawerVisible"
       :model="model"
       :node-id="activeId"
+      :form-options="formOptions"
       @saved="onDrawerSaved"
       @error="onDrawerError"
     />
