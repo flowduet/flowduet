@@ -338,9 +338,14 @@ for t in json.load(sys.stdin)['data']:
     print(t['id'])
 "); do
   COMPLETE_RESP="$(mktemp)"
-  COMPLETE_HTTP=$(curl -s -o "$COMPLETE_RESP" -w "%{http_code}" -u "$SMOKE_USER:$SMOKE_PASS" \
-    -H "Content-Type: application/json" -d '{"action":"complete"}' \
-    "$RUNTIME_API/tasks/$tid")
+  if ! COMPLETE_HTTP=$(curl -sS -o "$COMPLETE_RESP" -w "%{http_code}" \
+    -u "$SMOKE_USER:$SMOKE_PASS" -H "Content-Type: application/json" \
+    -d '{"action":"complete"}' "$RUNTIME_API/tasks/$tid"); then
+    echo "✗ 完成会签任务请求失败（${tid}）" >&2
+    cat "$COMPLETE_RESP" >&2
+    rm -f "$COMPLETE_RESP"
+    exit 1
+  fi
   if [ "$COMPLETE_HTTP" != "200" ]; then
     echo "✗ 完成会签任务失败 HTTP ${COMPLETE_HTTP}（${tid}）：" >&2
     cat "$COMPLETE_RESP" >&2
