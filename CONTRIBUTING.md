@@ -2,7 +2,24 @@
 
 ## 分支与提交
 
-- 集成分支为 `develop`；feature 分支命名 `feat/<issue 号>-<短横线摘要>`，经 PR（squash）合入。
+### 分支体系与命名
+
+分支由 [GitHub 规则集](https://github.com/flowduet/flowduet/rules)（Settings → Rulesets，四条，均无人可绕过）在服务器端强制；本节是它的可读版本。
+
+| 分支                           | 用途                                          | 生命周期                                                      |
+| ------------------------------ | --------------------------------------------- | ------------------------------------------------------------- |
+| `develop`                      | 集成分支                                      | 常驻；仅接受 PR（squash）合入，CI 必绿，禁强推与删除          |
+| `main`                         | 默认分支、发布锚点                            | 常驻；仅接受来自 `develop` 的发版 PR（merge commit），CI 必绿 |
+| `feat/<issue 号>-<短横线摘要>` | 功能实施（主力形态）                          | 从最新 `develop` 切出，PR 合入后删除                          |
+| `fix/<issue 号>-<短横线摘要>`  | 缺陷修复                                      | 同上                                                          |
+| `docs/` `chore/` `refactor/`   | 文档、杂务、重构票                            | 同上                                                          |
+| `release/<摘要>`               | 版本 PR（`pnpm version-packages` 的工作分支） | 从 `develop` 切出，以 `develop` 为目标，合后删除              |
+| `prototype/<摘要>`             | 原型与观感验收载体                            | 长期保留，允许直推                                            |
+
+命名约束：新分支名必须在上述前缀内（小写 kebab-case 摘要），白名单外的名字会被远端**拒绝创建**——本地 `git branch -m` 改名后重推即可。将来新增前缀（如 `hotfix/`，或引入 changesets bot 时其硬编码的 `changeset-release/`）需同步编辑规则集的排除列表。发版 tag（`<包名>@<版本>`，由 `changeset publish` 生成）不可删除或重指，与「不撤包、不复用版本号」的纪律一致。
+
+### 提交与合入
+
 - **实施任何 issue 都在独立 feature 分支上施工**：开工第一步从最新 `develop` 切出分支，实现提交全部落在该分支，不直接提交到 `develop`——保证每个票的改动可整体审阅、可单独丢弃或重做。
 - 提交信息遵循 [约定式提交](https://www.conventionalcommits.org/zh-hans/v1.0.0/)，中文描述（详见 AGENTS.md）。
 - CI 在 PR 上跑 Node 22 / 24 双矩阵：`pnpm lint` + `pnpm test` + `pnpm build`，绿了才可合并。
