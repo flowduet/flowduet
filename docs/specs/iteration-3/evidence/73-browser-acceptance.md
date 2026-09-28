@@ -1,5 +1,7 @@
 # #73 Codex 内置浏览器功能验收（2026-09-28）
 
+本文件保留修复前的验收结果；A05、A06 及 B09 的后续验证见 [`73-fix-verification.md`](./73-fix-verification.md)。
+
 ## 范围与环境
 
 - 基线：`dbeaef3`（`feat/73-multi-form-override`），工作区干净；先执行 `pnpm build`，通过后启动 Playground：`pnpm --filter @flowduet/playground dev --host 127.0.0.1 --port 5199 --strictPort`。
