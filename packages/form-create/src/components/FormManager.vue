@@ -6,9 +6,10 @@ import { assertFormDefinitionValid } from "../form-schema.js";
 import FormDesigner from "./FormDesigner.vue";
 
 /**
- * 表单管理面板（#72 最小形态）：列表 + 新建 + 改名 + 进入设计器编辑内容。
- * 删除、同名区分与完整管理 UI 属下一票；本面板只经事件上抛操作，
- * 状态归 FlowDesignSession，宿主接线即可。
+ * 表单管理面板（#72 最小形态 + #73 删除）：列表 + 新建 + 改名 + 删除 +
+ * 进入设计器编辑内容。删除走两段确认（内容有设计工作量，误删代价高），
+ * 引用守卫在会话侧（deleteForm），面板只经事件上抛操作，状态归
+ * FlowDesignSession，宿主接线即可。
  */
 defineProps<{
   forms: readonly FormDefinition[];
@@ -19,6 +20,8 @@ const emit = defineEmits<{
   rename: [id: string, name: string];
   /** 设计器保存：内容（rules/options）成对上抛 */
   updateContent: [id: string, rules: string, options: string];
+  /** 删除确认后的上抛：被引用时的拒绝与位置说明由会话 deleteForm 决定 */
+  delete: [id: string];
 }>();
 
 const newName = ref("");
@@ -26,6 +29,8 @@ const renamingId = ref<string | null>(null);
 const renamingValue = ref("");
 const createError = ref("");
 const renameError = ref("");
+/** 两段删除确认：正在确认删除的表单 id（与改名态互斥展示） */
+const deletingId = ref<string | null>(null);
 const editing = ref<FormDefinition | null>(null);
 const editVisible = ref(false);
 const editError = ref("");
@@ -43,8 +48,23 @@ function submitCreate(): void {
 function startRename(id: string, current: string): void {
   createError.value = "";
   renameError.value = "";
+  deletingId.value = null;
   renamingId.value = id;
   renamingValue.value = current;
+}
+
+/** 进入删除确认态：先取消可能进行中的改名（两种行内态互斥） */
+function requestDelete(id: string): void {
+  renamingId.value = null;
+  deletingId.value = id;
+}
+
+/** 确认删除：上抛会话执行；被引用时的拒绝消息由宿主回显 */
+function confirmDelete(): void {
+  const id = deletingId.value;
+  if (id === null) return;
+  deletingId.value = null;
+  emit("delete", id);
 }
 
 function submitRename(): void {
@@ -140,6 +160,26 @@ function onDesignerSave(rules: string, options: string): void {
             确定
           </ElButton>
         </template>
+        <template v-else-if="deletingId === form.id">
+          <span class="form-manager-item-name">删除后不可恢复，确认删除？</span>
+          <span class="form-manager-item-actions">
+            <ElButton
+              size="small"
+              type="danger"
+              :data-test="`form-delete-confirm-${form.id}`"
+              @click="confirmDelete"
+            >
+              确认删除
+            </ElButton>
+            <ElButton
+              size="small"
+              :data-test="`form-delete-cancel-${form.id}`"
+              @click="deletingId = null"
+            >
+              取消
+            </ElButton>
+          </span>
+        </template>
         <template v-else>
           <span class="form-manager-item-name" :title="form.id">
             {{ form.name }}
@@ -162,6 +202,15 @@ function onDesignerSave(rules: string, options: string): void {
               @click="openEditor(form)"
             >
               编辑内容
+            </ElButton>
+            <ElButton
+              link
+              size="small"
+              type="danger"
+              :data-test="`form-delete-btn-${form.id}`"
+              @click="requestDelete(form.id)"
+            >
+              删除
             </ElButton>
           </span>
         </template>

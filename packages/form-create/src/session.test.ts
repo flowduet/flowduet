@@ -167,3 +167,154 @@ describe("FlowDesignSession", () => {
     expect((await session.save()).document.xml).toBe(document.xml);
   });
 });
+
+/**
+ * 表单删除守卫（#73，A06）：被流程默认或任意审批节点引用的表单拒绝删除
+ * 并列出位置；解除全部引用后才可删除。未绑定表单随时可删。
+ */
+describe("FlowDesignSession 表单删除守卫（#73）", () => {
+  function buildMultiNodeFlow(): BpmnModel {
+    return BpmnModel.create({ processId: "delete_guard_flow", adapter: flowableAdapter })
+      .addStartEvent({ id: "start", name: "开始" })
+      .addUserTask({ id: "solo", name: "经理审批", assignee: "${manager}" })
+      .addApprovalTask({ id: "counter", name: "部门会签", collection: "approvers", mode: "all" })
+      .addEndEvent({ id: "end", name: "结束" })
+      .addSequenceFlow({ id: "f1", sourceRef: "start", targetRef: "solo" })
+      .addSequenceFlow({ id: "f2", sourceRef: "solo", targetRef: "counter" })
+      .addSequenceFlow({ id: "f3", sourceRef: "counter", targetRef: "end" });
+  }
+
+  it("未被引用的表单直接删除；不存在的表单明确报错", () => {
+    const session = new FlowDesignSession(buildMultiNodeFlow());
+    const apply = session.createForm("申请单");
+    const review = session.createForm("复核单");
+    session.deleteForm(review.id);
+    expect(session.current?.forms).toHaveLength(1);
+    expect(session.current?.forms[0]?.id).toBe(apply.id);
+    expect(() => session.deleteForm(review.id)).toThrow("不存在");
+  });
+
+  it("被流程默认引用时拒绝删除并列出位置；解除默认引用后可删", () => {
+    const session = new FlowDesignSession(buildMultiNodeFlow());
+    const apply = session.createForm("申请单");
+    session.current?.model.setDefaultFormKey(apply.id);
+
+    expect(() => session.deleteForm(apply.id)).toThrow("流程默认表单");
+    expect(session.current?.forms).toHaveLength(1);
+
+    session.current?.model.setDefaultFormKey(undefined);
+    session.deleteForm(apply.id);
+    expect(session.current?.forms).toHaveLength(0);
+  });
+
+  it("被任意审批节点引用时拒绝删除并列出节点位置；清空覆盖后可删", () => {
+    const session = new FlowDesignSession(buildMultiNodeFlow());
+    const review = session.createForm("复核单");
+    const model = session.current?.model;
+    model?.elementOf("solo").set("formKey", review.id);
+    model?.elementOf("counter").set("formKey", review.id);
+
+    // 两个引用位置都在错误信息中（多节点复用同一表单的删除面）
+    const error = (() => {
+      try {
+        session.deleteForm(review.id);
+        return undefined;
+      } catch (e) {
+        return e instanceof Error ? e.message : String(e);
+      }
+    })();
+    expect(error).toContain("经理审批");
+    expect(error).toContain("部门会签");
+    expect(session.current?.forms).toHaveLength(1);
+
+    model?.elementOf("solo").set("formKey", undefined);
+    expect(() => session.deleteForm(review.id)).toThrow("部门会签");
+    model?.elementOf("counter").set("formKey", undefined);
+    session.deleteForm(review.id);
+    expect(session.current?.forms).toHaveLength(0);
+  });
+
+  it("带首尾空格的 key 不算引用（与引用诊断口径一致），可删除", () => {
+    const session = new FlowDesignSession(buildMultiNodeFlow());
+    const apply = session.createForm("申请单");
+    // 失效引用（目录外）不阻止删除目录内表单——修复失效引用是改 key，不是删表单
+    session.current?.model.setDefaultFormKey("missing_form");
+    session.deleteForm(apply.id);
+    expect(session.current?.forms).toHaveLength(0);
+  });
+});
+
+/**
+ * 双表单默认/覆盖关系往返（#73，AC8）：反复保存打开后表单 ID、内容与
+ * 默认/覆盖关系保持一致；目录不跨文档共享、打开产物与原文档语义等价。
+ */
+describe("FlowDesignSession 双表单默认与覆盖往返（#73）", () => {
+  const APPLY_RULES = JSON.stringify([{ type: "input", field: "reason", title: "申请事由" }]);
+  const REVIEW_RULES = JSON.stringify([{ type: "input", field: "comment", title: "复核意见" }]);
+
+  function buildSession(): FlowDesignSession {
+    const model = BpmnModel.create({ processId: "dual_form_flow", adapter: flowableAdapter })
+      .addStartEvent({ id: "start", name: "开始" })
+      .addUserTask({ id: "solo", name: "经理审批", assignee: "${manager}" })
+      .addApprovalTask({ id: "counter", name: "部门会签", collection: "approvers", mode: "all" })
+      .addEndEvent({ id: "end", name: "结束" })
+      .addSequenceFlow({ id: "f1", sourceRef: "start", targetRef: "solo" })
+      .addSequenceFlow({ id: "f2", sourceRef: "solo", targetRef: "counter" })
+      .addSequenceFlow({ id: "f3", sourceRef: "counter", targetRef: "end" });
+    const session = new FlowDesignSession(model);
+    session.createForm("申请单");
+    session.createForm("复核单");
+    session.updateFormContent("form_1", APPLY_RULES, "{}");
+    session.updateFormContent("form_2", REVIEW_RULES, "{}");
+    // 默认 = 申请单（solo 继承）；counter 显式覆盖 = 复核单
+    model.setDefaultFormKey("form_1");
+    model.elementOf("counter").set("formKey", "form_2");
+    return session;
+  }
+
+  it("反复保存打开：ID、规则与默认/覆盖关系逐项恢复且稳定", async () => {
+    const session = buildSession();
+    const first = await session.save();
+
+    // 打开后目录与绑定关系逐项核对
+    const state = await session.open(first.json);
+    expect(state.forms.map((form) => form.id)).toEqual(["form_1", "form_2"]);
+    expect(state.forms[0]).toMatchObject({ name: "申请单", rules: APPLY_RULES });
+    expect(state.forms[1]).toMatchObject({ name: "复核单", rules: REVIEW_RULES });
+    expect(state.model.defaultFormKey).toBe("form_1");
+    expect(String(state.model.elementOf("counter").get("formKey"))).toBe("form_2");
+    expect(state.model.elementOf("solo").get("formKey")).toBeUndefined();
+    expect(session.referenceIssues).toEqual([]);
+
+    // 第二轮往返与第一轮逐字等价（不漂移）
+    const second = await session.save();
+    expect(second.json).toBe(first.json);
+  });
+
+  it("改名不改 ID：改名后往返，引用关系继续指向原 ID", async () => {
+    const session = buildSession();
+    session.renameForm("form_2", "复核单（改）");
+    const { json } = await session.save();
+    const state = await session.open(json);
+    expect(state.forms[1]).toMatchObject({ id: "form_2", name: "复核单（改）" });
+    expect(String(state.model.elementOf("counter").get("formKey"))).toBe("form_2");
+  });
+
+  it("同一文档打开到两个会话后互不影响（无跨文档共享或自动更新）", async () => {
+    const { json } = await buildSession().save();
+    const left = new FlowDesignSession();
+    const right = new FlowDesignSession();
+    await left.open(json);
+    await right.open(json);
+
+    left.renameForm("form_1", "申请单（左改）");
+    left.createForm("左新增");
+    expect(left.current?.forms.map((form) => form.name)).toEqual([
+      "申请单（左改）",
+      "复核单",
+      "左新增",
+    ]);
+    // 右会话目录不随左会话操作变化（表单仅在同一文档内共享）
+    expect(right.current?.forms.map((form) => form.name)).toEqual(["申请单", "复核单"]);
+  });
+});

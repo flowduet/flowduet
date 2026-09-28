@@ -42,3 +42,24 @@ function referenceProblem(key: string, ids: ReadonlySet<string>): string | undef
   if (key !== key.trim()) return "含首尾空格";
   return ids.has(key) ? undefined : "不在表单目录中";
 }
+
+/**
+ * 表单引用位置收集（#73，A06）：给定目录内某表单 id，列出文档内全部引用
+ * 位置（流程默认 / 各审批节点，含节点名定位）。删除守卫据此拒绝删除——
+ * 位置非空即存在活跃引用；带空格或目录外的失效 key 不是对目录内表单的
+ * 引用，不阻止删除（修复失效引用是改 key，不是删表单）。
+ */
+export function collectFormUsage(model: BpmnModel, id: string): string[] {
+  const usages: string[] = [];
+  if (model.defaultFormKey === id) {
+    usages.push("流程默认表单");
+  }
+  const flowElements = (model.process.get("flowElements") as ModdleElement[] | undefined) ?? [];
+  for (const element of flowElements) {
+    if (!isApprovalTask(element)) continue;
+    if (String(element.get("formKey") ?? "") === id) {
+      usages.push(`审批节点「${elementLabel(element)}」`);
+    }
+  }
+  return usages;
+}

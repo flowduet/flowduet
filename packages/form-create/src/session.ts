@@ -6,7 +6,7 @@ import type {
   OpenDesignDocumentResult,
   SaveDesignDocumentResult,
 } from "./document.js";
-import { collectReferenceIssues } from "./binding.js";
+import { collectReferenceIssues, collectFormUsage } from "./binding.js";
 import { assertFormDefinitionValid } from "./form-schema.js";
 
 /** 表单内容（rules/options 序列化字符串）的最小可编辑初值 */
@@ -158,6 +158,26 @@ export class FlowDesignSession {
     this.#state = {
       model: state.model,
       forms: state.forms.map((form) => (form.id === id ? next : form)),
+    };
+  }
+
+  /**
+   * 删除表单（#73，A06）：被流程默认或任意审批节点引用时拒绝并列出全部
+   * 引用位置；宿主解除或调整全部引用后才可删除。未被引用的表单（含
+   * 尚未绑定的草稿表单）直接删除，目录其余部分不动。
+   */
+  deleteForm(id: string): void {
+    const state = this.#requireState();
+    const form = this.#requireForm(state, id);
+    const usages = collectFormUsage(state.model, id);
+    if (usages.length > 0) {
+      throw new Error(
+        `表单「${form.name}」仍被以下位置引用，请先解除或调整引用：\n${usages.join("\n")}`,
+      );
+    }
+    this.#state = {
+      model: state.model,
+      forms: state.forms.filter((candidate) => candidate.id !== id),
     };
   }
 

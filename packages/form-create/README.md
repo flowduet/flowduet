@@ -1,6 +1,6 @@
 # @flowduet/form-create
 
-FlowDuet 表单集成包（迭代三构建中）：承载**流程设计文档**的编解码与组合编辑装配，并封装真实的 [FormCreate](https://github.com/xaboy/form-create-designer) 开源设计器与 Element Plus 渲染器。当前版本（#72）交付：文本字段表单的设计、默认绑定、文档往返、真实渲染器试填与组合部署导出。
+FlowDuet 表单集成包（迭代三构建中）：承载**流程设计文档**的编解码与组合编辑装配，并封装真实的 [FormCreate](https://github.com/xaboy/form-create-designer) 开源设计器与 Element Plus 渲染器。当前版本（#72–#73）交付：文本字段表单的设计、多表单目录管理（新建 / 改名 / 删除守卫）、流程默认绑定与审批节点显式覆盖、文档往返、真实渲染器试填与组合部署导出。
 
 > **边界（ADR-0006 / ADR-0009）**：`@flowduet/core` 与 `@flowduet/designer` 保持零 FormCreate 依赖；表单领域的内容（设计器、渲染、文档内表单定义）全部收敛在本包。宿主负责存储（文件、浏览器或后端），本包负责成套编解码与原子恢复。不使用 FormCreate Pro 与 AI 助理（设计器 AI 模块已关闭）。
 
@@ -43,10 +43,12 @@ import { FlowDesignSession } from "@flowduet/form-create";
 // 组合编辑会话：持有「模型 + 表单目录」整体状态
 const session = new FlowDesignSession(existingModel);
 
-// 表单目录管理（#72）：创建 / 改名（ID 不变）/ 写入设计器产物
+// 表单目录管理（#72/#73）：创建 / 改名（ID 不变）/ 写入设计器产物 / 删除守卫
 const form = session.createForm("申请单");
 session.renameForm(form.id, "报销单");
 session.updateFormContent(form.id, rulesJson, optionsJson);
+// 删除：被流程默认或任意审批节点引用时抛错并列出全部引用位置（A06）
+session.deleteForm(form.id);
 
 // designer 的中立表单接缝（formOptions prop）直接可用
 const options = session.formOptions();
@@ -65,12 +67,14 @@ const xml = await exportDeployXml(session.current!.model, session.current!.forms
 
 宿主只做文件 I/O 与展示（下载 Blob、读 File、把模型接进 `DingtalkDesigner` / `BpmnCanvas`），文档算法不复制到宿主。纯函数形式同样可用：`saveDesignDocument(model, forms?)` / `openDesignDocument(text)` / `exportDeployXml(model, forms)` / `collectReferenceIssues(model, forms)`。
 
-## 默认表单绑定
+## 默认表单绑定与节点覆盖
 
 - 流程默认表单落在 `bpmn:Process` 的 `flowduet:defaultFormKey`（命名空间 `urn:flowduet:bpmn`），由 core 在创建与解析路径统一注册，未使用时编译输出不含该命名空间（既有基准逐字一致）。
-- 只有审批节点（单签与三种多人形态）参与继承；网关与抄送不解析也不展示。节点显式 `flowable:formKey` 优先，且不被默认值覆盖、不因目录缺失被清除；继承结果不逐节点固化。
+- 只有审批节点（单签与三种多人形态）参与继承；网关与抄送不解析也不展示。节点显式 `flowable:formKey` 优先，且不被默认值覆盖、不因目录缺失被清除；继承结果不逐节点固化。修改默认只影响继承节点，审批形态（单签 / 会签 / 或签 / 依次）切换保留节点 ID 与覆盖 key。
+- 表单集成模式下（designer 传入 `formOptions`），审批节点抽屉提供覆盖选择：继承默认 / 从目录显式覆盖 / 目录外 key 只读项保留并改选修复；同名表单选项附 ID 区分。不传 `formOptions` 的纯流程宿主保持手写 formKey 的自由文本合同。
 - 引用失效（key 不在目录中或带首尾空格）：保存与打开允许（保留 XML 原值的草稿），组合部署导出阻断，相关预览显示错误。
-- 默认继承是 FlowDuet 的设计协议——Flowable 引擎不会自动加载或渲染表单，宿主需用公开解析能力自行接入运行时。
+- 删除被默认或任意审批节点引用的表单会被 `deleteForm` 拒绝并列出引用位置（流程默认 / 各审批节点），解除或调整全部引用后才可删除；未被引用的表单（含尚未绑定的草稿表单）随时可删。
+- 默认继承是 FlowDuet 的设计协议——Flowable 引擎不会自动加载或渲染表单，宿主需用公开解析能力（core 的 `resolveEffectiveForm`）自行接入运行时。
 
 ## 保存与部署导出的区别
 
