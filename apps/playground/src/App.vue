@@ -187,7 +187,13 @@ function refreshForms(): void {
   formsTick.value += 1;
 }
 
+/** 表单目录操作的前置清理：成功操作清掉上一次错误，与文档级操作同一惯例 */
+function clearDocError(): void {
+  docError.value = "";
+}
+
 function onFormCreate(name: string): void {
+  clearDocError();
   try {
     session.createForm(name);
     refreshForms();
@@ -197,6 +203,7 @@ function onFormCreate(name: string): void {
 }
 
 function onFormRename(id: string, name: string): void {
+  clearDocError();
   try {
     session.renameForm(id, name);
     refreshForms();
@@ -206,12 +213,14 @@ function onFormRename(id: string, name: string): void {
 }
 
 function onFormUpdateContent(id: string, rules: string, options: string): void {
+  clearDocError();
   session.updateFormContent(id, rules, options);
   refreshForms();
 }
 
 /** 删除表单：被引用时会被会话拒绝，引用位置随错误就地反馈（A06） */
 function onFormDelete(id: string): void {
+  clearDocError();
   try {
     session.deleteForm(id);
     refreshForms();

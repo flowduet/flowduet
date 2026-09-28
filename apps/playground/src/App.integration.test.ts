@@ -320,9 +320,36 @@ describe("Playground 默认表单闭环（#72：表单 → 绑定 → 保存 →
     await wrapper.find('input[data-test="open-doc-input"]').trigger("change");
     await flushPromises();
     expect(wrapper.find('[data-test="reference-issues"]').text()).toContain("ghost_form");
+    // A16（表单语境）：引用失效后导出报当前错误，旧的有效 XML 不再呈现为当前结果
+    await wrapper.find('[data-test="export-btn"]').trigger("click");
+    await flushPromises();
+    expect(wrapper.find('[data-test="xml-error"]').text()).toContain("ghost_form");
+    expect(wrapper.find('[data-test="xml-preview"]').exists()).toBe(false);
     await wrapper.find('[data-test="default-form-select"]').setValue("form_1");
     await flushPromises();
     expect(wrapper.find('[data-test="reference-issues"]').exists()).toBe(false);
+    // 修复后恢复导出（A16 后半）：引用修好后仍需业务配置完整——补上审批人，
+    // 当前配置重新产出有效 XML
+    const ghostCard = wrapper
+      .findAll('[data-test="node-card"]')
+      .find((card) => card.text().includes("审批节点"));
+    await ghostCard!.trigger("click");
+    await flushPromises();
+    const ghostAssignee = document.querySelector<HTMLInputElement>('[data-test="drawer-assignee"]');
+    ghostAssignee!.value = "${boss}";
+    ghostAssignee!.dispatchEvent(new Event("input", { bubbles: true }));
+    await flushPromises();
+    document.querySelector<HTMLElement>('[data-test="drawer-save"]')!.click();
+    await flushPromises();
+    await vi.waitFor(
+      () => {
+        expect(wrapper.find('[data-test="xml-preview"]').text()).toContain(
+          'flowduet:defaultFormKey="form_1"',
+        );
+      },
+      { timeout: 3000 },
+    );
+    expect(wrapper.find('[data-test="xml-error"]').exists()).toBe(false);
 
     // 即使目录恰好存在同样带空格的 ID，该引用仍不允许预览。
     pickFile(
@@ -515,10 +542,9 @@ describe("Playground 多表单管理与节点覆盖闭环（#73）", () => {
     expect(wrapper.find('[data-test="doc-error"]').text()).toContain("流程默认表单");
     expect(wrapper.find('[data-test="form-item-form_1"]').exists()).toBe(true);
 
-    // 解除默认引用后再删：成功，列表清空
+    // 解除默认引用后再删：成功，列表清空（上一轮错误横幅随操作自动清除）
     await wrapper.find('[data-test="default-form-select"]').setValue("");
     await flushPromises();
-    wrapper.find('[data-test="doc-error"]').element.remove?.(); // 清除旧错误横幅
     await wrapper.find('[data-test="form-delete-btn-form_1"]').trigger("click");
     await flushPromises();
     await wrapper.find('[data-test="form-delete-confirm-form_1"]').trigger("click");

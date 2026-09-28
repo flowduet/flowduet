@@ -106,7 +106,8 @@ const overrideKeyInvalid = computed(() => {
   const options = props.formOptions;
   if (options === undefined) return false;
   const key = formKey.value;
-  if (key.trim() === "") return false;
+  // 只排除真正的空值（继承态）；全空白 key 属于失效引用，同样进只读项呈现
+  if (key === "") return false;
   return key !== key.trim() || !options.some((option) => option.id === key);
 });
 
@@ -230,7 +231,10 @@ function save(): void {
   }
 
   const trimmedAssignee = assignee.value.trim();
-  const trimmedFormKey = formKey.value.trim();
+  // 表单双形态的取值口径：集成模式（select）产出目录 id 或原 key 原值——
+  // 带空格的失效 key 原样保留（AC5：不自动清除/修正），trim 只属于
+  // 纯流程模式的自由文本合同（手写值去空白）。
+  const formKeyValue = props.formOptions !== undefined ? formKey.value : formKey.value.trim();
   const trimmedRecipients = recipients.value.trim();
 
   // ── 前置校验（一律不写模型）：任一条不过即 emit error 返回，模型零变更 ──
@@ -290,8 +294,9 @@ function save(): void {
       if (approvalKind.value === "single") {
         current.set("assignee", trimmedAssignee === "" ? undefined : trimmedAssignee);
       }
-      // 单/多两形态同口径：formKey 清空保存同样落盘（不残留旧值）
-      current.set("formKey", trimmedFormKey === "" ? undefined : trimmedFormKey);
+      // 单/多两形态同口径：formKey 清空保存同样落盘（不残留旧值）；
+      // 集成模式下带空格 key 以原值落盘（select 原样保留，trim 由改选完成）
+      current.set("formKey", formKeyValue === "" ? undefined : formKeyValue);
     }
   } else if (isCcTask.value) {
     el.set("name", trimmedName === "" ? undefined : trimmedName);

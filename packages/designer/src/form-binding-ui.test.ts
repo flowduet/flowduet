@@ -227,30 +227,37 @@ describe("审批节点表单覆盖选择（#73）", () => {
     expect(document.querySelector('[data-test="drawer-formkey"]')).toBeNull();
   });
 
-  it("单签与多实例形态互切后覆盖 key 保留（A04）", async () => {
+  it("四种审批形态互切后节点 ID 与覆盖 key 均保留（A04）", async () => {
     const model = buildModel();
     model.elementOf("solo").set("formKey", "form_review");
     wrapper = mountDesigner(model);
     await flushPromises();
 
-    // 单签 → 会签：转换同 id 重建节点，formKey 应随行
-    await openCardDrawer(1);
-    const kindAll = document.querySelector('[data-test="kind-all"]');
-    (kindAll as HTMLElement).click();
-    await flushPromises();
-    const assignee = document.querySelector<HTMLInputElement>('[data-test="drawer-assignee"]');
-    assignee!.value = "approvers";
-    assignee!.dispatchEvent(new Event("input", { bubbles: true }));
-    await flushPromises();
-    await saveDrawer();
-    expect(String(model.elementOf("solo").get("formKey"))).toBe("form_review");
-
-    // 会签 → 单签：覆盖同样保留
-    await openCardDrawer(1);
-    (document.querySelector('[data-test="kind-single"]') as HTMLElement).click();
-    await flushPromises();
-    await saveDrawer();
-    expect(String(model.elementOf("solo").get("formKey"))).toBe("form_review");
+    /**
+     * 依次切到每种形态再保存：单↔多边界走同 id 转换（重建节点），
+     * 多人三档之间走 setApprovalMode（原位改 MI）——两条路径都不得丢 formKey。
+     */
+    const switches: { kind: string; needsCollection: boolean }[] = [
+      { kind: "all", needsCollection: true }, // 单签 → 会签（重建）
+      { kind: "any", needsCollection: false }, // 会签 → 或签（档间直改）
+      { kind: "sequential", needsCollection: false }, // 或签 → 依次（档间直改）
+      { kind: "single", needsCollection: false }, // 依次 → 单签（重建）
+    ];
+    for (const step of switches) {
+      await openCardDrawer(1);
+      (document.querySelector(`[data-test="kind-${step.kind}"]`) as HTMLElement).click();
+      await flushPromises();
+      if (step.needsCollection) {
+        const assignee = document.querySelector<HTMLInputElement>('[data-test="drawer-assignee"]');
+        assignee!.value = "approvers";
+        assignee!.dispatchEvent(new Event("input", { bubbles: true }));
+        await flushPromises();
+      }
+      await saveDrawer();
+      expect(String(model.elementOf("solo").get("formKey"))).toBe("form_review");
+    }
+    // 节点 ID 全程未换（同 id 转换而非删旧建新）
+    expect(() => model.elementOf("solo")).not.toThrow();
   });
 
   it("纯流程模式：自由文本 formKey 输入保持既有合同（A17）", async () => {
