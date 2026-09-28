@@ -284,6 +284,86 @@ else
   exit 1
 fi
 
+# ── 多表单覆盖基准（#73）：默认 + 四形态继承/覆盖混布 + 多节点复用同一覆盖 key。
+# 运行时断言覆盖语义通道：显式 formKey 经引擎任务查询可读（REST task.formKey），
+# 继承节点不落盘（formKey 为 null——默认继承是 FlowDuet 约定，引擎不自动填充）。
+echo "▶ 多表单覆盖基准：部署 ..."
+deploy_and_check "$FIXTURE_DIR/form-override.flowable68.baseline.xml" "form-override.bpmn20.xml" "form_override_flow"
+
+echo "▶ 运行时断言:覆盖节点的 formKey 经任务查询可读，继承节点不固化 ..."
+# 变量补齐四形态所需集合：approvers（会签）/ chains（依次）在此注入；
+# directors（或签）走大额条件支，amount=100 不经过但一并注入保持完整
+FO_PID="$(start_instance form_override_flow '[{"name":"submitter","type":"string","value":"张提交"},{"name":"approvers","type":"json","value":["刘备","关羽"]},{"name":"directors","type":"json","value":["曹操"]},{"name":"chains","type":"json","value":["赵六","钱七"]},{"name":"amount","type":"integer","value":100}]')"
+FO_TASKS_JSON="$(query_tasks "$FO_PID")" || {
+  echo "✗ 查询任务列表失败（引擎异常？）：$RUNTIME_API/tasks?processInstanceId=$FO_PID" >&2
+  exit 1
+}
+if printf '%s' "$FO_TASKS_JSON" | python3 -c "
+import json, sys
+tasks = json.load(sys.stdin)['data']
+ok = len(tasks) == 1 and tasks[0].get('assignee') == '张提交' and tasks[0].get('formKey') is None
+t = tasks[0] if tasks else {}
+print(f\"  首任务 {t.get('name','-')} assignee={t.get('assignee','-')} formKey={t.get('formKey','-')}\")
+sys.exit(0 if ok else 1)
+"; then
+  echo "✓ 继承节点无固化 formKey（默认继承不落节点属性）"
+else
+  echo "✗ 运行时断言失败:首任务应为继承形态（formKey=null）" >&2
+  exit 1
+fi
+# 推进：完成提交任务 → 默认支会签（amount=100 不走大额支）→ 会签节点 formKey=form_review_v1
+FO_SOLO_ID="$(printf '%s' "$FO_TASKS_JSON" | python3 -c "import json,sys; print(json.load(sys.stdin)['data'][0]['id'])")"
+if ! curl -sf -o /dev/null -u "$SMOKE_USER:$SMOKE_PASS" -H "Content-Type: application/json" \
+  -d '{"action":"complete"}' "$RUNTIME_API/tasks/$FO_SOLO_ID"; then
+  echo "✗ 完成提交任务失败（${FO_SOLO_ID}）" >&2
+  exit 1
+fi
+if query_tasks "$FO_PID" | python3 -c "
+import json, sys
+tasks = json.load(sys.stdin)['data']
+ok = len(tasks) == 2 and all(t.get('formKey') == 'form_review_v1' for t in tasks)
+names = [t.get('name') for t in tasks]
+print(f'  会签任务 {names} formKey 集合 = {sorted({t.get(\"formKey\") for t in tasks})}')
+sys.exit(0 if ok else 1)
+"; then
+  echo "✓ 显式覆盖 formKey 通道生效（部门复核 → form_review_v1）"
+else
+  echo "✗ 运行时断言失败:会签任务未读到覆盖 formKey" >&2
+  exit 1
+fi
+# 完成会签两任务 → 依次审批（与部门复用同一张覆盖表单）
+for tid in $(query_tasks "$FO_PID" | python3 -c "
+import json, sys
+for t in json.load(sys.stdin)['data']:
+    print(t['id'])
+"); do
+  COMPLETE_RESP="$(mktemp)"
+  COMPLETE_HTTP=$(curl -s -o "$COMPLETE_RESP" -w "%{http_code}" -u "$SMOKE_USER:$SMOKE_PASS" \
+    -H "Content-Type: application/json" -d '{"action":"complete"}' \
+    "$RUNTIME_API/tasks/$tid")
+  if [ "$COMPLETE_HTTP" != "200" ]; then
+    echo "✗ 完成会签任务失败 HTTP ${COMPLETE_HTTP}（${tid}）：" >&2
+    cat "$COMPLETE_RESP" >&2
+    rm -f "$COMPLETE_RESP"
+    exit 1
+  fi
+  rm -f "$COMPLETE_RESP"
+done
+if query_tasks "$FO_PID" | python3 -c "
+import json, sys
+tasks = json.load(sys.stdin)['data']
+ok = len(tasks) == 1 and tasks[0].get('formKey') == 'form_review_v1'
+t = tasks[0] if tasks else {}
+print(f\"  依次任务 {t.get('name','-')} formKey={t.get('formKey','-')}\")
+sys.exit(0 if ok else 1)
+"; then
+  echo "✓ 多节点复用同一覆盖 key（依次确认 → form_review_v1）"
+else
+  echo "✗ 运行时断言失败:依次审批任务未读到复用的 formKey" >&2
+  exit 1
+fi
+
+
 # ── 附加导出物（可选，#72）：SMOKE_EXTRA_XML 提供则一并部署——用于把
 # Playground 当前有效导出物纳入同一次冒烟（process key 自动从 XML 提取）
 if [ -n "${SMOKE_EXTRA_XML:-}" ]; then

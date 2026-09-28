@@ -6,6 +6,7 @@ import { compile } from "../compile/compiler.js";
 import { verticalDiLayout } from "../layout/vertical-layout.js";
 import { parse } from "../parse/parser.js";
 import { buildDefaultFormFlow } from "../compile/__fixtures__/default-form.js";
+import { buildFormOverrideFlow } from "../compile/__fixtures__/form-override.js";
 import { resolveEffectiveForm } from "./form-binding.js";
 
 /**
@@ -71,6 +72,38 @@ describe("默认绑定往返（compile → parse 语义等价）", () => {
     expect(xml).not.toContain("xmlns:flowduet");
     expect(xml).not.toContain("urn:flowduet");
     expect(xml).not.toContain("defaultFormKey");
+  });
+
+  it("多表单覆盖基准（#73）：四形态混布往返等价，继承/覆盖关系逐节点恢复", async () => {
+    const first = await compile(buildFormOverrideFlow());
+    const model = await parse(first, { adapter: flowableAdapter });
+    // 默认恢复；覆盖节点恢复 key；继承节点（单签/或签）保持未固化
+    expect(model.defaultFormKey).toBe("form_apply_v1");
+    expect(String(model.elementOf("mi_review").get("formKey"))).toBe("form_review_v1");
+    expect(String(model.elementOf("seq_sign").get("formKey"))).toBe("form_review_v1");
+    expect(model.elementOf("solo_apply").get("formKey")).toBeUndefined();
+    expect(model.elementOf("any_audit").get("formKey")).toBeUndefined();
+    // 有效表单解析与编译意图一致：网关/抄送不参与（A19）
+    expect(resolveEffectiveForm(model, "solo_apply")).toEqual({
+      source: "default",
+      key: "form_apply_v1",
+    });
+    expect(resolveEffectiveForm(model, "mi_review")).toEqual({
+      source: "node",
+      key: "form_review_v1",
+    });
+    expect(resolveEffectiveForm(model, "any_audit")).toEqual({
+      source: "default",
+      key: "form_apply_v1",
+    });
+    expect(resolveEffectiveForm(model, "seq_sign")).toEqual({
+      source: "node",
+      key: "form_review_v1",
+    });
+    expect(resolveEffectiveForm(model, "amount_fork")).toEqual({ source: "none", key: undefined });
+    expect(resolveEffectiveForm(model, "cc_record")).toEqual({ source: "none", key: undefined });
+    // 重复往返稳定
+    expect(await compile(model)).toBe(first);
   });
 });
 
