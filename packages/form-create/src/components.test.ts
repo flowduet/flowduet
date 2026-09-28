@@ -4,11 +4,14 @@ import { flushPromises, mount } from "@vue/test-utils";
 import FormPreview from "./components/FormPreview.vue";
 import FormManager from "./components/FormManager.vue";
 import FormDesigner from "./components/FormDesigner.vue";
+import { DESIGNER_CONFIG, FIELD_MENU } from "./components/designer-config.js";
 import type { FormDefinition } from "./document.js";
+import { rulesSemantics } from "./form-semantics.js";
 
 /**
- * 真实组件链路（#72）：FormCreate 渲染器实际参与预览与试填校验，
+ * 真实组件链路（#72 / #74）：FormCreate 渲染器实际参与预览与试填校验，
  * 设计器实际参与内容编辑——不 mock 序列化结果（迭代三测试决策）。
+ * #74 起覆盖八类字段与栅格布局的全字段矩阵（A09/A10）与开放范围收口（A13）。
  */
 
 let wrapper: ReturnType<typeof mount> | undefined;
@@ -175,15 +178,13 @@ describe("FormManager（目录管理面板）", () => {
     expect(designer.exists()).toBe(true);
     designer.vm.$emit(
       "save",
-      JSON.stringify([{ type: "select", field: "s1", title: "下拉" }]),
+      JSON.stringify([{ type: "upload", field: "u1", title: "上传" }]),
       "{}",
     );
     await flushPromises();
 
     expect(manager.emitted("updateContent")).toBeUndefined();
-    expect(manager.find('[data-test="form-manager-error"]').text()).toContain(
-      "只支持文本（input）字段",
-    );
+    expect(manager.find('[data-test="form-manager-error"]').text()).toContain("支持的组件");
     expect(manager.find('[data-test="form-manager-edit-dialog"]').exists()).toBe(true);
     manager.unmount();
   });
@@ -238,5 +239,301 @@ describe("FormDesigner（真实 FcDesigner 装载）", () => {
     await wrapper.find('[data-test="form-designer-cancel"]').trigger("click");
     expect(wrapper.emitted("save")).toBeUndefined();
     expect(wrapper.emitted("cancel")).toBeTruthy();
+  });
+});
+
+/**
+ * 八类字段 + 栅格布局矩阵（与真实设计器导出形态一致，含运行态元数据键）。
+ * 注意：与 form-schema.test.ts / document.test.ts 的矩阵 fixture 刻意同构，
+ * 新增字段类型时三处同步更新
+ */
+const MATRIX_RULES_JSON = JSON.stringify([
+  {
+    type: "input",
+    field: "reason",
+    title: "申请事由",
+    value: "默认事由",
+    $required: true,
+    _fc_drag_tag: "input",
+  },
+  { type: "input", field: "detail", title: "详细说明", props: { type: "textarea" } },
+  { type: "inputNumber", field: "amount", title: "金额", value: 0 },
+  {
+    type: "radio",
+    field: "urgent",
+    title: "是否加急",
+    options: [
+      { label: "是", value: "1" },
+      { label: "否", value: "0" },
+    ],
+    value: "0",
+    effect: { fetch: "" },
+  },
+  {
+    type: "checkbox",
+    field: "tags",
+    title: "标签",
+    options: [
+      { label: "甲", value: "a" },
+      { label: "乙", value: "b" },
+    ],
+  },
+  { type: "select", field: "level", title: "级别", options: [{ label: "普通", value: "1" }] },
+  { type: "datePicker", field: "applyDate", title: "申请日期" },
+  {
+    type: "switch",
+    field: "notify",
+    title: "通知",
+    value: false,
+    props: { activeValue: true, inactiveValue: false },
+  },
+  {
+    type: "fcRow",
+    children: [
+      {
+        type: "col",
+        props: { span: 12 },
+        children: [{ type: "input", field: "leftCol", title: "列甲" }],
+      },
+      {
+        type: "col",
+        props: { span: 12 },
+        children: [{ type: "datePicker", field: "rightCol", title: "列乙" }],
+      },
+    ],
+  },
+]);
+
+const MATRIX_FORM: FormDefinition = {
+  id: "form_matrix",
+  name: "矩阵表单",
+  provider: "form-create/element-plus",
+  rules: MATRIX_RULES_JSON,
+  options: "{}",
+};
+
+describe("FormPreview 全字段与布局矩阵（真实渲染器，A09/A10）", () => {
+  it("八类字段与栅格布局真实渲染；数字 0、开关 false、单选 0、空多选按组件语义回显", async () => {
+    wrapper = mount(FormPreview, { props: { form: MATRIX_FORM } });
+    await flushPromises();
+
+    // 文本与多行文本
+    const inputs = wrapper.findAll("input");
+    expect((inputs[0].element as HTMLInputElement).value).toBe("默认事由");
+    expect(wrapper.find("textarea").exists()).toBe(true);
+
+    // 数字 0：回显为 "0" 而非空（不能把 0 当空值吞掉）
+    const numberInput = wrapper.findAll(".el-input-number input");
+    expect(numberInput).toHaveLength(1);
+    expect((numberInput[0].element as HTMLInputElement).value).toBe("0");
+
+    // 单选：两个选项、默认值 "0"（字符串值类型）选中在「否」
+    const radios = wrapper.findAll('input[type="radio"]');
+    expect(radios).toHaveLength(2);
+    expect((radios[0].element as HTMLInputElement).checked).toBe(false);
+    expect((radios[1].element as HTMLInputElement).checked).toBe(true);
+
+    // 多选：默认未选（空数组），选项在场
+    const checkboxes = wrapper.findAll('input[type="checkbox"]');
+    expect(checkboxes.length).toBeGreaterThanOrEqual(2);
+    checkboxes.forEach((box) => expect((box.element as HTMLInputElement).checked).toBe(false));
+
+    // 下拉单选与日期
+    expect(wrapper.find(".el-select").exists()).toBe(true);
+    expect(wrapper.find(".el-date-editor").exists()).toBe(true);
+
+    // 开关：默认 false——未选中态而非丢失
+    const switchEl = wrapper.find(".el-switch");
+    expect(switchEl.exists()).toBe(true);
+    expect(switchEl.classes()).not.toContain("is-checked");
+
+    // 栅格布局：行列结构真实渲染，列内字段在场
+    expect(wrapper.find(".el-row").exists()).toBe(true);
+    expect(wrapper.findAll(".el-col").length).toBeGreaterThanOrEqual(2);
+    expect(wrapper.text()).toContain("列甲");
+    expect(wrapper.text()).toContain("列乙");
+  });
+
+  it("试填各类型字段只写试填状态，设计默认值不被污染（0/false 语义保持）", async () => {
+    wrapper = mount(FormPreview, { props: { form: MATRIX_FORM } });
+    await flushPromises();
+
+    const inputs = wrapper.findAll("input");
+    await inputs[0].setValue("试填事由");
+    await wrapper.find("textarea").setValue("试填说明");
+    // 单选改选「是」、开关打开
+    await wrapper.findAll('input[type="radio"]')[0].setValue(true);
+    await wrapper.findAll('input[type="checkbox"]')[0].setValue(true);
+    await wrapper.find(".el-switch input").setValue(true);
+    await flushPromises();
+
+    // 试填值可见
+    const valuesText = wrapper.find('[data-test="form-preview-values"]').text();
+    expect(valuesText).toContain("试填事由");
+    expect(valuesText).toContain("试填说明");
+    expect(valuesText).toContain("urgent");
+    expect(valuesText).toContain("notify");
+
+    // 设计定义不被污染：默认值、选项、必填原样保留
+    const rulesText = wrapper.props("form").rules;
+    expect(rulesText).toContain("默认事由");
+    expect(rulesText).toContain('"value":0');
+    expect(rulesText).toContain('"value":false');
+    expect(rulesText).toContain('"value":"0"');
+    expect(rulesText).not.toContain("试填事由");
+    expect(rulesText).not.toContain("试填说明");
+  });
+});
+
+describe("FormDesigner 全字段与布局矩阵（真实设计器，A10）", () => {
+  it("装载八类字段与栅格布局后成对导出，语义与装载内容等价", async () => {
+    wrapper = mount(FormDesigner, {
+      props: { name: MATRIX_FORM.name, rules: MATRIX_RULES_JSON, options: "{}" },
+    });
+    await flushPromises();
+
+    // 设计区回显矩阵字段与列内字段
+    const text = wrapper.text();
+    for (const title of [
+      "申请事由",
+      "详细说明",
+      "金额",
+      "是否加急",
+      "标签",
+      "级别",
+      "申请日期",
+      "通知",
+      "列甲",
+      "列乙",
+    ]) {
+      expect(text).toContain(title);
+    }
+
+    await wrapper.find('[data-test="form-designer-save"]').trigger("click");
+    await flushPromises();
+    const saved = wrapper.emitted("save");
+    expect(saved).toBeTruthy();
+    const [rules, options] = saved![0] as [string, string];
+    expect(typeof JSON.parse(options)).toBe("object");
+    // 忽略设计器运行态元数据后的语义等价（字段顺序、布局、默认值、必填、选项）
+    expect(rulesSemantics(rules)).toEqual(rulesSemantics(MATRIX_RULES_JSON));
+  });
+});
+
+describe("设计器开放范围收口（A13，designer-config 与真实面板）", () => {
+  it("菜单只提供八类字段与栅格布局，范围外组件无拖拽入口", () => {
+    const names = FIELD_MENU.flatMap((group) => group.list.map((item) => item.name));
+    expect([...names]).toEqual([
+      "input",
+      "textarea",
+      "inputNumber",
+      "radio",
+      "checkbox",
+      "select",
+      "datePicker",
+      "switch",
+      "fcRow",
+    ]);
+  });
+
+  it("真实设计器面板不出现范围外组件与配置入口", async () => {
+    wrapper = mount(FormDesigner, {
+      props: { name: MATRIX_FORM.name, rules: MATRIX_RULES_JSON, options: "{}" },
+    });
+    await flushPromises();
+    const text = wrapper.text();
+    // 上传、滑块、评分、级联、富文本、子表单等不提供入口
+    // （菜单项 label 由 designer 内置 locale 渲染，按内置文案核对开放项）
+    for (const label of [
+      "上传",
+      "滑块",
+      "评分",
+      "级联",
+      "富文本",
+      "子表单",
+      "表格表单",
+      "穿梭框",
+      "颜色选择器",
+    ]) {
+      expect(text).not.toContain(label);
+    }
+    // 表单级事件（onSubmit 等脚本编辑）不提供
+    expect(text).not.toContain("表单事件");
+    // 开放的九个入口在场（内置文案：输入框/多行输入框/计数器/单选框/多选框/选择器/日期/开关/栅格布局）
+    for (const label of [
+      "输入框",
+      "多行输入框",
+      "计数器",
+      "单选框",
+      "多选框",
+      "选择器",
+      "日期",
+      "开关",
+      "栅格布局",
+    ]) {
+      expect(text).toContain(label);
+    }
+    // AI 助理入口按钮不在场（showAi 关闭；限定左侧菜单栏，面板本体是 v-show 挂载）
+    expect(wrapper.find("._fc-l-menu .icon-ai").exists()).toBe(false);
+  });
+
+  it("选中字段后：联动与编辑数据入口不渲染，静态选项与必填配置在场", async () => {
+    // 未选中时配置面板是 v-show 预渲染（DOM 文案在场但不可达），
+    // 入口收口的实际效果以选中字段后的面板为准
+    wrapper = mount(FormDesigner, {
+      props: {
+        name: "收口验证",
+        rules: JSON.stringify([
+          {
+            type: "radio",
+            field: "urgent",
+            title: "是否加急",
+            options: [{ label: "是", value: "1" }],
+          },
+        ]),
+        options: "{}",
+      },
+    });
+    await flushPromises();
+    const canvasItem = wrapper
+      .findAll("._fc-m-drag .el-form-item")
+      .find((node) => node.text().includes("是否加急"));
+    expect(canvasItem).toBeDefined();
+    await canvasItem!.trigger("click");
+    await flushPromises();
+    // 配置面板的隐藏项在选中后的 nextTick 才应用，补一个宏任务等待
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
+    const text = wrapper.text();
+    expect(text).not.toContain("组件联动");
+    expect(text).not.toContain("编辑数据");
+    expect(text).not.toContain("远程数据");
+    // 开放范围内的配置在场：静态选项表格编辑与「是否必填」
+    expect(text).toContain("是否必填");
+    expect(text).toContain("键名");
+  });
+
+  it("配置收口：选项类型/多选/范围日期/远程与脚本入口隐藏，栅格不可拖入容器", () => {
+    const hidden = DESIGNER_CONFIG.hiddenItemConfig!;
+    // 选项类型选择器隐藏：静态选项编辑默认在场，远程数据无从切换
+    expect(hidden.default).toContain("_optionType");
+    // 下拉仅单选：multiple 及其衍生的远程搜索入口隐藏
+    expect(hidden.select).toContain("multiple");
+    expect(hidden.select).toContain("remote");
+    expect(hidden.select).toContain("remoteMethod");
+    // 日期仅单值：类型选择（含范围形态）隐藏
+    expect(hidden.datePicker).toContain("type");
+    // 事件（脚本）、联动、自定义组件面板关闭；表单级事件与数据录入入口关闭
+    expect(DESIGNER_CONFIG.showEventForm).toBe(false);
+    expect(DESIGNER_CONFIG.hiddenFormConfig).toContain("formCreate_event");
+    expect(DESIGNER_CONFIG.showInputData).toBe(false);
+    expect(DESIGNER_CONFIG.showControl).toBe(false);
+    expect(DESIGNER_CONFIG.showCustomProps).toBe(false);
+
+    // checkDrag：栅格布局拖入任何已有容器（含 col）被拒；字段不受影响
+    const checkDrag = DESIGNER_CONFIG.checkDrag!;
+    expect(checkDrag({ menu: { name: "fcRow" } } as never)).toBe(false);
+    expect(checkDrag({ menu: { name: "input" } } as never)).toBe(true);
+    expect(checkDrag({ menu: { name: "col" } } as never)).toBe(true);
   });
 });
