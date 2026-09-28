@@ -79,9 +79,14 @@ npm 发版的 git tag 统一使用 changesets 原生格式 `<包名>@<版本>`(�
 
 ## Agent skills
 
+**开工前置阅读（硬规则，不可跳过）**：实施任何工作前先读 `docs/agents/` 全部文档、根目录 `CONTEXT.md` 与领域相关的 `docs/adr/*`。下面的摘要不替代详版文档。
+
 ### Issue tracker
 
-issue 统一记录在 GitHub Issues（flowduet/flowduet），通过 `gh` CLI 读写。详见 `docs/agents/issue-tracker.md`。
+issue 统一记录在 GitHub Issues（flowduet/flowduet），通过 `gh` CLI 读写。`/implement` 相关的两条硬规则（详版 `docs/agents/issue-tracker.md`）：
+
+- **开工第一步**：从最新 `develop` 切 `feat/<issue 号>-<kebab 摘要>` 独立分支，实现提交全部落在该分支，绝不直接提交 `develop`；
+- **收工（wrap-up）**：在对应 issue 留实施评论——本地提交哈希、构建内容、验证证据、边界说明；**不关票**（关票属于合并流程）；**不推送分支**——推送、开 PR、合并由用户决定，逐项先问。
 
 ### Triage labels
 
