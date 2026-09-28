@@ -237,10 +237,17 @@ describe("FlowDesignSession 表单删除守卫（#73）", () => {
   it("带首尾空格的 key 不算引用（与引用诊断口径一致），可删除", () => {
     const session = new FlowDesignSession(buildMultiNodeFlow());
     const apply = session.createForm("申请单");
-    // 失效引用（目录外）不阻止删除目录内表单——修复失效引用是改 key，不是删表单
-    session.current?.model.setDefaultFormKey("missing_form");
+    const spacedKey = ` ${apply.id} `;
+    const model = session.current!.model;
+    // 公共 setter 会 trim；模拟从 XML 打开的失效原值，验证删除守卫不误认引用。
+    model.process.set("defaultFormKey", spacedKey);
+    model.elementOf("solo").set("formKey", spacedKey);
+
+    expect(session.referenceIssues.join("；")).toContain("含首尾空格");
     session.deleteForm(apply.id);
     expect(session.current?.forms).toHaveLength(0);
+    expect(model.defaultFormKey).toBe(spacedKey);
+    expect(model.elementOf("solo").get("formKey")).toBe(spacedKey);
   });
 });
 
