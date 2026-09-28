@@ -37,6 +37,10 @@
 
 原则：先镜像、后直连。首次使用某个下载渠道时，先小规模验证连通性（如 HEAD 请求），再执行批量下载或安装；若镜像与直连均失败，主动汇报而不是反复重试。
 
+## Git 分支施工规范
+
+实施任何 issue：开工第一步从最新 `develop` 切出白名单分支（`feat/<issue 号>-<短横线摘要>` / `fix/<issue 号>-<摘要>`；非票变更用 `docs/` `chore/` `refactor/<摘要>`），实现提交**全部落在该分支，不直接提交到 `develop` 或 `main`**。完成后推送分支并按 PR 模板开 PR（squash 合入 `develop`），CI（Node 22/24 双矩阵）绿后才可合并，合并由维护者审阅执行。分支命名白名单与规则集见 `CONTRIBUTING.md`「分支体系与命名」；本地 pre-commit（husky）会在 `develop`/`main` 上直接提交时拦截。
+
 ## Git 提交规范
 
 ### 约定式提交(Conventional Commits)
