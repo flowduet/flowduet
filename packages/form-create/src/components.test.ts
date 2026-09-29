@@ -101,6 +101,25 @@ describe("FormPreview（真实渲染器试填）", () => {
     expect(wrapper.find('[data-test="form-preview-values"]').text()).not.toContain("试用内容");
   });
 
+  it("重新打开同 ID 的表单定义时清除旧试填并回显新默认值", async () => {
+    wrapper = mount(FormPreview, { props: { form: APPLY_FORM } });
+    await flushPromises();
+    await wrapper.find("input").setValue("试用内容");
+    await flushPromises();
+
+    const reopened: FormDefinition = {
+      ...APPLY_FORM,
+      rules: JSON.stringify([
+        { type: "input", field: "reason", title: "申请事由", value: "重开默认" },
+      ]),
+    };
+    await wrapper.setProps({ form: reopened });
+    await flushPromises();
+
+    expect(wrapper.find('[data-test="form-preview-values"]').text()).not.toContain("试用内容");
+    expect((wrapper.find("input").element as HTMLInputElement).value).toBe("重开默认");
+  });
+
   it("内容无法解析时显示错误而非白屏", () => {
     wrapper = mount(FormPreview, {
       props: { form: { ...APPLY_FORM, rules: "{bad-json" } },
