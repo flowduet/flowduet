@@ -227,6 +227,19 @@ describe("FormManager（目录管理面板）", () => {
     expect(wrapper.find('[data-test="form-manager-error"]').text()).toContain("字段标识重复");
     expect(wrapper.find('[data-test="form-manager-edit-dialog"]').exists()).toBe(true);
   });
+
+  it("取消内容编辑时关闭弹窗，不留下空白编辑器", async () => {
+    wrapper = mount(FormManager, { props: { forms: [APPLY_FORM] }, attachTo: document.body });
+    await wrapper.find('[data-test="form-edit-btn-form_apply"]').trigger("click");
+    await flushPromises();
+    expect(wrapper.find('[data-test="form-manager-edit-dialog"]').isVisible()).toBe(true);
+
+    await wrapper.find('[data-test="form-designer-cancel"]').trigger("click");
+    await flushPromises();
+
+    expect(wrapper.find('[data-test="form-manager-edit-dialog"]').isVisible()).toBe(false);
+    expect(wrapper.emitted("updateContent")).toBeUndefined();
+  });
 });
 
 describe("FormDesigner（真实 FcDesigner 装载）", () => {
