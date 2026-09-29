@@ -105,6 +105,21 @@ describe("assertSupportedFieldTypes（开放范围矩阵）", () => {
 });
 
 describe("assertSupportedFieldTypes（组件语义边界）", () => {
+  it("普通输入框只接受文本形态，多行文本仍可导入", () => {
+    for (const type of ["number", "date", "password"]) {
+      expect(() =>
+        assertSupportedFieldTypes([{ type: "input", field: "reason", props: { type } }]),
+      ).toThrow("只支持文本或多行文本");
+    }
+    for (const type of [undefined, "text", "textarea"]) {
+      expect(() =>
+        assertSupportedFieldTypes([
+          { type: "input", field: "reason", props: type === undefined ? {} : { type } },
+        ]),
+      ).not.toThrow();
+    }
+  });
+
   it("下拉多选形态（props.multiple）拒绝：本版本只支持下拉单选", () => {
     expect(() =>
       assertSupportedFieldTypes(
@@ -168,6 +183,26 @@ describe("assertSupportedFieldTypes（组件语义边界）", () => {
 });
 
 describe("assertSupportedFieldTypes（布局结构边界）", () => {
+  it("栅格行列的 children 为非数组时拒绝，不把未知内容当空布局", () => {
+    for (const rules of [
+      [{ type: "fcRow", children: { type: "upload", field: "u1" } }],
+      [{ type: "fcRow", children: [{ type: "col", children: { type: "upload", field: "u1" } }] }],
+    ]) {
+      expect(() => assertSupportedFieldTypes(rules as unknown as FieldRule[])).toThrow(
+        "children 必须是数组",
+      );
+    }
+  });
+
+  it("设计器省略空栅格子级时按空数组处理", () => {
+    expect(() =>
+      assertSupportedFieldTypes([
+        { type: "fcRow", children: [{ type: "col" }] } as unknown as FieldRule,
+      ]),
+    ).not.toThrow();
+    expect(() => assertSupportedFieldTypes([{ type: "fcRow" } as FieldRule])).not.toThrow();
+  });
+
   it("栅格嵌套栅格拒绝（复杂嵌套布局不开放）", () => {
     const nested = [
       {
@@ -237,6 +272,53 @@ describe("assertSupportedFieldTypes（布局结构边界）", () => {
         "form_matrix",
       ),
     ).toThrow("字段标识重复");
+  });
+
+  it("普通字段携带子规则时拒绝，避免绕过开放范围守卫", () => {
+    expect(() =>
+      assertFormDefinitionValid(
+        validForm({
+          rules: JSON.stringify([
+            { type: "input", field: "reason", children: [{ type: "upload", field: "u1" }] },
+          ]),
+        }),
+        new Set(),
+      ),
+    ).toThrow("普通字段不能包含 children");
+  });
+
+  it("普通字段携带联动规则时拒绝，避免导入范围外配置", () => {
+    expect(() =>
+      assertFormDefinitionValid(
+        validForm({
+          rules: JSON.stringify([
+            {
+              type: "input",
+              field: "reason",
+              control: [{ value: "x", rule: [{ type: "upload", field: "u1" }] }],
+            },
+          ]),
+        }),
+        new Set(),
+      ),
+    ).toThrow("不支持组件联动");
+  });
+
+  it("栅格列携带联动规则时也拒绝", () => {
+    expect(() =>
+      assertSupportedFieldTypes([
+        {
+          type: "fcRow",
+          children: [
+            {
+              type: "col",
+              children: [],
+              control: [{ value: "x", rule: [{ type: "upload", field: "u1" }] }],
+            },
+          ],
+        } as unknown as FieldRule,
+      ]),
+    ).toThrow("不支持组件联动");
   });
 });
 

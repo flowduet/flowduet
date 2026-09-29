@@ -51,11 +51,65 @@ export const DESIGNER_CONFIG: Config = {
   // 联动与自定义组件配置不开放
   showControl: false,
   showCustomProps: false,
+  // 使用设计器的组件配置扩展编辑规则 value，试填数据入口继续关闭。
+  // formCreateValue 是设计器映射到字段规则顶层 value 的配置键。
+  componentRule: {
+    default: (rule) => {
+      const field = "formCreateValue";
+      const title = "默认值";
+      const options = Array.isArray(rule.options) ? rule.options : [];
+      switch (rule.type) {
+        case "input":
+          return [
+            {
+              type: "input",
+              field,
+              title,
+              props: { type: rule.props?.type === "textarea" ? "textarea" : "text" },
+            },
+          ];
+        case "inputNumber":
+          return [{ type: "inputNumber", field, title }];
+        case "radio":
+        case "select":
+          return [{ type: "select", field, title, options, props: { clearable: true } }];
+        case "checkbox":
+          return [
+            { type: "select", field, title, options, props: { multiple: true, clearable: true } },
+          ];
+        case "datePicker":
+          return [
+            {
+              type: "datePicker",
+              field,
+              title,
+              props: { type: "date", valueFormat: "YYYY-MM-DD", clearable: true },
+            },
+          ];
+        case "switch":
+          return [
+            {
+              type: "select",
+              field,
+              title,
+              options: [
+                { label: "关闭", value: false },
+                { label: "开启", value: true },
+              ],
+              props: { clearable: true },
+            },
+          ];
+        default:
+          return [];
+      }
+    },
+  },
   // 选项类型选择器整体隐藏：静态选项编辑（TableOptions）默认在场，
   // 「远程数据 / 文本 / json」分支无从切换，远程数据源不能通过 UI 新建；
   // _control（组件联动）与 showControl 双保险，选中字段后入口不渲染
   hiddenItemConfig: {
     default: ["_optionType", "_control"],
+    input: ["type"],
     select: ["multiple", "multipleLimit", "remote", "remoteMethod"],
     datePicker: ["type"],
   },

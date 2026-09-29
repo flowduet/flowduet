@@ -418,6 +418,40 @@ describe("FormDesigner 全字段与布局矩阵（真实设计器，A10）", () 
     // 忽略设计器运行态元数据后的语义等价（字段顺序、布局、默认值、必填、选项）
     expect(rulesSemantics(rules)).toEqual(rulesSemantics(MATRIX_RULES_JSON));
   });
+
+  it("数字与开关字段可在真实配置面板编辑默认值", async () => {
+    wrapper = mount(FormDesigner, {
+      props: {
+        name: "默认值配置",
+        rules: JSON.stringify([
+          { type: "inputNumber", field: "amount", title: "金额", value: 0 },
+          {
+            type: "switch",
+            field: "notify",
+            title: "通知",
+            value: false,
+            props: { activeValue: true, inactiveValue: false },
+          },
+        ]),
+        options: "{}",
+      },
+    });
+    await flushPromises();
+
+    for (const title of ["金额", "通知"]) {
+      const canvasItem = wrapper
+        .findAll("._fc-m-drag .el-form-item")
+        .find((node) => node.text().includes(title));
+      expect(canvasItem).toBeDefined();
+      await canvasItem!.trigger("click");
+      await flushPromises();
+      await new Promise((resolve) => setTimeout(resolve, 100));
+      const defaultItem = wrapper
+        .findAll("._fc-r-config .el-form-item")
+        .find((node) => node.text().includes("默认值"));
+      expect(defaultItem, `${title} 缺少默认值配置入口`).toBeDefined();
+    }
+  }, 15_000);
 });
 
 describe("设计器开放范围收口（A13，designer-config 与真实面板）", () => {
@@ -517,6 +551,8 @@ describe("设计器开放范围收口（A13，designer-config 与真实面板）
     const hidden = DESIGNER_CONFIG.hiddenItemConfig!;
     // 选项类型选择器隐藏：静态选项编辑默认在场，远程数据无从切换
     expect(hidden.default).toContain("_optionType");
+    // 输入框仅保留文本形态，多行由独立菜单入口提供
+    expect(hidden.input).toContain("type");
     // 下拉仅单选：multiple 及其衍生的远程搜索入口隐藏
     expect(hidden.select).toContain("multiple");
     expect(hidden.select).toContain("remote");

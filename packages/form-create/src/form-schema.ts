@@ -83,6 +83,13 @@ function ruleLabel(rule: FieldRule): string {
   return String(rule.title ?? rule.type);
 }
 
+/** 联动规则可能藏在任意层级，布局列也必须检查 */
+function assertNoControl(rule: Record<string, unknown>): void {
+  if (rule.control !== undefined && (!Array.isArray(rule.control) || rule.control.length > 0)) {
+    throw new Error(`规则「${ruleLabel(rule as unknown as FieldRule)}」不支持组件联动（control）`);
+  }
+}
+
 /**
  * 组件语义守卫：开放范围内的配置边界。
  * 下拉仅单选、日期仅单值、选项仅静态（远程数据源不在开放范围）。
@@ -90,6 +97,17 @@ function ruleLabel(rule: FieldRule): string {
 function assertFieldSemantics(rule: FieldRule): void {
   const label = ruleLabel(rule);
   const props = (rule.props ?? {}) as Record<string, unknown>;
+  if (
+    rule.type === "input" &&
+    props.type !== undefined &&
+    props.type !== "" &&
+    props.type !== "text" &&
+    props.type !== "textarea"
+  ) {
+    throw new Error(
+      `输入字段「${label}」的形态是 ${String(props.type)}，本版本只支持文本或多行文本`,
+    );
+  }
   if (rule.type === "select" && props.multiple !== undefined && props.multiple !== false) {
     throw new Error(`下拉字段「${label}」配置了 multiple 多选形态，本版本只支持下拉单选`);
   }
@@ -133,28 +151,32 @@ function assertRuleTreeSupported(
       throw new Error("字段规则缺少非空的 type（FormCreate 组件类型）");
     }
     const typedRule = rule as unknown as FieldRule;
+    assertNoControl(rule);
     if (rule.type === LAYOUT_ROW_TYPE) {
       if (insideLayout) {
         throw new Error("栅格布局（fcRow）不支持嵌套，复杂嵌套布局超出本版本范围");
       }
       // fcRow 的直接子级只能是 col；col 内部回到字段层递归（字段不能是布局）
-      const cols = Array.isArray(rule.children) ? rule.children : [];
+      const cols = rule.children === undefined ? [] : rule.children;
+      if (!Array.isArray(cols)) {
+        throw new Error("栅格布局（fcRow）的 children 必须是数组");
+      }
       for (const child of cols) {
         if (typeof child !== "object" || child === null || Array.isArray(child)) {
           throw new Error("栅格布局（fcRow）内只能是栅格列（col）规则对象");
         }
-        if ((child as Record<string, unknown>).type !== LAYOUT_COL_TYPE) {
+        const col = child as Record<string, unknown>;
+        if (col.type !== LAYOUT_COL_TYPE) {
           throw new Error(
-            `栅格布局（fcRow）内只能是栅格列（col），出现 ${(child as Record<string, unknown>).type ?? "（无 type）"}`,
+            `栅格布局（fcRow）内只能是栅格列（col），出现 ${col.type ?? "（无 type）"}`,
           );
         }
-        const colChildren = (child as Record<string, unknown>).children;
-        assertRuleTreeSupported(
-          Array.isArray(colChildren) ? colChildren : [],
-          knownFields,
-          formId,
-          true,
-        );
+        assertNoControl(col);
+        const colChildren = col.children === undefined ? [] : col.children;
+        if (!Array.isArray(colChildren)) {
+          throw new Error("栅格列（col）的 children 必须是数组");
+        }
+        assertRuleTreeSupported(colChildren, knownFields, formId, true);
       }
       continue;
     }
@@ -165,6 +187,12 @@ function assertRuleTreeSupported(
       throw new Error(
         `表单字段「${ruleLabel(typedRule)}」的类型是 ${rule.type}，本版本支持的组件：${SUPPORTED_LABEL}，拒绝导入`,
       );
+    }
+    if (
+      rule.children !== undefined &&
+      (!Array.isArray(rule.children) || rule.children.length > 0)
+    ) {
+      throw new Error(`普通字段不能包含 children 子规则：${ruleLabel(typedRule)}`);
     }
     assertFieldSemantics(typedRule);
     if (typeof rule.field !== "string" || rule.field.trim() === "") {
