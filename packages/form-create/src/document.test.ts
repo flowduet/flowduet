@@ -387,6 +387,31 @@ describe("openDesignDocument", () => {
     ).rejects.toThrow("字段标识重复");
   });
 
+  it("字段与表单级脚本配置在保存、打开两侧都拒绝", async () => {
+    const base: FormDefinition = {
+      id: "form_script",
+      name: "脚本边界",
+      provider: "form-create/element-plus",
+      rules: JSON.stringify([{ type: "input", field: "reason" }]),
+      options: "{}",
+    };
+    const cases: FormDefinition[] = [
+      {
+        ...base,
+        rules: JSON.stringify([
+          { type: "input", field: "reason", on: { change: "function(){return 1;}" } },
+        ]),
+      },
+      { ...base, options: JSON.stringify({ onSubmit: "function(){return true;}" }) },
+    ];
+    for (const form of cases) {
+      await expect(saveDesignDocument(buildDraftFlow(), [form])).rejects.toThrow("脚本配置");
+      await expect(
+        openDesignDocument(wrapDocument(STANDARD_BPMN_XML, { forms: [form] })),
+      ).rejects.toThrow("脚本配置");
+    }
+  });
+
   it("坏 XML 拒绝并带上下文前缀", async () => {
     await expect(openDesignDocument(wrapDocument("<bpmn:not-closed"))).rejects.toThrow(
       "文档 XML 无法解析",

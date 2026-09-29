@@ -83,6 +83,72 @@ function ruleLabel(rule: FieldRule): string {
   return String(rule.title ?? rule.type);
 }
 
+const SCRIPT_RULE_KEYS = ["on", "_on", "nativeOn", "computed", "_computed", "hook", "_hook"];
+const SCRIPT_OPTION_KEYS = [
+  "onReset",
+  "onSubmit",
+  "beforeSubmit",
+  "onCreated",
+  "onMounted",
+  "onBeforeUnmount",
+  "onReload",
+  "onChange",
+  "beforeFetch",
+  "_event",
+];
+
+/** 设计器默认的空事件容器可往返，非空配置属于本轮未开放的脚本能力 */
+function hasConfiguredScript(value: unknown): boolean {
+  if (value === undefined || value === null || value === "" || value === false) return false;
+  if (Array.isArray(value)) return value.length > 0;
+  if (typeof value === "object") return Object.values(value).some(hasConfiguredScript);
+  return true;
+}
+
+function assertNoRuleScripts(rule: Record<string, unknown>): void {
+  for (const key of SCRIPT_RULE_KEYS) {
+    if (hasConfiguredScript(rule[key])) {
+      throw new Error(`规则「${ruleLabel(rule as unknown as FieldRule)}」不支持脚本配置（${key}）`);
+    }
+  }
+}
+
+function assertNoOptionScripts(options: Record<string, unknown>): void {
+  for (const key of SCRIPT_OPTION_KEYS) {
+    if (hasConfiguredScript(options[key])) {
+      throw new Error(`表单 options 不支持脚本配置（${key}）`);
+    }
+  }
+}
+
+/** FormCreate parseJson 会把这些字符串还原为函数，不能作为普通字段值放行 */
+function assertNoEncodedScripts(value: unknown, path: string): void {
+  if (typeof value === "string") {
+    const text = value.trim();
+    if (
+      text.startsWith("[[FORM-CREATE-PREFIX-") ||
+      text.startsWith("$FN:") ||
+      text.startsWith("$FNX:") ||
+      text.startsWith("$EXEC:") ||
+      text.startsWith("$GLOBAL:") ||
+      text.startsWith("function(") ||
+      text.startsWith("function ")
+    ) {
+      throw new Error(`表单 ${path} 包含脚本配置或提供者函数编码，本版本不支持`);
+    }
+    return;
+  }
+  if (Array.isArray(value)) {
+    value.forEach((item, index) => assertNoEncodedScripts(item, `${path}[${index}]`));
+    return;
+  }
+  if (typeof value === "object" && value !== null) {
+    for (const [key, item] of Object.entries(value)) {
+      assertNoEncodedScripts(item, `${path}.${key}`);
+    }
+  }
+}
+
 /** 联动规则可能藏在任意层级，布局列也必须检查 */
 function assertNoControl(rule: Record<string, unknown>): void {
   if (rule.control !== undefined && (!Array.isArray(rule.control) || rule.control.length > 0)) {
@@ -113,6 +179,9 @@ function assertFieldSemantics(rule: FieldRule): void {
   }
   if (rule.type === "select" && props.remote !== undefined && props.remote !== false) {
     throw new Error(`下拉字段「${label}」配置了 remote 远程搜索，本版本只支持静态选项`);
+  }
+  if (rule.type === "select" && hasConfiguredScript(props.remoteMethod)) {
+    throw new Error(`下拉字段「${label}」配置了远程方法（remoteMethod），本版本只支持静态选项`);
   }
   if (rule.type === "datePicker") {
     const type = typeof props.type === "string" ? props.type : "";
@@ -151,6 +220,7 @@ function assertRuleTreeSupported(
       throw new Error("字段规则缺少非空的 type（FormCreate 组件类型）");
     }
     const typedRule = rule as unknown as FieldRule;
+    assertNoRuleScripts(rule);
     assertNoControl(rule);
     if (rule.type === LAYOUT_ROW_TYPE) {
       if (insideLayout) {
@@ -171,6 +241,7 @@ function assertRuleTreeSupported(
             `栅格布局（fcRow）内只能是栅格列（col），出现 ${col.type ?? "（无 type）"}`,
           );
         }
+        assertNoRuleScripts(col);
         assertNoControl(col);
         const colChildren = col.children === undefined ? [] : col.children;
         if (!Array.isArray(colChildren)) {
@@ -232,5 +303,8 @@ export function assertFormDefinitionValid(form: FormDefinition, knownIds: Set<st
   }
   const rules = parseFormRules(form.rules);
   assertSupportedFieldTypes(rules, form.id);
-  parseFormOptions(form.options);
+  assertNoEncodedScripts(rules, "rules");
+  const options = parseFormOptions(form.options);
+  assertNoOptionScripts(options);
+  assertNoEncodedScripts(options, "options");
 }

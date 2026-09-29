@@ -105,6 +105,28 @@ describe("assertSupportedFieldTypes（开放范围矩阵）", () => {
 });
 
 describe("assertSupportedFieldTypes（组件语义边界）", () => {
+  it("字段和布局各层的事件、计算与钩子脚本明确拒绝", () => {
+    for (const key of ["on", "_on", "nativeOn", "computed", "_computed", "hook", "_hook"]) {
+      expect(() =>
+        assertSupportedFieldTypes([
+          { type: "input", field: "reason", [key]: { change: "function(){return 1;}" } },
+        ]),
+      ).toThrow("脚本配置");
+    }
+    expect(() =>
+      assertSupportedFieldTypes([
+        {
+          type: "fcRow",
+          children: [{ type: "col", children: [], on: { change: "function(){}" } }],
+        } as unknown as FieldRule,
+      ]),
+    ).toThrow("脚本配置");
+    // 提供者产出的空事件容器不代表已配置脚本。
+    expect(() =>
+      assertSupportedFieldTypes([{ type: "input", field: "reason", on: {}, _on: {} }]),
+    ).not.toThrow();
+  });
+
   it("普通输入框只接受文本形态，多行文本仍可导入", () => {
     for (const type of ["number", "date", "password"]) {
       expect(() =>
@@ -165,6 +187,14 @@ describe("assertSupportedFieldTypes（组件语义边界）", () => {
         { type: "select", field: "s1", props: { remote: false }, options: [] },
       ]),
     ).not.toThrow();
+  });
+
+  it("下拉远程方法即使未启用 remote 也拒绝导入", () => {
+    expect(() =>
+      assertSupportedFieldTypes([
+        { type: "select", field: "s1", props: { remoteMethod: "function(){}" } },
+      ]),
+    ).toThrow("远程方法");
   });
 
   it("远程数据源（effect.fetch 非空）拒绝：本版本只支持静态选项", () => {
@@ -323,6 +353,60 @@ describe("assertSupportedFieldTypes（布局结构边界）", () => {
 });
 
 describe("parseFormRules 与 assertFormDefinitionValid 的既有口径保持", () => {
+  it("表单级事件脚本拒绝，空事件配置保持兼容", () => {
+    for (const key of [
+      "onReset",
+      "onSubmit",
+      "beforeSubmit",
+      "onCreated",
+      "onMounted",
+      "onBeforeUnmount",
+      "onReload",
+      "onChange",
+      "beforeFetch",
+    ]) {
+      expect(() =>
+        assertFormDefinitionValid(
+          validForm({ options: JSON.stringify({ [key]: "function(){return true;}" }) }),
+          new Set(),
+        ),
+      ).toThrow("脚本配置");
+    }
+    expect(() =>
+      assertFormDefinitionValid(
+        validForm({ options: JSON.stringify({ _event: { onSubmit: "function(){}" } }) }),
+        new Set(),
+      ),
+    ).toThrow("脚本配置");
+    expect(() =>
+      assertFormDefinitionValid(
+        validForm({ options: JSON.stringify({ onSubmit: "", _event: { onReset: "" } }) }),
+        new Set(),
+      ),
+    ).not.toThrow();
+  });
+
+  it("提供者函数编码藏在普通字段值或配置中也明确拒绝", () => {
+    for (const value of [
+      "function(){return 1;}",
+      "$FN:function(){return 1;}",
+      "[[FORM-CREATE-PREFIX-function(){return 1;}-FORM-CREATE-SUFFIX]]",
+    ]) {
+      expect(() =>
+        assertFormDefinitionValid(
+          validForm({ rules: JSON.stringify([{ type: "input", field: "reason", value }]) }),
+          new Set(),
+        ),
+      ).toThrow("脚本配置");
+    }
+    expect(() =>
+      assertFormDefinitionValid(
+        validForm({ options: JSON.stringify({ form: { labelWidth: "$GLOBAL:callback" } }) }),
+        new Set(),
+      ),
+    ).toThrow("脚本配置");
+  });
+
   it("rules 必须是数组、每项带非空 type", () => {
     expect(() => parseFormRules("{}")).toThrow("字段规则数组");
     expect(() => parseFormRules('["x"]')).toThrow("字段规则对象");
