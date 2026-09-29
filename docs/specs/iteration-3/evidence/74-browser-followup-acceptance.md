@@ -11,4 +11,8 @@
 
 本轮仓库检查：`pnpm lint`、`pnpm build` 退出码均为 0；全量 `pnpm test` 为 core 90、designer 124、form-create 88、playground 17，共 319 项通过。一次并行运行中有测试触及 5 秒超时；取消并行构建后，单包复跑及随后全量复跑均通过。PR #84 的提交 `ec5f225` 已推送，Node 22/24 CI 均通过。
 
+## 下载边界诊断
+
+在内置浏览器打开 CDP 的页面下载事件后再次点击下载，浏览器收到 `Page.downloadWillBegin`，建议文件名为 `playground_demo.flowduet.json`，总量 14081 字节；紧接着 `Page.downloadProgress` 报 `state: canceled`、`receivedBytes: 0`。为检验是否因页面过早释放 Blob URL，仅在当前页面运行态把释放延后 30 秒并重试，结果仍是 0 字节即取消。随后恢复原有 `URL.revokeObjectURL`。这说明页面已发起下载，本轮未取得文件发生在浏览器接管下载之后；尚不能进一步断定取消的具体环境原因，也不能以此证明其他浏览器都无法下载。
+
 **验收出口：** F02/F06 的界面证据已补齐。F09/F10 仍需要能够取到实际下载文件的浏览器环境，再执行两轮打开和试填前后文档语义比对；不能仅凭页面“已保存”提示或代码级测试宣布这两项产品验收通过。
