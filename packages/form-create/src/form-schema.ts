@@ -36,6 +36,15 @@ export interface FieldRule {
   [key: string]: unknown;
 }
 
+/** 规则属性必须为对象，保存、恢复与编辑适配使用同一结构边界。 */
+export function validatedRuleProps(rule: FieldRule): Record<string, unknown> {
+  if (rule.props === undefined) return {};
+  if (typeof rule.props !== "object" || rule.props === null || Array.isArray(rule.props)) {
+    throw new Error(`字段或布局「${ruleLabel(rule)}」的 props 必须是 JSON 对象`);
+  }
+  return rule.props as Record<string, unknown>;
+}
+
 /** 解析字段规则串：必须是 JSON 数组且每项形如字段规则 */
 export function parseFormRules(rules: string): FieldRule[] {
   let parsed: unknown;
@@ -162,7 +171,7 @@ function assertNoControl(rule: Record<string, unknown>): void {
  */
 function assertFieldSemantics(rule: FieldRule): void {
   const label = ruleLabel(rule);
-  const props = (rule.props ?? {}) as Record<string, unknown>;
+  const props = validatedRuleProps(rule);
   if (
     rule.type === "input" &&
     props.type !== undefined &&
@@ -223,6 +232,7 @@ function assertRuleTreeSupported(
       throw new Error("字段规则缺少非空的 type（FormCreate 组件类型）");
     }
     const typedRule = rule as unknown as FieldRule;
+    validatedRuleProps(typedRule);
     assertNoRuleScripts(rule);
     assertNoControl(rule);
     if (rule.type === LAYOUT_ROW_TYPE) {
@@ -239,6 +249,7 @@ function assertRuleTreeSupported(
           throw new Error("栅格布局（fcRow）内只能是栅格列（col）规则对象");
         }
         const col = child as Record<string, unknown>;
+        validatedRuleProps(col as unknown as FieldRule);
         if (col.type !== LAYOUT_COL_TYPE) {
           throw new Error(
             `栅格布局（fcRow）内只能是栅格列（col），出现 ${col.type ?? "（无 type）"}`,

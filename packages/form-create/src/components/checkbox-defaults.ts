@@ -1,4 +1,4 @@
-import { parseFormRules } from "../form-schema.js";
+import { parseFormRules, validatedRuleProps } from "../form-schema.js";
 import type { FieldRule } from "../form-schema.js";
 
 /** 仅用于提供者编辑态，保存文档前移除，不属于表单协议。 */
@@ -17,7 +17,7 @@ function visitRules(rules: FieldRule[], visit: (rule: FieldRule) => void): void 
 export function prepareCheckboxDefaults(json: string): FieldRule[] {
   const rules = parseFormRules(json);
   visitRules(rules, (rule) => {
-    const props = (rule.props ?? {}) as Record<string, unknown>;
+    const props = validatedRuleProps(rule);
     delete props[CHECKBOX_DEFAULT_STATE];
     if (rule.type === "checkbox" && Array.isArray(rule.value)) {
       props[CHECKBOX_DEFAULT_STATE] = true;
@@ -32,7 +32,7 @@ export function prepareCheckboxDefaults(json: string): FieldRule[] {
 export function restoreCheckboxDefaults(json: string): FieldRule[] {
   const rules = parseFormRules(json);
   visitRules(rules, (rule) => {
-    const props = (rule.props ?? {}) as Record<string, unknown>;
+    const props = validatedRuleProps(rule);
     if (
       rule.type === "checkbox" &&
       props[CHECKBOX_DEFAULT_STATE] === true &&

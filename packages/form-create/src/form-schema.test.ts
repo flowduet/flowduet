@@ -78,6 +78,18 @@ function validForm(
 }
 
 describe("下拉单选静态选项范围", () => {
+  it("非法 props 结构明确拒绝并定位字段", () => {
+    for (const props of [7, null, [], "bad"]) {
+      expect(() =>
+        assertFormDefinitionValid(
+          validForm({
+            rules: JSON.stringify([{ type: "checkbox", field: "tags", props, value: [] }]),
+          }),
+          new Set(),
+        ),
+      ).toThrow("tags");
+    }
+  });
   it("拒绝创建静态目录外的新选项，仍允许本地搜索与显式关闭创建", () => {
     expect(() =>
       assertFormDefinitionValid(
