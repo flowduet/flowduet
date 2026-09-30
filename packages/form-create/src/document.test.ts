@@ -293,6 +293,71 @@ describe("openDesignDocument", () => {
     await expect(openDesignDocument(again.json)).resolves.toBeTruthy();
   });
 
+  // ---------- 引擎扩展兼容判定（A20：按实际使用的 URI 与扩展内容） ----------
+
+  /** 前缀更名但 URI 不变的 flowable 方言流程：assignee 与 flowduet 默认绑定都应恢复 */
+  const RENAMED_PREFIX_XML = `<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:fa="http://flowable.org/bpmn" xmlns:fd="urn:flowduet:bpmn" id="renamed_defs" targetNamespace="http://example.com/renamed">
+  <bpmn:process id="renamed_flow" name="前缀更名" isExecutable="true" fd:defaultFormKey="form_apply">
+    <bpmn:startEvent id="s" name="开始" />
+    <bpmn:userTask id="t1" name="审批" fa:assignee="\${manager}" />
+    <bpmn:endEvent id="e" name="结束" />
+    <bpmn:sequenceFlow id="f1" sourceRef="s" targetRef="t1" />
+    <bpmn:sequenceFlow id="f2" sourceRef="t1" targetRef="e" />
+  </bpmn:process>
+</bpmn:definitions>`;
+
+  /** 假用 flowable 前缀但绑定其他 URI：moddle 会静默把属性收进 $attrs，必须显式拒绝 */
+  const FAKE_PREFIX_XML = `<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:flowable="http://vendor.example/private-ns" id="fake_defs" targetNamespace="http://example.com/fake">
+  <bpmn:process id="fake_flow" isExecutable="true">
+    <bpmn:startEvent id="s" />
+    <bpmn:userTask id="t1" flowable:assignee="\${manager}" />
+    <bpmn:endEvent id="e" />
+    <bpmn:sequenceFlow id="f1" sourceRef="s" targetRef="t1" />
+    <bpmn:sequenceFlow id="f2" sourceRef="t1" targetRef="e" />
+  </bpmn:process>
+</bpmn:definitions>`;
+
+  it("扩展前缀更名但 URI 不变：assignee 与 flowduet 默认绑定照常恢复（A20）", async () => {
+    const form: FormDefinition = {
+      id: "form_apply",
+      name: "申请单",
+      provider: "form-create/element-plus",
+      rules: JSON.stringify([{ type: "input", field: "reason", title: "事由" }]),
+      options: "{}",
+    };
+    const { model } = await openDesignDocument(wrapDocument(RENAMED_PREFIX_XML, { forms: [form] }));
+    expect(String(model.elementOf("t1").get("assignee"))).toBe("${manager}");
+    expect(model.defaultFormKey).toBe("form_apply");
+    // 语义恢复后可继续编辑与保存（前缀由序列化层规范化回注册前缀）
+    const again = await saveDesignDocument(model, [form]);
+    await expect(openDesignDocument(again.json)).resolves.toHaveProperty("model");
+  });
+
+  it("假用 flowable 前缀但 URI 不匹配：拒绝打开并点名前缀与 URI（A20）", async () => {
+    await expect(openDesignDocument(wrapDocument(FAKE_PREFIX_XML))).rejects.toThrow(
+      /不支持的扩展.*flowable:assignee.*http:\/\/vendor\.example\/private-ns/s,
+    );
+  });
+
+  it("仅声明未使用的其他引擎命名空间不构成冲突；实际使用才拒绝（A20）", async () => {
+    // 只有 xmlns 声明、没有任何元素或属性引用：按标准草稿打开
+    const declaredOnly = STANDARD_BPMN_XML.replace(
+      "<bpmn:definitions ",
+      '<bpmn:definitions xmlns:camunda="http://camunda.org/schema/1.0/bpmn" ',
+    );
+    await expect(openDesignDocument(wrapDocument(declaredOnly))).resolves.toHaveProperty("model");
+
+    const actuallyUsed = declaredOnly.replace(
+      '<bpmn:userTask id="t1" name="审批" />',
+      '<bpmn:userTask id="t1" name="审批" camunda:assignee="demo" />',
+    );
+    await expect(openDesignDocument(wrapDocument(actuallyUsed))).rejects.toThrow(
+      "文档 XML 使用了当前引擎适配器不支持的扩展",
+    );
+  });
+
   it("省略节点连线标记的条件分支恢复后仍报告缺失条件并拦截部署导出", async () => {
     const original = BpmnModel.create({ processId: "branch_draft", adapter: flowableAdapter })
       .addStartEvent({ id: "s" })

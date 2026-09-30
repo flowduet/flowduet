@@ -665,3 +665,232 @@ describe("Playground 多表单管理与节点覆盖闭环（#73）", () => {
     expect(wrapper.find('[data-test="form-preview-render"]').exists()).toBe(true);
   });
 });
+
+/**
+ * 文档兼容检查与原子打开（#75，A11–A13、A20）：
+ * 经 Playground 的公开文件打开入口注入文档，验证实际解析/恢复结果——
+ * 合法内容恢复、业务未配齐的以草稿打开、真正不兼容的内容明确拒绝，
+ * 拒绝时先持有的未保存设计与表单目录不被部分覆盖。
+ */
+
+/** 文档 JSON 包装（默认空表单目录） */
+function designDoc(xml: string, forms: unknown[] = []): string {
+  return JSON.stringify({ format: "flowduet.design", version: 1, engine: "flowable", xml, forms });
+}
+
+/** 单审批节点最小流程骨架；extraAttrs 注入 userTask、decls 注入 definitions */
+function minimalFlowXml(extraAttrs = "", decls = "", processAttrs = ""): string {
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" ${decls} id="compat_defs" targetNamespace="http://example.com/compat">
+  <bpmn:process id="compat_flow" name="兼容检查流程" isExecutable="true" ${processAttrs}>
+    <bpmn:startEvent id="s" name="开始" />
+    <bpmn:userTask id="t1" name="审批节点" ${extraAttrs} />
+    <bpmn:endEvent id="e" name="结束" />
+    <bpmn:sequenceFlow id="f1" sourceRef="s" targetRef="t1" />
+    <bpmn:sequenceFlow id="f2" sourceRef="t1" targetRef="e" />
+  </bpmn:process>
+</bpmn:definitions>`;
+}
+
+async function openDocument(json: string): Promise<void> {
+  pickFile(wrapper!, json);
+  await wrapper!.find('input[data-test="open-doc-input"]').trigger("change");
+  await flushPromises();
+}
+
+describe("Playground 文档兼容检查与原子打开（#75）", () => {
+  it("导入失效表单 key 的可恢复文档：以草稿打开、key 保留并定位、预览与部署导出受阻（A11）", async () => {
+    wrapper = mount(App, { attachTo: document.body });
+    const xml = minimalFlowXml(
+      'fa:assignee="${manager}" fa:formKey="ghost_form"',
+      'xmlns:fa="http://flowable.org/bpmn" xmlns:fd="urn:flowduet:bpmn"',
+      'fd:defaultFormKey="missing_form"',
+    );
+    const validForm = {
+      id: "form_apply",
+      name: "申请单",
+      provider: "form-create/element-plus",
+      rules: JSON.stringify([{ type: "input", field: "reason", title: "申请事由" }]),
+      options: "{}",
+    };
+    await openDocument(designDoc(xml, [validForm]));
+
+    // 草稿打开成功：不是「文档结构损坏」的报错形态
+    expect(wrapper.find('[data-test="doc-error"]').exists()).toBe(false);
+    expect(wrapper.find('[data-test="doc-status"]').text()).toContain("兼容检查流程");
+    // 引用失效定位：默认与节点覆盖两条都报出，key 原样保留
+    const issues = wrapper.find('[data-test="reference-issues"]').text();
+    expect(issues).toContain("missing_form");
+    expect(issues).toContain("ghost_form");
+    expect(issues).toContain("已保留原值");
+
+    // 相关预览受阻：覆盖节点预览报失效（不回退默认、不渲染其他表单）
+    await wrapper.find('[data-test="form-preview-btn"]').trigger("click");
+    await flushPromises();
+    await wrapper.find('[data-test="preview-node-select"]').setValue("t1");
+    await flushPromises();
+    expect(wrapper.find('[data-test="preview-target-error"]').text()).toContain("ghost_form");
+    expect(wrapper.find('[data-test="form-preview-render"]').exists()).toBe(false);
+
+    // 部署导出受阻：组合校验拦截失效引用（草稿不冒充可部署产物）
+    await wrapper.find('[data-test="export-btn"]').trigger("click");
+    await flushPromises();
+    expect(wrapper.find('[data-test="xml-error"]').text()).toContain("missing_form");
+    expect(wrapper.find('[data-test="xml-preview"]').exists()).toBe(false);
+  });
+
+  it("先持有未保存设计与表单目录，打开失败后全部保留（A12）", async () => {
+    wrapper = mount(App, { attachTo: document.body });
+    // 未保存状态 = 新建的最小流程 + 目录里新建的表单（从未点过下载）
+    await setupWithForms(["未保存申请单"]);
+    expect(wrapper.text()).toContain("审批节点");
+
+    // 未知引擎：拒绝
+    await openDocument(
+      JSON.stringify({
+        format: "flowduet.design",
+        version: 1,
+        engine: "camunda",
+        xml: minimalFlowXml(),
+        forms: [],
+      }),
+    );
+    expect(wrapper.find('[data-test="doc-error"]').text()).toContain("不支持的目标引擎");
+    expect(wrapper.find('[data-test="doc-status"]').exists()).toBe(false);
+    // 未保存的模型与表单目录原样在场
+    expect(wrapper.text()).toContain("审批节点");
+    await wrapper.find('[data-test="form-manager-btn"]').trigger("click");
+    await flushPromises();
+    expect(wrapper.find("[data-test=form-item-form_1]").text()).toContain("未保存申请单");
+
+    // 坏 XML：同样拒绝且不部分覆盖（表单管理弹窗开着也不受影响）
+    await openDocument(designDoc("<bpmn:not-closed"));
+    expect(wrapper.find('[data-test="doc-error"]').text()).toContain("文档 XML 无法解析");
+    expect(wrapper.find("[data-test=form-item-form_1]").text()).toContain("未保存申请单");
+
+    // 假 flowable 前缀但 URI 不匹配：按实际 URI 拒绝
+    const fakePrefixXml = minimalFlowXml(
+      'flowable:assignee="${manager}"',
+      'xmlns:flowable="http://vendor.example/private-ns"',
+    );
+    await openDocument(designDoc(fakePrefixXml));
+    expect(wrapper.find('[data-test="doc-error"]').text()).toContain("不支持的扩展");
+    expect(wrapper.find("[data-test=form-item-form_1]").text()).toContain("未保存申请单");
+
+    // 重复表单 ID 与未知提供者：目录级拒绝（其余组合由 document.test.ts 单测兜底）
+    const baseForm = {
+      id: "form_dup",
+      name: "重复项",
+      provider: "form-create/element-plus",
+      rules: "[]",
+      options: "{}",
+    };
+    await openDocument(designDoc(minimalFlowXml(), [baseForm, { ...baseForm, name: "再来一份" }]));
+    expect(wrapper.find('[data-test="doc-error"]').text()).toContain("id 重复");
+    await openDocument(
+      designDoc(minimalFlowXml(), [{ ...baseForm, provider: "other-vendor/antd" }]),
+    );
+    expect(wrapper.find('[data-test="doc-error"]').text()).toContain(
+      "只支持 form-create/element-plus",
+    );
+    expect(wrapper.find("[data-test=form-item-form_1]").text()).toContain("未保存申请单");
+    document
+      .querySelector<HTMLElement>('[data-test="form-manager-dialog"] .el-dialog__headerbtn')!
+      .click();
+    await flushPromises();
+    expect(wrapper.text()).toContain("审批节点");
+  });
+
+  it("多流程、超编辑子集与超表单范围的文档拒绝打开并点名（A13）", async () => {
+    wrapper = mount(App, { attachTo: document.body });
+    expect(wrapper.text()).toContain("合同会签");
+
+    const multiProcessXml = `<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" id="multi_defs" targetNamespace="http://example.com/multi">
+  <bpmn:process id="flow_a" isExecutable="true">
+    <bpmn:startEvent id="a_s" />
+    <bpmn:endEvent id="a_e" />
+    <bpmn:sequenceFlow id="a_f1" sourceRef="a_s" targetRef="a_e" />
+  </bpmn:process>
+  <bpmn:process id="flow_b" isExecutable="true">
+    <bpmn:startEvent id="b_s" />
+    <bpmn:endEvent id="b_e" />
+    <bpmn:sequenceFlow id="b_f1" sourceRef="b_s" targetRef="b_e" />
+  </bpmn:process>
+</bpmn:definitions>`;
+    await openDocument(designDoc(multiProcessXml));
+    expect(wrapper.find('[data-test="doc-error"]').text()).toContain("2 个流程");
+
+    const scriptTaskXml = minimalFlowXml().replace(
+      '<bpmn:userTask id="t1" name="审批节点"  />',
+      '<bpmn:scriptTask id="t1" name="系统脚本" />',
+    );
+    await openDocument(designDoc(scriptTaskXml));
+    expect(wrapper.find('[data-test="doc-error"]').text()).toContain("t1");
+    expect(wrapper.find('[data-test="doc-error"]').text()).toContain("ScriptTask");
+
+    const uploadForm = {
+      id: "form_upload",
+      name: "上传表单",
+      provider: "form-create/element-plus",
+      rules: JSON.stringify([{ type: "upload", field: "attachment", title: "附件" }]),
+      options: "{}",
+    };
+    await openDocument(designDoc(minimalFlowXml(), [uploadForm]));
+    expect(wrapper.find('[data-test="doc-error"]').text()).toContain("支持的组件");
+
+    // 三次拒绝后当前演示设计原样在场
+    expect(wrapper.text()).toContain("合同会签");
+  });
+
+  it("标准草稿无 Flowable 扩展可打开；缺审批人仍拦截部署导出（A20 前半）", async () => {
+    wrapper = mount(App, { attachTo: document.body });
+    // flowableAdapter 产出的未配置审批人标准流程：无任何 Flowable 扩展声明与使用
+    const standardXml = minimalFlowXml();
+    await openDocument(designDoc(standardXml));
+
+    expect(wrapper.find('[data-test="doc-error"]').exists()).toBe(false);
+    expect(wrapper.find('[data-test="doc-status"]').text()).toContain("兼容检查流程");
+    expect(wrapper.findAll('[data-test="node-card"]').length).toBeGreaterThan(0);
+
+    // 缺业务配置：打开为草稿可以，部署导出被拦（不因「能打开」冒充可部署）
+    await wrapper.find('[data-test="export-btn"]').trigger("click");
+    await flushPromises();
+    expect(wrapper.find('[data-test="xml-error"]').text()).toContain("审批人");
+  });
+
+  it("前缀更名 URI 不变可识别、未使用声明放行、实际使用冲突扩展拒绝（A20 后半）", async () => {
+    wrapper = mount(App, { attachTo: document.body });
+
+    // fa 前缀 + 正确 flowable URI：assignee 语义恢复
+    const renamedXml = minimalFlowXml(
+      'fa:assignee="${manager}"',
+      'xmlns:fa="http://flowable.org/bpmn"',
+    );
+    await openDocument(designDoc(renamedXml));
+    expect(wrapper.find('[data-test="doc-error"]').exists()).toBe(false);
+    expect(wrapper.find('[data-test="doc-status"]').text()).toContain("兼容检查流程");
+
+    // 仅声明未使用的 camunda 命名空间：不构成冲突
+    const declaredOnlyXml = minimalFlowXml(
+      "",
+      'xmlns:camunda="http://camunda.org/schema/1.0/bpmn"',
+    );
+    await openDocument(designDoc(declaredOnlyXml));
+    expect(wrapper.find('[data-test="doc-error"]').exists()).toBe(false);
+    const nodeCardCount = wrapper.findAll('[data-test="node-card"]').length;
+
+    // 实际使用 camunda 扩展：按 URI 拒绝（前缀叫什么不重要）
+    const actuallyUsedXml = minimalFlowXml(
+      'camunda:assignee="demo"',
+      'xmlns:camunda="http://camunda.org/schema/1.0/bpmn"',
+    );
+    await openDocument(designDoc(actuallyUsedXml));
+    expect(wrapper.find('[data-test="doc-error"]').text()).toContain("camunda:assignee");
+    expect(wrapper.find('[data-test="doc-error"]').text()).toContain(
+      "http://camunda.org/schema/1.0/bpmn",
+    );
+    // 拒绝后当前设计仍是上一次成功打开的内容（打开尝试会清空状态文案，以节点为准）
+    expect(wrapper.findAll('[data-test="node-card"]')).toHaveLength(nodeCardCount);
+  });
+});
