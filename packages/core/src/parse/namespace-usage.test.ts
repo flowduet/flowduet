@@ -38,6 +38,21 @@ describe("collectUnregisteredNamespaceUsage", () => {
     expect(collectUnregisteredNamespaceUsage(xml, REGISTERED)).toEqual([]);
   });
 
+  it("属性使用先于同标签 xmlns 声明：属性顺序无关，照常识别", () => {
+    // XML 属性顺序无关：使用写在声明之前同样合法，不能误报「前缀未声明」
+    const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="${BPMN_MODEL_URI}" id="probe" targetNamespace="http://example.com/probe">
+  <bpmn:process id="probe_flow" isExecutable="true">
+    <bpmn:startEvent id="s" />
+    <bpmn:userTask id="t" fa:assignee="\${manager}" xmlns:fa="${FLOWABLE_URI}" />
+    <bpmn:endEvent id="e" />
+    <bpmn:sequenceFlow id="f1" sourceRef="s" targetRef="t" />
+    <bpmn:sequenceFlow id="f2" sourceRef="t" targetRef="e" />
+  </bpmn:process>
+</bpmn:definitions>`;
+    expect(collectUnregisteredNamespaceUsage(xml, REGISTERED)).toEqual([]);
+  });
+
   it("假用已注册前缀名但 URI 不匹配：按 URI 判定，产生带定位的诊断", () => {
     const xml = flowXml(
       'flowable:assignee="${manager}"',
@@ -157,6 +172,24 @@ describe("parse 的 rejectUnregisteredNamespaces 选项（opt-in，不改既有�
 
   it("开启审计：同 URI 不同前缀正常恢复，语义不丢失", async () => {
     const xml = flowXml('fa:assignee="${manager}"', `xmlns:fa="${FLOWABLE_URI}"`);
+    const model = await parse(xml, {
+      adapter: flowableAdapter,
+      rejectUnregisteredNamespaces: true,
+    });
+    expect(String(model.elementOf("t").get("assignee"))).toBe("${manager}");
+  });
+
+  it("开启审计：使用先于同标签声明的前缀照常恢复（属性顺序无关）", async () => {
+    const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="${BPMN_MODEL_URI}" id="probe" targetNamespace="http://example.com/probe">
+  <bpmn:process id="probe_flow" isExecutable="true">
+    <bpmn:startEvent id="s" />
+    <bpmn:userTask id="t" fa:assignee="\${manager}" xmlns:fa="${FLOWABLE_URI}" />
+    <bpmn:endEvent id="e" />
+    <bpmn:sequenceFlow id="f1" sourceRef="s" targetRef="t" />
+    <bpmn:sequenceFlow id="f2" sourceRef="t" targetRef="e" />
+  </bpmn:process>
+</bpmn:definitions>`;
     const model = await parse(xml, {
       adapter: flowableAdapter,
       rejectUnregisteredNamespaces: true,

@@ -67,6 +67,12 @@ export function collectUnregisteredNamespaceUsage(
     }
   };
 
+  /** 跳到标记串之后（注释/CDATA/PI/DOCTYPE 的同形收尾），未闭合则跳到文本末尾 */
+  const skipPast = (marker: string, searchFrom = i + marker.length): void => {
+    const end = xml.indexOf(marker, searchFrom);
+    advance(end === -1 ? n : end + marker.length);
+  };
+
   /** 记录一次带前缀使用：URI 在作用域内解析，未注册才进诊断 */
   const record = (qualifiedName: string, kind: "element" | "attribute"): void => {
     const separator = qualifiedName.indexOf(":");
@@ -110,24 +116,20 @@ export function collectUnregisteredNamespaceUsage(
     }
 
     if (xml.startsWith("<!--", i)) {
-      const end = xml.indexOf("-->", i + 4);
-      advance(end === -1 ? n : end + 3);
+      skipPast("-->");
       continue;
     }
     if (xml.startsWith("<![CDATA[", i)) {
-      const end = xml.indexOf("]]>", i + 9);
-      advance(end === -1 ? n : end + 3);
+      skipPast("]]>");
       continue;
     }
     if (xml.startsWith("<?", i)) {
-      const end = xml.indexOf("?>", i + 2);
-      advance(end === -1 ? n : end + 2);
+      skipPast("?>");
       continue;
     }
     if (xml.startsWith("<!", i)) {
       // DOCTYPE 等 DTD 标记：跳到本声明收尾（内部子集极少嵌套，解析层兜底）
-      const end = xml.indexOf(">", i + 2);
-      advance(end === -1 ? n : end + 1);
+      skipPast(">", i + 2);
       continue;
     }
 
@@ -151,6 +153,8 @@ export function collectUnregisteredNamespaceUsage(
     const frame: ScopeFrame = new Map();
     scopes.push(frame);
     let selfClosing = false;
+    /** 本标签上带前缀属性的使用：延后到声明收集完成后统一解析（属性顺序无关） */
+    const attributeUses: Array<{ name: string; line: number }> = [];
 
     while (cursor < n) {
       // 跳过标签内空白
@@ -180,11 +184,17 @@ export function collectUnregisteredNamespaceUsage(
         cursor += 1;
         continue;
       }
-      // 跳过 = 与空白
-      while (cursor < n && /\s/.test(at(cursor))) cursor += 1;
+      // 跳过 = 两侧空白（换行计入行号，保证多行标签的定位准确）
+      while (cursor < n && /\s/.test(at(cursor))) {
+        if (at(cursor) === "\n") line += 1;
+        cursor += 1;
+      }
       if (at(cursor) !== "=") continue;
       cursor += 1;
-      while (cursor < n && /\s/.test(at(cursor))) cursor += 1;
+      while (cursor < n && /\s/.test(at(cursor))) {
+        if (at(cursor) === "\n") line += 1;
+        cursor += 1;
+      }
       const quote = at(cursor);
       if (quote !== '"' && quote !== "'") continue;
       const valueEnd = xml.indexOf(quote, cursor + 1);
@@ -200,15 +210,19 @@ export function collectUnregisteredNamespaceUsage(
       } else if (attrName.startsWith("xmlns:")) {
         frame.set(attrName.slice(6), value);
       } else if (attrName.includes(":")) {
-        record(attrName, "attribute");
+        attributeUses.push({ name: attrName, line });
       }
     }
 
-    // 元素名在帧压栈后记录：同标签上的声明即可解析（xmlns 与使用同元素合法）
-    const elementLine = tagLine;
+    // 元素与属性的使用都在本标签全部声明收集完成后解析：
+    // XML 属性顺序无关，使用写在 xmlns 声明之前同样合法
     const savedLine = line;
-    line = elementLine;
+    line = tagLine;
     record(name, "element");
+    for (const use of attributeUses) {
+      line = use.line;
+      record(use.name, "attribute");
+    }
     line = savedLine;
 
     if (selfClosing) scopes.pop();
