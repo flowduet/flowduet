@@ -168,6 +168,43 @@ describe("FlowDesignSession", () => {
     expect(String(session.current?.model.process.get("id"))).toBe("newer_flow");
   });
 
+  it("打开接受宿主的读取 Promise，仍完整恢复模型与表单", async () => {
+    const source = new FlowDesignSession(buildDraftFlow());
+    source.createForm("Promise 申请单");
+    const { json } = await source.save();
+    const session = new FlowDesignSession();
+    const state = await session.open(Promise.resolve(json));
+    expect(state.model.elementOf("approval_1").get("assignee")).toBe("${manager}");
+    expect(state.forms[0]?.name).toBe("Promise 申请单");
+  });
+
+  it("较新请求尚在读取时，较早解析也不能提交临时模型", async () => {
+    const session = new FlowDesignSession(buildDraftFlow());
+    session.createForm("原表单");
+    const previous = session.current;
+    const { json } = await session.save();
+    let finishRead!: (text: string) => void;
+    const reading = new Promise<string>((resolve) => {
+      finishRead = resolve;
+    });
+    const old = session.open(json);
+    // 立即挂上拒绝处理，旧请求即使提前完成也不会产生未处理 rejection。
+    const stale = expect(old).rejects.toThrow("已被更新");
+    // 让旧请求越过文本读取阶段并进入真实解析，再启动较新的读取请求。
+    await Promise.resolve();
+    const latest = session.open(reading).then(
+      (state) => ({ state, error: undefined }),
+      (error: unknown) => ({ state: undefined, error }),
+    );
+    await stale;
+    expect(session.current).toBe(previous);
+    finishRead(json);
+    const result = await latest;
+    expect(result.error).toBeUndefined();
+    expect(result.state?.forms[0]?.name).toBe("原表单");
+    expect(session.current).toBe(result.state);
+  });
+
   it.each([
     ["重复 ID", '<bpmn:userTask id="approval_1" name="不能丢失的节点" />'],
     ["无法识别的元素", '<bpmn:scriptTesk id="unknown_task" name="不能丢失的节点" />'],

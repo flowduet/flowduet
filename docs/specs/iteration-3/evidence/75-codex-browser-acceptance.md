@@ -1,5 +1,7 @@
 # #75 Codex 自带浏览器产品功能验收（2026-09-30）
 
+本页保留 `acc4d4e` 的初验结果。X06 后续修复与复验见 [`75-race-fix-verification.md`](./75-race-fix-verification.md)，不覆盖原失败证据。
+
 本轮不能判定完整文件打开边界通过。62 个用例全部执行或尝试：59 个通过、2 个部分完成、1 个失败。#75 聚焦的 55 个文件恢复/拒绝用例全部通过；父规格 A14 的慢文件竞态 X06 失败。完整用例定义见 [`75-functional-test-cases.md`](../75-functional-test-cases.md)。
 
 ## 被测环境与证据性质

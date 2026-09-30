@@ -21,10 +21,16 @@ afterEach(() => {
 });
 
 /** 直接向文件选择器注入 File（happy-dom 下 files 为只读 FileList） */
-function pickFile(target: ReturnType<typeof mount>, json: string): void {
+function pickFile(
+  target: ReturnType<typeof mount>,
+  json: string,
+  readText?: () => Promise<string>,
+): void {
   const input = target.find<HTMLInputElement>('input[data-test="open-doc-input"]');
+  const file = new File([json], "design.flowduet.json", { type: "application/json" });
+  if (readText !== undefined) Object.defineProperty(file, "text", { value: readText });
   Object.defineProperty(input.element, "files", {
-    value: [new File([json], "design.flowduet.json", { type: "application/json" })],
+    value: [file],
     configurable: true,
   });
 }
@@ -698,6 +704,97 @@ async function openDocument(json: string): Promise<void> {
   await wrapper!.find('input[data-test="open-doc-input"]').trigger("change");
   await flushPromises();
 }
+
+/** 只延迟文件 I/O，后续文档解析与原子恢复仍走真实公开入口。 */
+function pendingFileRead(): {
+  text: Promise<string>;
+  resolve: (value: string) => void;
+  reject: (reason: Error) => void;
+} {
+  let resolve!: (value: string) => void;
+  let reject!: (reason: Error) => void;
+  const text = new Promise<string>((ok, fail) => {
+    resolve = ok;
+    reject = fail;
+  });
+  return { text, resolve, reject };
+}
+
+describe("Playground 文件读取与打开竞态（A14）", () => {
+  it.each(["成功", "读取失败", "坏文档"])("旧文件迟到%s不覆盖新文件或其反馈", async (outcome) => {
+    wrapper = mount(App, { attachTo: document.body });
+    const oldJson = designDoc(
+      minimalFlowXml('fa:assignee="oldA75"', 'xmlns:fa="http://flowable.org/bpmn"'),
+    );
+    const newJson = designDoc(
+      minimalFlowXml('fa:assignee="newB75"', 'xmlns:fa="http://flowable.org/bpmn"').replace(
+        'name="兼容检查流程"',
+        'name="新请求B75"',
+      ),
+      [
+        {
+          id: "new_form",
+          name: "新请求表单B75",
+          provider: "form-create/element-plus",
+          rules: "[]",
+          options: "{}",
+        },
+      ],
+    );
+    const slow = pendingFileRead();
+    pickFile(wrapper, oldJson, () => slow.text);
+    await wrapper.find('[data-test="open-doc-input"]').trigger("change");
+    await openDocument(newJson);
+    expect(wrapper.find('[data-test="doc-status"]').text()).toContain("新请求B75");
+
+    if (outcome === "读取失败") slow.reject(new Error("旧文件读取失败75"));
+    else slow.resolve(outcome === "坏文档" ? "{bad-json" : oldJson);
+    await flushPromises();
+    expect(wrapper.find('[data-test="doc-status"]').text()).toContain("新请求B75");
+    expect(wrapper.find('[data-test="doc-error"]').exists()).toBe(false);
+    await wrapper.find('[data-test="export-btn"]').trigger("click");
+    await flushPromises();
+    expect(wrapper.find('[data-test="xml-preview"]').text()).toContain('assignee="newB75"');
+    expect(wrapper.find('[data-test="xml-preview"]').text()).not.toContain("oldA75");
+    await wrapper.find('[data-test="form-manager-btn"]').trigger("click");
+    await flushPromises();
+    expect(wrapper.find('[data-test="form-item-new_form"]').text()).toContain("新请求表单B75");
+  });
+
+  it("较新文件失败后，旧文件迟到也不能替换原未保存设计", async () => {
+    wrapper = mount(App, { attachTo: document.body });
+    await setupWithForms(["未保存申请单"]);
+    const slow = pendingFileRead();
+    const oldJson = designDoc(minimalFlowXml());
+    pickFile(wrapper, oldJson, () => slow.text);
+    await wrapper.find('[data-test="open-doc-input"]').trigger("change");
+    await openDocument("{new-bad-json");
+    slow.resolve(oldJson);
+    await flushPromises();
+    expect(wrapper.find('[data-test="doc-error"]').text()).toContain("不是合法 JSON");
+    expect(wrapper.find('[data-test="doc-status"]').exists()).toBe(false);
+    expect(wrapper.text()).toContain("审批节点");
+    await wrapper.find('[data-test="form-manager-btn"]').trigger("click");
+    await flushPromises();
+    expect(wrapper.find('[data-test="form-item-form_1"]').text()).toContain("未保存申请单");
+  });
+
+  it.each(["成功", "读取失败"])("新建设计后旧文件迟到%s被忽略", async (outcome) => {
+    wrapper = mount(App, { attachTo: document.body });
+    const slow = pendingFileRead();
+    const oldJson = designDoc(minimalFlowXml());
+    pickFile(wrapper, oldJson, () => slow.text);
+    await wrapper.find('[data-test="open-doc-input"]').trigger("change");
+    await wrapper.find('[data-test="new-design-btn"]').trigger("click");
+    if (outcome === "读取失败") slow.reject(new Error("旧文件读取失败75"));
+    else slow.resolve(oldJson);
+    await flushPromises();
+    expect(wrapper.find('[data-test="doc-status"]').text()).toContain("已新建设计");
+    expect(wrapper.find('[data-test="doc-error"]').exists()).toBe(false);
+    expect(wrapper.text()).toContain("审批节点");
+    expect(wrapper.text()).not.toContain("兼容检查流程");
+  });
+});
 
 describe("Playground 文档兼容检查与原子打开（#75）", () => {
   it("字符引用 URI 文件可打开并导出；非法 xml 重绑定文件拒绝且未保存内容不丢失", async () => {

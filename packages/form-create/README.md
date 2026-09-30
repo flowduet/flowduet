@@ -84,6 +84,8 @@ const xml = await exportDeployXml(session.current!.model, session.current!.forms
 
 宿主只做文件 I/O 与展示（下载 Blob、读 File、把模型接进 `DingtalkDesigner` / `BpmnCanvas`），文档算法不复制到宿主。纯函数形式同样可用：`saveDesignDocument(model, forms?)` / `openDesignDocument(text)` / `exportDeployXml(model, forms)` / `collectReferenceIssues(model, forms)`。
 
+文件宿主应将文本读取 Promise 直接传给 `session.open`，例如 `session.open(Promise.resolve().then(() => file.text()))`，让会话在读取开始前记录打开顺序；先等待文件读完再调用无法防止慢文件覆盖较新文件。已有 `session.open(json)` 调用继续有效。会话会拒绝迟到结果，宿主的状态与错误提示也应按文件选择顺序过滤旧请求；新建设计应使旧请求的反馈失效。
+
 ## 默认表单绑定与节点覆盖
 
 - 流程默认表单落在 `bpmn:Process` 的 `flowduet:defaultFormKey`（命名空间 `urn:flowduet:bpmn`），由 core 在创建与解析路径统一注册，未使用时编译输出不含该命名空间（既有基准逐字一致）。
