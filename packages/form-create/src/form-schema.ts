@@ -160,8 +160,12 @@ function assertNoEncodedScripts(value: unknown, path: string): void {
 
 /** 联动规则可能藏在任意层级，布局列也必须检查 */
 function assertNoControl(rule: Record<string, unknown>): void {
-  if (rule.control !== undefined && (!Array.isArray(rule.control) || rule.control.length > 0)) {
-    throw new Error(`规则「${ruleLabel(rule as unknown as FieldRule)}」不支持组件联动（control）`);
+  // 提供者编辑态使用 _control，恢复后会转回 control，两种编码都要收口。
+  for (const key of ["control", "_control"]) {
+    const value = rule[key];
+    if (value !== undefined && (!Array.isArray(value) || value.length > 0)) {
+      throw new Error(`规则「${ruleLabel(rule as unknown as FieldRule)}」不支持组件联动（${key}）`);
+    }
   }
 }
 

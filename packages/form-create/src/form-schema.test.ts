@@ -114,6 +114,40 @@ describe("下拉单选静态选项范围", () => {
   });
 });
 
+describe("提供者联动别名边界", () => {
+  it("字段、栅格行与列都拒绝非空 _control，空联动容器仍可恢复", () => {
+    const linkage = [{ value: "a", rule: [{ type: "upload", field: "upload" }] }];
+    const cases = [
+      [{ type: "input", field: "reason", _control: linkage }],
+      [{ type: "fcRow", _control: linkage, children: [] }],
+      [{ type: "fcRow", children: [{ type: "col", _control: linkage, children: [] }] }],
+    ];
+    for (const rules of cases) {
+      expect(() =>
+        assertFormDefinitionValid(validForm({ rules: JSON.stringify(rules) }), new Set()),
+      ).toThrow("_control");
+    }
+    for (const _control of [null, {}, "bad"]) {
+      expect(() =>
+        assertFormDefinitionValid(
+          validForm({
+            rules: JSON.stringify([{ type: "input", field: "reason", _control }]),
+          }),
+          new Set(),
+        ),
+      ).toThrow("_control");
+    }
+    expect(() =>
+      assertFormDefinitionValid(
+        validForm({
+          rules: JSON.stringify([{ type: "input", field: "reason", control: [], _control: [] }]),
+        }),
+        new Set(),
+      ),
+    ).not.toThrow();
+  });
+});
+
 describe("assertSupportedFieldTypes（开放范围矩阵）", () => {
   it("八类字段与栅格布局整棵规则树放行（含数字 0、开关 false、空多选默认值）", () => {
     expect(() => assertSupportedFieldTypes(MATRIX_RULES, "form_matrix")).not.toThrow();

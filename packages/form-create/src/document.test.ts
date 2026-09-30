@@ -428,6 +428,26 @@ describe("openDesignDocument", () => {
     ).rejects.toThrow("allowCreate");
   });
 
+  it("联动编辑别名 _control 在公开保存与打开两侧拒绝", async () => {
+    const form: FormDefinition = {
+      id: "linkage_alias",
+      name: "联动别名",
+      provider: "form-create/element-plus",
+      options: "{}",
+      rules: JSON.stringify([
+        {
+          type: "input",
+          field: "reason",
+          _control: [{ value: "a", rule: [{ type: "upload", field: "out_of_scope" }] }],
+        },
+      ]),
+    };
+    await expect(saveDesignDocument(buildDraftFlow(), [form])).rejects.toThrow("_control");
+    await expect(
+      openDesignDocument(wrapDocument(STANDARD_BPMN_XML, { forms: [form] })),
+    ).rejects.toThrow("_control");
+  });
+
   it("坏 XML 拒绝并带上下文前缀", async () => {
     await expect(openDesignDocument(wrapDocument("<bpmn:not-closed"))).rejects.toThrow(
       "文档 XML 无法解析",
