@@ -412,6 +412,22 @@ describe("openDesignDocument", () => {
     }
   });
 
+  it("创建静态目录外的下拉选项在公开保存和打开接口都被拒绝", async () => {
+    const form: FormDefinition = {
+      id: "static_select",
+      name: "静态下拉",
+      provider: "form-create/element-plus",
+      options: "{}",
+      rules: JSON.stringify([
+        { type: "select", field: "level", props: { allowCreate: true, filterable: true } },
+      ]),
+    };
+    await expect(saveDesignDocument(buildDraftFlow(), [form])).rejects.toThrow("allowCreate");
+    await expect(
+      openDesignDocument(wrapDocument(STANDARD_BPMN_XML, { forms: [form] })),
+    ).rejects.toThrow("allowCreate");
+  });
+
   it("坏 XML 拒绝并带上下文前缀", async () => {
     await expect(openDesignDocument(wrapDocument("<bpmn:not-closed"))).rejects.toThrow(
       "文档 XML 无法解析",

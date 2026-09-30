@@ -1,4 +1,5 @@
 import type { Config } from "@form-create/designer/types/index.d";
+import { CHECKBOX_DEFAULT_STATE } from "./checkbox-defaults.js";
 
 /**
  * 设计器收口配置（#74）：与 form-schema 守卫同一开放范围口径。
@@ -75,7 +76,33 @@ export const DESIGNER_CONFIG: Config = {
           return [{ type: "select", field, title, options, props: { clearable: true } }];
         case "checkbox":
           return [
-            { type: "select", field, title, options, props: { multiple: true, clearable: true } },
+            {
+              type: "switch",
+              field: `formCreate>props>${CHECKBOX_DEFAULT_STATE}`,
+              title: "设置默认值",
+              value: Array.isArray(rule.value) || rule.props?.[CHECKBOX_DEFAULT_STATE] === true,
+              on: {
+                change: (enabled: boolean) => {
+                  // 关闭表示未设置；开启且无选项表示显式 []。
+                  if (!enabled) delete rule.value;
+                  else if (!Array.isArray(rule.value)) rule.value = [];
+                },
+              },
+              control: [
+                {
+                  value: true,
+                  rule: [
+                    {
+                      type: "select",
+                      field,
+                      title: "默认选项",
+                      options,
+                      props: { multiple: true, clearable: true },
+                    },
+                  ],
+                },
+              ],
+            },
           ];
         case "datePicker":
           return [
@@ -110,7 +137,7 @@ export const DESIGNER_CONFIG: Config = {
   hiddenItemConfig: {
     default: ["_optionType", "_control"],
     input: ["type"],
-    select: ["multiple", "multipleLimit", "remote", "remoteMethod"],
+    select: ["multiple", "multipleLimit", "remote", "remoteMethod", "allowCreate"],
     datePicker: ["type"],
   },
   // 栅格布局只允许顶层：checkDrag 仅在「拖入已有容器」时被调用，

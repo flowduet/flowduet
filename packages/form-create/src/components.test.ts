@@ -418,6 +418,97 @@ describe("FormPreview 全字段与布局矩阵（真实渲染器，A09/A10）", 
 });
 
 describe("FormDesigner 全字段与布局矩阵（真实设计器，A10）", () => {
+  it("真实设计器重复保存保留显式空多选默认值，并区分未设置（含栅格列内）", async () => {
+    let rules = JSON.stringify([
+      { type: "checkbox", field: "empty", title: "空默认值", value: [] },
+      { type: "checkbox", field: "unset", title: "未设置" },
+      { type: "checkbox", field: "selected", title: "有选择", value: ["a"] },
+      {
+        type: "fcRow",
+        children: [
+          {
+            type: "col",
+            children: [{ type: "checkbox", field: "nested", title: "列内空值", value: [] }],
+          },
+        ],
+      },
+    ]);
+    for (let round = 0; round < 2; round++) {
+      wrapper = mount(FormDesigner, { props: { name: "默认值往返", rules, options: "{}" } });
+      await flushPromises();
+      await wrapper.find('[data-test="form-designer-save"]').trigger("click");
+      rules = wrapper.emitted("save")![0]![0] as string;
+      const output = JSON.parse(rules);
+      expect(output[0].value).toEqual([]);
+      expect(Object.hasOwn(output[1], "value")).toBe(false);
+      expect(output[2].value).toEqual(["a"]);
+      expect(output[3].children[0].children[0].value).toEqual([]);
+      expect(rules).not.toContain("__flowduet");
+      wrapper.unmount();
+      wrapper = undefined;
+    }
+  }, 15_000);
+
+  it("新建多选字段可显式设置空默认值，再恢复未设置", async () => {
+    wrapper = mount(FormDesigner, { props: { name: "新建默认值", rules: "[]", options: "{}" } });
+    await flushPromises();
+    const menu = wrapper.findAll("._fc-l-item").find((item) => item.text() === "多选框");
+    expect(menu).toBeDefined();
+    await menu!.trigger("click");
+    await flushPromises();
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    const mode = wrapper
+      .findAll("._fc-r-config .el-form-item")
+      .find((item) => item.text().includes("设置默认值"));
+    expect(mode, "多选需要区分未设置与显式空默认值").toBeDefined();
+    await mode!.find(".el-switch__core").trigger("click");
+    await flushPromises();
+    await wrapper.find('[data-test="form-designer-save"]').trigger("click");
+    expect(JSON.parse(wrapper.emitted("save")![0]![0] as string)[0].value).toEqual([]);
+    await mode!.find(".el-switch__core").trigger("click");
+    await flushPromises();
+    await wrapper.find('[data-test="form-designer-save"]').trigger("click");
+    const output = JSON.parse(wrapper.emitted("save")![1]![0] as string);
+    expect(Object.hasOwn(output[0], "value")).toBe(false);
+  }, 15_000);
+
+  it("清除多选默认项保存为显式空数组，关闭默认值设置才变为未设置", async () => {
+    wrapper = mount(FormDesigner, {
+      props: {
+        name: "清空默认项",
+        rules: JSON.stringify([
+          {
+            type: "checkbox",
+            field: "tags",
+            title: "标签",
+            value: ["a"],
+            options: [{ label: "甲", value: "a" }],
+          },
+        ]),
+        options: "{}",
+      },
+    });
+    await flushPromises();
+    await wrapper.find("._fc-m-drag .el-form-item").trigger("click");
+    await vi.waitFor(() => expect(wrapper!.text()).toContain("默认选项"));
+    const defaults = wrapper
+      .findAll("._fc-r-config .el-form-item")
+      .find((item) => item.text().includes("默认选项"));
+    await defaults!.find(".el-tag__close").trigger("click");
+    await flushPromises();
+    await wrapper.find('[data-test="form-designer-save"]').trigger("click");
+    expect(JSON.parse(wrapper.emitted("save")![0]![0] as string)[0].value).toEqual([]);
+    const mode = wrapper
+      .findAll("._fc-r-config .el-form-item")
+      .find((item) => item.text().includes("设置默认值"));
+    await mode!.find(".el-switch__core").trigger("click");
+    await flushPromises();
+    await wrapper.find('[data-test="form-designer-save"]').trigger("click");
+    expect(Object.hasOwn(JSON.parse(wrapper.emitted("save")![1]![0] as string)[0], "value")).toBe(
+      false,
+    );
+  }, 15_000);
+
   it("装载八类字段与栅格布局后成对导出，语义与装载内容等价", async () => {
     wrapper = mount(FormDesigner, {
       props: { name: MATRIX_FORM.name, rules: MATRIX_RULES_JSON, options: "{}" },
@@ -487,6 +578,32 @@ describe("FormDesigner 全字段与布局矩阵（真实设计器，A10）", () 
 });
 
 describe("设计器开放范围收口（A13，designer-config 与真实面板）", () => {
+  it("下拉单选真实配置面板不能开启创建新条目", async () => {
+    wrapper = mount(FormDesigner, {
+      props: {
+        name: "静态下拉",
+        rules: JSON.stringify([
+          {
+            type: "select",
+            field: "level",
+            title: "级别",
+            options: [{ label: "普通", value: "1" }],
+          },
+        ]),
+        options: "{}",
+      },
+    });
+    await flushPromises();
+    const item = wrapper
+      .findAll("._fc-m-drag .el-form-item")
+      .find((node) => node.text().includes("级别"));
+    await item!.trigger("click");
+    await flushPromises();
+    await vi.waitFor(() => expect(wrapper!.text()).toContain("是否可搜索"));
+    expect(wrapper.text()).not.toContain("是否允许用户创建新条目");
+    expect(wrapper.text()).toContain("是否可搜索");
+  }, 15_000);
+
   it("菜单只提供八类字段与栅格布局，范围外组件无拖拽入口", () => {
     const names = FIELD_MENU.flatMap((group) => group.list.map((item) => item.name));
     expect([...names]).toEqual([

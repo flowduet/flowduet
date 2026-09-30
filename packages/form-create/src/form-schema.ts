@@ -177,6 +177,9 @@ function assertFieldSemantics(rule: FieldRule): void {
   if (rule.type === "select" && props.multiple !== undefined && props.multiple !== false) {
     throw new Error(`下拉字段「${label}」配置了 multiple 多选形态，本版本只支持下拉单选`);
   }
+  if (rule.type === "select" && props.allowCreate !== undefined && props.allowCreate !== false) {
+    throw new Error(`下拉字段「${label}」配置了 allowCreate 创建新选项，本版本只支持静态选项`);
+  }
   if (rule.type === "select" && props.remote !== undefined && props.remote !== false) {
     throw new Error(`下拉字段「${label}」配置了 remote 远程搜索，本版本只支持静态选项`);
   }

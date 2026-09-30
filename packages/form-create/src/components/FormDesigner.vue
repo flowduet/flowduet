@@ -5,6 +5,7 @@ import FcDesigner from "@form-create/designer";
 import { parseFormOptions } from "../form-schema.js";
 import { ensureFormCreateInstalled } from "../form-create-setup.js";
 import { DESIGNER_CONFIG, FIELD_MENU } from "./designer-config.js";
+import { prepareCheckboxDefaults, restoreCheckboxDefaults } from "./checkbox-defaults.js";
 
 /**
  * FormCreate 设计器封装（#72 / #74）：真实开源设计器（@form-create/designer 3.5.0）
@@ -40,7 +41,7 @@ onBeforeMount(ensureFormCreateInstalled);
 onMounted(() => {
   const designer = designerRef.value;
   if (designer === null) return;
-  designer.setRule(props.rules);
+  designer.setRule(prepareCheckboxDefaults(props.rules) as never);
   designer.setOption(parseFormOptions(props.options) as never);
 });
 
@@ -48,7 +49,8 @@ function save(): void {
   const designer = designerRef.value;
   if (designer === null) return;
   // getJson / getOptionsJson 即「匹配版本的 FormCreate 序列化接口」成对出口
-  emit("save", designer.getJson(), designer.getOptionsJson());
+  const rules = restoreCheckboxDefaults(designer.getJson());
+  emit("save", FcDesigner.designerForm.toJson(rules), designer.getOptionsJson());
 }
 </script>
 

@@ -77,6 +77,31 @@ function validForm(
   };
 }
 
+describe("下拉单选静态选项范围", () => {
+  it("拒绝创建静态目录外的新选项，仍允许本地搜索与显式关闭创建", () => {
+    expect(() =>
+      assertFormDefinitionValid(
+        validForm({
+          rules: JSON.stringify([
+            { type: "select", field: "level", props: { allowCreate: true, filterable: true } },
+          ]),
+        }),
+        new Set(),
+      ),
+    ).toThrow("allowCreate");
+    expect(() =>
+      assertFormDefinitionValid(
+        validForm({
+          rules: JSON.stringify([
+            { type: "select", field: "level", props: { allowCreate: false, filterable: true } },
+          ]),
+        }),
+        new Set(),
+      ),
+    ).not.toThrow();
+  });
+});
+
 describe("assertSupportedFieldTypes（开放范围矩阵）", () => {
   it("八类字段与栅格布局整棵规则树放行（含数字 0、开关 false、空多选默认值）", () => {
     expect(() => assertSupportedFieldTypes(MATRIX_RULES, "form_matrix")).not.toThrow();
