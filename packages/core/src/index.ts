@@ -37,8 +37,10 @@ export type { BlockTreeNode, LayoutResult } from "./layout/vertical-layout.js";
 export { compile } from "./compile/compiler.js";
 export type { CompileOptions } from "./compile/compiler.js";
 
-export { parse } from "./parse/parser.js";
+export { parse, UnregisteredNamespaceError } from "./parse/parser.js";
 export type { ParseOptions } from "./parse/parser.js";
+export { collectUnregisteredNamespaceUsage } from "./parse/namespace-usage.js";
+export type { NamespaceUsageIssue } from "./parse/namespace-usage.js";
 
 export { resolveEffectiveForm, isApprovalTask } from "./model/form-binding.js";
 export type { EffectiveFormRef } from "./model/form-binding.js";
