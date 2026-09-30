@@ -1,0 +1,446 @@
+{
+  "head": "acc4d4e2235dcc7d4c658168bb572d3446b92044",
+  "base": "baseline.flowduet.json",
+  "cases": [
+    {
+      "id": "P01",
+      "title": "无方言无审批人的标准草稿",
+      "file": "P01.flowduet.json",
+      "want": "打开成功",
+      "rule": "A12/A20",
+      "extra": "导出须报审批人缺失；下载重开仍为草稿"
+    },
+    {
+      "id": "P02",
+      "title": "配置完整的纯流程",
+      "file": "P02.flowduet.json",
+      "want": "打开成功",
+      "rule": "A12/A20",
+      "extra": "XML 导出成功；恢复后可修改节点名称"
+    },
+    {
+      "id": "P03",
+      "title": "Flowable 更名前缀",
+      "file": "P03.flowduet.json",
+      "want": "打开成功",
+      "rule": "A12/A20",
+      "extra": "导出保留 john"
+    },
+    {
+      "id": "P04",
+      "title": "项目默认表单扩展更名前缀",
+      "file": "P04.flowduet.json",
+      "want": "打开成功",
+      "rule": "A12/A20",
+      "extra": "显示继承默认；真实预览默认值；文档往返保真"
+    },
+    {
+      "id": "P05",
+      "title": "仅声明未使用 Camunda 命名空间",
+      "file": "P05.flowduet.json",
+      "want": "打开成功",
+      "rule": "A12/A20",
+      "extra": ""
+    },
+    {
+      "id": "P06",
+      "title": "xmlns 十进制字符引用",
+      "file": "P06.flowduet.json",
+      "want": "打开成功",
+      "rule": "A12/A20",
+      "extra": "导出 john；下载重开正确"
+    },
+    {
+      "id": "P07",
+      "title": "xmlns 十六进制字符引用",
+      "file": "P07.flowduet.json",
+      "want": "打开成功",
+      "rule": "A12/A20",
+      "extra": "导出 john；下载重开正确"
+    },
+    {
+      "id": "P08",
+      "title": "属性使用先于同标签声明",
+      "file": "P08.flowduet.json",
+      "want": "打开成功",
+      "rule": "A12/A20",
+      "extra": "导出 john"
+    },
+    {
+      "id": "P09",
+      "title": "嵌套作用域重新绑定合法 URI",
+      "file": "P09.flowduet.json",
+      "want": "打开成功",
+      "rule": "A12/A20",
+      "extra": ""
+    },
+    {
+      "id": "P10",
+      "title": "合法 xml 显式绑定与基础属性",
+      "file": "P10.flowduet.json",
+      "want": "打开成功",
+      "rule": "A12/A20",
+      "extra": ""
+    },
+    {
+      "id": "P11",
+      "title": "已开放八字段与基础行列布局",
+      "file": "P11.flowduet.json",
+      "want": "打开成功",
+      "rule": "A12/A20",
+      "extra": "真实编辑器和渲染器可用；只验恢复兼容，未重做 #74 字段全矩阵"
+    },
+    {
+      "id": "P12",
+      "title": "同名不同 ID 表单",
+      "file": "P12.flowduet.json",
+      "want": "打开成功",
+      "rule": "A12/A20",
+      "extra": "目录两项保留；未被视作重复"
+    },
+    {
+      "id": "D01",
+      "title": "失效默认 key 作为草稿",
+      "file": "D01.flowduet.json",
+      "want": "打开成功",
+      "rule": "A11",
+      "extra": "打开成功保留 key，预览与导出阻断"
+    },
+    {
+      "id": "D02",
+      "title": "失效覆盖不回退合法默认",
+      "file": "D02.flowduet.json",
+      "want": "打开成功",
+      "rule": "A11",
+      "extra": "节点预览报 ghost_override，不渲染默认表单；导出阻断"
+    },
+    {
+      "id": "D03",
+      "title": "失效默认即使无人继承仍阻断导出",
+      "file": "D03.flowduet.json",
+      "want": "打开成功",
+      "rule": "A11/A18",
+      "extra": "节点有效表单可以预览；导出仍报 ghost_default"
+    },
+    {
+      "id": "D04",
+      "title": "未绑定表单与草稿保存往返",
+      "file": "D04.flowduet.json",
+      "want": "打开成功",
+      "rule": "A12/A20",
+      "extra": "两张表单随草稿保存重开；可继续编辑；导出缺审批人"
+    },
+    {
+      "id": "E01",
+      "title": "坏 JSON",
+      "file": "E01.flowduet.json",
+      "want": "不是合法 JSON",
+      "rule": "A12",
+      "extra": ""
+    },
+    {
+      "id": "E02",
+      "title": "外层非对象",
+      "file": "E02.flowduet.json",
+      "want": "必须是 JSON 对象",
+      "rule": "A12",
+      "extra": ""
+    },
+    {
+      "id": "E03",
+      "title": "未知 format",
+      "file": "E03.flowduet.json",
+      "want": "未知的设计文档格式",
+      "rule": "A12",
+      "extra": ""
+    },
+    {
+      "id": "E04",
+      "title": "未知 version",
+      "file": "E04.flowduet.json",
+      "want": "不支持的设计文档版本",
+      "rule": "A12",
+      "extra": ""
+    },
+    {
+      "id": "E05",
+      "title": "未知 engine",
+      "file": "E05.flowduet.json",
+      "want": "不支持的目标引擎",
+      "rule": "A12",
+      "extra": ""
+    },
+    {
+      "id": "E06",
+      "title": "未知提供者",
+      "file": "E06.flowduet.json",
+      "want": "只支持 form-create/element-plus",
+      "rule": "A12",
+      "extra": ""
+    },
+    {
+      "id": "E07",
+      "title": "重复表单 ID",
+      "file": "E07.flowduet.json",
+      "want": "id 重复",
+      "rule": "A12",
+      "extra": ""
+    },
+    {
+      "id": "E08",
+      "title": "缺失 rules",
+      "file": "E08.flowduet.json",
+      "want": "rules/options 必须是字符串",
+      "rule": "A12",
+      "extra": ""
+    },
+    {
+      "id": "E09",
+      "title": "坏 rules JSON",
+      "file": "E09.flowduet.json",
+      "want": "rules 不是合法 JSON",
+      "rule": "A12",
+      "extra": ""
+    },
+    {
+      "id": "E10",
+      "title": "坏 options JSON",
+      "file": "E10.flowduet.json",
+      "want": "options 不是合法 JSON",
+      "rule": "A12",
+      "extra": ""
+    },
+    {
+      "id": "E11",
+      "title": "options 非对象",
+      "file": "E11.flowduet.json",
+      "want": "options 必须是 JSON 对象",
+      "rule": "A12",
+      "extra": ""
+    },
+    {
+      "id": "E12",
+      "title": "rules 非数组",
+      "file": "E12.flowduet.json",
+      "want": "rules 必须是字段规则数组",
+      "rule": "A12",
+      "extra": ""
+    },
+    {
+      "id": "E13",
+      "title": "空白表单名",
+      "file": "E13.flowduet.json",
+      "want": "名称不能为空白",
+      "rule": "A12",
+      "extra": ""
+    },
+    {
+      "id": "E14",
+      "title": "坏 XML",
+      "file": "E14.flowduet.json",
+      "want": "无法解析",
+      "rule": "A12",
+      "extra": ""
+    },
+    {
+      "id": "E15",
+      "title": "重复 XML ID",
+      "file": "E15.flowduet.json",
+      "want": "duplicate ID",
+      "rule": "A12",
+      "extra": ""
+    },
+    {
+      "id": "E16",
+      "title": "实际使用未知 URI 属性",
+      "file": "E16.flowduet.json",
+      "want": "x:assignee",
+      "rule": "A12/A20",
+      "extra": ""
+    },
+    {
+      "id": "E17",
+      "title": "假 flowable 前缀",
+      "file": "E17.flowduet.json",
+      "want": "urn:fake-flowable75",
+      "rule": "A12/A20",
+      "extra": ""
+    },
+    {
+      "id": "E18",
+      "title": "实际使用冲突扩展元素",
+      "file": "E18.flowduet.json",
+      "want": "c:taskListener",
+      "rule": "A12/A20",
+      "extra": ""
+    },
+    {
+      "id": "E19",
+      "title": "已注册 URI 中未知属性",
+      "file": "E19.flowduet.json",
+      "want": "unknown attribute",
+      "rule": "A12",
+      "extra": ""
+    },
+    {
+      "id": "E20",
+      "title": "非法 xml 前缀重绑 Camunda",
+      "file": "E20.flowduet.json",
+      "want": "非法保留命名空间声明",
+      "rule": "A12/A20",
+      "extra": ""
+    },
+    {
+      "id": "E21",
+      "title": "非法 xml 前缀重绑已注册 Flowable",
+      "file": "E21.flowduet.json",
+      "want": "非法保留命名空间声明",
+      "rule": "A12/A20",
+      "extra": ""
+    },
+    {
+      "id": "E22",
+      "title": "其他前缀非法绑定保留 XML URI",
+      "file": "E22.flowduet.json",
+      "want": "非法保留命名空间声明",
+      "rule": "A12",
+      "extra": ""
+    },
+    {
+      "id": "E23",
+      "title": "URI 百分号编码不作为同 URI",
+      "file": "E23.flowduet.json",
+      "want": "bp%6Dn",
+      "rule": "A20",
+      "extra": ""
+    },
+    {
+      "id": "E24",
+      "title": "URI 大小写不归一化",
+      "file": "E24.flowduet.json",
+      "want": "HTTP://flowable.org/bpmn",
+      "rule": "A20",
+      "extra": ""
+    },
+    {
+      "id": "E25",
+      "title": "作用域退出后不沿用内层绑定",
+      "file": "E25.flowduet.json",
+      "want": "c:note",
+      "rule": "A20",
+      "extra": ""
+    },
+    {
+      "id": "S01",
+      "title": "多个流程",
+      "file": "S01.flowduet.json",
+      "want": "2 个流程",
+      "rule": "A13",
+      "extra": ""
+    },
+    {
+      "id": "S02",
+      "title": "脚本任务超流程子集",
+      "file": "S02.flowduet.json",
+      "want": "ScriptTask",
+      "rule": "A13",
+      "extra": ""
+    },
+    {
+      "id": "S03",
+      "title": "子流程超流程子集",
+      "file": "S03.flowduet.json",
+      "want": "SubProcess",
+      "rule": "A13",
+      "extra": ""
+    },
+    {
+      "id": "S04",
+      "title": "循环结构",
+      "file": "S04.flowduet.json",
+      "want": "拒绝",
+      "rule": "A13",
+      "extra": ""
+    },
+    {
+      "id": "S05",
+      "title": "不可达节点",
+      "file": "S05.flowduet.json",
+      "want": "拒绝",
+      "rule": "A13",
+      "extra": ""
+    },
+    {
+      "id": "S06",
+      "title": "上传组件超范围",
+      "file": "S06.flowduet.json",
+      "want": "支持的组件",
+      "rule": "A13",
+      "extra": ""
+    },
+    {
+      "id": "S07",
+      "title": "远程下拉超范围",
+      "file": "S07.flowduet.json",
+      "want": "远程",
+      "rule": "A13",
+      "extra": ""
+    },
+    {
+      "id": "S08",
+      "title": "字段脚本超范围",
+      "file": "S08.flowduet.json",
+      "want": "脚本",
+      "rule": "A13",
+      "extra": ""
+    },
+    {
+      "id": "S09",
+      "title": "重复字段标识",
+      "file": "S09.flowduet.json",
+      "want": "字段标识",
+      "rule": "A13",
+      "extra": ""
+    },
+    {
+      "id": "S10",
+      "title": "嵌套栅格超范围",
+      "file": "S10.flowduet.json",
+      "want": "嵌套",
+      "rule": "A13",
+      "extra": ""
+    },
+    {
+      "id": "S11",
+      "title": "表单级脚本超范围",
+      "file": "S11.flowduet.json",
+      "want": "脚本",
+      "rule": "A13",
+      "extra": ""
+    },
+    {
+      "id": "L01",
+      "title": "多行属性名定位 '\\n'",
+      "file": "L01.flowduet.json",
+      "want": "第 5 行",
+      "rule": "A12/A20",
+      "extra": "错误应含 bad:assignee 与 urn:bad75，不指向值结束行"
+    },
+    {
+      "id": "L02",
+      "title": "多行属性名定位 '\\r\\n'",
+      "file": "L02.flowduet.json",
+      "want": "第 5 行",
+      "rule": "A12/A20",
+      "extra": "错误应含 bad:assignee 与 urn:bad75，不指向值结束行"
+    },
+    {
+      "id": "L03",
+      "title": "多行属性名定位 '\\r'",
+      "file": "L03.flowduet.json",
+      "want": "第 5 行",
+      "rule": "A12/A20",
+      "extra": "错误应含 bad:assignee 与 urn:bad75，不指向值结束行"
+    }
+  ]
+}

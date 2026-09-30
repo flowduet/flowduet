@@ -1,0 +1,407 @@
+[
+  {
+    "id": "P01",
+    "result": "通过",
+    "detail": "标准草稿从原生文件选择器打开；导出明确阻断审批人缺失"
+  },
+  {
+    "id": "P02",
+    "result": "通过",
+    "detail": "原生文件打开成功，XML 导出保留审批人 john"
+  },
+  {
+    "id": "P03",
+    "result": "通过",
+    "detail": "原生文件打开成功，XML 导出保留审批人 john"
+  },
+  {
+    "id": "P05",
+    "result": "通过",
+    "detail": "原生文件打开成功，XML 导出保留审批人 john"
+  },
+  {
+    "id": "P06",
+    "result": "通过",
+    "detail": "原生文件打开成功，XML 导出保留审批人 john; 辅助捕获产品 Blob 并从原生选择器重开，john 保留（原生下载落盘未证实）"
+  },
+  {
+    "id": "P07",
+    "result": "通过",
+    "detail": "原生文件打开成功，XML 导出保留审批人 john; 辅助捕获产品 Blob 并从原生选择器重开，john 保留（原生下载落盘未证实）"
+  },
+  {
+    "id": "P08",
+    "result": "通过",
+    "detail": "原生文件打开成功，XML 导出保留审批人 john"
+  },
+  {
+    "id": "P09",
+    "result": "通过",
+    "detail": "原生文件打开成功，XML 导出保留审批人 john"
+  },
+  {
+    "id": "P10",
+    "result": "通过",
+    "detail": "原生文件打开成功，XML 导出保留审批人 john"
+  },
+  {
+    "id": "P04",
+    "result": "通过",
+    "detail": "默认引用 fd:defaultFormKey 恢复；节点继承并真实渲染 reason75=原始默认值75",
+    "screenshot": "75-browser-run/P04-default-preview.jpg"
+  },
+  {
+    "id": "P12",
+    "result": "通过",
+    "detail": "同名表单 f_apply/f_second 均恢复，目录和绑定选择可用 ID 区分"
+  },
+  {
+    "id": "P11",
+    "result": "通过",
+    "detail": "八类字段与两列布局实际渲染；真实设计器恢复全部内容并可保存表单"
+  },
+  {
+    "id": "D01",
+    "result": "通过",
+    "detail": "ghost_default 原样保留并定位；节点预览显示引用失效，部署导出受阻"
+  },
+  {
+    "id": "D02",
+    "result": "通过",
+    "detail": {
+      "deployError": [
+        "审批节点「验收审批75（t）」的表单 key「ghost_override」不在表单目录中（已保留原值，请修复引用）"
+      ],
+      "previewError": ["表单引用失效：key「ghost_override」不在表单目录中（保留原值，请修复）"],
+      "rendered": 0
+    }
+  },
+  {
+    "id": "D03",
+    "result": "通过",
+    "detail": {
+      "deployError": [
+        "流程默认表单 key「ghost_default」不在表单目录中（已保留原值，请修复引用或补建表单）"
+      ],
+      "previewError": [],
+      "rendered": 1
+    }
+  },
+  {
+    "id": "D04",
+    "result": "通过",
+    "detail": "产品 Blob 草稿重开，两张未绑定表单保留，审批人缺失仍拦截导出"
+  },
+  {
+    "id": "E01",
+    "result": "通过",
+    "error": "设计文档不是合法 JSON：Expected property name or '}' in JSON at position 1 (line 1 column 2)",
+    "rejected": true,
+    "preserved": true,
+    "containsExpected": true
+  },
+  {
+    "id": "E02",
+    "result": "通过",
+    "error": "设计文档必须是 JSON 对象",
+    "rejected": true,
+    "preserved": true,
+    "containsExpected": true
+  },
+  {
+    "id": "E03",
+    "result": "通过",
+    "error": "未知的设计文档格式：期望 \"flowduet.design\"，实际 \"other.design\"",
+    "rejected": true,
+    "preserved": true,
+    "containsExpected": true
+  },
+  {
+    "id": "E04",
+    "result": "通过",
+    "error": "不支持的设计文档版本：期望 1，实际 2；不自动迁移",
+    "rejected": true,
+    "preserved": true,
+    "containsExpected": true
+  },
+  {
+    "id": "E05",
+    "result": "通过",
+    "error": "不支持的目标引擎：期望 \"flowable\"，实际 \"camunda\"；不猜测适配器",
+    "rejected": true,
+    "preserved": true,
+    "containsExpected": true
+  },
+  {
+    "id": "E06",
+    "result": "通过",
+    "error": "表单 f_apply 的提供者是 other/vendor，本版本只支持 form-create/element-plus",
+    "rejected": true,
+    "preserved": true,
+    "containsExpected": true
+  },
+  {
+    "id": "E07",
+    "result": "通过",
+    "error": "表单 id 重复：f_apply（文档内 id 必须唯一）",
+    "rejected": true,
+    "preserved": true,
+    "containsExpected": true
+  },
+  {
+    "id": "E08",
+    "result": "通过",
+    "error": "表单 f_apply 的 rules/options 必须是字符串",
+    "rejected": true,
+    "preserved": true,
+    "containsExpected": true
+  },
+  {
+    "id": "E09",
+    "result": "通过",
+    "error": "表单 rules 不是合法 JSON：Expected property name or '}' in JSON at position 1 (line 1 column 2)",
+    "rejected": true,
+    "preserved": true,
+    "containsExpected": true
+  },
+  {
+    "id": "E10",
+    "result": "通过",
+    "error": "表单 options 不是合法 JSON：Expected property name or '}' in JSON at position 1 (line 1 column 2)",
+    "rejected": true,
+    "preserved": true,
+    "containsExpected": true
+  },
+  {
+    "id": "E11",
+    "result": "通过",
+    "error": "表单 options 必须是 JSON 对象",
+    "rejected": true,
+    "preserved": true,
+    "containsExpected": true
+  },
+  {
+    "id": "E12",
+    "result": "通过",
+    "error": "表单 rules 必须是字段规则数组（JSON 数组）",
+    "rejected": true,
+    "preserved": true,
+    "containsExpected": true
+  },
+  {
+    "id": "E13",
+    "result": "通过",
+    "error": "表单 f_apply 的名称不能为空白",
+    "rejected": true,
+    "preserved": true,
+    "containsExpected": true
+  },
+  {
+    "id": "E14",
+    "result": "通过",
+    "error": "文档 XML 无法解析：unparsable content <bpmn:broken detected\n\tline: 0\n\tcolumn: 0\n\tnested error: unclosed tag",
+    "rejected": true,
+    "preserved": true,
+    "containsExpected": true
+  },
+  {
+    "id": "E15",
+    "result": "通过",
+    "error": "文档 XML 无法解析：XML 解析产生警告：unparsable content <bpmn:userTask> detected\n\tline: 8\n\tcolumn: 4\n\tnested error: duplicate ID <t>",
+    "rejected": true,
+    "preserved": true,
+    "containsExpected": true
+  },
+  {
+    "id": "E16",
+    "result": "通过",
+    "error": "文档 XML 使用了当前引擎适配器不支持的扩展：XML 实际使用了未注册命名空间的内容：第 5 行的 x:assignee（前缀 \"x\"，命名空间 urn:unsupported75）。这些内容不在目标适配器与项目协议的已注册扩展范围内，无法无损恢复，拒绝打开",
+    "rejected": true,
+    "preserved": true,
+    "containsExpected": true
+  },
+  {
+    "id": "E17",
+    "result": "通过",
+    "error": "文档 XML 使用了当前引擎适配器不支持的扩展：XML 实际使用了未注册命名空间的内容：第 5 行的 flowable:assignee（前缀 \"flowable\"，命名空间 urn:fake-flowable75）。这些内容不在目标适配器与项目协议的已注册扩展范围内，无法无损恢复，拒绝打开",
+    "rejected": true,
+    "preserved": true,
+    "containsExpected": true
+  },
+  {
+    "id": "E18",
+    "result": "通过",
+    "error": "文档 XML 使用了当前引擎适配器不支持的扩展：XML 实际使用了未注册命名空间的内容：第 9 行的 c:taskListener（前缀 \"c\"，命名空间 http://camunda.org/schema/1.0/bpmn）。这些内容不在目标适配器与项目协议的已注册扩展范围内，无法无损恢复，拒绝打开",
+    "rejected": true,
+    "preserved": true,
+    "containsExpected": true
+  },
+  {
+    "id": "E19",
+    "result": "通过",
+    "error": "文档 XML 无法解析：XML 解析产生警告：unknown attribute <flowable:unknown75>",
+    "rejected": true,
+    "preserved": true,
+    "containsExpected": true
+  },
+  {
+    "id": "E20",
+    "result": "通过",
+    "error": "文档 XML 无法解析：第 2 行的 xmlns:xml 是非法保留命名空间声明：http://camunda.org/schema/1.0/bpmn",
+    "rejected": true,
+    "preserved": true,
+    "containsExpected": true
+  },
+  {
+    "id": "E21",
+    "result": "通过",
+    "error": "文档 XML 无法解析：第 2 行的 xmlns:xml 是非法保留命名空间声明：http://flowable.org/bpmn",
+    "rejected": true,
+    "preserved": true,
+    "containsExpected": true
+  },
+  {
+    "id": "E22",
+    "result": "通过",
+    "error": "文档 XML 无法解析：第 2 行的 xmlns:other 是非法保留命名空间声明：http://www.w3.org/XML/1998/namespace",
+    "rejected": true,
+    "preserved": true,
+    "containsExpected": true
+  },
+  {
+    "id": "E23",
+    "result": "通过",
+    "error": "文档 XML 使用了当前引擎适配器不支持的扩展：XML 实际使用了未注册命名空间的内容：第 5 行的 fa:assignee（前缀 \"fa\"，命名空间 http://flowable.org/bp%6Dn）。这些内容不在目标适配器与项目协议的已注册扩展范围内，无法无损恢复，拒绝打开",
+    "rejected": true,
+    "preserved": true,
+    "containsExpected": true
+  },
+  {
+    "id": "E24",
+    "result": "通过",
+    "error": "文档 XML 使用了当前引擎适配器不支持的扩展：XML 实际使用了未注册命名空间的内容：第 5 行的 fa:assignee（前缀 \"fa\"，命名空间 HTTP://flowable.org/bpmn）。这些内容不在目标适配器与项目协议的已注册扩展范围内，无法无损恢复，拒绝打开",
+    "rejected": true,
+    "preserved": true,
+    "containsExpected": true
+  },
+  {
+    "id": "E25",
+    "result": "通过",
+    "error": "文档 XML 使用了当前引擎适配器不支持的扩展：XML 实际使用了未注册命名空间的内容：第 9 行的 c:note（前缀 \"c\"，命名空间 urn:outside75）。这些内容不在目标适配器与项目协议的已注册扩展范围内，无法无损恢复，拒绝打开",
+    "rejected": true,
+    "preserved": true,
+    "containsExpected": true
+  },
+  {
+    "id": "S01",
+    "result": "通过",
+    "error": "文档流程超出可编辑范围：XML 包含 2 个流程，本编辑器一次只编辑单流程文档",
+    "rejected": true,
+    "preserved": true,
+    "containsExpected": true
+  },
+  {
+    "id": "S02",
+    "result": "通过",
+    "error": "文档流程超出可编辑范围：流程元素「验收审批75（t）」（bpmn:ScriptTask）超出本编辑器支持的流程子集",
+    "rejected": true,
+    "preserved": true,
+    "containsExpected": true
+  },
+  {
+    "id": "S03",
+    "result": "通过",
+    "error": "文档流程超出可编辑范围：流程元素「验收审批75（t）」（bpmn:SubProcess）超出本编辑器支持的流程子集",
+    "rejected": true,
+    "preserved": true,
+    "containsExpected": true
+  },
+  {
+    "id": "S04",
+    "result": "通过",
+    "error": "文档流程超出可编辑范围：元素 t 的多出边未按分支块处理（非网关多出边，不良构）",
+    "rejected": true,
+    "preserved": true,
+    "containsExpected": true
+  },
+  {
+    "id": "S05",
+    "result": "通过",
+    "error": "文档流程超出可编辑范围：竖排布局仅支持从开始事件可达的图形，元素 orphan75 不在块树中",
+    "rejected": true,
+    "preserved": true,
+    "containsExpected": true
+  },
+  {
+    "id": "S06",
+    "result": "通过",
+    "error": "表单字段「（upload75）」的类型是 upload，本版本支持的组件：文本 / 多行文本 / 数字 / 单选 / 多选 / 下拉单选 / 日期 / 开关 / 栅格布局，拒绝导入",
+    "rejected": true,
+    "preserved": true,
+    "containsExpected": true
+  },
+  {
+    "id": "S07",
+    "result": "通过",
+    "error": "下拉字段「（remote75）」配置了 remote 远程搜索，本版本只支持静态选项",
+    "rejected": true,
+    "preserved": true,
+    "containsExpected": true
+  },
+  {
+    "id": "S08",
+    "result": "通过",
+    "error": "规则「（script75）」不支持脚本配置（on）",
+    "rejected": true,
+    "preserved": true,
+    "containsExpected": true
+  },
+  {
+    "id": "S09",
+    "result": "通过",
+    "error": "表单 f_apply 的字段标识重复：dup75",
+    "rejected": true,
+    "preserved": true,
+    "containsExpected": true
+  },
+  {
+    "id": "S10",
+    "result": "通过",
+    "error": "栅格布局（fcRow）不支持嵌套，复杂嵌套布局超出本版本范围",
+    "rejected": true,
+    "preserved": true,
+    "containsExpected": true
+  },
+  {
+    "id": "S11",
+    "result": "通过",
+    "error": "表单 options 不支持脚本配置（onSubmit）",
+    "rejected": true,
+    "preserved": true,
+    "containsExpected": true
+  },
+  {
+    "id": "L01",
+    "result": "通过",
+    "error": "文档 XML 使用了当前引擎适配器不支持的扩展：XML 实际使用了未注册命名空间的内容：第 5 行的 bad:assignee（前缀 \"bad\"，命名空间 urn:bad75）。这些内容不在目标适配器与项目协议的已注册扩展范围内，无法无损恢复，拒绝打开",
+    "rejected": true,
+    "preserved": true,
+    "containsExpected": true
+  },
+  {
+    "id": "L02",
+    "result": "通过",
+    "error": "文档 XML 使用了当前引擎适配器不支持的扩展：XML 实际使用了未注册命名空间的内容：第 5 行的 bad:assignee（前缀 \"bad\"，命名空间 urn:bad75）。这些内容不在目标适配器与项目协议的已注册扩展范围内，无法无损恢复，拒绝打开",
+    "rejected": true,
+    "preserved": true,
+    "containsExpected": true
+  },
+  {
+    "id": "L03",
+    "result": "通过",
+    "error": "文档 XML 使用了当前引擎适配器不支持的扩展：XML 实际使用了未注册命名空间的内容：第 5 行的 bad:assignee（前缀 \"bad\"，命名空间 urn:bad75）。这些内容不在目标适配器与项目协议的已注册扩展范围内，无法无损恢复，拒绝打开",
+    "rejected": true,
+    "preserved": true,
+    "containsExpected": true
+  }
+]

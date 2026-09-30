@@ -88,15 +88,21 @@ export class FlowDesignSession {
 
   /**
    * 打开设计文档：外层格式、XML 与可编辑结构全部校验通过后才整体替换当前状态，
-   * 任一失败保留原状态。revision 守卫：校验期间发生更新的新建/打开时，
-   * 迟到的本次结果拒绝落地，当前状态保持为最新操作的结果。
+   * 也可接收宿主提供的文本读取 Promise，使文件读取与校验使用同一序号。
+   * 任一失败保留原状态；读取或校验期间发生更新的新建/打开时，
+   * 迟到的本次结果拒绝落地。文件 I/O 仍由宿主负责。
    */
-  async open(text: string): Promise<FlowDesignState> {
+  async open(text: string | Promise<string>): Promise<FlowDesignState> {
     const revision = ++this.#revision;
-    const result: OpenDesignDocumentResult = await openDesignDocument(text);
-    if (revision !== this.#revision) {
-      throw new Error("本次打开已被更新的新建或打开操作取代，当前状态保持为最新操作的结果");
-    }
+    const assertCurrentRequest = (): void => {
+      if (revision !== this.#revision) {
+        throw new Error("本次打开已被更新的新建或打开操作取代，当前状态保持为最新操作的结果");
+      }
+    };
+    const content = await text;
+    assertCurrentRequest();
+    const result: OpenDesignDocumentResult = await openDesignDocument(content);
+    assertCurrentRequest();
     const state: FlowDesignState = { model: result.model, forms: result.forms };
     this.#state = state;
     return state;

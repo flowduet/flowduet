@@ -21,6 +21,24 @@ function buildDraftFlow(): BpmnModel {
 const BAD_DOCUMENT_JSON = "{not-json";
 
 describe("FlowDesignSession", () => {
+  it("非法 xml 重绑定打开失败后未保存模型与表单目录保持原样", async () => {
+    const session = new FlowDesignSession(buildDraftFlow());
+    const form = session.createForm("未保存申请单");
+    session.updateFormContent(form.id, '[{"type":"input","field":"reason","title":"事由"}]', "{}");
+    const before = session.current;
+    const saved = await session.save();
+    const xml = saved.document.xml
+      .replaceAll("flowable:", "xml:")
+      .replace("xmlns:flowable", "xmlns:xml")
+      .replace("http://flowable.org/bpmn", "http://camunda.org/schema/1.0/bpmn");
+    await expect(
+      session.open(JSON.stringify({ ...saved.document, xml, forms: [] })),
+    ).rejects.toThrow(/xmlns:xml.*非法.*命名空间声明/);
+    expect(session.current).toBe(before);
+    expect(session.current?.model.elementOf("approval_1").get("assignee")).toBe("${manager}");
+    expect(session.current?.forms[0]?.rules).toContain("reason");
+  });
+
   it("构造时收编宿主已有模型；未初始化的会话保存明确报错", async () => {
     const model = buildDraftFlow();
     const session = new FlowDesignSession(model);
@@ -148,6 +166,43 @@ describe("FlowDesignSession", () => {
     await expect(late).rejects.toThrow("已被更新");
     expect(session.current?.model).toBe(fresh);
     expect(String(session.current?.model.process.get("id"))).toBe("newer_flow");
+  });
+
+  it("打开接受宿主的读取 Promise，仍完整恢复模型与表单", async () => {
+    const source = new FlowDesignSession(buildDraftFlow());
+    source.createForm("Promise 申请单");
+    const { json } = await source.save();
+    const session = new FlowDesignSession();
+    const state = await session.open(Promise.resolve(json));
+    expect(state.model.elementOf("approval_1").get("assignee")).toBe("${manager}");
+    expect(state.forms[0]?.name).toBe("Promise 申请单");
+  });
+
+  it("较新请求尚在读取时，较早解析也不能提交临时模型", async () => {
+    const session = new FlowDesignSession(buildDraftFlow());
+    session.createForm("原表单");
+    const previous = session.current;
+    const { json } = await session.save();
+    let finishRead!: (text: string) => void;
+    const reading = new Promise<string>((resolve) => {
+      finishRead = resolve;
+    });
+    const old = session.open(json);
+    // 立即挂上拒绝处理，旧请求即使提前完成也不会产生未处理 rejection。
+    const stale = expect(old).rejects.toThrow("已被更新");
+    // 让旧请求越过文本读取阶段并进入真实解析，再启动较新的读取请求。
+    await Promise.resolve();
+    const latest = session.open(reading).then(
+      (state) => ({ state, error: undefined }),
+      (error: unknown) => ({ state: undefined, error }),
+    );
+    await stale;
+    expect(session.current).toBe(previous);
+    finishRead(json);
+    const result = await latest;
+    expect(result.error).toBeUndefined();
+    expect(result.state?.forms[0]?.name).toBe("原表单");
+    expect(session.current).toBe(result.state);
   });
 
   it.each([

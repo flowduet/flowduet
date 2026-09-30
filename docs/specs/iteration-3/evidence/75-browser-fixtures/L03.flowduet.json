@@ -1,0 +1,7 @@
+{
+  "format": "flowduet.design",
+  "version": 1,
+  "engine": "flowable",
+  "xml": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r<bpmn:definitions xmlns:bpmn=\"http://www.omg.org/spec/BPMN/20100524/MODEL\" xmlns:bad=\"urn:bad75\" id=\"defs75\" targetNamespace=\"urn:acceptance75\">\r  <bpmn:process id=\"flow75\" name=\"验收流程75\" isExecutable=\"true\" >\r    <bpmn:startEvent id=\"s\" name=\"开始\" />\r    <bpmn:userTask id=\"t\" name=\"验收审批75\" bad:assignee\r      =\r      \"first\rsecond\rthird\" />\r    <bpmn:endEvent id=\"e\" name=\"结束\" />\r    <bpmn:sequenceFlow id=\"f1\" sourceRef=\"s\" targetRef=\"t\" />\r    <bpmn:sequenceFlow id=\"f2\" sourceRef=\"t\" targetRef=\"e\" />\r    \r  </bpmn:process>\r</bpmn:definitions>",
+  "forms": []
+}

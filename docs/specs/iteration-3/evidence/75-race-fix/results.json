@@ -1,0 +1,50 @@
+[
+  {
+    "id": "R1",
+    "kind": "成功",
+    "result": "通过",
+    "before": "已打开设计文档（流程 新请求B75），可继续编辑",
+    "after": "已打开设计文档（流程 新请求B75），可继续编辑",
+    "error": "",
+    "xmlContainsB": true
+  },
+  {
+    "id": "R2",
+    "kind": "读取失败",
+    "result": "通过",
+    "before": "已打开设计文档（流程 新请求B75），可继续编辑",
+    "after": "已打开设计文档（流程 新请求B75），可继续编辑",
+    "error": "",
+    "xmlContainsB": true
+  },
+  {
+    "id": "R3",
+    "kind": "坏文档",
+    "result": "通过",
+    "before": "已打开设计文档（流程 新请求B75），可继续编辑",
+    "after": "已打开设计文档（流程 新请求B75），可继续编辑",
+    "error": "",
+    "xmlContainsB": true
+  },
+  {
+    "id": "R4",
+    "kind": "较新请求失败，旧成功迟到",
+    "result": "通过",
+    "error": "设计文档不是合法 JSON：Expected property name or '}' in JSON at position 1 (line 1 column 2)",
+    "formsPreserved": true
+  },
+  {
+    "id": "R5",
+    "kind": "新建后旧文件迟到成功",
+    "result": "通过",
+    "status": "已新建设计（最小流程），可直接编辑或下载设计文档",
+    "error": ""
+  },
+  {
+    "id": "R6",
+    "kind": "新建后旧文件迟到读取失败",
+    "result": "通过",
+    "status": "已新建设计（最小流程），可直接编辑或下载设计文档",
+    "error": ""
+  }
+]

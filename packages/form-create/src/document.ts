@@ -4,6 +4,7 @@ import {
   deriveVerticalGeometry,
   flowableAdapter,
   parse,
+  UnregisteredNamespaceError,
   verticalDiLayout,
 } from "@flowduet/core";
 import { collectDraftIssues, isCcServiceTask } from "@flowduet/designer";
@@ -226,11 +227,23 @@ function parseEnvelope(text: string): FlowDesignDocument {
   };
 }
 
-/** XML → 模型：统一错误出口，解析失败带上上下文前缀 */
+/**
+ * XML → 模型：统一错误出口。两类失败分开包装——
+ * 命名空间审计（实际使用了与目标适配器冲突或不支持的扩展）不是解析失败，
+ * 单独给出「引擎扩展不兼容」上下文，避免误导为 XML 语法问题；
+ * 其余解析失败（含被拒绝的警告明细）带「无法解析」前缀，诊断不静默丢弃。
+ */
 async function parseForRestore(xml: string): Promise<BpmnModel> {
   try {
-    return await parse(xml, { adapter: flowableAdapter, rejectWarnings: true });
+    return await parse(xml, {
+      adapter: flowableAdapter,
+      rejectWarnings: true,
+      rejectUnregisteredNamespaces: true,
+    });
   } catch (e) {
+    if (e instanceof UnregisteredNamespaceError) {
+      throw new Error(`文档 XML 使用了当前引擎适配器不支持的扩展：${e.message}`, { cause: e });
+    }
     throw new Error(`文档 XML 无法解析：${messageOf(e)}`, { cause: e });
   }
 }

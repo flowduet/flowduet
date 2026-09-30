@@ -113,6 +113,8 @@ const previewVisible = ref(false);
 const previewNodeId = ref<string | undefined>(undefined);
 let exportTimer: ReturnType<typeof setTimeout> | undefined;
 let exportRevision = 0;
+/** 文件选择时即换代，迟到的读取/解析成功与失败都不能改写最新反馈。 */
+let documentRevision = 0;
 
 function messageOf(e: unknown): string {
   return e instanceof Error ? e.message : String(e);
@@ -285,6 +287,7 @@ function adoptModel(next: BpmnModel): void {
 }
 
 function onNewDesign(): void {
+  documentRevision += 1;
   docStatus.value = "";
   docError.value = "";
   try {
@@ -331,19 +334,22 @@ async function onOpenFile(event: Event): Promise<void> {
   // 先取引用再复位选择器：再次选择同一文件也要触发 change
   input.value = "";
   if (file === undefined) return;
+  const revision = ++documentRevision;
   docStatus.value = "";
   docError.value = "";
   try {
-    const text = await file.text();
-    const state = await session.open(text);
+    // 会话在读取前登记请求；同步读取异常也作为 Promise 拒绝统一处理。
+    const state = await session.open(Promise.resolve().then(() => file.text()));
+    if (revision !== documentRevision) return;
     adoptModel(state.model);
     docStatus.value = `已打开设计文档（流程 ${String(state.model.process.get("name") ?? state.model.process.get("id"))}），可继续编辑`;
   } catch (e) {
-    docError.value = messageOf(e);
+    if (revision === documentRevision) docError.value = messageOf(e);
   }
 }
 
 onUnmounted(() => {
+  documentRevision += 1;
   exportRevision += 1;
   if (exportTimer !== undefined) clearTimeout(exportTimer);
 });

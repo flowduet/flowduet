@@ -1,6 +1,6 @@
 # @flowduet/form-create
 
-FlowDuet 表单集成包（迭代三构建中）：承载**流程设计文档**的编解码与组合编辑装配，并封装真实的 [FormCreate](https://github.com/xaboy/form-create-designer) 开源设计器与 Element Plus 渲染器。当前版本（#72–#74）交付：八类常用字段与基础栅格布局的表单设计、多表单目录管理（新建 / 改名 / 删除守卫）、流程默认绑定与审批节点显式覆盖、文档往返、真实渲染器试填与组合部署导出。
+FlowDuet 表单集成包（迭代三构建中）：承载**流程设计文档**的编解码与组合编辑装配，并封装真实的 [FormCreate](https://github.com/xaboy/form-create-designer) 开源设计器与 Element Plus 渲染器。当前版本（#72–#75）交付：八类常用字段与基础栅格布局的表单设计、多表单目录管理（新建 / 改名 / 删除守卫）、流程默认绑定与审批节点显式覆盖、文档往返、真实渲染器试填与组合部署导出、打开侧的引擎扩展兼容检查与原子恢复。
 
 > **边界（ADR-0006 / ADR-0009）**：`@flowduet/core` 与 `@flowduet/designer` 保持零 FormCreate 依赖；表单领域的内容（设计器、渲染、文档内表单定义）全部收敛在本包。宿主负责存储（文件、浏览器或后端），本包负责成套编解码与原子恢复。不使用 FormCreate Pro 与 AI 助理（设计器 AI 模块已关闭）。
 
@@ -84,6 +84,8 @@ const xml = await exportDeployXml(session.current!.model, session.current!.forms
 
 宿主只做文件 I/O 与展示（下载 Blob、读 File、把模型接进 `DingtalkDesigner` / `BpmnCanvas`），文档算法不复制到宿主。纯函数形式同样可用：`saveDesignDocument(model, forms?)` / `openDesignDocument(text)` / `exportDeployXml(model, forms)` / `collectReferenceIssues(model, forms)`。
 
+文件宿主应将文本读取 Promise 直接传给 `session.open`，例如 `session.open(Promise.resolve().then(() => file.text()))`，让会话在读取开始前记录打开顺序；先等待文件读完再调用无法防止慢文件覆盖较新文件。已有 `session.open(json)` 调用继续有效。会话会拒绝迟到结果，宿主的状态与错误提示也应按文件选择顺序过滤旧请求；新建设计应使旧请求的反馈失效。
+
 ## 默认表单绑定与节点覆盖
 
 - 流程默认表单落在 `bpmn:Process` 的 `flowduet:defaultFormKey`（命名空间 `urn:flowduet:bpmn`），由 core 在创建与解析路径统一注册，未使用时编译输出不含该命名空间（既有基准逐字一致）。
@@ -104,9 +106,19 @@ const xml = await exportDeployXml(session.current!.model, session.current!.forms
 
 ## 打开的拒绝口径
 
-坏 JSON、未知 `format` / `version` / `engine`、多流程、超出钉钉式编辑子集的元素、竖排推导不可行的图形（循环、多开始事件、不可达元素）、结构坏的表单定义（重复 id / 空名 / 未知提供者 / 坏 JSON / 超出开放范围的字段或布局，含下拉多选、日期范围、远程数据源、事件脚本与提供者函数编码、嵌套栅格）一律明确拒绝并保留当前状态。纯标准 BPMN 草稿（无 Flowable 命名空间）可以打开——缺少业务配置按草稿处理。
+坏 JSON、未知 `format` / `version` / `engine`、多流程、超出钉钉式编辑子集的元素、竖排推导不可行的图形（循环、多开始事件、不可达元素）、结构坏的表单定义（重复 id / 空名 / 未知提供者 / 坏 JSON / 超出开放范围的字段或布局，含下拉多选、日期范围、远程数据源、事件脚本与提供者函数编码、嵌套栅格）一律明确拒绝并保留当前状态。纯标准 BPMN 草稿（无 Flowable 命名空间）可以打开——缺少业务配置按草稿处理；存在表单 key 但目录缺失的定义属于业务草稿，打开后保留 key 供修复（相关预览与部署导出受阻）。
 
 文档保存自证与打开均启用 `parse` 的 `rejectWarnings` 选项；重复 ID、未知元素等解析警告会阻止恢复，避免接受已经丢失内容的模型。`core.parse` 默认仍保持原有宽松行为。恢复时根据顺序流端点重建节点的 `incoming/outgoing` 引用，省略这些可选标记不会影响继续编辑或缺失条件校验。
+
+### 引擎扩展兼容判定
+
+打开与保存自证对 XML 实际使用的引擎扩展做**引擎扩展兼容判定**——按命名空间 URI 与实际使用内容判定，不看前缀名称、不看是否声明：
+
+- 同一 URI 换任意前缀（如 `fa:assignee` 绑定 `http://flowable.org/bpmn`）照常识别与恢复；项目扩展 `urn:flowduet:bpmn` 同样保留。
+- xmlns 声明中的 XML 字符引用先解码再比较 URI；URI 大小写与百分号编码不归一化。`xml` 可以省略声明或显式声明其固定 URI，非法重绑定及其他保留命名空间声明会拒绝，即使该声明未被使用。
+- 仅声明未使用的其他引擎命名空间（如只写 `xmlns:camunda=...` 而无引用）不构成冲突。
+- 实际使用了未注册命名空间的元素或属性——包括假借 `flowable` 前缀但绑定其他 URI、真实使用 `camunda:` 扩展——明确拒绝，错误点名前缀、URI、限定名与行号。动机：moddle 对这类内容不产生解析警告而是静默收进 `$attrs`，语义丢失对调用者不可见。
+- 判定经 `parse` 的 `rejectUnregisteredNamespaces` 选项开启（本包的保存自证与打开路径均已启用）；已注册集合以适配器与项目协议的扩展包为准，新增合法组件或适配器不需要维护第二份名单。
 
 ## License
 
