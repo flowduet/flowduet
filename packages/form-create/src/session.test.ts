@@ -59,13 +59,13 @@ describe("FlowDesignSession", () => {
     session.renameForm("form_1", "报销单");
     expect(session.current?.forms[0]).toMatchObject({ id: "form_1", name: "报销单" });
 
-    // 内容写入：合法文本字段通过，超范围/坏 JSON 拒绝且目录不动
+    // 内容写入：合法字段通过，超范围/坏 JSON 拒绝且目录不动
     const rules = JSON.stringify([{ type: "input", field: "amount", title: "金额" }]);
     session.updateFormContent("form_1", rules, "{}");
     expect(session.current?.forms[0]?.rules).toBe(rules);
     expect(() =>
-      session.updateFormContent("form_1", JSON.stringify([{ type: "select", field: "s" }]), "{}"),
-    ).toThrow("只支持文本");
+      session.updateFormContent("form_1", JSON.stringify([{ type: "upload", field: "u" }]), "{}"),
+    ).toThrow("支持的组件");
     expect(session.current?.forms[0]?.rules).toBe(rules);
     expect(() => session.updateFormContent("form_1", "{bad", "{}")).toThrow("不是合法 JSON");
 

@@ -6,7 +6,8 @@
  * 2. 组合编辑入口——FlowDesignSession 持有「模型 + 表单目录」整体状态，
  *    承载新建、保存、原子恢复与表单目录管理（创建/命名/内容编辑）；
  * 3. 表单装配组件——FormManager（管理面板）、FormDesigner（真实 FormCreate
- *    设计器封装，本票文本字段）、FormPreview（真实渲染器试填，与设计隔离）；
+ *    设计器封装，八类常用字段与栅格布局，范围外能力无 UI 入口）、FormPreview
+ *    （真实渲染器试填，与设计隔离）；
  *    组合部署导出 exportDeployXml 在流程校验外补表单引用完整性检查。
  * core 与 designer 保持零 FormCreate 依赖（ADR-0006）。
  */

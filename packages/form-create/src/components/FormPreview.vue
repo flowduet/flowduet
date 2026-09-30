@@ -9,7 +9,7 @@ import { ensureFormCreateInstalled } from "../form-create-setup.js";
 /**
  * 表单预览（#72）：真实 FormCreate 渲染器（@form-create/element-ui 3.3.4）试填。
  * 试填状态与设计定义隔离：值只进本地 trialValue，不回写 rules/options、
- * 不进设计文档；切换预览目标（换 form）即重置（A09/A10/A41 相关）。
+ * 不进设计文档；切换表单或重新打开同 ID 文档时重置（A09/A10/A41 相关）。
  */
 const props = defineProps<{
   form: FormDefinition;
@@ -26,9 +26,9 @@ const trialValue = ref<Record<string, unknown>>({});
 const fApi = ref<{ validate?: (cb: (result: unknown) => void) => unknown } | null>(null);
 const validation = ref<{ ok: boolean; message: string } | null>(null);
 
-// 目标切换即重置：不同表单的试填写入不混在一起
+// 定义换代即重置：同 ID 文档重新打开后也不能沿用旧试填值
 watch(
-  () => props.form.id,
+  () => props.form,
   () => {
     trialValue.value = {};
     validation.value = null;

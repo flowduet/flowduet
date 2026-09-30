@@ -84,6 +84,11 @@ function openEditor(form: FormDefinition): void {
   editVisible.value = true;
 }
 
+function cancelEdit(): void {
+  editing.value = null;
+  editVisible.value = false;
+}
+
 function onDesignerSave(rules: string, options: string): void {
   const form = editing.value;
   if (form === null) return;
@@ -233,7 +238,7 @@ function onDesignerSave(rules: string, options: string): void {
         :rules="editing.rules"
         :options="editing.options"
         @save="onDesignerSave"
-        @cancel="editing = null"
+        @cancel="cancelEdit"
       />
     </ElDialog>
   </div>

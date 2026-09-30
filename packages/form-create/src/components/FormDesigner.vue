@@ -2,17 +2,21 @@
 import { onBeforeMount, onMounted, ref } from "vue";
 import { ElButton } from "element-plus";
 import FcDesigner from "@form-create/designer";
-import type { Config } from "@form-create/designer/types/index.d";
 import { parseFormOptions } from "../form-schema.js";
 import { ensureFormCreateInstalled } from "../form-create-setup.js";
+import { DESIGNER_CONFIG, FIELD_MENU } from "./designer-config.js";
+import { prepareCheckboxDefaults, restoreCheckboxDefaults } from "./checkbox-defaults.js";
 
 /**
- * FormCreate 设计器封装（#72）：真实开源设计器（@form-create/designer 3.5.0）
+ * FormCreate 设计器封装（#72 / #74）：真实开源设计器（@form-create/designer 3.5.0）
  * 承载表单内容编辑，加载 / 保存 rules+options 成对序列化字符串。
  *
- * 组件范围收口：menu 整体覆盖为「仅文本字段」——拖拽面板只有 input 一项，
- * 超范围字段在本封装内就无从产生（导入侧另有 form-schema 守卫兜底）。
- * AI 模块关闭（迭代三不接入 Pro / AI 助理）。
+ * 组件范围收口（父规格口径，见 designer-config.ts）：菜单整体覆盖为
+ * 「八类常用字段 + 栅格布局」，上传、子表单、自定义组件等超范围字段在
+ * 本封装内就无从产生（导入侧另有 form-schema 守卫兜底）。配置入口同步
+ * 收口：远程数据源、下拉多选、日期范围形态、事件脚本、组件联动均不提供
+ * UI 入口；栅格布局只能拖入顶层（checkDrag 拒绝嵌套）。AI 模块关闭
+ * （迭代三不接入 Pro / AI 助理）。
  */
 const props = defineProps<{
   /** 表单名（展示用） */
@@ -31,32 +35,13 @@ const emit = defineEmits<{
 
 const designerRef = ref<InstanceType<typeof FcDesigner> | null>(null);
 
-/** 菜单列表整体覆盖：只有文本字段（name 对应 DragRule 的 name，icon 为包内样式类） */
-const TEXT_ONLY_MENU = [
-  {
-    name: "main",
-    title: "文本字段",
-    list: [{ label: "文本", name: "input", icon: "icon-input" }],
-  },
-];
-
-const DESIGNER_CONFIG: Config = {
-  // 不接入 AI 助理（Pro 能力红线，ADR-0006）
-  showAi: false,
-  // 验证面板只保留必填：本票字段配置面就是「默认值 + 必填」
-  validateOnlyRequired: true,
-  showSaveBtn: false,
-  showDevice: false,
-  showLanguage: false,
-};
-
 // 宿主未全局安装时补装（画布字段渲染依赖 elm 组件映射注册）
 onBeforeMount(ensureFormCreateInstalled);
 
 onMounted(() => {
   const designer = designerRef.value;
   if (designer === null) return;
-  designer.setRule(props.rules);
+  designer.setRule(prepareCheckboxDefaults(props.rules) as never);
   designer.setOption(parseFormOptions(props.options) as never);
 });
 
@@ -64,7 +49,8 @@ function save(): void {
   const designer = designerRef.value;
   if (designer === null) return;
   // getJson / getOptionsJson 即「匹配版本的 FormCreate 序列化接口」成对出口
-  emit("save", designer.getJson(), designer.getOptionsJson());
+  const rules = restoreCheckboxDefaults(designer.getJson());
+  emit("save", FcDesigner.designerForm.toJson(rules), designer.getOptionsJson());
 }
 </script>
 
@@ -79,7 +65,7 @@ function save(): void {
         保存表单内容
       </ElButton>
     </div>
-    <FcDesigner ref="designerRef" :menu="TEXT_ONLY_MENU" :config="DESIGNER_CONFIG" height="460px" />
+    <FcDesigner ref="designerRef" :menu="FIELD_MENU" :config="DESIGNER_CONFIG" height="460px" />
   </div>
 </template>
 

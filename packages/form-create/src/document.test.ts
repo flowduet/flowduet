@@ -10,6 +10,7 @@ import {
   saveDesignDocument,
 } from "./document.js";
 import type { FormDefinition } from "./document.js";
+import { formSemantics } from "./form-semantics.js";
 
 /**
  * 设计文档编解码合同（#71）：
@@ -152,10 +153,107 @@ describe("saveDesignDocument", () => {
       saveDesignDocument(buildDraftFlow(), [
         {
           ...good,
-          rules: JSON.stringify([{ type: "select", field: "s1", title: "下拉" }]),
+          rules: JSON.stringify([{ type: "upload", field: "u1", title: "上传" }]),
         },
       ]),
-    ).rejects.toThrow("只支持文本（input）字段");
+    ).rejects.toThrow("支持的组件");
+  });
+
+  it("全字段与布局矩阵重复往返：字段标识、类型、选项、默认值、必填、顺序、布局及表单配置语义等价（A10）", async () => {
+    // 八类字段 + 栅格布局（含列内字段），并带上设计器导出会附带的部分运行态键，
+    // 证明语义等价不受装载元数据干扰。
+    // 注意：矩阵与 form-schema.test.ts / components.test.ts 的矩阵 fixture 刻意同构，
+    // 新增字段类型时三处同步更新
+    const matrixForm: FormDefinition = {
+      id: "form_matrix",
+      name: "矩阵表单",
+      provider: "form-create/element-plus",
+      rules: JSON.stringify([
+        {
+          type: "input",
+          field: "reason",
+          title: "申请事由",
+          value: "默认事由",
+          $required: true,
+          _fc_id: "id_a",
+          name: "ref_a",
+        },
+        { type: "input", field: "detail", title: "详细说明", props: { type: "textarea" } },
+        { type: "inputNumber", field: "amount", title: "金额", value: 0 },
+        {
+          type: "radio",
+          field: "urgent",
+          title: "是否加急",
+          options: [
+            { label: "是", value: "1" },
+            { label: "否", value: "0" },
+          ],
+          value: "0",
+          effect: { fetch: "" },
+        },
+        {
+          type: "checkbox",
+          field: "tags",
+          title: "标签",
+          options: [{ label: "甲", value: "a" }],
+          value: [],
+        },
+        {
+          type: "select",
+          field: "level",
+          title: "级别",
+          options: [{ label: "普通", value: "1" }],
+          $required: true,
+        },
+        { type: "datePicker", field: "applyDate", title: "申请日期" },
+        {
+          type: "switch",
+          field: "notify",
+          title: "通知",
+          value: false,
+          props: { activeValue: true, inactiveValue: false },
+        },
+        {
+          type: "fcRow",
+          children: [
+            {
+              type: "col",
+              props: { span: 12 },
+              children: [{ type: "input", field: "leftCol", title: "列甲" }],
+            },
+            {
+              type: "col",
+              props: { span: 12 },
+              children: [{ type: "datePicker", field: "rightCol", title: "列乙" }],
+            },
+          ],
+        },
+      ]),
+      options: JSON.stringify({ form: { labelWidth: "120px" } }),
+    };
+    const model = buildConfiguredFlow();
+    model.setDefaultFormKey("form_matrix");
+
+    // 重复往返：保存 → 打开 → 再保存 → 再打开，每一跳语义等价
+    const first = await saveDesignDocument(model, [matrixForm]);
+    const opened1 = await openDesignDocument(first.json);
+    expect(opened1.model.defaultFormKey).toBe("form_matrix");
+    expect(formSemantics(opened1.forms[0])).toEqual(formSemantics(matrixForm));
+
+    const second = await saveDesignDocument(opened1.model, opened1.forms);
+    const opened2 = await openDesignDocument(second.json);
+    expect(formSemantics(opened2.forms[0])).toEqual(formSemantics(matrixForm));
+
+    // 值语义抽查：数字 0、开关 false、空多选默认值不得被通用真假判断吞掉
+    const values = Object.fromEntries(
+      (JSON.parse(opened2.forms[0].rules) as Array<{ field?: string; value?: unknown }>).map(
+        (rule) => [rule.field ?? rule.type, rule.value],
+      ),
+    );
+    expect(values.amount).toBe(0);
+    expect(values.notify).toBe(false);
+    expect(values.tags).toEqual([]);
+    expect(values.urgent).toBe("0");
   });
 
   it("默认引用失效仍可保存为草稿并报告 referenceIssues", async () => {
@@ -271,7 +369,7 @@ describe("openDesignDocument", () => {
           forms: [{ ...form, rules: JSON.stringify([{ type: "upload", field: "u1" }]) }],
         }),
       ),
-    ).rejects.toThrow("只支持文本（input）字段");
+    ).rejects.toThrow("支持的组件");
     await expect(
       openDesignDocument(
         wrapDocument(STANDARD_BPMN_XML, {
@@ -287,6 +385,67 @@ describe("openDesignDocument", () => {
         }),
       ),
     ).rejects.toThrow("字段标识重复");
+  });
+
+  it("字段与表单级脚本配置在保存、打开两侧都拒绝", async () => {
+    const base: FormDefinition = {
+      id: "form_script",
+      name: "脚本边界",
+      provider: "form-create/element-plus",
+      rules: JSON.stringify([{ type: "input", field: "reason" }]),
+      options: "{}",
+    };
+    const cases: FormDefinition[] = [
+      {
+        ...base,
+        rules: JSON.stringify([
+          { type: "input", field: "reason", on: { change: "function(){return 1;}" } },
+        ]),
+      },
+      { ...base, options: JSON.stringify({ onSubmit: "function(){return true;}" }) },
+    ];
+    for (const form of cases) {
+      await expect(saveDesignDocument(buildDraftFlow(), [form])).rejects.toThrow("脚本配置");
+      await expect(
+        openDesignDocument(wrapDocument(STANDARD_BPMN_XML, { forms: [form] })),
+      ).rejects.toThrow("脚本配置");
+    }
+  });
+
+  it("创建静态目录外的下拉选项在公开保存和打开接口都被拒绝", async () => {
+    const form: FormDefinition = {
+      id: "static_select",
+      name: "静态下拉",
+      provider: "form-create/element-plus",
+      options: "{}",
+      rules: JSON.stringify([
+        { type: "select", field: "level", props: { allowCreate: true, filterable: true } },
+      ]),
+    };
+    await expect(saveDesignDocument(buildDraftFlow(), [form])).rejects.toThrow("allowCreate");
+    await expect(
+      openDesignDocument(wrapDocument(STANDARD_BPMN_XML, { forms: [form] })),
+    ).rejects.toThrow("allowCreate");
+  });
+
+  it("联动编辑别名 _control 在公开保存与打开两侧拒绝", async () => {
+    const form: FormDefinition = {
+      id: "linkage_alias",
+      name: "联动别名",
+      provider: "form-create/element-plus",
+      options: "{}",
+      rules: JSON.stringify([
+        {
+          type: "input",
+          field: "reason",
+          _control: [{ value: "a", rule: [{ type: "upload", field: "out_of_scope" }] }],
+        },
+      ]),
+    };
+    await expect(saveDesignDocument(buildDraftFlow(), [form])).rejects.toThrow("_control");
+    await expect(
+      openDesignDocument(wrapDocument(STANDARD_BPMN_XML, { forms: [form] })),
+    ).rejects.toThrow("_control");
   });
 
   it("坏 XML 拒绝并带上下文前缀", async () => {
