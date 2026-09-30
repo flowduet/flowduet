@@ -33,6 +33,77 @@ function flowXml(extra: string, declarations: string): string {
 }
 
 describe("collectUnregisteredNamespaceUsage", () => {
+  it.each(["http://flowable.org/bp&#109;n", "http://flowable.org/bp&#x6D;n"])(
+    "命名空间字符引用按实际 URI 识别：%s",
+    (uri) => {
+      const xml = flowXml('fa:assignee="john"', `xmlns:fa="${uri}"`);
+      expect(collectUnregisteredNamespaceUsage(xml, REGISTERED)).toEqual([]);
+    },
+  );
+
+  it("预定义实体解码一次，不对 URI 做百分号解码或大小写归一化", () => {
+    const uri = "urn:custom:a&b<\"'";
+    const xml = flowXml('fa:assignee="john"', 'xmlns:fa="urn:custom:a&amp;b&lt;&quot;&apos;"');
+    expect(collectUnregisteredNamespaceUsage(xml, new Set([...REGISTERED, uri]))).toEqual([]);
+    for (const encoded of ["http://flowable.org/bp%6Dn", "HTTP://flowable.org/bpmn"]) {
+      expect(
+        collectUnregisteredNamespaceUsage(
+          flowXml('fa:assignee="john"', `xmlns:fa="${encoded}"`),
+          REGISTERED,
+        ),
+      ).toHaveLength(1);
+    }
+    const escapedReference = flowXml('fa:assignee="john"', 'xmlns:fa="urn:custom:&amp;#109;"');
+    expect(
+      collectUnregisteredNamespaceUsage(
+        escapedReference,
+        new Set([...REGISTERED, "urn:custom:&#109;"]),
+      ),
+    ).toEqual([]);
+  });
+
+  it.each([
+    ['xmlns:xml="http://camunda.org/schema/1.0/bpmn"', 'xml:assignee="john"'],
+    ['xmlns:xml="http://flowable.org/bpmn"', 'xml:assignee="john"'],
+    ['xmlns:xml="http://camunda.org/schema/1.0/bpmn"', ""],
+    ['xmlns:other="http://www.w3.org/XML/1998/namespace"', ""],
+    ['xmlns="http://www.w3.org/XML/1998/namespace"', ""],
+    ['xmlns:xmlns="http://www.w3.org/2000/xmlns/"', ""],
+    ['xmlns:other="http://www.w3.org/2000/xmlns/"', ""],
+  ])("非法保留命名空间声明拒绝：%s", (declaration, attribute) => {
+    expect(() =>
+      collectUnregisteredNamespaceUsage(flowXml(attribute, declaration), REGISTERED),
+    ).toThrow(/第 2 行.*非法.*命名空间声明/);
+  });
+
+  it("xml 固定 URI 的显式声明仍合法", () => {
+    expect(
+      collectUnregisteredNamespaceUsage(
+        flowXml('xml:space="preserve"', 'xmlns:xml="http://www.w3.org/XML/1998/namespace"'),
+        REGISTERED,
+      ),
+    ).toEqual([]);
+  });
+
+  it.each(["\n", "\r\n", "\r"])("多行属性定位在名字起始行，换行 %j", (newline) => {
+    const xml = [
+      '<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bad="urn:bad">',
+      "  <bpmn:userTask",
+      "    bad:assignee",
+      "      =",
+      '      "first',
+      "second",
+      'third" />',
+      '  <bad:extra bad:other="x" />',
+      "</bpmn:definitions>",
+    ].join(newline);
+    expect(collectUnregisteredNamespaceUsage(xml, REGISTERED)).toMatchObject([
+      { qualifiedName: "bad:assignee", line: 3 },
+      { qualifiedName: "bad:extra", line: 8 },
+      { qualifiedName: "bad:other", line: 8 },
+    ]);
+  });
+
   it("同 URI 不同前缀：解析为已注册 URI，不产生诊断", () => {
     const xml = flowXml('fa:assignee="${manager}"', `xmlns:fa="${FLOWABLE_URI}"`);
     expect(collectUnregisteredNamespaceUsage(xml, REGISTERED)).toEqual([]);
@@ -160,6 +231,32 @@ describe("collectUnregisteredNamespaceUsage", () => {
 });
 
 describe("parse 的 rejectUnregisteredNamespaces 选项（opt-in，不改既有调用者）", () => {
+  it.each(["http://flowable.org/bp&#109;n", "http://flowable.org/bp&#x6D;n"])(
+    "开启审计：字符引用 URI 恢复真实审批人：%s",
+    async (uri) => {
+      const model = await parse(flowXml('fa:assignee="john"', `xmlns:fa="${uri}"`), {
+        adapter: flowableAdapter,
+        rejectWarnings: true,
+        rejectUnregisteredNamespaces: true,
+      });
+      expect(model.elementOf("t").get("assignee")).toBe("john");
+    },
+  );
+
+  it("开启审计拒绝 xml 重绑定，关闭审计保留旧 parse 行为", async () => {
+    const xml = flowXml('xml:assignee="john"', `xmlns:xml="${CAMUNDA_URI}"`);
+    await expect(
+      parse(xml, {
+        adapter: flowableAdapter,
+        rejectWarnings: true,
+        rejectUnregisteredNamespaces: true,
+      }),
+    ).rejects.toThrow(/xmlns:xml.*非法.*命名空间声明/);
+    await expect(
+      parse(xml, { adapter: flowableAdapter, rejectWarnings: true }),
+    ).resolves.toBeTruthy();
+  });
+
   it("开启审计：假前缀 URI 不匹配的 XML 抛可定位错误", async () => {
     const xml = flowXml(
       'flowable:assignee="${manager}"',

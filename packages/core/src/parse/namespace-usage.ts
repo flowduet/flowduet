@@ -20,11 +20,48 @@ export interface NamespaceUsageIssue {
   line: number;
 }
 
+const XML_URI = "http://www.w3.org/XML/1998/namespace";
+const XMLNS_URI = "http://www.w3.org/2000/xmlns/";
+
 /** XML 基建命名空间：schema 实例与保留前缀，与引擎方言无关，不参与判定 */
-const INFRASTRUCTURE_URIS = new Set([
-  "http://www.w3.org/2001/XMLSchema-instance",
-  "http://www.w3.org/XML/1998/namespace",
-]);
+const INFRASTRUCTURE_URIS = new Set(["http://www.w3.org/2001/XMLSchema-instance", XML_URI]);
+
+/** 声明值按 XML 属性语义解码一次；URI 大小写与百分号编码保持原样 */
+function decodeNamespaceUri(value: string): string {
+  const entities: Record<string, string> = { amp: "&", lt: "<", gt: ">", quot: '"', apos: "'" };
+  return value
+    .replace(/[\t\n]/g, " ")
+    .replace(/&(#x[\da-fA-F]+|#\d+|amp|lt|gt|quot|apos);/g, (_, reference: string) => {
+      if (!reference.startsWith("#")) return entities[reference] ?? "";
+      const hex = reference.startsWith("#x");
+      const codePoint = Number.parseInt(reference.slice(hex ? 2 : 1), hex ? 16 : 10);
+      // XML 1.0 字符范围：不能让非法字符引用解码为无效字符或触发 RangeError
+      if (
+        codePoint !== 9 &&
+        codePoint !== 10 &&
+        codePoint !== 13 &&
+        !(codePoint >= 0x20 && codePoint <= 0xd7ff) &&
+        !(codePoint >= 0xe000 && codePoint <= 0xfffd) &&
+        !(codePoint >= 0x10000 && codePoint <= 0x10ffff)
+      ) {
+        throw new Error(`命名空间声明包含非法 XML 字符引用：&${reference};`);
+      }
+      return String.fromCodePoint(codePoint);
+    });
+}
+
+/** 保留命名空间约束不能依赖 moddle 告警：非法重绑定可能被静默收进 $attrs */
+function assertNamespaceDeclaration(prefix: string, uri: string, line: number): void {
+  if (
+    (prefix === "xml" && uri !== XML_URI) ||
+    (uri === XML_URI && prefix !== "xml") ||
+    prefix === "xmlns" ||
+    uri === XMLNS_URI
+  ) {
+    const name = prefix === "" ? "xmlns" : `xmlns:${prefix}`;
+    throw new Error(`第 ${line} 行的 ${name} 是非法保留命名空间声明：${uri}`);
+  }
+}
 
 /** 前缀作用域帧：键为前缀（"" 键表示默认命名空间） */
 type ScopeFrame = Map<string, string>;
@@ -42,11 +79,13 @@ export function collectUnregisteredNamespaceUsage(
   xml: string,
   registeredUris: ReadonlySet<string>,
 ): NamespaceUsageIssue[] {
+  // XML 将 CRLF 与 CR 统一视为换行，预先规范化使所有扫描分支使用同一行号口径
+  xml = xml.replace(/\r\n?/g, "\n");
   const issues: NamespaceUsageIssue[] = [];
   const scopes: ScopeFrame[] = [];
   const lookupUri = (prefix: string): string | undefined => {
-    // xml 前缀由 XML 规范保留、隐式绑定固定 URI，不要求（也不允许）显式声明
-    if (prefix === "xml") return "http://www.w3.org/XML/1998/namespace";
+    // xml 隐式绑定固定 URI；显式声明只能使用同一 URI，收集声明时已校验
+    if (prefix === "xml") return XML_URI;
     for (let s = scopes.length - 1; s >= 0; s -= 1) {
       const uri = scopes[s]?.get(prefix);
       if (uri !== undefined) return uri;
@@ -174,6 +213,7 @@ export function collectUnregisteredNamespaceUsage(
       }
 
       // 属性名
+      const attributeLine = line;
       let attrName = "";
       while (cursor < n && isNameChar(at(cursor))) {
         attrName += at(cursor);
@@ -205,12 +245,13 @@ export function collectUnregisteredNamespaceUsage(
       }
       cursor = valueEnd === -1 ? n : valueEnd + 1;
 
-      if (attrName === "xmlns") {
-        frame.set("", value);
-      } else if (attrName.startsWith("xmlns:")) {
-        frame.set(attrName.slice(6), value);
+      if (attrName === "xmlns" || attrName.startsWith("xmlns:")) {
+        const prefix = attrName === "xmlns" ? "" : attrName.slice(6);
+        const uri = decodeNamespaceUri(value);
+        assertNamespaceDeclaration(prefix, uri, attributeLine);
+        frame.set(prefix, uri);
       } else if (attrName.includes(":")) {
-        attributeUses.push({ name: attrName, line });
+        attributeUses.push({ name: attrName, line: attributeLine });
       }
     }
 

@@ -113,6 +113,7 @@ const xml = await exportDeployXml(session.current!.model, session.current!.forms
 打开与保存自证对 XML 实际使用的引擎扩展做**引擎扩展兼容判定**——按命名空间 URI 与实际使用内容判定，不看前缀名称、不看是否声明：
 
 - 同一 URI 换任意前缀（如 `fa:assignee` 绑定 `http://flowable.org/bpmn`）照常识别与恢复；项目扩展 `urn:flowduet:bpmn` 同样保留。
+- xmlns 声明中的 XML 字符引用先解码再比较 URI；URI 大小写与百分号编码不归一化。`xml` 可以省略声明或显式声明其固定 URI，非法重绑定及其他保留命名空间声明会拒绝，即使该声明未被使用。
 - 仅声明未使用的其他引擎命名空间（如只写 `xmlns:camunda=...` 而无引用）不构成冲突。
 - 实际使用了未注册命名空间的元素或属性——包括假借 `flowable` 前缀但绑定其他 URI、真实使用 `camunda:` 扩展——明确拒绝，错误点名前缀、URI、限定名与行号。动机：moddle 对这类内容不产生解析警告而是静默收进 `$attrs`，语义丢失对调用者不可见。
 - 判定经 `parse` 的 `rejectUnregisteredNamespaces` 选项开启（本包的保存自证与打开路径均已启用）；已注册集合以适配器与项目协议的扩展包为准，新增合法组件或适配器不需要维护第二份名单。

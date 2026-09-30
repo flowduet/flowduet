@@ -341,6 +341,28 @@ describe("openDesignDocument", () => {
     );
   });
 
+  it.each(["http://flowable.org/bp&#109;n", "http://flowable.org/bp&#x6D;n"])(
+    "字符引用命名空间经公开打开、保存再打开后审批人不丢失：%s",
+    async (uri) => {
+      const xml = RENAMED_PREFIX_XML.replace("http://flowable.org/bpmn", uri);
+      const opened = await openDesignDocument(wrapDocument(xml));
+      expect(opened.model.elementOf("t1").get("assignee")).toBe("${manager}");
+      const saved = await saveDesignDocument(opened.model, opened.forms);
+      const reopened = await openDesignDocument(saved.json);
+      expect(reopened.model.elementOf("t1").get("assignee")).toBe("${manager}");
+      expect(reopened.model.defaultFormKey).toBe("form_apply");
+    },
+  );
+
+  it("公开打开拒绝非法 xml 重绑定，阻止后续保存丢失扩展", async () => {
+    const xml = FAKE_PREFIX_XML.replaceAll("flowable:", "xml:")
+      .replace("xmlns:flowable", "xmlns:xml")
+      .replace("http://vendor.example/private-ns", "http://camunda.org/schema/1.0/bpmn");
+    await expect(openDesignDocument(wrapDocument(xml))).rejects.toThrow(
+      /xmlns:xml.*非法.*命名空间声明/,
+    );
+  });
+
   it("仅声明未使用的其他引擎命名空间不构成冲突；实际使用才拒绝（A20）", async () => {
     // 只有 xmlns 声明、没有任何元素或属性引用：按标准草稿打开
     const declaredOnly = STANDARD_BPMN_XML.replace(

@@ -21,6 +21,24 @@ function buildDraftFlow(): BpmnModel {
 const BAD_DOCUMENT_JSON = "{not-json";
 
 describe("FlowDesignSession", () => {
+  it("非法 xml 重绑定打开失败后未保存模型与表单目录保持原样", async () => {
+    const session = new FlowDesignSession(buildDraftFlow());
+    const form = session.createForm("未保存申请单");
+    session.updateFormContent(form.id, '[{"type":"input","field":"reason","title":"事由"}]', "{}");
+    const before = session.current;
+    const saved = await session.save();
+    const xml = saved.document.xml
+      .replaceAll("flowable:", "xml:")
+      .replace("xmlns:flowable", "xmlns:xml")
+      .replace("http://flowable.org/bpmn", "http://camunda.org/schema/1.0/bpmn");
+    await expect(
+      session.open(JSON.stringify({ ...saved.document, xml, forms: [] })),
+    ).rejects.toThrow(/xmlns:xml.*非法.*命名空间声明/);
+    expect(session.current).toBe(before);
+    expect(session.current?.model.elementOf("approval_1").get("assignee")).toBe("${manager}");
+    expect(session.current?.forms[0]?.rules).toContain("reason");
+  });
+
   it("构造时收编宿主已有模型；未初始化的会话保存明确报错", async () => {
     const model = buildDraftFlow();
     const session = new FlowDesignSession(model);

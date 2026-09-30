@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { flushPromises, mount } from "@vue/test-utils";
+import { flowableAdapter, parse } from "@flowduet/core";
 import App from "./App.vue";
 
 let wrapper: ReturnType<typeof mount> | undefined;
@@ -699,6 +700,36 @@ async function openDocument(json: string): Promise<void> {
 }
 
 describe("Playground 文档兼容检查与原子打开（#75）", () => {
+  it("字符引用 URI 文件可打开并导出；非法 xml 重绑定文件拒绝且未保存内容不丢失", async () => {
+    wrapper = mount(App, { attachTo: document.body });
+    const encoded = minimalFlowXml(
+      'fa:assignee="john"',
+      'xmlns:fa="http://flowable.org/bp&#x6D;n"',
+    );
+    await openDocument(designDoc(encoded));
+    expect(wrapper.find('[data-test="doc-error"]').exists()).toBe(false);
+    await wrapper.find('[data-test="export-btn"]').trigger("click");
+    await flushPromises();
+    const exported = await parse(wrapper.find('[data-test="xml-preview"]').text(), {
+      adapter: flowableAdapter,
+      rejectWarnings: true,
+      rejectUnregisteredNamespaces: true,
+    });
+    expect(exported.elementOf("t1").get("assignee")).toBe("john");
+
+    await setupWithForms(["未保存申请单"]);
+    const invalid = minimalFlowXml(
+      'xml:assignee="john"',
+      'xmlns:xml="http://camunda.org/schema/1.0/bpmn"',
+    );
+    await openDocument(designDoc(invalid));
+    expect(wrapper.find('[data-test="doc-error"]').text()).toMatch(/xmlns:xml.*非法.*命名空间声明/);
+    expect(wrapper.text()).toContain("审批节点");
+    await wrapper.find('[data-test="form-manager-btn"]').trigger("click");
+    await flushPromises();
+    expect(wrapper.find("[data-test=form-item-form_1]").text()).toContain("未保存申请单");
+  });
+
   it("导入失效表单 key 的可恢复文档：以草稿打开、key 保留并定位、预览与部署导出受阻（A11）", async () => {
     wrapper = mount(App, { attachTo: document.body });
     const xml = minimalFlowXml(
