@@ -109,8 +109,10 @@ const xml = await exportDeployXml(session.current!.model, session.current!.forms
 流程抽屉与表单编辑器里的输入要等「确定 / 保存」才落模型与目录——宿主在调用 `session.save()` 前，应先经组件提交边界收集这些未提交变更，避免只保存旧模型而遗漏当前输入：
 
 - `DingtalkDesigner#commitPendingChanges({ allowIncomplete: true })`：宿主保存业务草稿时显式允许空集合变量与空收件人，仍拦截非空非法集合格式；未传选项时与「确定」保持严格。抽屉未打开为无操作。业务缺失由保存结果报告，部署导出仍拒绝。
-- `FormManager#commitPendingEdit()`：编辑对话框打开时经真实设计器序列化 rules/options 并走「保存表单内容」同一守卫上抛 `updateContent`；对话框未打开为无操作。`FormManager#hasOpenEditor()` 可查询编辑器是否开着（设计器内部输入无法逐事件感知，替换当前设计前应据此一并向用户确认）。
+- `FormManager#commitPendingEdit()`：编辑对话框打开时经真实设计器序列化 rules/options 并走「保存表单内容」同一守卫上抛 `updateContent`；对话框未打开为无操作。`FormManager#hasOpenEditor()` 可查询编辑器是否开着，替换当前设计前应据此一并向用户确认。`FormDesigner` 与 `FormManager` 的 `draft-change` 事件上抛原生输入、变更和设计器结构编辑；第三方仅发 Vue 事件的控件，通过编辑区点击/编辑按键保守标记潜在编辑（仅查看配置也可能提示未保存），宿主应接入编辑世代以识别保存期间尚未提交的新表单输入。
 - 保存入口的可达性由宿主自行安排：抽屉与对话框（Element Plus 的 Dialog 即使关闭遮罩，全屏容器仍拦截点击）开着时工具栏按钮不可点，Playground 以 Cmd/Ctrl+S 快捷键作为编辑中途保存的稳定入口。
+
+`FormDesigner#exportContent()` 同步导出前会使本编辑器内的活动控件失焦，收集 FormCreate 在失焦时才提交的字段值；不会改变编辑器外部控件的焦点。
 
 任一返回 `false` 时宿主应中止保存——守卫错误已在对应组件内呈现，绕过守卫会制造半写模型或无法恢复的文档。抽屉字段被编辑时 designer 上抛 `draft-change` 事件，供宿主把未提交输入计入「未保存修改」判定（打开文件 / 新建设计前的替换确认）。
 

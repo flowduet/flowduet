@@ -669,6 +669,7 @@ onUnmounted(() => {
       <FormManager
         ref="formManagerRef"
         :forms="formList"
+        @draft-change="markEdited"
         @create="onFormCreate"
         @rename="onFormRename"
         @update-content="onFormUpdateContent"

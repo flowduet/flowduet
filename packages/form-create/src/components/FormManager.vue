@@ -22,6 +22,8 @@ const emit = defineEmits<{
   updateContent: [id: string, rules: string, options: string];
   /** 删除确认后的上抛：被引用时的拒绝与位置说明由会话 deleteForm 决定 */
   delete: [id: string];
+  /** 表单编辑器尚未提交的设计变更，供宿主更新未保存状态。 */
+  draftChange: [];
 }>();
 
 const newName = ref("");
@@ -273,6 +275,7 @@ defineExpose({ commitPendingEdit, hasOpenEditor });
       <FormDesigner
         v-if="editing"
         ref="designerRef"
+        @draft-change="emit('draftChange')"
         :name="editing.name"
         :rules="editing.rules"
         :options="editing.options"

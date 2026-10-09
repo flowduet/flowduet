@@ -12,3 +12,5 @@
 
 - `BpmnModel.addApprovalTask(spec, options)` 与 `DingtalkDesigner#commitPendingChanges(options)` 支持显式 `{ allowIncomplete: true }` 草稿路径：集合变量与收件人尚未配置时可保存恢复，非空非法格式仍拦截；默认确认和部署导出保持严格。内核只容许集合业务缺失，不放开 mode、元素变量或字段类型守卫。
 - 表单收集序列化异常可见反馈并保留编辑器；Playground 用保存请求序号与设计替换序号阻止迟到结果覆盖较新草稿或反馈。
+
+- 保存前收集表单当前焦点控件的未提交值；表单 `draft-change` 事件贯穿编辑器、管理面板与宿主编辑世代，保存期间的新输入不被误标为已保存。Playground 切换视图前收集抽屉缓冲，格式非法时保持原视图和选中态。

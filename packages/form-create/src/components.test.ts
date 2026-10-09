@@ -1,6 +1,7 @@
 // @vitest-environment happy-dom
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { defineComponent } from "vue";
+import { defineComponent, h, ref } from "vue";
+import { ElSelect, ElOption } from "element-plus";
 import { flushPromises, mount } from "@vue/test-utils";
 import FormPreview from "./components/FormPreview.vue";
 import FormManager from "./components/FormManager.vue";
@@ -810,5 +811,109 @@ describe("PR88 序列化异常反馈", () => {
     expect(wrapper.emitted("updateContent")).toBeUndefined();
     expect(wrapper.find('[data-test="form-manager-error"]').text()).toContain("序列化故障");
     expect(wrapper.find('[data-test="form-manager-edit-dialog"]').isVisible()).toBe(true);
+  });
+});
+
+describe("PR88 产品验收焦点与编辑通知回归", () => {
+  async function openDefaultEditor(): Promise<void> {
+    // 外部 ValueInput 的已核实合同：input 只改缓冲，blur 才更新规则。
+    // 这里保留真实 DOM 焦点行为；完整 FormCreate 链路由内置浏览器复验。
+    const delayedInput = defineComponent({
+      name: "FcDesigner",
+      setup(_, { expose }) {
+        const pending = ref("");
+        let rules: Record<string, unknown>[] = [];
+        let options: object = {};
+        expose({
+          setRule: (value: Record<string, unknown>[]) => {
+            rules = value;
+            pending.value = String(value[0]?.value ?? "");
+          },
+          setOption: (value: object) => {
+            options = value;
+          },
+          getJson: () => JSON.stringify(rules),
+          getOptionsJson: () => JSON.stringify(options),
+        });
+        return () =>
+          h("input", {
+            "data-test": "delayed-default-input",
+            value: pending.value,
+            onInput: (event: Event) => {
+              pending.value = (event.target as HTMLInputElement).value;
+            },
+            onBlur: () => {
+              rules[0]!.value = pending.value;
+            },
+          });
+      },
+    });
+    wrapper = mount(FormDesigner, {
+      props: { name: APPLY_FORM.name, rules: APPLY_FORM.rules, options: APPLY_FORM.options },
+      attachTo: document.body,
+      global: { stubs: { FcDesigner: delayedInput } },
+    });
+    await flushPromises();
+  }
+
+  it("P13 当前默认值未失焦时同步收集也包含已输入内容", async () => {
+    await openDefaultEditor();
+    const input = wrapper!.find<HTMLInputElement>('[data-test="delayed-default-input"]');
+    input.element.focus();
+    await input.setValue("焦点新默认值");
+    expect(document.activeElement).toBe(input.element);
+    const vm = wrapper!.vm as unknown as {
+      exportContent: () => { rules: string; options: string };
+    };
+    const content = vm.exportContent();
+    expect(JSON.parse(content.rules)[0].value).toBe("焦点新默认值");
+  });
+
+  it("E15 当前输入上抛编辑通知，宿主可识别尚未提交的新编辑", async () => {
+    await openDefaultEditor();
+    const input = wrapper!.find<HTMLInputElement>('[data-test="delayed-default-input"]');
+    await input.setValue("尚未提交的新默认值");
+    expect(wrapper!.emitted("draftChange")?.length).toBeGreaterThan(0);
+    expect(wrapper!.emitted("save")).toBeUndefined();
+  });
+  it("E15 仅发 Vue 事件的下拉交互也上抛潜在编辑", async () => {
+    const externalSelect = defineComponent({
+      name: "FcDesigner",
+      setup(_, { expose }) {
+        const value = ref("a");
+        expose({ setRule: () => {}, setOption: () => {} });
+        return () =>
+          h(
+            ElSelect,
+            {
+              modelValue: value.value,
+              "onUpdate:modelValue": (next: string) => {
+                value.value = next;
+              },
+            },
+            () => [
+              h(ElOption, { label: "选项A", value: "a" }),
+              h(ElOption, { label: "选项B", value: "b" }),
+            ],
+          );
+      },
+    });
+    wrapper = mount(FormDesigner, {
+      props: { name: "下拉编辑", rules: "[]", options: "{}" },
+      attachTo: document.body,
+      global: { stubs: { FcDesigner: externalSelect } },
+    });
+    await flushPromises();
+    await wrapper.find(".el-select__wrapper").trigger("click");
+    await flushPromises();
+    const option = Array.from(
+      document.querySelectorAll<HTMLElement>(".el-select-dropdown__item"),
+    ).find((node) => node.textContent === "选项B");
+    option!.click();
+    await flushPromises();
+    expect(wrapper.findAll(".el-select__selected-item").map((node) => node.text())).toContain(
+      "选项B",
+    );
+    expect((wrapper.emitted("draftChange") ?? []).length).toBeGreaterThan(0);
   });
 });
