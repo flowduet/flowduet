@@ -93,6 +93,7 @@ const session = new FlowDesignSession(demoModel);
 const model = shallowRef<BpmnModel>(demoModel);
 
 const view = ref<"dingtalk" | "bpmn">("dingtalk");
+const viewSwitchKey = ref(0);
 const xml = ref("");
 const error = ref("");
 /** 模型内容版本：编辑区 change 时递增，驱动画布重挂及宿主派生视图重算 */
@@ -133,6 +134,22 @@ const dirty = computed(() => editGeneration.value > savedGeneration.value);
 /** 设计器与表单管理面板的组件引用：保存前收集未提交内容的公开边界 */
 const designerRef = ref<InstanceType<typeof DingtalkDesigner> | null>(null);
 const formManagerRef = ref<InstanceType<typeof FormManager> | null>(null);
+
+/** 离开编辑视图前收集缓冲；格式非法时保持当前视图供修正。 */
+function onViewChange(next: string | number | boolean | undefined): void {
+  if (next !== "dingtalk" && next !== "bpmn") return;
+  if (next === view.value) return;
+  if (
+    view.value === "dingtalk" &&
+    designerRef.value !== null &&
+    !designerRef.value.commitPendingChanges({ allowIncomplete: true })
+  ) {
+    // 原生 radio 已切换 checked；重挂控件还原选中态，但保留编辑视图及缓冲。
+    viewSwitchKey.value += 1;
+    return;
+  }
+  view.value = next;
+}
 
 function messageOf(e: unknown): string {
   return e instanceof Error ? e.message : String(e);
@@ -551,7 +568,13 @@ onUnmounted(() => {
       <h1>FlowDuet Playground</h1>
       <div class="playground-toolbar">
         <span v-if="dirty" class="playground-dirty" data-test="dirty-badge">有未保存修改</span>
-        <ElRadioGroup v-model="view" data-test="view-switch" size="small">
+        <ElRadioGroup
+          :key="viewSwitchKey"
+          :model-value="view"
+          @update:model-value="onViewChange"
+          data-test="view-switch"
+          size="small"
+        >
           <ElRadioButton value="dingtalk" data-test="view-dingtalk">钉钉式</ElRadioButton>
           <ElRadioButton value="bpmn" data-test="view-bpmn">BPMN 视图</ElRadioButton>
         </ElRadioGroup>

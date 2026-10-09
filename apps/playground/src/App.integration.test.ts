@@ -1567,3 +1567,38 @@ describe("PR88 保存与抽屉边界回归", () => {
     );
   });
 });
+
+describe("PR88 产品验收视图切换回归", () => {
+  it("P24 切换只读视图前收集当前抽屉输入，保存恢复不丢失", async () => {
+    wrapper = mount(App, { attachTo: document.body });
+    await openApprovalDrawer(wrapper);
+    await setValue(
+      document.querySelector<HTMLInputElement>('[data-test="drawer-name"]')!,
+      "切视图保留名称",
+    );
+    await wrapper.find('[data-test="view-bpmn"] input').setValue();
+    await flushPromises();
+    await wrapper.find('[data-test="save-local-btn"]').trigger("click");
+    await flushPromises();
+    expect(JSON.parse(localStorage.getItem("flowduet.playground.design")!).xml).toContain(
+      "切视图保留名称",
+    );
+  });
+
+  it("P24 非法格式阻止离开当前视图，输入仍在原抽屉", async () => {
+    wrapper = mount(App, { attachTo: document.body });
+    await wrapper.findAll('[data-test="node-card"]')[2]!.trigger("click");
+    await flushPromises();
+    await setValue(
+      document.querySelector<HTMLInputElement>('[data-test="drawer-assignee"]')!,
+      "张三,李四",
+    );
+    await wrapper.find('[data-test="view-bpmn"] input').setValue();
+    await flushPromises();
+    expect(wrapper.find('[data-test="view-dingtalk"] input').element.checked).toBe(true);
+    expect(document.querySelector<HTMLInputElement>('[data-test="drawer-assignee"]')!.value).toBe(
+      "张三,李四",
+    );
+    expect(wrapper.find('[data-test="action-error"]').text()).toContain("集合变量名");
+  });
+});
