@@ -115,6 +115,8 @@ let exportTimer: ReturnType<typeof setTimeout> | undefined;
 let exportRevision = 0;
 /** 文件选择时即换代，迟到的读取/解析成功与失败都不能改写最新反馈。 */
 let documentRevision = 0;
+/** 保存请求序号：同一设计内的新保存也使迟到旧快照失效。 */
+let saveRevision = 0;
 
 /** 本地草稿（#76）：保存到浏览器存储的键；刷新后经同一公开文档合同恢复 */
 const LOCAL_DRAFT_KEY = "flowduet.playground.design";
@@ -227,7 +229,10 @@ function markClean(): void {
  * 任一守卫拦截即中止保存——错误详情已在对应组件内呈现，这里补指引。
  */
 function collectPendingEdits(): boolean {
-  if (designerRef.value !== null && !designerRef.value.commitPendingChanges()) {
+  if (
+    designerRef.value !== null &&
+    !designerRef.value.commitPendingChanges({ allowIncomplete: true })
+  ) {
     docError.value = "流程抽屉内有未通过校验的输入，请先在抽屉中修正后再保存";
     return false;
   }
@@ -243,10 +248,15 @@ async function saveSnapshot(): Promise<
   | { ok: true; result: SaveDesignDocumentResult; raced: boolean; snapshotGeneration: number }
   | { ok: false; refused: boolean; error?: unknown }
 > {
-  if (!collectPendingEdits()) return { ok: false, refused: true };
-  const snapshotGeneration = editGeneration.value;
+  const revision = ++saveRevision;
+  const designRevision = documentRevision;
+  const isCurrent = (): boolean => revision === saveRevision && designRevision === documentRevision;
   try {
+    if (!collectPendingEdits()) return { ok: false, refused: true };
+    const snapshotGeneration = editGeneration.value;
     const result = await session.save();
+    // 先判有效性再交给存储途径；编辑世代只判断 dirty，不能代替请求顺序。
+    if (!isCurrent()) return { ok: false, refused: true };
     return {
       ok: true,
       result,
@@ -254,6 +264,7 @@ async function saveSnapshot(): Promise<
       snapshotGeneration,
     };
   } catch (e) {
+    if (!isCurrent()) return { ok: false, refused: true };
     return { ok: false, refused: false, error: e };
   }
 }

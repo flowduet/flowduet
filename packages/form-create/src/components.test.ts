@@ -783,3 +783,32 @@ describe("FormManager 未提交内容收集（#76：commitPendingEdit）", () =>
     expect(wrapper.find('[data-test="form-manager-edit-dialog"]').isVisible()).toBe(true);
   });
 });
+
+describe("PR88 序列化异常反馈", () => {
+  it("设计器序列化抛错时拒绝提交，保留编辑器与当前目录", async () => {
+    const stub = defineComponent({
+      name: "FormDesigner",
+      setup(_, { expose }) {
+        expose({
+          exportContent: () => {
+            throw new Error("序列化故障");
+          },
+        });
+      },
+      render: () => null,
+    });
+    wrapper = mount(FormManager, {
+      props: { forms: [APPLY_FORM] },
+      attachTo: document.body,
+      global: { stubs: { FormDesigner: stub } },
+    });
+    await wrapper.find('[data-test="form-edit-btn-form_apply"]').trigger("click");
+    await flushPromises();
+    const vm = wrapper.vm as unknown as { commitPendingEdit: () => boolean };
+    expect(vm.commitPendingEdit()).toBe(false);
+    await flushPromises();
+    expect(wrapper.emitted("updateContent")).toBeUndefined();
+    expect(wrapper.find('[data-test="form-manager-error"]').text()).toContain("序列化故障");
+    expect(wrapper.find('[data-test="form-manager-edit-dialog"]').isVisible()).toBe(true);
+  });
+});

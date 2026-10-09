@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { flushPromises, mount } from "@vue/test-utils";
+import { FlowDesignSession } from "@flowduet/form-create";
 import { flowableAdapter, parse } from "@flowduet/core";
 import App from "./App.vue";
 
@@ -1384,7 +1385,7 @@ describe("Playground 抄送草稿保存（#76 AC9）", () => {
     );
   });
 
-  it("抽屉里空白收件人是格式拦截：保存被中止且不误报成功", async () => {
+  it("抽屉里空白收件人可保存为业务草稿，恢复后部署仍拦截", async () => {
     wrapper = mount(App, { attachTo: document.body });
     await wrapper.find('[data-test="new-design-btn"]').trigger("click");
     await flushPromises();
@@ -1400,9 +1401,15 @@ describe("Playground 抄送草稿保存（#76 AC9）", () => {
     );
     await wrapper.find('[data-test="save-local-btn"]').trigger("click");
     await flushPromises();
-    expect(wrapper.find('[data-test="doc-error"]').text()).toContain("抽屉");
-    expect(wrapper.find('[data-test="doc-status"]').exists()).toBe(false);
-    expect(localStorage.getItem("flowduet.playground.design")).toBeNull();
+    expect(wrapper.find('[data-test="doc-error"]').exists()).toBe(false);
+    expect(wrapper.find('[data-test="doc-status"]').text()).toContain("待修复");
+    expect(localStorage.getItem("flowduet.playground.design")).not.toBeNull();
+    wrapper.unmount();
+    wrapper = mount(App, { attachTo: document.body });
+    await flushPromises();
+    await vi.waitFor(() =>
+      expect(wrapper!.find('[data-test="xml-error"]').text()).toContain("收件人"),
+    );
   });
 });
 
@@ -1428,5 +1435,135 @@ describe("Playground 保存竞态（真实组件，#76 AC5）", () => {
     // 快照属于旧世代：尚未绑定默认表单
     const saved = JSON.parse(localStorage.getItem("flowduet.playground.design")!);
     expect(saved.xml).not.toContain('defaultFormKey="form_1"');
+  });
+});
+
+describe("PR88 保存与抽屉边界回归", () => {
+  it.each(["成功", "失败"])("旧保存晚到%s不覆盖较新本地草稿及反馈", async (outcome) => {
+    const original = FlowDesignSession.prototype.save;
+    let release!: () => void;
+    const gate = new Promise<void>((resolve) => {
+      release = resolve;
+    });
+    let count = 0;
+    const spy = vi.spyOn(FlowDesignSession.prototype, "save").mockImplementation(async function () {
+      const result = await original.call(this);
+      if (++count === 1) {
+        await gate;
+        if (outcome === "失败") throw new Error("旧保存失败");
+      }
+      return result;
+    });
+    try {
+      wrapper = mount(App, { attachTo: document.body });
+      await setupWithForms(["申请单"]);
+      await wrapper.find('[data-test="save-local-btn"]').trigger("click");
+      await vi.waitFor(() => expect(count).toBe(1));
+      const select = document.querySelector<HTMLSelectElement>(
+        '[data-test="default-form-select"]',
+      )!;
+      select.value = "form_1";
+      select.dispatchEvent(new Event("change"));
+      await wrapper.find('[data-test="save-local-btn"]').trigger("click");
+      await vi.waitFor(() => expect(count).toBe(2));
+      await flushPromises();
+      expect(JSON.parse(localStorage.getItem("flowduet.playground.design")!).xml).toContain(
+        'defaultFormKey="form_1"',
+      );
+      release();
+      await flushPromises();
+      expect(JSON.parse(localStorage.getItem("flowduet.playground.design")!).xml).toContain(
+        'defaultFormKey="form_1"',
+      );
+      expect(wrapper.find('[data-test="dirty-badge"]').exists()).toBe(false);
+      expect(wrapper.find('[data-test="doc-status"]').text()).not.toContain("尚未保存");
+      expect(wrapper.find('[data-test="doc-error"]').exists()).toBe(false);
+    } finally {
+      release();
+      spy.mockRestore();
+    }
+  });
+
+  it("保存期间新建设计使旧保存失效，不落盘或覆盖新建反馈", async () => {
+    const original = FlowDesignSession.prototype.save;
+    let release!: () => void;
+    const gate = new Promise<void>((resolve) => {
+      release = resolve;
+    });
+    let ready = false;
+    const spy = vi.spyOn(FlowDesignSession.prototype, "save").mockImplementation(async function () {
+      const result = await original.call(this);
+      ready = true;
+      await gate;
+      return result;
+    });
+    try {
+      wrapper = mount(App, { attachTo: document.body });
+      await wrapper.find('[data-test="save-local-btn"]').trigger("click");
+      await vi.waitFor(() => expect(ready).toBe(true));
+      await wrapper.find('[data-test="new-design-btn"]').trigger("click");
+      release();
+      await flushPromises();
+      expect(localStorage.getItem("flowduet.playground.design")).toBeNull();
+      expect(wrapper.find('[data-test="doc-status"]').text()).toContain("已新建设计");
+      expect(wrapper.find('[data-test="dirty-badge"]').exists()).toBe(false);
+    } finally {
+      release();
+      spy.mockRestore();
+    }
+  });
+
+  it("切换抽屉目标前收集未提交名称，保存后不丢失", async () => {
+    wrapper = mount(App, { attachTo: document.body });
+    await openApprovalDrawer(wrapper);
+    await setValue(
+      document.querySelector<HTMLInputElement>('[data-test="drawer-name"]')!,
+      "未提交的新名称",
+    );
+    await wrapper.findAll('[data-test="node-card"]')[2]!.trigger("click");
+    await flushPromises();
+    await wrapper.find('[data-test="save-local-btn"]').trigger("click");
+    await flushPromises();
+    expect(JSON.parse(localStorage.getItem("flowduet.playground.design")!).xml).toContain(
+      "未提交的新名称",
+    );
+  });
+
+  it("非法集合格式阻止切换，保留原节点及输入", async () => {
+    wrapper = mount(App, { attachTo: document.body });
+    await wrapper.findAll('[data-test="node-card"]')[2]!.trigger("click");
+    await flushPromises();
+    await setValue(
+      document.querySelector<HTMLInputElement>('[data-test="drawer-assignee"]')!,
+      "张三,李四",
+    );
+    await wrapper.findAll('[data-test="node-card"]')[1]!.trigger("click");
+    await flushPromises();
+    expect(document.querySelector<HTMLInputElement>('[data-test="drawer-assignee"]')!.value).toBe(
+      "张三,李四",
+    );
+    expect(wrapper.find('[data-test="action-error"]').text()).toContain("集合变量名");
+  });
+
+  it("单签切多人未配置集合可保存恢复，部署仍拒绝", async () => {
+    wrapper = mount(App, { attachTo: document.body });
+    await wrapper.find('[data-test="new-design-btn"]').trigger("click");
+    await openApprovalDrawer(wrapper);
+    document.querySelector<HTMLElement>('[data-test="kind-all"]')!.click();
+    await flushPromises();
+    await wrapper.find('[data-test="save-local-btn"]').trigger("click");
+    await flushPromises();
+    expect(wrapper.find('[data-test="doc-error"]').exists()).toBe(false);
+    expect(wrapper.find('[data-test="doc-status"]').text()).toContain("待修复");
+    wrapper.unmount();
+    wrapper = mount(App, { attachTo: document.body });
+    await flushPromises();
+    await openApprovalDrawer(wrapper);
+    expect(document.querySelector<HTMLInputElement>('[data-test="drawer-assignee"]')!.value).toBe(
+      "",
+    );
+    await vi.waitFor(() =>
+      expect(wrapper!.find('[data-test="xml-error"]').text()).toContain("集合"),
+    );
   });
 });

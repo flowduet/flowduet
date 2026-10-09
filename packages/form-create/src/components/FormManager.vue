@@ -124,9 +124,18 @@ function submitContent(rules: string, options: string): boolean {
  */
 function commitPendingEdit(): boolean {
   if (!hasOpenEditor()) return true;
-  const content = designerRef.value?.exportContent();
-  if (content === null || content === undefined) return false;
-  return submitContent(content.rules, content.options);
+  try {
+    const content = designerRef.value?.exportContent();
+    if (content === null || content === undefined) {
+      editError.value = "表单编辑器尚未准备好，请稍后重试";
+      return false;
+    }
+    return submitContent(content.rules, content.options);
+  } catch (e) {
+    // 第三方序列化失败不关闭编辑器，避免错误提示之外再次丢失输入。
+    editError.value = e instanceof Error ? e.message : String(e);
+    return false;
+  }
 }
 
 /** 编辑对话框是否开着（#76）：宿主据此在替换当前设计前提示未提交内容 */

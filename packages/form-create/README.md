@@ -108,13 +108,13 @@ const xml = await exportDeployXml(session.current!.model, session.current!.forms
 
 流程抽屉与表单编辑器里的输入要等「确定 / 保存」才落模型与目录——宿主在调用 `session.save()` 前，应先经组件提交边界收集这些未提交变更，避免只保存旧模型而遗漏当前输入：
 
-- `DingtalkDesigner#commitPendingChanges()`：抽屉打开时按「确定」同一套守卫把当前输入写入模型（多人集合变量格式非法等会被拦截并返回 `false`）；抽屉未打开为无操作。
+- `DingtalkDesigner#commitPendingChanges({ allowIncomplete: true })`：宿主保存业务草稿时显式允许空集合变量与空收件人，仍拦截非空非法集合格式；未传选项时与「确定」保持严格。抽屉未打开为无操作。业务缺失由保存结果报告，部署导出仍拒绝。
 - `FormManager#commitPendingEdit()`：编辑对话框打开时经真实设计器序列化 rules/options 并走「保存表单内容」同一守卫上抛 `updateContent`；对话框未打开为无操作。`FormManager#hasOpenEditor()` 可查询编辑器是否开着（设计器内部输入无法逐事件感知，替换当前设计前应据此一并向用户确认）。
 - 保存入口的可达性由宿主自行安排：抽屉与对话框（Element Plus 的 Dialog 即使关闭遮罩，全屏容器仍拦截点击）开着时工具栏按钮不可点，Playground 以 Cmd/Ctrl+S 快捷键作为编辑中途保存的稳定入口。
 
 任一返回 `false` 时宿主应中止保存——守卫错误已在对应组件内呈现，绕过守卫会制造半写模型或无法恢复的文档。抽屉字段被编辑时 designer 上抛 `draft-change` 事件，供宿主把未提交输入计入「未保存修改」判定（打开文件 / 新建设计前的替换确认）。
 
-宿主自行负责存储（文件、浏览器或后端）与异步竞态：`saveDesignDocument` 是异步序列化，期间发生的新编辑不属于本次快照，宿主应以编辑世代比对避免把新状态标记为已保存（Playground 的实现可参考 `apps/playground`）；文件读取与存储失败须如实反馈，不显示保存成功。
+宿主自行负责存储（文件、浏览器或后端）与异步竞态：`saveDesignDocument` 是异步序列化，期间发生的新编辑不属于本次快照，宿主应以编辑世代比对避免把新状态标记为已保存，并用请求序号阻止迟到旧保存覆盖较新草稿或新建/打开后的反馈（Playground 的实现可参考 `apps/playground`）；文件读取与存储失败须如实反馈，不显示保存成功。
 
 ## 打开的拒绝口径
 
