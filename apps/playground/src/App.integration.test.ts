@@ -1182,6 +1182,11 @@ describe("Playground 本地草稿与未完成设计保护（#76）", () => {
     wrapper = mount(App, { attachTo: document.body });
     await wrapper.find('[data-test="new-design-btn"]').trigger("click");
     await flushPromises();
+    await openApprovalDrawer(wrapper);
+    await setValue(
+      document.querySelector<HTMLInputElement>('[data-test="drawer-name"]')!,
+      "初审节点",
+    );
     await wrapper.find('[data-test="save-local-btn"]').trigger("click");
     await flushPromises();
     const localJson = localStorage.getItem("flowduet.playground.design");
@@ -1198,6 +1203,11 @@ describe("Playground 本地草稿与未完成设计保护（#76）", () => {
     await wrapper.find('[data-test="open-doc-input"]').trigger("change");
     await flushPromises();
     expect(wrapper.find('[data-test="doc-status"]').text()).toContain("已打开设计文档");
+    // 与本地恢复同内容：同一快照打开后再保存，产物与原本地草稿逐字一致
+    expect(wrapper.text()).toContain("初审节点");
+    await wrapper.find('[data-test="save-local-btn"]').trigger("click");
+    await flushPromises();
+    expect(localStorage.getItem("flowduet.playground.design")).toBe(localJson);
   });
 
   it("A14：本地存储写入被拒时不显示保存成功，错误可见", async () => {
@@ -1219,10 +1229,10 @@ describe("Playground 本地草稿与未完成设计保护（#76）", () => {
 });
 
 describe("Playground 未保存替换提示（#76：新建/打开前确认）", () => {
-  it("打开文件前提示替换影响；取消后模型、未提交输入与未保存状态全部保持", async () => {
+  it("打开文件前提示替换影响；取消后模型、表单、未提交输入与未保存状态全部保持", async () => {
     wrapper = mount(App, { attachTo: document.body });
-    await wrapper.find('[data-test="new-design-btn"]').trigger("click");
-    await flushPromises();
+    // 未保存内容同时含表单目录：取消替换后必须一并保留
+    await setupWithForms(["未保存申请单"]);
     await openApprovalDrawer(wrapper);
     await setValue(
       document.querySelector<HTMLInputElement>('[data-test="drawer-name"]')!,
@@ -1250,6 +1260,10 @@ describe("Playground 未保存替换提示（#76：新建/打开前确认）", (
       "初审节点",
     );
     expect(wrapper.text()).toContain("审批节点");
+    // 表单目录原样在场（AC4：模型、表单、未提交输入、未保存状态全部保持）
+    await wrapper.find('[data-test="form-manager-btn"]').trigger("click");
+    await flushPromises();
+    expect(wrapper.find("[data-test=form-item-form_1]").text()).toContain("未保存申请单");
     expect(wrapper.text()).not.toContain("已打开设计文档");
   });
 
@@ -1343,5 +1357,76 @@ describe("Playground 表单目录联动导出预览（A16 目录侧，#76）", (
       { timeout: 3000 },
     );
     expect(wrapper.find('[data-test="xml-error"]').exists()).toBe(false);
+  });
+});
+
+describe("Playground 抄送草稿保存（#76 AC9）", () => {
+  it("存量占位收件人属业务草稿：可保存恢复并报告待修复，部署导出仍拦截", async () => {
+    wrapper = mount(App, { attachTo: document.body });
+    await wrapper.find('[data-test="new-design-btn"]').trigger("click");
+    await flushPromises();
+    // 插入抄送节点（默认收件人为占位串）但不进抽屉：模型留存量占位
+    await insertViaMenu(wrapper, "approval_1", "cc");
+    await wrapper.find('[data-test="save-local-btn"]').trigger("click");
+    await flushPromises();
+    expect(wrapper.find('[data-test="doc-status"]').text()).toContain("占位串");
+
+    wrapper.unmount();
+    wrapper = mount(App, { attachTo: document.body });
+    await flushPromises();
+    expect(wrapper.find('[data-test="doc-status"]').text()).toContain("已恢复本地草稿");
+    expect(wrapper.text()).toContain("抄送节点");
+    await vi.waitFor(
+      () => {
+        expect(wrapper!.find('[data-test="xml-error"]').text()).toContain("收件人");
+      },
+      { timeout: 3000 },
+    );
+  });
+
+  it("抽屉里空白收件人是格式拦截：保存被中止且不误报成功", async () => {
+    wrapper = mount(App, { attachTo: document.body });
+    await wrapper.find('[data-test="new-design-btn"]').trigger("click");
+    await flushPromises();
+    await insertViaMenu(wrapper, "approval_1", "cc");
+    const ccCard = wrapper
+      .findAll('[data-test="node-card"]')
+      .find((card) => card.text().includes("抄送节点"));
+    await ccCard!.trigger("click");
+    await flushPromises();
+    await setValue(
+      document.querySelector<HTMLInputElement>('[data-test="drawer-recipients"]')!,
+      "",
+    );
+    await wrapper.find('[data-test="save-local-btn"]').trigger("click");
+    await flushPromises();
+    expect(wrapper.find('[data-test="doc-error"]').text()).toContain("抽屉");
+    expect(wrapper.find('[data-test="doc-status"]').exists()).toBe(false);
+    expect(localStorage.getItem("flowduet.playground.design")).toBeNull();
+  });
+});
+
+describe("Playground 保存竞态（真实组件，#76 AC5）", () => {
+  it("序列化期间改动默认表单绑定：完成后报告快照而非当前状态已保存", async () => {
+    wrapper = mount(App, { attachTo: document.body });
+    await setupWithForms(["申请单"]);
+    // 保存发起后、任何 await 之前同步改默认绑定（select 常驻 DOM，原生事件零渲染等待），
+    // 确保编辑落在快照世代之后
+    wrapper.find('[data-test="save-local-btn"]').trigger("click");
+    const select = document.querySelector<HTMLSelectElement>('[data-test="default-form-select"]');
+    select!.value = "form_1";
+    select!.dispatchEvent(new Event("change"));
+    await flushPromises();
+
+    await vi.waitFor(
+      () => {
+        expect(wrapper!.find('[data-test="doc-status"]').text()).toContain("序列化期间又有新编辑");
+      },
+      { timeout: 3000 },
+    );
+    expect(wrapper.find('[data-test="dirty-badge"]').exists()).toBe(true);
+    // 快照属于旧世代：尚未绑定默认表单
+    const saved = JSON.parse(localStorage.getItem("flowduet.playground.design")!);
+    expect(saved.xml).not.toContain('defaultFormKey="form_1"');
   });
 });

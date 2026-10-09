@@ -422,16 +422,7 @@ async function onDownloadDocument(): Promise<void> {
     return;
   }
   triggerDownload(shot.result.json);
-  savedGeneration.value = shot.snapshotGeneration;
-  if (shot.raced) {
-    docStatus.value = "已下载保存发起时的快照；序列化期间又有新编辑，当前内容尚未保存";
-    return;
-  }
-  const notes = [...shot.result.pendingIssues, ...shot.result.referenceIssues];
-  docStatus.value =
-    notes.length > 0
-      ? `已保存设计文档；待修复 ${notes.length} 项（部署导出仍会被拦截）：\n${notes.join("\n")}`
-      : "已保存设计文档，当前无待修复项";
+  reportSaveOutcome(shot, { raced: "已下载保存发起时的快照", saved: "已保存设计文档" });
 }
 
 /** Cmd/Ctrl+S：保存草稿的快捷键入口（防浏览器默认保存页行为） */
@@ -457,16 +448,27 @@ async function onSaveLocalDraft(): Promise<void> {
     docError.value = `本地存储写入失败（可能被浏览器设置拒绝或容量已满）：${messageOf(e)}`;
     return;
   }
+  reportSaveOutcome(shot, { raced: "快照已保存到本地", saved: "已保存到本地（刷新后可恢复）" });
+}
+
+/**
+ * 保存结果的统一收尾（两条存储途径共用）：世代回写、竞态提示与待修复项
+ * 拼装。竞态时只报告快照已落、当前内容尚未保存，不误报当前状态为已保存。
+ */
+function reportSaveOutcome(
+  shot: Extract<Awaited<ReturnType<typeof saveSnapshot>>, { ok: true }>,
+  labels: { raced: string; saved: string },
+): void {
   savedGeneration.value = shot.snapshotGeneration;
   if (shot.raced) {
-    docStatus.value = "快照已保存到本地；序列化期间又有新编辑，当前内容尚未保存";
+    docStatus.value = `${labels.raced}；序列化期间又有新编辑，当前内容尚未保存`;
     return;
   }
   const notes = [...shot.result.pendingIssues, ...shot.result.referenceIssues];
   docStatus.value =
     notes.length > 0
-      ? `已保存到本地；待修复 ${notes.length} 项（部署导出仍会被拦截）：\n${notes.join("\n")}`
-      : "已保存到本地，刷新后可恢复本草稿";
+      ? `${labels.saved}；待修复 ${notes.length} 项（部署导出仍会被拦截）：\n${notes.join("\n")}`
+      : `${labels.saved}，当前无待修复项`;
 }
 
 /** 刷新恢复（#76）：挂载时读取本地草稿，经同一 open 合同原子替换演示模型 */

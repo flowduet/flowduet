@@ -123,7 +123,7 @@ function submitContent(rules: string, options: string): boolean {
  * 宿主应中止保存而非绕过守卫。对话框未打开时无未提交内容，视为成功。
  */
 function commitPendingEdit(): boolean {
-  if (!editVisible.value || editing.value === null) return true;
+  if (!hasOpenEditor()) return true;
   const content = designerRef.value?.exportContent();
   if (content === null || content === undefined) return false;
   return submitContent(content.rules, content.options);
