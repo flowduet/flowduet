@@ -16,7 +16,9 @@ vi.mock("@flowduet/designer", async () => {
     BpmnCanvas: defineComponent({ render: () => null }),
     DingtalkDesigner: defineComponent({
       emits: ["change"],
-      setup(_, { emit }) {
+      setup(_, { emit, expose }) {
+        // 真组件的保存收集边界（#76）：替身同样 expose，宿主保存链路可调用
+        expose({ commitPendingChanges: () => true });
         return () =>
           h("button", { "data-test": "fake-edit", onClick: () => emit("change") }, "编辑");
       },
@@ -33,6 +35,8 @@ afterEach(() => {
   wrapper = undefined;
   vi.useRealTimers();
   document.body.innerHTML = "";
+  // 本地草稿链路（#76）：残留会串扰下一次挂载的刷新恢复
+  localStorage.clear();
 });
 
 describe("Playground XML 预览", () => {
@@ -182,5 +186,51 @@ describe("Playground 设计文档链路（#71）", () => {
 
     clickSpy.mockRestore();
     objectUrlSpy.mockRestore();
+  });
+});
+
+describe("Playground 保存竞态（#76）", () => {
+  it("序列化期间的新编辑：完成后不把当前状态标记为已保存", async () => {
+    wrapper = mount(App, { attachTo: document.body });
+    await wrapper.find('[data-test="new-design-btn"]').trigger("click");
+    await flushPromises();
+
+    // 保存发起后、任何 await 之前同步注入编辑（替身组件的 fake-edit 已在
+    // DOM 中，同步 click 即推进编辑世代）：确保编辑落在快照世代之后
+    wrapper.find('[data-test="save-local-btn"]').trigger("click");
+    wrapper.find('[data-test="fake-edit"]').trigger("click");
+    await flushPromises();
+
+    await vi.waitFor(
+      () => {
+        expect(wrapper!.find('[data-test="doc-status"]').text()).toContain("序列化期间又有新编辑");
+      },
+      { timeout: 3000 },
+    );
+    // 快照照常落本地，但属于旧世代：不含竞态期间的新表单，且未保存标记仍在
+    const saved = JSON.parse(localStorage.getItem("flowduet.playground.design")!);
+    expect(saved.forms).toHaveLength(0);
+    expect(wrapper.find('[data-test="dirty-badge"]').exists()).toBe(true);
+  });
+});
+
+describe("Playground 保存快捷键（#76）", () => {
+  it("Cmd/Ctrl+S 触发本地草稿保存：抽屉本体遮挡工具栏时的稳定保存入口", async () => {
+    wrapper = mount(App, { attachTo: document.body });
+    await wrapper.find('[data-test="new-design-btn"]').trigger("click");
+    await flushPromises();
+    window.dispatchEvent(new KeyboardEvent("keydown", { key: "s", ctrlKey: true }));
+    await flushPromises();
+    expect(wrapper.find('[data-test="doc-status"]').text()).toContain("已保存到本地");
+    expect(localStorage.getItem("flowduet.playground.design")).not.toBeNull();
+  });
+
+  it("无修饰键的 s 键不触发保存", async () => {
+    wrapper = mount(App, { attachTo: document.body });
+    await wrapper.find('[data-test="new-design-btn"]').trigger("click");
+    await flushPromises();
+    window.dispatchEvent(new KeyboardEvent("keydown", { key: "s" }));
+    await flushPromises();
+    expect(wrapper.find('[data-test="doc-status"]').text()).not.toContain("已保存到本地");
   });
 });
