@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, toRaw, watch } from "vue";
-import type { BpmnModel, BlockTreeNode } from "@flowduet/core";
+import type { ApprovalDraftOptions, BpmnModel, BlockTreeNode } from "@flowduet/core";
 import { deriveBlockTree, resolveEffectiveForm } from "@flowduet/core";
 import BlockNodeList from "./BlockNodeList.vue";
 import NodeDrawer from "./NodeDrawer.vue";
@@ -185,6 +185,10 @@ function insertAfter(kind: "approval" | "cc", nodeId: string): void {
 }
 
 function openNode(nodeId: string): void {
+  if (drawerVisible.value && activeId.value === nodeId) return;
+  // 换目标前先保存当前缓冲；格式非法时停留原节点供修正。
+  // 集成宿主明确允许业务草稿，纯流程宿主仍沿用确定按钮的严格守卫。
+  if (!commitPendingChanges({ allowIncomplete: props.formOptions !== undefined })) return;
   activeId.value = nodeId;
   drawerVisible.value = true;
 }
@@ -243,8 +247,7 @@ function clearStaleActive(): void {
 function openBranchConfig(flowId: string | undefined): void {
   // 非抛出式读函数（S8）可能返回 undefined（半损态）——此时不开抽屉
   if (flowId === undefined) return;
-  activeId.value = flowId;
-  drawerVisible.value = true;
+  openNode(flowId);
 }
 
 /** 抽屉守卫抛错接入内联提示（#24 评审 W4） */
@@ -265,11 +268,11 @@ function onDrawerSaved(): void {
 
 /**
  * 保存前收集抽屉里的未提交输入（#76 公开组合边界）：宿主在保存设计文档前
- * 调用，抽屉打开时执行与「确定」同一套守卫并写模型。守卫拦截返回 false
+ * 调用，抽屉打开时按相同写模型路径提交；显式草稿选项仅容许业务缺失。守卫拦截返回 false
  * （错误已走内联提示通道），宿主应中止保存而非绕过守卫落半写模型。
  */
-function commitPendingChanges(): boolean {
-  return drawerRef.value?.commit() ?? true;
+function commitPendingChanges(options: ApprovalDraftOptions = {}): boolean {
+  return drawerRef.value?.commit(options) ?? true;
 }
 
 defineExpose({ commitPendingChanges });

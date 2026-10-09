@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
 import { ElButton, ElDrawer, ElForm, ElFormItem, ElInput } from "element-plus";
-import type { ApprovalMode, BpmnModel, ModdleElement } from "@flowduet/core";
+import type { ApprovalDraftOptions, ApprovalMode, BpmnModel, ModdleElement } from "@flowduet/core";
 import { labelFormOptions, type DesignerFormOption } from "../form-options.js";
 import {
   CC_RECIPIENTS_PLACEHOLDER,
@@ -202,11 +202,11 @@ function readMultiSafe(): ReturnType<typeof readApprovalMulti> {
 }
 
 /**
- * 提交抽屉当前输入（#76 保存收集边界）：与「确定」按钮同一套守卫与写模型路径，
+ * 提交抽屉当前输入（#76 保存收集边界）：复用「确定」按钮的写模型路径，显式草稿选项仅容许业务缺失，
  * 供宿主在保存设计文档前收集未提交的抽屉输入，不遗漏当前设计变更。
  * 抽屉未打开时无未提交内容，直接视为成功；守卫拦截返回 false，输入保留待修正。
  */
-function commit(): boolean {
+function commit(options: ApprovalDraftOptions = {}): boolean {
   if (!visible.value) return true;
   if (props.nodeId === undefined) return true;
   const el = currentNode();
@@ -242,11 +242,11 @@ function commit(): boolean {
 
   // ── 前置校验（一律不写模型）：任一条不过即 emit error 返回，模型零变更 ──
   if (isTask.value && approvalKind.value !== "single") {
-    if (trimmedAssignee === "") {
+    if (trimmedAssignee === "" && options.allowIncomplete !== true) {
       emit("error", "多人审批需要填写审批人集合变量名（运行时注入名单）");
       return false;
     }
-    if (!isCollectionVariable(trimmedAssignee)) {
+    if (trimmedAssignee !== "" && !isCollectionVariable(trimmedAssignee)) {
       // 文案与限制对齐（评审 S-4）：明确 ASCII-only，避免用户误以为字段不接受任何名单
       emit(
         "error",
@@ -255,8 +255,11 @@ function commit(): boolean {
       return false;
     }
   } else if (isCcTask.value) {
-    // 空白与插入占位串都拦：占位落盘会让运行时查无此人、静默丢知会（#25 评审 W4）
-    if (trimmedRecipients === "" || trimmedRecipients === CC_RECIPIENTS_PLACEHOLDER) {
+    // 普通确定仍拒绝空白与占位串；显式草稿收集容许缺失，由部署校验拦截。
+    if (
+      options.allowIncomplete !== true &&
+      (trimmedRecipients === "" || trimmedRecipients === CC_RECIPIENTS_PLACEHOLDER)
+    ) {
       emit("error", "抄送收件人不能为空白或占位文本（字面量逗号分隔或表达式）");
       return false;
     }
@@ -281,9 +284,9 @@ function commit(): boolean {
       } else {
         const multi = readApprovalMulti(props.model, props.nodeId);
         if (multi === null) {
-          convertApprovalToMulti(props.model, props.nodeId, multiSpec);
+          convertApprovalToMulti(props.model, props.nodeId, multiSpec, options);
         } else {
-          setApprovalMode(props.model, props.nodeId, multiSpec);
+          setApprovalMode(props.model, props.nodeId, multiSpec, options);
         }
       }
     } catch (e) {
@@ -424,7 +427,7 @@ defineExpose({ commit });
     <div v-else class="drawer-empty">该元素无可配置字段</div>
     <template #footer>
       <ElButton data-test="drawer-cancel" @click="visible = false">取消</ElButton>
-      <ElButton type="primary" data-test="drawer-save" @click="commit">确定</ElButton>
+      <ElButton type="primary" data-test="drawer-save" @click="commit()">确定</ElButton>
     </template>
   </ElDrawer>
 </template>
