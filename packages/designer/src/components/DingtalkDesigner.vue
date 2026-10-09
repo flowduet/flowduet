@@ -40,9 +40,15 @@ const props = defineProps<{
   formOptions?: readonly DesignerFormOption[];
 }>();
 
-const emit = defineEmits<{ change: [] }>();
+const emit = defineEmits<{
+  change: [];
+  /** 抽屉字段缓冲被编辑（#76）：未提交输入也计入宿主的未保存判定 */
+  draftChange: [];
+}>();
 
 const model = computed(() => toRaw(props.model));
+
+const drawerRef = ref<InstanceType<typeof NodeDrawer> | null>(null);
 
 const version = ref(0);
 const activeId = ref<string>();
@@ -246,11 +252,27 @@ function onDrawerError(message: string): void {
   actionError.value = message;
 }
 
+/** 抽屉输入未提交也属于未保存内容：转发给宿主推进未保存判定（#76） */
+function onDrawerDraftModified(): void {
+  emit("draftChange");
+}
+
 /** 抽屉保存成功：清掉上一次守卫错误横幅（#24 二轮评审 W1），再触发重算 */
 function onDrawerSaved(): void {
   actionError.value = "";
   refresh();
 }
+
+/**
+ * 保存前收集抽屉里的未提交输入（#76 公开组合边界）：宿主在保存设计文档前
+ * 调用，抽屉打开时执行与「确定」同一套守卫并写模型。守卫拦截返回 false
+ * （错误已走内联提示通道），宿主应中止保存而非绕过守卫落半写模型。
+ */
+function commitPendingChanges(): boolean {
+  return drawerRef.value?.commit() ?? true;
+}
+
+defineExpose({ commitPendingChanges });
 </script>
 
 <template>
@@ -301,12 +323,14 @@ function onDrawerSaved(): void {
       @branch-config="openBranchConfig"
     />
     <NodeDrawer
+      ref="drawerRef"
       v-model="drawerVisible"
       :model="model"
       :node-id="activeId"
       :form-options="formOptions"
       @saved="onDrawerSaved"
       @error="onDrawerError"
+      @draft-modified="onDrawerDraftModified"
     />
   </div>
 </template>

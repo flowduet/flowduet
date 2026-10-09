@@ -797,3 +797,70 @@ describe("exportXml 草稿校验", () => {
     await expect(exportXml(model)).rejects.toThrow(/集合变量为空白/);
   });
 });
+
+describe("未提交内容收集边界（#76：保存前经宿主提交抽屉缓冲）", () => {
+  it("抽屉打开未点确定：commitPendingChanges 落模型、触发 change 并关闭抽屉", async () => {
+    const model = buildChain();
+    const wrapper = mountDesigner(model);
+    await wrapper.findAll('[data-test="node-card"]')[1]!.trigger("click");
+    await flushPromises();
+    await setValue(
+      document.querySelector<HTMLInputElement>('[data-test="drawer-name"]')!,
+      "总监审批",
+    );
+
+    const vm = wrapper.vm as unknown as { commitPendingChanges: () => boolean };
+    expect(vm.commitPendingChanges()).toBe(true);
+    await flushPromises();
+
+    expect(model.elementOf("approval_1").get("name")).toBe("总监审批");
+    expect(wrapper.emitted("change")).toBeTruthy();
+    wrapper.unmount();
+  });
+
+  it("抽屉未打开时收集是 no-op：取消后的缓冲残留不再落模型", async () => {
+    const model = buildChain();
+    const wrapper = mountDesigner(model);
+    await wrapper.findAll('[data-test="node-card"]')[1]!.trigger("click");
+    await flushPromises();
+    await setValue(
+      document.querySelector<HTMLInputElement>('[data-test="drawer-name"]')!,
+      "不该保存的名字",
+    );
+    // 取消关闭抽屉：缓冲里残留的输入属于已被放弃的编辑
+    (document.querySelector('[data-test="drawer-cancel"]') as HTMLElement).click();
+    await flushPromises();
+
+    const vm = wrapper.vm as unknown as { commitPendingChanges: () => boolean };
+    expect(vm.commitPendingChanges()).toBe(true);
+    expect(model.elementOf("approval_1").get("name")).toBe("经理审批");
+    wrapper.unmount();
+  });
+
+  it("守卫拦截（多人集合变量非法格式）：返回 false、模型零变更、抽屉保持打开", async () => {
+    const model = buildMultiInstanceChain();
+    const wrapper = mountDesigner(model);
+    await wrapper.findAll('[data-test="node-card"]')[1]!.trigger("click");
+    await flushPromises();
+    // 表达式形态是单签语义的值，落多人集合变量即非法格式（守卫不可绕过）
+    await setValue(
+      document.querySelector<HTMLInputElement>('[data-test="drawer-assignee"]')!,
+      "${managers}",
+    );
+
+    const vm = wrapper.vm as unknown as { commitPendingChanges: () => boolean };
+    expect(vm.commitPendingChanges()).toBe(false);
+    await flushPromises();
+
+    const loop = model.elementOf("approval_mi").get("loopCharacteristics") as {
+      get(k: string): unknown;
+    };
+    expect(loop.get("collection")).toBe("approvers");
+    expect(wrapper.find('[data-test="action-error"]').text()).toContain("集合变量名");
+    // 输入保留在抽屉里供修正，不被清空
+    expect(document.querySelector<HTMLInputElement>('[data-test="drawer-assignee"]')!.value).toBe(
+      "${managers}",
+    );
+    wrapper.unmount();
+  });
+});
