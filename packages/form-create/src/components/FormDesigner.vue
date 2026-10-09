@@ -45,12 +45,25 @@ onMounted(() => {
   designer.setOption(parseFormOptions(props.options) as never);
 });
 
-function save(): void {
+/**
+ * 导出当前设计器内容（#76 保存收集边界）：与「保存表单内容」按钮同一序列化
+ * 出口，供宿主在保存设计文档前收集编辑器里尚未提交的内容。设计器实例不在场
+ * （挂载未完成）时返回 null，调用方据此中止保存而不是误报成功。
+ */
+function exportContent(): { rules: string; options: string } | null {
   const designer = designerRef.value;
-  if (designer === null) return;
+  if (designer === null) return null;
   // getJson / getOptionsJson 即「匹配版本的 FormCreate 序列化接口」成对出口
   const rules = restoreCheckboxDefaults(designer.getJson());
-  emit("save", FcDesigner.designerForm.toJson(rules), designer.getOptionsJson());
+  return { rules: FcDesigner.designerForm.toJson(rules), options: designer.getOptionsJson() };
+}
+
+defineExpose({ exportContent });
+
+function save(): void {
+  const content = exportContent();
+  if (content === null) return;
+  emit("save", content.rules, content.options);
 }
 </script>
 

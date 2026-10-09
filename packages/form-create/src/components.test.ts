@@ -1,5 +1,6 @@
 // @vitest-environment happy-dom
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { defineComponent } from "vue";
 import { flushPromises, mount } from "@vue/test-utils";
 import FormPreview from "./components/FormPreview.vue";
 import FormManager from "./components/FormManager.vue";
@@ -720,5 +721,65 @@ describe("设计器开放范围收口（A13，designer-config 与真实面板）
     expect(checkDrag({ menu: { name: "fcRow" } } as never)).toBe(false);
     expect(checkDrag({ menu: { name: "input" } } as never)).toBe(true);
     expect(checkDrag({ menu: { name: "col" } } as never)).toBe(true);
+  });
+});
+
+describe("FormManager 未提交内容收集（#76：commitPendingEdit）", () => {
+  it("编辑器开着：commitPendingEdit 经真实设计器序列化上抛并关闭编辑器", async () => {
+    wrapper = mount(FormManager, { props: { forms: [APPLY_FORM] }, attachTo: document.body });
+    await wrapper.find('[data-test="form-edit-btn-form_apply"]').trigger("click");
+    await flushPromises();
+
+    const vm = wrapper.vm as unknown as { commitPendingEdit: () => boolean };
+    expect(vm.commitPendingEdit()).toBe(true);
+    await flushPromises();
+
+    const events = wrapper.emitted("updateContent");
+    expect(events).toBeTruthy();
+    expect(events![0]![0]).toBe("form_apply");
+    expect(JSON.parse(events![0]![1] as string)[0]!.field).toBe("reason");
+    expect(wrapper.find('[data-test="form-manager-edit-dialog"]').isVisible()).toBe(false);
+  });
+
+  it("编辑器未打开：收集是 no-op，返回 true 且不上抛", async () => {
+    wrapper = mount(FormManager, { props: { forms: [APPLY_FORM] }, attachTo: document.body });
+    await flushPromises();
+
+    const vm = wrapper.vm as unknown as { commitPendingEdit: () => boolean };
+    expect(vm.commitPendingEdit()).toBe(true);
+    expect(wrapper.emitted("updateContent")).toBeUndefined();
+  });
+
+  it("超范围内容：返回 false、不上抛、编辑器保持打开供修正", async () => {
+    // 真实设计器无法产出范围外内容（菜单收口），坏内容路径经替身注入
+    const stub = defineComponent({
+      name: "FormDesigner",
+      props: ["name", "rules", "options"],
+      emits: ["save", "cancel"],
+      setup(_, { expose }) {
+        expose({
+          exportContent: () => ({
+            rules: JSON.stringify([{ type: "upload", field: "u1", title: "上传" }]),
+            options: "{}",
+          }),
+        });
+      },
+      render: () => null,
+    });
+    wrapper = mount(FormManager, {
+      props: { forms: [APPLY_FORM] },
+      attachTo: document.body,
+      global: { stubs: { FormDesigner: stub } },
+    });
+    await wrapper.find('[data-test="form-edit-btn-form_apply"]').trigger("click");
+    await flushPromises();
+
+    const vm = wrapper.vm as unknown as { commitPendingEdit: () => boolean };
+    expect(vm.commitPendingEdit()).toBe(false);
+    await flushPromises();
+
+    expect(wrapper.emitted("updateContent")).toBeUndefined();
+    expect(wrapper.find('[data-test="form-manager-error"]').text()).toContain("支持的组件");
+    expect(wrapper.find('[data-test="form-manager-edit-dialog"]').isVisible()).toBe(true);
   });
 });
