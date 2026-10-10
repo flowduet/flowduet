@@ -7,3 +7,8 @@ CONTEXT.md
 **/node_modules/
 # 故意损坏的 JSON 文件用于文档拒绝验收，不能被格式化或要求语法合法。
 docs/specs/iteration-3/evidence/75-browser-fixtures/E01.flowduet.json
+
+# 原始浏览器证据保留实际下载/落盘字节及校验和，不由格式化器重写。
+docs/specs/iteration-3/evidence/76-browser-run/
+docs/specs/iteration-3/evidence/76-browser-recheck/
+docs/specs/iteration-3/evidence/76-browser-fixtures/bad-json.flowduet.json

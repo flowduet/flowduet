@@ -1,0 +1,314 @@
+{
+  "product_commit": "53cba17",
+  "fixtures": ["baseline", "other", "invalid-ref", "bad-json", "bad-xml"],
+  "cases": [
+    {
+      "id": "P01",
+      "basis": "AC3",
+      "scenario": "无本地草稿启动",
+      "steps": "清除测试键并刷新",
+      "expected": "显示演示流程，无虚假恢复成功"
+    },
+    {
+      "id": "P02",
+      "basis": "AC1/3 A07",
+      "scenario": "最小业务草稿保存恢复",
+      "steps": "新建设计，保存按钮，刷新",
+      "expected": "审批人缺失仍恢复，待修复可见，导出拒绝"
+    },
+    {
+      "id": "P03",
+      "basis": "AC1 A07",
+      "scenario": "抽屉未确认输入",
+      "steps": "打开审批，改名并清空审批人，Cmd+S，刷新",
+      "expected": "名称与缺失配置都恢复，不只保存旧模型"
+    },
+    {
+      "id": "P04",
+      "basis": "AC1 A07",
+      "scenario": "条件缺失业务草稿",
+      "steps": "演示条件支路清空条件后快捷保存刷新",
+      "expected": "分支名和空条件恢复，部署拒绝"
+    },
+    {
+      "id": "P05",
+      "basis": "AC9",
+      "scenario": "会签空集合",
+      "steps": "单签切会签不填集合，快捷保存刷新",
+      "expected": "完成方式保留，待修复，部署拒绝"
+    },
+    {
+      "id": "P06",
+      "basis": "AC9",
+      "scenario": "或签空集合",
+      "steps": "单签切或签不填集合，快捷保存刷新",
+      "expected": "完成方式保留，待修复，部署拒绝"
+    },
+    {
+      "id": "P07",
+      "basis": "AC9",
+      "scenario": "依次审批空集合",
+      "steps": "单签切依次不填集合，快捷保存刷新",
+      "expected": "完成方式保留，待修复，部署拒绝"
+    },
+    {
+      "id": "P08",
+      "basis": "AC9",
+      "scenario": "抄送空收件人",
+      "steps": "清空抄送收件人，快捷保存刷新",
+      "expected": "抄送形态保留，待修复，部署拒绝"
+    },
+    {
+      "id": "P09",
+      "basis": "AC1",
+      "scenario": "切节点采集",
+      "steps": "基准t1改名未确认，点t2，保存",
+      "expected": "t1名称未丢，t2可继续编辑"
+    },
+    {
+      "id": "P10",
+      "basis": "AC2/9",
+      "scenario": "非法集合阻止保存与切换",
+      "steps": "分别填表达式、逗号名单、中文，切目标及快捷保存",
+      "expected": "保持原节点与原输入，不落存储，不半写模型"
+    },
+    {
+      "id": "P11",
+      "basis": "AC1",
+      "scenario": "重复点击当前节点",
+      "steps": "改名后再点相同节点，保存",
+      "expected": "缓冲不被旧字段回填覆盖"
+    },
+    {
+      "id": "P12",
+      "basis": "AC9",
+      "scenario": "普通确定严格",
+      "steps": "多人集合/抄送收件人留空，点确定",
+      "expected": "仍拒绝且保留输入；草稿入口可保存"
+    },
+    {
+      "id": "P13",
+      "basis": "AC1/2",
+      "scenario": "真实表单未提交内容采集",
+      "steps": "基准表单进编辑器，更改字段默认值，不点保存表单，Cmd+S，刷新",
+      "expected": "保存恢复新默认值与options，不遗漏编辑内容"
+    },
+    {
+      "id": "P14",
+      "basis": "AC3 A15",
+      "scenario": "实际文档下载及文件重开",
+      "steps": "下载文件，读取内容，从实际文件选择器重开",
+      "expected": "实际文件含XML/forms，重开一致"
+    },
+    {
+      "id": "P15",
+      "basis": "AC3 A15",
+      "scenario": "重复保存恢复与未绑定表单",
+      "steps": "保存刷新再下载重开，检查表单ID与默认/配置",
+      "expected": "稳定ID及字段/表单配置不变，未绑定定义保持"
+    },
+    {
+      "id": "P16",
+      "basis": "AC4",
+      "scenario": "取消新建保留输入与目录",
+      "steps": "基准抽屉改名，新建，取消",
+      "expected": "模型、表单、输入和dirty保持"
+    },
+    {
+      "id": "P17",
+      "basis": "AC4",
+      "scenario": "确认新建替换",
+      "steps": "基准改名，新建并确认",
+      "expected": "替换成最小流程，旧目录清空，缓冲清除"
+    },
+    {
+      "id": "P18",
+      "basis": "AC4",
+      "scenario": "取消文件替换保留输入",
+      "steps": "基准改名，选另一文件，取消",
+      "expected": "模型、表单、输入和dirty保持"
+    },
+    {
+      "id": "P19",
+      "basis": "AC4",
+      "scenario": "确认文件替换",
+      "steps": "基准改名，选B，确认",
+      "expected": "只呈现B模型目录，旧输入清除"
+    },
+    {
+      "id": "P20",
+      "basis": "AC2/4",
+      "scenario": "坏文件打开原子保留",
+      "steps": "持有dirty基准，选坏JSON/坏XML并确认",
+      "expected": "错误可见，模型目录及未提交输入dirty不变"
+    },
+    {
+      "id": "P21",
+      "basis": "AC7",
+      "scenario": "草稿试填隔离及目标切换",
+      "steps": "含表单草稿恢复，清空触发必填，修正试填，切t2再保存",
+      "expected": "校验有效，目标切换重置，试填不落默认值或草稿"
+    },
+    {
+      "id": "P22",
+      "basis": "AC5/6 A16",
+      "scenario": "修复失效引用自动导出",
+      "steps": "打开失效引用，改默认为现有表单",
+      "expected": "无效时无旧XML；修复后自动呈现新有效XML"
+    },
+    {
+      "id": "P23",
+      "basis": "AC6 A16",
+      "scenario": "有效转无效清除旧XML",
+      "steps": "基准导出成功，清空审批人确定",
+      "expected": "立即清除旧有效XML，再导出显示缺失错误"
+    },
+    {
+      "id": "P24",
+      "basis": "AC1 边界",
+      "scenario": "切只读视图的未确认输入保持",
+      "steps": "抽屉改名未确认，切BPMN再保存刷新",
+      "expected": "当前输入不应静默丢失；若缺陷记录实际结果"
+    },
+    {
+      "id": "E01",
+      "basis": "AC6",
+      "scenario": "本地存储读拒绝",
+      "steps": "CDP注入getItem拒绝并重挂应用",
+      "expected": "错误可见，保留演示设计，可继续操作"
+    },
+    {
+      "id": "E02",
+      "basis": "AC3/6",
+      "scenario": "损坏的本地草稿",
+      "steps": "置坏JSON后刷新",
+      "expected": "恢复失败可见，演示模型不部分覆盖"
+    },
+    {
+      "id": "E03",
+      "basis": "AC6 A14",
+      "scenario": "本地存储写拒绝",
+      "steps": "注入SecurityError后保存",
+      "expected": "显示失败，不显示成功、不标clean、不改旧草稿"
+    },
+    {
+      "id": "E04",
+      "basis": "AC6 A14",
+      "scenario": "本地容量不足",
+      "steps": "注入QuotaExceededError后保存",
+      "expected": "显示容量失败，dirty保持，旧草稿保持"
+    },
+    {
+      "id": "E05",
+      "basis": "AC6 A14",
+      "scenario": "文件读取失败",
+      "steps": "注入File.text拒绝后选择合法文件",
+      "expected": "错误可见，现设计和dirty保持，可重试"
+    },
+    {
+      "id": "E06",
+      "basis": "AC5 A14",
+      "scenario": "连续文件打开旧成功晚到",
+      "steps": "延迟A读取，选B，再释放A",
+      "expected": "模型和反馈均保持B"
+    },
+    {
+      "id": "E07",
+      "basis": "AC5 A14",
+      "scenario": "连续打开旧失败晚到",
+      "steps": "延迟A后失败，B成功后释放",
+      "expected": "B状态保持，不显示旧A错误"
+    },
+    {
+      "id": "E08",
+      "basis": "AC5",
+      "scenario": "保存中继续编辑",
+      "steps": "延迟真实save返回，编辑后释放",
+      "expected": "保存仅旧快照，当前dirty仍在且提示清楚"
+    },
+    {
+      "id": "E09",
+      "basis": "AC5",
+      "scenario": "保存乱序成功",
+      "steps": "延迟第一次save，新编辑第二次保存后释放",
+      "expected": "较新草稿和clean不被覆盖"
+    },
+    {
+      "id": "E10",
+      "basis": "AC5",
+      "scenario": "保存乱序旧失败",
+      "steps": "延迟第一次save再拒绝，第二次成功后释放",
+      "expected": "较新存储与反馈保持，无旧错误"
+    },
+    {
+      "id": "E11",
+      "basis": "AC5",
+      "scenario": "保存期间新建/打开使旧结果失效",
+      "steps": "延迟save，新建或打开B后释放",
+      "expected": "旧保存不落盘、不覆盖新反馈"
+    },
+    {
+      "id": "E12",
+      "basis": "AC5/6",
+      "scenario": "旧导出迟到",
+      "steps": "延迟真实部署导出，改成无效后释放",
+      "expected": "旧XML不冒充当前状态"
+    },
+    {
+      "id": "E13",
+      "basis": "AC2",
+      "scenario": "表单序列化异常",
+      "steps": "真实编辑器getJson或getOptionsJson抛错，Cmd+S",
+      "expected": "错误可见，编辑器和输入保持，旧草稿不变"
+    },
+    {
+      "id": "E14",
+      "basis": "AC2/5/6",
+      "scenario": "失败后继续操作",
+      "steps": "撤销注入后修正并保存刷新",
+      "expected": "可重新成功，dirty及状态恢复正常"
+    },
+    {
+      "id": "C01",
+      "basis": "AC9 A17",
+      "scenario": "无表单宿主兼容合同",
+      "steps": "同一浏览器临时挂载公开DingtalkDesigner不传formOptions，尝试空集合普通确定及手写formKey",
+      "expected": "严格守卫与手写formKey保持；结束卸载临时组件"
+    },
+    {
+      "id": "P25",
+      "basis": "AC4 原生对照",
+      "scenario": "已确认未保存编辑取消新建",
+      "steps": "修改名称点确定，抽屉关闭后原生点击新建并取消",
+      "expected": "模型目录及dirty保持"
+    },
+    {
+      "id": "P26",
+      "basis": "AC4 原生对照",
+      "scenario": "已确认未保存编辑取消文件替换",
+      "steps": "修改名称点确定，原生打开按钮选择B并取消",
+      "expected": "模型目录及dirty保持"
+    },
+    {
+      "id": "E15",
+      "basis": "AC1/5",
+      "scenario": "保存期间表单新增输入",
+      "steps": "延迟真实save返回，重新打开表单编辑器产生新默认值，释放旧保存",
+      "expected": "当前新输入仍明确未保存，不误报clean"
+    },
+    {
+      "id": "E16",
+      "basis": "AC4/5",
+      "scenario": "读取文件期间继续编辑",
+      "steps": "延迟B读取，在当前抽屉输入名称后释放B",
+      "expected": "不得静默丢弃期间新输入，应阻止替换或再次确认"
+    },
+    {
+      "id": "C02",
+      "basis": "AC4/6 边界",
+      "scenario": "原生文件选择取消",
+      "steps": "打开系统选择器，取消选择",
+      "expected": "无替换、无错误、无虚假打开成功"
+    }
+  ]
+}
