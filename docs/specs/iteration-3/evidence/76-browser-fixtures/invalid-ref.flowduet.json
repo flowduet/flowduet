@@ -1,0 +1,15 @@
+{
+  "format": "flowduet.design",
+  "version": 1,
+  "engine": "flowable",
+  "xml": "<bpmn:definitions xmlns:bpmn=\"http://www.omg.org/spec/BPMN/20100524/MODEL\" xmlns:fa=\"http://flowable.org/bpmn\" xmlns:fd=\"urn:flowduet:bpmn\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" id=\"defs76\" targetNamespace=\"urn:acceptance76\"><bpmn:process id=\"flow76\" name=\"验收流程76\" isExecutable=\"true\" fd:defaultFormKey=\"ghost76\"><bpmn:startEvent id=\"s\" name=\"开始\"/><bpmn:userTask id=\"t1\" name=\"申请审批\" fa:assignee=\"john\"/><bpmn:userTask id=\"t2\" name=\"复核审批\" fa:assignee=\"jane\"/><bpmn:endEvent id=\"e\" name=\"结束\"/><bpmn:sequenceFlow id=\"f1\" sourceRef=\"s\" targetRef=\"t1\"/><bpmn:sequenceFlow id=\"f2\" sourceRef=\"t1\" targetRef=\"t2\"/><bpmn:sequenceFlow id=\"f3\" sourceRef=\"t2\" targetRef=\"e\"/></bpmn:process></bpmn:definitions>",
+  "forms": [
+    {
+      "id": "f_apply",
+      "name": "验收申请单76",
+      "provider": "form-create/element-plus",
+      "rules": "[{\"type\": \"input\", \"field\": \"reason76\", \"title\": \"申请事由76\", \"value\": \"原始默认值76\", \"$required\": true}]",
+      "options": "{\"form\": {\"labelWidth\": \"130px\"}, \"submitBtn\": {\"show\": false}}"
+    }
+  ]
+}

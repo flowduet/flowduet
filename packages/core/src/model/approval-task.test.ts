@@ -152,3 +152,33 @@ describe("addApprovalTask 语义", () => {
     ).not.toThrow();
   });
 });
+
+describe("PR88 显式多人审批草稿", () => {
+  it("显式草稿允许空集合，并保持多人完成方式可往返", async () => {
+    const model = createModel().addApprovalTask(
+      { id: "t", collection: "", mode: "any", shape: SHAPE },
+      { allowIncomplete: true },
+    );
+    const xml = await compile(model);
+    const { parse } = await import("../parse/parser.js");
+    const restored = await parse(xml, { adapter: flowableAdapter });
+    const loop = restored.elementOf("t").get("loopCharacteristics");
+    expect(loop).toBeDefined();
+    expect(String(loop.get("collection") ?? "")).toBe("");
+    expect(loop.get("completionCondition").get("body")).toBe("${nrOfCompletedInstances >= 1}");
+  });
+  it("草稿选项不放开非法类型，默认仍拒绝空集合且不留节点", () => {
+    const model = createModel();
+    expect(() => model.addApprovalTask({ id: "t", collection: "", mode: "all" })).toThrow(
+      /collection/,
+    );
+    expect(() => model.elementOf("t")).toThrow();
+    expect(() =>
+      model.addApprovalTask(
+        { id: "t", collection: undefined as unknown as string, mode: "all" },
+        { allowIncomplete: true },
+      ),
+    ).toThrow(/collection/);
+    expect(() => model.elementOf("t")).toThrow();
+  });
+});

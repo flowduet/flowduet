@@ -27,7 +27,12 @@ export type {
   OpenDesignDocumentResult,
 } from "./document.js";
 export { FlowDesignSession } from "./session.js";
-export type { FlowDesignState, FlowDesignSessionInit, NewDesignOptions } from "./session.js";
+export type {
+  FlowDesignState,
+  FlowDesignSessionInit,
+  NewDesignOptions,
+  OpenDesignSessionOptions,
+} from "./session.js";
 export { collectReferenceIssues } from "./binding.js";
 export { exportDeployXml } from "./export.js";
 export { parseFormRules, parseFormOptions } from "./form-schema.js";

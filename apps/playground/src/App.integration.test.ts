@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { flushPromises, mount } from "@vue/test-utils";
+import { FlowDesignSession } from "@flowduet/form-create";
 import { flowableAdapter, parse } from "@flowduet/core";
 import App from "./App.vue";
 
@@ -18,6 +19,8 @@ afterEach(() => {
   wrapper?.unmount();
   wrapper = undefined;
   document.body.innerHTML = "";
+  // 本地草稿链路（#76）：残留会串扰下一次挂载的刷新恢复
+  localStorage.clear();
 });
 
 /** 直接向文件选择器注入 File（happy-dom 下 files 为只读 FileList） */
@@ -33,6 +36,32 @@ function pickFile(
     value: [file],
     configurable: true,
   });
+}
+
+/** 原生 input 赋值并派发 input 事件（drawer 内 v-model 监听 input） */
+async function setValue(input: HTMLInputElement, value: string): Promise<void> {
+  input.value = value;
+  input.dispatchEvent(new Event("input", { bubbles: true }));
+  await flushPromises();
+}
+
+/** 「+」类型菜单插入：点触发器后点 teleport 到 body 的菜单项 */
+async function insertViaMenu(
+  target: ReturnType<typeof mount>,
+  afterId: string,
+  kind: "approval" | "cc" = "approval",
+): Promise<void> {
+  await target.find(`[data-test="insert-btn-${afterId}"]`).trigger("click");
+  await flushPromises();
+  const item = document.querySelector(`[data-test="insert-kind-${kind}"]`);
+  if (item instanceof HTMLElement) item.click();
+  await flushPromises();
+}
+
+/** 打开新建设计中唯一的审批节点抽屉（最小流程卡片序：开始、审批、结束） */
+async function openApprovalDrawer(target: ReturnType<typeof mount>): Promise<void> {
+  await target.findAll('[data-test="node-card"]')[1]!.trigger("click");
+  await flushPromises();
 }
 
 describe("Playground 与 designer 的导出链路", () => {
@@ -317,15 +346,13 @@ describe("Playground 默认表单闭环（#72：表单 → 绑定 → 保存 →
     expect(wrapper.find('[data-test="xml-error"]').exists()).toBe(false);
 
     // 失效默认引用修复后，顶部诊断须随模型原位编辑立即消失。
-    pickFile(
-      wrapper,
+    // （#76 起有未保存修改时先弹替换确认，openDocument 代表用户确认替换）
+    await openDocument(
       JSON.stringify({
         ...document_,
         xml: document_.xml.replace('defaultFormKey="form_1"', 'defaultFormKey="ghost_form"'),
       }),
     );
-    await wrapper.find('input[data-test="open-doc-input"]').trigger("change");
-    await flushPromises();
     expect(wrapper.find('[data-test="reference-issues"]').text()).toContain("ghost_form");
     // A16（表单语境）：引用失效后导出报当前错误，旧的有效 XML 不再呈现为当前结果
     await wrapper.find('[data-test="export-btn"]').trigger("click");
@@ -359,16 +386,14 @@ describe("Playground 默认表单闭环（#72：表单 → 绑定 → 保存 →
     expect(wrapper.find('[data-test="xml-error"]').exists()).toBe(false);
 
     // 即使目录恰好存在同样带空格的 ID，该引用仍不允许预览。
-    pickFile(
-      wrapper,
+    // （#76 起有未保存修改时先弹替换确认，openDocument 代表用户确认替换）
+    await openDocument(
       JSON.stringify({
         ...document_,
         forms: document_.forms.map((form) => ({ ...form, id: " form_1 " })),
         xml: document_.xml.replace('defaultFormKey="form_1"', 'defaultFormKey=" form_1 "'),
       }),
     );
-    await wrapper.find('input[data-test="open-doc-input"]').trigger("change");
-    await flushPromises();
     await wrapper.find('[data-test="form-preview-btn"]').trigger("click");
     await flushPromises();
     await wrapper.find('[data-test="preview-node-select"]').setValue("approval_1");
@@ -571,106 +596,113 @@ describe("Playground 多表单管理与节点覆盖闭环（#73）", () => {
     expect(wrapper.find('[data-test="form-manager-error"]').exists()).toBe(false);
   });
 
-  it("预览多目标：同表单双节点切换清理旧试填值；失效只阻止相关目标（AC5）", async () => {
-    wrapper = mount(App, { attachTo: document.body });
-    await setupWithForms(["申请单"]);
+  // 真实 FcDesigner 装载较重（单跑已近 4s），并发全量时给足超时上限
+  it(
+    "预览多目标：同表单双节点切换清理旧试填值；失效只阻止相关目标（AC5）",
+    { timeout: 15000 },
+    async () => {
+      wrapper = mount(App, { attachTo: document.body });
+      await setupWithForms(["申请单"]);
 
-    // 给申请单塞带默认值的字段（经真实 FormDesigner 的保存通道写入目录）
-    await wrapper.find('[data-test="form-manager-btn"]').trigger("click");
-    await flushPromises();
-    await wrapper.find('[data-test="form-edit-btn-form_1"]').trigger("click");
-    await flushPromises();
-    wrapper
-      .findComponent({ name: "FormDesigner" })
-      .vm.$emit(
-        "save",
-        JSON.stringify([{ type: "input", field: "reason", title: "申请事由", value: "默认事由" }]),
-        "{}",
+      // 给申请单塞带默认值的字段（经真实 FormDesigner 的保存通道写入目录）
+      await wrapper.find('[data-test="form-manager-btn"]').trigger("click");
+      await flushPromises();
+      await wrapper.find('[data-test="form-edit-btn-form_1"]').trigger("click");
+      await flushPromises();
+      wrapper
+        .findComponent({ name: "FormDesigner" })
+        .vm.$emit(
+          "save",
+          JSON.stringify([
+            { type: "input", field: "reason", title: "申请事由", value: "默认事由" },
+          ]),
+          "{}",
+        );
+      await flushPromises();
+      document
+        .querySelector<HTMLElement>('[data-test="form-manager-dialog"] .el-dialog__headerbtn')!
+        .click();
+      await flushPromises();
+
+      // 默认 = form_1；approval_1 显式覆盖为同一张表单（两个目标同表单不同节点）
+      await wrapper.find('[data-test="default-form-select"]').setValue("form_1");
+      await flushPromises();
+      await openCardOf("审批节点");
+      const select = document.querySelector<HTMLSelectElement>('[data-test="drawer-form-select"]');
+      select!.value = "form_1";
+      select!.dispatchEvent(new Event("change", { bubbles: true }));
+      await flushPromises();
+      document.querySelector<HTMLElement>('[data-test="drawer-save"]')!.click();
+      await flushPromises();
+
+      // 再插入一个继承节点（同样解析到 form_1）
+      await wrapper.find('[data-test="insert-btn-approval_1"]').trigger("click");
+      await flushPromises();
+      document.querySelector<HTMLElement>('[data-test="insert-kind-approval"]')!.click();
+      await flushPromises();
+
+      // 预览覆盖节点：试填写入值
+      await wrapper.find('[data-test="form-preview-btn"]').trigger("click");
+      await flushPromises();
+      await wrapper.find('[data-test="preview-node-select"]').setValue("approval_1");
+      await flushPromises();
+      const input = document.querySelector<HTMLInputElement>(
+        '[data-test="form-preview-render"] input',
       );
-    await flushPromises();
-    document
-      .querySelector<HTMLElement>('[data-test="form-manager-dialog"] .el-dialog__headerbtn')!
-      .click();
-    await flushPromises();
+      expect(input).not.toBeNull();
+      input!.value = "试用内容";
+      input!.dispatchEvent(new Event("input", { bubbles: true }));
+      await flushPromises();
+      expect(wrapper.find('[data-test="form-preview-values"]').text()).toContain("试用内容");
 
-    // 默认 = form_1；approval_1 显式覆盖为同一张表单（两个目标同表单不同节点）
-    await wrapper.find('[data-test="default-form-select"]').setValue("form_1");
-    await flushPromises();
-    await openCardOf("审批节点");
-    const select = document.querySelector<HTMLSelectElement>('[data-test="drawer-form-select"]');
-    select!.value = "form_1";
-    select!.dispatchEvent(new Event("change", { bubbles: true }));
-    await flushPromises();
-    document.querySelector<HTMLElement>('[data-test="drawer-save"]')!.click();
-    await flushPromises();
+      // 切到继承节点：目标即重挂（同表单也不带入旧试填值）
+      await wrapper.find('[data-test="preview-node-select"]').setValue("approval_2");
+      await flushPromises();
+      expect(wrapper.find('[data-test="form-preview"]').exists()).toBe(true);
+      expect(wrapper.find('[data-test="form-preview-values"]').text()).not.toContain("试用内容");
 
-    // 再插入一个继承节点（同样解析到 form_1）
-    await wrapper.find('[data-test="insert-btn-approval_1"]').trigger("click");
-    await flushPromises();
-    document.querySelector<HTMLElement>('[data-test="insert-kind-approval"]')!.click();
-    await flushPromises();
+      // 失效只阻止相关目标：篡改覆盖节点的 key 后重开——
+      // 覆盖节点预览报失效（保留原 key），继承节点仍渲染同一张有效表单
+      const created: Blob[] = [];
+      const objectUrlSpy = vi
+        .spyOn(URL, "createObjectURL")
+        .mockImplementation((blob: Blob): string => {
+          created.push(blob);
+          return "blob:mock";
+        });
+      const clickSpy = vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(() => {});
+      await wrapper.find('[data-test="save-doc-btn"]').trigger("click");
+      await flushPromises();
+      clickSpy.mockRestore();
+      objectUrlSpy.mockRestore();
+      const document_ = JSON.parse(await created[0]!.text()) as { xml: string };
+      pickFile(
+        wrapper,
+        JSON.stringify({
+          ...document_,
+          xml: document_.xml.replace('flowable:formKey="form_1"', 'flowable:formKey="ghost_form"'),
+        }),
+      );
+      document
+        .querySelector<HTMLElement>('[data-test="form-preview-dialog"] .el-dialog__headerbtn')!
+        .click();
+      await flushPromises();
+      await wrapper.find('input[data-test="open-doc-input"]').trigger("change");
+      await flushPromises();
 
-    // 预览覆盖节点：试填写入值
-    await wrapper.find('[data-test="form-preview-btn"]').trigger("click");
-    await flushPromises();
-    await wrapper.find('[data-test="preview-node-select"]').setValue("approval_1");
-    await flushPromises();
-    const input = document.querySelector<HTMLInputElement>(
-      '[data-test="form-preview-render"] input',
-    );
-    expect(input).not.toBeNull();
-    input!.value = "试用内容";
-    input!.dispatchEvent(new Event("input", { bubbles: true }));
-    await flushPromises();
-    expect(wrapper.find('[data-test="form-preview-values"]').text()).toContain("试用内容");
+      await wrapper.find('[data-test="form-preview-btn"]').trigger("click");
+      await flushPromises();
+      await wrapper.find('[data-test="preview-node-select"]').setValue("approval_1");
+      await flushPromises();
+      expect(wrapper.find('[data-test="preview-target-error"]').text()).toContain("ghost_form");
+      expect(wrapper.find('[data-test="form-preview-render"]').exists()).toBe(false);
 
-    // 切到继承节点：目标即重挂（同表单也不带入旧试填值）
-    await wrapper.find('[data-test="preview-node-select"]').setValue("approval_2");
-    await flushPromises();
-    expect(wrapper.find('[data-test="form-preview"]').exists()).toBe(true);
-    expect(wrapper.find('[data-test="form-preview-values"]').text()).not.toContain("试用内容");
-
-    // 失效只阻止相关目标：篡改覆盖节点的 key 后重开——
-    // 覆盖节点预览报失效（保留原 key），继承节点仍渲染同一张有效表单
-    const created: Blob[] = [];
-    const objectUrlSpy = vi
-      .spyOn(URL, "createObjectURL")
-      .mockImplementation((blob: Blob): string => {
-        created.push(blob);
-        return "blob:mock";
-      });
-    const clickSpy = vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(() => {});
-    await wrapper.find('[data-test="save-doc-btn"]').trigger("click");
-    await flushPromises();
-    clickSpy.mockRestore();
-    objectUrlSpy.mockRestore();
-    const document_ = JSON.parse(await created[0]!.text()) as { xml: string };
-    pickFile(
-      wrapper,
-      JSON.stringify({
-        ...document_,
-        xml: document_.xml.replace('flowable:formKey="form_1"', 'flowable:formKey="ghost_form"'),
-      }),
-    );
-    document
-      .querySelector<HTMLElement>('[data-test="form-preview-dialog"] .el-dialog__headerbtn')!
-      .click();
-    await flushPromises();
-    await wrapper.find('input[data-test="open-doc-input"]').trigger("change");
-    await flushPromises();
-
-    await wrapper.find('[data-test="form-preview-btn"]').trigger("click");
-    await flushPromises();
-    await wrapper.find('[data-test="preview-node-select"]').setValue("approval_1");
-    await flushPromises();
-    expect(wrapper.find('[data-test="preview-target-error"]').text()).toContain("ghost_form");
-    expect(wrapper.find('[data-test="form-preview-render"]').exists()).toBe(false);
-
-    await wrapper.find('[data-test="preview-node-select"]').setValue("approval_2");
-    await flushPromises();
-    expect(wrapper.find('[data-test="preview-target-error"]').exists()).toBe(false);
-    expect(wrapper.find('[data-test="form-preview-render"]').exists()).toBe(true);
-  });
+      await wrapper.find('[data-test="preview-node-select"]').setValue("approval_2");
+      await flushPromises();
+      expect(wrapper.find('[data-test="preview-target-error"]').exists()).toBe(false);
+      expect(wrapper.find('[data-test="form-preview-render"]').exists()).toBe(true);
+    },
+  );
 });
 
 /**
@@ -703,6 +735,13 @@ async function openDocument(json: string): Promise<void> {
   pickFile(wrapper!, json);
   await wrapper!.find('input[data-test="open-doc-input"]').trigger("change");
   await flushPromises();
+  // 有未保存修改时宿主先弹替换确认（#76）：这里代表用户确认替换；
+  // 打开失败路径的「未保存内容保留」断言不受影响。
+  const confirm = document.querySelector<HTMLElement>('[data-test="discard-ok"]');
+  if (confirm !== null) {
+    confirm.click();
+    await flushPromises();
+  }
 }
 
 /** 只延迟文件 I/O，后续文档解析与原子恢复仍走真实公开入口。 */
@@ -1020,5 +1059,599 @@ describe("Playground 文档兼容检查与原子打开（#75）", () => {
     );
     // 拒绝后当前设计仍是上一次成功打开的内容（打开尝试会清空状态文案，以节点为准）
     expect(wrapper.findAll('[data-test="node-card"]')).toHaveLength(nodeCardCount);
+  });
+});
+
+describe("Playground 本地草稿与未完成设计保护（#76）", () => {
+  it("A07：抽屉输入未确认即保存草稿，刷新后恢复收集到的内容且部署导出仍受阻", async () => {
+    wrapper = mount(App, { attachTo: document.body });
+    await wrapper.find('[data-test="new-design-btn"]').trigger("click");
+    await flushPromises();
+    await openApprovalDrawer(wrapper);
+    await setValue(
+      document.querySelector<HTMLInputElement>('[data-test="drawer-name"]')!,
+      "初审节点",
+    );
+
+    // 抽屉不点确定，直接保存草稿：当前输入必须被收集，不能只保存旧模型
+    await wrapper.find('[data-test="save-local-btn"]').trigger("click");
+    await flushPromises();
+    expect(wrapper.find('[data-test="doc-status"]').text()).toContain("已保存到本地");
+    expect(wrapper.find('[data-test="doc-error"]').exists()).toBe(false);
+
+    // 审批人未配齐是业务草稿：部署导出仍被拦截
+    await vi.waitFor(
+      () => {
+        expect(wrapper.find('[data-test="xml-error"]').text()).toContain("审批人");
+      },
+      { timeout: 3000 },
+    );
+
+    // 卸载重挂 = 刷新：本地草稿恢复，抽屉里收集过的节点名在场
+    wrapper.unmount();
+    wrapper = mount(App, { attachTo: document.body });
+    await flushPromises();
+    expect(wrapper.find('[data-test="doc-status"]').text()).toContain("已恢复本地草稿");
+    expect(wrapper.text()).toContain("初审节点");
+    await vi.waitFor(
+      () => {
+        expect(wrapper.find('[data-test="xml-error"]').text()).toContain("审批人");
+      },
+      { timeout: 3000 },
+    );
+  });
+
+  it("收集被抽屉守卫拦截时中止保存：错误可见且不显示保存成功（AC2）", async () => {
+    wrapper = mount(App, { attachTo: document.body });
+    await wrapper.find('[data-test="new-design-btn"]').trigger("click");
+    await flushPromises();
+    await openApprovalDrawer(wrapper);
+    // 切会签 + 表达式形态的审批人：格式非法（守卫不可绕过），非业务草稿
+    document.querySelector<HTMLElement>('[data-test="kind-all"]')!.click();
+    await flushPromises();
+    await setValue(
+      document.querySelector<HTMLInputElement>('[data-test="drawer-assignee"]')!,
+      "${managers}",
+    );
+
+    await wrapper.find('[data-test="save-local-btn"]').trigger("click");
+    await flushPromises();
+
+    expect(wrapper.find('[data-test="doc-error"]').text()).toContain("抽屉");
+    expect(wrapper.find('[data-test="doc-status"]').exists()).toBe(false);
+    expect(localStorage.getItem("flowduet.playground.design")).toBeNull();
+    // 抽屉保持打开、输入保留供修正；修正为合法集合变量后保存成功
+    expect(document.querySelector<HTMLInputElement>('[data-test="drawer-assignee"]')!.value).toBe(
+      "${managers}",
+    );
+    await setValue(
+      document.querySelector<HTMLInputElement>('[data-test="drawer-assignee"]')!,
+      "managers",
+    );
+    await wrapper.find('[data-test="save-local-btn"]').trigger("click");
+    await flushPromises();
+    expect(wrapper.find('[data-test="doc-error"]').exists()).toBe(false);
+    expect(wrapper.find('[data-test="doc-status"]').text()).toContain("已保存到本地");
+  });
+
+  it("AC7：恢复含有效表单定义的草稿后可继续试填，试填不落本地草稿", async () => {
+    wrapper = mount(App, { attachTo: document.body });
+    const form = {
+      id: "form_apply",
+      name: "申请单",
+      provider: "form-create/element-plus",
+      rules: JSON.stringify([{ type: "input", field: "reason", title: "申请事由" }]),
+      options: "{}",
+    };
+    const xml = minimalFlowXml(
+      'fa:assignee="${manager}"',
+      'xmlns:fa="http://flowable.org/bpmn" xmlns:fd="urn:flowduet:bpmn"',
+      'fd:defaultFormKey="form_apply"',
+    );
+    await openDocument(designDoc(xml, [form]));
+    await wrapper.find('[data-test="save-local-btn"]').trigger("click");
+    await flushPromises();
+    expect(wrapper.find('[data-test="doc-status"]').text()).toContain("已保存到本地");
+
+    // 刷新恢复：表单目录与默认绑定都在，可继续试填
+    wrapper.unmount();
+    wrapper = mount(App, { attachTo: document.body });
+    await flushPromises();
+    expect(wrapper.find('[data-test="doc-status"]').text()).toContain("已恢复本地草稿");
+    await wrapper.find('[data-test="form-preview-btn"]').trigger("click");
+    await flushPromises();
+    await wrapper.find('[data-test="preview-node-select"]').setValue("t1");
+    await flushPromises();
+    const previewInput = document.querySelector<HTMLInputElement>(
+      '[data-test="form-preview-render"] input',
+    );
+    expect(previewInput).not.toBeNull();
+    previewInput!.value = "预览试填事由";
+    previewInput!.dispatchEvent(new Event("input", { bubbles: true }));
+    await flushPromises();
+    await wrapper.find('[data-test="form-preview-dialog"] .el-dialog__headerbtn').trigger("click");
+    await flushPromises();
+
+    // 再保存一次：本地草稿中的表单规则不含试填值（试填与设计隔离）
+    await wrapper.find('[data-test="save-local-btn"]').trigger("click");
+    await flushPromises();
+    const saved = JSON.parse(localStorage.getItem("flowduet.playground.design")!);
+    expect(JSON.stringify(saved.forms[0]!.rules)).not.toContain("预览试填");
+  });
+
+  it("A15：本地草稿与文件下载/打开复用同一文档合同，两条途径恢复结果一致", async () => {
+    wrapper = mount(App, { attachTo: document.body });
+    await wrapper.find('[data-test="new-design-btn"]').trigger("click");
+    await flushPromises();
+    await openApprovalDrawer(wrapper);
+    await setValue(
+      document.querySelector<HTMLInputElement>('[data-test="drawer-name"]')!,
+      "初审节点",
+    );
+    await wrapper.find('[data-test="save-local-btn"]').trigger("click");
+    await flushPromises();
+    const localJson = localStorage.getItem("flowduet.playground.design");
+    expect(localJson).not.toBeNull();
+    expect(JSON.parse(localJson!).format).toBe("flowduet.design");
+
+    // 文件打开走同一 openDesignDocument 合同：同内容文件恢复结果与本地一致
+    wrapper.unmount();
+    localStorage.clear();
+    wrapper = mount(App, { attachTo: document.body });
+    await flushPromises();
+    expect(wrapper.find('[data-test="doc-status"]').exists()).toBe(false);
+    pickFile(wrapper, localJson!);
+    await wrapper.find('[data-test="open-doc-input"]').trigger("change");
+    await flushPromises();
+    expect(wrapper.find('[data-test="doc-status"]').text()).toContain("已打开设计文档");
+    // 与本地恢复同内容：同一快照打开后再保存，产物与原本地草稿逐字一致
+    expect(wrapper.text()).toContain("初审节点");
+    await wrapper.find('[data-test="save-local-btn"]').trigger("click");
+    await flushPromises();
+    expect(localStorage.getItem("flowduet.playground.design")).toBe(localJson);
+  });
+
+  it("A14：本地存储写入被拒时不显示保存成功，错误可见", async () => {
+    wrapper = mount(App, { attachTo: document.body });
+    await wrapper.find('[data-test="new-design-btn"]').trigger("click");
+    await flushPromises();
+    const setItemSpy = vi.spyOn(localStorage, "setItem").mockImplementation(() => {
+      throw new DOMException("quota exceeded", "QuotaExceededError");
+    });
+    try {
+      await wrapper.find('[data-test="save-local-btn"]').trigger("click");
+      await flushPromises();
+      expect(wrapper.find('[data-test="doc-error"]').text()).toContain("本地存储");
+      expect(wrapper.find('[data-test="doc-status"]').exists()).toBe(false);
+    } finally {
+      setItemSpy.mockRestore();
+    }
+  });
+});
+
+describe("Playground 未保存替换提示（#76：新建/打开前确认）", () => {
+  it("打开文件前提示替换影响；取消后模型、表单、未提交输入与未保存状态全部保持", async () => {
+    wrapper = mount(App, { attachTo: document.body });
+    // 未保存内容同时含表单目录：取消替换后必须一并保留
+    await setupWithForms(["未保存申请单"]);
+    await openApprovalDrawer(wrapper);
+    await setValue(
+      document.querySelector<HTMLInputElement>('[data-test="drawer-name"]')!,
+      "初审节点",
+    );
+    expect(wrapper.find('[data-test="dirty-badge"]').exists()).toBe(true);
+
+    pickFile(
+      wrapper,
+      designDoc(minimalFlowXml('fa:assignee="${manager}"', 'xmlns:fa="http://flowable.org/bpmn"')),
+    );
+    await wrapper.find('[data-test="open-doc-input"]').trigger("change");
+    await flushPromises();
+
+    const dialog = wrapper.find('[data-test="discard-dialog"]');
+    expect(dialog.exists()).toBe(true);
+    expect(dialog.text()).toContain("未保存");
+    document.querySelector<HTMLElement>('[data-test="discard-cancel"]')!.click();
+    await flushPromises();
+
+    // 取消 = 什么都不动：未保存标记、抽屉缓冲、当前模型全部保持
+    expect(wrapper.find('[data-test="discard-dialog"]').isVisible()).toBe(false);
+    expect(wrapper.find('[data-test="dirty-badge"]').exists()).toBe(true);
+    expect(document.querySelector<HTMLInputElement>('[data-test="drawer-name"]')!.value).toBe(
+      "初审节点",
+    );
+    expect(wrapper.text()).toContain("审批节点");
+    // 表单目录原样在场（AC4：模型、表单、未提交输入、未保存状态全部保持）
+    await wrapper.find('[data-test="form-manager-btn"]').trigger("click");
+    await flushPromises();
+    expect(wrapper.find("[data-test=form-item-form_1]").text()).toContain("未保存申请单");
+    expect(wrapper.text()).not.toContain("已打开设计文档");
+  });
+
+  it("确认替换后载入新文档并重置未保存状态", async () => {
+    wrapper = mount(App, { attachTo: document.body });
+    await wrapper.find('[data-test="new-design-btn"]').trigger("click");
+    await flushPromises();
+    await openApprovalDrawer(wrapper);
+    await setValue(
+      document.querySelector<HTMLInputElement>('[data-test="drawer-name"]')!,
+      "会被替换的名字",
+    );
+    expect(wrapper.find('[data-test="dirty-badge"]').exists()).toBe(true);
+
+    pickFile(
+      wrapper,
+      designDoc(minimalFlowXml('fa:assignee="${manager}"', 'xmlns:fa="http://flowable.org/bpmn"')),
+    );
+    await wrapper.find('[data-test="open-doc-input"]').trigger("change");
+    await flushPromises();
+    document.querySelector<HTMLElement>('[data-test="discard-ok"]')!.click();
+    await flushPromises();
+
+    expect(wrapper.find('[data-test="doc-status"]').text()).toContain("已打开设计文档");
+    expect(wrapper.find('[data-test="dirty-badge"]').exists()).toBe(false);
+  });
+
+  it("无未保存修改时打开文件直通，不弹替换确认", async () => {
+    wrapper = mount(App, { attachTo: document.body });
+    pickFile(
+      wrapper,
+      designDoc(minimalFlowXml('fa:assignee="${manager}"', 'xmlns:fa="http://flowable.org/bpmn"')),
+    );
+    await wrapper.find('[data-test="open-doc-input"]').trigger("change");
+    await flushPromises();
+    expect(wrapper.find('[data-test="doc-status"]').text()).toContain("已打开设计文档");
+    expect(wrapper.find('[data-test="discard-dialog"]').exists()).toBe(false);
+  });
+
+  it("新建设计同样受替换提示保护；确认后载入最小流程并重置未保存状态", async () => {
+    wrapper = mount(App, { attachTo: document.body });
+    await wrapper.find('[data-test="new-design-btn"]').trigger("click");
+    await flushPromises();
+    await insertViaMenu(wrapper, "start");
+    expect(wrapper.findAll('[data-test="node-card"]')).toHaveLength(4);
+    expect(wrapper.find('[data-test="dirty-badge"]').exists()).toBe(true);
+
+    await wrapper.find('[data-test="new-design-btn"]').trigger("click");
+    await flushPromises();
+    document.querySelector<HTMLElement>('[data-test="discard-ok"]')!.click();
+    await flushPromises();
+
+    expect(wrapper.findAll('[data-test="node-card"]')).toHaveLength(3);
+    expect(wrapper.find('[data-test="dirty-badge"]').exists()).toBe(false);
+    expect(wrapper.find('[data-test="doc-status"]').text()).toContain("已新建设计");
+  });
+});
+
+describe("Playground 表单目录联动导出预览（A16 目录侧，#76）", () => {
+  it("修复失效引用后 XML 预览自动恢复：旧错误不再冒充当前结果", async () => {
+    wrapper = mount(App, { attachTo: document.body });
+    // 默认 key 指向不存在的 form_1：部署导出被引用完整性校验拦截
+    const xml = minimalFlowXml(
+      'fa:assignee="${manager}"',
+      'xmlns:fa="http://flowable.org/bpmn" xmlns:fd="urn:flowduet:bpmn"',
+      'fd:defaultFormKey="form_1"',
+    );
+    await openDocument(designDoc(xml));
+    await vi.waitFor(
+      () => {
+        expect(wrapper!.find('[data-test="xml-error"]').text()).toContain("form_1");
+      },
+      { timeout: 3000 },
+    );
+
+    // 新建表单（目录自动分配 id=form_1）修复引用：目录变化必须重刷导出预览
+    await wrapper.find('[data-test="form-manager-btn"]').trigger("click");
+    await flushPromises();
+    await wrapper.find('[data-test="form-manager-new-name"]').setValue("申请单");
+    await wrapper.find('[data-test="form-manager-create-btn"]').trigger("click");
+    await flushPromises();
+    document
+      .querySelector<HTMLElement>('[data-test="form-manager-dialog"] .el-dialog__headerbtn')!
+      .click();
+    await flushPromises();
+
+    await vi.waitFor(
+      () => {
+        expect(wrapper!.find('[data-test="xml-preview"]').text()).toContain("defaultFormKey");
+      },
+      { timeout: 3000 },
+    );
+    expect(wrapper.find('[data-test="xml-error"]').exists()).toBe(false);
+  });
+});
+
+describe("Playground 抄送草稿保存（#76 AC9）", () => {
+  it("存量占位收件人属业务草稿：可保存恢复并报告待修复，部署导出仍拦截", async () => {
+    wrapper = mount(App, { attachTo: document.body });
+    await wrapper.find('[data-test="new-design-btn"]').trigger("click");
+    await flushPromises();
+    // 插入抄送节点（默认收件人为占位串）但不进抽屉：模型留存量占位
+    await insertViaMenu(wrapper, "approval_1", "cc");
+    await wrapper.find('[data-test="save-local-btn"]').trigger("click");
+    await flushPromises();
+    expect(wrapper.find('[data-test="doc-status"]').text()).toContain("占位串");
+
+    wrapper.unmount();
+    wrapper = mount(App, { attachTo: document.body });
+    await flushPromises();
+    expect(wrapper.find('[data-test="doc-status"]').text()).toContain("已恢复本地草稿");
+    expect(wrapper.text()).toContain("抄送节点");
+    await vi.waitFor(
+      () => {
+        expect(wrapper!.find('[data-test="xml-error"]').text()).toContain("收件人");
+      },
+      { timeout: 3000 },
+    );
+  });
+
+  it("抽屉里空白收件人可保存为业务草稿，恢复后部署仍拦截", async () => {
+    wrapper = mount(App, { attachTo: document.body });
+    await wrapper.find('[data-test="new-design-btn"]').trigger("click");
+    await flushPromises();
+    await insertViaMenu(wrapper, "approval_1", "cc");
+    const ccCard = wrapper
+      .findAll('[data-test="node-card"]')
+      .find((card) => card.text().includes("抄送节点"));
+    await ccCard!.trigger("click");
+    await flushPromises();
+    await setValue(
+      document.querySelector<HTMLInputElement>('[data-test="drawer-recipients"]')!,
+      "",
+    );
+    await wrapper.find('[data-test="save-local-btn"]').trigger("click");
+    await flushPromises();
+    expect(wrapper.find('[data-test="doc-error"]').exists()).toBe(false);
+    expect(wrapper.find('[data-test="doc-status"]').text()).toContain("待修复");
+    expect(localStorage.getItem("flowduet.playground.design")).not.toBeNull();
+    wrapper.unmount();
+    wrapper = mount(App, { attachTo: document.body });
+    await flushPromises();
+    await vi.waitFor(() =>
+      expect(wrapper!.find('[data-test="xml-error"]').text()).toContain("收件人"),
+    );
+  });
+});
+
+describe("Playground 保存竞态（真实组件，#76 AC5）", () => {
+  it("序列化期间改动默认表单绑定：完成后报告快照而非当前状态已保存", async () => {
+    wrapper = mount(App, { attachTo: document.body });
+    await setupWithForms(["申请单"]);
+    // 保存发起后、任何 await 之前同步改默认绑定（select 常驻 DOM，原生事件零渲染等待），
+    // 确保编辑落在快照世代之后
+    wrapper.find('[data-test="save-local-btn"]').trigger("click");
+    const select = document.querySelector<HTMLSelectElement>('[data-test="default-form-select"]');
+    select!.value = "form_1";
+    select!.dispatchEvent(new Event("change"));
+    await flushPromises();
+
+    await vi.waitFor(
+      () => {
+        expect(wrapper!.find('[data-test="doc-status"]').text()).toContain("序列化期间又有新编辑");
+      },
+      { timeout: 3000 },
+    );
+    expect(wrapper.find('[data-test="dirty-badge"]').exists()).toBe(true);
+    // 快照属于旧世代：尚未绑定默认表单
+    const saved = JSON.parse(localStorage.getItem("flowduet.playground.design")!);
+    expect(saved.xml).not.toContain('defaultFormKey="form_1"');
+  });
+});
+
+describe("PR88 保存与抽屉边界回归", () => {
+  it.each(["成功", "失败"])("旧保存晚到%s不覆盖较新本地草稿及反馈", async (outcome) => {
+    const original = FlowDesignSession.prototype.save;
+    let release!: () => void;
+    const gate = new Promise<void>((resolve) => {
+      release = resolve;
+    });
+    let count = 0;
+    const spy = vi.spyOn(FlowDesignSession.prototype, "save").mockImplementation(async function () {
+      const result = await original.call(this);
+      if (++count === 1) {
+        await gate;
+        if (outcome === "失败") throw new Error("旧保存失败");
+      }
+      return result;
+    });
+    try {
+      wrapper = mount(App, { attachTo: document.body });
+      await setupWithForms(["申请单"]);
+      await wrapper.find('[data-test="save-local-btn"]').trigger("click");
+      await vi.waitFor(() => expect(count).toBe(1));
+      const select = document.querySelector<HTMLSelectElement>(
+        '[data-test="default-form-select"]',
+      )!;
+      select.value = "form_1";
+      select.dispatchEvent(new Event("change"));
+      await wrapper.find('[data-test="save-local-btn"]').trigger("click");
+      await vi.waitFor(() => expect(count).toBe(2));
+      await flushPromises();
+      expect(JSON.parse(localStorage.getItem("flowduet.playground.design")!).xml).toContain(
+        'defaultFormKey="form_1"',
+      );
+      release();
+      await flushPromises();
+      expect(JSON.parse(localStorage.getItem("flowduet.playground.design")!).xml).toContain(
+        'defaultFormKey="form_1"',
+      );
+      expect(wrapper.find('[data-test="dirty-badge"]').exists()).toBe(false);
+      expect(wrapper.find('[data-test="doc-status"]').text()).not.toContain("尚未保存");
+      expect(wrapper.find('[data-test="doc-error"]').exists()).toBe(false);
+    } finally {
+      release();
+      spy.mockRestore();
+    }
+  });
+
+  it("保存期间新建设计使旧保存失效，不落盘或覆盖新建反馈", async () => {
+    const original = FlowDesignSession.prototype.save;
+    let release!: () => void;
+    const gate = new Promise<void>((resolve) => {
+      release = resolve;
+    });
+    let ready = false;
+    const spy = vi.spyOn(FlowDesignSession.prototype, "save").mockImplementation(async function () {
+      const result = await original.call(this);
+      ready = true;
+      await gate;
+      return result;
+    });
+    try {
+      wrapper = mount(App, { attachTo: document.body });
+      await wrapper.find('[data-test="save-local-btn"]').trigger("click");
+      await vi.waitFor(() => expect(ready).toBe(true));
+      await wrapper.find('[data-test="new-design-btn"]').trigger("click");
+      release();
+      await flushPromises();
+      expect(localStorage.getItem("flowduet.playground.design")).toBeNull();
+      expect(wrapper.find('[data-test="doc-status"]').text()).toContain("已新建设计");
+      expect(wrapper.find('[data-test="dirty-badge"]').exists()).toBe(false);
+    } finally {
+      release();
+      spy.mockRestore();
+    }
+  });
+
+  it("切换抽屉目标前收集未提交名称，保存后不丢失", async () => {
+    wrapper = mount(App, { attachTo: document.body });
+    await openApprovalDrawer(wrapper);
+    await setValue(
+      document.querySelector<HTMLInputElement>('[data-test="drawer-name"]')!,
+      "未提交的新名称",
+    );
+    await wrapper.findAll('[data-test="node-card"]')[2]!.trigger("click");
+    await flushPromises();
+    await wrapper.find('[data-test="save-local-btn"]').trigger("click");
+    await flushPromises();
+    expect(JSON.parse(localStorage.getItem("flowduet.playground.design")!).xml).toContain(
+      "未提交的新名称",
+    );
+  });
+
+  it("非法集合格式阻止切换，保留原节点及输入", async () => {
+    wrapper = mount(App, { attachTo: document.body });
+    await wrapper.findAll('[data-test="node-card"]')[2]!.trigger("click");
+    await flushPromises();
+    await setValue(
+      document.querySelector<HTMLInputElement>('[data-test="drawer-assignee"]')!,
+      "张三,李四",
+    );
+    await wrapper.findAll('[data-test="node-card"]')[1]!.trigger("click");
+    await flushPromises();
+    expect(document.querySelector<HTMLInputElement>('[data-test="drawer-assignee"]')!.value).toBe(
+      "张三,李四",
+    );
+    expect(wrapper.find('[data-test="action-error"]').text()).toContain("集合变量名");
+  });
+
+  it("单签切多人未配置集合可保存恢复，部署仍拒绝", async () => {
+    wrapper = mount(App, { attachTo: document.body });
+    await wrapper.find('[data-test="new-design-btn"]').trigger("click");
+    await openApprovalDrawer(wrapper);
+    document.querySelector<HTMLElement>('[data-test="kind-all"]')!.click();
+    await flushPromises();
+    await wrapper.find('[data-test="save-local-btn"]').trigger("click");
+    await flushPromises();
+    expect(wrapper.find('[data-test="doc-error"]').exists()).toBe(false);
+    expect(wrapper.find('[data-test="doc-status"]').text()).toContain("待修复");
+    wrapper.unmount();
+    wrapper = mount(App, { attachTo: document.body });
+    await flushPromises();
+    await openApprovalDrawer(wrapper);
+    expect(document.querySelector<HTMLInputElement>('[data-test="drawer-assignee"]')!.value).toBe(
+      "",
+    );
+    await vi.waitFor(() =>
+      expect(wrapper!.find('[data-test="xml-error"]').text()).toContain("集合"),
+    );
+  });
+});
+
+describe("PR88 产品验收视图切换回归", () => {
+  it("P24 切换只读视图前收集当前抽屉输入，保存恢复不丢失", async () => {
+    wrapper = mount(App, { attachTo: document.body });
+    await openApprovalDrawer(wrapper);
+    await setValue(
+      document.querySelector<HTMLInputElement>('[data-test="drawer-name"]')!,
+      "切视图保留名称",
+    );
+    await wrapper.find('[data-test="view-bpmn"] input').setValue();
+    await flushPromises();
+    await wrapper.find('[data-test="save-local-btn"]').trigger("click");
+    await flushPromises();
+    expect(JSON.parse(localStorage.getItem("flowduet.playground.design")!).xml).toContain(
+      "切视图保留名称",
+    );
+  });
+
+  it("P24 非法格式阻止离开当前视图，输入仍在原抽屉", async () => {
+    wrapper = mount(App, { attachTo: document.body });
+    await wrapper.findAll('[data-test="node-card"]')[2]!.trigger("click");
+    await flushPromises();
+    await setValue(
+      document.querySelector<HTMLInputElement>('[data-test="drawer-assignee"]')!,
+      "张三,李四",
+    );
+    await wrapper.find('[data-test="view-bpmn"] input').setValue();
+    await flushPromises();
+    expect(wrapper.find('[data-test="view-dingtalk"] input').element.checked).toBe(true);
+    expect(document.querySelector<HTMLInputElement>('[data-test="drawer-assignee"]')!.value).toBe(
+      "张三,李四",
+    );
+    expect(wrapper.find('[data-test="action-error"]').text()).toContain("集合变量名");
+  });
+});
+
+describe("E16 文件读取期间新编辑保护", () => {
+  it("新抽屉输入取消迟到打开，模型目录缓冲dirty保持，重试仍可打开", async () => {
+    wrapper = mount(App, { attachTo: document.body });
+    await setupWithForms(["保留目录76"]);
+    await wrapper.find('[data-test="save-local-btn"]').trigger("click");
+    await flushPromises();
+    const slow = pendingFileRead();
+    const incoming = designDoc(
+      minimalFlowXml().replace('name="兼容检查流程"', 'name="迟到文档76"'),
+    );
+    pickFile(wrapper, incoming, () => slow.text);
+    await wrapper.find('[data-test="open-doc-input"]').trigger("change");
+    await openApprovalDrawer(wrapper);
+    await setValue(
+      document.querySelector<HTMLInputElement>('[data-test="drawer-name"]')!,
+      "读取期间新输入76",
+    );
+    slow.resolve(incoming);
+    await flushPromises();
+    expect(wrapper.find('[data-test="doc-error"]').text()).toContain("新编辑");
+    expect(document.querySelector<HTMLInputElement>('[data-test="drawer-name"]')!.value).toBe(
+      "读取期间新输入76",
+    );
+    expect(wrapper.find('[data-test="dirty-badge"]').exists()).toBe(true);
+    // 目录必须仍是旧会话的目录，不能仅跳过宿主 adoptModel 而留半换状态。
+    await wrapper.find('[data-test="save-local-btn"]').trigger("click");
+    await flushPromises();
+    const saved = JSON.parse(localStorage.getItem("flowduet.playground.design")!);
+    expect(saved.xml).toContain("读取期间新输入76");
+    expect(saved.forms[0].name).toBe("保留目录76");
+    await openDocument(incoming);
+    expect(wrapper.find('[data-test="doc-status"]').text()).toContain("迟到文档76");
+  });
+
+  it("读取期间新打开表单编辑器也保持当前目录及编辑器", async () => {
+    wrapper = mount(App, { attachTo: document.body });
+    await setupWithForms(["保留编辑器76"]);
+    await wrapper.find('[data-test="save-local-btn"]').trigger("click");
+    await flushPromises();
+    const slow = pendingFileRead();
+    const incoming = designDoc(minimalFlowXml());
+    pickFile(wrapper, incoming, () => slow.text);
+    await wrapper.find('[data-test="open-doc-input"]').trigger("change");
+    await wrapper.find('[data-test="form-manager-btn"]').trigger("click");
+    await wrapper.find('[data-test="form-edit-btn-form_1"]').trigger("click");
+    await flushPromises();
+    slow.resolve(incoming);
+    await flushPromises();
+    expect(wrapper.find('[data-test="doc-error"]').text()).toContain("新编辑");
+    expect(wrapper.find('[data-test="form-designer-name"]').text()).toContain("保留编辑器76");
   });
 });

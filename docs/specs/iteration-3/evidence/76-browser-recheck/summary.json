@@ -1,0 +1,79 @@
+{
+  "product_commit": "d943508fdfe083a48a46765e3aceac0364ab90a9",
+  "date": "2026-10-10",
+  "fixed_cases": [
+    "P13",
+    "E15",
+    "E16",
+    "P24"
+  ],
+  "browser_rechecks": {
+    "P13": {
+      "id": "P13",
+      "time": "2026-10-09T10:19:18.511Z",
+      "details": "真实未离焦输入保存、刷新恢复及预览均通过",
+      "status": "PASS",
+      "screenshot": "P13.png"
+    },
+    "E15": {
+      "id": "E15",
+      "time": "2026-10-09T10:19:21.448Z",
+      "details": "表单新输入推进世代，旧保存报告快照且dirty保持",
+      "status": "PASS",
+      "screenshot": "E15.png"
+    },
+    "E15-select": {
+      "id": "E15-select",
+      "status": "PASS",
+      "details": "真实FormCreate下拉默认值从A改B，无文字输入；旧保存只报告快照，dirty保持",
+      "screenshot": "E15-select.png",
+      "time": "2026-10-09T10:31:11.970Z"
+    },
+    "P24": {
+      "id": "P24",
+      "time": "2026-10-09T10:19:24.276Z",
+      "details": "辅助触发视图切换前正确收集，实际保存包含名称",
+      "status": "PASS",
+      "screenshot": "P24.png"
+    },
+    "P24-invalid": {
+      "id": "P24-invalid",
+      "time": "2026-10-09T10:21:32.089Z",
+      "details": "非法格式阻止视图卸载，原单选状态和缓冲保持",
+      "status": "PASS",
+      "screenshot": "P24-invalid.png"
+    },
+    "E16-read": {
+      "id": "E16-read",
+      "status": "PASS",
+      "date": "2026-10-10",
+      "details": "真实File.text延迟期间新输入取消打开；旧模型目录缓冲dirty保持，随后保存与重试通过",
+      "screenshot": "E16-read-kept.png"
+    },
+    "E16-parse": {
+      "id": "E16-parse",
+      "status": "PASS",
+      "date": "2026-10-10",
+      "details": "真实fromXML解析返回延迟期间新输入取消打开，原缓冲dirty保持",
+      "screenshot": "E16-parse-kept.png"
+    }
+  },
+  "tests": {
+    "core": 125,
+    "designer": 127,
+    "form-create": 119,
+    "playground": 55,
+    "total": 426
+  },
+  "limits": [
+    "C02原生文件取消仍无法确认",
+    "部分按钮与视图入口使用辅助触发，未证明原生鼠标可达性改变",
+    "未重新跑整套44项验收，保留原始失败记录",
+    "未执行Flowable部署冒烟"
+  ],
+  "cleanup": {
+    "storage_restored": true,
+    "hooks_removed": true,
+    "tab_closed": true
+  }
+}

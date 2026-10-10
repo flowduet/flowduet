@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { BpmnModel, deriveBlockTree, flowableAdapter } from "@flowduet/core";
 import { FlowDesignSession } from "./session.js";
 import type { FormDefinition } from "./document.js";
@@ -378,5 +378,75 @@ describe("FlowDesignSession 双表单默认与覆盖往返（#73）", () => {
     ]);
     // 右会话目录不随左会话操作变化（表单仅在同一文档内共享）
     expect(right.current?.forms.map((form) => form.name)).toEqual(["申请单", "复核单"]);
+  });
+});
+
+describe("E16 打开前替换许可合同", () => {
+  it.each(["拒绝", "抛错"])("宿主%s替换时模型和表单目录保持原状态", async (outcome) => {
+    const session = new FlowDesignSession(buildDraftFlow());
+    session.createForm("保留表单");
+    const before = session.current;
+    const incoming = await saveDesignDocument(buildDraftFlow(), []);
+    const canReplace = () => {
+      if (outcome === "抛错") throw new Error("宿主取消替换");
+      return false;
+    };
+    await expect(session.open(incoming.json, { canReplace })).rejects.toThrow(
+      outcome === "抛错" ? "宿主取消替换" : "新编辑",
+    );
+    expect(session.current).toBe(before);
+    expect(session.current!.forms[0]!.name).toBe("保留表单");
+  });
+
+  it("真实XML解析期间产生新编辑，在会话写入前拒绝替换", async () => {
+    const model = buildDraftFlow();
+    const session = new FlowDesignSession(model);
+    const incoming = await saveDesignDocument(buildDraftFlow(), []);
+    const before = session.current;
+    let edited = false;
+    let release!: () => void;
+    let ready!: () => void;
+    const gate = new Promise<void>((resolve) => {
+      release = resolve;
+    });
+    const started = new Promise<void>((resolve) => {
+      ready = resolve;
+    });
+    const proto = Object.getPrototypeOf(model.moddle) as Pick<typeof model.moddle, "fromXML">;
+    const original = proto.fromXML;
+    const spy = vi.spyOn(proto, "fromXML").mockImplementation(async function (...args) {
+      const result = await original.apply(this, args);
+      ready();
+      await gate;
+      return result;
+    });
+    try {
+      const opening = session.open(incoming.json, { canReplace: () => !edited });
+      const rejection = expect(opening).rejects.toThrow("新编辑");
+      await started;
+      model.elementOf("approval_1").set("name", "解析期间新名称");
+      edited = true;
+      release();
+      await rejection;
+      expect(session.current).toBe(before);
+      expect(session.current!.model.elementOf("approval_1").get("name")).toBe("解析期间新名称");
+    } finally {
+      release();
+      spy.mockRestore();
+    }
+  });
+
+  it("许可回调发起较新替换时，旧请求也不得覆盖新会话", async () => {
+    const session = new FlowDesignSession(buildDraftFlow());
+    const incoming = await session.save();
+    await expect(
+      session.open(incoming.json, {
+        canReplace: () => {
+          session.newDesign({ processId: "newer_guard" });
+          return true;
+        },
+      }),
+    ).rejects.toThrow("取代");
+    expect(session.current!.model.process.get("id")).toBe("newer_guard");
   });
 });

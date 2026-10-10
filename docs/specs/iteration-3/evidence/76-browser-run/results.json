@@ -1,0 +1,488 @@
+[
+  {
+    "id": "P01",
+    "time": "2026-10-09T09:29:00.397Z",
+    "details": "无存储时显示完整演示，无恢复成功提示",
+    "status": "PASS",
+    "screenshot": "P01.png"
+  },
+  {
+    "id": "P02",
+    "time": "2026-10-09T09:29:01.175Z",
+    "details": "最小流程保存、刷新恢复成功，空审批人阻止部署",
+    "status": "PASS",
+    "screenshot": "P02.png"
+  },
+  {
+    "id": "P03",
+    "time": "2026-10-09T09:29:33.207Z",
+    "status": "TOOL_ERROR",
+    "details": "Error: Error: Playwright selector deadline exceeded\nlocator.fill failed for selector [data-test=\"drawer-name\"] input\nLocator diagnostics: {\"kind\":\"no_matches\",\"action\":\"fill\",\"locator\":\"[data-test=\\\"drawer-name\\\"] input\",\"matchCount\":0,\"matches\":[],\"visibleCount\":0,\"truncated\":false}",
+    "screenshot": null,
+    "superseded": true
+  },
+  {
+    "id": "P04",
+    "time": "2026-10-09T09:29:37.229Z",
+    "status": "TOOL_ERROR",
+    "details": "Error: Error: Playwright selector deadline exceeded\nlocator.fill failed for selector [data-test=\"drawer-name\"] input\nLocator diagnostics: {\"kind\":\"no_matches\",\"action\":\"fill\",\"locator\":\"[data-test=\\\"drawer-name\\\"] input\",\"matchCount\":0,\"matches\":[],\"visibleCount\":0,\"truncated\":false}",
+    "screenshot": null,
+    "superseded": true
+  },
+  {
+    "id": "P05",
+    "time": "2026-10-09T09:29:41.165Z",
+    "status": "TOOL_ERROR",
+    "details": "Error: Error: Playwright selector deadline exceeded\nlocator.press failed for selector body\nLocator diagnostics: {\"kind\":\"action_failed\",\"action\":\"press\",\"locator\":\"body\",\"matchCount\":1,\"matches\":[{\"ariaLabel\":null,\"disabled\":false,\"role\":null,\"tag\":\"body\",\"text\":\"FlowDuet Playground有未保存修改钉钉式BPMN 视图新建设计打开文档表单管理预览表单 保存草稿  下载设计文档 导出 XML流程默认表单无验收申请单76起开始 + 审申请审批审批人 john表单：验收申请单76（继承默认）\",\"type\":null,\"visible\":true}],\"visibleCount\":1,\"truncated\":false}",
+    "screenshot": null,
+    "superseded": true
+  },
+  {
+    "id": "P06",
+    "time": "2026-10-09T09:29:45.500Z",
+    "status": "TOOL_ERROR",
+    "details": "Error: Error: Playwright selector deadline exceeded\nlocator.press failed for selector body\nLocator diagnostics: {\"kind\":\"action_failed\",\"action\":\"press\",\"locator\":\"body\",\"matchCount\":1,\"matches\":[{\"ariaLabel\":null,\"disabled\":false,\"role\":null,\"tag\":\"body\",\"text\":\"FlowDuet Playground有未保存修改钉钉式BPMN 视图新建设计打开文档表单管理预览表单 保存草稿  下载设计文档 导出 XML流程默认表单无验收申请单76起开始 + 审申请审批审批人 john表单：验收申请单76（继承默认）\",\"type\":null,\"visible\":true}],\"visibleCount\":1,\"truncated\":false}",
+    "screenshot": null,
+    "superseded": true
+  },
+  {
+    "id": "P07",
+    "time": "2026-10-09T09:29:49.861Z",
+    "status": "TOOL_ERROR",
+    "details": "Error: Error: Playwright selector deadline exceeded\nlocator.press failed for selector body\nLocator diagnostics: {\"kind\":\"action_failed\",\"action\":\"press\",\"locator\":\"body\",\"matchCount\":1,\"matches\":[{\"ariaLabel\":null,\"disabled\":false,\"role\":null,\"tag\":\"body\",\"text\":\"FlowDuet Playground有未保存修改钉钉式BPMN 视图新建设计打开文档表单管理预览表单 保存草稿  下载设计文档 导出 XML流程默认表单无验收申请单76起开始 + 审申请审批审批人 john表单：验收申请单76（继承默认）\",\"type\":null,\"visible\":true}],\"visibleCount\":1,\"truncated\":false}",
+    "screenshot": null,
+    "superseded": true
+  },
+  {
+    "id": "P03",
+    "time": "2026-10-09T09:30:41.756Z",
+    "details": "未确认名称和空审批人保存恢复，部署拦截",
+    "status": "PASS",
+    "screenshot": "P03.png"
+  },
+  {
+    "id": "P04",
+    "time": "2026-10-09T09:30:44.559Z",
+    "details": "分支名和缺失条件恢复，部署拦截",
+    "status": "PASS",
+    "screenshot": "P04.png"
+  },
+  {
+    "id": "P05",
+    "time": "2026-10-09T09:30:46.564Z",
+    "details": "all 空集合保存恢复且部署拒绝",
+    "status": "PASS",
+    "screenshot": "P05.png"
+  },
+  {
+    "id": "P06",
+    "time": "2026-10-09T09:30:48.825Z",
+    "status": "CHECK_ERROR",
+    "details": "Error: 完成方式丢失",
+    "screenshot": null,
+    "superseded": true
+  },
+  {
+    "id": "P07",
+    "time": "2026-10-09T09:30:50.148Z",
+    "details": "sequential 空集合保存恢复且部署拒绝",
+    "status": "PASS",
+    "screenshot": "P07.png"
+  },
+  {
+    "id": "P06",
+    "time": "2026-10-09T09:31:41.791Z",
+    "details": "或签空集合恢复；XML转义后完成条件语义正确；部署拒绝",
+    "status": "PASS",
+    "screenshot": "P06.png"
+  },
+  {
+    "id": "P08",
+    "time": "2026-10-09T09:31:44.078Z",
+    "details": "空收件人抄送保存恢复，部署拒绝",
+    "status": "PASS",
+    "screenshot": "P08.png"
+  },
+  {
+    "id": "P09",
+    "time": "2026-10-09T09:31:46.640Z",
+    "details": "换目标前采集名称，存储保留",
+    "status": "PASS",
+    "screenshot": "P09.png"
+  },
+  {
+    "id": "P10",
+    "time": "2026-10-09T09:31:47.962Z",
+    "details": "表达式/逗号名单/中文均拒绝，缓冲和旧草稿保持",
+    "status": "PASS",
+    "screenshot": "P10.png"
+  },
+  {
+    "id": "P11",
+    "time": "2026-10-09T09:31:52.911Z",
+    "details": "重复点击同目标保留未确认缓冲",
+    "status": "PASS",
+    "screenshot": "P11.png"
+  },
+  {
+    "id": "P12",
+    "time": "2026-10-09T09:31:54.280Z",
+    "details": "普通确定仍拒绝两种空字段并保持抽屉",
+    "status": "PASS",
+    "screenshot": "P12.png"
+  },
+  {
+    "id": "P13",
+    "time": "2026-10-09T09:33:04.796Z",
+    "status": "CHECK_ERROR",
+    "details": "Error: 未收集默认值",
+    "screenshot": null,
+    "superseded": true
+  },
+  {
+    "id": "P14",
+    "time": "2026-10-09T09:33:06.854Z",
+    "details": "实际下载文件已读盘并经原生文件选择器重开：/Users/l/Downloads/flow76.flowduet.json",
+    "status": "PASS",
+    "screenshot": "P14.png"
+  },
+  {
+    "id": "P15",
+    "time": "2026-10-09T09:33:08.219Z",
+    "status": "CHECK_ERROR",
+    "details": "Error: 未绑定表单丢失",
+    "screenshot": null,
+    "superseded": true
+  },
+  {
+    "id": "P13",
+    "time": "2026-10-09T09:33:58.751Z",
+    "status": "FAIL",
+    "details": "Error: 当前输入未收集",
+    "screenshot": null,
+    "superseded": true
+  },
+  {
+    "id": "P15",
+    "time": "2026-10-09T09:34:01.778Z",
+    "details": "等保存完成后，两次恢复目录与字段语义稳定，未绑定定义保留；文件打开通过",
+    "status": "PASS",
+    "screenshot": "P15.png"
+  },
+  {
+    "id": "P16",
+    "time": "2026-10-09T09:35:07.499Z",
+    "status": "UI_BLOCKED",
+    "details": "Error: 未提示",
+    "screenshot": null,
+    "superseded": true
+  },
+  {
+    "id": "P17",
+    "time": "2026-10-09T09:35:08.786Z",
+    "status": "UI_BLOCKED",
+    "details": "Error: Error: Playwright selector deadline exceeded\nwaiting on click for selector [data-test=\"discard-ok\"]\nLocator diagnostics: {\"kind\":\"no_matches\",\"action\":\"click\",\"locator\":\"[data-test=\\\"discard-ok\\\"]\",\"matchCount\":0,\"matches\":[],\"visibleCount\":0,\"truncated\":false}",
+    "screenshot": null,
+    "superseded": true
+  },
+  {
+    "id": "P18",
+    "time": "2026-10-09T09:35:13.155Z",
+    "status": "UI_BLOCKED",
+    "details": "Error: Timed out after 10000ms waiting for file chooser.",
+    "screenshot": null,
+    "superseded": true
+  },
+  {
+    "id": "P19",
+    "time": "2026-10-09T09:35:25.266Z",
+    "status": "UI_BLOCKED",
+    "details": "Error: Timed out after 10000ms waiting for file chooser.",
+    "screenshot": null,
+    "superseded": true
+  },
+  {
+    "id": "P16",
+    "time": "2026-10-09T09:39:28.258Z",
+    "mode": "CDP辅助点击",
+    "details": "辅助触发被抽屉覆盖的新建按钮；取消保护模型目录缓冲dirty通过，原生可达性受限",
+    "status": "PASS",
+    "screenshot": "P16.png"
+  },
+  {
+    "id": "P17",
+    "time": "2026-10-09T09:39:29.793Z",
+    "mode": "CDP辅助点击",
+    "details": "辅助触发新建，确认后最小流程及空目录替换成功",
+    "status": "PASS",
+    "screenshot": "P17.png"
+  },
+  {
+    "id": "P18",
+    "time": "2026-10-09T09:39:31.243Z",
+    "mode": "CDP文件输入",
+    "status": "FAIL",
+    "details": "Error: This method is not supported through raw CDP. Use tab.playwright.waitForEvent(\"filechooser\") and chooser.setFiles(...) instead.",
+    "screenshot": null,
+    "superseded": true
+  },
+  {
+    "id": "P18",
+    "time": "2026-10-09T09:40:00.827Z",
+    "mode": "辅助点击+实际文件选择",
+    "details": "辅助触发打开按钮后使用实际文件选择器；取消保留模型目录输入dirty",
+    "status": "PASS",
+    "screenshot": "P18.png"
+  },
+  {
+    "id": "P19",
+    "time": "2026-10-09T09:40:03.764Z",
+    "mode": "辅助点击+实际文件选择",
+    "details": "实际选择B并确认替换，状态反馈为B、缓冲清除",
+    "status": "PASS",
+    "screenshot": "P19.png"
+  },
+  {
+    "id": "P20",
+    "time": "2026-10-09T09:40:06.319Z",
+    "mode": "辅助点击+实际文件选择",
+    "details": "坏JSON/XML原子拒绝，现模型目录未提交输入dirty保持",
+    "status": "PASS",
+    "screenshot": "P20.png"
+  },
+  {
+    "id": "P21",
+    "time": "2026-10-09T09:41:03.316Z",
+    "mode": "UI",
+    "details": "草稿恢复后必填失败/修正通过；目标切换重置；试填不落草稿",
+    "status": "PASS",
+    "screenshot": "P21.png"
+  },
+  {
+    "id": "P22",
+    "time": "2026-10-09T09:41:08.278Z",
+    "mode": "UI",
+    "details": "失效引用阻断；目录默认修正后自动生成有效XML",
+    "status": "PASS",
+    "screenshot": "P22.png"
+  },
+  {
+    "id": "P23",
+    "time": "2026-10-09T09:41:10.251Z",
+    "mode": "UI",
+    "details": "有效转无效立即清旧XML，显示当前缺审批人错误",
+    "status": "PASS",
+    "screenshot": "P23.png"
+  },
+  {
+    "id": "P24",
+    "time": "2026-10-09T09:41:12.920Z",
+    "mode": "CDP辅助切视图",
+    "status": "FAIL",
+    "details": "Error: 切BPMN卸载抽屉后保存遗漏当前输入",
+    "screenshot": "P24.png"
+  },
+  {
+    "id": "E01",
+    "time": "2026-10-09T09:42:39.234Z",
+    "mode": "CDP启动异常注入",
+    "status": "TOOL_ERROR",
+    "details": "Error: This method is not supported through raw CDP.",
+    "screenshot": null,
+    "superseded": true
+  },
+  {
+    "id": "E02",
+    "time": "2026-10-09T09:42:39.918Z",
+    "mode": "CDP存储夹具",
+    "details": "坏本地草稿原子拒绝并可继续编辑",
+    "status": "PASS",
+    "screenshot": "E02.png"
+  },
+  {
+    "id": "E03",
+    "time": "2026-10-09T09:42:40.618Z",
+    "mode": "CDP存储异常注入",
+    "details": "SecurityError失败可见，无成功/clean，旧存储保持",
+    "status": "PASS",
+    "screenshot": "E03.png"
+  },
+  {
+    "id": "E04",
+    "time": "2026-10-09T09:42:41.714Z",
+    "mode": "CDP存储异常注入",
+    "details": "QuotaExceededError失败可见，无成功/clean，旧存储保持",
+    "status": "PASS",
+    "screenshot": "E04.png"
+  },
+  {
+    "id": "E05",
+    "time": "2026-10-09T09:42:42.860Z",
+    "mode": "CDP读取异常+实际文件选择",
+    "details": "实际文件输入读取故障反馈，未提交输入dirty保持",
+    "status": "PASS",
+    "screenshot": "E05.png"
+  },
+  {
+    "id": "E01",
+    "time": "2026-10-09T09:44:01.451Z",
+    "mode": "真实App重挂+CDP异常",
+    "details": "真实App重挂时读取拒绝，错误可见且演示模型保持",
+    "status": "PASS",
+    "screenshot": "E01.png"
+  },
+  {
+    "id": "E06",
+    "time": "2026-10-09T09:44:03.949Z",
+    "mode": "CDP读取延迟+实际文件选择",
+    "details": "真实A读取延迟成功晚于B，不覆盖B模型及反馈",
+    "status": "PASS",
+    "screenshot": "E06.png"
+  },
+  {
+    "id": "E07",
+    "time": "2026-10-09T09:44:05.854Z",
+    "mode": "CDP读取延迟+实际文件选择",
+    "details": "真实A读取延迟失败晚于B，不覆盖B模型及反馈",
+    "status": "PASS",
+    "screenshot": "E07.png"
+  },
+  {
+    "id": "E08",
+    "time": "2026-10-09T09:45:12.676Z",
+    "mode": "CDP真实保存返回延迟",
+    "details": "真实保存旧快照，期间新编辑保持dirty且提示当前未保存",
+    "status": "PASS",
+    "screenshot": "E08.png"
+  },
+  {
+    "id": "E09",
+    "time": "2026-10-09T09:45:14.501Z",
+    "mode": "CDP真实保存乱序",
+    "details": "较新保存完成后，旧成功晚到不覆写存储/反馈/clean",
+    "status": "PASS",
+    "screenshot": "E09.png"
+  },
+  {
+    "id": "E10",
+    "time": "2026-10-09T09:45:16.593Z",
+    "mode": "CDP真实保存乱序",
+    "details": "较新保存完成后，旧失败晚到不覆写存储/反馈/clean",
+    "status": "PASS",
+    "screenshot": "E10.png"
+  },
+  {
+    "id": "E11",
+    "time": "2026-10-09T09:46:11.548Z",
+    "mode": "CDP保存延迟+UI替换",
+    "details": "新建和打开B均使进行中旧保存失效，存储与新反馈保持",
+    "status": "PASS",
+    "screenshot": "E11.png"
+  },
+  {
+    "id": "E12",
+    "time": "2026-10-09T09:46:15.478Z",
+    "mode": "CDP真实XML返回延迟",
+    "details": "真实toXML结果延迟，新编辑无效后旧导出不显示",
+    "status": "PASS",
+    "screenshot": "E12.png"
+  },
+  {
+    "id": "E13",
+    "time": "2026-10-09T09:46:18.247Z",
+    "mode": "CDP第三方序列化异常",
+    "details": "实际第三方toJson抛错后，错误可见、编辑器与旧存储保持",
+    "status": "PASS",
+    "screenshot": "E13.png"
+  },
+  {
+    "id": "E14",
+    "time": "2026-10-09T09:46:20.394Z",
+    "mode": "UI",
+    "details": "移除异常注入后仍可成功保存刷新继续编辑",
+    "status": "PASS",
+    "screenshot": "E14.png"
+  },
+  {
+    "id": "C01",
+    "time": "2026-10-09T09:47:07.676Z",
+    "mode": "同页临时公开组件边界",
+    "status": "TOOL_ERROR",
+    "details": "Error: Error: Playwright selector deadline exceeded\nlocator.fill failed for selector [data-test=\"drawer-form-key\"]\nLocator diagnostics: {\"kind\":\"no_matches\",\"action\":\"fill\",\"locator\":\"[data-test=\\\"drawer-form-key\\\"]\",\"matchCount\":0,\"matches\":[],\"visibleCount\":0,\"truncated\":false}",
+    "screenshot": null,
+    "superseded": true
+  },
+  {
+    "id": "C01",
+    "time": "2026-10-09T09:47:53.479Z",
+    "mode": "同页临时公开组件边界",
+    "details": "真实无表单公开组件：空集合拒绝且无半写，手写key trim并导出；证据C01-contract.xml/png",
+    "status": "PASS",
+    "screenshot": "C01.png"
+  },
+  {
+    "id": "D01",
+    "time": "2026-10-09T09:47:56.514Z",
+    "mode": "UI",
+    "details": "对照：先离开默认值字段再快捷保存，新默认值被采集；P13焦点场景边界确定",
+    "status": "PASS",
+    "screenshot": "D01.png"
+  },
+  {
+    "id": "E15",
+    "time": "2026-10-09T09:49:18.197Z",
+    "mode": "CDP真实保存返回延迟+真实表单编辑",
+    "status": "TOOL_ERROR",
+    "details": "Error: Error: Playwright selector deadline exceeded\nwaiting on click for selector internal:text=\"申请事由76\"s\nLocator diagnostics: {\"kind\":\"no_matches\",\"action\":\"click\",\"locator\":\"internal:text=\\\"申请事由76\\\"s\",\"matchCount\":0,\"matches\":[],\"visibleCount\":0,\"truncated\":false}",
+    "screenshot": null,
+    "superseded": true
+  },
+  {
+    "id": "E16",
+    "time": "2026-10-09T09:49:22.953Z",
+    "mode": "CDP文件读取延迟+真实抽屉编辑",
+    "status": "FAIL",
+    "details": "Error: 文件读取期间的新输入被迟到打开结果静默丢弃",
+    "screenshot": "E16.png"
+  },
+  {
+    "id": "C02",
+    "time": "2026-10-09T09:49:24.104Z",
+    "mode": "UI",
+    "details": "选择器为单文件；可发送Escape但API无取消回执，无法证明系统原生取消，不能标通过",
+    "status": "BLOCKED",
+    "screenshot": "C02.png"
+  },
+  {
+    "id": "E15",
+    "time": "2026-10-09T09:50:24.900Z",
+    "mode": "CDP真实保存延迟+真实表单编辑",
+    "status": "FAIL",
+    "details": "Error: 表单编辑器新输入未推进编辑世代，旧保存完成误报当前已保存",
+    "screenshot": "E15.png"
+  },
+  {
+    "id": "P25",
+    "time": "2026-10-09T09:51:40.117Z",
+    "mode": "UI",
+    "details": "原生按钮新建取消：已确认未落盘编辑和目录保持",
+    "status": "PASS",
+    "screenshot": "P25.png"
+  },
+  {
+    "id": "P26",
+    "time": "2026-10-09T09:51:42.452Z",
+    "mode": "UI",
+    "details": "原生打开按钮及实际文件选择后取消，模型目录dirty保持",
+    "status": "PASS",
+    "screenshot": "P26.png"
+  },
+  {
+    "id": "P13",
+    "time": "2026-10-09T09:51:44.659Z",
+    "mode": "UI",
+    "status": "FAIL",
+    "details": "Error: 焦点仍在默认值字段时快捷保存未采集当前输入：输入=未离焦复现76，落盘=原始默认值76",
+    "screenshot": "P13.png"
+  }
+]

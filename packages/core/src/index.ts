@@ -13,6 +13,7 @@ export {
   BpmnModel,
 } from "./model/bpmn-model.js";
 export type {
+  ApprovalDraftOptions,
   ApprovalMode,
   ApprovalTaskSpec,
   BpmnModelSpec,

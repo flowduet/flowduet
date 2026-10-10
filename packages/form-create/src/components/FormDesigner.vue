@@ -31,9 +31,28 @@ const emit = defineEmits<{
   /** 保存设计器当前内容（rules / options 已成对序列化） */
   save: [rules: string, options: string];
   cancel: [];
+  /** 未提交输入或结构编辑也属于当前设计变更。 */
+  draftChange: [];
 }>();
 
 const designerRef = ref<InstanceType<typeof FcDesigner> | null>(null);
+const hostRef = ref<HTMLElement | null>(null);
+
+/** 第三方下拉与选项表格仅发 Vue 事件，交互时保守标记潜在编辑，避免漏报。 */
+function onDesignInteraction(event: MouseEvent | KeyboardEvent): void {
+  const target = event.target;
+  if (target instanceof Element && target.closest(".form-designer-toolbar") !== null) return;
+  if (
+    event instanceof KeyboardEvent &&
+    (event.metaKey || event.ctrlKey || event.key === "Tab" || event.key === "Escape")
+  )
+    return;
+  notifyDraftChange();
+}
+
+function notifyDraftChange(): void {
+  emit("draftChange");
+}
 
 // 宿主未全局安装时补装（画布字段渲染依赖 elm 组件映射注册）
 onBeforeMount(ensureFormCreateInstalled);
@@ -45,17 +64,41 @@ onMounted(() => {
   designer.setOption(parseFormOptions(props.options) as never);
 });
 
-function save(): void {
+/**
+ * 导出当前设计器内容（#76 保存收集边界）：与「保存表单内容」按钮同一序列化
+ * 出口，供宿主在保存设计文档前收集编辑器里尚未提交的内容。设计器实例不在场
+ * （挂载未完成）时返回 null，调用方据此中止保存而不是误报成功。
+ */
+function exportContent(): { rules: string; options: string } | null {
   const designer = designerRef.value;
-  if (designer === null) return;
+  if (designer === null) return null;
+  // ValueInput 在失焦时才提交；快捷键不会自然失焦，先收集本编辑器内的焦点缓冲。
+  const active = hostRef.value?.ownerDocument.activeElement;
+  if (active instanceof HTMLElement && hostRef.value?.contains(active)) active.blur();
   // getJson / getOptionsJson 即「匹配版本的 FormCreate 序列化接口」成对出口
   const rules = restoreCheckboxDefaults(designer.getJson());
-  emit("save", FcDesigner.designerForm.toJson(rules), designer.getOptionsJson());
+  return { rules: FcDesigner.designerForm.toJson(rules), options: designer.getOptionsJson() };
+}
+
+defineExpose({ exportContent });
+
+function save(): void {
+  const content = exportContent();
+  if (content === null) return;
+  emit("save", content.rules, content.options);
 }
 </script>
 
 <template>
-  <div class="form-designer-host" data-test="form-designer">
+  <div
+    ref="hostRef"
+    class="form-designer-host"
+    data-test="form-designer"
+    @click.capture="onDesignInteraction"
+    @keydown.capture="onDesignInteraction"
+    @input.capture="notifyDraftChange"
+    @change.capture="notifyDraftChange"
+  >
     <div class="form-designer-toolbar">
       <span class="form-designer-name" data-test="form-designer-name">{{ name }}</span>
       <ElButton size="small" data-test="form-designer-cancel" @click="emit('cancel')"
@@ -65,7 +108,21 @@ function save(): void {
         保存表单内容
       </ElButton>
     </div>
-    <FcDesigner ref="designerRef" :menu="FIELD_MENU" :config="DESIGNER_CONFIG" height="460px" />
+    <FcDesigner
+      ref="designerRef"
+      :menu="FIELD_MENU"
+      :config="DESIGNER_CONFIG"
+      height="460px"
+      @create="notifyDraftChange"
+      @copy="notifyDraftChange"
+      @delete="notifyDraftChange"
+      @drag="notifyDraftChange"
+      @clear="notifyDraftChange"
+      @paste-rule="notifyDraftChange"
+      @sort-up="notifyDraftChange"
+      @sort-down="notifyDraftChange"
+      @change-field="notifyDraftChange"
+    />
   </div>
 </template>
 

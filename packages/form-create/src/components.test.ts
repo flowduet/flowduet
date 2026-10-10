@@ -1,5 +1,7 @@
 // @vitest-environment happy-dom
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { defineComponent, h, ref } from "vue";
+import { ElSelect, ElOption } from "element-plus";
 import { flushPromises, mount } from "@vue/test-utils";
 import FormPreview from "./components/FormPreview.vue";
 import FormManager from "./components/FormManager.vue";
@@ -720,5 +722,198 @@ describe("设计器开放范围收口（A13，designer-config 与真实面板）
     expect(checkDrag({ menu: { name: "fcRow" } } as never)).toBe(false);
     expect(checkDrag({ menu: { name: "input" } } as never)).toBe(true);
     expect(checkDrag({ menu: { name: "col" } } as never)).toBe(true);
+  });
+});
+
+describe("FormManager 未提交内容收集（#76：commitPendingEdit）", () => {
+  it("编辑器开着：commitPendingEdit 经真实设计器序列化上抛并关闭编辑器", async () => {
+    wrapper = mount(FormManager, { props: { forms: [APPLY_FORM] }, attachTo: document.body });
+    await wrapper.find('[data-test="form-edit-btn-form_apply"]').trigger("click");
+    await flushPromises();
+
+    const vm = wrapper.vm as unknown as { commitPendingEdit: () => boolean };
+    expect(vm.commitPendingEdit()).toBe(true);
+    await flushPromises();
+
+    const events = wrapper.emitted("updateContent");
+    expect(events).toBeTruthy();
+    expect(events![0]![0]).toBe("form_apply");
+    expect(JSON.parse(events![0]![1] as string)[0]!.field).toBe("reason");
+    expect(wrapper.find('[data-test="form-manager-edit-dialog"]').isVisible()).toBe(false);
+  });
+
+  it("编辑器未打开：收集是 no-op，返回 true 且不上抛", async () => {
+    wrapper = mount(FormManager, { props: { forms: [APPLY_FORM] }, attachTo: document.body });
+    await flushPromises();
+
+    const vm = wrapper.vm as unknown as { commitPendingEdit: () => boolean };
+    expect(vm.commitPendingEdit()).toBe(true);
+    expect(wrapper.emitted("updateContent")).toBeUndefined();
+  });
+
+  it("超范围内容：返回 false、不上抛、编辑器保持打开供修正", async () => {
+    // 真实设计器无法产出范围外内容（菜单收口），坏内容路径经替身注入
+    const stub = defineComponent({
+      name: "FormDesigner",
+      props: ["name", "rules", "options"],
+      emits: ["save", "cancel"],
+      setup(_, { expose }) {
+        expose({
+          exportContent: () => ({
+            rules: JSON.stringify([{ type: "upload", field: "u1", title: "上传" }]),
+            options: "{}",
+          }),
+        });
+      },
+      render: () => null,
+    });
+    wrapper = mount(FormManager, {
+      props: { forms: [APPLY_FORM] },
+      attachTo: document.body,
+      global: { stubs: { FormDesigner: stub } },
+    });
+    await wrapper.find('[data-test="form-edit-btn-form_apply"]').trigger("click");
+    await flushPromises();
+
+    const vm = wrapper.vm as unknown as { commitPendingEdit: () => boolean };
+    expect(vm.commitPendingEdit()).toBe(false);
+    await flushPromises();
+
+    expect(wrapper.emitted("updateContent")).toBeUndefined();
+    expect(wrapper.find('[data-test="form-manager-error"]').text()).toContain("支持的组件");
+    expect(wrapper.find('[data-test="form-manager-edit-dialog"]').isVisible()).toBe(true);
+  });
+});
+
+describe("PR88 序列化异常反馈", () => {
+  it("设计器序列化抛错时拒绝提交，保留编辑器与当前目录", async () => {
+    const stub = defineComponent({
+      name: "FormDesigner",
+      setup(_, { expose }) {
+        expose({
+          exportContent: () => {
+            throw new Error("序列化故障");
+          },
+        });
+      },
+      render: () => null,
+    });
+    wrapper = mount(FormManager, {
+      props: { forms: [APPLY_FORM] },
+      attachTo: document.body,
+      global: { stubs: { FormDesigner: stub } },
+    });
+    await wrapper.find('[data-test="form-edit-btn-form_apply"]').trigger("click");
+    await flushPromises();
+    const vm = wrapper.vm as unknown as { commitPendingEdit: () => boolean };
+    expect(vm.commitPendingEdit()).toBe(false);
+    await flushPromises();
+    expect(wrapper.emitted("updateContent")).toBeUndefined();
+    expect(wrapper.find('[data-test="form-manager-error"]').text()).toContain("序列化故障");
+    expect(wrapper.find('[data-test="form-manager-edit-dialog"]').isVisible()).toBe(true);
+  });
+});
+
+describe("PR88 产品验收焦点与编辑通知回归", () => {
+  async function openDefaultEditor(): Promise<void> {
+    // 外部 ValueInput 的已核实合同：input 只改缓冲，blur 才更新规则。
+    // 这里保留真实 DOM 焦点行为；完整 FormCreate 链路由内置浏览器复验。
+    const delayedInput = defineComponent({
+      name: "FcDesigner",
+      setup(_, { expose }) {
+        const pending = ref("");
+        let rules: Record<string, unknown>[] = [];
+        let options: object = {};
+        expose({
+          setRule: (value: Record<string, unknown>[]) => {
+            rules = value;
+            pending.value = String(value[0]?.value ?? "");
+          },
+          setOption: (value: object) => {
+            options = value;
+          },
+          getJson: () => JSON.stringify(rules),
+          getOptionsJson: () => JSON.stringify(options),
+        });
+        return () =>
+          h("input", {
+            "data-test": "delayed-default-input",
+            value: pending.value,
+            onInput: (event: Event) => {
+              pending.value = (event.target as HTMLInputElement).value;
+            },
+            onBlur: () => {
+              rules[0]!.value = pending.value;
+            },
+          });
+      },
+    });
+    wrapper = mount(FormDesigner, {
+      props: { name: APPLY_FORM.name, rules: APPLY_FORM.rules, options: APPLY_FORM.options },
+      attachTo: document.body,
+      global: { stubs: { FcDesigner: delayedInput } },
+    });
+    await flushPromises();
+  }
+
+  it("P13 当前默认值未失焦时同步收集也包含已输入内容", async () => {
+    await openDefaultEditor();
+    const input = wrapper!.find<HTMLInputElement>('[data-test="delayed-default-input"]');
+    input.element.focus();
+    await input.setValue("焦点新默认值");
+    expect(document.activeElement).toBe(input.element);
+    const vm = wrapper!.vm as unknown as {
+      exportContent: () => { rules: string; options: string };
+    };
+    const content = vm.exportContent();
+    expect(JSON.parse(content.rules)[0].value).toBe("焦点新默认值");
+  });
+
+  it("E15 当前输入上抛编辑通知，宿主可识别尚未提交的新编辑", async () => {
+    await openDefaultEditor();
+    const input = wrapper!.find<HTMLInputElement>('[data-test="delayed-default-input"]');
+    await input.setValue("尚未提交的新默认值");
+    expect(wrapper!.emitted("draftChange")?.length).toBeGreaterThan(0);
+    expect(wrapper!.emitted("save")).toBeUndefined();
+  });
+  it("E15 仅发 Vue 事件的下拉交互也上抛潜在编辑", async () => {
+    const externalSelect = defineComponent({
+      name: "FcDesigner",
+      setup(_, { expose }) {
+        const value = ref("a");
+        expose({ setRule: () => {}, setOption: () => {} });
+        return () =>
+          h(
+            ElSelect,
+            {
+              modelValue: value.value,
+              "onUpdate:modelValue": (next: string) => {
+                value.value = next;
+              },
+            },
+            () => [
+              h(ElOption, { label: "选项A", value: "a" }),
+              h(ElOption, { label: "选项B", value: "b" }),
+            ],
+          );
+      },
+    });
+    wrapper = mount(FormDesigner, {
+      props: { name: "下拉编辑", rules: "[]", options: "{}" },
+      attachTo: document.body,
+      global: { stubs: { FcDesigner: externalSelect } },
+    });
+    await flushPromises();
+    await wrapper.find(".el-select__wrapper").trigger("click");
+    await flushPromises();
+    const option = Array.from(
+      document.querySelectorAll<HTMLElement>(".el-select-dropdown__item"),
+    ).find((node) => node.textContent === "选项B");
+    option!.click();
+    await flushPromises();
+    expect(wrapper.findAll(".el-select__selected-item").map((node) => node.text())).toContain(
+      "选项B",
+    );
+    expect((wrapper.emitted("draftChange") ?? []).length).toBeGreaterThan(0);
   });
 });

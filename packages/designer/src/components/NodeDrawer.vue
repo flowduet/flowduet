@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
 import { ElButton, ElDrawer, ElForm, ElFormItem, ElInput } from "element-plus";
-import type { ApprovalMode, BpmnModel, ModdleElement } from "@flowduet/core";
+import type { ApprovalDraftOptions, ApprovalMode, BpmnModel, ModdleElement } from "@flowduet/core";
 import { labelFormOptions, type DesignerFormOption } from "../form-options.js";
 import {
   CC_RECIPIENTS_PLACEHOLDER,
@@ -36,6 +36,8 @@ const emit = defineEmits<{
   saved: [];
   /** 守卫抛错的可读消息：由宿主接入内联提示通道，不冒泡炸视图 */
   error: [message: string];
+  /** 字段缓冲被编辑（#76）：未提交输入也属于「未保存内容」，宿主据此提示替换影响 */
+  draftModified: [];
 }>();
 
 const visible = defineModel<boolean>({ default: false });
@@ -138,6 +140,7 @@ function isCollectionVariable(value: string): boolean {
  * 只在用户交互时触发，不走 watch，避免打开抽屉回填多实例时被误清（#25 评审 C1/S1）。
  */
 function selectKind(kind: "single" | ApprovalMode): void {
+  emit("draftModified");
   const prev = approvalKind.value;
   if (prev === kind) return;
   approvalKind.value = kind;
@@ -198,13 +201,19 @@ function readMultiSafe(): ReturnType<typeof readApprovalMulti> {
   }
 }
 
-function save(): void {
-  if (props.nodeId === undefined) return;
+/**
+ * 提交抽屉当前输入（#76 保存收集边界）：复用「确定」按钮的写模型路径，显式草稿选项仅容许业务缺失，
+ * 供宿主在保存设计文档前收集未提交的抽屉输入，不遗漏当前设计变更。
+ * 抽屉未打开时无未提交内容，直接视为成功；守卫拦截返回 false，输入保留待修正。
+ */
+function commit(options: ApprovalDraftOptions = {}): boolean {
+  if (!visible.value) return true;
+  if (props.nodeId === undefined) return true;
   const el = currentNode();
   if (el === undefined) {
     // 抽屉打开期间宿主可能已删除该节点——不在此抛未捕获异常
     visible.value = false;
-    return;
+    return true;
   }
 
   const trimmedName = name.value.trim();
@@ -215,13 +224,13 @@ function save(): void {
       setBranchCondition(props.model, props.nodeId, condition.value);
     } catch (e) {
       emit("error", e instanceof Error ? e.message : String(e));
-      return;
+      return false;
     }
     // 条件写成功后才写 name，避免半写模型（#25 评审 C2）
     el.set("name", trimmedName === "" ? undefined : trimmedName);
     visible.value = false;
     emit("saved");
-    return;
+    return true;
   }
 
   const trimmedAssignee = assignee.value.trim();
@@ -233,23 +242,26 @@ function save(): void {
 
   // ── 前置校验（一律不写模型）：任一条不过即 emit error 返回，模型零变更 ──
   if (isTask.value && approvalKind.value !== "single") {
-    if (trimmedAssignee === "") {
+    if (trimmedAssignee === "" && options.allowIncomplete !== true) {
       emit("error", "多人审批需要填写审批人集合变量名（运行时注入名单）");
-      return;
+      return false;
     }
-    if (!isCollectionVariable(trimmedAssignee)) {
+    if (trimmedAssignee !== "" && !isCollectionVariable(trimmedAssignee)) {
       // 文案与限制对齐（评审 S-4）：明确 ASCII-only，避免用户误以为字段不接受任何名单
       emit(
         "error",
         "审批人集合变量名仅支持英文字母/数字/下划线（如 approvers 或 dept.approvers），不接受 ${...} 表达式或逗号名单",
       );
-      return;
+      return false;
     }
   } else if (isCcTask.value) {
-    // 空白与插入占位串都拦：占位落盘会让运行时查无此人、静默丢知会（#25 评审 W4）
-    if (trimmedRecipients === "" || trimmedRecipients === CC_RECIPIENTS_PLACEHOLDER) {
+    // 普通确定仍拒绝空白与占位串；显式草稿收集容许缺失，由部署校验拦截。
+    if (
+      options.allowIncomplete !== true &&
+      (trimmedRecipients === "" || trimmedRecipients === CC_RECIPIENTS_PLACEHOLDER)
+    ) {
       emit("error", "抄送收件人不能为空白或占位文本（字面量逗号分隔或表达式）");
-      return;
+      return false;
     }
   }
 
@@ -272,14 +284,14 @@ function save(): void {
       } else {
         const multi = readApprovalMulti(props.model, props.nodeId);
         if (multi === null) {
-          convertApprovalToMulti(props.model, props.nodeId, multiSpec);
+          convertApprovalToMulti(props.model, props.nodeId, multiSpec, options);
         } else {
-          setApprovalMode(props.model, props.nodeId, multiSpec);
+          setApprovalMode(props.model, props.nodeId, multiSpec, options);
         }
       }
     } catch (e) {
       emit("error", e instanceof Error ? e.message : String(e));
-      return;
+      return false;
     }
     // 转换可能同 id 重建节点——统一取当前元素，name 与字段最后写
     const current = currentNode();
@@ -298,7 +310,10 @@ function save(): void {
   }
   visible.value = false;
   emit("saved");
+  return true;
 }
+
+defineExpose({ commit });
 </script>
 
 <template>
@@ -307,15 +322,22 @@ function save(): void {
     :title="isBranchHead ? '分支条件' : isCcTask ? '抄送节点' : '审批节点'"
     size="360px"
     data-test="node-drawer"
+    :modal="false"
   >
     <ElForm v-if="isTask" label-position="top">
       <ElFormItem label="节点名称">
-        <ElInput v-model="name" data-test="drawer-name" placeholder="如：经理审批" />
+        <ElInput
+          v-model="name"
+          data-test="drawer-name"
+          @input="emit('draftModified')"
+          placeholder="如：经理审批"
+        />
       </ElFormItem>
       <ElFormItem :label="approvalKind === 'single' ? '审批人' : '审批人（集合变量）'">
         <ElInput
           v-model="assignee"
           data-test="drawer-assignee"
+          @input="emit('draftModified')"
           :placeholder="
             approvalKind === 'single' ? '如 ${manager} 或 张三' : '如 approvers，运行时注入名单'
           "
@@ -344,7 +366,10 @@ function save(): void {
           class="drawer-form-select"
           data-test="drawer-form-select"
           :value="formKey"
-          @change="formKey = ($event.target as HTMLSelectElement).value"
+          @change="
+            emit('draftModified');
+            formKey = ($event.target as HTMLSelectElement).value;
+          "
         >
           <option value="" data-test="drawer-form-inherit">{{ inheritFormLabel }}</option>
           <option
@@ -365,24 +390,36 @@ function save(): void {
     </ElForm>
     <ElForm v-else-if="isCcTask" label-position="top">
       <ElFormItem label="节点名称">
-        <ElInput v-model="name" data-test="drawer-name" placeholder="如：抄送知会" />
+        <ElInput
+          v-model="name"
+          data-test="drawer-name"
+          @input="emit('draftModified')"
+          placeholder="如：抄送知会"
+        />
       </ElFormItem>
       <ElFormItem label="收件人">
         <ElInput
           v-model="recipients"
           data-test="drawer-recipients"
+          @input="emit('draftModified')"
           placeholder="字面量逗号分隔（张三,李四）或表达式（${ccUsers}）"
         />
       </ElFormItem>
     </ElForm>
     <ElForm v-else-if="isBranchHead" label-position="top">
       <ElFormItem label="节点名称">
-        <ElInput v-model="name" data-test="drawer-name" placeholder="分支名（如：金额较大）" />
+        <ElInput
+          v-model="name"
+          data-test="drawer-name"
+          @input="emit('draftModified')"
+          placeholder="分支名（如：金额较大）"
+        />
       </ElFormItem>
       <ElFormItem label="条件表达式">
         <ElInput
           v-model="condition"
           data-test="drawer-condition"
+          @input="emit('draftModified')"
           placeholder="如 ${amount > 1000}；留空表示无条件"
         />
       </ElFormItem>
@@ -390,7 +427,7 @@ function save(): void {
     <div v-else class="drawer-empty">该元素无可配置字段</div>
     <template #footer>
       <ElButton data-test="drawer-cancel" @click="visible = false">取消</ElButton>
-      <ElButton type="primary" data-test="drawer-save" @click="save">确定</ElButton>
+      <ElButton type="primary" data-test="drawer-save" @click="commit()">确定</ElButton>
     </template>
   </ElDrawer>
 </template>

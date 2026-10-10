@@ -22,6 +22,8 @@ const emit = defineEmits<{
   updateContent: [id: string, rules: string, options: string];
   /** 删除确认后的上抛：被引用时的拒绝与位置说明由会话 deleteForm 决定 */
   delete: [id: string];
+  /** 表单编辑器尚未提交的设计变更，供宿主更新未保存状态。 */
+  draftChange: [];
 }>();
 
 const newName = ref("");
@@ -29,6 +31,7 @@ const renamingId = ref<string | null>(null);
 const renamingValue = ref("");
 const createError = ref("");
 const renameError = ref("");
+const designerRef = ref<InstanceType<typeof FormDesigner> | null>(null);
 /** 两段删除确认：正在确认删除的表单 id（与改名态互斥展示） */
 const deletingId = ref<string | null>(null);
 const editing = ref<FormDefinition | null>(null);
@@ -90,8 +93,16 @@ function cancelEdit(): void {
 }
 
 function onDesignerSave(rules: string, options: string): void {
+  submitContent(rules, options);
+}
+
+/**
+ * 提交编辑器内容（守卫 + 上抛 + 收尾）的单一出口：按钮保存与宿主收集
+ * （#76 commitPendingEdit）共用。守卫失败返回 false 且编辑器保持打开。
+ */
+function submitContent(rules: string, options: string): boolean {
   const form = editing.value;
-  if (form === null) return;
+  if (form === null) return false;
   editError.value = "";
   // 内容守卫前置到本地：Vue3 的 emit 不会向调用方 rethrow 宿主处理器的
   // 异常，若依赖宿主 updateContent 抛错，这里的 catch 是收不到的死路径。
@@ -100,12 +111,41 @@ function onDesignerSave(rules: string, options: string): void {
     assertFormDefinitionValid({ ...form, rules, options }, new Set());
   } catch (e) {
     editError.value = e instanceof Error ? e.message : String(e);
-    return;
+    return false;
   }
   emit("updateContent", form.id, rules, options);
   editing.value = null;
   editVisible.value = false;
+  return true;
 }
+
+/**
+ * 保存前收集编辑器里的未提交内容（#76 公开组合边界）：编辑对话框打开时
+ * 经真实设计器序列化并走与「保存表单内容」同一守卫；守卫拦截返回 false，
+ * 宿主应中止保存而非绕过守卫。对话框未打开时无未提交内容，视为成功。
+ */
+function commitPendingEdit(): boolean {
+  if (!hasOpenEditor()) return true;
+  try {
+    const content = designerRef.value?.exportContent();
+    if (content === null || content === undefined) {
+      editError.value = "表单编辑器尚未准备好，请稍后重试";
+      return false;
+    }
+    return submitContent(content.rules, content.options);
+  } catch (e) {
+    // 第三方序列化失败不关闭编辑器，避免错误提示之外再次丢失输入。
+    editError.value = e instanceof Error ? e.message : String(e);
+    return false;
+  }
+}
+
+/** 编辑对话框是否开着（#76）：宿主据此在替换当前设计前提示未提交内容 */
+function hasOpenEditor(): boolean {
+  return editVisible.value && editing.value !== null;
+}
+
+defineExpose({ commitPendingEdit, hasOpenEditor });
 </script>
 
 <template>
@@ -234,6 +274,8 @@ function onDesignerSave(rules: string, options: string): void {
       </p>
       <FormDesigner
         v-if="editing"
+        ref="designerRef"
+        @draft-change="emit('draftChange')"
         :name="editing.name"
         :rules="editing.rules"
         :options="editing.options"

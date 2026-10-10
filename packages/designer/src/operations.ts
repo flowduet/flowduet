@@ -1,4 +1,5 @@
 import type {
+  ApprovalDraftOptions,
   ApprovalMode,
   ApprovalTaskSpec,
   BpmnModel,
@@ -485,6 +486,7 @@ export function convertApprovalToMulti(
   model: BpmnModel,
   nodeId: string,
   spec: Pick<ApprovalTaskSpec, "collection" | "mode" | "elementVariable">,
+  options: ApprovalDraftOptions = {},
 ): void {
   const el = model.elementOf(nodeId);
   if (el.$type !== "bpmn:UserTask") {
@@ -495,7 +497,10 @@ export function convertApprovalToMulti(
   }
   // fail-fast：与内核 addApprovalTask 同构前置校验。removeNode 会级联删两侧连线，
   // 若等内核守卫在其之后才抛错，节点消失、prev/next 互不连通（#25 评审 W3）。
-  if (typeof spec.collection !== "string" || spec.collection.trim() === "") {
+  if (
+    typeof spec.collection !== "string" ||
+    (spec.collection.trim() === "" && options.allowIncomplete !== true)
+  ) {
     throw new Error(`节点 ${nodeId} 转多人审批：collection 不能为空白`);
   }
   if (!APPROVAL_MODES.includes(spec.mode)) {
@@ -527,14 +532,17 @@ export function convertApprovalToMulti(
   // 带 DI 导入 + 抽屉转换的消费路径需 #27/#35 追踪（内核需暴露 setShape/setWaypoints
   // 写入口，转换时保留 DI；跨包改动，暂缓）。
   model.removeNode(nodeId);
-  model.addApprovalTask({
-    id: nodeId,
-    ...(name !== undefined ? { name: String(name) } : {}),
-    collection: spec.collection,
-    mode: spec.mode,
-    ...(spec.elementVariable !== undefined ? { elementVariable: spec.elementVariable } : {}),
-    ...(formKey !== undefined ? { formKey: String(formKey) } : {}),
-  });
+  model.addApprovalTask(
+    {
+      id: nodeId,
+      ...(name !== undefined ? { name: String(name) } : {}),
+      collection: spec.collection,
+      mode: spec.mode,
+      ...(spec.elementVariable !== undefined ? { elementVariable: spec.elementVariable } : {}),
+      ...(formKey !== undefined ? { formKey: String(formKey) } : {}),
+    },
+    options,
+  );
   // 连线 id 走 nextFreeId 序列号（与 removeApprovalNode 的 relay 同口径）：节点 id 复用，
   // 若沿用 flow_${nodeId}_in 定名，删→他处插→再转会撞已登记的旧连线（#25 评审 S4）。
   model.addSequenceFlow({
@@ -601,6 +609,7 @@ export function setApprovalMode(
   model: BpmnModel,
   nodeId: string,
   spec: Pick<ApprovalTaskSpec, "collection" | "mode" | "elementVariable">,
+  options: ApprovalDraftOptions = {},
 ): void {
   const el = model.elementOf(nodeId);
   const loop = el.get("loopCharacteristics") as ModdleElement | undefined;
@@ -616,7 +625,10 @@ export function setApprovalMode(
       `任务 ${nodeId} 的 mode 必须是 ${APPROVAL_MODES.join("/")} 之一，实际是 ${String(spec.mode)}`,
     );
   }
-  if (typeof spec.collection !== "string" || spec.collection.trim() === "") {
+  if (
+    typeof spec.collection !== "string" ||
+    (spec.collection.trim() === "" && options.allowIncomplete !== true)
+  ) {
     throw new Error(`任务 ${nodeId} 的 collection 不能为空白`);
   }
   // 默认名与内核 addApprovalTask 同源（#25 评审 W1）；空白守卫与内核口径对称（W5）。

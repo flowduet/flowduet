@@ -82,6 +82,11 @@ export const COMPLETION_CONDITIONS: Readonly<Record<Exclude<ApprovalMode, "seque
  */
 export const DEFAULT_ELEMENT_VARIABLE = "assignee";
 
+/** 显式草稿建模选项：仅容许未配置的业务集合，其他结构守卫保持严格。 */
+export interface ApprovalDraftOptions {
+  allowIncomplete?: boolean;
+}
+
 /**
  * 多实例审批任务建模参数。完成方式是 BPMN 标准多实例语义（非方言差异），
  * 故不经任务类型映射、直建用户任务；方言属性（collection/elementVariable）
@@ -351,7 +356,7 @@ export class BpmnModel {
    * XML 形态经 Flowable 6.8 部署 + 启动 + 逐人 assignee 实测
    * （分支 prototype/iter2-vertical-layout-mi）。
    */
-  addApprovalTask(spec: ApprovalTaskSpec): this {
+  addApprovalTask(spec: ApprovalTaskSpec, options: ApprovalDraftOptions = {}): this {
     if (spec.completionCondition !== undefined) {
       if (spec.mode === "sequential") {
         throw new Error(`任务 ${spec.id}：依次审批没有完成条件（逐人跑完即通过），不允许覆盖`);
@@ -365,7 +370,10 @@ export class BpmnModel {
         `任务 ${spec.id} 的 mode 必须是 ${APPROVAL_MODES.join("/")} 之一，实际是 ${String(spec.mode)}`,
       );
     }
-    if (typeof spec.collection !== "string" || spec.collection.trim() === "") {
+    if (
+      typeof spec.collection !== "string" ||
+      (spec.collection.trim() === "" && options.allowIncomplete !== true)
+    ) {
       throw new Error(`任务 ${spec.id} 的 collection 不能为空白`);
     }
     // 前后空白原样落盘会让引擎按带空格变量名解析集合、静默取不到值——统一 trim 后再用

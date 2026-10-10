@@ -1,0 +1,67 @@
+[
+  {
+    "id": "P13",
+    "time": "2026-10-09T10:18:08.312Z",
+    "status": "TOOL_ERROR",
+    "details": "Error: Tab 2 is not part of browser session 01a11fc7-a447-7023-844a-3e5132eceebf",
+    "screenshot": null,
+    "superseded": true
+  },
+  {
+    "id": "E15",
+    "time": "2026-10-09T10:18:08.395Z",
+    "status": "TOOL_ERROR",
+    "details": "Error: Tab 2 is not part of browser session 01a11fc7-a447-7023-844a-3e5132eceebf",
+    "screenshot": null,
+    "superseded": true
+  },
+  {
+    "id": "P13",
+    "time": "2026-10-09T10:19:18.511Z",
+    "details": "真实未离焦输入保存、刷新恢复及预览均通过",
+    "status": "PASS",
+    "screenshot": "P13.png"
+  },
+  {
+    "id": "E15",
+    "time": "2026-10-09T10:19:21.448Z",
+    "details": "表单新输入推进世代，旧保存报告快照且dirty保持",
+    "status": "PASS",
+    "screenshot": "E15.png"
+  },
+  {
+    "id": "P24",
+    "time": "2026-10-09T10:19:24.276Z",
+    "details": "辅助触发视图切换前正确收集，实际保存包含名称",
+    "status": "PASS",
+    "screenshot": "P24.png"
+  },
+  {
+    "id": "P24-invalid",
+    "time": "2026-10-09T10:21:32.089Z",
+    "details": "非法格式阻止视图卸载，原单选状态和缓冲保持",
+    "status": "PASS",
+    "screenshot": "P24-invalid.png"
+  },
+  {
+    "id": "E15-select",
+    "status": "PASS",
+    "details": "真实FormCreate下拉默认值从A改B，无文字输入；旧保存只报告快照，dirty保持",
+    "screenshot": "E15-select.png",
+    "time": "2026-10-09T10:31:11.970Z"
+  },
+  {
+    "id": "E16-read",
+    "status": "PASS",
+    "date": "2026-10-10",
+    "details": "真实File.text延迟期间新输入取消打开；旧模型目录缓冲dirty保持，随后保存与重试通过",
+    "screenshot": "E16-read-kept.png"
+  },
+  {
+    "id": "E16-parse",
+    "status": "PASS",
+    "date": "2026-10-10",
+    "details": "真实fromXML解析返回延迟期间新输入取消打开，原缓冲dirty保持",
+    "screenshot": "E16-parse-kept.png"
+  }
+]
