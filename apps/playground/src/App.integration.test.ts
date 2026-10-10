@@ -1602,3 +1602,56 @@ describe("PR88 产品验收视图切换回归", () => {
     expect(wrapper.find('[data-test="action-error"]').text()).toContain("集合变量名");
   });
 });
+
+describe("E16 文件读取期间新编辑保护", () => {
+  it("新抽屉输入取消迟到打开，模型目录缓冲dirty保持，重试仍可打开", async () => {
+    wrapper = mount(App, { attachTo: document.body });
+    await setupWithForms(["保留目录76"]);
+    await wrapper.find('[data-test="save-local-btn"]').trigger("click");
+    await flushPromises();
+    const slow = pendingFileRead();
+    const incoming = designDoc(
+      minimalFlowXml().replace('name="兼容检查流程"', 'name="迟到文档76"'),
+    );
+    pickFile(wrapper, incoming, () => slow.text);
+    await wrapper.find('[data-test="open-doc-input"]').trigger("change");
+    await openApprovalDrawer(wrapper);
+    await setValue(
+      document.querySelector<HTMLInputElement>('[data-test="drawer-name"]')!,
+      "读取期间新输入76",
+    );
+    slow.resolve(incoming);
+    await flushPromises();
+    expect(wrapper.find('[data-test="doc-error"]').text()).toContain("新编辑");
+    expect(document.querySelector<HTMLInputElement>('[data-test="drawer-name"]')!.value).toBe(
+      "读取期间新输入76",
+    );
+    expect(wrapper.find('[data-test="dirty-badge"]').exists()).toBe(true);
+    // 目录必须仍是旧会话的目录，不能仅跳过宿主 adoptModel 而留半换状态。
+    await wrapper.find('[data-test="save-local-btn"]').trigger("click");
+    await flushPromises();
+    const saved = JSON.parse(localStorage.getItem("flowduet.playground.design")!);
+    expect(saved.xml).toContain("读取期间新输入76");
+    expect(saved.forms[0].name).toBe("保留目录76");
+    await openDocument(incoming);
+    expect(wrapper.find('[data-test="doc-status"]').text()).toContain("迟到文档76");
+  });
+
+  it("读取期间新打开表单编辑器也保持当前目录及编辑器", async () => {
+    wrapper = mount(App, { attachTo: document.body });
+    await setupWithForms(["保留编辑器76"]);
+    await wrapper.find('[data-test="save-local-btn"]').trigger("click");
+    await flushPromises();
+    const slow = pendingFileRead();
+    const incoming = designDoc(minimalFlowXml());
+    pickFile(wrapper, incoming, () => slow.text);
+    await wrapper.find('[data-test="open-doc-input"]').trigger("change");
+    await wrapper.find('[data-test="form-manager-btn"]').trigger("click");
+    await wrapper.find('[data-test="form-edit-btn-form_1"]').trigger("click");
+    await flushPromises();
+    slow.resolve(incoming);
+    await flushPromises();
+    expect(wrapper.find('[data-test="doc-error"]').text()).toContain("新编辑");
+    expect(wrapper.find('[data-test="form-designer-name"]').text()).toContain("保留编辑器76");
+  });
+});

@@ -137,3 +137,7 @@ const xml = await exportDeployXml(session.current!.model, session.current!.forms
 ## License
 
 Apache-2.0
+
+## 打开期间的新编辑保护
+
+宿主可调用 `session.open(textOrPromise, { canReplace })`，同步判定函数在文档临时校验完成后、模型与表单目录原子替换之前执行。返回 `false` 或抛错时取消打开并保留当前会话；未传选项沿用原行为。宿主应在读取前记录编辑世代，并在判定中检查等待期间是否产生新编辑。Playground 对文件打开和本地草稿恢复都接入该保护；发现新编辑后明确提示取消本次打开，用户处理修改后可重试。

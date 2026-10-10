@@ -24,6 +24,11 @@ export interface FlowDesignSessionInit {
   forms?: readonly FormDefinition[];
 }
 
+/** 宿主可在原子替换前检查等待期间是否有新编辑；默认保留原打开合同。 */
+export interface OpenDesignSessionOptions {
+  canReplace?: () => boolean;
+}
+
 export interface NewDesignOptions {
   processId?: string;
   processName?: string;
@@ -92,7 +97,10 @@ export class FlowDesignSession {
    * 任一失败保留原状态；读取或校验期间发生更新的新建/打开时，
    * 迟到的本次结果拒绝落地。文件 I/O 仍由宿主负责。
    */
-  async open(text: string | Promise<string>): Promise<FlowDesignState> {
+  async open(
+    text: string | Promise<string>,
+    options: OpenDesignSessionOptions = {},
+  ): Promise<FlowDesignState> {
     const revision = ++this.#revision;
     const assertCurrentRequest = (): void => {
       if (revision !== this.#revision) {
@@ -102,6 +110,13 @@ export class FlowDesignSession {
     const content = await text;
     assertCurrentRequest();
     const result: OpenDesignDocumentResult = await openDesignDocument(content);
+    assertCurrentRequest();
+    if (options.canReplace?.() === false) {
+      throw new Error(
+        "打开期间产生了新编辑，本次打开已取消；当前设计与输入已保留，请保存或处理修改后重新打开",
+      );
+    }
+    // 宿主回调也可能同步发起更新的替换，仍须保持最新请求优先。
     assertCurrentRequest();
     const state: FlowDesignState = { model: result.model, forms: result.forms };
     this.#state = state;

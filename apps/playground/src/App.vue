@@ -499,6 +499,15 @@ function reportSaveOutcome(
       : `${labels.saved}，当前无待修复项`;
 }
 
+/** 在读取/校验前捕获编辑起点，判定必须交给会话在实际替换前执行。 */
+function captureReplacementGuard(): () => boolean {
+  const generation = editGeneration.value;
+  const hadOpenEditor = formManagerRef.value?.hasOpenEditor() ?? false;
+  return () =>
+    editGeneration.value === generation &&
+    (hadOpenEditor || !(formManagerRef.value?.hasOpenEditor() ?? false));
+}
+
 /** 刷新恢复（#76）：挂载时读取本地草稿，经同一 open 合同原子替换演示模型 */
 onMounted(() => {
   // 保存快捷键：抽屉/表单编辑器（非模态）本体会遮挡工具栏按钮，Cmd/Ctrl+S
@@ -517,7 +526,9 @@ onMounted(() => {
     docStatus.value = "";
     docError.value = "";
     try {
-      const state = await session.open(Promise.resolve(text));
+      const state = await session.open(Promise.resolve(text), {
+        canReplace: captureReplacementGuard(),
+      });
       if (revision !== documentRevision) return;
       adoptModel(state.model);
       docStatus.value = "已恢复本地草稿（最近一次保存的内容），可继续编辑";
@@ -545,7 +556,10 @@ async function readFileIntoSession(file: File): Promise<void> {
   docError.value = "";
   try {
     // 会话在读取前登记请求；同步读取异常也作为 Promise 拒绝统一处理。
-    const state = await session.open(Promise.resolve().then(() => file.text()));
+    const state = await session.open(
+      Promise.resolve().then(() => file.text()),
+      { canReplace: captureReplacementGuard() },
+    );
     if (revision !== documentRevision) return;
     adoptModel(state.model);
     docStatus.value = `已打开设计文档（流程 ${String(state.model.process.get("name") ?? state.model.process.get("id"))}），可继续编辑`;
