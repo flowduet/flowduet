@@ -3,6 +3,10 @@
  *
  * 导出的都是 ROADMAP 声明的接缝：BpmnModel（moddle 树包装）/ Compiler /
  * DiLayout / 引擎适配器。冒烟版本号供集成方做健康检查。
+ *
+ * bpmn-moddle 未随 npm 包发布类型，src/types/bpmn-moddle.d.ts 提供 ambient 声明；
+ * 该声明经 scripts/pack-declarations.mjs 打进 dist 并挂上产物声明链（消费侧
+ * tsc 依赖它解析 `import type { ModdleElement }`，不会报 TS7016）。
  */
 export const CORE_VERSION = "0.2.1" as const;
 

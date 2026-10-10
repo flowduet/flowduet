@@ -7,7 +7,7 @@
 > 双视图流程设计器 —— 钉钉式审批视图与 BPMN 自由画布，共享同一棵流程模型树。
 > Dual-view workflow designer (DingTalk-style approval view + BPMN canvas) sharing one BPMN model tree. For Vue 3 & TypeScript.
 
-🚧 **预发布阶段。** `@flowduet/core` 与 `@flowduet/designer` 已发布 0.x 版本；当前进展与计划见 [ROADMAP](docs/ROADMAP.md)，发版流程见 [贡献指南](CONTRIBUTING.md)。
+🚧 **预发布阶段。** `@flowduet/core`、`@flowduet/designer` 已发布 0.x 版本；`@flowduet/form-create`（表单集成）随迭代三交付首个公开版本。当前进展与计划见 [ROADMAP](docs/ROADMAP.md)，发版流程见 [贡献指南](CONTRIBUTING.md)。
 
 ## 核心理念
 
@@ -21,8 +21,10 @@
 |---|---|
 | `@flowduet/core` | 模型树 + Parser/Compiler + 引擎适配器 + DI 布局 |
 | `@flowduet/designer` | Vue 3 设计器（双视图、属性面板） |
-| `@flowduet/form-create` | FormCreate 深度集成（表单设计 + 多框架渲染绑定） |
+| `@flowduet/form-create` | FormCreate 深度集成（表单设计 + 流程设计文档 + 绑定） |
 | `apps/playground` | 可独立部署的演示应用（兼文档示例） |
+
+表单集成边界：core 与 designer 保持零 FormCreate 依赖；`@flowduet/form-create` 封装开源 FormCreate 设计器与 Element Plus 渲染器，承载流程设计文档（BPMN XML + 文档内表单定义）的编解码与组合编辑。接入说明见[各包 README](packages/form-create/README.md)。
 
 ## 文档
 

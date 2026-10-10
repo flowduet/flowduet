@@ -56,4 +56,4 @@ async function doExport(): Promise<string> {
 
 ## License
 
-Apache-2.0
+Apache-2.0（见 [LICENSE](./LICENSE)）

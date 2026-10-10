@@ -45,7 +45,7 @@ GitHub 原生模板需要进入仓库默认分支后，才会出现在页面创�
 
 ## 发版（Changesets，人工流程）
 
-当前公开包为 `@flowduet/core` 与 `@flowduet/designer`；`@flowduet/playground` 是私有验收宿主。发包仍由维护者手动执行，CI 不会自动发布。发布期间避免继续向 `develop` 合并其他变更，使版本 PR、npm 产物与 Git tag 指向同一提交。
+当前公开包为 `@flowduet/core`、`@flowduet/designer` 与 `@flowduet/form-create`（迭代三起发布）；`@flowduet/playground` 是私有验收宿主。发包仍由维护者手动执行，CI 不会自动发布。发布期间避免继续向 `develop` 合并其他变更，使版本 PR、npm 产物与 Git tag 指向同一提交。
 
 ### 1. 确定发布范围
 
@@ -55,11 +55,12 @@ GitHub 原生模板需要进入仓库默认分支后，才会出现在页面创�
 pnpm changeset status
 npm view @flowduet/core version dist-tags --json --registry=https://registry.npmjs.org/
 npm view @flowduet/designer version dist-tags --json --registry=https://registry.npmjs.org/
+npm view @flowduet/form-create version dist-tags --json --registry=https://registry.npmjs.org/
 ```
 
 ### 2. 准备并评审版本 PR
 
-从 `develop` 新建分支，运行 `pnpm version-packages`：它调用 Changesets 消费已累积的 changeset，并更新包版本与 CHANGELOG。检查两个公开包的版本、内部依赖、CHANGELOG 和锁文件；如锁文件需要更新，一并纳入 PR。版本 PR 以 `develop` 为目标，评审通过且 Node 22/24 CI 全绿后再合并。不要在未经评审的本地版本状态直接发布。
+从 `develop` 新建分支，运行 `pnpm version-packages`：它调用 Changesets 消费已累积的 changeset，并更新包版本与 CHANGELOG。检查三包的版本、内部依赖、CHANGELOG 和锁文件；如锁文件需要更新，一并纳入 PR。**`@flowduet/core` 发版时须同步 bump `packages/core/src/index.ts` 的 `CORE_VERSION` 常量**（changesets 只更新 package.json，防漂移测试会拦截不一致——版本 PR CI 不会绿）。版本 PR 以 `develop` 为目标，评审通过且 Node 22/24 CI 全绿后再合并。不要在未经评审的本地版本状态直接发布。
 
 ### 3. 验收版本化产物
 
@@ -72,20 +73,23 @@ pnpm build
 pnpm smoke
 pnpm --filter @flowduet/core pack --dry-run --json
 pnpm --filter @flowduet/designer pack --dry-run --json
+pnpm --filter @flowduet/form-create pack --dry-run --json
 ```
 
-`pack --dry-run` 只检查拟装包内容。还需将两个公开包实际打成 tarball，在临时空项目同时安装并验证公开入口、CSS 与依赖解析。`realpath` 保证 macOS 上 npm 记录的本地 tarball 路径与真实路径一致：
+`pack --dry-run` 只检查拟装包内容。还需将三包实际打成 tarball，在临时空项目同时安装并验证公开入口、CSS 与依赖解析（`@flowduet/form-create` 是浏览器库，Node 侧只验模块解析边界，渲染验证以 Playground/浏览器为准）。`realpath` 保证 macOS 上 npm 记录的本地 tarball 路径与真实路径一致：
 
 ```sh
 FLOWDUET_PACK_DIR="$(realpath "$(mktemp -d)")"
 pnpm --filter @flowduet/core pack --pack-destination "$FLOWDUET_PACK_DIR"
 pnpm --filter @flowduet/designer pack --pack-destination "$FLOWDUET_PACK_DIR"
+pnpm --filter @flowduet/form-create pack --pack-destination "$FLOWDUET_PACK_DIR"
 
 FLOWDUET_CONSUMER_DIR="$(realpath "$(mktemp -d)")"
 printf '%s\n' '{"name":"flowduet-release-check","private":true,"type":"module"}' > "$FLOWDUET_CONSUMER_DIR/package.json"
 npm install --prefix "$FLOWDUET_CONSUMER_DIR" --registry=https://registry.npmmirror.com \
   "$FLOWDUET_PACK_DIR"/flowduet-core-*.tgz \
-  "$FLOWDUET_PACK_DIR"/flowduet-designer-*.tgz 'vue@^3.5.0'
+  "$FLOWDUET_PACK_DIR"/flowduet-designer-*.tgz \
+  "$FLOWDUET_PACK_DIR"/flowduet-form-create-*.tgz 'vue@^3.5.0'
 (
   cd "$FLOWDUET_CONSUMER_DIR"
   npm ls --depth=0
@@ -96,6 +100,7 @@ import { BpmnModel } from '@flowduet/core';
 import { exportXml } from '@flowduet/designer';
 if (typeof BpmnModel !== 'function' || typeof exportXml !== 'function') throw new Error('公开导出缺失');
 if (!existsSync(fileURLToPath(import.meta.resolve('@flowduet/designer/style.css')))) throw new Error('样式入口缺失');
+if (!existsSync(fileURLToPath(import.meta.resolve('@flowduet/form-create/style.css')))) throw new Error('form-create 样式入口缺失');
 NODE
 )
 ```
