@@ -15,7 +15,7 @@ pnpm add @flowduet/core
 ## 建模与编译
 
 ```ts
-import { BpmnModel, flowableAdapter, compile } from "@flowduet/core";
+import { BpmnModel, flowableAdapter, compile, verticalDiLayout } from "@flowduet/core";
 
 const model = BpmnModel.create({ processId: "leave_approval", adapter: flowableAdapter })
   .addStartEvent({ id: "start", name: "开始" })
