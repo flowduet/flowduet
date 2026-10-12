@@ -1,0 +1,269 @@
+{
+  "verifiedCommit": "211b9e13e63e9dc37b85bde067e9048b788ab076",
+  "interface": "现有 Playground；Playwright 真实点击/填入/选择与文件输入事件，无 Vue 私有状态注入",
+  "modeSwitches": [
+    "any",
+    "sequential",
+    "single",
+    "all"
+  ],
+  "roundtrip": [
+    {
+      "step": "刷新恢复完整两表单",
+      "forms": [
+        "form_1",
+        "form_2"
+      ],
+      "sameForms": true
+    },
+    {
+      "step": "文件打开与重复保存 1",
+      "forms": [
+        "form_1",
+        "form_2"
+      ],
+      "sameForms": true
+    },
+    {
+      "step": "文件打开与重复保存 2",
+      "forms": [
+        "form_1",
+        "form_2"
+      ],
+      "sameForms": true
+    }
+  ],
+  "preview": {
+    "applyValues": "{\n  \"Ftjcmv4kqbnoazc\": \"试填申请人\",\n  \"Ff8ymv4kqc29b2c\": \"试填说明\",\n  \"Fdajmv4kqcisb5c\": 42,\n  \"Fl3cmv4kqd30b8c\": \"2\",\n  \"Fwismv4kqdz6bbc\": [],\n  \"Fggdmv4kqf85bkc\": false,\n  \"Ff1nmv4ks9psbtc\": \"列内默认\"\n}",
+    "reviewInitial": "{}",
+    "validation": "两表单必填失败/补填成功",
+    "isolation": "试填不进设计定义；切换目标重置"
+  },
+  "namespacePositive": [
+    {
+      "name": "项目/引擎前缀更名 URI不变",
+      "opened": true,
+      "sameForms": true,
+      "overridePreserved": true
+    },
+    {
+      "name": "仅声明未使用其他引擎命名空间",
+      "opened": true,
+      "sameForms": true,
+      "overridePreserved": true
+    }
+  ],
+  "draft": [
+    {
+      "name": "多表单×完整字段×草稿刷新恢复",
+      "sameForms": true,
+      "unboundFormPreserved": true,
+      "deploymentBlocked": true,
+      "previewContinues": true,
+      "draftStatus": "已保存到本地（刷新后可恢复）；待修复 2 项（部署导出仍会被拦截）：\n单签审批节点「经理审批（approval_1）」的审批人为空白，请在抽屉补填后再导出\n条件分支「大额复核（fb）」未设置条件，请配置表达式或设为默认支路",
+      "error": "单签审批节点「经理审批（approval_1）」的审批人为空白，请在抽屉补填后再导出\n条件分支「大额复核（fb）」未设置条件，请配置表达式或设为默认支路"
+    }
+  ],
+  "references": [
+    {
+      "name": "失效节点覆盖不回退默认",
+      "draftOpened": true,
+      "invalidKeyRetained": true,
+      "validOtherPreview": true,
+      "deployBlocked": true,
+      "oldXmlCleared": true,
+      "error": "审批节点「经理审批（approval_1）」的表单 key「missing_node_form」不在表单目录中（已保留原值，请修复引用）"
+    },
+    {
+      "name": "无人继承的失效默认仍阻断部署",
+      "draftOpened": true,
+      "invalidKeyRetained": true,
+      "validOtherPreview": true,
+      "deployBlocked": true,
+      "oldXmlCleared": true,
+      "error": "流程默认表单 key「missing_default_form」不在表单目录中（已保留原值，请修复引用或补建表单）"
+    }
+  ],
+  "rejections": [
+    {
+      "name": "坏 JSON",
+      "inputSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+      "rejected": true,
+      "preservedModel": true,
+      "preservedForms": true,
+      "preservedDirty": true,
+      "error": "设计文档不是合法 JSON：Expected property name or '}' in JSON at position 1 (line 1 column 2)"
+    },
+    {
+      "name": "未知协议版本",
+      "inputSha256": "e4d3ee68de68200aaed9daa6d5a96cc51a518b8110ab8efdd874187b60852bc1",
+      "rejected": true,
+      "preservedModel": true,
+      "preservedForms": true,
+      "preservedDirty": true,
+      "error": "不支持的设计文档版本：期望 1，实际 99；不自动迁移"
+    },
+    {
+      "name": "未知引擎",
+      "inputSha256": "33cd1927780ad2914c2e30261268d44ba7097e045c8300a6daf1bbb5cb193a74",
+      "rejected": true,
+      "preservedModel": true,
+      "preservedForms": true,
+      "preservedDirty": true,
+      "error": "不支持的目标引擎：期望 \"flowable\"，实际 \"camunda\"；不猜测适配器"
+    },
+    {
+      "name": "未知提供者",
+      "inputSha256": "742490d7229a801e37fef69b0bf2804125b8b334e11ca65e23833d02f5c7b575",
+      "rejected": true,
+      "preservedModel": true,
+      "preservedForms": true,
+      "preservedDirty": true,
+      "error": "表单 form_2 的提供者是 custom/unknown，本版本只支持 form-create/element-plus"
+    },
+    {
+      "name": "重复表单 ID",
+      "inputSha256": "4ab3e5b62889b7c28a679b6d45af3be8a8ed5205c118121b49f4c6b680d3e098",
+      "rejected": true,
+      "preservedModel": true,
+      "preservedForms": true,
+      "preservedDirty": true,
+      "error": "表单 id 重复：form_1（文档内 id 必须唯一）"
+    },
+    {
+      "name": "无法解析规则",
+      "inputSha256": "fe994324f55e3bb3a41400827b4d8c30a9ac7ac242368e6ca762e71a9911788d",
+      "rejected": true,
+      "preservedModel": true,
+      "preservedForms": true,
+      "preservedDirty": true,
+      "error": "表单 rules 不是合法 JSON：Expected property name or '}' in JSON at position 1 (line 1 column 2)"
+    },
+    {
+      "name": "无法解析配置",
+      "inputSha256": "7c9760efb173f3b6b983fa796712f2cd3ecb807ccf2903b7f4c664e44406a864",
+      "rejected": true,
+      "preservedModel": true,
+      "preservedForms": true,
+      "preservedDirty": true,
+      "error": "表单 options 不是合法 JSON：Expected property name or '}' in JSON at position 1 (line 1 column 2)"
+    },
+    {
+      "name": "坏 XML",
+      "inputSha256": "87c9b00ffbcae04308829724e64b356c60f1bd5e91e5b17122c16a14c032f245",
+      "rejected": true,
+      "preservedModel": true,
+      "preservedForms": true,
+      "preservedDirty": true,
+      "error": "文档 XML 无法解析：unparsable content detected\n\tline: 0\n\tcolumn: 13\n\tnested error: unexpected end of file"
+    },
+    {
+      "name": "XML 重复节点 ID",
+      "inputSha256": "2e861575ce6e98141a4874881b6187969884298b2c790541bd5e33f45b540e90",
+      "rejected": true,
+      "preservedModel": true,
+      "preservedForms": true,
+      "preservedDirty": true,
+      "error": "文档 XML 无法解析：XML 解析产生警告：unparsable content <bpmn:userTask> detected\n\tline: 6\n\tcolumn: 4\n\tnested error: duplicate ID <start>\nunresolved reference <approval_1>\nunresolved reference <approval_1>\nunresolved reference <approval_1>"
+    },
+    {
+      "name": "未知扩展 URI 属性",
+      "inputSha256": "ad736ca4f325cf0c678ae1780ca08a9a5f990f8ed4e35aec2349075e336595bd",
+      "rejected": true,
+      "preservedModel": true,
+      "preservedForms": true,
+      "preservedDirty": true,
+      "error": "文档 XML 使用了当前引擎适配器不支持的扩展：XML 实际使用了未注册命名空间的内容：第 7 行的 other:assignee（前缀 \"other\"，命名空间 urn:unknown:engine）。这些内容不在目标适配器与项目协议的已注册扩展范围内，无法无损恢复，拒绝打开"
+    },
+    {
+      "name": "flowable 前缀绑定冲突 URI",
+      "inputSha256": "e2eff57c16daf6165c981bf664e06b390332b494d7a1bc16b6b2948d2582a48e",
+      "rejected": true,
+      "preservedModel": true,
+      "preservedForms": true,
+      "preservedDirty": true,
+      "error": "文档 XML 使用了当前引擎适配器不支持的扩展：XML 实际使用了未注册命名空间的内容：第 7 行的 flowable:assignee（前缀 \"flowable\"，命名空间 urn:unsupported:engine）；第 11 行的 flowable:delegateExpression（前缀 \"flowable\"，命名空间 urn:unsupported:engine）；第 11 行的 flowable:ccTo（前缀 \"flowable\"，命名空间 urn:unsupported:engine）；第 20 行的 flowable:assignee（前缀 \"flowable\"，命名空间 urn:unsupported:engine）；第 34 行的 flowable:assignee（前缀 \"flowable\"，命名空间 urn:unsupported:engine）；第 34 行的 flowable:formKey（前缀 \"flowable\"，命名空间 urn:unsupported:engine）；第 38 行的 flowable:assignee（前缀 \"flowable\"，命名空间 urn:unsupported:engine）；第 63 行的 flowable:assignee（前缀 \"flowable\"，命名空间 urn:unsupported:engine）；第 63 行的 flowable:formKey（前缀 \"flowable\"，命名空间 urn:unsupported:engine）；第 66 行的 flowable:collection（前缀 \"flowable\"，命名空间 urn:unsupported:engine）；第 66 行的 flowable:elementVariable（前缀 \"flowable\"，命名空间 urn:unsupported:engine）。这些内容不在目标适配器与项目协议的已注册扩展范围内，无法无损恢复，拒绝打开"
+    },
+    {
+      "name": "多流程 XML",
+      "inputSha256": "b7bea32f88e579870615e88cd70aeef24e1db7b5e946098ff12f7904a813d682",
+      "rejected": true,
+      "preservedModel": true,
+      "preservedForms": true,
+      "preservedDirty": true,
+      "error": "文档流程超出可编辑范围：XML 包含 2 个流程，本编辑器一次只编辑单流程文档"
+    },
+    {
+      "name": "超流程子集 scriptTask",
+      "inputSha256": "db244f2e26b270cc57a59cc9ab3a46544aec370ecb7bb8f83bfbfae5b24a298f",
+      "rejected": true,
+      "preservedModel": true,
+      "preservedForms": true,
+      "preservedDirty": true,
+      "error": "文档 XML 无法解析：XML 解析产生警告：unknown attribute <flowable:delegateExpression>\nunknown attribute <flowable:ccTo>"
+    },
+    {
+      "name": "超表单范围 upload",
+      "inputSha256": "5e321a7adaf8759fabd001fa82ced24d055f3b8792d481b9a04e45af2e1b533f",
+      "rejected": true,
+      "preservedModel": true,
+      "preservedForms": true,
+      "preservedDirty": true,
+      "error": "表单字段「申请人（Ftjcmv4kqbnoazc）」的类型是 upload，本版本支持的组件：文本 / 多行文本 / 数字 / 单选 / 多选 / 下拉单选 / 日期 / 开关 / 栅格布局，拒绝导入"
+    },
+    {
+      "name": "重复字段 ID",
+      "inputSha256": "b5d90c56c8896bd4d0abf2b71c5426ddfbdbab1b894d1f6758ebf72637a014fc",
+      "rejected": true,
+      "preservedModel": true,
+      "preservedForms": true,
+      "preservedDirty": true,
+      "error": "表单 form_1 的字段标识重复：Ftjcmv4kqbnoazc"
+    },
+    {
+      "name": "下拉多选",
+      "inputSha256": "8a406dfa7f639f4411513d1e6d75958051a6a2220fd66597f61eac12ccb66fa6",
+      "rejected": true,
+      "preservedModel": true,
+      "preservedForms": true,
+      "preservedDirty": true,
+      "error": "下拉字段「申请部门（Ftc7mv4kqelzbec）」配置了 multiple 多选形态，本版本只支持下拉单选"
+    },
+    {
+      "name": "下拉 allowCreate",
+      "inputSha256": "0cb8310cf316ce46815de19b8205b2c45f3c9cf2f1e27edf3a66e8b710fe58ae",
+      "rejected": true,
+      "preservedModel": true,
+      "preservedForms": true,
+      "preservedDirty": true,
+      "error": "下拉字段「申请部门（Ftc7mv4kqelzbec）」配置了 allowCreate 创建新选项，本版本只支持静态选项"
+    },
+    {
+      "name": "日期范围",
+      "inputSha256": "bc591b18c9f6649e059754745bd671580cdc231bcb5f60be501ba4abe2f4f520",
+      "rejected": true,
+      "preservedModel": true,
+      "preservedForms": true,
+      "preservedDirty": true,
+      "error": "日期字段「申请日期（Fxizmv4kqez1bhc）」的形态是 daterange，本版本只支持日期单值"
+    },
+    {
+      "name": "隐藏联动 _control",
+      "inputSha256": "f19cc5d9ed37733587878d4108897166420038d81501344e0cc7ada24780e8a9",
+      "rejected": true,
+      "preservedModel": true,
+      "preservedForms": true,
+      "preservedDirty": true,
+      "error": "规则「申请人（Ftjcmv4kqbnoazc）」不支持组件联动（_control）"
+    },
+    {
+      "name": "嵌套栅格",
+      "inputSha256": "1ec92aa43f4f4d0574e37089c5047920200c592039d6b26944d5dba87f2c4185",
+      "rejected": true,
+      "preservedModel": true,
+      "preservedForms": true,
+      "preservedDirty": true,
+      "error": "栅格布局（fcRow）不支持嵌套，复杂嵌套布局超出本版本范围"
+    }
+  ]
+}

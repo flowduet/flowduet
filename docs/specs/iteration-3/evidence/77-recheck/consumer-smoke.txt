@@ -1,0 +1,5 @@
+✓ core：建模 → compile → parse 往返、绑定解析、严格审计全部通过
+✓ designer：模块加载与公开导出（DingtalkDesigner/BpmnCanvas/exportXml/...）
+✓ form-create：Node 加载按预期拒绝（浏览器库边界：document is not defined）
+
+Node 侧 smoke 完成（form-create 的 JS 导出/渲染/保存恢复在浏览器环节验证）
