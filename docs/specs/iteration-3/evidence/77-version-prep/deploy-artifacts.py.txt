@@ -1,0 +1,19 @@
+import urllib.request,urllib.parse,base64,json,time,pathlib,uuid
+root=pathlib.Path('/Users/l/Documents/projects/flowduet/docs/specs/iteration-3/evidence/77-version-prep');base='http://127.0.0.1:18081/flowable-ui/process-api'
+auth='Basic '+base64.b64encode(b'admin:test').decode()
+def req(path,body=None,content='application/json'):
+ r=urllib.request.Request(base+path,data=body,headers={'Authorization':auth,'Content-Type':content})
+ with urllib.request.urlopen(r,timeout=15) as response:return response.status,json.load(response)
+for i in range(180):
+ try:_,engine=req('/management/engine');break
+ except Exception:time.sleep(1)
+else:raise RuntimeError('引擎未就绪')
+results=[]
+for name in ['consumer-export.xml','playground-export.xml']:
+ boundary='----'+uuid.uuid4().hex;xml=(root/name).read_bytes();payload=(f'--{boundary}\r\nContent-Disposition: form-data; name="file"; filename="{name}.bpmn20.xml"\r\nContent-Type: application/xml\r\n\r\n').encode()+xml+f'\r\n--{boundary}--\r\n'.encode()
+ status,dep=req('/repository/deployments',payload,'multipart/form-data; boundary='+boundary);assert status==201
+ _,defs=req('/repository/process-definitions?deploymentId='+dep['id']);assert len(defs['data'])==1;definition=defs['data'][0];assert definition['key']=='playground_demo'
+ _,instance=req('/runtime/process-instances',json.dumps({'processDefinitionId':definition['id'],'variables':[{'name':'manager','type':'string','value':'王经理'}]}).encode())
+ _,tasks=req('/runtime/tasks?processInstanceId='+instance['id']);assert len(tasks['data'])==1;task=tasks['data'][0];assert task['assignee']=='王经理' and task['formKey'] is None
+ item={'file':name,'deploymentStatus':status,'deploymentId':dep['id'],'definitionId':definition['id'],'instanceId':instance['id'],'taskAssignee':task['assignee'],'taskFormKey':task['formKey']};results.append(item);print(json.dumps(item,ensure_ascii=False),flush=True)
+(root/'artifacts-flowable68.json').write_text(json.dumps({'engine':engine,'passed':True,'results':results},ensure_ascii=False,indent=2))

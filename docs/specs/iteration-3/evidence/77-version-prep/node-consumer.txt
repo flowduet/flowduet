@@ -1,0 +1,1 @@
+{"coreVersion":"0.3.0","compileParse":true,"publicDesigner":true,"css":true,"nodeFormCreateBoundary":"document is not defined"}

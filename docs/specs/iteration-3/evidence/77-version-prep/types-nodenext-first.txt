@@ -1,0 +1,5 @@
+node_modules/@flowduet/designer/dist/index.d.ts(1,45): error TS2307: Cannot find module './components/DingtalkDesigner.vue' or its corresponding type declarations.
+node_modules/@flowduet/designer/dist/index.d.ts(2,39): error TS2307: Cannot find module './components/BpmnCanvas.vue' or its corresponding type declarations.
+node_modules/@flowduet/form-create/dist/index.d.ts(22,40): error TS2307: Cannot find module './components/FormManager.vue' or its corresponding type declarations.
+node_modules/@flowduet/form-create/dist/index.d.ts(23,41): error TS2307: Cannot find module './components/FormDesigner.vue' or its corresponding type declarations.
+node_modules/@flowduet/form-create/dist/index.d.ts(24,40): error TS2307: Cannot find module './components/FormPreview.vue' or its corresponding type declarations.
