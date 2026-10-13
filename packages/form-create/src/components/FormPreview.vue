@@ -22,15 +22,18 @@ const FormCreateRenderer = markRaw(formCreateFactory.$form());
 onBeforeMount(ensureFormCreateInstalled);
 
 const trialValue = ref<Record<string, unknown>>({});
+const rendererVersion = ref(0);
 /** fApi：渲染器挂载后经 update:api 事件交付（form-create v3 约定），用于触发校验 */
 const fApi = ref<{ validate?: (cb: (result: unknown) => void) => unknown } | null>(null);
 const validation = ref<{ ok: boolean; message: string } | null>(null);
 
-// 定义换代即重置：同 ID 文档重新打开后也不能沿用旧试填值
+// 定义换代时重建渲染器：相同默认值会被旧实例视为未变而省略更新通知。
 watch(
   () => props.form,
   () => {
+    rendererVersion.value += 1;
     trialValue.value = {};
+    fApi.value = null;
     validation.value = null;
   },
 );
@@ -82,6 +85,7 @@ function validate(): void {
     <template v-else>
       <component
         :is="FormCreateRenderer"
+        :key="rendererVersion"
         v-model="trialValue"
         :rule="rule"
         :option="option"

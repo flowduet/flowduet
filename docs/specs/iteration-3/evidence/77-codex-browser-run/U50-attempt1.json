@@ -1,0 +1,14 @@
+{
+  "title": "依次空集合",
+  "source": "A07",
+  "method": "Codex内置浏览器真实UI",
+  "startedUTC": "2026-10-12T10:21:42.405Z",
+  "status": "待诊断",
+  "attempts": [],
+  "error": "Error: Playwright selector deadline exceeded\nlocator.waitFor(hidden) timed out for selector [data-test=\"node-drawer\"]\nLocator diagnostics: {\"kind\":\"action_failed\",\"action\":\"waitFor\",\"locator\":\"[data-test=\\\"node-drawer\\\"]\",\"matchCount\":1,\"matches\":[{\"ariaLabel\":\"审批节点\",\"disabled\":false,\"role\":\"dialog\",\"tag\":\"div\",\"text\":\"审批节点节点名称审批人（集合变量）完成方式单签一人审批会签全员同意或签任一同意依次顺序逐人表单继承默认（申请单）申请单复核单取消确定\",\"type\":null,\"visible\":true}],\"visibleCount\":1,\"truncated\":false}",
+  "completedUTC": "2026-10-12T10:21:49.009Z",
+  "evidence": [
+    "U50.ax.txt",
+    "U50.jpg"
+  ]
+}

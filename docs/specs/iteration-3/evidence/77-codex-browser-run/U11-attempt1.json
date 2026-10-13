@@ -1,0 +1,14 @@
+{
+  "title": "多选三态",
+  "source": "A10",
+  "method": "Codex内置浏览器真实UI",
+  "startedUTC": "2026-10-12T10:10:44.674Z",
+  "status": "待诊断",
+  "attempts": [],
+  "error": "Error: Playwright selector deadline exceeded\nwaiting on click for selector .el-select__wrapper >> internal:has=\"internal:role=combobox[name=\\\"默认值\\\"s]\"\nLocator diagnostics: {\"kind\":\"no_matches\",\"action\":\"click\",\"locator\":\".el-select__wrapper >> internal:has=\\\"internal:role=combobox[name=\\\\\\\"默认值\\\\\\\"s]\\\"\",\"matchCount\":0,\"matches\":[],\"visibleCount\":0,\"truncated\":false}",
+  "completedUTC": "2026-10-12T10:11:00.650Z",
+  "evidence": [
+    "U11.ax.txt",
+    "U11.jpg"
+  ]
+}

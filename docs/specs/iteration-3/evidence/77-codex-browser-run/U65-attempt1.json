@@ -1,0 +1,14 @@
+{
+  "title": "节点key失效不回退",
+  "source": "A11",
+  "method": "Codex内置浏览器真实UI",
+  "startedUTC": "2026-10-12T10:25:28.623Z",
+  "status": "待诊断",
+  "attempts": [],
+  "error": "Error: Playwright selector deadline exceeded\nlocator.waitFor(visible) timed out for selector [data-test=\"preview-target-error\"]\nLocator diagnostics: {\"kind\":\"no_matches\",\"action\":\"waitFor\",\"locator\":\"[data-test=\\\"preview-target-error\\\"]\",\"matchCount\":0,\"matches\":[],\"visibleCount\":0,\"truncated\":false}",
+  "completedUTC": "2026-10-12T10:25:32.991Z",
+  "evidence": [
+    "U65.ax.txt",
+    "U65.jpg"
+  ]
+}

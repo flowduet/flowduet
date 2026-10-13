@@ -6,7 +6,23 @@ import vueParser from "vue-eslint-parser";
 
 export default tseslint.config(
   {
-    ignores: ["**/dist/", "**/coverage/", "npm/flowduet/"],
+    ignores: [
+      "**/dist/",
+      "**/coverage/",
+      "npm/flowduet/",
+      // 验收操作脚本是原始证据快照，不作为工程源码改写。
+      "docs/specs/iteration-3/evidence/77-codex-browser-run/scripts/",
+    ],
+  },
+  // Node 构建脚本（*.mjs）：console/process 等 Node 全局可用
+  {
+    files: ["**/*.mjs"],
+    languageOptions: {
+      globals: {
+        console: "readonly",
+        process: "readonly",
+      },
+    },
   },
   eslint.configs.recommended,
   ...tseslint.configs.recommended,

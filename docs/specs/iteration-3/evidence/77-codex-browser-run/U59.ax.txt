@@ -1,0 +1,38 @@
+Browser tab: 2, Title: "FlowDuet Playground", URL: "http://127.0.0.1:5173/".
+1 AXWebArea FlowDuet Playground, URL: 127.0.0.1:5173/
+	2 container app
+		3 container
+			4 heading FlowDuet Playground, Value: 1
+				5 text FlowDuet Playground
+			112 Description: radio-group, ID: el-id-8304-75
+				113 container
+					114 radio button (settable, integer) Description: 钉钉式, Value: 1
+					115 text 钉钉式
+				116 container
+					117 radio button (settable, integer) Description: BPMN 视图, Value: 0
+					118 text BPMN 视图
+			13 button 新建设计
+			14 button 打开文档
+			15 button 表单管理
+			16 button 预览表单
+			17 button 保存草稿
+			18 button 下载设计文档
+			19 button 导出 XML
+		20 container
+			218 text 流程默认表单
+			219 pop up button (collapsed, settable) Value: 无, Secondary Actions: Expand
+				220 menu
+					221 (selected) 无
+			222 container
+				223 text 起 开始
+			224 pop up button (collapsed) +, Help: 在此后添加节点, ID: el-id-8304-148, Secondary Actions: Expand
+			225 container
+				226 text 审 审批节点 未配置审批人
+			227 pop up button (collapsed) +, Help: 在此后添加节点, ID: el-id-8304-152, Secondary Actions: Expand
+			228 container
+				229 text 终 结束
+			230 text 已保存到本地（刷新后可恢复）；待修复 1 项（部署导出仍会被拦截）：
+单签审批节点「审批节点（approval_1）」的审批人为空白，请在抽屉补填后再导出
+			231 text 单签审批节点「审批节点（approval_1）」的审批人为空白，请在抽屉补填后再导出
+
+The focused UI element is 17 button 保存草稿

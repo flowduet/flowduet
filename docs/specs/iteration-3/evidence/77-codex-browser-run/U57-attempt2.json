@@ -1,0 +1,23 @@
+{
+  "title": "未确认输入切BPMN",
+  "source": "A10 A15",
+  "method": "Codex内置浏览器真实UI",
+  "startedUTC": "2026-10-12T10:48:02.601Z",
+  "status": "工具阻塞",
+  "attempts": [
+    {
+      "status": "待诊断",
+      "evidence": "U57-attempt1.json"
+    }
+  ],
+  "actual": {
+    "committedModelSurvivesView": true,
+    "unsubmittedBufferPath": "抽屉打开时工具栏被遮挡，无法完成原步骤；不计该子场景通过"
+  },
+  "completedUTC": "2026-10-12T10:48:06.177Z",
+  "evidence": [
+    "U57.ax.txt",
+    "U57.jpg"
+  ],
+  "verdictNote": "仅完成已记录的部分步骤，未执行或无法观察的原步骤不计通过。"
+}

@@ -12,3 +12,10 @@ docs/specs/iteration-3/evidence/75-browser-fixtures/E01.flowduet.json
 docs/specs/iteration-3/evidence/76-browser-run/
 docs/specs/iteration-3/evidence/76-browser-recheck/
 docs/specs/iteration-3/evidence/76-browser-fixtures/bad-json.flowduet.json
+
+# PR #89 复验的原始下载、部署资源及校验和保留实际字节。
+docs/specs/iteration-3/evidence/77-recheck/
+
+# PR #89 内置浏览器原始证据保留字节及校验和。
+docs/specs/iteration-3/evidence/77-codex-browser-run/
+docs/specs/iteration-3/evidence/77-u64-fix/

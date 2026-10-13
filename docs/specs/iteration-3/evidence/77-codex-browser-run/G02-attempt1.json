@@ -1,0 +1,13 @@
+{
+  "title": "错误format",
+  "source": "A12/A13/A20",
+  "method": "Codex内置浏览器真实UI",
+  "startedUTC": "2026-10-12T07:36:33.013Z",
+  "status": "待诊断",
+  "error": "Timed out after 8000ms waiting for file chooser.",
+  "completedUTC": "2026-10-12T07:36:41.266Z",
+  "evidence": [
+    "G02.ax.txt",
+    "G02.jpg"
+  ]
+}

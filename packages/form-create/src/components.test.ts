@@ -122,6 +122,27 @@ describe("FormPreview（真实渲染器试填）", () => {
     expect((wrapper.find("input").element as HTMLInputElement).value).toBe("重开默认");
   });
 
+  it.each([false, true])(
+    "同 ID 相同定义重开后当前值与可见默认一致（已试填=%s）",
+    async (edited) => {
+      wrapper = mount(FormPreview, { props: { form: APPLY_FORM } });
+      await flushPromises();
+      if (edited) {
+        await wrapper.find("input").setValue("旧试填");
+        await flushPromises();
+      }
+
+      // 文件重开创建新的定义对象，序列化内容与旧定义相同。
+      await wrapper.setProps({ form: { ...APPLY_FORM } });
+      await flushPromises();
+      expect((wrapper.find("input").element as HTMLInputElement).value).toBe("默认事由");
+      expect(JSON.parse(wrapper.find('[data-test="form-preview-values"]').text())).toEqual({
+        reason: "默认事由",
+      });
+      expect(wrapper.props("form").rules).toBe(APPLY_FORM.rules);
+    },
+  );
+
   it("内容无法解析时显示错误而非白屏", () => {
     wrapper = mount(FormPreview, {
       props: { form: { ...APPLY_FORM, rules: "{bad-json" } },

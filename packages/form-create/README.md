@@ -1,12 +1,10 @@
 # @flowduet/form-create
 
-FlowDuet 表单集成包（迭代三构建中）：承载**流程设计文档**的编解码与组合编辑装配，并封装真实的 [FormCreate](https://github.com/xaboy/form-create-designer) 开源设计器与 Element Plus 渲染器。当前版本（#72–#75）交付：八类常用字段与基础栅格布局的表单设计、多表单目录管理（新建 / 改名 / 删除守卫）、流程默认绑定与审批节点显式覆盖、文档往返、真实渲染器试填与组合部署导出、打开侧的引擎扩展兼容检查与原子恢复。
+FlowDuet 表单集成包：承载**流程设计文档**的编解码与组合编辑装配，并封装真实的 [FormCreate](https://github.com/xaboy/form-create-designer) 开源设计器与 Element Plus 渲染器。当前版本交付：八类常用字段与基础栅格布局的表单设计、多表单目录管理（新建 / 改名 / 删除守卫）、流程默认绑定与审批节点显式覆盖、文档往返、真实渲染器试填与组合部署导出、打开侧的引擎扩展兼容检查与原子恢复。
 
 > **边界（ADR-0006 / ADR-0009）**：`@flowduet/core` 与 `@flowduet/designer` 保持零 FormCreate 依赖；表单领域的内容（设计器、渲染、文档内表单定义）全部收敛在本包。宿主负责存储（文件、浏览器或后端），本包负责成套编解码与原子恢复。不使用 FormCreate Pro 与 AI 助理（设计器 AI 模块已关闭）。
 
 ## 安装
-
-> 当前尚未发布到 npm（迭代三构建中，首个公开 alpha 随迭代三发版交付）；仓库内以 pnpm workspace 引用。
 
 ```sh
 pnpm add @flowduet/form-create @flowduet/core @flowduet/designer element-plus vue
@@ -20,6 +18,8 @@ import "element-plus/dist/index.css";
 ```
 
 锁定的外部依赖：`@form-create/designer@3.5.0` + `@form-create/element-ui@3.3.4`（Vue 3 / Element Plus 线，peer `vue ^3.5`）。注意 npm 上 `latest` 标签是 Vue 2 线、`next` 标签会漂移——请勿混装其他版本。
+
+> **浏览器环境边界**：本包（含上游 FormCreate 设计器）在模块加载期访问 `document`，纯 Node 下 `import "@flowduet/form-create"` 会抛 `document is not defined`——属浏览器组件库的预期行为。SSR 宿主（Nuxt 等）需将本包的导入与组件挂载收敛到客户端（client-only / onMounted 动态导入）；`@flowduet/core` 与 `@flowduet/designer` 无此限制（core 同构可用，designer 仅依赖 Vue 运行时）。
 
 ## 流程设计文档
 
@@ -134,10 +134,10 @@ const xml = await exportDeployXml(session.current!.model, session.current!.forms
 - 实际使用了未注册命名空间的元素或属性——包括假借 `flowable` 前缀但绑定其他 URI、真实使用 `camunda:` 扩展——明确拒绝，错误点名前缀、URI、限定名与行号。动机：moddle 对这类内容不产生解析警告而是静默收进 `$attrs`，语义丢失对调用者不可见。
 - 判定经 `parse` 的 `rejectUnregisteredNamespaces` 选项开启（本包的保存自证与打开路径均已启用）；已注册集合以适配器与项目协议的扩展包为准，新增合法组件或适配器不需要维护第二份名单。
 
-## License
-
-Apache-2.0
-
 ## 打开期间的新编辑保护
 
 宿主可调用 `session.open(textOrPromise, { canReplace })`，同步判定函数在文档临时校验完成后、模型与表单目录原子替换之前执行。返回 `false` 或抛错时取消打开并保留当前会话；未传选项沿用原行为。宿主应在读取前记录编辑世代，并在判定中检查等待期间是否产生新编辑。Playground 对文件打开和本地草稿恢复都接入该保护；发现新编辑后明确提示取消本次打开，用户处理修改后可重试。
+
+## License
+
+Apache-2.0（见 [LICENSE](./LICENSE)）

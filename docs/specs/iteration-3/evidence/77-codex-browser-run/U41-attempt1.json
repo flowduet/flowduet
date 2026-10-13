@@ -1,0 +1,14 @@
+{
+  "title": "条件并行抄送无有效表单",
+  "source": "A19",
+  "method": "Codex内置浏览器真实UI",
+  "startedUTC": "2026-10-12T10:33:19.483Z",
+  "status": "失败",
+  "attempts": [],
+  "error": "预览非审批",
+  "completedUTC": "2026-10-12T10:33:20.420Z",
+  "evidence": [
+    "U41.ax.txt",
+    "U41.jpg"
+  ]
+}

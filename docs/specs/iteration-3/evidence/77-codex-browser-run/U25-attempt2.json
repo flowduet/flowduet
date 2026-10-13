@@ -1,0 +1,19 @@
+{
+  "title": "表单级配置保真",
+  "source": "A10",
+  "method": "Codex内置浏览器真实UI",
+  "startedUTC": "2026-10-12T10:36:04.384Z",
+  "status": "失败",
+  "attempts": [
+    {
+      "status": "失败",
+      "evidence": "U25-attempt1.json"
+    }
+  ],
+  "error": "输入未确认",
+  "completedUTC": "2026-10-12T10:36:08.118Z",
+  "evidence": [
+    "U25.ax.txt",
+    "U25.jpg"
+  ]
+}

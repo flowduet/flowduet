@@ -1,0 +1,583 @@
+Browser tab: 2, Title: "FlowDuet Playground", URL: "http://127.0.0.1:5173/".
+0 AXWebArea FlowDuet Playground, URL: 127.0.0.1:5173/
+	1 container app
+		2 container
+			3 heading FlowDuet Playground, Value: 1
+				4 text FlowDuet Playground
+			537 text 有未保存修改
+			5 Description: radio-group, ID: el-id-7637-37
+				6 container
+					7 radio button (settable, integer) Description: 钉钉式, Value: 1
+					8 text 钉钉式
+				9 container
+					10 radio button (settable, integer) Description: BPMN 视图, Value: 0
+					11 text BPMN 视图
+			12 button 新建设计
+			13 button 打开文档
+			14 button 表单管理
+			15 button 预览表单
+			16 button 保存草稿
+			17 button 下载设计文档
+			18 button 导出 XML
+		19 container
+			20 text 流程默认表单
+			21 pop up button (collapsed, settable) Value: 申请单, Secondary Actions: Expand
+				22 menu
+					23 无
+					24 (selected) 申请单
+					25 复核单
+			26 container
+				27 text 起 开始
+			28 pop up button (collapsed) +, Help: 在此后添加节点, ID: el-id-7637-723, Secondary Actions: Expand
+			29 container
+				30 text 审 经理审批 审批人 ${manager} 表单：申请单（继承默认）
+			31 pop up button (collapsed) +, Help: 在此后添加节点, ID: el-id-7637-727, Secondary Actions: Expand
+			32 container
+				33 text 审 合同会签 多人 · 集合 approvers 表单：复核单（节点指定）
+			34 pop up button (collapsed) +, Help: 在此后添加节点, ID: el-id-7637-731, Secondary Actions: Expand
+			35 container
+				36 text 抄 抄送法务备案 抄送：张三,李四
+			37 pop up button (collapsed) +, Help: 在此后添加节点, ID: el-id-7637-735, Secondary Actions: Expand
+			38 container
+				39 text 条件分支
+				40 button 默认1, Help: 点击取消默认（其余情况无兜底支路）
+				41 button 默认2, Help: 把该支路设为默认（其余情况走此支路）
+				42 button + 分支, Help: 添加分支
+				43 button 删块, Help: 删除整块（前后直连）
+				44 container
+					45 button 常规审批 其他情况（默认）, Help: 常规审批：其他情况（默认）；点击配置此分支
+						46 text 常规审批
+						47 text 其他情况（默认）
+					48 text 审
+					49 text 总监审批
+					50 text 审批人 ${director}
+					51 text 表单：申请单（继承默认）
+					52 pop up button (collapsed) +, Help: 在此后添加节点, ID: el-id-7637-739, Secondary Actions: Expand
+				53 container
+					54 button 大额复核 ${amount > 1000}, Help: 大额复核：${amount > 1000}；点击配置此分支
+						55 text 大额复核
+						56 text ${amount > 1000}
+					57 container
+						58 text 并行分支
+						59 button + 分支, Help: 添加分支
+						60 button 删块, Help: 删除整块（前后直连）
+					61 container
+						62 text 支路 1
+						63 container
+							64 text 审 财务复核 审批人 ${finance} 表单：复核单（节点指定）
+						65 pop up button (collapsed) +, Help: 在此后添加节点, ID: el-id-7637-743, Secondary Actions: Expand
+						66 text 支路 2
+						67 container
+							68 text 审 法务复核 审批人 ${legal} 表单：申请单（继承默认）
+						69 pop up button (collapsed) +, Help: 在此后添加节点, ID: el-id-7637-747, Secondary Actions: Expand
+			70 container
+				71 text 终 结束
+			384 text 已保存到本地（刷新后可恢复），当前无待修复项
+			383 text <?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:flowduet="urn:flowduet:bpmn" xmlns:flowable="http://flowable.org/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="playground_demo_defs" targetNamespace="http://flowduet.dev/bpmn">
+  <bpmn:process id="playground_demo" name="申请与复核" isExecutable="true" flowduet:defaultFormKey="form_1">
+    <bpmn:startEvent id="start" name="开始">
+      <bpmn:outgoing>f1</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:userTask id="approval_1" name="经理审批" flowable:assignee="${manager}">
+      <bpmn:incoming>f1</bpmn:incoming>
+      <bpmn:outgoing>flow_conv_in_1</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:serviceTask id="cc_1" name="抄送法务备案" flowable:delegateExpression="${flowduetCcTask}" flowable:ccTo="张三,李四">
+      <bpmn:incoming>flow_conv_out_1</bpmn:incoming>
+      <bpmn:outgoing>f2</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="fork1" name="金额判断" default="fa">
+      <bpmn:incoming>f2</bpmn:incoming>
+      <bpmn:outgoing>fa</bpmn:outgoing>
+      <bpmn:outgoing>fb</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="a_node" name="总监审批" flowable:assignee="${director}">
+      <bpmn:incoming>fa</bpmn:incoming>
+      <bpmn:outgoing>fa_j</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:parallelGateway id="pfork" name="并行开始">
+      <bpmn:incoming>fb</bpmn:incoming>
+      <bpmn:outgoing>fp_fin</bpmn:outgoing>
+      <bpmn:outgoing>fp_legal</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:parallelGateway id="pjoin" name="并行结束">
+      <bpmn:incoming>fin_pj</bpmn:incoming>
+      <bpmn:incoming>legal_pj</bpmn:incoming>
+      <bpmn:outgoing>pj_j1</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:userTask id="fin_node" name="财务复核" flowable:assignee="${finance}" flowable:formKey="form_2">
+      <bpmn:incoming>fp_fin</bpmn:incoming>
+      <bpmn:outgoing>fin_pj</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="legal_node" name="法务复核" flowable:assignee="${legal}">
+      <bpmn:incoming>fp_legal</bpmn:incoming>
+      <bpmn:outgoing>legal_pj</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="join1" name="汇聚">
+      <bpmn:incoming>pj_j1</bpmn:incoming>
+      <bpmn:incoming>fa_j</bpmn:incoming>
+      <bpmn:outgoing>fj</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:endEvent id="end" name="结束">
+      <bpmn:incoming>fj</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="f1" sourceRef="start" targetRef="approval_1" />
+    <bpmn:sequenceFlow id="f2" sourceRef="cc_1" targetRef="fork1" />
+    <bpmn:sequenceFlow id="fa" name="常规审批" sourceRef="fork1" targetRef="a_node" />
+    <bpmn:sequenceFlow id="fb" name="大额复核" sourceRef="fork1" targetRef="pfork">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${amount &gt; 1000}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="fp_fin" sourceRef="pfork" targetRef="fin_node" />
+    <bpmn:sequenceFlow id="fp_legal" sourceRef="pfork" targetRef="legal_node" />
+    <bpmn:sequenceFlow id="fin_pj" sourceRef="fin_node" targetRef="pjoin" />
+    <bpmn:sequenceFlow id="legal_pj" sourceRef="legal_node" targetRef="pjoin" />
+    <bpmn:sequenceFlow id="pj_j1" sourceRef="pjoin" targetRef="join1" />
+    <bpmn:sequenceFlow id="fa_j" sourceRef="a_node" targetRef="join1" />
+    <bpmn:sequenceFlow id="fj" sourceRef="join1" targetRef="end" />
+    <bpmn:userTask id="approval_mi" name="合同会签" flowable:assignee="${assignee}" flowable:formKey="form_2">
+      <bpmn:incoming>flow_conv_in_1</bpmn:incoming>
+      <bpmn:outgoing>flow_conv_out_1</bpmn:outgoing>
+      <bpmn:multiInstanceLoopCharacteristics flowable:collection="approvers" flowable:elementVariable="assignee">
+        <bpmn:completionCondition xsi:type="bpmn:tFormalExpression">${nrOfCompletedInstances == nrOfInstances}</bpmn:completionCondition>
+      </bpmn:multiInstanceLoopCharacteristics>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="flow_conv_in_1" sourceRef="approval_1" targetRef="approval_mi" />
+    <bpmn:sequenceFlow id="flow_conv_out_1" sourceRef="approval_mi" targetRef="cc_1" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="playground_demo_di">
+    <bpmndi:BPMNPlane id="playground_demo_plane" bpmnElement="playground_demo">
+      <bpmndi:BPMNShape id="start_di" bpmnElement="start">
+        <dc:Bounds x="262" y="40" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="approval_1_di" bpmnElement="approval_1">
+        <dc:Bounds x="230" y="136" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="cc_1_di" bpmnElement="cc_1">
+        <dc:Bounds x="230" y="416" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="fork1_di" bpmnElement="fork1">
+        <dc:Bounds x="255" y="556" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="a_node_di" bpmnElement="a_node">
+        <dc:Bounds x="40" y="676" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="pfork_di" bpmnElement="pfork">
+        <dc:Bounds x="350" y="676" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="pjoin_di" bpmnElement="pjoin">
+        <dc:Bounds x="350" y="946" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="fin_node_di" bpmnElement="fin_node">
+        <dc:Bounds x="230" y="796" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="legal_node_di" bpmnElement="legal_node">
+        <dc:Bounds x="420" y="796" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="join1_di" bpmnElement="join1">
+        <dc:Bounds x="255" y="1066" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="end_di" bpmnElement="end">
+        <dc:Bounds x="262" y="1176" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="f1_di" bpmnElement="f1">
+        <di:waypoint x="280" y="76" />
+        <di:waypoint x="280" y="136" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f2_di" bpmnElement="f2">
+        <di:waypoint x="280" y="496" />
+        <di:waypoint x="280" y="556" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="fa_di" bpmnElement="fa">
+        <di:waypoint x="271.6666666666667" y="606" />
+        <di:waypoint x="271.6666666666667" y="614" />
+        <di:waypoint x="90" y="614" />
+        <di:waypoint x="90" y="676" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="fb_di" bpmnElement="fb">
+        <di:waypoint x="288.3333333333333" y="606" />
+        <di:waypoint x="288.3333333333333" y="622" />
+        <di:waypoint x="375" y="622" />
+        <di:waypoint x="375" y="676" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="fp_fin_di" bpmnElement="fp_fin">
+        <di:waypoint x="366.6666666666667" y="726" />
+        <di:waypoint x="366.6666666666667" y="734" />
+        <di:waypoint x="280" y="734" />
+        <di:waypoint x="280" y="796" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="fp_legal_di" bpmnElement="fp_legal">
+        <di:waypoint x="383.3333333333333" y="726" />
+        <di:waypoint x="383.3333333333333" y="742" />
+        <di:waypoint x="470" y="742" />
+        <di:waypoint x="470" y="796" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="fin_pj_di" bpmnElement="fin_pj">
+        <di:waypoint x="280" y="876" />
+        <di:waypoint x="280" y="938" />
+        <di:waypoint x="366.6666666666667" y="938" />
+        <di:waypoint x="366.6666666666667" y="946" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="legal_pj_di" bpmnElement="legal_pj">
+        <di:waypoint x="470" y="876" />
+        <di:waypoint x="470" y="930" />
+        <di:waypoint x="383.3333333333333" y="930" />
+        <di:waypoint x="383.3333333333333" y="946" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="pj_j1_di" bpmnElement="pj_j1">
+        <di:waypoint x="375" y="996" />
+        <di:waypoint x="375" y="1050" />
+        <di:waypoint x="288.3333333333333" y="1050" />
+        <di:waypoint x="288.3333333333333" y="1066" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="fa_j_di" bpmnElement="fa_j">
+        <di:waypoint x="90" y="756" />
+        <di:waypoint x="90" y="1058" />
+        <di:waypoint x="271.6666666666667" y="1058" />
+        <di:waypoint x="271.6666666666667" y="1066" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="fj_di" bpmnElement="fj">
+        <di:waypoint x="280" y="1116" />
+        <di:waypoint x="280" y="1176" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="approval_mi_di" bpmnElement="approval_mi">
+        <dc:Bounds x="230" y="276" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="flow_conv_in_1_di" bpmnElement="flow_conv_in_1">
+        <di:waypoint x="280" y="216" />
+        <di:waypoint x="280" y="276" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_conv_out_1_di" bpmnElement="flow_conv_out_1">
+        <di:waypoint x="280" y="356" />
+        <di:waypoint x="280" y="416" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
+
+		385 container 表单管理
+			386 container
+				409 heading 表单管理, Value: 2
+					410 text 表单管理
+				411 button Close this dialog
+				391 container el-id-7637-34
+					392 text field (settable) el-id-7637-100
+					393 button 新建表单
+					394 content list
+						395 container
+							396 container form_1
+								397 text 申请单 
+								398 text form_1
+							399 button 改名
+							400 button 编辑内容
+							401 button 删除
+						402 container
+							403 container form_2
+								404 text 复核单 
+								405 text form_2
+							406 button 改名
+							407 button 编辑内容
+							408 button 删除
+					412 container 编辑表单：申请单
+						413 container 申请单 取消 保存表单内容
+							414 container
+								415 heading 编辑表单：申请单, Value: 2
+									416 text 编辑表单：申请单
+								417 button Close this dialog
+							418 container
+								419 text 申请单
+								420 button 取消
+								421 button 保存表单内容
+								422 container
+									538 text 
+									539 text 
+									540 text 
+									426 container
+										427 text 组件
+										428 text 大纲
+										429 heading 基础组件 , Value: 4
+											430 text 基础组件
+											541 text 
+										432 container
+											542 text 
+											434 text 输入框
+										435 container
+											543 text 
+											437 text 多行输入框
+										438 container
+											544 text 
+											440 text 计数器
+										441 container
+											545 text 
+											443 text 单选框
+										444 container
+											546 text 
+											446 text 多选框
+										447 container
+											547 text 
+											449 text 选择器
+										450 container
+											548 text 
+											452 text 日期
+										453 container
+											549 text 
+											455 text 开关
+										456 heading 布局组件 , Value: 4
+											457 text 布局组件
+											550 text 
+										459 container
+											551 text 
+											461 text 栅格布局
+									462 container
+										552 text 
+										553 text 
+										465 button  预览
+											554 text 
+											467 text 预览
+										468 button  清空
+											555 text 
+											470 text 清空
+									471 container
+										556 link form-create.com/
+										473 container
+											474 container el-id-7637-1479
+												557 text *
+												476 text 申请人
+											477 text field (settable) *申请人, Value: 设计默认申请人, ID: el-id-7637-1496
+											478 container el-id-7637-1480
+												558 text *
+												480 text 申请说明
+											481 text entry area (settable) *申请说明, ID: el-id-7637-1497, Value: 第一行
+第二行
+											482 container el-id-7637-1481
+												559 text *
+												484 text 申请金额
+											485 container
+												486 button decrease number
+												487 button increase number
+												488 stepper (settable, integer) *申请金额, Value: 0, ID: el-id-7637-1498
+											489 container el-id-7637-1482
+												560 text *
+												491 text 申请类型
+											492 Description: *申请类型, ID: el-id-7637-1499
+												493 container
+													494 radio button (settable, integer) Description: 否, Value: 1
+													495 text 否
+												496 container
+													497 radio button (settable, integer) Description: 是, Value: 0
+													498 text 是
+											561 text 
+											562 container
+												563 text 
+												564 text 
+											499 container el-id-7637-1484
+												565 text *
+												501 text 申请附件类别
+											502 container *申请附件类别
+												503 container
+													504 checkbox (settable, integer) Description: 否, Value: 0
+													505 text 否
+												506 container
+													507 checkbox (settable, integer) Description: 是, Value: 0
+													508 text 是
+											509 container el-id-7637-1485
+												566 text *
+												511 text 申请部门
+											512 container
+												513 combo box (collapsed, settable) *申请部门, ID: el-id-7637-1501, Secondary Actions: Expand
+												514 text 否
+												515 image
+											516 container el-id-7637-1490
+												567 text *
+												518 text 申请日期
+											519 container
+												520 image
+												521 combo box (collapsed, settable) *申请日期, Value: 2026-10-12, ID: el-id-7637-1502, Secondary Actions: Expand
+											522 container el-id-7637-1492
+												568 text *
+												524 text 紧急申请
+											525 container
+												526 switch (settable, boolean) Description: *紧急申请, Value: 0, ID: el-id-7637-1503
+											527 container
+												528 container
+													529 text 布局备注
+													530 text field (settable) 布局备注, Value: 列内默认, ID: el-id-7637-1504
+												531 container
+													532 text 列二联系人
+													533 text field (settable) 列二联系人, Value: 列二默认, ID: el-id-7637-1505
+									569 text 
+									535 container
+										570 text 组件配置
+										536 text 表单配置
+										571 text 
+										572 text 组件类型
+										573 pop up button (collapsed) 多选框 , ID: el-id-7637-1506, Secondary Actions: Expand
+										574 text 编号
+										575 container
+											576 text field Value: ref_Fgvcmv4kqdz6bdc, ID: el-id-7637-1601
+											577 text 
+											578 text 
+										579 text 隐藏
+										580 container
+											581 switch (settable, boolean) Value: 0, ID: el-id-7637-1602
+										582 container
+											583 text 字段 ID
+											584 container
+												585 text 
+												586 text field (disabled) 字段 ID, Value: apply_checkbox, ID: el-id-7637-1603
+											587 text 字段名称
+											588 text field (settable) 字段名称, Value: 申请附件类别, ID: el-id-7637-1604
+											589 text 提示信息
+											590 text field (settable) 提示信息, ID: el-id-7637-1605
+											591 text 标签的宽度
+											592 container
+												593 button decrease number
+												594 button increase number
+												595 stepper (settable, integer) 标签的宽度, Value: 0, ID: el-id-7637-1606
+											596 pop up button (collapsed) px, ID: el-id-7637-1521, Secondary Actions: Expand
+										597 container
+											598 container
+												599 table
+													600 row
+														601 cell
+															602 text 键名
+														603 cell
+															604 text 值
+												605 table
+													606 container
+														607 row
+															608 cell
+																609 text field (settable) Value: 否, ID: el-id-7637-1647
+															610 cell
+																611 container
+																	612 container
+																		613 combo box (collapsed, settable) ID: el-id-7637-1648, Secondary Actions: Expand
+																		614 text 文本
+																		615 image
+																	616 text field (settable) Value: 0, ID: el-id-7637-1649
+															617 cell
+																618 text 
+														619 row
+															620 cell
+																621 text field (settable) Value: 是, ID: el-id-7637-1650
+															622 cell
+																623 container
+																	624 container
+																		625 combo box (collapsed, settable) ID: el-id-7637-1651, Secondary Actions: Expand
+																		626 text 文本
+																		627 image
+																	628 text field (settable) Value: 1, ID: el-id-7637-1652
+															629 cell
+																630 text 
+											631 button  添加
+												632 text 
+												633 text 添加
+											634 text 是否禁用
+											635 container
+												636 switch (settable, boolean) Description: 是否禁用, Value: 0, ID: el-id-7637-1608
+											637 text 是否可以填写
+											638 container
+												639 switch (settable, boolean) Description: 是否可以填写, Value: 0, ID: el-id-7637-1609
+											640 text 按钮类型
+											641 container
+												642 switch (settable, boolean) Description: 按钮类型, Value: 0, ID: el-id-7637-1610
+											643 text 可被勾选的最小数量
+											644 container
+												645 button decrease number
+												646 button increase number
+												647 stepper (settable, integer) 可被勾选的最小数量, Value: 0, ID: el-id-7637-1611
+											648 text 可被勾选的最大数量
+											649 container
+												650 button decrease number
+												651 button increase number
+												652 stepper (settable, integer) 可被勾选的最大数量, Value: 0, ID: el-id-7637-1612
+											653 container 当按钮为活跃状态时的字体颜色
+												654 text 当按钮为活跃状态时的字体颜色
+												655 container
+													656 text field (settable) el-id-7637-1615
+													657 pop up button (collapsed) Description: color picker, ID: el-id-7637-1614, Secondary Actions: Expand
+											658 container 当按钮为活跃状态时的边框和背景颜色
+												659 text 当按钮为活跃状态时的边框和背景颜色
+												660 container
+													661 text field (settable) el-id-7637-1618
+													662 pop up button (collapsed) Description: color picker, ID: el-id-7637-1617, Secondary Actions: Expand
+											663 text 设置默认值
+											664 container
+												665 switch (settable, boolean) Description: 设置默认值, Value: 1, ID: el-id-7637-1619
+											666 text 默认选项
+											667 container
+												668 combo box (collapsed, settable) 默认选项, ID: el-id-7637-1620, Secondary Actions: Expand
+												669 text Select
+												670 image
+										671 container
+											672 text ID
+											673 text field (settable) ID, ID: el-id-7637-1621
+											674 text Class
+											675 text field (settable) Class, ID: el-id-7637-1622
+											676 container
+												677 text 外边距
+												678 text field (settable)
+												679 text field (settable)
+												680 text field (settable)
+												681 text field (settable)
+												682 text 
+												683 text 
+												684 text 内边距
+												685 container
+													686 text 
+													687 text 
+												688 text field (settable)
+												689 text field (settable)
+												690 text field (settable)
+												691 text field (settable)
+											692 container
+												693 text 尺寸 
+											694 text 颜色
+											695 container
+												696 text field (settable) el-id-7637-1625
+												697 pop up button (collapsed) Description: color picker, ID: el-id-7637-1624, Secondary Actions: Expand
+											698 container
+												699 text 背景 
+											700 container
+												701 text field (settable) el-id-7637-1628
+												702 pop up button (collapsed) Description: color picker, ID: el-id-7637-1627, Secondary Actions: Expand
+											703 container
+												704 text 边框 
+											705 container
+												706 text 圆角 
+											707 container
+												708 button decrease number
+												709 button increase number
+												710 stepper (settable, integer) Value: 0, ID: el-id-7637-1629
+											711 pop up button (collapsed) px, ID: el-id-7637-1562, Secondary Actions: Expand
+											712 container
+												713 text 文字 
+											714 text 样式预览
+											715 container
+												716 text 阴影 
+											717 container
+												718 text field (settable) el-id-7637-1630
+												719 pop up button (collapsed) , ID: el-id-7637-1566, Secondary Actions: Expand
+											720 container
+												721 text 位置 
+											722 container
+												723 combo box (collapsed, settable) ID: el-id-7637-1631, Secondary Actions: Expand
+												724 text Select
+												725 image
+											726 text 透明度
+											727 container
+												728 slider Description: slider between 0 and 100, Value: 100, ID: el-id-7637-1632
+											729 text 100%
+											730 text 缩放
+											731 container
+												732 slider Description: slider between 80 and 120, Value: 100, ID: el-id-7637-1633
+											733 text 100%
+											734 container
+												735 text 自定义 
+										736 container 是否必填
+											737 text 是否必填
+											738 container
+												739 switch (settable, boolean) Value: 1, ID: el-id-7637-1634
+												740 text field (settable) el-id-7637-1635
+
+The focused UI element is 413 container 申请单 取消 保存表单内容

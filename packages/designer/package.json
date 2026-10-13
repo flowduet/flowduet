@@ -11,8 +11,19 @@
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
     },
-    "./style.css": "./dist/designer.css"
+    "./style.css": "./dist/designer.css",
+    "./package.json": "./package.json"
   },
+  "keywords": [
+    "bpmn",
+    "flowable",
+    "workflow",
+    "approval-flow",
+    "dingtalk-style",
+    "vue3",
+    "element-plus",
+    "process-designer"
+  ],
   "files": [
     "dist"
   ],

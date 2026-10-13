@@ -1,0 +1,14 @@
+{
+  "title": "有效变无效清旧XML",
+  "source": "A16",
+  "method": "Codex内置浏览器真实UI",
+  "startedUTC": "2026-10-12T10:25:37.180Z",
+  "status": "待诊断",
+  "attempts": [],
+  "error": "Error: Playwright selector deadline exceeded\nwaiting on click for selector [data-test=\"drawer-cancel\"]\nLocator diagnostics: {\"kind\":\"no_visible_match\",\"action\":\"click\",\"locator\":\"[data-test=\\\"drawer-cancel\\\"]\",\"matchCount\":1,\"matches\":[{\"ariaLabel\":null,\"disabled\":false,\"role\":null,\"tag\":\"button\",\"text\":\"取消\",\"type\":\"button\",\"visible\":false}],\"visibleCount\":0,\"truncated\":false}",
+  "completedUTC": "2026-10-12T10:25:42.091Z",
+  "evidence": [
+    "U68.ax.txt",
+    "U68.jpg"
+  ]
+}

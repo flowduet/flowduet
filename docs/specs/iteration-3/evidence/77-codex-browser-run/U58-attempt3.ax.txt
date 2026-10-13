@@ -1,0 +1,279 @@
+Browser tab: 2, Title: "FlowDuet Playground", URL: "http://127.0.0.1:5173/".
+1 AXWebArea FlowDuet Playground, URL: 127.0.0.1:5173/
+	2 container app
+		3 container
+			4 heading FlowDuet Playground, Value: 1
+				5 text FlowDuet Playground
+			6 Description: radio-group, ID: el-id-2178-37
+				7 container
+					8 radio button (settable, integer) Description: 钉钉式, Value: 0
+					9 text 钉钉式
+				10 container
+					11 radio button (settable, integer) Description: BPMN 视图, Value: 1
+					12 text BPMN 视图
+			13 button 新建设计
+			14 button 打开文档
+			15 button 表单管理
+			16 button 预览表单
+			17 button 保存草稿
+			18 button 下载设计文档
+			19 button 导出 XML
+		20 container
+			21 container
+				22 container
+					23 image
+						24 container Edge from start to approval_1
+					25 image
+						26 container Edge from cc_1 to fork1
+					27 image
+						28 container Edge from fork1 to a_node
+							29 text 常规审批 · 默认
+					30 image
+						31 container Edge from fork1 to pfork
+							32 container ${amount > 1000}
+								33 text 大额复核
+					34 image
+						35 container Edge from pfork to fin_node
+					36 image
+						37 container Edge from pfork to legal_node
+					38 image
+						39 container Edge from fin_node to pjoin
+					40 image
+						41 container Edge from legal_node to pjoin
+					42 image
+						43 container Edge from pjoin to join1
+					44 image
+						45 container Edge from a_node to join1
+					46 image
+						47 container Edge from join1 to end
+					48 image
+						49 container Edge from approval_1 to approval_mi
+					50 image
+						51 container Edge from approval_mi to cc_1
+					52 container start
+						53 image
+						54 text 开始
+					55 container approval_1
+						56 container
+							57 image
+							58 text 经理审批
+					59 container cc_1
+						60 container
+							61 image
+							62 text 抄送法务备案
+					63 container fork1
+						64 image
+						65 text 金额判断
+					66 container a_node
+						67 container
+							68 image
+							69 text 总监审批
+					70 container pfork
+						71 image
+						72 text 并行开始
+					73 container pjoin
+						74 image
+						75 text 并行结束
+					76 container fin_node
+						77 container
+							78 image
+							79 text 财务复核
+					80 container legal_node
+						81 container
+							82 image
+							83 text 法务复核
+					84 container join1
+						85 image
+						86 text 汇聚
+					87 container end
+						88 image
+						89 text 结束
+					90 container approval_mi
+						91 container
+							92 image
+							93 text 合同会签
+			94 text 已打开设计文档（流程 申请与复核），可继续编辑
+			95 text <?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:flowduet="urn:flowduet:bpmn" xmlns:flowable="http://flowable.org/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="playground_demo_defs" targetNamespace="http://flowduet.dev/bpmn">
+  <bpmn:process id="playground_demo" name="申请与复核" isExecutable="true" flowduet:defaultFormKey="form_1">
+    <bpmn:startEvent id="start" name="开始">
+      <bpmn:outgoing>f1</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:userTask id="approval_1" name="经理审批" flowable:assignee="${manager}">
+      <bpmn:incoming>f1</bpmn:incoming>
+      <bpmn:outgoing>flow_conv_in_1</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:serviceTask id="cc_1" name="抄送法务备案" flowable:delegateExpression="${flowduetCcTask}" flowable:ccTo="张三,李四">
+      <bpmn:incoming>flow_conv_out_1</bpmn:incoming>
+      <bpmn:outgoing>f2</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="fork1" name="金额判断" default="fa">
+      <bpmn:incoming>f2</bpmn:incoming>
+      <bpmn:outgoing>fa</bpmn:outgoing>
+      <bpmn:outgoing>fb</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="a_node" name="总监审批" flowable:assignee="${director}">
+      <bpmn:incoming>fa</bpmn:incoming>
+      <bpmn:outgoing>fa_j</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:parallelGateway id="pfork" name="并行开始">
+      <bpmn:incoming>fb</bpmn:incoming>
+      <bpmn:outgoing>fp_fin</bpmn:outgoing>
+      <bpmn:outgoing>fp_legal</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:parallelGateway id="pjoin" name="并行结束">
+      <bpmn:incoming>fin_pj</bpmn:incoming>
+      <bpmn:incoming>legal_pj</bpmn:incoming>
+      <bpmn:outgoing>pj_j1</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:userTask id="fin_node" name="财务复核" flowable:assignee="${finance}" flowable:formKey="form_2">
+      <bpmn:incoming>fp_fin</bpmn:incoming>
+      <bpmn:outgoing>fin_pj</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="legal_node" name="法务复核" flowable:assignee="${legal}">
+      <bpmn:incoming>fp_legal</bpmn:incoming>
+      <bpmn:outgoing>legal_pj</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="join1" name="汇聚">
+      <bpmn:incoming>pj_j1</bpmn:incoming>
+      <bpmn:incoming>fa_j</bpmn:incoming>
+      <bpmn:outgoing>fj</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:endEvent id="end" name="结束">
+      <bpmn:incoming>fj</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="f1" sourceRef="start" targetRef="approval_1" />
+    <bpmn:sequenceFlow id="f2" sourceRef="cc_1" targetRef="fork1" />
+    <bpmn:sequenceFlow id="fa" name="常规审批" sourceRef="fork1" targetRef="a_node" />
+    <bpmn:sequenceFlow id="fb" name="大额复核" sourceRef="fork1" targetRef="pfork">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${amount &gt; 1000}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="fp_fin" sourceRef="pfork" targetRef="fin_node" />
+    <bpmn:sequenceFlow id="fp_legal" sourceRef="pfork" targetRef="legal_node" />
+    <bpmn:sequenceFlow id="fin_pj" sourceRef="fin_node" targetRef="pjoin" />
+    <bpmn:sequenceFlow id="legal_pj" sourceRef="legal_node" targetRef="pjoin" />
+    <bpmn:sequenceFlow id="pj_j1" sourceRef="pjoin" targetRef="join1" />
+    <bpmn:sequenceFlow id="fa_j" sourceRef="a_node" targetRef="join1" />
+    <bpmn:sequenceFlow id="fj" sourceRef="join1" targetRef="end" />
+    <bpmn:userTask id="approval_mi" name="合同会签" flowable:assignee="${assignee}" flowable:formKey="form_2">
+      <bpmn:incoming>flow_conv_in_1</bpmn:incoming>
+      <bpmn:outgoing>flow_conv_out_1</bpmn:outgoing>
+      <bpmn:multiInstanceLoopCharacteristics flowable:collection="approvers" flowable:elementVariable="assignee">
+        <bpmn:completionCondition xsi:type="bpmn:tFormalExpression">${nrOfCompletedInstances == nrOfInstances}</bpmn:completionCondition>
+      </bpmn:multiInstanceLoopCharacteristics>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="flow_conv_in_1" sourceRef="approval_1" targetRef="approval_mi" />
+    <bpmn:sequenceFlow id="flow_conv_out_1" sourceRef="approval_mi" targetRef="cc_1" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="playground_demo_di">
+    <bpmndi:BPMNPlane id="playground_demo_plane" bpmnElement="playground_demo">
+      <bpmndi:BPMNShape id="start_di" bpmnElement="start">
+        <dc:Bounds x="262" y="40" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="approval_1_di" bpmnElement="approval_1">
+        <dc:Bounds x="230" y="136" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="cc_1_di" bpmnElement="cc_1">
+        <dc:Bounds x="230" y="416" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="fork1_di" bpmnElement="fork1">
+        <dc:Bounds x="255" y="556" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="a_node_di" bpmnElement="a_node">
+        <dc:Bounds x="40" y="676" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="pfork_di" bpmnElement="pfork">
+        <dc:Bounds x="350" y="676" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="pjoin_di" bpmnElement="pjoin">
+        <dc:Bounds x="350" y="946" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="fin_node_di" bpmnElement="fin_node">
+        <dc:Bounds x="230" y="796" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="legal_node_di" bpmnElement="legal_node">
+        <dc:Bounds x="420" y="796" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="join1_di" bpmnElement="join1">
+        <dc:Bounds x="255" y="1066" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="end_di" bpmnElement="end">
+        <dc:Bounds x="262" y="1176" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="f1_di" bpmnElement="f1">
+        <di:waypoint x="280" y="76" />
+        <di:waypoint x="280" y="136" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f2_di" bpmnElement="f2">
+        <di:waypoint x="280" y="496" />
+        <di:waypoint x="280" y="556" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="fa_di" bpmnElement="fa">
+        <di:waypoint x="271.6666666666667" y="606" />
+        <di:waypoint x="271.6666666666667" y="614" />
+        <di:waypoint x="90" y="614" />
+        <di:waypoint x="90" y="676" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="fb_di" bpmnElement="fb">
+        <di:waypoint x="288.3333333333333" y="606" />
+        <di:waypoint x="288.3333333333333" y="622" />
+        <di:waypoint x="375" y="622" />
+        <di:waypoint x="375" y="676" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="fp_fin_di" bpmnElement="fp_fin">
+        <di:waypoint x="366.6666666666667" y="726" />
+        <di:waypoint x="366.6666666666667" y="734" />
+        <di:waypoint x="280" y="734" />
+        <di:waypoint x="280" y="796" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="fp_legal_di" bpmnElement="fp_legal">
+        <di:waypoint x="383.3333333333333" y="726" />
+        <di:waypoint x="383.3333333333333" y="742" />
+        <di:waypoint x="470" y="742" />
+        <di:waypoint x="470" y="796" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="fin_pj_di" bpmnElement="fin_pj">
+        <di:waypoint x="280" y="876" />
+        <di:waypoint x="280" y="938" />
+        <di:waypoint x="366.6666666666667" y="938" />
+        <di:waypoint x="366.6666666666667" y="946" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="legal_pj_di" bpmnElement="legal_pj">
+        <di:waypoint x="470" y="876" />
+        <di:waypoint x="470" y="930" />
+        <di:waypoint x="383.3333333333333" y="930" />
+        <di:waypoint x="383.3333333333333" y="946" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="pj_j1_di" bpmnElement="pj_j1">
+        <di:waypoint x="375" y="996" />
+        <di:waypoint x="375" y="1050" />
+        <di:waypoint x="288.3333333333333" y="1050" />
+        <di:waypoint x="288.3333333333333" y="1066" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="fa_j_di" bpmnElement="fa_j">
+        <di:waypoint x="90" y="756" />
+        <di:waypoint x="90" y="1058" />
+        <di:waypoint x="271.6666666666667" y="1058" />
+        <di:waypoint x="271.6666666666667" y="1066" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="fj_di" bpmnElement="fj">
+        <di:waypoint x="280" y="1116" />
+        <di:waypoint x="280" y="1176" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="approval_mi_di" bpmnElement="approval_mi">
+        <dc:Bounds x="230" y="276" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="flow_conv_in_1_di" bpmnElement="flow_conv_in_1">
+        <di:waypoint x="280" y="216" />
+        <di:waypoint x="280" y="276" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_conv_out_1_di" bpmnElement="flow_conv_out_1">
+        <di:waypoint x="280" y="356" />
+        <di:waypoint x="280" y="416" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
+
+
+The focused UI element is 14 button 打开文档

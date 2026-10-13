@@ -1,0 +1,14 @@
+{
+  "title": "旧导出迟到",
+  "source": "A14/A15/A16/并发边界",
+  "method": "Codex内置浏览器UI + 明确记录的CDP临时故障/延迟注入",
+  "startedUTC": "2026-10-12T10:31:13.823Z",
+  "status": "待诊断",
+  "attempts": [],
+  "error": "Uncaught (in promise) TypeError: Cannot read properties of undefined (reading 'prototype'):TypeError: Cannot read properties of undefined (reading 'prototype')\n    at <anonymous>:1:126",
+  "completedUTC": "2026-10-12T10:31:14.891Z",
+  "evidence": [
+    "E15.ax.txt",
+    "E15.jpg"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "title": "抄送空收件人",
+  "source": "A07",
+  "method": "Codex内置浏览器真实UI",
+  "startedUTC": "2026-10-12T10:21:49.009Z",
+  "status": "待诊断",
+  "attempts": [],
+  "error": "Error: Playwright selector deadline exceeded\nlocator.waitFor(hidden) timed out for selector [data-test=\"node-drawer\"]\nLocator diagnostics: {\"kind\":\"action_failed\",\"action\":\"waitFor\",\"locator\":\"[data-test=\\\"node-drawer\\\"]\",\"matchCount\":1,\"matches\":[{\"ariaLabel\":\"抄送节点\",\"disabled\":false,\"role\":\"dialog\",\"tag\":\"div\",\"text\":\"抄送节点节点名称收件人取消确定\",\"type\":null,\"visible\":true}],\"visibleCount\":1,\"truncated\":false}",
+  "completedUTC": "2026-10-12T10:21:55.646Z",
+  "evidence": [
+    "U51.ax.txt",
+    "U51.jpg"
+  ]
+}

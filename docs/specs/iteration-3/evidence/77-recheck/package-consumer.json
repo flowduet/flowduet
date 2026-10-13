@@ -1,0 +1,182 @@
+{
+  "node": "v24.16.0",
+  "packages": [
+    {
+      "name": "@flowduet/core",
+      "version": "0.2.1",
+      "dependencies": {
+        "bpmn-moddle": "^10.2.0"
+      },
+      "exports": {
+        ".": {
+          "types": "./dist/index.d.ts",
+          "default": "./dist/index.js"
+        },
+        "./package.json": "./package.json"
+      }
+    },
+    {
+      "name": "@flowduet/designer",
+      "version": "0.0.5",
+      "dependencies": {
+        "@vue-flow/core": "^1.48.2",
+        "element-plus": "^2.14.6",
+        "@flowduet/core": "0.2.1"
+      },
+      "exports": {
+        ".": {
+          "types": "./dist/index.d.ts",
+          "default": "./dist/index.js"
+        },
+        "./style.css": "./dist/designer.css",
+        "./package.json": "./package.json"
+      },
+      "cssBytes": 10066,
+      "cssSha256": "57688045788dbed735665f1199698da4a8605f3c815021cf5327bbfaadc1cd92"
+    },
+    {
+      "name": "@flowduet/form-create",
+      "version": "0.0.0",
+      "dependencies": {
+        "@form-create/designer": "3.5.0",
+        "@form-create/element-ui": "3.3.4",
+        "@flowduet/designer": "0.0.5",
+        "@flowduet/core": "0.2.1"
+      },
+      "exports": {
+        ".": {
+          "types": "./dist/index.d.ts",
+          "default": "./dist/index.js"
+        },
+        "./style.css": "./dist/form-create.css",
+        "./package.json": "./package.json"
+      },
+      "cssBytes": 13289,
+      "cssSha256": "32b71851342f23c62159981081319cb23552a31e35efcf67c8244dbcea34e60f"
+    }
+  ],
+  "verifiedCommit": "211b9e13e63e9dc37b85bde067e9048b788ab076",
+  "compiler": "TypeScript 5.9.3",
+  "strict": true,
+  "skipLibCheck": false,
+  "publicDeclarationsExit": 0,
+  "readmeCompileExit": 0,
+  "readmeExecuteExit": 0,
+  "npmInstallExit": 0,
+  "npmLsExit": 0,
+  "nodeSmokeExit": 0,
+  "consumerDirectory": "/private/tmp/flowduet-pr89-final-consumer.4EcMd8",
+  "tarballs": [
+    {
+      "name": "flowduet-core-0.2.1.tgz",
+      "sha256": "cc1660f86172f258465a1a1a303e5e97ce50e1beca3fae27bf31744c8c995b62",
+      "files": [
+        "package/LICENSE",
+        "package/dist/adapter/adapter-contract.js",
+        "package/dist/model/bpmn-model.js",
+        "package/dist/compile/compiler.js",
+        "package/dist/layout/di-layout.js",
+        "package/dist/adapter/engine-adapter.js",
+        "package/dist/adapter/flowable-adapter.js",
+        "package/dist/adapter/flowduet-package.js",
+        "package/dist/model/form-binding.js",
+        "package/dist/index.js",
+        "package/dist/util/moddle-utils.js",
+        "package/dist/parse/namespace-usage.js",
+        "package/dist/parse/parser.js",
+        "package/dist/layout/vertical-layout.js",
+        "package/package.json",
+        "package/dist/adapter/adapter-contract.d.ts.map",
+        "package/dist/adapter/adapter-contract.js.map",
+        "package/dist/model/bpmn-model.d.ts.map",
+        "package/dist/model/bpmn-model.js.map",
+        "package/dist/compile/compiler.d.ts.map",
+        "package/dist/compile/compiler.js.map",
+        "package/dist/layout/di-layout.d.ts.map",
+        "package/dist/layout/di-layout.js.map",
+        "package/dist/adapter/engine-adapter.d.ts.map",
+        "package/dist/adapter/engine-adapter.js.map",
+        "package/dist/adapter/flowable-adapter.d.ts.map",
+        "package/dist/adapter/flowable-adapter.js.map",
+        "package/dist/adapter/flowduet-package.d.ts.map",
+        "package/dist/adapter/flowduet-package.js.map",
+        "package/dist/model/form-binding.d.ts.map",
+        "package/dist/model/form-binding.js.map",
+        "package/dist/index.d.ts.map",
+        "package/dist/index.js.map",
+        "package/dist/util/moddle-utils.d.ts.map",
+        "package/dist/util/moddle-utils.js.map",
+        "package/dist/parse/namespace-usage.d.ts.map",
+        "package/dist/parse/namespace-usage.js.map",
+        "package/dist/parse/parser.d.ts.map",
+        "package/dist/parse/parser.js.map",
+        "package/dist/layout/vertical-layout.d.ts.map",
+        "package/dist/layout/vertical-layout.js.map",
+        "package/README.md",
+        "package/dist/adapter/adapter-contract.d.ts",
+        "package/dist/types/bpmn-moddle.d.ts",
+        "package/dist/model/bpmn-model.d.ts",
+        "package/dist/compile/compiler.d.ts",
+        "package/dist/layout/di-layout.d.ts",
+        "package/dist/adapter/engine-adapter.d.ts",
+        "package/dist/adapter/flowable-adapter.d.ts",
+        "package/dist/adapter/flowduet-package.d.ts",
+        "package/dist/model/form-binding.d.ts",
+        "package/dist/index.d.ts",
+        "package/dist/util/moddle-utils.d.ts",
+        "package/dist/parse/namespace-usage.d.ts",
+        "package/dist/parse/parser.d.ts",
+        "package/dist/layout/vertical-layout.d.ts"
+      ]
+    },
+    {
+      "name": "flowduet-designer-0.0.5.tgz",
+      "sha256": "7069b8db189964424d9efa74dcc67161002ad8a130c1ced381025d5b7e28a326",
+      "files": [
+        "package/LICENSE",
+        "package/dist/designer.css",
+        "package/dist/index.js",
+        "package/package.json",
+        "package/README.md",
+        "package/dist/components/BlockNodeList.vue.d.ts",
+        "package/dist/components/BpmnCanvas.vue.d.ts",
+        "package/dist/components/BpmnEdge.vue.d.ts",
+        "package/dist/components/BpmnNode.vue.d.ts",
+        "package/dist/canvas-props.d.ts",
+        "package/dist/components/DingtalkDesigner.vue.d.ts",
+        "package/dist/export.d.ts",
+        "package/dist/form-options.d.ts",
+        "package/dist/geometry.d.ts",
+        "package/dist/index.d.ts",
+        "package/dist/components/NodeCard.vue.d.ts",
+        "package/dist/components/NodeDrawer.vue.d.ts",
+        "package/dist/operations.d.ts"
+      ]
+    },
+    {
+      "name": "flowduet-form-create-0.0.0.tgz",
+      "sha256": "80849badc675d11c14ad942d2942f726b7dca4c9e16cf5f1a607131be10e5234",
+      "files": [
+        "package/LICENSE",
+        "package/dist/form-create.css",
+        "package/dist/index.js",
+        "package/package.json",
+        "package/README.md",
+        "package/dist/binding.d.ts",
+        "package/dist/components/checkbox-defaults.d.ts",
+        "package/dist/components/designer-config.d.ts",
+        "package/dist/document.d.ts",
+        "package/dist/element-label.d.ts",
+        "package/dist/export.d.ts",
+        "package/dist/form-create-setup.d.ts",
+        "package/dist/form-schema.d.ts",
+        "package/dist/form-semantics.d.ts",
+        "package/dist/components/FormDesigner.vue.d.ts",
+        "package/dist/components/FormManager.vue.d.ts",
+        "package/dist/components/FormPreview.vue.d.ts",
+        "package/dist/index.d.ts",
+        "package/dist/session.d.ts"
+      ]
+    }
+  ]
+}

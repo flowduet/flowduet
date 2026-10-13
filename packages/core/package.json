@@ -10,8 +10,17 @@
     ".": {
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
-    }
+    },
+    "./package.json": "./package.json"
   },
+  "keywords": [
+    "bpmn",
+    "bpmn20",
+    "flowable",
+    "workflow",
+    "workflow-engine",
+    "process-modeling"
+  ],
   "files": [
     "dist"
   ],
@@ -28,7 +37,7 @@
     "registry": "https://registry.npmjs.org/"
   },
   "scripts": {
-    "build": "tsc -p tsconfig.build.json",
+    "build": "tsc -p tsconfig.build.json && node scripts/pack-declarations.mjs",
     "test": "vitest run"
   },
   "dependencies": {
