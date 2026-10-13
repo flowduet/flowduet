@@ -8,7 +8,9 @@
     "latestTarball": "https://registry.npmjs.org/@flowduet/core/-/core-0.3.0.tgz",
     "dependencies": {
       "bpmn-moddle": "^10.2.0"
-    }
+    },
+    "approvedVersion": "0.3.0",
+    "matchesApproval": true
   },
   {
     "name": "@flowduet/designer",
@@ -21,7 +23,9 @@
       "element-plus": "^2.14.6",
       "@flowduet/core": "0.3.0",
       "@vue-flow/core": "^1.48.2"
-    }
+    },
+    "approvedVersion": "0.1.0",
+    "matchesApproval": true
   },
   {
     "name": "@flowduet/form-create",
@@ -35,6 +39,8 @@
       "@flowduet/designer": "0.1.0",
       "@form-create/designer": "3.5.0",
       "@form-create/element-ui": "3.3.4"
-    }
+    },
+    "approvedVersion": "0.1.0",
+    "matchesApproval": true
   }
 ]
