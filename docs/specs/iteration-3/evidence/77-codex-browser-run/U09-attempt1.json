@@ -1,0 +1,17 @@
+{
+  "title": "数字零默认",
+  "source": "A10",
+  "method": "Codex内置浏览器真实UI",
+  "startedUTC": "2026-10-12T09:04:59.010Z",
+  "status": "失败",
+  "attempts": [],
+  "error": "真实预览未回显设计默认",
+  "actual": {
+    "expected": 0
+  },
+  "completedUTC": "2026-10-12T09:05:03.760Z",
+  "evidence": [
+    "U09.ax.txt",
+    "U09.jpg"
+  ]
+}

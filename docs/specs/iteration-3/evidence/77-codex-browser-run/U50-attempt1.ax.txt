@@ -1,0 +1,113 @@
+Browser tab: 2, Title: "FlowDuet Playground", URL: "http://127.0.0.1:5173/".
+1 AXWebArea FlowDuet Playground, URL: 127.0.0.1:5173/
+	2 container app
+		3 container
+			4 heading FlowDuet Playground, Value: 1
+				5 text FlowDuet Playground
+			6 Description: radio-group, ID: el-id-3769-37
+				7 container
+					8 radio button (settable, integer) Description: 钉钉式, Value: 1
+					9 text 钉钉式
+				10 container
+					11 radio button (settable, integer) Description: BPMN 视图, Value: 0
+					12 text BPMN 视图
+			13 button 新建设计
+			14 button 打开文档
+			15 button 表单管理
+			16 button 预览表单
+			17 button 保存草稿
+			18 button 下载设计文档
+			19 button 导出 XML
+		20 container
+			111 text 多人审批需要填写审批人集合变量名（运行时注入名单）
+			21 text 流程默认表单
+			22 pop up button (collapsed, settable) Value: 申请单, Secondary Actions: Expand
+				23 menu
+					24 无
+					25 (selected) 申请单
+					26 复核单
+			27 container
+				28 text 起 开始
+			29 pop up button (collapsed) +, Help: 在此后添加节点, ID: el-id-3769-38, Secondary Actions: Expand
+			30 container
+				31 text 审 经理审批 审批人 ${manager} 表单：申请单（继承默认）
+			32 pop up button (collapsed) +, Help: 在此后添加节点, ID: el-id-3769-42, Secondary Actions: Expand
+			33 container
+				34 text 审 合同会签 多人 · 集合 表单：复核单（节点指定）
+			35 pop up button (collapsed) +, Help: 在此后添加节点, ID: el-id-3769-46, Secondary Actions: Expand
+			36 container
+				37 text 抄 抄送法务备案 抄送：张三,李四
+			38 pop up button (collapsed) +, Help: 在此后添加节点, ID: el-id-3769-50, Secondary Actions: Expand
+			39 container
+				40 text 条件分支
+				41 button 默认1, Help: 点击取消默认（其余情况无兜底支路）
+				42 button 默认2, Help: 把该支路设为默认（其余情况走此支路）
+				43 button + 分支, Help: 添加分支
+				44 button 删块, Help: 删除整块（前后直连）
+				45 container
+					46 button 常规审批 其他情况（默认）, Help: 常规审批：其他情况（默认）；点击配置此分支
+						47 text 常规审批
+						48 text 其他情况（默认）
+					49 text 审
+					50 text 总监审批
+					51 text 审批人 ${director}
+					52 text 表单：申请单（继承默认）
+					53 pop up button (collapsed) +, Help: 在此后添加节点, ID: el-id-3769-54, Secondary Actions: Expand
+				54 container
+					55 button 大额复核 ${amount > 1000}, Help: 大额复核：${amount > 1000}；点击配置此分支
+						56 text 大额复核
+						57 text ${amount > 1000}
+					58 container
+						59 text 并行分支
+						60 button + 分支, Help: 添加分支
+						61 button 删块, Help: 删除整块（前后直连）
+					62 container
+						63 text 支路 1
+						64 container
+							65 text 审 财务复核 审批人 ${finance} 表单：复核单（节点指定）
+						66 pop up button (collapsed) +, Help: 在此后添加节点, ID: el-id-3769-58, Secondary Actions: Expand
+						67 text 支路 2
+						68 container
+							69 text 审 法务复核 审批人 ${legal} 表单：申请单（继承默认）
+						70 pop up button (collapsed) +, Help: 在此后添加节点, ID: el-id-3769-62, Secondary Actions: Expand
+			71 container
+				72 text 终 结束
+			74 container 审批节点
+				76 container
+					77 heading 审批节点, Value: 2, ID: el-id-3769-66
+						78 text 审批节点
+					79 button Close this dialog
+				80 container
+					81 text 节点名称
+					82 text field (settable) 节点名称, Value: 合同会签, ID: el-id-3769-72
+					83 text 审批人（集合变量）
+					84 text field (settable) 审批人（集合变量）, ID: el-id-3769-73
+					85 container 完成方式
+						86 text 完成方式
+						87 container
+							88 button 单签 一人审批
+								89 text 单签
+								90 text 一人审批
+							91 button 会签 全员同意
+								92 text 会签
+								93 text 全员同意
+							94 button 或签 任一同意
+								95 text 或签
+								96 text 任一同意
+							97 button 依次 顺序逐人
+								98 text 依次
+								99 text 顺序逐人
+					100 container 表单
+						101 text 表单
+						102 pop up button (collapsed, settable) Value: 复核单, Secondary Actions: Expand
+							103 menu
+								104 继承默认（申请单）
+								105 申请单
+								106 (selected) 复核单
+				107 container
+					108 button 取消
+					109 button 确定
+			73 text 已恢复本地草稿（最近一次保存的内容），可继续编辑
+			110 text 多人审批节点「合同会签（approval_mi）」的集合变量为空白，请在抽屉补填后再导出
+
+The focused UI element is 109 button 确定

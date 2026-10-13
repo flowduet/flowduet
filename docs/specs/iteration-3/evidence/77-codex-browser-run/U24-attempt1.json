@@ -1,0 +1,14 @@
+{
+  "title": "行列和字段顺序",
+  "source": "A10 A13",
+  "method": "Codex内置浏览器真实UI",
+  "startedUTC": "2026-10-12T10:44:02.424Z",
+  "status": "待诊断",
+  "attempts": [],
+  "error": "Cannot read properties of undefined (reading 'every')",
+  "completedUTC": "2026-10-12T10:44:04.223Z",
+  "evidence": [
+    "U24.ax.txt",
+    "U24.jpg"
+  ]
+}

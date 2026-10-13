@@ -1,0 +1,23 @@
+{
+  "title": "取消新建",
+  "source": "A15",
+  "method": "Codex内置浏览器真实UI",
+  "startedUTC": "2026-10-12T10:47:59.556Z",
+  "status": "工具阻塞",
+  "attempts": [
+    {
+      "status": "待诊断",
+      "evidence": "U58-attempt1.json"
+    }
+  ],
+  "actual": {
+    "modelDirectoryDirtyPreserved": true,
+    "unsubmittedBufferPath": "抽屉遮挡工具栏，未能触发新建；原步骤的该部分未验收"
+  },
+  "completedUTC": "2026-10-12T10:48:02.595Z",
+  "evidence": [
+    "U58.ax.txt",
+    "U58.jpg"
+  ],
+  "verdictNote": "仅完成已记录的部分步骤，未执行或无法观察的原步骤不计通过。"
+}

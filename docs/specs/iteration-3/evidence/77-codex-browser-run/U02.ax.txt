@@ -1,0 +1,75 @@
+Browser tab: 1, Title: "FlowDuet Playground", URL: "http://127.0.0.1:5173/".
+1 AXWebArea FlowDuet Playground, URL: 127.0.0.1:5173/
+	2 container app
+		3 container
+			4 heading FlowDuet Playground, Value: 1
+				5 text FlowDuet Playground
+			6 Description: radio-group, ID: el-id-8247-37
+				7 container
+					8 radio button (settable, integer) Description: 钉钉式, Value: 1
+					9 text 钉钉式
+				10 container
+					11 radio button (settable, integer) Description: BPMN 视图, Value: 0
+					12 text BPMN 视图
+			13 button 新建设计
+			14 button 打开文档
+			15 button 表单管理
+			16 button 预览表单
+			17 button 保存草稿
+			18 button 下载设计文档
+			19 button 导出 XML
+		20 container
+			21 text 流程默认表单
+			22 pop up button (collapsed, settable) Value: 无, Secondary Actions: Expand
+				23 menu
+					24 (selected) 无
+			25 container
+				26 text 起 开始
+			27 pop up button (collapsed) +, Help: 在此后添加节点, ID: el-id-8247-38, Secondary Actions: Expand
+			28 container
+				29 text 审 审批节点 审批人 验收经理
+			30 pop up button (collapsed) +, Help: 在此后添加节点, ID: el-id-8247-42, Secondary Actions: Expand
+			31 container
+				32 text 终 结束
+			33 text 已恢复本地草稿（最近一次保存的内容），可继续编辑
+			34 text <?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:flowable="http://flowable.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="flow_1_defs" targetNamespace="http://flowduet.dev/bpmn">
+  <bpmn:process id="flow_1" name="未命名流程" isExecutable="true">
+    <bpmn:startEvent id="start" name="开始">
+      <bpmn:outgoing>flow_start</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:userTask id="approval_1" name="审批节点" flowable:assignee="验收经理">
+      <bpmn:incoming>flow_start</bpmn:incoming>
+      <bpmn:outgoing>flow_end</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:endEvent id="end" name="结束">
+      <bpmn:incoming>flow_end</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="flow_start" sourceRef="start" targetRef="approval_1" />
+    <bpmn:sequenceFlow id="flow_end" sourceRef="approval_1" targetRef="end" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="flow_1_di">
+    <bpmndi:BPMNPlane id="flow_1_plane" bpmnElement="flow_1">
+      <bpmndi:BPMNShape id="start_di" bpmnElement="start">
+        <dc:Bounds x="72" y="40" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="approval_1_di" bpmnElement="approval_1">
+        <dc:Bounds x="40" y="136" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="end_di" bpmnElement="end">
+        <dc:Bounds x="72" y="276" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="flow_start_di" bpmnElement="flow_start">
+        <di:waypoint x="90" y="76" />
+        <di:waypoint x="90" y="136" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_end_di" bpmnElement="flow_end">
+        <di:waypoint x="90" y="216" />
+        <di:waypoint x="90" y="276" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
+
+
+The focused UI element is 19 button 导出 XML

@@ -1,0 +1,133 @@
+[
+  {
+    "id": "R01-initial",
+    "status": "通过",
+    "actual": {
+      "apply_text": "设计默认申请人",
+      "apply_textarea": "第一行\n第二行",
+      "apply_number": 0,
+      "apply_radio": "0",
+      "apply_checkbox": [],
+      "apply_select": "0",
+      "apply_date": "2026-10-12",
+      "apply_switch": false,
+      "apply_layout_note": "列内默认",
+      "apply_layout_contact": "列二默认"
+    }
+  },
+  {
+    "id": "R02-reopen-1",
+    "status": "通过",
+    "actual": {
+      "apply_text": "设计默认申请人",
+      "apply_textarea": "第一行\n第二行",
+      "apply_number": 0,
+      "apply_radio": "0",
+      "apply_checkbox": [],
+      "apply_select": "0",
+      "apply_date": "2026-10-12",
+      "apply_switch": false,
+      "apply_layout_note": "列内默认",
+      "apply_layout_contact": "列二默认"
+    }
+  },
+  {
+    "id": "R02-reopen-2",
+    "status": "通过",
+    "actual": {
+      "apply_text": "设计默认申请人",
+      "apply_textarea": "第一行\n第二行",
+      "apply_number": 0,
+      "apply_radio": "0",
+      "apply_checkbox": [],
+      "apply_select": "0",
+      "apply_date": "2026-10-12",
+      "apply_switch": false,
+      "apply_layout_note": "列内默认",
+      "apply_layout_contact": "列二默认"
+    }
+  },
+  {
+    "id": "R02-reopen-3",
+    "status": "通过",
+    "actual": {
+      "apply_text": "设计默认申请人",
+      "apply_textarea": "第一行\n第二行",
+      "apply_number": 0,
+      "apply_radio": "0",
+      "apply_checkbox": [],
+      "apply_select": "0",
+      "apply_date": "2026-10-12",
+      "apply_switch": false,
+      "apply_layout_note": "列内默认",
+      "apply_layout_contact": "列二默认"
+    }
+  },
+  {
+    "id": "R03-other-target",
+    "status": "通过",
+    "actual": {}
+  },
+  {
+    "id": "R04-reopen-after-trial",
+    "status": "通过",
+    "actual": {
+      "apply_text": "设计默认申请人",
+      "apply_textarea": "第一行\n第二行",
+      "apply_number": 0,
+      "apply_radio": "0",
+      "apply_checkbox": [],
+      "apply_select": "0",
+      "apply_date": "2026-10-12",
+      "apply_switch": false,
+      "apply_layout_note": "列内默认",
+      "apply_layout_contact": "列二默认"
+    }
+  },
+  {
+    "id": "R05-required-empty",
+    "status": "通过",
+    "actual": {
+      "validation": "空多选必填失败"
+    }
+  },
+  {
+    "id": "R06-required-filled",
+    "status": "通过",
+    "actual": {
+      "validation": "非空多选通过"
+    }
+  },
+  {
+    "id": "R07-new-api-validation",
+    "status": "通过",
+    "actual": {
+      "validation": "重开后新校验可触发，旧结果清除"
+    }
+  },
+  {
+    "id": "R08-changed-default",
+    "status": "通过",
+    "actual": {
+      "apply_text": "同ID更新默认",
+      "apply_textarea": "第一行\n第二行",
+      "apply_number": 0,
+      "apply_radio": "0",
+      "apply_checkbox": [],
+      "apply_select": "0",
+      "apply_date": "2026-10-12",
+      "apply_switch": false,
+      "apply_layout_note": "列内默认",
+      "apply_layout_contact": "列二默认"
+    }
+  },
+  {
+    "id": "R09-isolation-download",
+    "status": "通过",
+    "actual": {
+      "downloadPath": "/Users/l/Downloads/playground_demo.flowduet (3).json",
+      "formsEqual": true,
+      "trialExcluded": true
+    }
+  }
+]

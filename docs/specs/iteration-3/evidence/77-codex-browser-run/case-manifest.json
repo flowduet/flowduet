@@ -1,0 +1,1340 @@
+{
+  "version": 2,
+  "targetCommit": "1f5bbffee51c076045aa5aad6f8c0793b321da96",
+  "sourceIssues": [
+    77,
+    70
+  ],
+  "cases": [
+    {
+      "id": "U01",
+      "source": "A01",
+      "area": "启动",
+      "title": "无草稿启动",
+      "precondition": "原草稿已备份",
+      "steps": "备份测试键；清除该键并刷新",
+      "expected": "显示演示设计，无虚假恢复成功",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "U02",
+      "source": "A01",
+      "area": "纯流程",
+      "title": "新建无表单流程",
+      "precondition": "新建最小纯流程，无表单",
+      "steps": "新建设计；配置单签审批人；保存、刷新、导出",
+      "expected": "目录为空，流程可继续编辑且有效XML导出",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "U03",
+      "source": "A05",
+      "area": "目录",
+      "title": "空白名称拒绝",
+      "precondition": "纯流程目录为空；表单管理已打开",
+      "steps": "表单管理分别输入空串及全空格，点击新建",
+      "expected": "错误可见，无空名表单；已有目录保持",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "U04",
+      "source": "A02",
+      "area": "目录",
+      "title": "创建申请与复核",
+      "precondition": "纯流程目录为空；表单管理已打开",
+      "steps": "新建申请单与复核单",
+      "expected": "两张独立稳定ID，目录和选择项同步",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "U05",
+      "source": "A13",
+      "area": "字段边界",
+      "title": "设计器菜单和配置范围",
+      "precondition": "U04新建的空申请单，真实设计器已打开",
+      "steps": "打开编辑器，清点菜单及配置；检索上传/子表单/远程/脚本/联动",
+      "expected": "仅八类字段与基础栅格；范围外没有可用入口",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "U06",
+      "source": "A10",
+      "area": "字段创建",
+      "title": "八字段与基础布局",
+      "precondition": "U04新建的空申请单，真实设计器已打开",
+      "steps": "真实设计器逐项单击添加八类字段与顶层栅格，列内放字段，保存",
+      "expected": "类型/顺序/布局正确，所有字段标识非空且单表单内唯一",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "U07",
+      "source": "A10",
+      "area": "默认值",
+      "title": "文本中文默认",
+      "precondition": "S1完整两表单",
+      "steps": "编辑文本默认为中文；保存重开并预览",
+      "expected": "规则为字符串，编辑器和预览回显一致",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "U08",
+      "source": "A10",
+      "area": "默认值",
+      "title": "多行文本默认",
+      "precondition": "S1完整两表单",
+      "steps": "多行默认设置两行中文；保存重开",
+      "expected": "input+textarea，换行和值保留",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "U09",
+      "source": "A10",
+      "area": "默认值",
+      "title": "数字零默认",
+      "precondition": "S1完整两表单",
+      "steps": "设置数字默认0，保存重开",
+      "expected": "默认数值0未丢失，不变成字符串或未设置",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "U10",
+      "source": "A10",
+      "area": "默认值",
+      "title": "单选默认与静态选项",
+      "precondition": "S1完整两表单",
+      "steps": "配置否=字符串0、是=字符串1，默认0；保存重开",
+      "expected": "选项和值类型及选择正确",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "U11",
+      "source": "A10",
+      "area": "默认值",
+      "title": "多选三态",
+      "precondition": "S1完整两表单",
+      "steps": "依次未设置、启用空默认[]、选中1；各保存重开并下载对比",
+      "expected": "未设置无value，显式空值[]与非空数组分别保留",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "U12",
+      "source": "A10",
+      "area": "默认值",
+      "title": "下拉单选默认",
+      "precondition": "S1完整两表单",
+      "steps": "配置静态选项与默认字符串0；保存重开",
+      "expected": "单选值类型与选项正确，未启用multiple/allowCreate",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "U13",
+      "source": "A10",
+      "area": "默认值",
+      "title": "日期单值默认",
+      "precondition": "S1完整两表单",
+      "steps": "设置2026-10-12；保存重开并预览",
+      "expected": "单值日期语义不变，不变成范围或自动换日期",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "U14",
+      "source": "A10",
+      "area": "默认值",
+      "title": "开关false默认",
+      "precondition": "S1完整两表单",
+      "steps": "设置关闭默认false；保存重开",
+      "expected": "布尔false不丢失，与未设置有区分",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "U15",
+      "source": "A09",
+      "area": "必填",
+      "title": "文本必填",
+      "precondition": "S1完整两表单",
+      "steps": "打开必填；预览清空、校验、补中文再校验",
+      "expected": "空值字段错误，补填通过",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "U16",
+      "source": "A09",
+      "area": "必填",
+      "title": "多行必填",
+      "precondition": "S1完整两表单",
+      "steps": "打开必填；清空校验，再填两行",
+      "expected": "空值失败，文本有效通过",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "U17",
+      "source": "A09",
+      "area": "必填",
+      "title": "数字必填及0",
+      "precondition": "S1完整两表单",
+      "steps": "打开必填；清空校验，再填0及正数",
+      "expected": "空值失败，数字0和有效数字通过",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "U18",
+      "source": "A09",
+      "area": "必填",
+      "title": "单选必填",
+      "precondition": "S1完整两表单",
+      "steps": "打开未设置默认值的必填单选，校验后再选0",
+      "expected": "无选择失败，值0选中通过",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "U19",
+      "source": "A09",
+      "area": "必填",
+      "title": "多选必填",
+      "precondition": "S1完整两表单",
+      "steps": "打开必填；清成[]校验，再选1",
+      "expected": "空数组失败，非空数组通过",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "U20",
+      "source": "A09",
+      "area": "必填",
+      "title": "下拉必填",
+      "precondition": "S1完整两表单",
+      "steps": "打开必填；清空校验，再选0",
+      "expected": "无值失败，单值通过",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "U21",
+      "source": "A09",
+      "area": "必填",
+      "title": "日期必填",
+      "precondition": "S1完整两表单",
+      "steps": "打开必填；清空日期校验，再选单值日期",
+      "expected": "空值失败，合法单值通过",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "U22",
+      "source": "A09",
+      "area": "必填",
+      "title": "开关false有效",
+      "precondition": "S1完整两表单",
+      "steps": "打开必填，默认false；分别关闭/开启校验",
+      "expected": "false为有效布尔值，开关两态通过",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "U23",
+      "source": "A10",
+      "area": "选项",
+      "title": "选项修改与顺序",
+      "precondition": "S1完整两表单",
+      "steps": "更改单选/多选/下拉label、value和顺序；保存重开",
+      "expected": "选择不串位，选项完整且值类型保持",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "U24",
+      "source": "A10 A13",
+      "area": "布局",
+      "title": "行列和字段顺序",
+      "precondition": "S1完整两表单",
+      "steps": "调整顶层及列内顺序；字段放两列；尝试嵌套栅格",
+      "expected": "序列/列结构保持，嵌套栅格被拒绝",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "U25",
+      "source": "A10",
+      "area": "表单配置",
+      "title": "表单级配置保真",
+      "precondition": "S1完整两表单",
+      "steps": "改表单名称、标签位置/宽度、按钮配置；保存重开",
+      "expected": "options和rules成对保存，配置回显",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "U26",
+      "source": "A10",
+      "area": "续编",
+      "title": "重开编辑标题",
+      "precondition": "S1完整两表单",
+      "steps": "保存关编辑器再打开，改一字段标题保存",
+      "expected": "字段ID和其他定义保持，恢复后能继续编辑",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "U27",
+      "source": "A05",
+      "area": "目录",
+      "title": "改名保持引用",
+      "precondition": "S1完整两表单",
+      "steps": "默认及覆盖绑定后改名申请单",
+      "expected": "ID不变，所有引用仍指向原表单且摘要更新",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "U28",
+      "source": "A05",
+      "area": "目录",
+      "title": "同名不同ID可区分",
+      "precondition": "S1完整两表单",
+      "steps": "创建同名申请单；检查目录及绑定选择",
+      "expected": "同名条目可区分，原绑定不误换新ID",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "U29",
+      "source": "A06",
+      "area": "删除守卫",
+      "title": "默认引用阻止删除",
+      "precondition": "S1完整两表单",
+      "steps": "尝试删除流程默认表单并确认",
+      "expected": "拒绝且列出默认引用，目录不变",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "U30",
+      "source": "A06",
+      "area": "删除守卫",
+      "title": "覆盖引用阻止删除",
+      "precondition": "S1完整两表单",
+      "steps": "尝试删除有节点覆盖的表单并确认",
+      "expected": "拒绝且列出节点引用位置，目录不变",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "U31",
+      "source": "A06",
+      "area": "删除确认",
+      "title": "取消删除",
+      "precondition": "S1完整两表单",
+      "steps": "对未绑定测试表单进入删除确认后取消",
+      "expected": "表单内容及目录不变",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "U32",
+      "source": "A06",
+      "area": "删除",
+      "title": "解除引用后可删除",
+      "precondition": "S1完整两表单",
+      "steps": "解除测试表单的默认/节点引用，再确认删除",
+      "expected": "仅该表单删除，其他绑定和定义不变",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "U33",
+      "source": "A02",
+      "area": "绑定",
+      "title": "默认和节点覆盖",
+      "precondition": "S1完整两表单",
+      "steps": "申请单设默认，合同与财务指定复核单",
+      "expected": "经理继承来源正确，覆盖节点指定来源正确",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "U34",
+      "source": "A03",
+      "area": "绑定",
+      "title": "改默认仅影响继承",
+      "precondition": "S1完整两表单",
+      "steps": "将默认申请换成复核，再换回",
+      "expected": "继承节点随默认，覆盖节点保持原key",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "U35",
+      "source": "A03",
+      "area": "绑定",
+      "title": "清覆盖恢复继承",
+      "precondition": "S1完整两表单",
+      "steps": "清合同覆盖，再换默认",
+      "expected": "清除即继承；不是忽略默认或强制无表单",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "U36",
+      "source": "A04",
+      "area": "完成方式",
+      "title": "单签保持ID与覆盖",
+      "precondition": "S1完整两表单",
+      "steps": "覆盖节点切单签，填审批人，保存重开",
+      "expected": "节点ID、覆盖和字段不丢",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "U37",
+      "source": "A04",
+      "area": "完成方式",
+      "title": "会签保持ID与覆盖",
+      "precondition": "S1完整两表单",
+      "steps": "覆盖节点切会签，集合approvers，保存重开",
+      "expected": "节点ID、覆盖不丢；all形态正确",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "U38",
+      "source": "A04",
+      "area": "完成方式",
+      "title": "或签保持ID与覆盖",
+      "precondition": "S1完整两表单",
+      "steps": "覆盖节点切或签，集合approvers，保存重开",
+      "expected": "节点ID、覆盖不丢；any形态正确",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "U39",
+      "source": "A04",
+      "area": "完成方式",
+      "title": "依次保持ID与覆盖",
+      "precondition": "S1完整两表单",
+      "steps": "覆盖节点切依次，集合approvers，保存重开",
+      "expected": "节点ID、覆盖不丢；sequential形态正确",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "U40",
+      "source": "A02",
+      "area": "复用",
+      "title": "多个节点同key",
+      "precondition": "S1完整两表单",
+      "steps": "合同与财务均绑定同一复核单，保存重开",
+      "expected": "同一目录定义被复用，不复制新表单",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "U41",
+      "source": "A19",
+      "area": "节点边界",
+      "title": "条件并行抄送无有效表单",
+      "precondition": "S1完整两表单",
+      "steps": "主流程设默认；看摘要和预览下拉，并打开网关/抄送配置",
+      "expected": "只有审批节点参与解析/预览；网关抄送无覆盖入口",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "U42",
+      "source": "A10 A15",
+      "area": "恢复",
+      "title": "完整草稿刷新",
+      "precondition": "S1完整两表单",
+      "steps": "完整两表单保存本地、刷新",
+      "expected": "流程/目录/绑定及全部字段配置保持",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "U43",
+      "source": "A15",
+      "area": "下载",
+      "title": "实际设计文档下载",
+      "precondition": "S1完整两表单",
+      "steps": "点击下载，读取实际落盘文件",
+      "expected": "外层标识/版本/引擎、XML及全部forms齐全，不混试填值",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "U44",
+      "source": "A15",
+      "area": "文件打开",
+      "title": "从本轮下载物打开",
+      "precondition": "S1完整两表单",
+      "steps": "用实际文件选择器打开本轮下载文档",
+      "expected": "与本地刷新恢复语义一致",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "U45",
+      "source": "A10",
+      "area": "往返",
+      "title": "重复保存打开两轮",
+      "precondition": "S1完整两表单",
+      "steps": "完整文档保存、文件打开两轮，比较实际文件",
+      "expected": "字段ID/类型/选项/默认/必填/布局/options语义稳定",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "U46",
+      "source": "A08",
+      "area": "未绑定表单",
+      "title": "未绑定定义保留",
+      "precondition": "S1完整两表单",
+      "steps": "加入第三张未绑定表单，保存刷新、文件重开",
+      "expected": "该表单不被丢弃且可继续编辑",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "U47",
+      "source": "A07",
+      "area": "业务草稿",
+      "title": "审批人和条件缺失",
+      "precondition": "S1完整两表单",
+      "steps": "清空经理审批人及大额条件，保存刷新",
+      "expected": "设计进度恢复、定位两缺失、部署仍受阻",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "U48",
+      "source": "A07",
+      "area": "业务草稿",
+      "title": "会签空集合",
+      "precondition": "S1完整两表单",
+      "steps": "会签集合清空，快捷保存刷新",
+      "expected": "方式和空值恢复，待修复，导出受阻",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "U49",
+      "source": "A07",
+      "area": "业务草稿",
+      "title": "或签空集合",
+      "precondition": "S1完整两表单",
+      "steps": "或签集合清空，快捷保存刷新",
+      "expected": "方式和空值恢复，待修复，导出受阻",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "U50",
+      "source": "A07",
+      "area": "业务草稿",
+      "title": "依次空集合",
+      "precondition": "S1完整两表单",
+      "steps": "依次集合清空，快捷保存刷新",
+      "expected": "方式和空值恢复，待修复，导出受阻",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "U51",
+      "source": "A07",
+      "area": "业务草稿",
+      "title": "抄送空收件人",
+      "precondition": "S1完整两表单",
+      "steps": "清空抄送收件人，快捷保存刷新",
+      "expected": "抄送保持、待修复，导出受阻",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "U52",
+      "source": "A07 A13",
+      "area": "格式守卫",
+      "title": "集合表达式非法",
+      "precondition": "S1完整两表单",
+      "steps": "集合填${approvers}，尝试保存及切目标",
+      "expected": "格式拒绝，缓冲/旧存储/旧模型保持",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "U53",
+      "source": "A07 A13",
+      "area": "格式守卫",
+      "title": "集合逗号名单非法",
+      "precondition": "S1完整两表单",
+      "steps": "集合填a,b，尝试保存及切目标",
+      "expected": "格式拒绝，不半写模型",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "U54",
+      "source": "A07 A13",
+      "area": "格式守卫",
+      "title": "集合中文非法",
+      "precondition": "S1完整两表单",
+      "steps": "集合填中文，尝试保存及切目标",
+      "expected": "格式拒绝，不半写模型",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "U55",
+      "source": "A07",
+      "area": "未提交缓冲",
+      "title": "抽屉快捷保存",
+      "precondition": "S1完整两表单",
+      "steps": "改名并清空审批人，不确认，Cmd+S并刷新",
+      "expected": "当前输入和空业务值均被保存",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "U56",
+      "source": "A10 A15",
+      "area": "未提交缓冲",
+      "title": "焦点默认值快捷保存",
+      "precondition": "S1完整两表单",
+      "steps": "真实表单编辑器默认值输入，不离焦不保存表单，Cmd+S刷新",
+      "expected": "新默认值被收集，options保持，不只保存旧目录",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "U57",
+      "source": "A10 A15",
+      "area": "视图切换",
+      "title": "未确认输入切BPMN",
+      "precondition": "S1完整两表单",
+      "steps": "抽屉改名未确认，切只读视图再保存刷新",
+      "expected": "输入不静默丢失；非法格式不应被切换绕过",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "U58",
+      "source": "A15",
+      "area": "替换保护",
+      "title": "取消新建",
+      "precondition": "S1完整两表单",
+      "steps": "有未保存模型/目录/缓冲时新建并取消",
+      "expected": "全部当前状态及dirty保持",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "U59",
+      "source": "A15",
+      "area": "替换保护",
+      "title": "确认新建",
+      "precondition": "S1完整两表单",
+      "steps": "未保存状态新建并确认",
+      "expected": "换最小流程，旧目录和缓冲清除",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "U60",
+      "source": "A15",
+      "area": "替换保护",
+      "title": "取消文件替换",
+      "precondition": "S1完整两表单",
+      "steps": "有未保存编辑时选另一文件，替换提示取消",
+      "expected": "模型/目录/缓冲/dirty保持",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "U61",
+      "source": "A15",
+      "area": "替换保护",
+      "title": "确认文件替换",
+      "precondition": "S1完整两表单",
+      "steps": "有未保存编辑时选B并确认",
+      "expected": "仅呈现B设计，旧编辑清除",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "U62",
+      "source": "A14 A15",
+      "area": "文件边界",
+      "title": "取消原生文件选择",
+      "precondition": "S1完整两表单",
+      "steps": "打开系统选择器并取消",
+      "expected": "无替换/错误/虚假打开成功",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "U63",
+      "source": "A15",
+      "area": "文件边界",
+      "title": "连续选同一文件",
+      "precondition": "S1完整两表单",
+      "steps": "同文件打开两次",
+      "expected": "第二次仍执行打开，不因input未清空失效",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "U64",
+      "source": "A09 A10",
+      "area": "试填隔离",
+      "title": "目标切换和重复打开",
+      "precondition": "S1完整两表单",
+      "steps": "两表单试填，切目标、同ID文件重开，再下载定义",
+      "expected": "值按目标重置，试填不改默认、不进入文档",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "U65",
+      "source": "A11",
+      "area": "引用失效",
+      "title": "节点key失效不回退",
+      "precondition": "S1完整两表单",
+      "steps": "打开invalid-node，预览相关/其他节点、保存/导出",
+      "expected": "key保留定位；相关失败，其他可用，导出受阻",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "U66",
+      "source": "A11",
+      "area": "引用失效",
+      "title": "默认key失效",
+      "precondition": "S1完整两表单",
+      "steps": "打开invalid-default含覆盖，预览继承/覆盖，保存/导出",
+      "expected": "继承失败，覆盖仍可用；草稿保留引用，导出受阻",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "U67",
+      "source": "A18",
+      "area": "引用失效",
+      "title": "无人继承的失效默认",
+      "precondition": "S1完整两表单",
+      "steps": "全部节点覆盖有效form_2，默认missing，导出",
+      "expected": "仍因默认失效阻断，不按无人继承放行",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "U68",
+      "source": "A16",
+      "area": "导出状态",
+      "title": "有效变无效清旧XML",
+      "precondition": "S1完整两表单",
+      "steps": "先有效导出，再清业务值快捷保存并导出",
+      "expected": "显示当前错误，无旧有效XML冒充",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "U69",
+      "source": "A12 A15",
+      "area": "恢复错误",
+      "title": "非法后合法可恢复",
+      "precondition": "S1完整两表单",
+      "steps": "有效→非法→合法文件交替",
+      "expected": "失败保留上个状态，后续合法可打开，旧错误清除",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "U70",
+      "source": "#70边界",
+      "area": "范围",
+      "title": "设计闭环能力边界",
+      "precondition": "S1完整两表单",
+      "steps": "检查工作区/管理/预览/导出入口",
+      "expected": "无实际发起/待办/审批操作/跨流程库/字段权限/多框架入口，不把试填当实例业务",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "G01",
+      "source": "A12/A13/A20",
+      "area": "JSON语法",
+      "title": "坏JSON",
+      "precondition": "G01单条件变体",
+      "steps": "在完整S1仅改变坏JSON，先确认抽屉输入形成未保存设计并关闭抽屉；实际选择变体并确认打开",
+      "expected": "界面明确拒绝并定位；当前模型、两表单、未保存设计内容、dirty保持；可继续保存/恢复",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "G02",
+      "source": "A12/A13/A20",
+      "area": "格式标识",
+      "title": "错误format",
+      "precondition": "G02单条件变体",
+      "steps": "在完整S1仅改变错误format，先确认抽屉输入形成未保存设计并关闭抽屉；实际选择变体并确认打开",
+      "expected": "界面明确拒绝并定位；当前模型、两表单、未保存设计内容、dirty保持；可继续保存/恢复",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "G03",
+      "source": "A12/A13/A20",
+      "area": "版本",
+      "title": "未知版本99",
+      "precondition": "G03单条件变体",
+      "steps": "在完整S1仅改变未知版本99，先确认抽屉输入形成未保存设计并关闭抽屉；实际选择变体并确认打开",
+      "expected": "界面明确拒绝并定位；当前模型、两表单、未保存设计内容、dirty保持；可继续保存/恢复",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "G04",
+      "source": "A12/A13/A20",
+      "area": "版本类型",
+      "title": "版本类型字符串",
+      "precondition": "G04单条件变体",
+      "steps": "在完整S1仅改变版本类型字符串，先确认抽屉输入形成未保存设计并关闭抽屉；实际选择变体并确认打开",
+      "expected": "界面明确拒绝并定位；当前模型、两表单、未保存设计内容、dirty保持；可继续保存/恢复",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "G05",
+      "source": "A12/A13/A20",
+      "area": "engine",
+      "title": "未知引擎",
+      "precondition": "G05单条件变体",
+      "steps": "在完整S1仅改变未知引擎，先确认抽屉输入形成未保存设计并关闭抽屉；实际选择变体并确认打开",
+      "expected": "界面明确拒绝并定位；当前模型、两表单、未保存设计内容、dirty保持；可继续保存/恢复",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "G06",
+      "source": "A12/A13/A20",
+      "area": "provider",
+      "title": "未知提供者",
+      "precondition": "G06单条件变体",
+      "steps": "在完整S1仅改变未知提供者，先确认抽屉输入形成未保存设计并关闭抽屉；实际选择变体并确认打开",
+      "expected": "界面明确拒绝并定位；当前模型、两表单、未保存设计内容、dirty保持；可继续保存/恢复",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "G07",
+      "source": "A12/A13/A20",
+      "area": "forms id",
+      "title": "重复表单ID",
+      "precondition": "G07单条件变体",
+      "steps": "在完整S1仅改变重复表单ID，先确认抽屉输入形成未保存设计并关闭抽屉；实际选择变体并确认打开",
+      "expected": "界面明确拒绝并定位；当前模型、两表单、未保存设计内容、dirty保持；可继续保存/恢复",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "G08",
+      "source": "A12/A13/A20",
+      "area": "forms id",
+      "title": "空表单ID",
+      "precondition": "G08单条件变体",
+      "steps": "在完整S1仅改变空表单ID，先确认抽屉输入形成未保存设计并关闭抽屉；实际选择变体并确认打开",
+      "expected": "界面明确拒绝并定位；当前模型、两表单、未保存设计内容、dirty保持；可继续保存/恢复",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "G09",
+      "source": "A12/A13/A20",
+      "area": "name",
+      "title": "空白表单名",
+      "precondition": "G09单条件变体",
+      "steps": "在完整S1仅改变空白表单名，先确认抽屉输入形成未保存设计并关闭抽屉；实际选择变体并确认打开",
+      "expected": "界面明确拒绝并定位；当前模型、两表单、未保存设计内容、dirty保持；可继续保存/恢复",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "G10",
+      "source": "A12/A13/A20",
+      "area": "rules",
+      "title": "rules坏JSON",
+      "precondition": "G10单条件变体",
+      "steps": "在完整S1仅改变rules坏JSON，先确认抽屉输入形成未保存设计并关闭抽屉；实际选择变体并确认打开",
+      "expected": "界面明确拒绝并定位；当前模型、两表单、未保存设计内容、dirty保持；可继续保存/恢复",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "G11",
+      "source": "A12/A13/A20",
+      "area": "options",
+      "title": "options坏JSON",
+      "precondition": "G11单条件变体",
+      "steps": "在完整S1仅改变options坏JSON，先确认抽屉输入形成未保存设计并关闭抽屉；实际选择变体并确认打开",
+      "expected": "界面明确拒绝并定位；当前模型、两表单、未保存设计内容、dirty保持；可继续保存/恢复",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "G12",
+      "source": "A12/A13/A20",
+      "area": "规则结构",
+      "title": "rules根对象",
+      "precondition": "G12单条件变体",
+      "steps": "在完整S1仅改变rules根对象，先确认抽屉输入形成未保存设计并关闭抽屉；实际选择变体并确认打开",
+      "expected": "界面明确拒绝并定位；当前模型、两表单、未保存设计内容、dirty保持；可继续保存/恢复",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "G13",
+      "source": "A12/A13/A20",
+      "area": "props",
+      "title": "props非对象",
+      "precondition": "G13单条件变体",
+      "steps": "在完整S1仅改变props非对象，先确认抽屉输入形成未保存设计并关闭抽屉；实际选择变体并确认打开",
+      "expected": "界面明确拒绝并定位；当前模型、两表单、未保存设计内容、dirty保持；可继续保存/恢复",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "G14",
+      "source": "A12/A13/A20",
+      "area": "组件范围",
+      "title": "upload超范围",
+      "precondition": "G14单条件变体",
+      "steps": "在完整S1仅改变upload超范围，先确认抽屉输入形成未保存设计并关闭抽屉；实际选择变体并确认打开",
+      "expected": "界面明确拒绝并定位；当前模型、两表单、未保存设计内容、dirty保持；可继续保存/恢复",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "G15",
+      "source": "A12/A13/A20",
+      "area": "input type",
+      "title": "input非文本类型",
+      "precondition": "G15单条件变体",
+      "steps": "在完整S1仅改变input非文本类型，先确认抽屉输入形成未保存设计并关闭抽屉；实际选择变体并确认打开",
+      "expected": "界面明确拒绝并定位；当前模型、两表单、未保存设计内容、dirty保持；可继续保存/恢复",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "G16",
+      "source": "A12/A13/A20",
+      "area": "下拉范围",
+      "title": "select multiple",
+      "precondition": "G16单条件变体",
+      "steps": "在完整S1仅改变select multiple，先确认抽屉输入形成未保存设计并关闭抽屉；实际选择变体并确认打开",
+      "expected": "界面明确拒绝并定位；当前模型、两表单、未保存设计内容、dirty保持；可继续保存/恢复",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "G17",
+      "source": "A12/A13/A20",
+      "area": "下拉范围",
+      "title": "select allowCreate",
+      "precondition": "G17单条件变体",
+      "steps": "在完整S1仅改变select allowCreate，先确认抽屉输入形成未保存设计并关闭抽屉；实际选择变体并确认打开",
+      "expected": "界面明确拒绝并定位；当前模型、两表单、未保存设计内容、dirty保持；可继续保存/恢复",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "G18",
+      "source": "A12/A13/A20",
+      "area": "日期范围",
+      "title": "date range",
+      "precondition": "G18单条件变体",
+      "steps": "在完整S1仅改变date range，先确认抽屉输入形成未保存设计并关闭抽屉；实际选择变体并确认打开",
+      "expected": "界面明确拒绝并定位；当前模型、两表单、未保存设计内容、dirty保持；可继续保存/恢复",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "G19",
+      "source": "A12/A13/A20",
+      "area": "联动",
+      "title": "control联动",
+      "precondition": "G19单条件变体",
+      "steps": "在完整S1仅改变control联动，先确认抽屉输入形成未保存设计并关闭抽屉；实际选择变体并确认打开",
+      "expected": "界面明确拒绝并定位；当前模型、两表单、未保存设计内容、dirty保持；可继续保存/恢复",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "G20",
+      "source": "A12/A13/A20",
+      "area": "联动",
+      "title": "_control隐藏联动",
+      "precondition": "G20单条件变体",
+      "steps": "在完整S1仅改变_control隐藏联动，先确认抽屉输入形成未保存设计并关闭抽屉；实际选择变体并确认打开",
+      "expected": "界面明确拒绝并定位；当前模型、两表单、未保存设计内容、dirty保持；可继续保存/恢复",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "G21",
+      "source": "A12/A13/A20",
+      "area": "远程数据",
+      "title": "远程fetch",
+      "precondition": "G21单条件变体",
+      "steps": "在完整S1仅改变远程fetch，先确认抽屉输入形成未保存设计并关闭抽屉；实际选择变体并确认打开",
+      "expected": "界面明确拒绝并定位；当前模型、两表单、未保存设计内容、dirty保持；可继续保存/恢复",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "G22",
+      "source": "A12/A13/A20",
+      "area": "脚本",
+      "title": "字段事件脚本",
+      "precondition": "G22单条件变体",
+      "steps": "在完整S1仅改变字段事件脚本，先确认抽屉输入形成未保存设计并关闭抽屉；实际选择变体并确认打开",
+      "expected": "界面明确拒绝并定位；当前模型、两表单、未保存设计内容、dirty保持；可继续保存/恢复",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "G23",
+      "source": "A12/A13/A20",
+      "area": "字段唯一",
+      "title": "重复字段ID",
+      "precondition": "G23单条件变体",
+      "steps": "在完整S1仅改变重复字段ID，先确认抽屉输入形成未保存设计并关闭抽屉；实际选择变体并确认打开",
+      "expected": "界面明确拒绝并定位；当前模型、两表单、未保存设计内容、dirty保持；可继续保存/恢复",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "G24",
+      "source": "A12/A13/A20",
+      "area": "布局范围",
+      "title": "嵌套栅格",
+      "precondition": "G24单条件变体",
+      "steps": "在完整S1仅改变嵌套栅格，先确认抽屉输入形成未保存设计并关闭抽屉；实际选择变体并确认打开",
+      "expected": "界面明确拒绝并定位；当前模型、两表单、未保存设计内容、dirty保持；可继续保存/恢复",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "G25",
+      "source": "A12/A13/A20",
+      "area": "options脚本",
+      "title": "表单级脚本",
+      "precondition": "G25单条件变体",
+      "steps": "在完整S1仅改变表单级脚本，先确认抽屉输入形成未保存设计并关闭抽屉；实际选择变体并确认打开",
+      "expected": "界面明确拒绝并定位；当前模型、两表单、未保存设计内容、dirty保持；可继续保存/恢复",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "G26",
+      "source": "A12/A13/A20",
+      "area": "XML语法",
+      "title": "坏XML",
+      "precondition": "G26单条件变体",
+      "steps": "在完整S1仅改变坏XML，先确认抽屉输入形成未保存设计并关闭抽屉；实际选择变体并确认打开",
+      "expected": "界面明确拒绝并定位；当前模型、两表单、未保存设计内容、dirty保持；可继续保存/恢复",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "G27",
+      "source": "A12/A13/A20",
+      "area": "XML唯一",
+      "title": "重复XML节点ID",
+      "precondition": "G27单条件变体",
+      "steps": "在完整S1仅改变重复XML节点ID，先确认抽屉输入形成未保存设计并关闭抽屉；实际选择变体并确认打开",
+      "expected": "界面明确拒绝并定位；当前模型、两表单、未保存设计内容、dirty保持；可继续保存/恢复",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "G28",
+      "source": "A12/A13/A20",
+      "area": "流程数量",
+      "title": "多流程",
+      "precondition": "G28单条件变体",
+      "steps": "在完整S1仅改变多流程，先确认抽屉输入形成未保存设计并关闭抽屉；实际选择变体并确认打开",
+      "expected": "界面明确拒绝并定位；当前模型、两表单、未保存设计内容、dirty保持；可继续保存/恢复",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "G29",
+      "source": "A12/A13/A20",
+      "area": "流程子集",
+      "title": "scriptTask",
+      "precondition": "G29单条件变体",
+      "steps": "在完整S1仅改变scriptTask，先确认抽屉输入形成未保存设计并关闭抽屉；实际选择变体并确认打开",
+      "expected": "界面明确拒绝并定位；当前模型、两表单、未保存设计内容、dirty保持；可继续保存/恢复",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "G30",
+      "source": "A12/A13/A20",
+      "area": "流程子集",
+      "title": "subProcess",
+      "precondition": "G30单条件变体",
+      "steps": "在完整S1仅改变subProcess，先确认抽屉输入形成未保存设计并关闭抽屉；实际选择变体并确认打开",
+      "expected": "界面明确拒绝并定位；当前模型、两表单、未保存设计内容、dirty保持；可继续保存/恢复",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "G31",
+      "source": "A12/A13/A20",
+      "area": "结构",
+      "title": "循环",
+      "precondition": "G31单条件变体",
+      "steps": "在完整S1仅改变循环，先确认抽屉输入形成未保存设计并关闭抽屉；实际选择变体并确认打开",
+      "expected": "界面明确拒绝并定位；当前模型、两表单、未保存设计内容、dirty保持；可继续保存/恢复",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "G32",
+      "source": "A12/A13/A20",
+      "area": "结构",
+      "title": "不可达节点",
+      "precondition": "G32单条件变体",
+      "steps": "在完整S1仅改变不可达节点，先确认抽屉输入形成未保存设计并关闭抽屉；实际选择变体并确认打开",
+      "expected": "界面明确拒绝并定位；当前模型、两表单、未保存设计内容、dirty保持；可继续保存/恢复",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "G33",
+      "source": "A12/A13/A20",
+      "area": "结构",
+      "title": "多开始",
+      "precondition": "G33单条件变体",
+      "steps": "在完整S1仅改变多开始，先确认抽屉输入形成未保存设计并关闭抽屉；实际选择变体并确认打开",
+      "expected": "界面明确拒绝并定位；当前模型、两表单、未保存设计内容、dirty保持；可继续保存/恢复",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "G34",
+      "source": "A12/A13/A20",
+      "area": "扩展兼容",
+      "title": "未知URI属性",
+      "precondition": "G34单条件变体",
+      "steps": "在完整S1仅改变未知URI属性，先确认抽屉输入形成未保存设计并关闭抽屉；实际选择变体并确认打开",
+      "expected": "界面明确拒绝并定位；当前模型、两表单、未保存设计内容、dirty保持；可继续保存/恢复",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "G35",
+      "source": "A12/A13/A20",
+      "area": "扩展兼容",
+      "title": "未知URI元素",
+      "precondition": "G35单条件变体",
+      "steps": "在完整S1仅改变未知URI元素，先确认抽屉输入形成未保存设计并关闭抽屉；实际选择变体并确认打开",
+      "expected": "界面明确拒绝并定位；当前模型、两表单、未保存设计内容、dirty保持；可继续保存/恢复",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "G36",
+      "source": "A12/A13/A20",
+      "area": "URI非前缀",
+      "title": "伪装flowable前缀",
+      "precondition": "G36单条件变体",
+      "steps": "在完整S1仅改变伪装flowable前缀，先确认抽屉输入形成未保存设计并关闭抽屉；实际选择变体并确认打开",
+      "expected": "界面明确拒绝并定位；当前模型、两表单、未保存设计内容、dirty保持；可继续保存/恢复",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "G37",
+      "source": "A12/A13/A20",
+      "area": "未知语义",
+      "title": "已注册URI未知属性",
+      "precondition": "G37单条件变体",
+      "steps": "在完整S1仅改变已注册URI未知属性，先确认抽屉输入形成未保存设计并关闭抽屉；实际选择变体并确认打开",
+      "expected": "界面明确拒绝并定位；当前模型、两表单、未保存设计内容、dirty保持；可继续保存/恢复",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "G38",
+      "source": "A12/A13/A20",
+      "area": "保留命名空间",
+      "title": "非法xml保留前缀",
+      "precondition": "G38单条件变体",
+      "steps": "在完整S1仅改变非法xml保留前缀，先确认抽屉输入形成未保存设计并关闭抽屉；实际选择变体并确认打开",
+      "expected": "界面明确拒绝并定位；当前模型、两表单、未保存设计内容、dirty保持；可继续保存/恢复",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "G39",
+      "source": "A12/A13/A20",
+      "area": "URI精确",
+      "title": "URI大小写不归一",
+      "precondition": "G39单条件变体",
+      "steps": "在完整S1仅改变URI大小写不归一，先确认抽屉输入形成未保存设计并关闭抽屉；实际选择变体并确认打开",
+      "expected": "界面明确拒绝并定位；当前模型、两表单、未保存设计内容、dirty保持；可继续保存/恢复",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "G40",
+      "source": "A12/A13/A20",
+      "area": "URI精确",
+      "title": "URI百分号不归一",
+      "precondition": "G40单条件变体",
+      "steps": "在完整S1仅改变URI百分号不归一，先确认抽屉输入形成未保存设计并关闭抽屉；实际选择变体并确认打开",
+      "expected": "界面明确拒绝并定位；当前模型、两表单、未保存设计内容、dirty保持；可继续保存/恢复",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "G41",
+      "source": "A12/A13/A20",
+      "area": "作用域",
+      "title": "内层前缀重绑",
+      "precondition": "G41单条件变体",
+      "steps": "在完整S1仅改变内层前缀重绑，先确认抽屉输入形成未保存设计并关闭抽屉；实际选择变体并确认打开",
+      "expected": "界面明确拒绝并定位；当前模型、两表单、未保存设计内容、dirty保持；可继续保存/恢复",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "V01",
+      "source": "A20/A10",
+      "area": "兼容正例",
+      "title": "纯标准BPMN业务草稿",
+      "precondition": "V01合法兼容变体",
+      "steps": "文件打开去引擎扩展、审批人留空的完整字段文档，继续编辑并保存",
+      "expected": "可恢复且定义不丢；有效URI扩展识别；缺业务配置仍阻止导出；连线结构可编辑",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "V02",
+      "source": "A20/A10",
+      "area": "兼容正例",
+      "title": "同URI换项目和引擎前缀",
+      "precondition": "V02合法兼容变体",
+      "steps": "文件打开扩展属性前缀分别改fd/fb，URI不变的完整字段文档，继续编辑并保存",
+      "expected": "可恢复且定义不丢；有效URI扩展识别；缺业务配置仍阻止导出；连线结构可编辑",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "V03",
+      "source": "A20/A10",
+      "area": "兼容正例",
+      "title": "仅声明未用的其他命名空间",
+      "precondition": "V03合法兼容变体",
+      "steps": "文件打开增加未使用的未知URI声明的完整字段文档，继续编辑并保存",
+      "expected": "可恢复且定义不丢；有效URI扩展识别；缺业务配置仍阻止导出；连线结构可编辑",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "V04",
+      "source": "A20/A10",
+      "area": "兼容正例",
+      "title": "URI实体一次解码",
+      "precondition": "V04合法兼容变体",
+      "steps": "文件打开Flowable URI中的字符用XML实体等价编码的完整字段文档，继续编辑并保存",
+      "expected": "可恢复且定义不丢；有效URI扩展识别；缺业务配置仍阻止导出；连线结构可编辑",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "V05",
+      "source": "A20/A10",
+      "area": "兼容正例",
+      "title": "省略节点侧连线登记",
+      "precondition": "V05合法兼容变体",
+      "steps": "文件打开删incoming/outgoing，保留SequenceFlow端点的完整字段文档，继续编辑并保存",
+      "expected": "可恢复且定义不丢；有效URI扩展识别；缺业务配置仍阻止导出；连线结构可编辑",
+      "method": "Codex内置浏览器真实UI"
+    },
+    {
+      "id": "E01",
+      "source": "A14/A15/A16/并发边界",
+      "area": "异常与竞态",
+      "title": "存储读拒绝",
+      "precondition": "S1完整两表单",
+      "steps": "Storage.getItem临时SecurityError后刷新",
+      "expected": "错误可见，演示状态保留，可继续操作",
+      "method": "Codex内置浏览器UI + 明确记录的CDP临时故障/延迟注入"
+    },
+    {
+      "id": "E02",
+      "source": "A14/A15/A16/并发边界",
+      "area": "异常与竞态",
+      "title": "损坏本地草稿",
+      "precondition": "S1完整两表单",
+      "steps": "测试键置坏JSON后刷新",
+      "expected": "恢复失败可见，不部分覆盖演示设计",
+      "method": "Codex内置浏览器UI + 明确记录的CDP临时故障/延迟注入"
+    },
+    {
+      "id": "E03",
+      "source": "A14/A15/A16/并发边界",
+      "area": "异常与竞态",
+      "title": "存储写拒绝",
+      "precondition": "S1完整两表单",
+      "steps": "setItem临时SecurityError，保存",
+      "expected": "不误报成功，dirty/旧草稿保持",
+      "method": "Codex内置浏览器UI + 明确记录的CDP临时故障/延迟注入"
+    },
+    {
+      "id": "E04",
+      "source": "A14/A15/A16/并发边界",
+      "area": "异常与竞态",
+      "title": "容量不足",
+      "precondition": "S1完整两表单",
+      "steps": "setItem临时QuotaExceededError，保存",
+      "expected": "容量错误可见，dirty/旧草稿保持",
+      "method": "Codex内置浏览器UI + 明确记录的CDP临时故障/延迟注入"
+    },
+    {
+      "id": "E05",
+      "source": "A14/A15/A16/并发边界",
+      "area": "异常与竞态",
+      "title": "文件读取拒绝",
+      "precondition": "S1完整两表单",
+      "steps": "仅测试File.text拒绝，选合法文件",
+      "expected": "错误可见，模型/目录/dirty保持，可重试",
+      "method": "Codex内置浏览器UI + 明确记录的CDP临时故障/延迟注入"
+    },
+    {
+      "id": "E06",
+      "source": "A14/A15/A16/并发边界",
+      "area": "异常与竞态",
+      "title": "慢A后快B旧成功",
+      "precondition": "S1完整两表单",
+      "steps": "延迟A读取；选B成功后释放A",
+      "expected": "最终模型/目录/反馈始终B",
+      "method": "Codex内置浏览器UI + 明确记录的CDP临时故障/延迟注入"
+    },
+    {
+      "id": "E07",
+      "source": "A14/A15/A16/并发边界",
+      "area": "异常与竞态",
+      "title": "慢A后快B旧失败",
+      "precondition": "S1完整两表单",
+      "steps": "延迟A读取；B成功后A拒绝",
+      "expected": "B保持，无A旧错误",
+      "method": "Codex内置浏览器UI + 明确记录的CDP临时故障/延迟注入"
+    },
+    {
+      "id": "E08",
+      "source": "A14/A15/A16/并发边界",
+      "area": "异常与竞态",
+      "title": "慢A后快B旧坏格式",
+      "precondition": "S1完整两表单",
+      "steps": "延迟A，B成功后A给坏JSON",
+      "expected": "B保持，无A旧格式错误",
+      "method": "Codex内置浏览器UI + 明确记录的CDP临时故障/延迟注入"
+    },
+    {
+      "id": "E09",
+      "source": "A14/A15/A16/并发边界",
+      "area": "异常与竞态",
+      "title": "慢A期间新建",
+      "precondition": "S1完整两表单",
+      "steps": "延迟A读取，新建后释放A",
+      "expected": "新设计保持，旧结果不落地",
+      "method": "Codex内置浏览器UI + 明确记录的CDP临时故障/延迟注入"
+    },
+    {
+      "id": "E10",
+      "source": "A14/A15/A16/并发边界",
+      "area": "异常与竞态",
+      "title": "读取期间继续编辑",
+      "precondition": "S1完整两表单",
+      "steps": "延迟B读取，在旧抽屉编辑后释放B",
+      "expected": "取消打开并保留新编辑，不静默替换",
+      "method": "Codex内置浏览器UI + 明确记录的CDP临时故障/延迟注入"
+    },
+    {
+      "id": "E11",
+      "source": "A14/A15/A16/并发边界",
+      "area": "异常与竞态",
+      "title": "解析期间继续编辑",
+      "precondition": "S1完整两表单",
+      "steps": "仅真实fromXML延迟，编辑后释放",
+      "expected": "替换前保护新编辑；可再保存/重试",
+      "method": "Codex内置浏览器UI + 明确记录的CDP临时故障/延迟注入"
+    },
+    {
+      "id": "E12",
+      "source": "A14/A15/A16/并发边界",
+      "area": "异常与竞态",
+      "title": "保存期间新编辑",
+      "precondition": "S1完整两表单",
+      "steps": "延迟真实save返回，模型/表单编辑后释放",
+      "expected": "旧快照可保存，当前dirty保留，反馈准确",
+      "method": "Codex内置浏览器UI + 明确记录的CDP临时故障/延迟注入"
+    },
+    {
+      "id": "E13",
+      "source": "A14/A15/A16/并发边界",
+      "area": "异常与竞态",
+      "title": "保存乱序成功",
+      "precondition": "S1完整两表单",
+      "steps": "第一次save延迟，第二次新快照成功，再放第一次",
+      "expected": "较新草稿与clean保持",
+      "method": "Codex内置浏览器UI + 明确记录的CDP临时故障/延迟注入"
+    },
+    {
+      "id": "E14",
+      "source": "A14/A15/A16/并发边界",
+      "area": "异常与竞态",
+      "title": "保存乱序旧失败",
+      "precondition": "S1完整两表单",
+      "steps": "旧save延迟拒绝，第二次成功后放旧拒绝",
+      "expected": "较新存储与反馈保持，不显示旧错误",
+      "method": "Codex内置浏览器UI + 明确记录的CDP临时故障/延迟注入"
+    },
+    {
+      "id": "E15",
+      "source": "A14/A15/A16/并发边界",
+      "area": "异常与竞态",
+      "title": "旧导出迟到",
+      "precondition": "S1完整两表单",
+      "steps": "延迟真实toXML导出，改为无效后释放",
+      "expected": "旧XML不冒充当前结果",
+      "method": "Codex内置浏览器UI + 明确记录的CDP临时故障/延迟注入"
+    },
+    {
+      "id": "E16",
+      "source": "A14/A15/A16/并发边界",
+      "area": "异常与竞态",
+      "title": "表单序列化抛错后恢复",
+      "precondition": "S1完整两表单",
+      "steps": "真实编辑器序列化出口临时抛错，快捷保存；撤销后再存",
+      "expected": "错误可见、输入保持、旧草稿不变；撤销后可成功",
+      "method": "Codex内置浏览器UI + 明确记录的CDP临时故障/延迟注入"
+    },
+    {
+      "id": "C01",
+      "source": "A17",
+      "area": "公开入口兼容",
+      "title": "原designer手写formKey",
+      "precondition": "S1完整两表单",
+      "steps": "同一浏览器临时装配公开DingtalkDesigner不传formOptions，手写formKey及普通确定；结束卸载",
+      "expected": "旧入口/严格守卫保持；不以Playground已装集成包证明未装包依赖独立性",
+      "method": "Codex内置浏览器辅助公开组件装配"
+    }
+  ]
+}

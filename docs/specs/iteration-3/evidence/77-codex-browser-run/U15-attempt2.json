@@ -1,0 +1,19 @@
+{
+  "title": "文本必填",
+  "source": "A09",
+  "method": "Codex内置浏览器真实UI",
+  "startedUTC": "2026-10-12T10:15:01.480Z",
+  "status": "待诊断",
+  "attempts": [
+    {
+      "status": "待诊断",
+      "evidence": "U15-attempt1.json"
+    }
+  ],
+  "error": "Error: Playwright selector deadline exceeded\nwaiting on click for selector [data-test=\"form-preview-dialog\"] >> .el-checkbox >> internal:has=\"[data-test=\\\"form-preview-dialog\\\"] >> internal:role=checkbox[name=\\\"是\\\"s]\"\nLocator diagnostics: {\"kind\":\"no_matches\",\"action\":\"click\",\"locator\":\"[data-test=\\\"form-preview-dialog\\\"] >> .el-checkbox >> internal:has=\\\"[data-test=\\\\\\\"form-preview-dialog\\\\\\\"] >> internal:role=checkbox[name=\\\\\\\"是\\\\\\\"s]\\\"\",\"matchCount\":0,\"matches\":[],\"visibleCount\":0,\"truncated\":false}",
+  "completedUTC": "2026-10-12T10:15:07.109Z",
+  "evidence": [
+    "U15.ax.txt",
+    "U15.jpg"
+  ]
+}

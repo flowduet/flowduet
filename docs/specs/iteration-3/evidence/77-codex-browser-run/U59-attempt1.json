@@ -1,0 +1,16 @@
+{
+  "title": "确认新建",
+  "source": "A15",
+  "method": "Codex内置浏览器真实UI",
+  "startedUTC": "2026-10-12T10:25:19.914Z",
+  "status": "通过",
+  "attempts": [],
+  "actual": {
+    "minimalDesign": true
+  },
+  "completedUTC": "2026-10-12T10:25:22.733Z",
+  "evidence": [
+    "U59.ax.txt",
+    "U59.jpg"
+  ]
+}
