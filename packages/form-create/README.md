@@ -21,6 +21,8 @@ import "element-plus/dist/index.css";
 
 > **浏览器环境边界**：本包（含上游 FormCreate 设计器）在模块加载期访问 `document`，纯 Node 下 `import "@flowduet/form-create"` 会抛 `document is not defined`——属浏览器组件库的预期行为。SSR 宿主（Nuxt 等）需将本包的导入与组件挂载收敛到客户端（client-only / onMounted 动态导入）；`@flowduet/core` 与 `@flowduet/designer` 无此限制（core 同构可用，designer 仅依赖 Vue 运行时）。
 
+TypeScript 消费本包的 Vue SFC 声明时，采用 Vue/Vite 的 `moduleResolution: "Bundler"`；纯 `NodeNext` 模式不是本包已验证的声明解析口径。
+
 ## 流程设计文档
 
 外层 JSON 协议（首版，未知格式 / 版本 / 引擎明确拒绝，不自动迁移）：

@@ -17,6 +17,18 @@ import "@flowduet/designer/style.css";
 import "element-plus/dist/index.css";
 ```
 
+若使用 `BpmnCanvas`，宿主还需显式安装 Vue Flow 的样式提供包，并引入其基础样式；`@flowduet/designer/style.css` 提供本包样式，不代替 Vue Flow 基础样式。只使用 `DingtalkDesigner` 时不需要这一步。
+
+```sh
+pnpm add @vue-flow/core@^1.48.2
+```
+
+```ts
+import "@vue-flow/core/dist/style.css";
+```
+
+TypeScript 接入以 Vue/Vite 的 `moduleResolution: "Bundler"` 为验证口径；Vue SFC 声明并不保证在纯 `NodeNext` 配置中可直接解析。`@flowduet/core` 可独立用于 Node 环境。
+
 ## 使用
 
 ```vue
