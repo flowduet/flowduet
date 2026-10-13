@@ -1,0 +1,22 @@
+📦  @flowduet/designer@0.1.0
+Tarball Contents
+dist/canvas-props.d.ts
+dist/components/BlockNodeList.vue.d.ts
+dist/components/BpmnCanvas.vue.d.ts
+dist/components/BpmnEdge.vue.d.ts
+dist/components/BpmnNode.vue.d.ts
+dist/components/DingtalkDesigner.vue.d.ts
+dist/components/NodeCard.vue.d.ts
+dist/components/NodeDrawer.vue.d.ts
+dist/designer.css
+dist/export.d.ts
+dist/form-options.d.ts
+dist/geometry.d.ts
+dist/index.d.ts
+dist/index.js
+dist/operations.d.ts
+LICENSE
+package.json
+README.md
+Tarball Details
+/Users/l/Documents/projects/flowduet/docs/specs/iteration-3/evidence/77-version-prep/tarballs/flowduet-designer-0.1.0.tgz

@@ -1,5 +1,58 @@
 # @flowduet/designer
 
+## 0.1.0
+
+### Minor Changes
+
+- 33591e1: 内核 `parse` 新增可选 `rejectWarnings`：默认保持宽松解析，文档恢复入口主动启用警告拒绝，防止重复 ID 或未知元素在打开后静默丢失。
+
+  新增公开导出 `collectDraftIssues(model)` 与 `isCcServiceTask(element)`：草稿待修复项收集器与抄送形态判定谓词，与 `exportXml` 共用同一扫描口径。设计文档保存与打开侧（`@flowduet/form-create`）据此实现「保存成功 + 报告待修复项」与子集校验，不再需要宿主复制判断逻辑。`exportXml` 行为不变。
+
+  流程设计文档编解码与组合会话（迭代三 #71）：
+
+  - 流程设计文档协议与编解码：`format=flowduet.design` / `version=1` / `engine=flowable`，携带单流程 XML 与 `forms` 数组；支持同文档多表单目录，真实表单定义与范围校验由本次发布的集成能力提供。
+  - `saveDesignDocument(model, forms?)`：生成带竖排 DI 的可恢复文档，业务草稿（审批人 / 条件未配齐）允许保存并返回 `pendingIssues`；产物重新解析自证可恢复。
+  - `openDesignDocument(text)`：坏 JSON / XML、未知格式 / 版本 / 引擎、多流程、超出编辑子集的元素与不良构图形（循环、多开始、不可达）明确拒绝；纯标准 BPMN 草稿（无 Flowable 命名空间）可恢复。
+  - 恢复后按顺序流端点重建节点连线登记，省略 incoming/outgoing 标记的文档仍可继续编辑，缺失条件不会绕过部署导出校验。
+  - `FlowDesignSession`：组合编辑会话，持有「模型 + 表单目录」整体状态，提供新建（最小流程）、保存与原子恢复打开；迟到的打开结果不覆盖更新的操作。
+  - core 与 designer 保持零 FormCreate 依赖。
+
+- c31d3ba: 默认表单绑定协议与真实 FormCreate 集成（迭代三 #72）：
+
+  - core：新增项目绑定扩展描述符——`bpmn:Process` 上的 `flowduet:defaultFormKey`（命名空间 `urn:flowduet:bpmn`），由创建与解析路径统一注册并与适配器扩展包合并，占用 `flowduet` 前缀的适配器明确拒绝；`BpmnModel.defaultFormKey / setDefaultFormKey()` 读写收口；`resolveEffectiveForm()` 有效表单解析（显式覆盖优先、默认继承、网关与抄送不参与）。未使用绑定的既有编译输出逐字不变（新增基准 `default-form.flowable68.baseline.xml`）。
+  - designer：`DingtalkDesigner` 新增中立表单接缝 `formOptions`（id/name 摘要，不依赖表单实现）——传入即展示流程默认表单选择条与审批节点有效表单摘要（继承默认 / 节点指定 / 引用失效，失效保留原 key），不传时纯流程形态完全不变；公开 `isCcServiceTask()` 谓词。
+  - form-create：接入真实开源设计器与渲染器（锁定 `@form-create/designer@3.5.0` + `@form-create/element-ui@3.3.4`，Vue3/Element Plus 线，AI 模块关闭）；`FlowDesignSession` 扩展表单目录管理（创建 / 改名不改 ID / 内容写入校验）；设计文档 forms 携带真实定义（provider=form-create/element-plus、成对序列化 rules/options、字段范围守卫覆盖八类常用字段与基础栅格）；`FormManager` / `FormDesigner`（菜单收口八类常用字段与基础栅格）/ `FormPreview`（真实渲染器试填、必填校验、查看值，试填与设计隔离、切换目标重置）；`exportDeployXml()` 组合部署导出（流程校验 + 默认与节点引用完整性，A18：默认失效即使节点全有覆盖也阻断）；`collectReferenceIssues()` 引用诊断。
+
+- 5beacbd: 多表单管理与审批节点显式覆盖（迭代三 #73）：
+
+  - designer：`NodeDrawer` 新增中立表单接缝 `formOptions`（由 `DingtalkDesigner` 自动下传）——表单集成模式下审批节点的自由文本 formKey 占位升级为目录选择：继承默认（选项内呈现当前默认表单名）/ 显式覆盖 / 目录外 key 只读项保留可改选修复；同名表单选项附 ID 区分（A05）；不传 `formOptions` 的纯流程宿主保持自由文本合同（A17）。网关与抄送不出现覆盖入口（A19）。
+  - form-create：`FlowDesignSession.deleteForm(id)` 表单删除守卫（A06）——被流程默认或任意审批节点引用时拒绝并列出全部引用位置，解除或调整全部引用后才可删除；新增 `collectFormUsage(model, id)` 引用位置收集器。`FormManager` 面板补删除入口（两段确认），未绑定表单随时可删（A08 反向面）。
+  - 基准：core 新增 `form-override` 编译与往返基准（流程默认 + 单签/或签继承 + 会签/依次覆盖复用同一 key + 网关与抄送在场），Flowable 6.8 部署冒烟扩展运行时断言——显式覆盖 formKey 经引擎任务查询可读、继承节点不固化（task.formKey=null）、多节点复用同一覆盖 key 逐节点可读。
+
+- 34b6a6b: 未完成设计的保存续编公开边界（迭代三 #76）：
+
+  - `DingtalkDesigner` 新增 `commitPendingChanges()` 组件方法与 `draft-change` 事件：宿主在保存设计文档前调用即可把抽屉里已输入未确认的变更经与「确定」同一套守卫写入模型；守卫拦截（如多人集合变量格式非法）返回 `false` 且抽屉保持打开，不绕过守卫落半写模型。抽屉字段被编辑时上抛 `draft-change`，未提交输入也计入宿主的未保存判定。
+  - `FormManager` 新增 `commitPendingEdit()` 与 `hasOpenEditor()` 组件方法，`FormDesigner` 新增 `exportContent()`：保存前可收集表单编辑器里尚未保存的 rules/options，序列化与守卫路径和「保存表单内容」按钮完全一致。
+  - 节点抽屉改为非模态展示：切换编辑目标前提交当前缓冲，格式非法时保留原节点与输入。
+
+  - `BpmnModel.addApprovalTask(spec, options)` 与 `DingtalkDesigner#commitPendingChanges(options)` 支持显式 `{ allowIncomplete: true }` 草稿路径：集合变量与收件人尚未配置时可保存恢复，非空非法格式仍拦截；默认确认和部署导出保持严格。内核只容许集合业务缺失，不放开 mode、元素变量或字段类型守卫。
+  - 表单收集序列化异常可见反馈并保留编辑器；Playground 用保存请求序号与设计替换序号阻止迟到结果覆盖较新草稿或反馈。
+
+  - 保存前收集表单当前焦点控件的未提交值；表单 `draft-change` 事件贯穿编辑器、管理面板与宿主编辑世代，保存期间的新输入不被误标为已保存。Playground 切换视图前收集抽屉缓冲，格式非法时保持原视图和选中态。
+
+  - `FlowDesignSession.open` 增加可选同步 `canReplace` 判定，在临时校验完成、实际替换之前取消已产生新编辑的打开请求；Playground 文件读取和刷新恢复期间的新输入不会被迟到结果静默覆盖，默认打开合同保持兼容。
+
+### Patch Changes
+
+- a046d93: 修复 #72 默认表单评审发现：有效表单解析保留 XML 引用字面值；带首尾空格的引用在设计视图中标为失效，组合部署导出明确拒绝；表单定义拒绝缺失或重复的字段标识，避免试填值混用。Playground 的预览与引用提示随模型编辑更新，表单管理面板就地反馈空白名称错误。
+- Updated dependencies [33591e1]
+- Updated dependencies [5ab2b61]
+- Updated dependencies [c31d3ba]
+- Updated dependencies [a046d93]
+- Updated dependencies [dc5cbbc]
+- Updated dependencies [34b6a6b]
+  - @flowduet/core@0.3.0
+
 ## 0.0.5
 
 ### Patch Changes

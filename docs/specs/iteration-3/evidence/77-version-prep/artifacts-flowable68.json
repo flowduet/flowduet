@@ -1,0 +1,29 @@
+{
+  "engine": {
+    "name": "default",
+    "resourceUrl": null,
+    "exception": null,
+    "version": "6.8.0"
+  },
+  "passed": true,
+  "results": [
+    {
+      "file": "consumer-export.xml",
+      "deploymentStatus": 201,
+      "deploymentId": "400ceb3d-c6b3-11f1-a0bb-52fd662017c7",
+      "definitionId": "playground_demo:1:40a42230-c6b3-11f1-a0bb-52fd662017c7",
+      "instanceId": "40ef8311-c6b3-11f1-a0bb-52fd662017c7",
+      "taskAssignee": "王经理",
+      "taskFormKey": null
+    },
+    {
+      "file": "playground-export.xml",
+      "deploymentStatus": 201,
+      "deploymentId": "41030b1b-c6b3-11f1-a0bb-52fd662017c7",
+      "definitionId": "playground_demo:2:411fe1ee-c6b3-11f1-a0bb-52fd662017c7",
+      "instanceId": "41270ddf-c6b3-11f1-a0bb-52fd662017c7",
+      "taskAssignee": "王经理",
+      "taskFormKey": null
+    }
+  ]
+}

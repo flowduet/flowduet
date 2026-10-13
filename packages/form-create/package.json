@@ -1,6 +1,6 @@
 {
   "name": "@flowduet/form-create",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "FlowDuet 表单集成：流程设计文档编解码、FormCreate 表单设计与渲染、组合编辑装配",
   "license": "Apache-2.0",
   "type": "module",

@@ -19,3 +19,6 @@ docs/specs/iteration-3/evidence/77-recheck/
 # PR #89 内置浏览器原始证据保留字节及校验和。
 docs/specs/iteration-3/evidence/77-codex-browser-run/
 docs/specs/iteration-3/evidence/77-u64-fix/
+
+# #77 版本化候选产物原始证据与下载字节。
+docs/specs/iteration-3/evidence/77-version-prep/

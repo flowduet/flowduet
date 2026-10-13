@@ -8,7 +8,7 @@
  * 该声明经 scripts/pack-declarations.mjs 打进 dist 并挂上产物声明链（消费侧
  * tsc 依赖它解析 `import type { ModdleElement }`，不会报 TS7016）。
  */
-export const CORE_VERSION = "0.2.1" as const;
+export const CORE_VERSION = "0.3.0" as const;
 
 export {
   APPROVAL_MODES,

@@ -1,0 +1,42 @@
+[
+  {
+    "name": "@flowduet/core",
+    "version": "0.3.0",
+    "dependencies": {
+      "bpmn-moddle": "^10.2.0"
+    },
+    "peerDependencies": {},
+    "fileCount": 56,
+    "tarball": "flowduet-core-0.3.0.tgz"
+  },
+  {
+    "name": "@flowduet/designer",
+    "version": "0.1.0",
+    "dependencies": {
+      "@vue-flow/core": "^1.48.2",
+      "element-plus": "^2.14.6",
+      "@flowduet/core": "0.3.0"
+    },
+    "peerDependencies": {
+      "vue": "^3.5.0"
+    },
+    "fileCount": 18,
+    "tarball": "flowduet-designer-0.1.0.tgz"
+  },
+  {
+    "name": "@flowduet/form-create",
+    "version": "0.1.0",
+    "dependencies": {
+      "@form-create/designer": "3.5.0",
+      "@form-create/element-ui": "3.3.4",
+      "@flowduet/core": "0.3.0",
+      "@flowduet/designer": "0.1.0"
+    },
+    "peerDependencies": {
+      "vue": "^3.5.0",
+      "element-plus": "^2.11.1"
+    },
+    "fileCount": 19,
+    "tarball": "flowduet-form-create-0.1.0.tgz"
+  }
+]

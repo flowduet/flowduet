@@ -1,0 +1,21 @@
+
+> flowduet-monorepo@0.0.0 lint /Users/l/Documents/projects/flowduet
+> eslint . && prettier --check .
+
+
+/Users/l/Documents/projects/flowduet/docs/specs/iteration-3/evidence/77-codex-browser-run/scripts/drafts.mjs
+  5:48  error  'd' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/Users/l/Documents/projects/flowduet/docs/specs/iteration-3/evidence/77-codex-browser-run/scripts/helpers.mjs
+  1:46  error  'assert' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/l/Documents/projects/flowduet/docs/specs/iteration-3/evidence/77-codex-browser-run/scripts/more.mjs
+  18:33  error  'd' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  20:37  error  'd' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/Users/l/Documents/projects/flowduet/docs/specs/iteration-3/evidence/77-codex-browser-run/scripts/session.mjs
+  15:119  error  Empty block statement  no-empty
+
+✖ 5 problems (5 errors, 0 warnings)
+
+ ELIFECYCLE  Command failed with exit code 1.

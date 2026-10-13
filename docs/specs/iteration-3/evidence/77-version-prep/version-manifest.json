@@ -1,0 +1,28 @@
+{
+  "baseCommit": "dc5cbbcc76123867910a0c7664ddc9209ff1469d",
+  "branch": "release/77-iteration-3",
+  "date": "2026-10-13",
+  "versions": {
+    "@flowduet/core": "0.3.0",
+    "@flowduet/designer": "0.1.0",
+    "@flowduet/form-create": "0.1.0"
+  },
+  "published": false,
+  "remotePR": null,
+  "remoteCI": "尚未建立版本PR，不能引用PR89的绿CI证明版本提交",
+  "build": true,
+  "lint": true,
+  "bundlerTypes": true,
+  "nodeCoreTypes": true,
+  "externalConsumer": true,
+  "flowable68": true,
+  "fullTestGate": false,
+  "packageLockChanged": false,
+  "versionSourceCommit": "f0344d4d0b8b1fa4aa59224b27fd70f8d01788bd",
+  "review": {
+    "standardsViolations": 0,
+    "specImplementationDefects": 0,
+    "acceptanceBlocker": "完整组件测试未通过且无版本PR的新HEAD CI",
+    "normalPending": "尚未创建评审版本PR"
+  }
+}

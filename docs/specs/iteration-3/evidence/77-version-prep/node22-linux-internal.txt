@@ -1,0 +1,292 @@
+Preparing pnpm@10.26.1 for immediate activation...
+v22.23.2
+
+> flowduet-monorepo@0.0.0 test /work
+> pnpm -r test
+
+Scope: 4 of 5 workspace projects
+packages/core test$ vitest run
+packages/core test: [1m[30m[46m RUN [49m[39m[22m [36mv5.0.1 [39m[90m/work/packages/core[39m
+packages/core test:  [32m✓[39m src/model/gateway-default.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 102[2mms[22m[39m
+packages/core test: [90mstderr[2m | src/parse/namespace-usage.test.ts[2m > [22m[2mparse 的 rejectUnregisteredNamespaces 选项（opt-in，不改既有调用者）[2m > [22m[2m开启审计：字符引用 URI 恢复真实审批人：http://flowable.org/bp&#109;n
+packages/core test: [22m[39m[BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+packages/core test:  [32m✓[39m src/model/model-editing.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 132[2mms[22m[39m
+packages/core test: [90mstderr[2m | src/parse/namespace-usage.test.ts[2m > [22m[2mparse 的 rejectUnregisteredNamespaces 选项（opt-in，不改既有调用者）[2m > [22m[2m开启审计：字符引用 URI 恢复真实审批人：http://flowable.org/bp&#x6D;n
+packages/core test: [22m[39m[BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+packages/core test:  [32m✓[39m src/adapter/flowable-adapter.contract.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 171[2mms[22m[39m
+packages/core test:  [32m✓[39m src/model/cc-task.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 115[2mms[22m[39m
+packages/core test: [90mstderr[2m | src/parse/namespace-usage.test.ts[2m > [22m[2mparse 的 rejectUnregisteredNamespaces 选项（opt-in，不改既有调用者）[2m > [22m[2m开启审计拒绝 xml 重绑定，关闭审计保留旧 parse 行为
+packages/core test: [22m[39m[BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+packages/core test: [90mstderr[2m | src/parse/namespace-usage.test.ts[2m > [22m[2mparse 的 rejectUnregisteredNamespaces 选项（opt-in，不改既有调用者）[2m > [22m[2m开启审计：同 URI 不同前缀正常恢复，语义不丢失
+packages/core test: [22m[39m[BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+packages/core test: [90mstderr[2m | src/parse/namespace-usage.test.ts[2m > [22m[2mparse 的 rejectUnregisteredNamespaces 选项（opt-in，不改既有调用者）[2m > [22m[2m开启审计：使用先于同标签声明的前缀照常恢复（属性顺序无关）
+packages/core test: [22m[39m[BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+packages/core test: [90mstderr[2m | src/parse/namespace-usage.test.ts[2m > [22m[2mparse 的 rejectUnregisteredNamespaces 选项（opt-in，不改既有调用者）[2m > [22m[2m开启审计：未使用的 camunda 声明放行（A20）
+packages/core test: [22m[39m[BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+packages/core test: [90mstderr[2m | src/parse/namespace-usage.test.ts[2m > [22m[2mparse 的 rejectUnregisteredNamespaces 选项（opt-in，不改既有调用者）[2m > [22m[2m不开启审计：既有宽松行为不变（未注册属性静默进 $attrs，不抛错）
+packages/core test: [22m[39m[BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+packages/core test:  [32m✓[39m src/parse/namespace-usage.test.ts [2m([22m[2m33 tests[22m[2m)[22m[32m 178[2mms[22m[39m
+packages/core test:  [32m✓[39m src/model/approval-task.test.ts [2m([22m[2m11 tests[22m[2m)[22m[32m 254[2mms[22m[39m
+packages/core test:  [32m✓[39m src/model/form-key.test.ts [2m([22m[2m10 tests[22m[2m)[22m[32m 161[2mms[22m[39m
+packages/core test:  [32m✓[39m src/layout/vertical-layout.test.ts [2m([22m[2m11 tests[22m[2m)[22m[32m 249[2mms[22m[39m
+packages/core test:  [32m✓[39m src/compile/compile.contract.test.ts [2m([22m[2m9 tests[22m[2m)[22m[32m 154[2mms[22m[39m
+packages/core test:  [32m✓[39m src/model/form-binding.test.ts [2m([22m[2m9 tests[22m[2m)[22m[32m 204[2mms[22m[39m
+packages/core test:  [32m✓[39m src/index.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 13[2mms[22m[39m
+packages/core test:  [32m✓[39m src/parse/roundtrip.test.ts [2m([22m[2m15 tests[22m[2m)[22m[33m 392[2mms[22m[39m
+packages/core test: [2m Test Files [22m [1m[32m12 passed[39m[22m[90m (12)[39m
+packages/core test: [2m      Tests [22m [1m[32m125 passed[39m[22m[90m (125)[39m
+packages/core test: [2m   Start at [22m 03:20:20
+packages/core test: [2m   Duration [22m 1.42s[2m (transform 56%, tests 28%, import 15%, worker 1%)[22m
+packages/core test: [2m  Transform [22m [33mtransforming modules took 4.22s[39m[2m · 56% of tracked time, re-done on every run[22m
+packages/core test: [2m            [22m [2mpersist transforms across runs with [22m[33mfsModuleCache: true[39m
+packages/core test: [2m            [22m [2mlearn more: https://vitest.dev/guide/improving-performance#caching-between-reruns[22m
+packages/core test: Done
+packages/designer test$ vitest run
+packages/designer test: [1m[30m[46m RUN [49m[39m[22m [36mv5.0.1 [39m[90m/work/packages/designer[39m
+packages/designer test:  [32m✓[39m src/operations.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 78[2mms[22m[39m
+packages/designer test:  [32m✓[39m src/geometry.test.ts [2m([22m[2m9 tests[22m[2m)[22m[32m 148[2mms[22m[39m
+packages/designer test:  [32m✓[39m src/export.test.ts [2m([22m[2m12 tests[22m[2m)[22m[32m 242[2mms[22m[39m
+packages/designer test:  [32m✓[39m src/multi-cc-operations.test.ts [2m([22m[2m22 tests[22m[2m)[22m[33m 310[2mms[22m[39m
+packages/designer test:  [32m✓[39m src/branch-operations.test.ts [2m([22m[2m22 tests[22m[2m)[22m[32m 238[2mms[22m[39m
+packages/designer test: [90mstderr[2m | src/canvas.test.ts[2m > [22m[2mBpmnCanvas 只读投影[2m > [22m[2m挂载渲染：节点词汇（事件/多实例/网关/抄送）与连线齐备
+packages/designer test: [22m[39m[Vue Flow]: The Vue Flow parent container needs a width and a height to render the graph
+packages/designer test: [Vue Flow]: It seems that you haven't loaded the necessary styles. Please import '@vue-flow/core/dist/style.css' to ensure that the graph is rendered correctly
+packages/designer test: [90mstderr[2m | src/canvas.test.ts[2m > [22m[2mBpmnCanvas 只读投影[2m > [22m[2m条件出线可查看表达式，默认出线保留兜底标记
+packages/designer test: [22m[39m[Vue Flow]: The Vue Flow parent container needs a width and a height to render the graph
+packages/designer test: [Vue Flow]: It seems that you haven't loaded the necessary styles. Please import '@vue-flow/core/dist/style.css' to ensure that the graph is rendered correctly
+packages/designer test: [90mstderr[2m | src/canvas.test.ts[2m > [22m[2mBpmnCanvas 只读投影[2m > [22m[2m抽屉修改条件后，钉钉式、BPMN 与导出 XML 读取同一规则
+packages/designer test: [22m[39m[Vue Flow]: The Vue Flow parent container needs a width and a height to render the graph
+packages/designer test: [Vue Flow]: It seems that you haven't loaded the necessary styles. Please import '@vue-flow/core/dist/style.css' to ensure that the graph is rendered correctly
+packages/designer test: [90mstderr[2m | src/canvas.test.ts[2m > [22m[2mBpmnCanvas 只读投影[2m > [22m[2m互切零转换：编辑后重新挂载画布，呈现与导出一致
+packages/designer test: [22m[39m[Vue Flow]: The Vue Flow parent container needs a width and a height to render the graph
+packages/designer test: [Vue Flow]: It seems that you haven't loaded the necessary styles. Please import '@vue-flow/core/dist/style.css' to ensure that the graph is rendered correctly
+packages/designer test: [90mstderr[2m | src/canvas.test.ts[2m > [22m[2mBpmnCanvas 只读投影[2m > [22m[2m互切零转换：编辑后重新挂载画布，呈现与导出一致
+packages/designer test: [22m[39m[Vue Flow]: The Vue Flow parent container needs a width and a height to render the graph
+packages/designer test: [Vue Flow]: It seems that you haven't loaded the necessary styles. Please import '@vue-flow/core/dist/style.css' to ensure that the graph is rendered correctly
+packages/designer test: [90mstderr[2m | src/canvas.test.ts[2m > [22m[2mBpmnCanvas 只读投影[2m > [22m[2m原地刷新：宿主递增 version prop 触发几何重算（W-b）
+packages/designer test: [22m[39m[Vue Flow]: The Vue Flow parent container needs a width and a height to render the graph
+packages/designer test: [Vue Flow]: It seems that you haven't loaded the necessary styles. Please import '@vue-flow/core/dist/style.css' to ensure that the graph is rendered correctly
+packages/designer test:  [32m✓[39m src/canvas.test.ts [2m([22m[2m7 tests[22m[2m)[22m[33m 1516[2mms[22m[39m
+packages/designer test:    [32m✓[39m BpmnCanvas 只读投影 [2m(7)[22m
+packages/designer test:      [33m[2m✓[22m[39m 抽屉修改条件后，钉钉式、BPMN 与导出 XML 读取同一规则[33m 924[2mms[22m[39m
+packages/designer test:  [32m✓[39m src/form-binding-ui.test.ts [2m([22m[2m11 tests[22m[2m)[22m[33m 5448[2mms[22m[39m
+packages/designer test:    [32m✓[39m 纯流程模式兼容（不传 formOptions） [2m(1)[22m
+packages/designer test:      [33m[2m✓[22m[39m 无默认表单条与表单行，原有使用方式不变[33m 613[2mms[22m[39m
+packages/designer test:    [32m✓[39m 默认表单选择条 [2m(1)[22m
+packages/designer test:      [33m[2m✓[22m[39m 选择默认表单写入 model 并触发 change；切回「无」清除引用[33m 614[2mms[22m[39m
+packages/designer test:    [32m✓[39m 审批节点有效表单摘要 [2m(3)[22m
+packages/designer test:      [33m[2m✓[22m[39m 默认继承与节点指定各自标注；修改默认只影响继承节点[33m 785[2mms[22m[39m
+packages/designer test:      [33m[2m✓[22m[39m 默认或节点 key 不在目录中：保留原值并显示失效[33m 343[2mms[22m[39m
+packages/designer test:      [33m[2m✓[22m[39m 带首尾空格的 key 即使碰巧匹配目录 ID 也标记失效[33m 370[2mms[22m[39m
+packages/designer test:    [32m✓[39m 审批节点表单覆盖选择（#73） [2m(6)[22m
+packages/designer test:      [33m[2m✓[22m[39m 选择覆盖写入 formKey；选回继承清除覆盖恢复继承（A02/A03）[33m 434[2mms[22m[39m
+packages/designer test:      [33m[2m✓[22m[39m 目录外 key 以只读项保留原值，改选即修复（A11）[33m 382[2mms[22m[39m
+packages/designer test:      [33m[2m✓[22m[39m 同名不同 ID 的表单在默认、覆盖与节点摘要中均可区分（A05）[33m 433[2mms[22m[39m
+packages/designer test:      [33m[2m✓[22m[39m 多实例审批同样获得覆盖入口；抄送抽屉不出现表单入口（A19）[33m 633[2mms[22m[39m
+packages/designer test:      [33m[2m✓[22m[39m 四种审批形态互切后节点 ID 与覆盖 key 均保留（A04）[33m 476[2mms[22m[39m
+packages/designer test:      [33m[2m✓[22m[39m 纯流程模式：自由文本 formKey 输入保持既有合同（A17）[33m 362[2mms[22m[39m
+packages/designer test:  [32m✓[39m src/designer.test.ts [2m([22m[2m41 tests[22m[2m)[22m[33m 9479[2mms[22m[39m
+packages/designer test:    [32m✓[39m DingtalkDesigner 审批节点闭环 [2m(8)[22m
+packages/designer test:      [33m[2m✓[22m[39m 卡间「+」插入审批节点：块树与导出 XML 同步反映（零坐标导出带 DI）[33m 442[2mms[22m[39m
+packages/designer test:      [33m[2m✓[22m[39m 抽屉改节点名与审批人：保存直达模型字段[33m 378[2mms[22m[39m
+packages/designer test:      [33m[2m✓[22m[39m 删除中段节点：前后重链，导出链完整[33m 406[2mms[22m[39m
+packages/designer test:    [32m✓[39m 分支块交互（#24） [2m(13)[22m
+packages/designer test:      [33m[2m✓[22m[39m 加支路：块树分支数 +1，导出 XML 含新支路且竖排推导可用[33m 542[2mms[22m[39m
+packages/designer test:      [33m[2m✓[22m[39m 删支路：块树与导出同步收缩[33m 489[2mms[22m[39m
+packages/designer test:      [33m[2m✓[22m[39m 默认分支：标记呈现 + 默认流转落 XML（无条件出线）[33m 366[2mms[22m[39m
+packages/designer test:      [33m[2m✓[22m[39m 默认开关 toggle：再次点击当前默认支路的按钮即取消默认[33m 471[2mms[22m[39m
+packages/designer test:      [33m[2m✓[22m[39m 条件抽屉：支路头点击开抽屉，条件表达式写回 FormalExpression[33m 481[2mms[22m[39m
+packages/designer test:      [33m[2m✓[22m[39m 条件抽屉守卫（W4）：给默认支路写条件被拦截，呈现可读错误且不半写模型[33m 381[2mms[22m[39m
+packages/designer test:      [33m[2m✓[22m[39m 抽屉守卫错误在下次成功保存后清除（二轮 W1：不留陈旧横幅）[33m 367[2mms[22m[39m
+packages/designer test:      [33m[2m✓[22m[39m 删除含 active 节点的支路后重置 activeId（二轮 W2：回收 id 的新卡片不亮描边）[33m 529[2mms[22m[39m
+packages/designer test:    [32m✓[39m 多人审批与抄送（#25） [2m(12)[22m
+packages/designer test:      [33m[2m✓[22m[39m 抄送卡片字形为「抄」而非「审」（评审 W-5）[33m 301[2mms[22m[39m
+packages/designer test: [2m Test Files [22m [1m[32m8 passed[39m[22m[90m (8)[39m
+packages/designer test: [2m      Tests [22m [1m[32m127 passed[39m[22m[90m (127)[39m
+packages/designer test: [2m   Start at [22m 03:20:22
+packages/designer test: [2m   Duration [22m 13.03s[2m (tests 52%, transform 20%, import 14%, environment 14%)[22m
+packages/designer test: Done
+packages/form-create test$ vitest run
+packages/form-create test: [1m[30m[46m RUN [49m[39m[22m [36mv5.0.1 [39m[90m/work/packages/form-create[39m
+packages/form-create test:  [32m✓[39m src/components/checkbox-defaults.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 15[2mms[22m[39m
+packages/form-create test:  [32m✓[39m src/form-schema.test.ts [2m([22m[2m26 tests[22m[2m)[22m[32m 77[2mms[22m[39m
+packages/form-create test:  [32m✓[39m src/validation.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 76[2mms[22m[39m
+packages/form-create test:  [32m✓[39m src/binding-export.test.ts [2m([22m[2m8 tests[22m[2m)[22m[32m 79[2mms[22m[39m
+packages/form-create test: [90mstderr[2m | src/document.test.ts[2m > [22m[2mopenDesignDocument[2m > [22m[2m纯标准 BPMN 草稿（无 Flowable 命名空间）可恢复并再次保存
+packages/form-create test: [22m[39m[BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+packages/form-create test: [90mstderr[2m | src/document.test.ts[2m > [22m[2mopenDesignDocument[2m > [22m[2m扩展前缀更名但 URI 不变：assignee 与 flowduet 默认绑定照常恢复（A20）
+packages/form-create test: [22m[39m[BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+packages/form-create test: [90mstderr[2m | src/document.test.ts[2m > [22m[2mopenDesignDocument[2m > [22m[2m字符引用命名空间经公开打开、保存再打开后审批人不丢失：http://flowable.org/bp&#109;n
+packages/form-create test: [22m[39m[BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+packages/form-create test: [90mstderr[2m | src/document.test.ts[2m > [22m[2mopenDesignDocument[2m > [22m[2m字符引用命名空间经公开打开、保存再打开后审批人不丢失：http://flowable.org/bp&#x6D;n
+packages/form-create test: [22m[39m[BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+packages/form-create test: [90mstderr[2m | src/document.test.ts[2m > [22m[2mopenDesignDocument[2m > [22m[2m仅声明未使用的其他引擎命名空间不构成冲突；实际使用才拒绝（A20）
+packages/form-create test: [22m[39m[BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+packages/form-create test: [90mstderr[2m | src/document.test.ts[2m > [22m[2mopenDesignDocument[2m > [22m[2m多流程输入明确拒绝
+packages/form-create test: [22m[39m[BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+packages/form-create test: [90mstderr[2m | src/document.test.ts[2m > [22m[2mopenDesignDocument[2m > [22m[2m超出编辑子集的元素拒绝打开并点名元素
+packages/form-create test: [22m[39m[BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+packages/form-create test: [90mstderr[2m | src/document.test.ts[2m > [22m[2mopenDesignDocument[2m > [22m[2m非抄送形态的服务任务拒绝；抄送节点可正常打开
+packages/form-create test: [22m[39m[BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+packages/form-create test: [90mstderr[2m | src/document.test.ts[2m > [22m[2mopenDesignDocument[2m > [22m[2m非抄送形态的服务任务拒绝；抄送节点可正常打开
+packages/form-create test: [22m[39m[BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+packages/form-create test: [90mstderr[2m | src/document.test.ts[2m > [22m[2mopenDesignDocument[2m > [22m[2m循环结构拒绝打开（竖排推导守卫）
+packages/form-create test: [22m[39m[BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+packages/form-create test:  [32m✓[39m src/document.test.ts [2m([22m[2m25 tests[22m[2m)[22m[33m 699[2mms[22m[39m
+packages/form-create test:  [32m✓[39m src/session.test.ts [2m([22m[2m25 tests[22m[2m)[22m[33m 745[2mms[22m[39m
+packages/form-create test: [90mstderr[2m | src/components.test.ts[2m > [22m[2mFormDesigner 全字段与布局矩阵（真实设计器，A10）[2m > [22m[2m新建多选字段可显式设置空默认值，再恢复未设置
+packages/form-create test: [22m[39mElementPlusError: [ElSwitch] model-value must be active-value or inactive-value
+packages/form-create test:     at debugWarn (file:///work/node_modules/[4m.pnpm[24m/element-plus@2.14.6_vue@3.5.43_typescript@5.9.3_/node_modules/[4melement-plus[24m/es/utils/error.mjs:14:35)
+packages/form-create test:     at setup (file:///work/node_modules/[4m.pnpm[24m/element-plus@2.14.6_vue@3.5.43_typescript@5.9.3_/node_modules/[4melement-plus[24m/es/components/switch/src/switch.vue_vue_type_script_setup_true_lang.mjs:72:4)
+packages/form-create test:     at callWithErrorHandling (/work/node_modules/[4m.pnpm[24m/@vue+runtime-core@3.5.43/node_modules/[4m@vue/runtime-core[24m/dist/runtime-core.cjs.js:200:19)
+packages/form-create test:     at setupStatefulComponent (/work/node_modules/[4m.pnpm[24m/@vue+runtime-core@3.5.43/node_modules/[4m@vue/runtime-core[24m/dist/runtime-core.cjs.js:8257:25)
+packages/form-create test:     at setupComponent (/work/node_modules/[4m.pnpm[24m/@vue+runtime-core@3.5.43/node_modules/[4m@vue/runtime-core[24m/dist/runtime-core.cjs.js:8219:36)
+packages/form-create test:     at mountComponent (/work/node_modules/[4m.pnpm[24m/@vue+runtime-core@3.5.43/node_modules/[4m@vue/runtime-core[24m/dist/runtime-core.cjs.js:6095:7)
+packages/form-create test:     at processComponent (/work/node_modules/[4m.pnpm[24m/@vue+runtime-core@3.5.43/node_modules/[4m@vue/runtime-core[24m/dist/runtime-core.cjs.js:6061:9)
+packages/form-create test:     at patch (/work/node_modules/[4m.pnpm[24m/@vue+runtime-core@3.5.43/node_modules/[4m@vue/runtime-core[24m/dist/runtime-core.cjs.js:5566:11)
+packages/form-create test:     at mountChildren (/work/node_modules/[4m.pnpm[24m/@vue+runtime-core@3.5.43/node_modules/[4m@vue/runtime-core[24m/dist/runtime-core.cjs.js:5817:7)
+packages/form-create test:     at processFragment (/work/node_modules/[4m.pnpm[24m/@vue+runtime-core@3.5.43/node_modules/[4m@vue/runtime-core[24m/dist/runtime-core.cjs.js:6004:7)
+packages/form-create test: [90mstderr[2m | src/components.test.ts[2m > [22m[2mFormDesigner 全字段与布局矩阵（真实设计器，A10）[2m > [22m[2m清除多选默认项保存为显式空数组，关闭默认值设置才变为未设置
+packages/form-create test: [22m[39mElementPlusError: [ElSwitch] model-value must be active-value or inactive-value
+packages/form-create test:     at debugWarn (file:///work/node_modules/[4m.pnpm[24m/element-plus@2.14.6_vue@3.5.43_typescript@5.9.3_/node_modules/[4melement-plus[24m/es/utils/error.mjs:14:35)
+packages/form-create test:     at setup (file:///work/node_modules/[4m.pnpm[24m/element-plus@2.14.6_vue@3.5.43_typescript@5.9.3_/node_modules/[4melement-plus[24m/es/components/switch/src/switch.vue_vue_type_script_setup_true_lang.mjs:72:4)
+packages/form-create test:     at callWithErrorHandling (/work/node_modules/[4m.pnpm[24m/@vue+runtime-core@3.5.43/node_modules/[4m@vue/runtime-core[24m/dist/runtime-core.cjs.js:200:19)
+packages/form-create test:     at setupStatefulComponent (/work/node_modules/[4m.pnpm[24m/@vue+runtime-core@3.5.43/node_modules/[4m@vue/runtime-core[24m/dist/runtime-core.cjs.js:8257:25)
+packages/form-create test:     at setupComponent (/work/node_modules/[4m.pnpm[24m/@vue+runtime-core@3.5.43/node_modules/[4m@vue/runtime-core[24m/dist/runtime-core.cjs.js:8219:36)
+packages/form-create test:     at mountComponent (/work/node_modules/[4m.pnpm[24m/@vue+runtime-core@3.5.43/node_modules/[4m@vue/runtime-core[24m/dist/runtime-core.cjs.js:6095:7)
+packages/form-create test:     at processComponent (/work/node_modules/[4m.pnpm[24m/@vue+runtime-core@3.5.43/node_modules/[4m@vue/runtime-core[24m/dist/runtime-core.cjs.js:6061:9)
+packages/form-create test:     at patch (/work/node_modules/[4m.pnpm[24m/@vue+runtime-core@3.5.43/node_modules/[4m@vue/runtime-core[24m/dist/runtime-core.cjs.js:5566:11)
+packages/form-create test:     at mountChildren (/work/node_modules/[4m.pnpm[24m/@vue+runtime-core@3.5.43/node_modules/[4m@vue/runtime-core[24m/dist/runtime-core.cjs.js:5817:7)
+packages/form-create test:     at processFragment (/work/node_modules/[4m.pnpm[24m/@vue+runtime-core@3.5.43/node_modules/[4m@vue/runtime-core[24m/dist/runtime-core.cjs.js:6004:7)
+packages/form-create test: [90mstderr[2m | src/components.test.ts[2m > [22m[2m设计器开放范围收口（A13，designer-config 与真实面板）[2m > [22m[2m选中字段后：联动与编辑数据入口不渲染，静态选项与必填配置在场
+packages/form-create test: [22m[39mElementPlusError: [ElSwitch] model-value must be active-value or inactive-value
+packages/form-create test:     at debugWarn (file:///work/node_modules/[4m.pnpm[24m/element-plus@2.14.6_vue@3.5.43_typescript@5.9.3_/node_modules/[4melement-plus[24m/es/utils/error.mjs:14:35)
+packages/form-create test:     at setup (file:///work/node_modules/[4m.pnpm[24m/element-plus@2.14.6_vue@3.5.43_typescript@5.9.3_/node_modules/[4melement-plus[24m/es/components/switch/src/switch.vue_vue_type_script_setup_true_lang.mjs:72:4)
+packages/form-create test:     at callWithErrorHandling (/work/node_modules/[4m.pnpm[24m/@vue+runtime-core@3.5.43/node_modules/[4m@vue/runtime-core[24m/dist/runtime-core.cjs.js:200:19)
+packages/form-create test:     at setupStatefulComponent (/work/node_modules/[4m.pnpm[24m/@vue+runtime-core@3.5.43/node_modules/[4m@vue/runtime-core[24m/dist/runtime-core.cjs.js:8257:25)
+packages/form-create test:     at setupComponent (/work/node_modules/[4m.pnpm[24m/@vue+runtime-core@3.5.43/node_modules/[4m@vue/runtime-core[24m/dist/runtime-core.cjs.js:8219:36)
+packages/form-create test:     at mountComponent (/work/node_modules/[4m.pnpm[24m/@vue+runtime-core@3.5.43/node_modules/[4m@vue/runtime-core[24m/dist/runtime-core.cjs.js:6095:7)
+packages/form-create test:     at processComponent (/work/node_modules/[4m.pnpm[24m/@vue+runtime-core@3.5.43/node_modules/[4m@vue/runtime-core[24m/dist/runtime-core.cjs.js:6061:9)
+packages/form-create test:     at patch (/work/node_modules/[4m.pnpm[24m/@vue+runtime-core@3.5.43/node_modules/[4m@vue/runtime-core[24m/dist/runtime-core.cjs.js:5566:11)
+packages/form-create test:     at mountChildren (/work/node_modules/[4m.pnpm[24m/@vue+runtime-core@3.5.43/node_modules/[4m@vue/runtime-core[24m/dist/runtime-core.cjs.js:5817:7)
+packages/form-create test:     at processFragment (/work/node_modules/[4m.pnpm[24m/@vue+runtime-core@3.5.43/node_modules/[4m@vue/runtime-core[24m/dist/runtime-core.cjs.js:6004:7)
+packages/form-create test:  [31m❯[39m src/components.test.ts [2m([22m[2m34 tests[22m[2m | [22m[31m6 failed[39m[2m)[22m[33m 116195[2mms[22m[39m
+packages/form-create test:    [32m✓[39m FormPreview（真实渲染器试填） [2m(7)[22m
+packages/form-create test:      [32m✓[39m 渲染真实输入框并回显设计默认值；试填值与设计定义隔离[32m 242[2mms[22m[39m
+packages/form-create test:      [32m✓[39m 必填标记与校验入口在场（成败语义经真机回归验证）[32m 168[2mms[22m[39m
+packages/form-create test:      [32m✓[39m 切换预览目标重置试填值，不同表单输入不混用[32m 78[2mms[22m[39m
+packages/form-create test:      [32m✓[39m 重新打开同 ID 的表单定义时清除旧试填并回显新默认值[32m 81[2mms[22m[39m
+packages/form-create test:      [32m✓[39m 同 ID 相同定义重开后当前值与可见默认一致（已试填=false）[32m 91[2mms[22m[39m
+packages/form-create test:      [32m✓[39m 同 ID 相同定义重开后当前值与可见默认一致（已试填=true）[32m 67[2mms[22m[39m
+packages/form-create test:      [32m✓[39m 内容无法解析时显示错误而非白屏[32m 4[2mms[22m[39m
+packages/form-create test:    [31m❯[39m FormManager（目录管理面板） [2m(6)[22m
+packages/form-create test:      [32m✓[39m 新建与改名经事件上抛，操作归会话[32m 39[2mms[22m[39m
+packages/form-create test:      [32m✓[39m 删除经两段确认后上抛；取消不上抛（A06 的面板交互）[32m 34[2mms[22m[39m
+packages/form-create test:      [32m✓[39m 空白名称留在管理面板供修正，不丢输入或退出改名[32m 26[2mms[22m[39m
+packages/form-create test: [31m     [31m×[31m 内容守卫前置：超范围字段不 emit 且编辑器保持打开供修正[39m[33m 5341[2mms[22m[39m
+packages/form-create test:      [33m[2m✓[22m[39m 重复字段标识不能关闭编辑器或上报保存[33m 3916[2mms[22m[39m
+packages/form-create test:      [33m[2m✓[22m[39m 取消内容编辑时关闭弹窗，不留下空白编辑器[33m 3915[2mms[22m[39m
+packages/form-create test:    [32m✓[39m FormDesigner（真实 FcDesigner 装载） [2m(2)[22m
+packages/form-create test:      [33m[2m✓[22m[39m 装载既有规则并成对导出 rules/options 序列化串[33m 2349[2mms[22m[39m
+packages/form-create test:      [33m[2m✓[22m[39m 取消不产出内容[33m 3189[2mms[22m[39m
+packages/form-create test:    [32m✓[39m FormPreview 全字段与布局矩阵（真实渲染器，A09/A10） [2m(2)[22m
+packages/form-create test:      [33m[2m✓[22m[39m 八类字段与栅格布局真实渲染；数字 0、开关 false、单选 0、空多选按组件语义回显[33m 1156[2mms[22m[39m
+packages/form-create test:      [33m[2m✓[22m[39m 试填各类型字段只写试填状态，设计默认值不被污染（0/false 语义保持）[33m 1226[2mms[22m[39m
+packages/form-create test:    [31m❯[39m FormDesigner 全字段与布局矩阵（真实设计器，A10） [2m(5)[22m
+packages/form-create test:      [33m[2m✓[22m[39m 真实设计器重复保存保留显式空多选默认值，并区分未设置（含栅格列内）[33m 4984[2mms[22m[39m
+packages/form-create test:      [33m[2m✓[22m[39m 新建多选字段可显式设置空默认值，再恢复未设置[33m 10064[2mms[22m[39m
+packages/form-create test:      [33m[2m✓[22m[39m 清除多选默认项保存为显式空数组，关闭默认值设置才变为未设置[33m 14991[2mms[22m[39m
+packages/form-create test: [31m     [31m×[31m 装载八类字段与栅格布局后成对导出，语义与装载内容等价[39m[33m 7726[2mms[22m[39m
+packages/form-create test: [31m     [31m×[31m 数字与开关字段可在真实配置面板编辑默认值[39m[33m 25512[2mms[22m[39m
+packages/form-create test:    [31m❯[39m 设计器开放范围收口（A13，designer-config 与真实面板） [2m(5)[22m
+packages/form-create test:      [33m[2m✓[22m[39m 下拉单选真实配置面板不能开启创建新条目[33m 11480[2mms[22m[39m
+packages/form-create test:      [32m✓[39m 菜单只提供八类字段与栅格布局，范围外组件无拖拽入口[32m 1[2mms[22m[39m
+packages/form-create test: [31m     [31m×[31m 真实设计器面板不出现范围外组件与配置入口[39m[33m 6546[2mms[22m[39m
+packages/form-create test: [31m     [31m×[31m 选中字段后：联动与编辑数据入口不渲染，静态选项与必填配置在场[39m[33m 7627[2mms[22m[39m
+packages/form-create test:      [32m✓[39m 配置收口：选项类型/多选/范围日期/远程与脚本入口隐藏，栅格不可拖入容器[32m 1[2mms[22m[39m
+packages/form-create test:    [31m❯[39m FormManager 未提交内容收集（#76：commitPendingEdit） [2m(3)[22m
+packages/form-create test: [31m     [31m×[31m 编辑器开着：commitPendingEdit 经真实设计器序列化上抛并关闭编辑器[39m[33m 5060[2mms[22m[39m
+packages/form-create test:      [32m✓[39m 编辑器未打开：收集是 no-op，返回 true 且不上抛[32m 9[2mms[22m[39m
+packages/form-create test:      [32m✓[39m 超范围内容：返回 false、不上抛、编辑器保持打开供修正[32m 30[2mms[22m[39m
+packages/form-create test:    [32m✓[39m PR88 序列化异常反馈 [2m(1)[22m
+packages/form-create test:      [32m✓[39m 设计器序列化抛错时拒绝提交，保留编辑器与当前目录[32m 27[2mms[22m[39m
+packages/form-create test:    [32m✓[39m PR88 产品验收焦点与编辑通知回归 [2m(3)[22m
+packages/form-create test:      [32m✓[39m P13 当前默认值未失焦时同步收集也包含已输入内容[32m 14[2mms[22m[39m
+packages/form-create test:      [32m✓[39m E15 当前输入上抛编辑通知，宿主可识别尚未提交的新编辑[32m 5[2mms[22m[39m
+packages/form-create test:      [32m✓[39m E15 仅发 Vue 事件的下拉交互也上抛潜在编辑[32m 186[2mms[22m[39m
+packages/form-create test: [31m⎯⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 6 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+packages/form-create test: [41m[1m FAIL [22m[49m src/components.test.ts[2m > [22mFormManager（目录管理面板）[2m > [22m内容守卫前置：超范围字段不 emit 且编辑器保持打开供修正
+packages/form-create test: [31m[1mError[22m: Test timed out in 5000ms.
+packages/form-create test: If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".[39m
+packages/form-create test: [36m [2m❯[22m src/components.test.ts:[2m212:3[22m[39m
+packages/form-create test:     [90m210|[39m   });
+packages/form-create test:     [90m211|[39m
+packages/form-create test:     [90m212|[39m   it("内容守卫前置：超范围字段不 emit 且编辑器保持打开供修正", async () => {
+packages/form-create test:     [90m   |[39m   [31m^[39m
+packages/form-create test:     [90m213|[39m     const manager = mount(FormManager, { props: { forms: [APPLY_FORM] …
+packages/form-create test:     [90m214|[39m     await manager.find('[data-test="form-edit-btn-form_apply"]').trigg…
+packages/form-create test: [31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/6]⎯[22m[39m
+packages/form-create test: [41m[1m FAIL [22m[49m src/components.test.ts[2m > [22mFormDesigner 全字段与布局矩阵（真实设计器，A10）[2m > [22m装载八类字段与栅格布局后成对导出，语义与装载内容等价
+packages/form-create test: [31m[1mError[22m: Test timed out in 5000ms.
+packages/form-create test: If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".[39m
+packages/form-create test: [36m [2m❯[22m src/components.test.ts:[2m535:3[22m[39m
+packages/form-create test:     [90m533|[39m   }, 15_000);
+packages/form-create test:     [90m534|[39m
+packages/form-create test:     [90m535|[39m   it("装载八类字段与栅格布局后成对导出，语义与装载内容等价", async () => {
+packages/form-create test:     [90m   |[39m   [31m^[39m
+packages/form-create test:     [90m536|[39m     wrapper = mount(FormDesigner, {
+packages/form-create test:     [90m537|[39m       props: { name: MATRIX_FORM.name, rules: MATRIX_RULES_JSON, optio…
+packages/form-create test: [31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/6]⎯[22m[39m
+packages/form-create test: [41m[1m FAIL [22m[49m src/components.test.ts[2m > [22mFormDesigner 全字段与布局矩阵（真实设计器，A10）[2m > [22m数字与开关字段可在真实配置面板编辑默认值
+packages/form-create test: [31m[1mError[22m: Test timed out in 15000ms.
+packages/form-create test: If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".[39m
+packages/form-create test: [36m [2m❯[22m src/components.test.ts:[2m568:3[22m[39m
+packages/form-create test:     [90m566|[39m   });
+packages/form-create test:     [90m567|[39m
+packages/form-create test:     [90m568|[39m   it("数字与开关字段可在真实配置面板编辑默认值", async () => {
+packages/form-create test:     [90m   |[39m   [31m^[39m
+packages/form-create test:     [90m569|[39m     wrapper = mount(FormDesigner, {
+packages/form-create test:     [90m570|[39m       props: {
+packages/form-create test: [31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/6]⎯[22m[39m
+packages/form-create test: [41m[1m FAIL [22m[49m src/components.test.ts[2m > [22m设计器开放范围收口（A13，designer-config 与真实面板）[2m > [22m真实设计器面板不出现范围外组件与配置入口
+packages/form-create test: [31m[1mError[22m: Test timed out in 5000ms.
+packages/form-create test: If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".[39m
+packages/form-create test: [36m [2m❯[22m src/components.test.ts:[2m645:3[22m[39m
+packages/form-create test:     [90m643|[39m   });
+packages/form-create test:     [90m644|[39m
+packages/form-create test:     [90m645|[39m   it("真实设计器面板不出现范围外组件与配置入口", async () => {
+packages/form-create test:     [90m   |[39m   [31m^[39m
+packages/form-create test:     [90m646|[39m     wrapper = mount(FormDesigner, {
+packages/form-create test:     [90m647|[39m       props: { name: MATRIX_FORM.name, rules: MATRIX_RULES_JSON, optio…
+packages/form-create test: [31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/6]⎯[22m[39m
+packages/form-create test: [41m[1m FAIL [22m[49m src/components.test.ts[2m > [22m设计器开放范围收口（A13，designer-config 与真实面板）[2m > [22m选中字段后：联动与编辑数据入口不渲染，静态选项与必填配置在场
+packages/form-create test: [31m[1mError[22m: Test timed out in 5000ms.
+packages/form-create test: If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".[39m
+packages/form-create test: [36m [2m❯[22m src/components.test.ts:[2m686:3[22m[39m
+packages/form-create test:     [90m684|[39m   });
+packages/form-create test:     [90m685|[39m
+packages/form-create test:     [90m686|[39m   it("选中字段后：联动与编辑数据入口不渲染，静态选项与必填配置在场", async () => {
+packages/form-create test:     [90m   |[39m   [31m^[39m
+packages/form-create test:     [90m687|[39m     // 未选中时配置面板是 v-show 预渲染（DOM 文案在场但不可达），
+packages/form-create test:     [90m688|[39m     // 入口收口的实际效果以选中字段后的面板为准
+packages/form-create test: [31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/6]⎯[22m[39m
+packages/form-create test: [41m[1m FAIL [22m[49m src/components.test.ts[2m > [22mFormManager 未提交内容收集（#76：commitPendingEdit）[2m > [22m编辑器开着：commitPendingEdit 经真实设计器序列化上抛并关闭编辑器
+packages/form-create test: [31m[1mError[22m: Test timed out in 5000ms.
+packages/form-create test: If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".[39m
+packages/form-create test: [36m [2m❯[22m src/components.test.ts:[2m750:3[22m[39m
+packages/form-create test:     [90m748|[39m
+packages/form-create test:     [90m749|[39m describe("FormManager 未提交内容收集（#76：commitPendingEdit）", () => {
+packages/form-create test:     [90m750|[39m   it("编辑器开着：commitPendingEdit 经真实设计器序列化上抛并关闭编辑器", async () => {
+packages/form-create test:     [90m   |[39m   [31m^[39m
+packages/form-create test:     [90m751|[39m     wrapper = mount(FormManager, { props: { forms: [APPLY_FORM] }, att…
+packages/form-create test:     [90m752|[39m     await wrapper.find('[data-test="form-edit-btn-form_apply"]').trigg…
+packages/form-create test: [31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/6]⎯[22m[39m
+packages/form-create test: [2m Test Files [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m6 passed[39m[22m[90m (7)[39m
+packages/form-create test: [2m      Tests [22m [1m[31m6 failed[39m[22m[2m | [22m[1m[32m115 passed[39m[22m[90m (121)[39m
+packages/form-create test: [2m   Start at [22m 03:20:35
+packages/form-create test: [2m   Duration [22m 120.52s[2m (tests 84%, import 7%, environment 5%, transform 4%)[22m
+packages/form-create test: Failed
+/work/packages/form-create:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @flowduet/form-create@0.1.0 test: `vitest run`
+Exit status 1
+ ELIFECYCLE  Test failed. See above for more details.

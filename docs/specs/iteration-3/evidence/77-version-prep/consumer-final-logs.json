@@ -1,0 +1,8 @@
+[
+  {
+    "level": "warn",
+    "message": "[Vue warn]: Plugin has already been applied to target app. \n  at <FormPreview form= Object > \n  at <App>",
+    "timestamp": "2026-10-13T03:14:34.395Z",
+    "url": "http://127.0.0.1:5174/@vite/client"
+  }
+]
