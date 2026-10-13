@@ -72,11 +72,11 @@
 
 ### 发布结果
 
-| 包                    | 版本 | npm latest 读回 | 远端 tag                      | 产物核对                       |
-| --------------------- | ---- | --------------- | ----------------------------- | ------------------------------ |
-| @flowduet/core        | 0.3.0 | 0.3.0          | @flowduet/core@0.3.0         | SHA256/SHA1 与 #77 基准逐字节一致 |
-| @flowduet/designer    | 0.1.0 | 0.1.0          | @flowduet/designer@0.1.0     | 同上                           |
-| @flowduet/form-create | 0.1.0 | 0.1.0          | @flowduet/form-create@0.1.0  | 同上（远端 tarball 下载复核）  |
+| 包                    | 版本  | npm latest 读回 | 远端 tag                    | 产物核对                          |
+| --------------------- | ----- | --------------- | --------------------------- | --------------------------------- |
+| @flowduet/core        | 0.3.0 | 0.3.0           | @flowduet/core@0.3.0        | SHA256/SHA1 与 #77 基准逐字节一致 |
+| @flowduet/designer    | 0.1.0 | 0.1.0           | @flowduet/designer@0.1.0    | 同上                              |
+| @flowduet/form-create | 0.1.0 | 0.1.0           | @flowduet/form-create@0.1.0 | 同上（远端 tarball 下载复核）     |
 
 明细：[78-release/published-tarballs.json](./evidence/78-release/published-tarballs.json)、[npm-readback.json](./evidence/78-release/npm-readback.json)、[git-tags-readback.txt](./evidence/78-release/git-tags-readback.txt)、[publish-record.md](./evidence/78-release/publish-record.md)。
 
