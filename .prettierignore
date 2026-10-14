@@ -22,3 +22,6 @@ docs/specs/iteration-3/evidence/77-u64-fix/
 
 # #77 版本化候选产物原始证据与下载字节。
 docs/specs/iteration-3/evidence/77-version-prep/
+
+# 用户提供的审核报告原文保留原始字节，复核与修订结论另行维护。
+docs/design/reviews/2026-10-14-external-review.md
