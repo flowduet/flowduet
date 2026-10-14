@@ -1,0 +1,45 @@
+
+ RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground
+
+ ❯ probes/stage-zero/host-protocol.test.ts (9 tests | 2 failed) 65ms
+   ❯ 真实 session 与候选宿主控制层 (9)
+     × host_conflict_or_cancel_keeps_current_document_and_dirty 9ms
+     × approved_available_identity_replaces_once 2ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  probes/stage-zero/host-protocol.test.ts > 真实 session 与候选宿主控制层 > host_conflict_or_cancel_keeps_current_document_and_dirty
+Error: 探针待实现
+ ❯ ProbeHostController.replaceIfAllowed probes/stage-zero/host-protocol.ts:9:101
+      7|   edit(){this.generation++;}
+      8|   newDesign(id:string){this.session.newDesign({processId:id});this.epo…
+      9|   replaceIfAllowed(_id:string,_approve:()=>boolean,_available:(id:stri…
+       |                                                                                                     ^
+     10|   async save(adapter:(json:string)=>Promise<void>):Promise<"saved"|"st…
+     11|     const epoch=this.epoch, request=++this.saveRequest, generation=thi…
+ ❯ probes/stage-zero/host-protocol.test.ts:8:161
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  probes/stage-zero/host-protocol.test.ts > 真实 session 与候选宿主控制层 > approved_available_identity_replaces_once
+Error: 探针待实现
+ ❯ ProbeHostController.replaceIfAllowed probes/stage-zero/host-protocol.ts:9:101
+      7|   edit(){this.generation++;}
+      8|   newDesign(id:string){this.session.newDesign({processId:id});this.epo…
+      9|   replaceIfAllowed(_id:string,_approve:()=>boolean,_available:(id:stri…
+       |                                                                                                     ^
+     10|   async save(adapter:(json:string)=>Promise<void>):Promise<"saved"|"st…
+     11|     const epoch=this.epoch, request=++this.saveRequest, generation=thi…
+ ❯ probes/stage-zero/host-protocol.test.ts:9:106
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 7 passed (9)
+   Start at  18:37:29
+   Duration  1.90s (import 46%, transform 31%, environment 19%, tests 4%)
+
+undefined
+/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run probes/stage-zero/host-protocol.test.ts

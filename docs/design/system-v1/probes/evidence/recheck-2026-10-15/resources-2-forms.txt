@@ -1,0 +1,6 @@
+### Result
+{"browser":"155.0.8059.41","dom":{"documents":1,"nodes":7136,"jsEventListeners":2541},"heap":{"usedSize":44652060,"totalSize":53039104,"embedderHeapUsedSize":7838040,"backingStorageSize":19528555}}
+### Ran Playwright code
+```js
+await (async (page) => { const cdp = await page.context().newCDPSession(page); await cdp.send("Performance.enable"); const dom = await cdp.send("Memory.getDOMCounters"); const heap = await cdp.send("Runtime.getHeapUsage"); const result = {browser:page.context().browser().version(),dom,heap}; await cdp.detach(); return result; })(page);
+```

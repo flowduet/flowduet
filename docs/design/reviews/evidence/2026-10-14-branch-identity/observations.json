@@ -1,0 +1,139 @@
+{
+  "kind": "diagnostic-observations-not-acceptance-tests",
+  "observations": [
+    {
+      "action": "single-to-multi",
+      "mode": "condition",
+      "before": {
+        "edgeId": "fa",
+        "name": "采购分支",
+        "condition": "${amount > 100}",
+        "defaultId": null,
+        "order": ["fa", "fb"]
+      },
+      "after": {
+        "edgeId": "flow_conv_in_1",
+        "name": null,
+        "condition": null,
+        "defaultId": null,
+        "order": ["fb", "flow_conv_in_1"]
+      }
+    },
+    {
+      "action": "multi-to-single",
+      "mode": "condition",
+      "before": {
+        "edgeId": "fa",
+        "name": "采购分支",
+        "condition": "${amount > 100}",
+        "defaultId": null,
+        "order": ["fa", "fb"]
+      },
+      "after": {
+        "edgeId": "flow_conv_in_1",
+        "name": null,
+        "condition": null,
+        "defaultId": null,
+        "order": ["fb", "flow_conv_in_1"]
+      }
+    },
+    {
+      "action": "delete-first",
+      "mode": "condition",
+      "before": {
+        "edgeId": "fa",
+        "name": "采购分支",
+        "condition": "${amount > 100}",
+        "defaultId": null,
+        "order": ["fa", "fb"]
+      },
+      "after": {
+        "edgeId": "flow_relay_1",
+        "name": null,
+        "condition": null,
+        "defaultId": null,
+        "order": ["fb", "flow_relay_1"]
+      }
+    },
+    {
+      "action": "single-to-multi",
+      "mode": "default",
+      "before": {
+        "edgeId": "fa",
+        "name": "采购分支",
+        "condition": null,
+        "defaultId": "fa",
+        "order": ["fa", "fb"]
+      },
+      "after": {
+        "edgeId": "flow_conv_in_1",
+        "name": null,
+        "condition": null,
+        "defaultId": null,
+        "order": ["fb", "flow_conv_in_1"]
+      }
+    },
+    {
+      "action": "multi-to-single",
+      "mode": "default",
+      "before": {
+        "edgeId": "fa",
+        "name": "采购分支",
+        "condition": null,
+        "defaultId": "fa",
+        "order": ["fa", "fb"]
+      },
+      "after": {
+        "edgeId": "flow_conv_in_1",
+        "name": null,
+        "condition": null,
+        "defaultId": null,
+        "order": ["fb", "flow_conv_in_1"]
+      }
+    },
+    {
+      "action": "delete-first",
+      "mode": "default",
+      "before": {
+        "edgeId": "fa",
+        "name": "采购分支",
+        "condition": null,
+        "defaultId": "fa",
+        "order": ["fa", "fb"]
+      },
+      "after": {
+        "edgeId": "flow_relay_1",
+        "name": null,
+        "condition": null,
+        "defaultId": null,
+        "order": ["fb", "flow_relay_1"]
+      }
+    },
+    {
+      "action": "delete-then-reuse-before-reconcile",
+      "reusedId": "approval_1",
+      "absentImmediatelyAfterDelete": true,
+      "sameIdPresentAtReconcile": true,
+      "sameObjectReference": false,
+      "staleSimulatedBufferSurvivedIdDiff": true
+    },
+    {
+      "action": "remove-nested-block-at-branch-head",
+      "mode": "condition",
+      "before": {
+        "edgeId": "fa",
+        "name": "采购分支",
+        "condition": "${amount > 100}",
+        "defaultId": null,
+        "order": ["fa", "fb"]
+      },
+      "after": {
+        "edgeId": "flow_block_relay_1",
+        "name": null,
+        "condition": null,
+        "defaultId": null,
+        "order": ["fb", "flow_block_relay_1"]
+      }
+    }
+  ]
+}

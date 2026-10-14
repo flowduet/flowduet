@@ -1,0 +1,6 @@
+### Result
+{"message":"定位目标生命期已失效，拒绝跳转","state":{"documentEpoch":1,"view":"edit","node":{"documentEpoch":1,"kind":"node","id":"approval_1","lifetime":3},"branch":{"documentEpoch":1,"kind":"flow","id":"fa","lifetime":9},"nodeAlive":false,"branchAlive":true,"branchBuffer":{"input":{"condition":"${amount > 200}"},"conflict":false},"nodeBuffer":null,"headTarget":"tail","branchOrder":["fa","fb"],"defaultFormKey":"form_1"},"newCard":"审新对象审批人 new × ","openDrawers":0}
+### Ran Playwright code
+```js
+await (async (page) => { await page.getByRole("button",{name:"宿主协议",exact:true}).click(); const root=page.locator("[data-location-case=chain]"); await page.waitForFunction(() => document.querySelector("[data-location-case=chain] [data-test=location-result]").textContent.includes("就绪")); await root.getByRole("checkbox",{name:"下一次定位期间删除再复用节点（实验确认）"}).check(); await root.getByRole("button",{name:"定位采购审批",exact:true}).click(); return {message:await root.locator("[data-test=location-result]").textContent(),state:JSON.parse(await root.locator("[data-test=location-state]").textContent()),newCard:await root.locator("[data-test=node-delete-approval_1]").locator("..").textContent(),openDrawers:await root.locator(".el-drawer.open").count()}; })(page);
+```

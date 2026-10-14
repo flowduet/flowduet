@@ -1,0 +1,111 @@
+Browser tab: 3, Title: "FlowDuet 阶段零探针", URL: "http://127.0.0.1:5173/probes/stage-zero/index.html".
+1 AXWebArea FlowDuet 阶段零探针, URL: 127.0.0.1:5173/probes/stage-zero/index.html
+	2 container app
+		3 heading FlowDuet 阶段零 · 真实组件探针, Value: 1
+			4 text FlowDuet 阶段零 · 真实组件探针
+		5 text 隔离的实验入口，不是正式工作台；只使用虚构样例。生产结构缺陷尚未修复。
+		6 container
+			7 button 编辑保留
+			8 button 主题隔离
+			9 button 宿主协议
+		177 container
+			178 checkbox (settable, integer) Description: 提供实验保存适配器, Value: 0
+			263 text 人工控制异步返回；不连接外部存储。保存请求数：2 宿主输入
+			180 text field (settable) 宿主输入
+			266 text 宿主快捷键次数：1
+			182 heading 实例 甲, Value: 3
+				183 text 实例 甲
+			184 container
+				185 text 候选名称
+				186 text field (settable) Description: 实例0候选名称, Value: 保存期间的新编辑
+			187 container
+				188 combo box (collapsed, settable) ID: el-id-1500-546, Secondary Actions: Expand
+				189 text 打开所属弹层
+				190 image
+			191 button 打开所属测试弹层
+			192 button 标记候选已校验（模拟）
+			193 button 原样应用
+			195 button 宿主确认成功
+			196 button 宿主确认失败
+			197 button 模拟新建替换
+			198 button 取消离开
+			199 heading 实例 乙, Value: 3
+				200 text 实例 乙
+			201 container
+				202 text 候选名称
+				203 text field (settable) Description: 实例1候选名称, Value: 候选乙
+			204 container
+				205 combo box (collapsed, settable) ID: el-id-1500-547, Secondary Actions: Expand
+				206 text 打开所属弹层
+				207 image
+			208 button 打开所属测试弹层
+			209 button 标记候选已校验（模拟）
+			210 button 原样应用
+			212 button 宿主确认成功
+			213 button 宿主确认失败
+			214 button 模拟新建替换
+			215 button 取消离开
+			264 text [
+  {
+    "instance": 0,
+    "epoch": 1,
+    "dirty": true,
+    "generation": 2,
+    "saved": 1,
+    "validation": false,
+    "pending": false
+  },
+  {
+    "instance": 1,
+    "epoch": 1,
+    "dirty": true,
+    "generation": 1,
+    "saved": 0,
+    "validation": false,
+    "pending": false
+  }
+]
+			217 heading 真实只读视图 → 编辑定位, Value: 3
+				218 text 真实只读视图 → 编辑定位
+			219 container
+				220 button 回到 BPMN 只读
+				221 button 定位采购审批
+				222 button 定位金额分支
+				223 button 定位默认表单问题
+				224 button 删除并复用节点 ID
+			225 text 就绪。定位采用内部 DOM 桥接作可行性试验，不是公开接口。
+			226 container
+				227 container
+					228 image
+						229 container Edge from s to fork
+					230 image
+						231 container Edge from fork to approval_1
+							232 container ${amount > 100}
+								233 text 金额分支
+					234 image
+						235 container Edge from approval_1 to tail
+					236 image
+						237 container Edge from tail to join
+					238 image
+						239 container Edge from fork to b
+							240 text 默认
+					241 image
+						242 container Edge from b to join
+					243 image
+						244 container Edge from join to e
+					245 container approval_1
+						246 container
+							247 image
+							248 text 采购审批
+					249 container tail
+						250 container
+							251 image
+							252 text 财务复核
+					253 container b
+						254 container
+							255 image
+							256 text 其他审批
+		175 button (collapsed) 探针事件记录 4, Secondary Actions: Expand
+			265 text 探针事件记录 4
+
+The focused UI element is 178 checkbox (settable, integer) Description: 提供实验保存适配器, Value: 0

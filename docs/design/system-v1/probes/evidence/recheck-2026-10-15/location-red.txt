@@ -1,0 +1,200 @@
+
+ RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground
+
+ ❯ probes/stage-zero/probe-log.test.ts (2 tests | 1 failed) 12ms
+   × 替换文档后的迟到事件同时记录当前epoch与旧目标epoch 10ms
+stderr | probes/stage-zero/location.test.ts > 真实视图定位确认 > 从BPMN切回后确认实际节点抽屉，而非仅派发事件
+[Vue Flow]: The Vue Flow parent container needs a width and a height to render the graph
+[Vue Flow]: It seems that you haven't loaded the necessary styles. Please import '@vue-flow/core/dist/style.css' to ensure that the graph is rendered correctly
+
+stderr | probes/stage-zero/location.test.ts > 真实视图定位确认 > 单↔多转换后原分支诊断仍定位fa，条件与顺序保留
+[Vue Flow]: The Vue Flow parent container needs a width and a height to render the graph
+[Vue Flow]: It seems that you haven't loaded the necessary styles. Please import '@vue-flow/core/dist/style.css' to ensure that the graph is rendered correctly
+
+stderr | probes/stage-zero/location.test.ts > 真实视图定位确认 > 删除首节点后fa改接tail仍可定位，旧节点诊断拒绝
+[Vue Flow]: The Vue Flow parent container needs a width and a height to render the graph
+[Vue Flow]: It seems that you haven't loaded the necessary styles. Please import '@vue-flow/core/dist/style.css' to ensure that the graph is rendered correctly
+
+stderr | probes/stage-zero/location.test.ts > 真实视图定位确认 > 外层头嵌套块删除后确认实际分支配置
+[Vue Flow]: The Vue Flow parent container needs a width and a height to render the graph
+[Vue Flow]: It seems that you haven't loaded the necessary styles. Please import '@vue-flow/core/dist/style.css' to ensure that the graph is rendered correctly
+
+stderr | probes/stage-zero/location.test.ts > 真实视图定位确认 > 现有抽屉含非法输入时不宣称后续分支已选中，输入保留
+[Vue Flow]: The Vue Flow parent container needs a width and a height to render the graph
+[Vue Flow]: It seems that you haven't loaded the necessary styles. Please import '@vue-flow/core/dist/style.css' to ensure that the graph is rendered correctly
+
+stderr | probes/stage-zero/location.test.ts > 真实视图定位确认 > 异步切换期间删除再复用ID，旧请求拒绝而不选中新对象
+[Vue Flow]: The Vue Flow parent container needs a width and a height to render the graph
+[Vue Flow]: It seems that you haven't loaded the necessary styles. Please import '@vue-flow/core/dist/style.css' to ensure that the graph is rendered correctly
+
+stderr | probes/stage-zero/location.test.ts > 真实视图定位确认 > 异步期间文档替换使旧诊断失效，实际epoch递增
+[Vue Flow]: The Vue Flow parent container needs a width and a height to render the graph
+[Vue Flow]: It seems that you haven't loaded the necessary styles. Please import '@vue-flow/core/dist/style.css' to ensure that the graph is rendered correctly
+
+stderr | probes/stage-zero/location.test.ts > 真实视图定位确认 > 默认表单问题进入真实配置控件并写回同一模型
+[Vue Flow]: The Vue Flow parent container needs a width and a height to render the graph
+[Vue Flow]: It seems that you haven't loaded the necessary styles. Please import '@vue-flow/core/dist/style.css' to ensure that the graph is rendered correctly
+
+ ❯ probes/stage-zero/location.test.ts (8 tests | 8 failed) 2579ms
+   ❯ 真实视图定位确认 (8)
+     × 从BPMN切回后确认实际节点抽屉，而非仅派发事件 816ms
+     × 单↔多转换后原分支诊断仍定位fa，条件与顺序保留 69ms
+     × 删除首节点后fa改接tail仍可定位，旧节点诊断拒绝 80ms
+     × 外层头嵌套块删除后确认实际分支配置 61ms
+     × 现有抽屉含非法输入时不宣称后续分支已选中，输入保留 532ms
+     × 异步切换期间删除再复用ID，旧请求拒绝而不选中新对象 475ms
+     × 异步期间文档替换使旧诊断失效，实际epoch递增 475ms
+     × 默认表单问题进入真实配置控件并写回同一模型 69ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 9 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  probes/stage-zero/location.test.ts > 真实视图定位确认 > 从BPMN切回后确认实际节点抽屉，而非仅派发事件
+AssertionError: expected '已定位 approval_1（内部 DOM 桥接）' to contain '已确认'
+
+Expected: "已确认"
+Received: "已定位 approval_1（内部 DOM 桥接）"
+
+ ❯ probes/stage-zero/location.test.ts:25:67
+     23|     await setup();await click("定位采购审批");expect(selected()).toBe("appro…
+     24|     expect(wrapper!.findComponent(NodeDrawer).props("modelValue")).toB…
+     25|     expect(wrapper!.find('[data-test="location-result"]').text()).toCo…
+       |                                                                   ^
+     26|   });
+     27|   it("单↔多转换后原分支诊断仍定位fa，条件与顺序保留",async()=>{
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/9]⎯
+
+ FAIL  probes/stage-zero/location.test.ts > 真实视图定位确认 > 单↔多转换后原分支诊断仍定位fa，条件与顺序保留
+AssertionError: 缺少真实探针操作：切为会签: expected undefined to be defined
+ ❯ click probes/stage-zero/location.test.ts:16:37
+     14| async function click(text:string) {
+     15|   const button=wrapper!.findAll("button").find(el=>el.text()===text);
+     16|   expect(button,`缺少真实探针操作：${text}`).toBeDefined();
+       |                                     ^
+     17|   await button!.trigger("click");await flushPromises();
+     18| }
+ ❯ probes/stage-zero/location.test.ts:28:25
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/9]⎯
+
+ FAIL  probes/stage-zero/location.test.ts > 真实视图定位确认 > 删除首节点后fa改接tail仍可定位，旧节点诊断拒绝
+AssertionError: 缺少真实探针操作：删除首节点（保留支路）: expected undefined to be defined
+ ❯ click probes/stage-zero/location.test.ts:16:37
+     14| async function click(text:string) {
+     15|   const button=wrapper!.findAll("button").find(el=>el.text()===text);
+     16|   expect(button,`缺少真实探针操作：${text}`).toBeDefined();
+       |                                     ^
+     17|   await button!.trigger("click");await flushPromises();
+     18| }
+ ❯ probes/stage-zero/location.test.ts:35:25
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/9]⎯
+
+ FAIL  probes/stage-zero/location.test.ts > 真实视图定位确认 > 外层头嵌套块删除后确认实际分支配置
+AssertionError: 缺少真实探针操作：删除嵌套块（保留外层支路）: expected undefined to be defined
+ ❯ click probes/stage-zero/location.test.ts:16:37
+     14| async function click(text:string) {
+     15|   const button=wrapper!.findAll("button").find(el=>el.text()===text);
+     16|   expect(button,`缺少真实探针操作：${text}`).toBeDefined();
+       |                                     ^
+     17|   await button!.trigger("click");await flushPromises();
+     18| }
+ ❯ probes/stage-zero/location.test.ts:42:38
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/9]⎯
+
+ FAIL  probes/stage-zero/location.test.ts > 真实视图定位确认 > 现有抽屉含非法输入时不宣称后续分支已选中，输入保留
+AssertionError: expected '已定位 fa（内部 DOM 桥接）' to contain '未确认'
+
+Expected: "未确认"
+Received: "已定位 fa（内部 DOM 桥接）"
+
+ ❯ probes/stage-zero/location.test.ts:53:67
+     51|     input.value="bad,list";input.dispatchEvent(new Event("input",{bubb…
+     52|     await click("定位金额分支");expect(selected()).toBe("approval_1");expect…
+     53|     expect(wrapper!.find('[data-test="location-result"]').text()).toCo…
+       |                                                                   ^
+     54|   });
+     55|   it("异步切换期间删除再复用ID，旧请求拒绝而不选中新对象",async()=>{
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/9]⎯
+
+ FAIL  probes/stage-zero/location.test.ts > 真实视图定位确认 > 异步切换期间删除再复用ID，旧请求拒绝而不选中新对象
+AssertionError: expected '已定位 approval_1（内部 DOM 桥接）' to contain '失效'
+
+Expected: "失效"
+Received: "已定位 approval_1（内部 DOM 桥接）"
+
+ ❯ probes/stage-zero/location.test.ts:59:89
+     57|       p.mutateModel(()=>{const m=p.session.current!.model;removeApprov…
+     58|     }});
+     59|     await click("定位采购审批");expect(wrapper!.find('[data-test="location-r…
+       |                                                                                         ^
+     60|     expect(wrapper!.findComponent(NodeDrawer).props("modelValue")).toB…
+     61|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/9]⎯
+
+ FAIL  probes/stage-zero/location.test.ts > 真实视图定位确认 > 异步期间文档替换使旧诊断失效，实际epoch递增
+AssertionError: expected '已定位 fa（内部 DOM 桥接）' to contain '失效'
+
+Expected: "失效"
+Received: "已定位 fa（内部 DOM 桥接）"
+
+ ❯ probes/stage-zero/location.test.ts:64:89
+     62|   it("异步期间文档替换使旧诊断失效，实际epoch递增",async()=>{
+     63|     await setup({beforeLocate:async(p:ProbeDesignState)=>{p.session.ne…
+     64|     await click("定位金额分支");expect(wrapper!.find('[data-test="location-r…
+       |                                                                                         ^
+     65|     expect(wrapper!.find('[data-test="location-state"]').text()).toCon…
+     66|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/9]⎯
+
+ FAIL  probes/stage-zero/location.test.ts > 真实视图定位确认 > 默认表单问题进入真实配置控件并写回同一模型
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ probes/stage-zero/location.test.ts:69:95
+     67|   it("默认表单问题进入真实配置控件并写回同一模型",async()=>{
+     68|     await setup();await click("定位默认表单问题");
+     69|     const select=wrapper!.find('[data-test="location-default-form"]');…
+       |                                                                                               ^
+     70|     await select.setValue("form_2");expect(wrapper!.find('[data-test="…
+     71|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/9]⎯
+
+ FAIL  probes/stage-zero/probe-log.test.ts > 替换文档后的迟到事件同时记录当前epoch与旧目标epoch
+AssertionError: expected 1 to be 2 // Object.is equality
+
+- Expected
++ Received
+
+- 2
++ 1
+
+ ❯ probes/stage-zero/probe-log.test.ts:7:43
+      5|   entries.value=[];const registry=new EntityRegistry();registry.sync([…
+      6|   registry.replaceDocument();record("location","stale",{},old,registry…
+      7|   expect(entries.value[0]?.documentEpoch).toBe(2);expect(entries.value…
+       |                                           ^
+      8| });
+      9| it("无文档归属的事件明确未知，不使用固定世代",()=>{
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/9]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  9 failed | 1 passed (10)
+   Start at  23:58:01
+   Duration  6.99s (import 35%, tests 34%, environment 18%, transform 13%, worker 1%)
+
+undefined
+/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run probes/stage-zero/location.test.ts probes/stage-zero/probe-log.test.ts

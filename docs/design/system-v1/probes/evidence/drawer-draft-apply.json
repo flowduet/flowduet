@@ -1,0 +1,9 @@
+{
+  "ok": true,
+  "nodeId": "approval_1",
+  "pendingIssues": [
+    "多人审批节点「先改名称的草稿（approval_1）」的集合变量为空白，请在抽屉补填后再导出"
+  ],
+  "modelName": "先改名称的草稿",
+  "collection": ""
+}

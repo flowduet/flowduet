@@ -1,0 +1,546 @@
+Scope: 4 of 5 workspace projects
+packages/core test$ vitest run
+packages/core test:  RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/core
+packages/core test:  Test Files  12 passed (12)
+packages/core test:       Tests  125 passed (125)
+packages/core test:    Start at  19:33:33
+packages/core test:    Duration  731ms (transform 51%, tests 33%, import 14%, worker 2%)
+packages/core test: Done
+packages/designer test$ vitest run
+packages/designer test:  RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/designer
+packages/designer test:  ❯ probes/stage-zero/branch-preservation.test.ts (8 tests | 7 failed) 98ms
+packages/designer test:    ❯ 阶段零：支路身份的红色基线 (8)
+packages/designer test:      × preserves_branch_head_on_conversion single-to-multi condition 38ms
+packages/designer test:      × preserves_branch_head_on_conversion multi-to-single condition 8ms
+packages/designer test:      × preserves_branch_head_when_removing_first condition 10ms
+packages/designer test:      × preserves_branch_head_on_conversion single-to-multi default 11ms
+packages/designer test:      × preserves_branch_head_on_conversion multi-to-single default 8ms
+packages/designer test:      × preserves_branch_head_when_removing_first default 8ms
+packages/designer test:      × preserves_branch_head_when_removing_nested_block 7ms
+packages/designer test:  ❯ probes/stage-zero/default-form-entry.test.ts (2 tests | 1 failed) 36ms
+packages/designer test:    × standalone keeps the existing default form selector 29ms
+packages/designer test:  ❯ src/form-binding-ui.test.ts (11 tests | 4 failed) 2299ms
+packages/designer test:    ❯ 默认表单选择条 (1)
+packages/designer test:      × 选择默认表单写入 model 并触发 change；切回「无」清除引用 214ms
+packages/designer test:    ❯ 审批节点有效表单摘要 (3)
+packages/designer test:      × 默认或节点 key 不在目录中：保留原值并显示失效 159ms
+packages/designer test:      × 带首尾空格的 key 即使碰巧匹配目录 ID 也标记失效 165ms
+packages/designer test:    ❯ 审批节点表单覆盖选择（#73） (6)
+packages/designer test:      × 同名不同 ID 的表单在默认、覆盖与节点摘要中均可区分（A05） 150ms
+packages/designer test: ⎯⎯⎯⎯⎯⎯ Failed Tests 12 ⎯⎯⎯⎯⎯⎯⎯
+packages/designer test:  FAIL  src/form-binding-ui.test.ts > 默认表单选择条 > 选择默认表单写入 model 并触发 change；切回「无」清除引用
+packages/designer test: Error: Cannot call setValue on an empty DOMWrapper.
+packages/designer test:  ❯ Object.get ../../node_modules/.pnpm/@vue+test-utils@2.5.1_@vue+compiler-dom@3.5.43_@vue+server-renderer@3.5.43_vue@3.5.43_typescript@5.9.3_/node_modules/@vue/test-utils/dist/vue-test-utils.cjs.js:1488:27
+packages/designer test:  ❯ src/form-binding-ui.test.ts:62:18
+packages/designer test:      60|
+packages/designer test:      61|     const select = wrapper.find('[data-test="default-form-select"]');
+packages/designer test:      62|     await select.setValue("form_apply");
+packages/designer test:        |                  ^
+packages/designer test:      63|     expect(model.defaultFormKey).toBe("form_apply");
+packages/designer test:      64|     expect(wrapper.emitted("change")).toBeTruthy();
+packages/designer test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/37]⎯
+packages/designer test:  FAIL  src/form-binding-ui.test.ts > 审批节点有效表单摘要 > 默认或节点 key 不在目录中：保留原值并显示失效
+packages/designer test: Error: Cannot call text on an empty DOMWrapper.
+packages/designer test:  ❯ Object.get ../../node_modules/.pnpm/@vue+test-utils@2.5.1_@vue+compiler-dom@3.5.43_@vue+server-renderer@3.5.43_vue@3.5.43_typescript@5.9.3_/node_modules/@vue/test-utils/dist/vue-test-utils.cjs.js:1488:27
+packages/designer test:  ❯ src/form-binding-ui.test.ts:103:62
+packages/designer test:     101|     wrapper = mountDesigner(model);
+packages/designer test:     102|     await flushPromises();
+packages/designer test:     103|     expect(wrapper.find('[data-test="default-form-invalid"]').text()).…
+packages/designer test:        |                                                              ^
+packages/designer test:     104|     expect(wrapper.find('[data-test="node-form-counter"]').text()).toC…
+packages/designer test:     105|     expect(wrapper.find('[data-test="node-form-counter"]').classes()).…
+packages/designer test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/37]⎯
+packages/designer test:  FAIL  src/form-binding-ui.test.ts > 审批节点有效表单摘要 > 带首尾空格的 key 即使碰巧匹配目录 ID 也标记失效
+packages/designer test: AssertionError: expected false to be true // Object.is equality
+packages/designer test: - Expected
+packages/designer test: + Received
+packages/designer test: - true
+packages/designer test: + false
+packages/designer test:  ❯ src/form-binding-ui.test.ts:119:73
+packages/designer test:     117|     await flushPromises();
+packages/designer test:     118|
+packages/designer test:     119|     expect(wrapper.find('[data-test="default-form-invalid"]').exists()…
+packages/designer test:        |                                                                         ^
+packages/designer test:     120|     expect(wrapper.find('[data-test="node-form-counter"]').classes()).…
+packages/designer test:     121|       "node-card-form--invalid",
+packages/designer test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/37]⎯
+packages/designer test:  FAIL  src/form-binding-ui.test.ts > 审批节点表单覆盖选择（#73） > 同名不同 ID 的表单在默认、覆盖与节点摘要中均可区分（A05）
+packages/designer test: AssertionError: expected [] to deeply equal [ '无', '申请单（form_apply）', …(2) ]
+packages/designer test: - Expected
+packages/designer test: + Received
+packages/designer test: - [
+packages/designer test: -   "无",
+packages/designer test: -   "申请单（form_apply）",
+packages/designer test: -   "申请单（form_apply_2）",
+packages/designer test: -   "复核单",
+packages/designer test: - ]
+packages/designer test: + []
+packages/designer test:  ❯ src/form-binding-ui.test.ts:213:28
+packages/designer test:     211|       .findAll('[data-test="default-form-select"] option')
+packages/designer test:     212|       .map((option) => option.text());
+packages/designer test:     213|     expect(defaultOptions).toEqual([
+packages/designer test:        |                            ^
+packages/designer test:     214|       "无",
+packages/designer test:     215|       "申请单（form_apply）",
+packages/designer test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/37]⎯
+packages/designer test:  FAIL  probes/stage-zero/branch-preservation.test.ts > 阶段零：支路身份的红色基线 > preserves_branch_head_on_conversion single-to-multi condition
+packages/designer test:  FAIL  probes/stage-zero/branch-preservation.test.ts > 阶段零：支路身份的红色基线 > preserves_branch_head_on_conversion single-to-multi default
+packages/designer test: AssertionError: expected 'flow_conv_in_1' to be 'fa' // Object.is equality
+packages/designer test: Expected: "fa"
+packages/designer test: Received: "flow_conv_in_1"
+packages/designer test:  ❯ assertHead probes/stage-zero/branch-preservation.test.ts:40:31
+packages/designer test:      38|   const outs = fork.get("outgoing") as ModdleElement[];
+packages/designer test:      39|   const head = outs.find((f) => (f.get("targetRef") as ModdleElement).…
+packages/designer test:      40|   expect.soft(head.get("id")).toBe("fa");
+packages/designer test:        |                               ^
+packages/designer test:      41|   expect.soft(head.get("name")).toBe("采购条件");
+packages/designer test:      42|   expect.soft(outs.map((f) => f.get("id"))).toEqual(["fa", "fb"]);
+packages/designer test:  ❯ probes/stage-zero/branch-preservation.test.ts:54:7
+packages/designer test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/37]⎯
+packages/designer test:  FAIL  probes/stage-zero/branch-preservation.test.ts > 阶段零：支路身份的红色基线 > preserves_branch_head_on_conversion single-to-multi condition
+packages/designer test:  FAIL  probes/stage-zero/branch-preservation.test.ts > 阶段零：支路身份的红色基线 > preserves_branch_head_on_conversion single-to-multi default
+packages/designer test: AssertionError: expected undefined to be '采购条件' // Object.is equality
+packages/designer test: - Expected:
+packages/designer test: "采购条件"
+packages/designer test: + Received:
+packages/designer test: undefined
+packages/designer test:  ❯ assertHead probes/stage-zero/branch-preservation.test.ts:41:33
+packages/designer test:      39|   const head = outs.find((f) => (f.get("targetRef") as ModdleElement).…
+packages/designer test:      40|   expect.soft(head.get("id")).toBe("fa");
+packages/designer test:      41|   expect.soft(head.get("name")).toBe("采购条件");
+packages/designer test:        |                                 ^
+packages/designer test:      42|   expect.soft(outs.map((f) => f.get("id"))).toEqual(["fa", "fb"]);
+packages/designer test:      43|   if (mode === "condition")
+packages/designer test:  ❯ probes/stage-zero/branch-preservation.test.ts:54:7
+packages/designer test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/37]⎯
+packages/designer test:  FAIL  probes/stage-zero/branch-preservation.test.ts > 阶段零：支路身份的红色基线 > preserves_branch_head_on_conversion single-to-multi condition
+packages/designer test:  FAIL  probes/stage-zero/branch-preservation.test.ts > 阶段零：支路身份的红色基线 > preserves_branch_head_on_conversion single-to-multi default
+packages/designer test: AssertionError: expected [ 'fb', 'flow_conv_in_1' ] to deeply equal [ 'fa', 'fb' ]
+packages/designer test: - Expected
+packages/designer test: + Received
+packages/designer test:   [
+packages/designer test: -   "fa",
+packages/designer test:     "fb",
+packages/designer test: +   "flow_conv_in_1",
+packages/designer test:   ]
+packages/designer test:  ❯ assertHead probes/stage-zero/branch-preservation.test.ts:42:45
+packages/designer test:      40|   expect.soft(head.get("id")).toBe("fa");
+packages/designer test:      41|   expect.soft(head.get("name")).toBe("采购条件");
+packages/designer test:      42|   expect.soft(outs.map((f) => f.get("id"))).toEqual(["fa", "fb"]);
+packages/designer test:        |                                             ^
+packages/designer test:      43|   if (mode === "condition")
+packages/designer test:      44|     expect
+packages/designer test:  ❯ probes/stage-zero/branch-preservation.test.ts:54:7
+packages/designer test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/37]⎯
+packages/designer test:  FAIL  probes/stage-zero/branch-preservation.test.ts > 阶段零：支路身份的红色基线 > preserves_branch_head_on_conversion single-to-multi condition
+packages/designer test: AssertionError: expected undefined to be '${amount > 100}' // Object.is equality
+packages/designer test: - Expected:
+packages/designer test: "${amount > 100}"
+packages/designer test: + Received:
+packages/designer test: undefined
+packages/designer test:  ❯ assertHead probes/stage-zero/branch-preservation.test.ts:46:8
+packages/designer test:      44|     expect
+packages/designer test:      45|       .soft((head.get("conditionExpression") as ModdleElement | undefi…
+packages/designer test:      46|       .toBe("${amount > 100}");
+packages/designer test:        |        ^
+packages/designer test:      47|   else expect.soft(fork.get("default")).toBe(head);
+packages/designer test:      48| }
+packages/designer test:  ❯ probes/stage-zero/branch-preservation.test.ts:54:7
+packages/designer test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/37]⎯
+packages/designer test:  FAIL  probes/stage-zero/branch-preservation.test.ts > 阶段零：支路身份的红色基线 > preserves_branch_head_on_conversion single-to-multi condition
+packages/designer test:  FAIL  probes/stage-zero/branch-preservation.test.ts > 阶段零：支路身份的红色基线 > preserves_branch_head_on_conversion single-to-multi default
+packages/designer test: AssertionError: expected 'flow_conv_out_1' to be 'at' // Object.is equality
+packages/designer test: Expected: "at"
+packages/designer test: Received: "flow_conv_out_1"
+packages/designer test:  ❯ probes/stage-zero/branch-preservation.test.ts:56:34
+packages/designer test:      54|       assertHead(m, "a", mode);
+packages/designer test:      55|       const out = (m.elementOf("a").get("outgoing") as ModdleElement[]…
+packages/designer test:      56|       expect.soft(out.get("id")).toBe("at");
+packages/designer test:        |                                  ^
+packages/designer test:      57|       expect.soft(out.get("name")).toBe("保留出边");
+packages/designer test:      58|     });
+packages/designer test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/37]⎯
+packages/designer test:  FAIL  probes/stage-zero/branch-preservation.test.ts > 阶段零：支路身份的红色基线 > preserves_branch_head_on_conversion single-to-multi condition
+packages/designer test:  FAIL  probes/stage-zero/branch-preservation.test.ts > 阶段零：支路身份的红色基线 > preserves_branch_head_on_conversion single-to-multi default
+packages/designer test: AssertionError: expected undefined to be '保留出边' // Object.is equality
+packages/designer test: - Expected:
+packages/designer test: "保留出边"
+packages/designer test: + Received:
+packages/designer test: undefined
+packages/designer test:  ❯ probes/stage-zero/branch-preservation.test.ts:57:36
+packages/designer test:      55|       const out = (m.elementOf("a").get("outgoing") as ModdleElement[]…
+packages/designer test:      56|       expect.soft(out.get("id")).toBe("at");
+packages/designer test:      57|       expect.soft(out.get("name")).toBe("保留出边");
+packages/designer test:        |                                    ^
+packages/designer test:      58|     });
+packages/designer test:      59|     it(`preserves_branch_head_on_conversion multi-to-single ${mode}`, …
+packages/designer test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/37]⎯
+packages/designer test:  FAIL  probes/stage-zero/branch-preservation.test.ts > 阶段零：支路身份的红色基线 > preserves_branch_head_on_conversion multi-to-single condition
+packages/designer test:  FAIL  probes/stage-zero/branch-preservation.test.ts > 阶段零：支路身份的红色基线 > preserves_branch_head_on_conversion multi-to-single default
+packages/designer test: AssertionError: expected 'flow_conv_in_1' to be 'fa' // Object.is equality
+packages/designer test: Expected: "fa"
+packages/designer test: Received: "flow_conv_in_1"
+packages/designer test:  ❯ assertHead probes/stage-zero/branch-preservation.test.ts:40:31
+packages/designer test:      38|   const outs = fork.get("outgoing") as ModdleElement[];
+packages/designer test:      39|   const head = outs.find((f) => (f.get("targetRef") as ModdleElement).…
+packages/designer test:      40|   expect.soft(head.get("id")).toBe("fa");
+packages/designer test:        |                               ^
+packages/designer test:      41|   expect.soft(head.get("name")).toBe("采购条件");
+packages/designer test:      42|   expect.soft(outs.map((f) => f.get("id"))).toEqual(["fa", "fb"]);
+packages/designer test:  ❯ probes/stage-zero/branch-preservation.test.ts:62:7
+packages/designer test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/37]⎯
+packages/designer test:  FAIL  probes/stage-zero/branch-preservation.test.ts > 阶段零：支路身份的红色基线 > preserves_branch_head_on_conversion multi-to-single condition
+packages/designer test:  FAIL  probes/stage-zero/branch-preservation.test.ts > 阶段零：支路身份的红色基线 > preserves_branch_head_on_conversion multi-to-single default
+packages/designer test: AssertionError: expected undefined to be '采购条件' // Object.is equality
+packages/designer test: - Expected:
+packages/designer test: "采购条件"
+packages/designer test: + Received:
+packages/designer test: undefined
+packages/designer test:  ❯ assertHead probes/stage-zero/branch-preservation.test.ts:41:33
+packages/designer test:      39|   const head = outs.find((f) => (f.get("targetRef") as ModdleElement).…
+packages/designer test:      40|   expect.soft(head.get("id")).toBe("fa");
+packages/designer test:      41|   expect.soft(head.get("name")).toBe("采购条件");
+packages/designer test:        |                                 ^
+packages/designer test:      42|   expect.soft(outs.map((f) => f.get("id"))).toEqual(["fa", "fb"]);
+packages/designer test:      43|   if (mode === "condition")
+packages/designer test:  ❯ probes/stage-zero/branch-preservation.test.ts:62:7
+packages/designer test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/37]⎯
+packages/designer test:  FAIL  probes/stage-zero/branch-preservation.test.ts > 阶段零：支路身份的红色基线 > preserves_branch_head_on_conversion multi-to-single condition
+packages/designer test:  FAIL  probes/stage-zero/branch-preservation.test.ts > 阶段零：支路身份的红色基线 > preserves_branch_head_on_conversion multi-to-single default
+packages/designer test: AssertionError: expected [ 'fb', 'flow_conv_in_1' ] to deeply equal [ 'fa', 'fb' ]
+packages/designer test: - Expected
+packages/designer test: + Received
+packages/designer test:   [
+packages/designer test: -   "fa",
+packages/designer test:     "fb",
+packages/designer test: +   "flow_conv_in_1",
+packages/designer test:   ]
+packages/designer test:  ❯ assertHead probes/stage-zero/branch-preservation.test.ts:42:45
+packages/designer test:      40|   expect.soft(head.get("id")).toBe("fa");
+packages/designer test:      41|   expect.soft(head.get("name")).toBe("采购条件");
+packages/designer test:      42|   expect.soft(outs.map((f) => f.get("id"))).toEqual(["fa", "fb"]);
+packages/designer test:        |                                             ^
+packages/designer test:      43|   if (mode === "condition")
+packages/designer test:      44|     expect
+packages/designer test:  ❯ probes/stage-zero/branch-preservation.test.ts:62:7
+packages/designer test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[13/37]⎯
+packages/designer test:  FAIL  probes/stage-zero/branch-preservation.test.ts > 阶段零：支路身份的红色基线 > preserves_branch_head_on_conversion multi-to-single condition
+packages/designer test: AssertionError: expected undefined to be '${amount > 100}' // Object.is equality
+packages/designer test: - Expected:
+packages/designer test: "${amount > 100}"
+packages/designer test: + Received:
+packages/designer test: undefined
+packages/designer test:  ❯ assertHead probes/stage-zero/branch-preservation.test.ts:46:8
+packages/designer test:      44|     expect
+packages/designer test:      45|       .soft((head.get("conditionExpression") as ModdleElement | undefi…
+packages/designer test:      46|       .toBe("${amount > 100}");
+packages/designer test:        |        ^
+packages/designer test:      47|   else expect.soft(fork.get("default")).toBe(head);
+packages/designer test:      48| }
+packages/designer test:  ❯ probes/stage-zero/branch-preservation.test.ts:62:7
+packages/designer test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[14/37]⎯
+packages/designer test:  FAIL  probes/stage-zero/branch-preservation.test.ts > 阶段零：支路身份的红色基线 > preserves_branch_head_when_removing_first condition
+packages/designer test:  FAIL  probes/stage-zero/branch-preservation.test.ts > 阶段零：支路身份的红色基线 > preserves_branch_head_when_removing_first default
+packages/designer test: AssertionError: expected 'flow_relay_1' to be 'fa' // Object.is equality
+packages/designer test: Expected: "fa"
+packages/designer test: Received: "flow_relay_1"
+packages/designer test:  ❯ assertHead probes/stage-zero/branch-preservation.test.ts:40:31
+packages/designer test:      38|   const outs = fork.get("outgoing") as ModdleElement[];
+packages/designer test:      39|   const head = outs.find((f) => (f.get("targetRef") as ModdleElement).…
+packages/designer test:      40|   expect.soft(head.get("id")).toBe("fa");
+packages/designer test:        |                               ^
+packages/designer test:      41|   expect.soft(head.get("name")).toBe("采购条件");
+packages/designer test:      42|   expect.soft(outs.map((f) => f.get("id"))).toEqual(["fa", "fb"]);
+packages/designer test:  ❯ probes/stage-zero/branch-preservation.test.ts:67:7
+packages/designer test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[15/37]⎯
+packages/designer test:  FAIL  probes/stage-zero/branch-preservation.test.ts > 阶段零：支路身份的红色基线 > preserves_branch_head_when_removing_first condition
+packages/designer test:  FAIL  probes/stage-zero/branch-preservation.test.ts > 阶段零：支路身份的红色基线 > preserves_branch_head_when_removing_first default
+packages/designer test: AssertionError: expected undefined to be '采购条件' // Object.is equality
+packages/designer test: - Expected:
+packages/designer test: "采购条件"
+packages/designer test: + Received:
+packages/designer test: undefined
+packages/designer test:  ❯ assertHead probes/stage-zero/branch-preservation.test.ts:41:33
+packages/designer test:      39|   const head = outs.find((f) => (f.get("targetRef") as ModdleElement).…
+packages/designer test:      40|   expect.soft(head.get("id")).toBe("fa");
+packages/designer test:      41|   expect.soft(head.get("name")).toBe("采购条件");
+packages/designer test:        |                                 ^
+packages/designer test:      42|   expect.soft(outs.map((f) => f.get("id"))).toEqual(["fa", "fb"]);
+packages/designer test:      43|   if (mode === "condition")
+packages/designer test:  ❯ probes/stage-zero/branch-preservation.test.ts:67:7
+packages/designer test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[16/37]⎯
+packages/designer test:  FAIL  probes/stage-zero/branch-preservation.test.ts > 阶段零：支路身份的红色基线 > preserves_branch_head_when_removing_first condition
+packages/designer test:  FAIL  probes/stage-zero/branch-preservation.test.ts > 阶段零：支路身份的红色基线 > preserves_branch_head_when_removing_first default
+packages/designer test: AssertionError: expected [ 'fb', 'flow_relay_1' ] to deeply equal [ 'fa', 'fb' ]
+packages/designer test: - Expected
+packages/designer test: + Received
+packages/designer test:   [
+packages/designer test: -   "fa",
+packages/designer test:     "fb",
+packages/designer test: +   "flow_relay_1",
+packages/designer test:   ]
+packages/designer test:  ❯ assertHead probes/stage-zero/branch-preservation.test.ts:42:45
+packages/designer test:      40|   expect.soft(head.get("id")).toBe("fa");
+packages/designer test:      41|   expect.soft(head.get("name")).toBe("采购条件");
+packages/designer test:      42|   expect.soft(outs.map((f) => f.get("id"))).toEqual(["fa", "fb"]);
+packages/designer test:        |                                             ^
+packages/designer test:      43|   if (mode === "condition")
+packages/designer test:      44|     expect
+packages/designer test:  ❯ probes/stage-zero/branch-preservation.test.ts:67:7
+packages/designer test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[17/37]⎯
+packages/designer test:  FAIL  probes/stage-zero/branch-preservation.test.ts > 阶段零：支路身份的红色基线 > preserves_branch_head_when_removing_first condition
+packages/designer test: AssertionError: expected undefined to be '${amount > 100}' // Object.is equality
+packages/designer test: - Expected:
+packages/designer test: "${amount > 100}"
+packages/designer test: + Received:
+packages/designer test: undefined
+packages/designer test:  ❯ assertHead probes/stage-zero/branch-preservation.test.ts:46:8
+packages/designer test:      44|     expect
+packages/designer test:      45|       .soft((head.get("conditionExpression") as ModdleElement | undefi…
+packages/designer test:      46|       .toBe("${amount > 100}");
+packages/designer test:        |        ^
+packages/designer test:      47|   else expect.soft(fork.get("default")).toBe(head);
+packages/designer test:      48| }
+packages/designer test:  ❯ probes/stage-zero/branch-preservation.test.ts:67:7
+packages/designer test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[18/37]⎯
+packages/designer test:  FAIL  probes/stage-zero/branch-preservation.test.ts > 阶段零：支路身份的红色基线 > preserves_branch_head_on_conversion single-to-multi default
+packages/designer test: AssertionError: expected undefined to be Base{ …(6) } // Object.is equality
+packages/designer test: - Expected:
+packages/designer test: Base {
+packages/designer test:   "$type": "bpmn:SequenceFlow",
+packages/designer test:   "id": "flow_conv_in_1",
+packages/designer test: }
+packages/designer test: + Received:
+packages/designer test: undefined
+packages/designer test:  ❯ assertHead probes/stage-zero/branch-preservation.test.ts:47:41
+packages/designer test:      45|       .soft((head.get("conditionExpression") as ModdleElement | undefi…
+packages/designer test:      46|       .toBe("${amount > 100}");
+packages/designer test:      47|   else expect.soft(fork.get("default")).toBe(head);
+packages/designer test:        |                                         ^
+packages/designer test:      48| }
+packages/designer test:      49| describe("阶段零：支路身份的红色基线", () => {
+packages/designer test:  ❯ probes/stage-zero/branch-preservation.test.ts:54:7
+packages/designer test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[19/37]⎯
+packages/designer test:  FAIL  probes/stage-zero/branch-preservation.test.ts > 阶段零：支路身份的红色基线 > preserves_branch_head_on_conversion multi-to-single default
+packages/designer test: AssertionError: expected undefined to be Base{ …(6) } // Object.is equality
+packages/designer test: - Expected:
+packages/designer test: Base {
+packages/designer test:   "$type": "bpmn:SequenceFlow",
+packages/designer test:   "id": "flow_conv_in_1",
+packages/designer test: }
+packages/designer test: + Received:
+packages/designer test: undefined
+packages/designer test:  ❯ assertHead probes/stage-zero/branch-preservation.test.ts:47:41
+packages/designer test:      45|       .soft((head.get("conditionExpression") as ModdleElement | undefi…
+packages/designer test:      46|       .toBe("${amount > 100}");
+packages/designer test:      47|   else expect.soft(fork.get("default")).toBe(head);
+packages/designer test:        |                                         ^
+packages/designer test:      48| }
+packages/designer test:      49| describe("阶段零：支路身份的红色基线", () => {
+packages/designer test:  ❯ probes/stage-zero/branch-preservation.test.ts:62:7
+packages/designer test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[20/37]⎯
+packages/designer test:  FAIL  probes/stage-zero/branch-preservation.test.ts > 阶段零：支路身份的红色基线 > preserves_branch_head_when_removing_first default
+packages/designer test: AssertionError: expected undefined to be Base{ …(6) } // Object.is equality
+packages/designer test: - Expected:
+packages/designer test: Base {
+packages/designer test:   "$type": "bpmn:SequenceFlow",
+packages/designer test:   "id": "flow_relay_1",
+packages/designer test: }
+packages/designer test: + Received:
+packages/designer test: undefined
+packages/designer test:  ❯ assertHead probes/stage-zero/branch-preservation.test.ts:47:41
+packages/designer test:      45|       .soft((head.get("conditionExpression") as ModdleElement | undefi…
+packages/designer test:      46|       .toBe("${amount > 100}");
+packages/designer test:      47|   else expect.soft(fork.get("default")).toBe(head);
+packages/designer test:        |                                         ^
+packages/designer test:      48| }
+packages/designer test:      49| describe("阶段零：支路身份的红色基线", () => {
+packages/designer test:  ❯ probes/stage-zero/branch-preservation.test.ts:67:7
+packages/designer test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[21/37]⎯
+packages/designer test:  FAIL  probes/stage-zero/branch-preservation.test.ts > 阶段零：支路身份的红色基线 > preserves_branch_head_when_removing_nested_block
+packages/designer test: AssertionError: expected 'flow_block_relay_1' to be 'fa' // Object.is equality
+packages/designer test: Expected: "fa"
+packages/designer test: Received: "flow_block_relay_1"
+packages/designer test:  ❯ assertHead probes/stage-zero/branch-preservation.test.ts:40:31
+packages/designer test:      38|   const outs = fork.get("outgoing") as ModdleElement[];
+packages/designer test:      39|   const head = outs.find((f) => (f.get("targetRef") as ModdleElement).…
+packages/designer test:      40|   expect.soft(head.get("id")).toBe("fa");
+packages/designer test:        |                               ^
+packages/designer test:      41|   expect.soft(head.get("name")).toBe("采购条件");
+packages/designer test:      42|   expect.soft(outs.map((f) => f.get("id"))).toEqual(["fa", "fb"]);
+packages/designer test:  ❯ probes/stage-zero/branch-preservation.test.ts:98:5
+packages/designer test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[22/37]⎯
+packages/designer test:  FAIL  probes/stage-zero/branch-preservation.test.ts > 阶段零：支路身份的红色基线 > preserves_branch_head_when_removing_nested_block
+packages/designer test: AssertionError: expected undefined to be '采购条件' // Object.is equality
+packages/designer test: - Expected:
+packages/designer test: "采购条件"
+packages/designer test: + Received:
+packages/designer test: undefined
+packages/designer test:  ❯ assertHead probes/stage-zero/branch-preservation.test.ts:41:33
+packages/designer test:      39|   const head = outs.find((f) => (f.get("targetRef") as ModdleElement).…
+packages/designer test:      40|   expect.soft(head.get("id")).toBe("fa");
+packages/designer test:      41|   expect.soft(head.get("name")).toBe("采购条件");
+packages/designer test:        |                                 ^
+packages/designer test:      42|   expect.soft(outs.map((f) => f.get("id"))).toEqual(["fa", "fb"]);
+packages/designer test:      43|   if (mode === "condition")
+packages/designer test:  ❯ probes/stage-zero/branch-preservation.test.ts:98:5
+packages/designer test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[23/37]⎯
+packages/designer test:  FAIL  probes/stage-zero/branch-preservation.test.ts > 阶段零：支路身份的红色基线 > preserves_branch_head_when_removing_nested_block
+packages/designer test: AssertionError: expected [ 'fb', 'flow_block_relay_1' ] to deeply equal [ 'fa', 'fb' ]
+packages/designer test: - Expected
+packages/designer test: + Received
+packages/designer test:   [
+packages/designer test: -   "fa",
+packages/designer test:     "fb",
+packages/designer test: +   "flow_block_relay_1",
+packages/designer test:   ]
+packages/designer test:  ❯ assertHead probes/stage-zero/branch-preservation.test.ts:42:45
+packages/designer test:      40|   expect.soft(head.get("id")).toBe("fa");
+packages/designer test:      41|   expect.soft(head.get("name")).toBe("采购条件");
+packages/designer test:      42|   expect.soft(outs.map((f) => f.get("id"))).toEqual(["fa", "fb"]);
+packages/designer test:        |                                             ^
+packages/designer test:      43|   if (mode === "condition")
+packages/designer test:      44|     expect
+packages/designer test:  ❯ probes/stage-zero/branch-preservation.test.ts:98:5
+packages/designer test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[24/37]⎯
+packages/designer test:  FAIL  probes/stage-zero/branch-preservation.test.ts > 阶段零：支路身份的红色基线 > preserves_branch_head_when_removing_nested_block
+packages/designer test: AssertionError: expected undefined to be '${amount > 100}' // Object.is equality
+packages/designer test: - Expected:
+packages/designer test: "${amount > 100}"
+packages/designer test: + Received:
+packages/designer test: undefined
+packages/designer test:  ❯ assertHead probes/stage-zero/branch-preservation.test.ts:46:8
+packages/designer test:      44|     expect
+packages/designer test:      45|       .soft((head.get("conditionExpression") as ModdleElement | undefi…
+packages/designer test:      46|       .toBe("${amount > 100}");
+packages/designer test:        |        ^
+packages/designer test:      47|   else expect.soft(fork.get("default")).toBe(head);
+packages/designer test:      48| }
+packages/designer test:  ❯ probes/stage-zero/branch-preservation.test.ts:98:5
+packages/designer test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[25/37]⎯
+packages/designer test:  FAIL  probes/stage-zero/default-form-entry.test.ts > standalone keeps the existing default form selector
+packages/designer test: AssertionError: expected false to be true // Object.is equality
+packages/designer test: - Expected
+packages/designer test: + Received
+packages/designer test: - true
+packages/designer test: + false
+packages/designer test:  ❯ probes/stage-zero/default-form-entry.test.ts:17:70
+packages/designer test:      15| it("standalone keeps the existing default form selector", () => {
+packages/designer test:      16|   const wrapper = shallowMount(DingtalkDesigner, { props: props() });
+packages/designer test:      17|   expect(wrapper.find('[data-test="default-form-select"]').exists()).t…
+packages/designer test:        |                                                                      ^
+packages/designer test:      18|   wrapper.unmount();
+packages/designer test:      19| });
+packages/designer test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[26/37]⎯
+packages/designer test:  Test Files  3 failed | 8 passed (11)
+packages/designer test:       Tests  12 failed | 136 passed (148)
+packages/designer test:    Start at  19:33:35
+packages/designer test:    Duration  6.66s (tests 43%, import 22%, transform 19%, environment 16%)
+packages/designer test: Failed
+packages/form-create test$ vitest run
+packages/form-create test:  RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/form-create
+packages/form-create test:  Test Files  7 passed (7)
+packages/form-create test:       Tests  121 passed (121)
+packages/form-create test:    Start at  19:33:42
+packages/form-create test:    Duration  39.19s (tests 77%, import 11%, environment 6%, transform 6%)
+packages/form-create test: Done
+apps/playground test$ vitest run
+apps/playground test:  RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground
+apps/playground test:  ❯ src/App.integration.test.ts (45 tests | 7 failed) 30735ms
+apps/playground test:    ❯ Playground 默认表单闭环（#72：表单 → 绑定 → 保存 → 打开 → 导出） (3)
+apps/playground test:      × 真实组件串联：新建表单、设默认、下载文档、从文件打开恢复绑定、组合导出含默认引用 202ms
+apps/playground test:    ❯ Playground 多表单管理与节点覆盖闭环（#73） (3)
+apps/playground test:      × 双表单：抽屉选覆盖、保存打开后默认/覆盖关系恢复、导出含两处引用 195ms
+apps/playground test:      × 删除守卫：被默认引用拒绝并说明位置，解除引用后可删除（A06） 199ms
+apps/playground test:      × 预览多目标：同表单双节点切换清理旧试填值；失效只阻止相关目标（AC5） 2571ms
+apps/playground test:    ❯ Playground 保存竞态（真实组件，#76 AC5） (1)
+apps/playground test:      × 序列化期间改动默认表单绑定：完成后报告快照而非当前状态已保存 184ms
+apps/playground test:    ❯ PR88 保存与抽屉边界回归 (6)
+apps/playground test:      × 旧保存晚到成功不覆盖较新本地草稿及反馈 246ms
+apps/playground test:      × 旧保存晚到失败不覆盖较新本地草稿及反馈 231ms
+apps/playground test: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 7 ⎯⎯⎯⎯⎯⎯⎯
+apps/playground test:  FAIL  src/App.integration.test.ts > Playground 默认表单闭环（#72：表单 → 绑定 → 保存 → 打开 → 导出） > 真实组件串联：新建表单、设默认、下载文档、从文件打开恢复绑定、组合导出含默认引用
+apps/playground test: AssertionError: expected false to be true // Object.is equality
+apps/playground test: - Expected
+apps/playground test: + Received
+apps/playground test: - true
+apps/playground test: + false
+apps/playground test:  ❯ src/App.integration.test.ts:279:28
+apps/playground test:     277|     // 流程默认表单选择条：设为 form_1；审批卡片显示继承
+apps/playground test:     278|     const strip = wrapper.find('[data-test="default-form-select"]');
+apps/playground test:     279|     expect(strip.exists()).toBe(true);
+apps/playground test:        |                            ^
+apps/playground test:     280|     await strip.setValue("form_1");
+apps/playground test:     281|     await flushPromises();
+apps/playground test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/7]⎯
+apps/playground test:  FAIL  src/App.integration.test.ts > Playground 多表单管理与节点覆盖闭环（#73） > 双表单：抽屉选覆盖、保存打开后默认/覆盖关系恢复、导出含两处引用
+apps/playground test: Error: Cannot call setValue on an empty DOMWrapper.
+apps/playground test:  ❯ Object.get ../../node_modules/.pnpm/@vue+test-utils@2.5.1_@vue+compiler-dom@3.5.43_@vue+server-renderer@3.5.43_vue@3.5.43_typescript@5.9.3_/node_modules/@vue/test-utils/dist/vue-test-utils.cjs.js:1488:27
+apps/playground test:  ❯ src/App.integration.test.ts:486:60
+apps/playground test:     484|
+apps/playground test:     485|     // 默认 = 申请单；审批节点抽屉选「复核单」显式覆盖
+apps/playground test:     486|     await wrapper.find('[data-test="default-form-select"]').setValue("…
+apps/playground test:        |                                                            ^
+apps/playground test:     487|     await flushPromises();
+apps/playground test:     488|     await openCardOf("审批节点");
+apps/playground test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/7]⎯
+apps/playground test:  FAIL  src/App.integration.test.ts > Playground 多表单管理与节点覆盖闭环（#73） > 删除守卫：被默认引用拒绝并说明位置，解除引用后可删除（A06）
+apps/playground test: Error: Cannot call setValue on an empty DOMWrapper.
+apps/playground test:  ❯ Object.get ../../node_modules/.pnpm/@vue+test-utils@2.5.1_@vue+compiler-dom@3.5.43_@vue+server-renderer@3.5.43_vue@3.5.43_typescript@5.9.3_/node_modules/@vue/test-utils/dist/vue-test-utils.cjs.js:1488:27
+apps/playground test:  ❯ src/App.integration.test.ts:564:60
+apps/playground test:     562|     await setupWithForms(["申请单"]);
+apps/playground test:     563|
+apps/playground test:     564|     await wrapper.find('[data-test="default-form-select"]').setValue("…
+apps/playground test:        |                                                            ^
+apps/playground test:     565|     await flushPromises();
+apps/playground test:     566|
+apps/playground test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/7]⎯
+apps/playground test:  FAIL  src/App.integration.test.ts > Playground 多表单管理与节点覆盖闭环（#73） > 预览多目标：同表单双节点切换清理旧试填值；失效只阻止相关目标（AC5）
+apps/playground test: Error: Cannot call setValue on an empty DOMWrapper.
+apps/playground test:  ❯ Object.get ../../node_modules/.pnpm/@vue+test-utils@2.5.1_@vue+compiler-dom@3.5.43_@vue+server-renderer@3.5.43_vue@3.5.43_typescript@5.9.3_/node_modules/@vue/test-utils/dist/vue-test-utils.cjs.js:1488:27
+apps/playground test:  ❯ src/App.integration.test.ts:628:62
+apps/playground test:     626|
+apps/playground test:     627|       // 默认 = form_1；approval_1 显式覆盖为同一张表单（两个目标同表单不同节点）
+apps/playground test:     628|       await wrapper.find('[data-test="default-form-select"]').setValue…
+apps/playground test:        |                                                              ^
+apps/playground test:     629|       await flushPromises();
+apps/playground test:     630|       await openCardOf("审批节点");
+apps/playground test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/7]⎯
+apps/playground test:  FAIL  src/App.integration.test.ts > Playground 保存竞态（真实组件，#76 AC5） > 序列化期间改动默认表单绑定：完成后报告快照而非当前状态已保存
+apps/playground test: TypeError: Cannot set properties of null (setting 'value')
+apps/playground test:  ❯ src/App.integration.test.ts:1424:13
+apps/playground test:     1422|     wrapper.find('[data-test="save-local-btn"]').trigger("click");
+apps/playground test:     1423|     const select = document.querySelector<HTMLSelectElement>('[data-te…
+apps/playground test:     1424|     select!.value = "form_1";
+apps/playground test:        |             ^
+apps/playground test:     1425|     select!.dispatchEvent(new Event("change"));
+apps/playground test:     1426|     await flushPromises();
+apps/playground test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/7]⎯
+apps/playground test:  FAIL  src/App.integration.test.ts > PR88 保存与抽屉边界回归 > 旧保存晚到成功不覆盖较新本地草稿及反馈
+apps/playground test:  FAIL  src/App.integration.test.ts > PR88 保存与抽屉边界回归 > 旧保存晚到失败不覆盖较新本地草稿及反馈
+apps/playground test: TypeError: Cannot set properties of null (setting 'value')
+apps/playground test:  ❯ src/App.integration.test.ts:1465:14
+apps/playground test:     1463|         '[data-test="default-form-select"]',
+apps/playground test:     1464|       )!;
+apps/playground test:     1465|       select.value = "form_1";
+apps/playground test:        |              ^
+apps/playground test:     1466|       select.dispatchEvent(new Event("change"));
+apps/playground test:     1467|       await wrapper.find('[data-test="save-local-btn"]').trigger("clic…
+apps/playground test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/7]⎯
+apps/playground test:  Test Files  1 failed | 2 passed (3)
+apps/playground test:       Tests  7 failed | 57 passed (64)
+apps/playground test:    Start at  19:34:21
+apps/playground test:    Duration  33.47s (tests 83%, import 10%, transform 5%, environment 3%)
+apps/playground test: Failed
+ ERR_PNPM_RECURSIVE_FAIL  
+
+
+Summary: 2 fails, 2 passes
+
+/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/designer:
+ ERROR  @flowduet/designer@0.1.0 test: `vitest run`
+Exit status 1
+
+/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground:
+ ERROR  @flowduet/playground@0.0.0 test: `vitest run`
+Exit status 1

@@ -1,0 +1,35 @@
+{
+  "savedToSession": false,
+  "candidates": [
+    {
+      "id": "form_1",
+      "name": "表单1",
+      "provider": "form-create/element-plus",
+      "rules": "[{\"type\":\"input\",\"field\":\"subject\",\"title\":\"事项1\",\"value\":\"原始1\",\"props\":{\"placeholder\":\"输入事项\"},\"_fc_id\":\"id_F6etmv7y29blabc\",\"name\":\"ref_Folpmv7y29blacc\",\"display\":true,\"hidden\":false,\"_fc_drag_tag\":\"input\"},{\"type\":\"input\",\"field\":\"notes\",\"title\":\"说明\",\"props\":{\"type\":\"textarea\",\"placeholder\":\"输入说明\"},\"_fc_id\":\"id_Fe5amv7y29bladc\",\"name\":\"ref_Fgoqmv7y29blaec\",\"display\":true,\"hidden\":false,\"_fc_drag_tag\":\"input\"},{\"type\":\"inputNumber\",\"field\":\"amount\",\"title\":\"金额\",\"value\":1,\"_fc_id\":\"id_Fsi1mv7y29blafc\",\"name\":\"ref_Fcbgmv7y29blagc\",\"display\":true,\"hidden\":false,\"_fc_drag_tag\":\"inputNumber\"},{\"type\":\"radio\",\"field\":\"priority\",\"title\":\"级别\",\"options\":[{\"label\":\"一般\",\"value\":\"normal\"},{\"label\":\"紧急\",\"value\":\"urgent\"}],\"_fc_id\":\"id_F7vdmv7y29blahc\",\"name\":\"ref_Fbecmv7y29blaic\",\"display\":true,\"hidden\":false,\"_fc_drag_tag\":\"radio\"},{\"type\":\"checkbox\",\"field\":\"areas\",\"title\":\"地区\",\"options\":[{\"label\":\"广州\",\"value\":\"gz\"},{\"label\":\"深圳\",\"value\":\"sz\"}],\"_fc_id\":\"id_Fx8amv7y29blajc\",\"name\":\"ref_Ftsomv7y29blakc\",\"display\":true,\"hidden\":false,\"_fc_drag_tag\":\"checkbox\"},{\"type\":\"select\",\"field\":\"department\",\"title\":\"部门\",\"options\":[{\"label\":\"研发\",\"value\":\"dev\"},{\"label\":\"采购\",\"value\":\"buy\"}],\"_fc_id\":\"id_Fpvpmv7y29blalc\",\"name\":\"ref_Fw5umv7y29blamc\",\"display\":true,\"hidden\":false,\"_fc_drag_tag\":\"select\"},{\"type\":\"datePicker\",\"field\":\"date\",\"title\":\"日期\",\"_fc_id\":\"id_F9llmv7y29blanc\",\"name\":\"ref_Fqmzmv7y29blaoc\",\"display\":true,\"hidden\":false,\"_fc_drag_tag\":\"datePicker\"},{\"type\":\"switch\",\"field\":\"urgent\",\"title\":\"加急\",\"value\":false,\"_fc_id\":\"id_Fv04mv7y29blapc\",\"name\":\"ref_Fhusmv7y29blaqc\",\"display\":true,\"hidden\":false,\"_fc_drag_tag\":\"switch\"}]",
+      "options": "{\"form\":{\"inline\":false,\"hideRequiredAsterisk\":false,\"labelPosition\":\"right\",\"size\":\"default\",\"labelWidth\":\"125px\"},\"resetBtn\":{\"show\":false,\"innerText\":\"重置\"},\"submitBtn\":{\"show\":true,\"innerText\":\"提交\"},\"formName\":\"未应用表单一\"}"
+    },
+    {
+      "id": "form_2",
+      "name": "表单2",
+      "provider": "form-create/element-plus",
+      "rules": "[{\"type\":\"input\",\"field\":\"subject\",\"title\":\"事项2\",\"value\":\"原始2\",\"props\":{\"placeholder\":\"输入事项\"},\"_fc_id\":\"id_Fh9pmv7y29bqarc\",\"name\":\"ref_F3dmmv7y29bqasc\",\"display\":true,\"hidden\":false,\"_fc_drag_tag\":\"input\"},{\"type\":\"input\",\"field\":\"notes\",\"title\":\"说明\",\"props\":{\"type\":\"textarea\",\"placeholder\":\"输入说明\"},\"_fc_id\":\"id_F3rpmv7y29bqatc\",\"name\":\"ref_Fkvhmv7y29bqauc\",\"display\":true,\"hidden\":false,\"_fc_drag_tag\":\"input\"},{\"type\":\"inputNumber\",\"field\":\"amount\",\"title\":\"金额\",\"value\":1,\"_fc_id\":\"id_F6aqmv7y29bqavc\",\"name\":\"ref_Fwvvmv7y29bqawc\",\"display\":true,\"hidden\":false,\"_fc_drag_tag\":\"inputNumber\"},{\"type\":\"radio\",\"field\":\"priority\",\"title\":\"级别\",\"options\":[{\"label\":\"一般\",\"value\":\"normal\"},{\"label\":\"紧急\",\"value\":\"urgent\"}],\"_fc_id\":\"id_Fcc7mv7y29bqaxc\",\"name\":\"ref_Fwtvmv7y29bqayc\",\"display\":true,\"hidden\":false,\"_fc_drag_tag\":\"radio\"},{\"type\":\"checkbox\",\"field\":\"areas\",\"title\":\"地区\",\"options\":[{\"label\":\"广州\",\"value\":\"gz\"},{\"label\":\"深圳\",\"value\":\"sz\"}],\"_fc_id\":\"id_Fwlomv7y29bqazc\",\"name\":\"ref_Fjs6mv7y29bqb0c\",\"display\":true,\"hidden\":false,\"_fc_drag_tag\":\"checkbox\"},{\"type\":\"select\",\"field\":\"department\",\"title\":\"部门\",\"options\":[{\"label\":\"研发\",\"value\":\"dev\"},{\"label\":\"采购\",\"value\":\"buy\"}],\"_fc_id\":\"id_Fgmhmv7y29bqb1c\",\"name\":\"ref_F0z5mv7y29bqb2c\",\"display\":true,\"hidden\":false,\"_fc_drag_tag\":\"select\"},{\"type\":\"datePicker\",\"field\":\"date\",\"title\":\"日期\",\"_fc_id\":\"id_F3fhmv7y29bqb3c\",\"name\":\"ref_Fu6kmv7y29bqb4c\",\"display\":true,\"hidden\":false,\"_fc_drag_tag\":\"datePicker\"},{\"type\":\"switch\",\"field\":\"urgent\",\"title\":\"加急\",\"value\":false,\"_fc_id\":\"id_Fdc4mv7y29bqb5c\",\"name\":\"ref_Fk8gmv7y29bqb6c\",\"display\":true,\"hidden\":false,\"_fc_drag_tag\":\"switch\"}]",
+      "options": "{\"form\":{\"inline\":false,\"hideRequiredAsterisk\":false,\"labelPosition\":\"right\",\"size\":\"default\",\"labelWidth\":\"125px\"},\"resetBtn\":{\"show\":false,\"innerText\":\"重置\"},\"submitBtn\":{\"show\":true,\"innerText\":\"提交\"},\"formName\":\"未应用表单二\"}"
+    }
+  ],
+  "session": [
+    {
+      "id": "form_1",
+      "name": "表单1",
+      "provider": "form-create/element-plus",
+      "rules": "[{\"type\":\"input\",\"field\":\"subject\",\"title\":\"事项1\",\"value\":\"原始1\",\"props\":{\"placeholder\":\"输入事项\"}},{\"type\":\"input\",\"field\":\"notes\",\"title\":\"说明\",\"props\":{\"type\":\"textarea\",\"placeholder\":\"输入说明\"}},{\"type\":\"inputNumber\",\"field\":\"amount\",\"title\":\"金额\",\"value\":1},{\"type\":\"radio\",\"field\":\"priority\",\"title\":\"级别\",\"options\":[{\"label\":\"一般\",\"value\":\"normal\"},{\"label\":\"紧急\",\"value\":\"urgent\"}]},{\"type\":\"checkbox\",\"field\":\"areas\",\"title\":\"地区\",\"options\":[{\"label\":\"广州\",\"value\":\"gz\"},{\"label\":\"深圳\",\"value\":\"sz\"}]},{\"type\":\"select\",\"field\":\"department\",\"title\":\"部门\",\"options\":[{\"label\":\"研发\",\"value\":\"dev\"},{\"label\":\"采购\",\"value\":\"buy\"}]},{\"type\":\"datePicker\",\"field\":\"date\",\"title\":\"日期\"},{\"type\":\"switch\",\"field\":\"urgent\",\"title\":\"加急\",\"value\":false}]",
+      "options": "{}"
+    },
+    {
+      "id": "form_2",
+      "name": "表单2",
+      "provider": "form-create/element-plus",
+      "rules": "[{\"type\":\"input\",\"field\":\"subject\",\"title\":\"事项2\",\"value\":\"原始2\",\"props\":{\"placeholder\":\"输入事项\"}},{\"type\":\"input\",\"field\":\"notes\",\"title\":\"说明\",\"props\":{\"type\":\"textarea\",\"placeholder\":\"输入说明\"}},{\"type\":\"inputNumber\",\"field\":\"amount\",\"title\":\"金额\",\"value\":1},{\"type\":\"radio\",\"field\":\"priority\",\"title\":\"级别\",\"options\":[{\"label\":\"一般\",\"value\":\"normal\"},{\"label\":\"紧急\",\"value\":\"urgent\"}]},{\"type\":\"checkbox\",\"field\":\"areas\",\"title\":\"地区\",\"options\":[{\"label\":\"广州\",\"value\":\"gz\"},{\"label\":\"深圳\",\"value\":\"sz\"}]},{\"type\":\"select\",\"field\":\"department\",\"title\":\"部门\",\"options\":[{\"label\":\"研发\",\"value\":\"dev\"},{\"label\":\"采购\",\"value\":\"buy\"}]},{\"type\":\"datePicker\",\"field\":\"date\",\"title\":\"日期\"},{\"type\":\"switch\",\"field\":\"urgent\",\"title\":\"加急\",\"value\":false}]",
+      "options": "{}"
+    }
+  ]
+}

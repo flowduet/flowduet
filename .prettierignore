@@ -29,3 +29,6 @@ docs/specs/iteration-3/evidence/77-version-prep/
 
 # 本轮浏览器原始下载及运行证据保留字节，不由格式化器重写。
 docs/design/reviews/evidence/2026-10-14-branch-structure-repair/
+
+# 阶段零原始截图、浏览器快照与测量证据保留字节。
+docs/design/system-v1/probes/evidence/

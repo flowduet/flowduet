@@ -1,0 +1,16 @@
+{
+  "assertionsPassed": true,
+  "checked": [
+    "two-form capture/session distinction",
+    "failure preservation",
+    "rename continuity",
+    "same-ID form remount",
+    "branch head retention after node/block deletion",
+    "old node reject after reuse",
+    "equivalent validation vs persistence",
+    "save race remains dirty",
+    "epoch 2 recorded"
+  ],
+  "nativeOverlayBlock": true,
+  "memoryBudgetEstablished": false
+}

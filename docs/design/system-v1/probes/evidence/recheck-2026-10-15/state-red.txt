@@ -1,0 +1,225 @@
+
+ RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground
+
+ ❯ probes/stage-zero/design-state.test.ts (16 tests | 16 failed) 107ms
+   ❯ 真实模型操作与候选生命期/缓冲 (7)
+     × 单↔多保留头边生命期与分支输入，节点不相容输入保留为冲突 18ms
+     × 首节点删除保留支路输入和定位目标，删除节点缓冲即时作废 6ms
+     × 嵌套块删除清理全部后代，保留外层支路身份及未应用条件 6ms
+     × 删完整嵌套支路清理后代，兄弟缓冲保留 7ms
+     × 同一同步命令删后再插复用ID，旧输入不串到新节点 4ms
+     × 失败删除不作废仍存节点和缓冲 4ms
+     × 外部原位属性变更保持身份，但候选基线冲突不能误判兼容 3ms
+   ❯ 真实session表单目录与收集 (9)
+     × 受控改名产生副本但保留生命期和规则输入 3ms
+     × 删除最后一张并创建同ID表单，旧编辑器/快照失效 4ms
+     × 受引用表单删除失败，编辑器与输入保留 6ms
+     × 两份未应用表单收集不写session；整体应用续期后才写入 10ms
+     × 第二张表单throw失败，全部session零写入且实例仍存 8ms
+     × 第二张表单null失败，全部session零写入且实例仍存 6ms
+     × 第二张表单invalid-json失败，全部session零写入且实例仍存 9ms
+     × 外部表单内容替换作废旧生命期；受控原样应用不会误续旧缓冲 3ms
+     × 替换为同名文档拒绝迟到捕获，日志世代递增 5ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 16 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  probes/stage-zero/design-state.test.ts > 真实模型操作与候选生命期/缓冲 > 单↔多保留头边生命期与分支输入，节点不相容输入保留为冲突
+Error: 对象不存在
+ ❯ EntityRegistry.ref probes/stage-zero/identity-policy.ts:38:23
+     36|   ref(kind: EntityRef["kind"], id: string): EntityRef {
+     37|     const found = this.entries.get(this.key({ kind, id }));
+     38|     if (!found) throw new Error("对象不存在");
+       |                       ^
+     39|     return { ...found.ref };
+     40|   }
+ ❯ probes/stage-zero/design-state.test.ts:41:27
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/16]⎯
+
+ FAIL  probes/stage-zero/design-state.test.ts > 真实模型操作与候选生命期/缓冲 > 首节点删除保留支路输入和定位目标，删除节点缓冲即时作废
+Error: 对象不存在
+ ❯ EntityRegistry.ref probes/stage-zero/identity-policy.ts:38:23
+     36|   ref(kind: EntityRef["kind"], id: string): EntityRef {
+     37|     const found = this.entries.get(this.key({ kind, id }));
+     38|     if (!found) throw new Error("对象不存在");
+       |                       ^
+     39|     return { ...found.ref };
+     40|   }
+ ❯ probes/stage-zero/design-state.test.ts:54:27
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/16]⎯
+
+ FAIL  probes/stage-zero/design-state.test.ts > 真实模型操作与候选生命期/缓冲 > 嵌套块删除清理全部后代，保留外层支路身份及未应用条件
+Error: 对象不存在
+ ❯ EntityRegistry.ref probes/stage-zero/identity-policy.ts:38:23
+     36|   ref(kind: EntityRef["kind"], id: string): EntityRef {
+     37|     const found = this.entries.get(this.key({ kind, id }));
+     38|     if (!found) throw new Error("对象不存在");
+       |                       ^
+     39|     return { ...found.ref };
+     40|   }
+ ❯ probes/stage-zero/design-state.test.ts:65:71
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/16]⎯
+
+ FAIL  probes/stage-zero/design-state.test.ts > 真实模型操作与候选生命期/缓冲 > 删完整嵌套支路清理后代，兄弟缓冲保留
+Error: 待验证的结构操作策略
+ ❯ ProbeDesignState.mutateModel probes/stage-zero/design-state.ts:10:50
+      8|   constructor(readonly session: FlowDesignSession) {}
+      9|   reconcile(): void { throw new Error("待验证的真实对象协调策略"); }
+     10|   mutateModel(_action: () => void): void { throw new Error("待验证的结构操作策略…
+       |                                                  ^
+     11|   stage(_ref: EntityRef, _input: unknown): void { throw new Error("待验证…
+     12|   buffer(_ref: EntityRef): { input: unknown; conflict: boolean } | und…
+ ❯ probes/stage-zero/design-state.test.ts:74:7
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/16]⎯
+
+ FAIL  probes/stage-zero/design-state.test.ts > 真实模型操作与候选生命期/缓冲 > 同一同步命令删后再插复用ID，旧输入不串到新节点
+Error: 对象不存在
+ ❯ EntityRegistry.ref probes/stage-zero/identity-policy.ts:38:23
+     36|   ref(kind: EntityRef["kind"], id: string): EntityRef {
+     37|     const found = this.entries.get(this.key({ kind, id }));
+     38|     if (!found) throw new Error("对象不存在");
+       |                       ^
+     39|     return { ...found.ref };
+     40|   }
+ ❯ probes/stage-zero/design-state.test.ts:81:65
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/16]⎯
+
+ FAIL  probes/stage-zero/design-state.test.ts > 真实模型操作与候选生命期/缓冲 > 失败删除不作废仍存节点和缓冲
+Error: 待验证的结构操作策略
+ ❯ ProbeDesignState.mutateModel probes/stage-zero/design-state.ts:10:50
+      8|   constructor(readonly session: FlowDesignSession) {}
+      9|   reconcile(): void { throw new Error("待验证的真实对象协调策略"); }
+     10|   mutateModel(_action: () => void): void { throw new Error("待验证的结构操作策略…
+       |                                                  ^
+     11|   stage(_ref: EntityRef, _input: unknown): void { throw new Error("待验证…
+     12|   buffer(_ref: EntityRef): { input: unknown; conflict: boolean } | und…
+ ❯ probes/stage-zero/design-state.test.ts:88:7
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/16]⎯
+
+ FAIL  probes/stage-zero/design-state.test.ts > 真实模型操作与候选生命期/缓冲 > 外部原位属性变更保持身份，但候选基线冲突不能误判兼容
+Error: 对象不存在
+ ❯ EntityRegistry.ref probes/stage-zero/identity-policy.ts:38:23
+     36|   ref(kind: EntityRef["kind"], id: string): EntityRef {
+     37|     const found = this.entries.get(this.key({ kind, id }));
+     38|     if (!found) throw new Error("对象不存在");
+       |                       ^
+     39|     return { ...found.ref };
+     40|   }
+ ❯ probes/stage-zero/design-state.test.ts:94:37
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/16]⎯
+
+ FAIL  probes/stage-zero/design-state.test.ts > 真实session表单目录与收集 > 受控改名产生副本但保留生命期和规则输入
+Error: 待验证的表单创建
+ ❯ ProbeDesignState.createForm probes/stage-zero/design-state.ts:18:48
+     16|   applyAll(): void { throw new Error("待验证的统一应用"); }
+     17|   renameForm(_id: string, _name: string): void { throw new Error("待验证的…
+     18|   createForm(_name: string): EntityRef { throw new Error("待验证的表单创建"); }
+       |                                                ^
+     19|   deleteForm(_id: string): void { throw new Error("待验证的删除时点"); }
+     20|   get editorCount(): number { return 0; }
+ ❯ forms probes/stage-zero/design-state.test.ts:33:5
+ ❯ probes/stage-zero/design-state.test.ts:102:13
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/16]⎯
+
+ FAIL  probes/stage-zero/design-state.test.ts > 真实session表单目录与收集 > 删除最后一张并创建同ID表单，旧编辑器/快照失效
+Error: 待验证的表单创建
+ ❯ ProbeDesignState.createForm probes/stage-zero/design-state.ts:18:48
+     16|   applyAll(): void { throw new Error("待验证的统一应用"); }
+     17|   renameForm(_id: string, _name: string): void { throw new Error("待验证的…
+     18|   createForm(_name: string): EntityRef { throw new Error("待验证的表单创建"); }
+       |                                                ^
+     19|   deleteForm(_id: string): void { throw new Error("待验证的删除时点"); }
+     20|   get editorCount(): number { return 0; }
+ ❯ forms probes/stage-zero/design-state.test.ts:33:5
+ ❯ probes/stage-zero/design-state.test.ts:108:13
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/16]⎯
+
+ FAIL  probes/stage-zero/design-state.test.ts > 真实session表单目录与收集 > 受引用表单删除失败，编辑器与输入保留
+Error: 待验证的表单创建
+ ❯ ProbeDesignState.createForm probes/stage-zero/design-state.ts:18:48
+     16|   applyAll(): void { throw new Error("待验证的统一应用"); }
+     17|   renameForm(_id: string, _name: string): void { throw new Error("待验证的…
+     18|   createForm(_name: string): EntityRef { throw new Error("待验证的表单创建"); }
+       |                                                ^
+     19|   deleteForm(_id: string): void { throw new Error("待验证的删除时点"); }
+     20|   get editorCount(): number { return 0; }
+ ❯ forms probes/stage-zero/design-state.test.ts:33:5
+ ❯ probes/stage-zero/design-state.test.ts:114:13
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/16]⎯
+
+ FAIL  probes/stage-zero/design-state.test.ts > 真实session表单目录与收集 > 两份未应用表单收集不写session；整体应用续期后才写入
+Error: 待验证的表单创建
+ ❯ ProbeDesignState.createForm probes/stage-zero/design-state.ts:18:48
+     16|   applyAll(): void { throw new Error("待验证的统一应用"); }
+     17|   renameForm(_id: string, _name: string): void { throw new Error("待验证的…
+     18|   createForm(_name: string): EntityRef { throw new Error("待验证的表单创建"); }
+       |                                                ^
+     19|   deleteForm(_id: string): void { throw new Error("待验证的删除时点"); }
+     20|   get editorCount(): number { return 0; }
+ ❯ forms probes/stage-zero/design-state.test.ts:33:5
+ ❯ probes/stage-zero/design-state.test.ts:119:13
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/16]⎯
+
+ FAIL  probes/stage-zero/design-state.test.ts > 真实session表单目录与收集 > 第二张表单throw失败，全部session零写入且实例仍存
+ FAIL  probes/stage-zero/design-state.test.ts > 真实session表单目录与收集 > 第二张表单null失败，全部session零写入且实例仍存
+ FAIL  probes/stage-zero/design-state.test.ts > 真实session表单目录与收集 > 第二张表单invalid-json失败，全部session零写入且实例仍存
+Error: 待验证的表单创建
+ ❯ ProbeDesignState.createForm probes/stage-zero/design-state.ts:18:48
+     16|   applyAll(): void { throw new Error("待验证的统一应用"); }
+     17|   renameForm(_id: string, _name: string): void { throw new Error("待验证的…
+     18|   createForm(_name: string): EntityRef { throw new Error("待验证的表单创建"); }
+       |                                                ^
+     19|   deleteForm(_id: string): void { throw new Error("待验证的删除时点"); }
+     20|   get editorCount(): number { return 0; }
+ ❯ forms probes/stage-zero/design-state.test.ts:33:5
+ ❯ probes/stage-zero/design-state.test.ts:128:15
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/16]⎯
+
+ FAIL  probes/stage-zero/design-state.test.ts > 真实session表单目录与收集 > 外部表单内容替换作废旧生命期；受控原样应用不会误续旧缓冲
+Error: 待验证的表单创建
+ ❯ ProbeDesignState.createForm probes/stage-zero/design-state.ts:18:48
+     16|   applyAll(): void { throw new Error("待验证的统一应用"); }
+     17|   renameForm(_id: string, _name: string): void { throw new Error("待验证的…
+     18|   createForm(_name: string): EntityRef { throw new Error("待验证的表单创建"); }
+       |                                                ^
+     19|   deleteForm(_id: string): void { throw new Error("待验证的删除时点"); }
+     20|   get editorCount(): number { return 0; }
+ ❯ forms probes/stage-zero/design-state.test.ts:33:5
+ ❯ probes/stage-zero/design-state.test.ts:136:13
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[13/16]⎯
+
+ FAIL  probes/stage-zero/design-state.test.ts > 真实session表单目录与收集 > 替换为同名文档拒绝迟到捕获，日志世代递增
+Error: 待验证的表单创建
+ ❯ ProbeDesignState.createForm probes/stage-zero/design-state.ts:18:48
+     16|   applyAll(): void { throw new Error("待验证的统一应用"); }
+     17|   renameForm(_id: string, _name: string): void { throw new Error("待验证的…
+     18|   createForm(_name: string): EntityRef { throw new Error("待验证的表单创建"); }
+       |                                                ^
+     19|   deleteForm(_id: string): void { throw new Error("待验证的删除时点"); }
+     20|   get editorCount(): number { return 0; }
+ ❯ forms probes/stage-zero/design-state.test.ts:33:5
+ ❯ probes/stage-zero/design-state.test.ts:141:13
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[14/16]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  16 failed (16)
+   Start at  23:47:31
+   Duration  6.33s (import 55%, transform 23%, environment 21%, tests 2%)
+
+undefined
+/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run probes/stage-zero/design-state.test.ts
