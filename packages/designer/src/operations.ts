@@ -538,8 +538,7 @@ export function insertCcAfter(
 /**
  * 校验从旧元素携带的 formKey：内核 normalizeFormKey 已前置校验空白（评审 S-1），
  * 此处保留为纵深防御：旧元素可能由宿主经 elementOf().set("formKey", "   ")
- * 直接写入（绕开内核守卫），转换前拦下避免同 id 重建时抛错
- * 但新节点已登、连线未接的半写模型。removeNode 是破坏性操作，fail-fast 先于它。
+ * 直接写入（绕开内核守卫）；在修改 loop 或 assignee 前拒绝，保证转换失败不部分写入。
  */
 function assertCarriedFormKey(nodeId: string, formKey: unknown): void {
   if (formKey !== undefined && String(formKey).trim() === "") {
@@ -564,8 +563,8 @@ export function convertApprovalToMulti(
   if (el.get("loopCharacteristics") !== undefined) {
     throw new Error(`节点 ${nodeId} 已是多人审批`);
   }
-  // fail-fast：与内核 addApprovalTask 同构前置校验。removeNode 会级联删两侧连线，
-  // 若等内核守卫在其之后才抛错，节点消失、prev/next 互不连通（#25 评审 W3）。
+  // 与内核 addApprovalTask 同构前置校验；先验证并构造未挂载的 loop，
+  // 再更新原任务，避免不合法输入留下部分转换的审批配置。
   if (
     typeof spec.collection !== "string" ||
     (spec.collection.trim() === "" && options.allowIncomplete !== true)
@@ -637,7 +636,11 @@ function assertConvertibleLoop(model: BpmnModel, nodeId: string): void {
   const assertProperties = (element: ModdleElement, allowed: string[]): void => {
     const attrs = (element as ModdleElement & { $attrs?: Record<string, unknown> }).$attrs;
     if (
-      Object.keys(attrs ?? {}).length > 0 ||
+      // moddle 已按 xsi:type 解析真实类型；FormalExpression 的类型声明可能保留原前缀，
+      // 它不是待丢弃的业务扩展。仅豁免此元数据，其他扩展属性继续拒绝。
+      Object.keys(attrs ?? {}).some(
+        (key) => !(element.$type === "bpmn:FormalExpression" && key === "xsi:type"),
+      ) ||
       Object.keys(element).some(
         (key) => !["$type", ...allowed].includes(key) && element.get(key) !== undefined,
       )

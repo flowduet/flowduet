@@ -293,7 +293,7 @@ function commit(options: ApprovalDraftOptions = {}): boolean {
       emit("error", e instanceof Error ? e.message : String(e));
       return false;
     }
-    // 转换可能同 id 重建节点——统一取当前元素，name 与字段最后写
+    // 形态转换原位保留任务；成功后再写名称与其余字段，失败时保留原配置。
     const current = currentNode();
     if (current !== undefined) {
       current.set("name", trimmedName === "" ? undefined : trimmedName);
