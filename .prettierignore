@@ -22,3 +22,10 @@ docs/specs/iteration-3/evidence/77-u64-fix/
 
 # #77 版本化候选产物原始证据与下载字节。
 docs/specs/iteration-3/evidence/77-version-prep/
+
+# 本地执行记录与浏览器临时快照；正式验收产物保存在 docs 中。
+.superpowers/
+.playwright-cli/
+
+# 本轮浏览器原始下载及运行证据保留字节，不由格式化器重写。
+docs/design/reviews/evidence/2026-10-14-branch-structure-repair/

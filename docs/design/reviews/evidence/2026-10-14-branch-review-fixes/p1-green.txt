@@ -1,0 +1,12 @@
+
+> @flowduet/form-create@0.1.0 test /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/form-create
+> vitest run src/reopened-approval.test.ts --testTimeout 20000
+
+
+ RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/form-create
+
+
+ Test Files  1 passed (1)
+      Tests  12 passed (12)
+   Start at  22:55:37
+   Duration  3.58s (tests 34%, import 31%, transform 21%, environment 14%)

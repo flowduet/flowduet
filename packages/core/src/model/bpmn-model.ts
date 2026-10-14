@@ -535,6 +535,48 @@ export class BpmnModel {
     return this;
   }
 
+  /** 保留连线身份和源侧顺序，只修改目标；端点变化后旧折线必须失效。 */
+  retargetSequenceFlow(flowId: string, targetId: string): this {
+    const flow = this.#state.flows.get(flowId);
+    if (flow === undefined) throw new Error(`连线 ${flowId} 不存在`);
+    if (flow.get("id") !== flowId || this.#state.flows.get(flow.get("id") as string) !== flow) {
+      throw new Error(`连线 ${flowId} 的 ID 与登记引用不一致`);
+    }
+    const source = flow.get("sourceRef") as ModdleElement | undefined;
+    const oldTarget = flow.get("targetRef") as ModdleElement | undefined;
+    const target = this.#state.nodes.get(targetId);
+    const elements = (this.#state.process.get("flowElements") as ModdleElement[]) ?? [];
+    const registered = (node: ModdleElement | undefined): node is ModdleElement =>
+      node !== undefined &&
+      this.#state.nodes.get(node.get("id") as string) === node &&
+      elements.filter((el) => el === node).length === 1 &&
+      node.$instanceOf("bpmn:FlowNode");
+    if (!registered(source) || !registered(oldTarget) || !registered(target)) {
+      throw new Error(`连线 ${flowId} 的端点必须是当前模型登记的流节点`);
+    }
+    if (source === target) throw new Error(`连线 ${flowId} 不支持重接为自环`);
+    // 当前连线只能出现在源的 outgoing 和旧目标的 incoming。错误方向也要拒绝，
+    // 否则重接后同一节点可能在两个数组登记它，后续级联删除会重复删边并部分失败。
+    const referencesConsistent = [...new Set([source, oldTarget, target])].every((node) => {
+      const incoming = (node.get("incoming") as ModdleElement[]) ?? [];
+      const outgoing = (node.get("outgoing") as ModdleElement[]) ?? [];
+      return (
+        incoming.filter((el) => el === flow).length === (node === oldTarget ? 1 : 0) &&
+        outgoing.filter((el) => el === flow).length === (node === source ? 1 : 0)
+      );
+    });
+    if (elements.filter((el) => el === flow).length !== 1 || !referencesConsistent) {
+      throw new Error(`连线 ${flowId} 的双向引用与登记不一致`);
+    }
+    if (target === oldTarget) return this;
+    removeFromArray(oldTarget, "incoming", flow);
+    flow.set("targetRef", target);
+    pushMany(target, "incoming", flow);
+    this.#state.waypoints.delete(flowId);
+    this.#removeDiagramElements(flow);
+    return this;
+  }
+
   /** 移除一条连线：流程元素、双向引用、网关 default 引用与登记表同步清理 */
   removeSequenceFlow(id: string): this {
     const flow = this.#state.flows.get(id);
@@ -551,6 +593,7 @@ export class BpmnModel {
     }
     this.#state.flows.delete(id);
     this.#state.waypoints.delete(id);
+    this.#removeDiagramElements(flow);
     return this;
   }
 
@@ -568,6 +611,7 @@ export class BpmnModel {
     removeFromArray(this.#state.process, "flowElements", node);
     this.#state.nodes.delete(id);
     this.#state.shapes.delete(id);
+    this.#removeDiagramElements(node);
     return this;
   }
 
@@ -602,6 +646,28 @@ export class BpmnModel {
   /** 用建树时绑定的 moddle 实例序列化（保证方言扩展包在场） */
   toXML(options?: { format?: boolean; preamble?: boolean }): Promise<{ xml: string }> {
     return this.#state.moddle.toXML(this.#state.definitions, options);
+  }
+
+  /** DI id 可由外部工具任意命名，因此按语义引用清理所有已物化图。 */
+  #removeDiagramElements(semantic: ModdleElement): void {
+    const diagrams = (this.#state.definitions.get("diagrams") as ModdleElement[]) ?? [];
+    const roots = (this.#state.definitions.get("rootElements") as ModdleElement[]) ?? [];
+    for (const diagram of new Set([
+      ...diagrams,
+      ...roots.filter((el) => el.$type === "bpmndi:BPMNDiagram"),
+    ])) {
+      const plane = diagram.get("plane") as ModdleElement | undefined;
+      const elements = plane?.get("planeElement") as ModdleElement[] | undefined;
+      if (elements === undefined) continue;
+      for (let i = elements.length - 1; i >= 0; i--) {
+        const el = elements[i]!;
+        if (
+          (el.$type === "bpmndi:BPMNShape" || el.$type === "bpmndi:BPMNEdge") &&
+          el.get("bpmnElement") === semantic
+        )
+          elements.splice(i, 1);
+      }
+    }
   }
 
   #addNode(type: string, spec: NodeSpec): ModdleElement {

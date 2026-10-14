@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { BpmnModel, deriveBlockTree, flowableAdapter } from "@flowduet/core";
-import { insertApprovalAfter, removeApprovalNode } from "./operations.js";
+import { insertApprovalAfter, insertCcAfter, removeApprovalNode } from "./operations.js";
 
 /**
  * operations 逻辑级测试：直接调视图操作函数验证模型树变更，不经组件渲染
@@ -81,3 +81,19 @@ describe("removeApprovalNode 分支块删除守卫", () => {
     expect(() => deriveBlockTree(model)).not.toThrow();
   });
 });
+
+for (const [label, insert] of [
+  ["审批", insertApprovalAfter],
+  ["抄送", (m: BpmnModel, id: string) => insertCcAfter(m, id, { recipients: "alice" })],
+] as const) {
+  it(`${label} 删除后复用节点 ID 插入到别处，不与存续入边撞名`, () => {
+    const m = chain();
+    const id = insert(m, "approval_1");
+    const edge = (m.elementOf(id).get("incoming") as import("@flowduet/core").ModdleElement[])[0]!;
+    removeApprovalNode(m, id);
+    expect(insert(m, "start")).toBe(id);
+    expect(m.elementOf(edge.get("id") as string)).toBe(edge);
+    removeApprovalNode(m, id);
+    expect(() => deriveBlockTree(m)).not.toThrow();
+  });
+}

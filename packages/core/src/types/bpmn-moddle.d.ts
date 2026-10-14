@@ -8,6 +8,7 @@ declare module "bpmn-moddle" {
   export interface ModdleElement {
     /** 元素的描述符类型，如 "bpmn:UserTask" */
     $type: string;
+    $instanceOf(type: string): boolean;
     get(prop: string): unknown;
     set(prop: string, value: unknown): void;
   }

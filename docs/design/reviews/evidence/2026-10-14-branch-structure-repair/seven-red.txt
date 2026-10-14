@@ -1,0 +1,463 @@
+
+> @flowduet/designer@0.1.0 test /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/designer
+> vitest run src/branch-preservation.test.ts
+
+
+ RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/designer
+
+ ❯ src/branch-preservation.test.ts (8 tests | 7 failed) 82ms
+   ❯ 支路身份保真回归 (8)
+     × preserves_branch_head_on_conversion single-to-multi condition 28ms
+     × preserves_branch_head_on_conversion multi-to-single condition 10ms
+     × preserves_branch_head_when_removing_first condition 9ms
+     × preserves_branch_head_on_conversion single-to-multi default 9ms
+     × preserves_branch_head_on_conversion multi-to-single default 6ms
+     × preserves_branch_head_when_removing_first default 6ms
+     × preserves_branch_head_when_removing_nested_block 7ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 7 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/branch-preservation.test.ts > 支路身份保真回归 > preserves_branch_head_on_conversion single-to-multi condition
+ FAIL  src/branch-preservation.test.ts > 支路身份保真回归 > preserves_branch_head_on_conversion single-to-multi default
+AssertionError: expected 'flow_conv_in_1' to be 'fa' // Object.is equality
+
+Expected: "fa"
+Received: "flow_conv_in_1"
+
+ ❯ assertHead src/branch-preservation.test.ts:26:31
+     24|   const outs = fork.get("outgoing") as ModdleElement[];
+     25|   const head = outs.find(f => (f.get("targetRef") as ModdleElement).ge…
+     26|   expect.soft(head.get("id")).toBe("fa");
+       |                               ^
+     27|   expect.soft(head.get("name")).toBe("采购条件");
+     28|   expect.soft(outs.map(f => f.get("id"))).toEqual(["fa", "fb"]);
+ ❯ src/branch-preservation.test.ts:37:7
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/32]⎯
+
+ FAIL  src/branch-preservation.test.ts > 支路身份保真回归 > preserves_branch_head_on_conversion single-to-multi condition
+ FAIL  src/branch-preservation.test.ts > 支路身份保真回归 > preserves_branch_head_on_conversion single-to-multi default
+AssertionError: expected undefined to be '采购条件' // Object.is equality
+
+- Expected:
+"采购条件"
+
++ Received:
+undefined
+
+ ❯ assertHead src/branch-preservation.test.ts:27:33
+     25|   const head = outs.find(f => (f.get("targetRef") as ModdleElement).ge…
+     26|   expect.soft(head.get("id")).toBe("fa");
+     27|   expect.soft(head.get("name")).toBe("采购条件");
+       |                                 ^
+     28|   expect.soft(outs.map(f => f.get("id"))).toEqual(["fa", "fb"]);
+     29|   if (mode === "condition") expect.soft((head.get("conditionExpression…
+ ❯ src/branch-preservation.test.ts:37:7
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/32]⎯
+
+ FAIL  src/branch-preservation.test.ts > 支路身份保真回归 > preserves_branch_head_on_conversion single-to-multi condition
+ FAIL  src/branch-preservation.test.ts > 支路身份保真回归 > preserves_branch_head_on_conversion single-to-multi default
+AssertionError: expected [ 'fb', 'flow_conv_in_1' ] to deeply equal [ 'fa', 'fb' ]
+
+- Expected
++ Received
+
+  [
+-   "fa",
+    "fb",
++   "flow_conv_in_1",
+  ]
+
+ ❯ assertHead src/branch-preservation.test.ts:28:43
+     26|   expect.soft(head.get("id")).toBe("fa");
+     27|   expect.soft(head.get("name")).toBe("采购条件");
+     28|   expect.soft(outs.map(f => f.get("id"))).toEqual(["fa", "fb"]);
+       |                                           ^
+     29|   if (mode === "condition") expect.soft((head.get("conditionExpression…
+     30|   else expect.soft(fork.get("default")).toBe(head);
+ ❯ src/branch-preservation.test.ts:37:7
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/32]⎯
+
+ FAIL  src/branch-preservation.test.ts > 支路身份保真回归 > preserves_branch_head_on_conversion single-to-multi condition
+AssertionError: expected undefined to be '${amount > 100}' // Object.is equality
+
+- Expected:
+"${amount > 100}"
+
++ Received:
+undefined
+
+ ❯ assertHead src/branch-preservation.test.ts:29:118
+     27|   expect.soft(head.get("name")).toBe("采购条件");
+     28|   expect.soft(outs.map(f => f.get("id"))).toEqual(["fa", "fb"]);
+     29|   if (mode === "condition") expect.soft((head.get("conditionExpression…
+       |                                                                                                                      ^
+     30|   else expect.soft(fork.get("default")).toBe(head);
+     31| }
+ ❯ src/branch-preservation.test.ts:37:7
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/32]⎯
+
+ FAIL  src/branch-preservation.test.ts > 支路身份保真回归 > preserves_branch_head_on_conversion single-to-multi condition
+ FAIL  src/branch-preservation.test.ts > 支路身份保真回归 > preserves_branch_head_on_conversion single-to-multi default
+AssertionError: expected 'flow_conv_out_1' to be 'at' // Object.is equality
+
+Expected: "at"
+Received: "flow_conv_out_1"
+
+ ❯ src/branch-preservation.test.ts:39:34
+     37|       assertHead(m, "a", mode);
+     38|       const out = (m.elementOf("a").get("outgoing") as ModdleElement[]…
+     39|       expect.soft(out.get("id")).toBe("at");
+       |                                  ^
+     40|       expect.soft(out.get("name")).toBe("保留出边");
+     41|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/32]⎯
+
+ FAIL  src/branch-preservation.test.ts > 支路身份保真回归 > preserves_branch_head_on_conversion single-to-multi condition
+ FAIL  src/branch-preservation.test.ts > 支路身份保真回归 > preserves_branch_head_on_conversion single-to-multi default
+AssertionError: expected undefined to be '保留出边' // Object.is equality
+
+- Expected:
+"保留出边"
+
++ Received:
+undefined
+
+ ❯ src/branch-preservation.test.ts:40:36
+     38|       const out = (m.elementOf("a").get("outgoing") as ModdleElement[]…
+     39|       expect.soft(out.get("id")).toBe("at");
+     40|       expect.soft(out.get("name")).toBe("保留出边");
+       |                                    ^
+     41|     });
+     42|     it(`preserves_branch_head_on_conversion multi-to-single ${mode}`, …
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/32]⎯
+
+ FAIL  src/branch-preservation.test.ts > 支路身份保真回归 > preserves_branch_head_on_conversion multi-to-single condition
+ FAIL  src/branch-preservation.test.ts > 支路身份保真回归 > preserves_branch_head_on_conversion multi-to-single default
+AssertionError: expected 'flow_conv_in_1' to be 'fa' // Object.is equality
+
+Expected: "fa"
+Received: "flow_conv_in_1"
+
+ ❯ assertHead src/branch-preservation.test.ts:26:31
+     24|   const outs = fork.get("outgoing") as ModdleElement[];
+     25|   const head = outs.find(f => (f.get("targetRef") as ModdleElement).ge…
+     26|   expect.soft(head.get("id")).toBe("fa");
+       |                               ^
+     27|   expect.soft(head.get("name")).toBe("采购条件");
+     28|   expect.soft(outs.map(f => f.get("id"))).toEqual(["fa", "fb"]);
+ ❯ src/branch-preservation.test.ts:45:7
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/32]⎯
+
+ FAIL  src/branch-preservation.test.ts > 支路身份保真回归 > preserves_branch_head_on_conversion multi-to-single condition
+ FAIL  src/branch-preservation.test.ts > 支路身份保真回归 > preserves_branch_head_on_conversion multi-to-single default
+AssertionError: expected undefined to be '采购条件' // Object.is equality
+
+- Expected:
+"采购条件"
+
++ Received:
+undefined
+
+ ❯ assertHead src/branch-preservation.test.ts:27:33
+     25|   const head = outs.find(f => (f.get("targetRef") as ModdleElement).ge…
+     26|   expect.soft(head.get("id")).toBe("fa");
+     27|   expect.soft(head.get("name")).toBe("采购条件");
+       |                                 ^
+     28|   expect.soft(outs.map(f => f.get("id"))).toEqual(["fa", "fb"]);
+     29|   if (mode === "condition") expect.soft((head.get("conditionExpression…
+ ❯ src/branch-preservation.test.ts:45:7
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/32]⎯
+
+ FAIL  src/branch-preservation.test.ts > 支路身份保真回归 > preserves_branch_head_on_conversion multi-to-single condition
+ FAIL  src/branch-preservation.test.ts > 支路身份保真回归 > preserves_branch_head_on_conversion multi-to-single default
+AssertionError: expected [ 'fb', 'flow_conv_in_1' ] to deeply equal [ 'fa', 'fb' ]
+
+- Expected
++ Received
+
+  [
+-   "fa",
+    "fb",
++   "flow_conv_in_1",
+  ]
+
+ ❯ assertHead src/branch-preservation.test.ts:28:43
+     26|   expect.soft(head.get("id")).toBe("fa");
+     27|   expect.soft(head.get("name")).toBe("采购条件");
+     28|   expect.soft(outs.map(f => f.get("id"))).toEqual(["fa", "fb"]);
+       |                                           ^
+     29|   if (mode === "condition") expect.soft((head.get("conditionExpression…
+     30|   else expect.soft(fork.get("default")).toBe(head);
+ ❯ src/branch-preservation.test.ts:45:7
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/32]⎯
+
+ FAIL  src/branch-preservation.test.ts > 支路身份保真回归 > preserves_branch_head_on_conversion multi-to-single condition
+AssertionError: expected undefined to be '${amount > 100}' // Object.is equality
+
+- Expected:
+"${amount > 100}"
+
++ Received:
+undefined
+
+ ❯ assertHead src/branch-preservation.test.ts:29:118
+     27|   expect.soft(head.get("name")).toBe("采购条件");
+     28|   expect.soft(outs.map(f => f.get("id"))).toEqual(["fa", "fb"]);
+     29|   if (mode === "condition") expect.soft((head.get("conditionExpression…
+       |                                                                                                                      ^
+     30|   else expect.soft(fork.get("default")).toBe(head);
+     31| }
+ ❯ src/branch-preservation.test.ts:45:7
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/32]⎯
+
+ FAIL  src/branch-preservation.test.ts > 支路身份保真回归 > preserves_branch_head_when_removing_first condition
+ FAIL  src/branch-preservation.test.ts > 支路身份保真回归 > preserves_branch_head_when_removing_first default
+AssertionError: expected 'flow_relay_1' to be 'fa' // Object.is equality
+
+Expected: "fa"
+Received: "flow_relay_1"
+
+ ❯ assertHead src/branch-preservation.test.ts:26:31
+     24|   const outs = fork.get("outgoing") as ModdleElement[];
+     25|   const head = outs.find(f => (f.get("targetRef") as ModdleElement).ge…
+     26|   expect.soft(head.get("id")).toBe("fa");
+       |                               ^
+     27|   expect.soft(head.get("name")).toBe("采购条件");
+     28|   expect.soft(outs.map(f => f.get("id"))).toEqual(["fa", "fb"]);
+ ❯ src/branch-preservation.test.ts:50:7
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/32]⎯
+
+ FAIL  src/branch-preservation.test.ts > 支路身份保真回归 > preserves_branch_head_when_removing_first condition
+ FAIL  src/branch-preservation.test.ts > 支路身份保真回归 > preserves_branch_head_when_removing_first default
+AssertionError: expected undefined to be '采购条件' // Object.is equality
+
+- Expected:
+"采购条件"
+
++ Received:
+undefined
+
+ ❯ assertHead src/branch-preservation.test.ts:27:33
+     25|   const head = outs.find(f => (f.get("targetRef") as ModdleElement).ge…
+     26|   expect.soft(head.get("id")).toBe("fa");
+     27|   expect.soft(head.get("name")).toBe("采购条件");
+       |                                 ^
+     28|   expect.soft(outs.map(f => f.get("id"))).toEqual(["fa", "fb"]);
+     29|   if (mode === "condition") expect.soft((head.get("conditionExpression…
+ ❯ src/branch-preservation.test.ts:50:7
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/32]⎯
+
+ FAIL  src/branch-preservation.test.ts > 支路身份保真回归 > preserves_branch_head_when_removing_first condition
+ FAIL  src/branch-preservation.test.ts > 支路身份保真回归 > preserves_branch_head_when_removing_first default
+AssertionError: expected [ 'fb', 'flow_relay_1' ] to deeply equal [ 'fa', 'fb' ]
+
+- Expected
++ Received
+
+  [
+-   "fa",
+    "fb",
++   "flow_relay_1",
+  ]
+
+ ❯ assertHead src/branch-preservation.test.ts:28:43
+     26|   expect.soft(head.get("id")).toBe("fa");
+     27|   expect.soft(head.get("name")).toBe("采购条件");
+     28|   expect.soft(outs.map(f => f.get("id"))).toEqual(["fa", "fb"]);
+       |                                           ^
+     29|   if (mode === "condition") expect.soft((head.get("conditionExpression…
+     30|   else expect.soft(fork.get("default")).toBe(head);
+ ❯ src/branch-preservation.test.ts:50:7
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[13/32]⎯
+
+ FAIL  src/branch-preservation.test.ts > 支路身份保真回归 > preserves_branch_head_when_removing_first condition
+AssertionError: expected undefined to be '${amount > 100}' // Object.is equality
+
+- Expected:
+"${amount > 100}"
+
++ Received:
+undefined
+
+ ❯ assertHead src/branch-preservation.test.ts:29:118
+     27|   expect.soft(head.get("name")).toBe("采购条件");
+     28|   expect.soft(outs.map(f => f.get("id"))).toEqual(["fa", "fb"]);
+     29|   if (mode === "condition") expect.soft((head.get("conditionExpression…
+       |                                                                                                                      ^
+     30|   else expect.soft(fork.get("default")).toBe(head);
+     31| }
+ ❯ src/branch-preservation.test.ts:50:7
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[14/32]⎯
+
+ FAIL  src/branch-preservation.test.ts > 支路身份保真回归 > preserves_branch_head_on_conversion single-to-multi default
+AssertionError: expected undefined to be Base{ …(6) } // Object.is equality
+
+- Expected:
+Base {
+  "$type": "bpmn:SequenceFlow",
+  "id": "flow_conv_in_1",
+}
+
++ Received:
+undefined
+
+ ❯ assertHead src/branch-preservation.test.ts:30:41
+     28|   expect.soft(outs.map(f => f.get("id"))).toEqual(["fa", "fb"]);
+     29|   if (mode === "condition") expect.soft((head.get("conditionExpression…
+     30|   else expect.soft(fork.get("default")).toBe(head);
+       |                                         ^
+     31| }
+     32| describe("支路身份保真回归", () => {
+ ❯ src/branch-preservation.test.ts:37:7
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[15/32]⎯
+
+ FAIL  src/branch-preservation.test.ts > 支路身份保真回归 > preserves_branch_head_on_conversion multi-to-single default
+AssertionError: expected undefined to be Base{ …(6) } // Object.is equality
+
+- Expected:
+Base {
+  "$type": "bpmn:SequenceFlow",
+  "id": "flow_conv_in_1",
+}
+
++ Received:
+undefined
+
+ ❯ assertHead src/branch-preservation.test.ts:30:41
+     28|   expect.soft(outs.map(f => f.get("id"))).toEqual(["fa", "fb"]);
+     29|   if (mode === "condition") expect.soft((head.get("conditionExpression…
+     30|   else expect.soft(fork.get("default")).toBe(head);
+       |                                         ^
+     31| }
+     32| describe("支路身份保真回归", () => {
+ ❯ src/branch-preservation.test.ts:45:7
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[16/32]⎯
+
+ FAIL  src/branch-preservation.test.ts > 支路身份保真回归 > preserves_branch_head_when_removing_first default
+AssertionError: expected undefined to be Base{ …(6) } // Object.is equality
+
+- Expected:
+Base {
+  "$type": "bpmn:SequenceFlow",
+  "id": "flow_relay_1",
+}
+
++ Received:
+undefined
+
+ ❯ assertHead src/branch-preservation.test.ts:30:41
+     28|   expect.soft(outs.map(f => f.get("id"))).toEqual(["fa", "fb"]);
+     29|   if (mode === "condition") expect.soft((head.get("conditionExpression…
+     30|   else expect.soft(fork.get("default")).toBe(head);
+       |                                         ^
+     31| }
+     32| describe("支路身份保真回归", () => {
+ ❯ src/branch-preservation.test.ts:50:7
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[17/32]⎯
+
+ FAIL  src/branch-preservation.test.ts > 支路身份保真回归 > preserves_branch_head_when_removing_nested_block
+AssertionError: expected 'flow_block_relay_1' to be 'fa' // Object.is equality
+
+Expected: "fa"
+Received: "flow_block_relay_1"
+
+ ❯ assertHead src/branch-preservation.test.ts:26:31
+     24|   const outs = fork.get("outgoing") as ModdleElement[];
+     25|   const head = outs.find(f => (f.get("targetRef") as ModdleElement).ge…
+     26|   expect.soft(head.get("id")).toBe("fa");
+       |                               ^
+     27|   expect.soft(head.get("name")).toBe("采购条件");
+     28|   expect.soft(outs.map(f => f.get("id"))).toEqual(["fa", "fb"]);
+ ❯ src/branch-preservation.test.ts:63:30
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[18/32]⎯
+
+ FAIL  src/branch-preservation.test.ts > 支路身份保真回归 > preserves_branch_head_when_removing_nested_block
+AssertionError: expected undefined to be '采购条件' // Object.is equality
+
+- Expected:
+"采购条件"
+
++ Received:
+undefined
+
+ ❯ assertHead src/branch-preservation.test.ts:27:33
+     25|   const head = outs.find(f => (f.get("targetRef") as ModdleElement).ge…
+     26|   expect.soft(head.get("id")).toBe("fa");
+     27|   expect.soft(head.get("name")).toBe("采购条件");
+       |                                 ^
+     28|   expect.soft(outs.map(f => f.get("id"))).toEqual(["fa", "fb"]);
+     29|   if (mode === "condition") expect.soft((head.get("conditionExpression…
+ ❯ src/branch-preservation.test.ts:63:30
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[19/32]⎯
+
+ FAIL  src/branch-preservation.test.ts > 支路身份保真回归 > preserves_branch_head_when_removing_nested_block
+AssertionError: expected [ 'fb', 'flow_block_relay_1' ] to deeply equal [ 'fa', 'fb' ]
+
+- Expected
++ Received
+
+  [
+-   "fa",
+    "fb",
++   "flow_block_relay_1",
+  ]
+
+ ❯ assertHead src/branch-preservation.test.ts:28:43
+     26|   expect.soft(head.get("id")).toBe("fa");
+     27|   expect.soft(head.get("name")).toBe("采购条件");
+     28|   expect.soft(outs.map(f => f.get("id"))).toEqual(["fa", "fb"]);
+       |                                           ^
+     29|   if (mode === "condition") expect.soft((head.get("conditionExpression…
+     30|   else expect.soft(fork.get("default")).toBe(head);
+ ❯ src/branch-preservation.test.ts:63:30
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[20/32]⎯
+
+ FAIL  src/branch-preservation.test.ts > 支路身份保真回归 > preserves_branch_head_when_removing_nested_block
+AssertionError: expected undefined to be '${amount > 100}' // Object.is equality
+
+- Expected:
+"${amount > 100}"
+
++ Received:
+undefined
+
+ ❯ assertHead src/branch-preservation.test.ts:29:118
+     27|   expect.soft(head.get("name")).toBe("采购条件");
+     28|   expect.soft(outs.map(f => f.get("id"))).toEqual(["fa", "fb"]);
+     29|   if (mode === "condition") expect.soft((head.get("conditionExpression…
+       |                                                                                                                      ^
+     30|   else expect.soft(fork.get("default")).toBe(head);
+     31| }
+ ❯ src/branch-preservation.test.ts:63:30
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[21/32]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  7 failed | 1 passed (8)
+   Start at  22:05:59
+   Duration  719ms (transform 59%, tests 24%, import 15%, worker 2%)
+
+/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/designer:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @flowduet/designer@0.1.0 test: `vitest run src/branch-preservation.test.ts`
+Exit status 1
