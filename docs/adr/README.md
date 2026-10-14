@@ -15,6 +15,6 @@
 | [0008](0008-logo-visual-identity.md) | 视觉标识（LOGO）：一树两冠 | Accepted | 2026-09-20 |
 | [0009](0009-design-document-and-form-binding.md) | 流程设计文档、默认表单与节点覆盖 | Proposed | 2026-09-24 |
 | [0010](0010-integrated-designer-delivery.md) | 完整设计界面与独立组件并行交付 | Accepted（交付边界与分包方向） | 2026-10-14 |
-| [0011](0011-property-editing-containers.md) | 属性编辑容器与缓冲提交边界 | Proposed | 2026-10-14 |
+| [0011](0011-property-editing-containers.md) | 属性编辑容器与缓冲提交边界 | Accepted | 2026-10-14 |
 
 来源：2026-09-14 的选型 grilling 会话（11 项决策全部收敛，无遗留分歧）。
