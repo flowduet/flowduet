@@ -85,10 +85,12 @@ describe("模型安全重接", () => {
     "duplicate-outgoing",
     "unregistered-flow",
     "non-node",
+    "renamed-flow",
   ]) {
     it(`${bad} 拒绝且不写入`, async () => {
       const m = model();
       await compile(m);
+      if (bad === "renamed-flow") m.elementOf("fa").set("id", "renamed");
       if (bad === "foreign-source") m.elementOf("fa").set("sourceRef", model().elementOf("fork"));
       if (bad === "missing-incoming") m.elementOf("a").set("incoming", []);
       if (bad === "duplicate-outgoing")
@@ -104,6 +106,10 @@ describe("模型安全重接", () => {
       }
       const current = bad === "non-node" ? BpmnModel.fromParsed(m.moddle, m.definitions) : m;
       const before = await current.toXML();
+      const flow = current.elementOf("fa");
+      const oldTarget = flow.get("targetRef");
+      const outgoing = [...(current.elementOf("fork").get("outgoing") as ModdleElement[])];
+      const incoming = [...(current.elementOf("end").get("incoming") as ModdleElement[])];
       const target =
         bad === "missing-target"
           ? "none"
@@ -118,6 +124,9 @@ describe("模型安全重接", () => {
         current.retargetSequenceFlow(bad === "missing-flow" ? "none" : "fa", target),
       ).toThrow(/连线|端点|引用|流节点|自环/);
       expect(await current.toXML()).toEqual(before);
+      expect(flow.get("targetRef")).toBe(oldTarget);
+      expect(current.elementOf("fork").get("outgoing")).toEqual(outgoing);
+      expect(current.elementOf("end").get("incoming")).toEqual(incoming);
       expect(current.waypointsOf("fa")).toEqual([
         { x: 0, y: 0 },
         { x: 100, y: 80 },

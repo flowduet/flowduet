@@ -539,6 +539,9 @@ export class BpmnModel {
   retargetSequenceFlow(flowId: string, targetId: string): this {
     const flow = this.#state.flows.get(flowId);
     if (flow === undefined) throw new Error(`连线 ${flowId} 不存在`);
+    if (flow.get("id") !== flowId || this.#state.flows.get(flow.get("id") as string) !== flow) {
+      throw new Error(`连线 ${flowId} 的 ID 与登记引用不一致`);
+    }
     const source = flow.get("sourceRef") as ModdleElement | undefined;
     const oldTarget = flow.get("targetRef") as ModdleElement | undefined;
     const target = this.#state.nodes.get(targetId);
