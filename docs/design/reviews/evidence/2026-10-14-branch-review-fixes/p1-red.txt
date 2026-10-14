@@ -1,0 +1,113 @@
+
+> @flowduet/form-create@0.1.0 test /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/form-create
+> vitest run src/reopened-approval.test.ts --testTimeout 20000
+
+
+ RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/form-create
+
+ ❯ src/reopened-approval.test.ts (12 tests | 6 failed) 1192ms
+   ❯ 保存重开后的审批转换 (12)
+     × all 经文档保存重开（bpmn 前缀）后原位转单签 41ms
+     × all 经文档保存重开（bpmn2 前缀）后原位转单签 18ms
+     × all 重开后通过真实抽屉确认单签 386ms
+     × any 经文档保存重开（bpmn 前缀）后原位转单签 30ms
+     × any 经文档保存重开（bpmn2 前缀）后原位转单签 34ms
+     × any 重开后通过真实抽屉确认单签 245ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 6 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/reopened-approval.test.ts > 保存重开后的审批转换 > all 经文档保存重开（bpmn 前缀）后原位转单签
+ FAIL  src/reopened-approval.test.ts > 保存重开后的审批转换 > all 经文档保存重开（bpmn2 前缀）后原位转单签
+Error: 节点 a 含不支持转换的循环属性，请先核对原 BPMN 配置
+ ❯ assertProperties ../designer/src/operations.ts:645:13
+    643|       )
+    644|     ) {
+    645|       throw new Error(`节点 ${nodeId} 含不支持转换的循环属性，请先核对原 BPMN 配置`);
+       |             ^
+    646|     }
+    647|   };
+ ❯ assertConvertibleLoop ../designer/src/operations.ts:660:5
+ ❯ convertMultiToSingle ../designer/src/operations.ts:625:3
+ ❯ src/reopened-approval.test.ts:44:9
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/6]⎯
+
+ FAIL  src/reopened-approval.test.ts > 保存重开后的审批转换 > all 重开后通过真实抽屉确认单签
+AssertionError: expected Base{ …(6) } to be undefined
+
+- Expected:
+undefined
+
++ Received:
+Base {
+  "$type": "bpmn:MultiInstanceLoopCharacteristics",
+  "collection": "people",
+  "completionCondition": Base {
+    "$type": "bpmn:FormalExpression",
+    "body": "${nrOfCompletedInstances == nrOfInstances}",
+  },
+  "elementVariable": "assignee",
+}
+
+ ❯ src/reopened-approval.test.ts:76:63
+     74|       (document.querySelector('[data-test="drawer-save"]') as HTMLElem…
+     75|       await flushPromises();
+     76|       expect(model.elementOf("a").get("loopCharacteristics")).toBeUnde…
+       |                                                               ^
+     77|       expect(model.elementOf("a").get("assignee")).toBe("alice");
+     78|       expect(wrapper.emitted("change")).toHaveLength(1);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/6]⎯
+
+ FAIL  src/reopened-approval.test.ts > 保存重开后的审批转换 > any 经文档保存重开（bpmn 前缀）后原位转单签
+ FAIL  src/reopened-approval.test.ts > 保存重开后的审批转换 > any 经文档保存重开（bpmn2 前缀）后原位转单签
+Error: 节点 a 含不支持转换的循环属性，请先核对原 BPMN 配置
+ ❯ assertProperties ../designer/src/operations.ts:645:13
+    643|       )
+    644|     ) {
+    645|       throw new Error(`节点 ${nodeId} 含不支持转换的循环属性，请先核对原 BPMN 配置`);
+       |             ^
+    646|     }
+    647|   };
+ ❯ assertConvertibleLoop ../designer/src/operations.ts:660:5
+ ❯ convertMultiToSingle ../designer/src/operations.ts:625:3
+ ❯ src/reopened-approval.test.ts:44:9
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/6]⎯
+
+ FAIL  src/reopened-approval.test.ts > 保存重开后的审批转换 > any 重开后通过真实抽屉确认单签
+AssertionError: expected Base{ …(6) } to be undefined
+
+- Expected:
+undefined
+
++ Received:
+Base {
+  "$type": "bpmn:MultiInstanceLoopCharacteristics",
+  "collection": "people",
+  "completionCondition": Base {
+    "$type": "bpmn:FormalExpression",
+    "body": "${nrOfCompletedInstances >= 1}",
+  },
+  "elementVariable": "assignee",
+}
+
+ ❯ src/reopened-approval.test.ts:76:63
+     74|       (document.querySelector('[data-test="drawer-save"]') as HTMLElem…
+     75|       await flushPromises();
+     76|       expect(model.elementOf("a").get("loopCharacteristics")).toBeUnde…
+       |                                                               ^
+     77|       expect(model.elementOf("a").get("assignee")).toBe("alice");
+     78|       expect(wrapper.emitted("change")).toHaveLength(1);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/6]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  6 failed | 6 passed (12)
+   Start at  22:54:17
+   Duration  3.87s (tests 32%, import 30%, transform 26%, environment 11%)
+
+/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/form-create:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @flowduet/form-create@0.1.0 test: `vitest run src/reopened-approval.test.ts --testTimeout 20000`
+Exit status 1

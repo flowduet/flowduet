@@ -1,0 +1,49 @@
+
+> @flowduet/core@0.3.0 test /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/core
+> vitest run src/model/structure-editing.test.ts
+
+
+ RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/core
+
+ ❯ src/model/structure-editing.test.ts (20 tests | 5 failed) 214ms
+   ❯ 重接前拒绝端点的错误方向引用 (7)
+     × fork.incoming 错误登记 fa 时拒绝重接到 end 且不写入 20ms
+     × fork.incoming 错误登记 fa 时拒绝重接到 a 且不写入 4ms
+     × a.outgoing 错误登记 fa 时拒绝重接到 end 且不写入 6ms
+     × a.outgoing 错误登记 fa 时拒绝重接到 a 且不写入 4ms
+     × end.outgoing 错误登记 fa 时拒绝重接到 end 且不写入 3ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/model/structure-editing.test.ts > 重接前拒绝端点的错误方向引用 > fork.incoming 错误登记 fa 时拒绝重接到 end 且不写入
+ FAIL  src/model/structure-editing.test.ts > 重接前拒绝端点的错误方向引用 > fork.incoming 错误登记 fa 时拒绝重接到 a 且不写入
+ FAIL  src/model/structure-editing.test.ts > 重接前拒绝端点的错误方向引用 > a.outgoing 错误登记 fa 时拒绝重接到 end 且不写入
+ FAIL  src/model/structure-editing.test.ts > 重接前拒绝端点的错误方向引用 > a.outgoing 错误登记 fa 时拒绝重接到 a 且不写入
+ FAIL  src/model/structure-editing.test.ts > 重接前拒绝端点的错误方向引用 > end.outgoing 错误登记 fa 时拒绝重接到 end 且不写入
+AssertionError: expected [Function] to throw an error
+
+- Expected:
+null
+
++ Received:
+undefined
+
+ ❯ src/model/structure-editing.test.ts:185:62
+    183|         const route = m.waypointsOf("fa");
+    184|         const shape = m.shapeOf("a");
+    185|         expect(() => m.retargetSequenceFlow("fa", targetId)).toThrow(/…
+       |                                                              ^
+    186|         expect(edge.get("sourceRef")).toBe(m.elementOf("fork"));
+    187|         expect(edge.get("targetRef")).toBe(m.elementOf("a"));
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/5]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  5 failed | 15 passed (20)
+   Start at  22:55:09
+   Duration  663ms (tests 48%, transform 38%, import 13%, worker 1%)
+
+/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/core:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @flowduet/core@0.3.0 test: `vitest run src/model/structure-editing.test.ts`
+Exit status 1

@@ -1,0 +1,32 @@
+Scope: 4 of 5 workspace projects
+packages/core test$ vitest run --testTimeout 20000
+packages/core test:  RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/core
+packages/core test:  Test Files  14 passed (14)
+packages/core test:       Tests  148 passed (148)
+packages/core test:    Start at  22:56:53
+packages/core test:    Duration  1.66s (transform 57%, tests 29%, import 12%, worker 2%)
+packages/core test:   Transform  transforming modules took 4.89s · 57% of tracked time, re-done on every run
+packages/core test:              persist transforms across runs with fsModuleCache: true
+packages/core test:              learn more: https://vitest.dev/guide/improving-performance#caching-between-reruns
+packages/core test: Done
+packages/designer test$ vitest run --testTimeout 20000
+packages/designer test:  RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/designer
+packages/designer test:  Test Files  11 passed (11)
+packages/designer test:       Tests  161 passed (161)
+packages/designer test:    Start at  22:56:55
+packages/designer test:    Duration  17.90s (tests 53%, import 17%, transform 15%, environment 14%)
+packages/designer test: Done
+packages/form-create test$ vitest run --testTimeout 20000
+packages/form-create test:  RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/form-create
+packages/form-create test:  Test Files  9 passed (9)
+packages/form-create test:       Tests  137 passed (137)
+packages/form-create test:    Start at  22:57:14
+packages/form-create test:    Duration  66.18s (tests 63%, import 19%, environment 11%, transform 7%)
+packages/form-create test: Done
+apps/playground test$ vitest run --testTimeout 20000
+apps/playground test:  RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground
+apps/playground test:  Test Files  2 passed (2)
+apps/playground test:       Tests  55 passed (55)
+apps/playground test:    Start at  22:58:21
+apps/playground test:    Duration  51.30s (tests 88%, import 7%, transform 4%, environment 2%)
+apps/playground test: Done
