@@ -315,3 +315,7 @@ $RECYCLE.BIN/
 .video_agent/
 # husky 运行态钩子（用户脚本 .husky/pre-commit 入库，_ 由 prepare 生成）
 .husky/_/
+
+# Agent 执行缓存与临时浏览器快照（正式证据另行归档）。
+.superpowers/
+.playwright-cli/

@@ -36,7 +36,7 @@
 
 ### Task 2: 安全重接与结构删除
 
-**Files:** packages/core/src/model/bpmn-model.ts；packages/core/test/structure-editing.test.ts；packages/designer/src/operations.ts；结构回归测试。
+**Files:** packages/core/src/model/bpmn-model.ts；packages/core/src/model/structure-editing.test.ts；packages/designer/src/operations.ts；结构回归测试。
 **Interfaces:** 产出 BpmnModel.retargetSequenceFlow(flowId: string, targetId: string): this；designer 消费该接口。
 
 - [ ] 添加重接引用/顺序/default/DI、同目标无操作、非法引用拒绝测试，Expected: 新方法不存在而失败；删除 DI 残留断言失败。
