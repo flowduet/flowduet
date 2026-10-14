@@ -479,7 +479,7 @@ function assertCarriedFormKey(nodeId: string, formKey: unknown): void {
 }
 
 /**
- * 单人审批 → 多人（多实例）：同 id 重建为 addApprovalTask 形态，前后连线原样保留。
+ * 单人审批 → 多人（多实例）：原位配置，保留节点、前后连线及 DI。
  * collection 是审批人集合的裸变量名（运行时注入名单，issue #25 口径）。
  */
 export function convertApprovalToMulti(
@@ -518,47 +518,28 @@ export function convertApprovalToMulti(
       `节点 ${nodeId} 不在单链位置（入 ${incoming.length}/出 ${outgoing.length}），不能转换`,
     );
   }
-  const prevId = (incoming[0]!.get("sourceRef") as ModdleElement).get("id") as string;
-  const nextId = (outgoing[0]!.get("targetRef") as ModdleElement).get("id") as string;
-  const name = el.get("name");
-  const formKey = el.get("formKey");
-  assertCarriedFormKey(nodeId, formKey);
-  // removeNode 会级联删两侧连线——先记端点，重建任务后原样接回。
-  // 已知限制（#25 评审 S2、PR #34 评审 W-6、PR #37 复核 3.1）：removeNode 同时丢弃 shape，
-  // removeSequenceFlow 丢弃两侧 waypoints。下游消费路径上 DI 丢失并非静默：
-  // IdentityDiLayout.attach 调 model.shapeOf(id) 缺 shape 直接抛错（诚实失败）；
-  // #26 只读画布按 spec「几何零计算：shapeOf/waypointsOf 直映射」，缺坐标同样沿
-  // shapeOf 抛错。钉钉式纵向视图恒走 verticalDiLayout 推导，主链路无影响；
-  // 带 DI 导入 + 抽屉转换的消费路径需 #27/#35 追踪（内核需暴露 setShape/setWaypoints
-  // 写入口，转换时保留 DI；跨包改动，暂缓）。
-  model.removeNode(nodeId);
-  model.addApprovalTask(
-    {
-      id: nodeId,
-      ...(name !== undefined ? { name: String(name) } : {}),
-      collection: spec.collection,
-      mode: spec.mode,
-      ...(spec.elementVariable !== undefined ? { elementVariable: spec.elementVariable } : {}),
-      ...(formKey !== undefined ? { formKey: String(formKey) } : {}),
-    },
-    options,
-  );
-  // 连线 id 走 nextFreeId 序列号（与 removeApprovalNode 的 relay 同口径）：节点 id 复用，
-  // 若沿用 flow_${nodeId}_in 定名，删→他处插→再转会撞已登记的旧连线（#25 评审 S4）。
-  model.addSequenceFlow({
-    id: nextFreeId(model, "flow_conv_in_"),
-    sourceRef: prevId,
-    targetRef: nodeId,
+  assertCarriedFormKey(nodeId, el.get("formKey"));
+  // 先构造配置，再挂到原任务上：节点、连线及其 DI 都属于存续对象。
+  const elementVariable = (spec.elementVariable ?? DEFAULT_ELEMENT_VARIABLE).trim();
+  const loop = model.moddle.create("bpmn:MultiInstanceLoopCharacteristics", {
+    isSequential: spec.mode === "sequential",
+    collection: spec.collection.trim(),
+    elementVariable,
   });
-  model.addSequenceFlow({
-    id: nextFreeId(model, "flow_conv_out_"),
-    sourceRef: nodeId,
-    targetRef: nextId,
-  });
+  if (spec.mode !== "sequential") {
+    loop.set(
+      "completionCondition",
+      model.moddle.create("bpmn:FormalExpression", {
+        body: COMPLETION_CONDITIONS[spec.mode],
+      }),
+    );
+  }
+  el.set("loopCharacteristics", loop);
+  el.set("assignee", `\${${elementVariable}}`);
 }
 
 /**
- * 多人（多实例）→ 单人审批：同 id 重建为普通用户任务。
+ * 多人（多实例）→ 单人审批：原位移除受支持的多实例配置。
  * 审批人留空（集合变量无法还原为具体名单，由用户在抽屉补填）。
  */
 export function convertMultiToSingle(model: BpmnModel, nodeId: string): void {
@@ -571,34 +552,45 @@ export function convertMultiToSingle(model: BpmnModel, nodeId: string): void {
   if (incoming.length !== 1 || outgoing.length !== 1) {
     throw new Error(`节点 ${nodeId} 不在单链位置，不能转换`);
   }
-  const prevId = (incoming[0]!.get("sourceRef") as ModdleElement).get("id") as string;
-  const nextId = (outgoing[0]!.get("targetRef") as ModdleElement).get("id") as string;
-  const name = el.get("name");
-  const formKey = el.get("formKey");
-  assertCarriedFormKey(nodeId, formKey);
-  // 已知限制（#25 评审 S2、PR #34 评审 W-6、PR #37 复核 3.1）：removeNode 丢弃 shape、
-  // removeSequenceFlow 丢弃两侧 waypoints；DI 丢失并非静默——IdentityDiLayout.attach
-  // 与 #26 只读画布（spec：shapeOf/waypointsOf 直映射）均沿 shapeOf 缺坐标抛错（诚实失败）。
-  // 纵向视图无影响，导入图转换后布局问题需 #27/#35 追踪。
-  model.removeNode(nodeId);
-  // 集合变量不回填摘要位：留空由用户在抽屉补填具体审批人
-  //（回填字面量会让导出带无效 assignee，运行时静默取不到人）。
-  // 抽屉侧另以 selectKind 在单↔多切换时清空审批人缓冲，与此处留空口径对齐（#25 评审 C1）。
-  const spec: UserTaskSpec = { id: nodeId, ...(name !== undefined ? { name: String(name) } : {}) };
-  if (formKey !== undefined) {
-    spec.formKey = String(formKey);
+  assertCarriedFormKey(nodeId, el.get("formKey"));
+  assertConvertibleLoop(model, nodeId);
+  // 集合元素不能当单人账号；仅移除本次转换的配置，保留任务其余扩展。
+  el.set("loopCharacteristics", undefined);
+  el.set("assignee", undefined);
+}
+
+/** 被移除的 loop 必须是可编辑子集，不能静默抹掉外部循环配置。 */
+function assertConvertibleLoop(model: BpmnModel, nodeId: string): void {
+  const loop = model.elementOf(nodeId).get("loopCharacteristics") as ModdleElement;
+  if (loop.$type !== "bpmn:MultiInstanceLoopCharacteristics") {
+    throw new Error(`节点 ${nodeId} 的循环形态不支持转换`);
   }
-  model.addUserTask(spec);
-  model.addSequenceFlow({
-    id: nextFreeId(model, "flow_conv_in_"),
-    sourceRef: prevId,
-    targetRef: nodeId,
-  });
-  model.addSequenceFlow({
-    id: nextFreeId(model, "flow_conv_out_"),
-    sourceRef: nodeId,
-    targetRef: nextId,
-  });
+  const assertProperties = (element: ModdleElement, allowed: string[]): void => {
+    const attrs = (element as ModdleElement & { $attrs?: Record<string, unknown> }).$attrs;
+    if (
+      Object.keys(attrs ?? {}).length > 0 ||
+      Object.keys(element).some(
+        (key) => !["$type", ...allowed].includes(key) && element.get(key) !== undefined,
+      )
+    ) {
+      throw new Error(`节点 ${nodeId} 含不支持转换的循环属性，请先核对原 BPMN 配置`);
+    }
+  };
+  assertProperties(loop, [
+    "id",
+    "isSequential",
+    "collection",
+    "elementVariable",
+    "completionCondition",
+  ]);
+  const condition = loop.get("completionCondition") as ModdleElement | undefined;
+  if (condition !== undefined) {
+    if (condition.$type !== "bpmn:FormalExpression") {
+      throw new Error(`节点 ${nodeId} 含不支持转换的完成条件`);
+    }
+    assertProperties(condition, ["id", "body"]);
+  }
+  readApprovalMulti(model, nodeId);
 }
 
 /**
