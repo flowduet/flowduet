@@ -28,30 +28,30 @@
 **Files:** packages/designer/src/operations.ts；packages/designer/src/branch-preservation.test.ts；packages/designer/src/approval-preservation.test.ts。
 **Interfaces:** 保留 convertApprovalToMulti/convertMultiToSingle 调用签名；新增私有 loop 支持形态检查。
 
-- [ ] 迁入 8 个基线合同，修正相对 import；运行 `pnpm --filter @flowduet/designer test src/branch-preservation.test.ts`，Expected: 7 failed / 1 passed。
-- [ ] 添加引用、DI、三种 mode、未知字段、非法 loop/输入拒绝无变更测试，先观察相关失败。
-- [ ] 原位设置/删除 loop、更新/清空 assignee，保留其余任务及连接；所有守卫先执行。
-- [ ] 运行转换相关测试及 designer 既有测试，Expected: 转换新增用例通过，仅保留未处理的 3 个删除失败。
-- [ ] 提交 `fix(designer): 原位转换审批形态并保留连线身份`。
+- [x] 迁入 8 个基线合同，修正相对 import；运行 `pnpm --filter @flowduet/designer test src/branch-preservation.test.ts`，Expected: 7 failed / 1 passed。
+- [x] 添加引用、DI、三种 mode、未知字段、非法 loop/输入拒绝无变更测试，先观察相关失败。
+- [x] 原位设置/删除 loop、更新/清空 assignee，保留其余任务及连接；所有守卫先执行。
+- [x] 运行转换相关测试及 designer 既有测试，Expected: 转换新增用例通过，仅保留未处理的 3 个删除失败。
+- [x] 提交 `fix(designer): 原位转换审批形态并保留连线身份`。
 
 ### Task 2: 安全重接与结构删除
 
 **Files:** packages/core/src/model/bpmn-model.ts；packages/core/src/model/structure-editing.test.ts；packages/designer/src/operations.ts；结构回归测试。
 **Interfaces:** 产出 BpmnModel.retargetSequenceFlow(flowId: string, targetId: string): this；designer 消费该接口。
 
-- [ ] 添加重接引用/顺序/default/DI、同目标无操作、非法引用拒绝测试，Expected: 新方法不存在而失败；删除 DI 残留断言失败。
-- [ ] core 实现窄重接接口及私有 DI 清理 helper；既有删除方法接入清理。
-- [ ] designer 删除前预计算并校验完整集合，保留入边再删除；补嵌套条件/default、并行、尾节点、整个默认支路删除测试。
-- [ ] 运行 core/designer 测试，Expected: 七项原始失败全部转绿，边界通过。
-- [ ] 提交 `fix(core): 安全重接支路并清理失效几何`。
+- [x] 添加重接引用/顺序/default/DI、同目标无操作、非法引用拒绝测试，Expected: 新方法不存在而失败；删除 DI 残留断言失败。
+- [x] core 实现窄重接接口及私有 DI 清理 helper；既有删除方法接入清理。
+- [x] designer 删除前预计算并校验完整集合，保留入边再删除；补嵌套条件/default、并行、尾节点、整个默认支路删除测试。
+- [x] 运行 core/designer 测试，Expected: 七项原始失败全部转绿，边界通过。
+- [x] 提交 `fix(core): 安全重接支路并清理失效几何`。
 
 ### Task 3: 编译恢复与集成验证
 
 **Files:** packages/core/src/compile/compiler.ts；core compiler 回归；packages/form-create/src/document.test.ts；docs/design/reviews/2026-10-14-branch-structure-repair-results.md；.changeset/。
 **Interfaces:** compile 签名和默认布局不变；消费任务 2 的坐标失效行为。
 
-- [ ] 添加 Identity/序列化失败恢复原 DI 测试，Expected: 现有先清图行为导致失败。
-- [ ] 实现限定 DI 容器恢复；补缺失/混合 DI、显式竖排导出、顺序/表单绑定保存恢复测试。
-- [ ] 运行 `pnpm test`、`pnpm build`、`pnpm lint`，Expected: 全部通过；既有告警如实记录。
-- [ ] 在真实 Playground 验证带 DI 导入、单↔多转换、删除、双视图切换、保存重开；记录实际证据及限制。
-- [ ] 提交编译恢复、changeset 与验收证据；按 executing-plans 做一次全分支独立复核，处理重要问题后重跑相关及完整测试。
+- [x] 添加 Identity/序列化失败恢复原 DI 测试，Expected: 现有先清图行为导致失败。
+- [x] 实现限定 DI 容器恢复；补缺失/混合 DI、显式竖排导出、顺序/表单绑定保存恢复测试。
+- [x] 运行 `pnpm test`、`pnpm build`、`pnpm lint`，Expected: 全部通过；既有告警如实记录。实际：默认 pnpm test 保留基线 5 秒超时；CLI --testTimeout 20000 全套 482/482，build/lint 通过，详见结果报告。
+- [x] 在真实 Playground 验证带 DI 导入、单↔多转换、删除、双视图切换、保存重开；记录实际证据及限制。
+- [x] 提交编译恢复、changeset 与验收证据；按 executing-plans 做一次全分支独立复核，处理重要问题后重跑相关及完整测试。

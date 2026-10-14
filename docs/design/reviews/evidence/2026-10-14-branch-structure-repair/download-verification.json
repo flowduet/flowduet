@@ -1,0 +1,21 @@
+{
+  "inputSha256": "dc52a766bce3e103c153e85d6941d02f52ea347ff32625467137b3c69a2a60a2",
+  "downloadedSha256": "f6941bca8f1e763d69090deb4f0c93bb9a932a3e9ddd651f71a8cbe22646cfad",
+  "assertionsPassed": true,
+  "branchHead": {
+    "id": "fa",
+    "target": "tail",
+    "default": true
+  },
+  "outgoingOrder": [
+    "fa",
+    "fb"
+  ],
+  "siblingCondition": "${amount > 100}",
+  "tailY": {
+    "before": 396,
+    "after": 256
+  },
+  "browser": "Playwright CLI Chromium; real file chooser and download; native Playground",
+  "console": "Only favicon.ico 404; no application exception observed"
+}

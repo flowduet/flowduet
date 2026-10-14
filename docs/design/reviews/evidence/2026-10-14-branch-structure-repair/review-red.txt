@@ -1,0 +1,41 @@
+
+> @flowduet/core@0.3.0 test /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/core
+> vitest run src/model/structure-editing.test.ts -t renamed-flow
+
+
+ RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/core
+
+ ❯ src/model/structure-editing.test.ts (13 tests | 1 failed | 12 skipped) 21ms
+   ❯ 模型安全重接 (13)
+     × renamed-flow 拒绝且不写入 20ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/model/structure-editing.test.ts > 模型安全重接 > renamed-flow 拒绝且不写入
+AssertionError: expected [Function] to throw an error
+
+- Expected:
+null
+
++ Received:
+undefined
+
+ ❯ src/model/structure-editing.test.ts:125:9
+    123|       expect(() =>
+    124|         current.retargetSequenceFlow(bad === "missing-flow" ? "none" :…
+    125|       ).toThrow(/连线|端点|引用|流节点|自环/);
+       |         ^
+    126|       expect(await current.toXML()).toEqual(before);
+    127|       expect(flow.get("targetRef")).toBe(oldTarget);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 12 skipped (13)
+   Start at  22:25:01
+   Duration  399ms (transform 67%, import 19%, tests 11%, worker 2%)
+
+/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/core:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @flowduet/core@0.3.0 test: `vitest run src/model/structure-editing.test.ts -t renamed-flow`
+Exit status 1
