@@ -1,0 +1,17 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": "../../../..",
+    "paths": {
+      "@flowduet/core": ["packages/core/src/index.ts"],
+      "@flowduet/designer": ["packages/designer/src/index.ts"],
+      "@flowduet/form-create": ["packages/form-create/src/index.ts"]
+    }
+  },
+  "include": [
+    "./**/*.ts",
+    "./**/*.vue",
+    "../../src/vite-env.d.ts",
+    "../../../../packages/core/src/types/*.d.ts"
+  ]
+}
