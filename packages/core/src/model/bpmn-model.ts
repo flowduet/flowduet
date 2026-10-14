@@ -555,15 +555,17 @@ export class BpmnModel {
       throw new Error(`连线 ${flowId} 的端点必须是当前模型登记的流节点`);
     }
     if (source === target) throw new Error(`连线 ${flowId} 不支持重接为自环`);
-    const outgoing = (source.get("outgoing") as ModdleElement[]) ?? [];
-    const incoming = (oldTarget.get("incoming") as ModdleElement[]) ?? [];
-    const targetIncoming = (target.get("incoming") as ModdleElement[]) ?? [];
-    if (
-      elements.filter((el) => el === flow).length !== 1 ||
-      outgoing.filter((el) => el === flow).length !== 1 ||
-      incoming.filter((el) => el === flow).length !== 1 ||
-      (target !== oldTarget && targetIncoming.includes(flow))
-    ) {
+    // 当前连线只能出现在源的 outgoing 和旧目标的 incoming。错误方向也要拒绝，
+    // 否则重接后同一节点可能在两个数组登记它，后续级联删除会重复删边并部分失败。
+    const referencesConsistent = [...new Set([source, oldTarget, target])].every((node) => {
+      const incoming = (node.get("incoming") as ModdleElement[]) ?? [];
+      const outgoing = (node.get("outgoing") as ModdleElement[]) ?? [];
+      return (
+        incoming.filter((el) => el === flow).length === (node === oldTarget ? 1 : 0) &&
+        outgoing.filter((el) => el === flow).length === (node === source ? 1 : 0)
+      );
+    });
+    if (elements.filter((el) => el === flow).length !== 1 || !referencesConsistent) {
       throw new Error(`连线 ${flowId} 的双向引用与登记不一致`);
     }
     if (target === oldTarget) return this;

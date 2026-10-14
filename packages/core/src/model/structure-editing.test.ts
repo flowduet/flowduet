@@ -163,3 +163,55 @@ describe("模型安全重接", () => {
     expect(() => m.waypointsOf("fa")).toThrow();
   });
 });
+
+describe("重接前拒绝端点的错误方向引用", () => {
+  for (const [nodeId, direction] of [
+    ["fork", "incoming"],
+    ["a", "outgoing"],
+    ["end", "outgoing"],
+    ["end", "incoming"],
+  ] as const) {
+    for (const targetId of nodeId === "end" ? ["end"] : ["end", "a"]) {
+      it(`${nodeId}.${direction} 错误登记 fa 时拒绝重接到 ${targetId} 且不写入`, async () => {
+        const m = model();
+        await compile(m);
+        const edge = m.elementOf("fa");
+        const node = m.elementOf(nodeId);
+        node.set(direction, [...((node.get(direction) as ModdleElement[]) ?? []), edge]);
+        const snapshots = ["fork", "a", "end"].flatMap((id) =>
+          ["incoming", "outgoing"].map((prop) => {
+            const owner = m.elementOf(id);
+            const array = owner.get(prop) as ModdleElement[];
+            return { owner, prop, array, contents: [...array] };
+          }),
+        );
+        const before = await m.toXML();
+        const diagrams = m.definitions.get("diagrams");
+        const route = m.waypointsOf("fa");
+        const shape = m.shapeOf("a");
+        expect(() => m.retargetSequenceFlow("fa", targetId)).toThrow(/引用/);
+        expect(edge.get("sourceRef")).toBe(m.elementOf("fork"));
+        expect(edge.get("targetRef")).toBe(m.elementOf("a"));
+        expect(m.elementOf("fork").get("default")).toBe(edge);
+        for (const { owner, prop, array, contents } of snapshots) {
+          expect(owner.get(prop)).toBe(array);
+          expect(array).toEqual(contents);
+        }
+        expect(m.definitions.get("diagrams")).toBe(diagrams);
+        expect(m.waypointsOf("fa")).toBe(route);
+        expect(m.shapeOf("a")).toBe(shape);
+        expect(await m.toXML()).toEqual(before);
+      });
+    }
+  }
+
+  it("合法旧自环重接到其他节点，不把双向引用误判为错误方向", () => {
+    const m = model();
+    m.addSequenceFlow({ id: "self", sourceRef: "b", targetRef: "b" });
+    const edge = m.elementOf("self");
+    m.retargetSequenceFlow("self", "end");
+    expect(m.elementOf("b").get("incoming")).not.toContain(edge);
+    expect(m.elementOf("b").get("outgoing")).toEqual([edge]);
+    expect(m.elementOf("end").get("incoming")).toContain(edge);
+  });
+});
