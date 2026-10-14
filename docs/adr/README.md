@@ -14,5 +14,6 @@
 | [0007](0007-delivery-and-naming.md) | 交付形态、工程约定与命名（FlowDuet / Apache-2.0） | Accepted | 2026-09-14 |
 | [0008](0008-logo-visual-identity.md) | 视觉标识（LOGO）：一树两冠 | Accepted | 2026-09-20 |
 | [0009](0009-design-document-and-form-binding.md) | 流程设计文档、默认表单与节点覆盖 | Proposed | 2026-09-24 |
+| [0010](0010-integrated-designer-delivery.md) | 完整设计界面与独立组件并行交付 | Accepted（交付边界与分包方向） | 2026-10-14 |
 
 来源：2026-09-14 的选型 grilling 会话（11 项决策全部收敛，无遗留分歧）。
