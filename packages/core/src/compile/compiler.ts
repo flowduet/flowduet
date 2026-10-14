@@ -29,9 +29,18 @@ function stripDi(model: BpmnModel): void {
  * 幂等：对同一模型或解析恢复的模型重复编译，产出完全一致。
  */
 export async function compile(model: BpmnModel, options: CompileOptions = {}): Promise<string> {
-  stripDi(model);
-  const diLayout = options.diLayout ?? new IdentityDiLayout();
-  diLayout.attach(model);
-  const { xml } = await model.toXML({ format: true });
-  return xml;
+  // 内置布局或序列化拒绝时恢复调用前的图容器；不回滚第三方布局的语义修改。
+  const diagrams = model.definitions.get("diagrams");
+  const roots = model.definitions.get("rootElements");
+  try {
+    stripDi(model);
+    const diLayout = options.diLayout ?? new IdentityDiLayout();
+    diLayout.attach(model);
+    const { xml } = await model.toXML({ format: true });
+    return xml;
+  } catch (error) {
+    model.definitions.set("diagrams", diagrams);
+    model.definitions.set("rootElements", roots);
+    throw error;
+  }
 }
