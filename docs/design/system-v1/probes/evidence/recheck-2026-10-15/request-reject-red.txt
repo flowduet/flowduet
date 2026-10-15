@@ -1,0 +1,66 @@
+
+ RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground
+
+stderr | probes/stage-zero/location.test.ts > 真实视图定位确认 > 异步定位请求失败不假报选中，保留当前模型与输入
+[Vue Flow]: The Vue Flow parent container needs a width and a height to render the graph
+[Vue Flow]: It seems that you haven't loaded the necessary styles. Please import '@vue-flow/core/dist/style.css' to ensure that the graph is rendered correctly
+
+stderr | probes/stage-zero/location.test.ts > 真实视图定位确认 > 异步定位请求失败不假报选中，保留当前模型与输入
+[Vue warn]: Unhandled error during execution of native event handler
+  at <LocationProbe beforeLocate=fn<beforeLocate> ref="VTU_COMPONENT" >
+  at <VTUROOT>
+
+ ❯ probes/stage-zero/location.test.ts (9 tests | 1 failed | 8 skipped) 826ms
+   ❯ 真实视图定位确认 (9)
+     × 异步定位请求失败不假报选中，保留当前模型与输入 825ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  probes/stage-zero/location.test.ts > 真实视图定位确认 > 异步定位请求失败不假报选中，保留当前模型与输入
+AssertionError: expected '就绪：使用内部DOM桥接，并核对实际抽屉；不是公开定位API。' to contain '失败'
+
+Expected: "失败"
+Received: "就绪：使用内部DOM桥接，并核对实际抽屉；不是公开定位API。"
+
+ ❯ probes/stage-zero/location.test.ts:114:67
+    112|     await setup({ beforeLocate: async () => { throw new Error("请求取消");…
+    113|     await click("定位采购审批");
+    114|     expect(wrapper!.find('[data-test="location-result"]').text()).toCo…
+       |                                                                   ^
+    115|     expect(wrapper!.findComponent(NodeDrawer).props("modelValue")).toB…
+    116|     expect(wrapper!.find('[data-test="location-state"]').text()).toCon…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+⎯⎯⎯⎯⎯⎯ Unhandled Errors ⎯⎯⎯⎯⎯⎯
+
+Vitest caught 1 unhandled error during the test run.
+This might cause false positive tests. Resolve unhandled errors to make sure your tests are not affected.
+
+⎯⎯⎯⎯ Unhandled Rejection ⎯⎯⎯⎯⎯
+Error: 请求取消
+ ❯ Proxy.beforeLocate probes/stage-zero/location.test.ts:112:53
+    110|   });
+    111|   it("异步定位请求失败不假报选中，保留当前模型与输入", async () => {
+    112|     await setup({ beforeLocate: async () => { throw new Error("请求取消");…
+       |                                                     ^
+    113|     await click("定位采购审批");
+    114|     expect(wrapper!.find('[data-test="location-result"]').text()).toCo…
+ ❯ Proxy.locate probes/stage-zero/LocationProbe.vue:158:17
+
+This error originated in "probes/stage-zero/location.test.ts" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+The last test to run before this error was "异步定位请求失败不假报选中，保留当前模型与输入". This means either:
+- the error was thrown while Vitest was running this test, or
+- the error was thrown after the test completed, and this was the most recent test at that point.
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 8 skipped (9)
+     Errors  1 error
+   Start at  00:23:09
+   Duration  4.59s (import 50%, transform 21%, tests 19%, environment 11%)
+
+undefined
+/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run probes/stage-zero/location.test.ts -t 异步定位请求失败

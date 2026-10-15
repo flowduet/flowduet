@@ -1,488 +1,116 @@
 <script setup lang="ts">
-import { computed, ref, watch } from "vue";
-import { ElButton, ElDrawer, ElForm, ElFormItem, ElInput } from "element-plus";
-import type { ApprovalDraftOptions, ApprovalMode, BpmnModel, ModdleElement } from "@flowduet/core";
-import { labelFormOptions, type DesignerFormOption } from "../form-options.js";
+import { computed, ref, toRaw, watch } from "vue";
+import { ElButton, ElDrawer } from "element-plus";
+import type { ApprovalDraftOptions, BpmnModel } from "@flowduet/core";
+import type { DesignerFormOption } from "../form-options.js";
 import {
-  CC_RECIPIENTS_PLACEHOLDER,
-  convertApprovalToMulti,
-  convertMultiToSingle,
-  readApprovalMulti,
-  setApprovalMode,
-  setBranchCondition,
-} from "../operations.js";
-
-/**
- * 节点配置抽屉（#23 最小集 + #25 字段面）。读写直接落模型——表单只是
- * 字段缓冲，保存即写回，无独立状态可失同步。
- *
- * 形态自适应：审批任务（单签/多人三档 + 表单）、抄送任务（收件人）、
- * 分支头连线（条件表达式）。单人↔多人经 operations 的同 id 转换（保连通）。
- *
- * 表单字段双形态（#73）：传入 formOptions（表单集成模式）时，formKey 由
- * 自由文本占位升级为目录选择——继承默认 / 显式覆盖 / 失效 key 只读项保留；
- * 不传时保持自由文本（纯流程宿主的手写 formKey 合同，A17）。
- */
+  readPropertyDraft,
+  applyPropertyDraft,
+  type FlowPropertyDraft,
+} from "../property-editing.js";
+import NodePropertyFields from "./NodePropertyFields.vue";
 const props = defineProps<{
   model: BpmnModel;
-  /** exactOptional 下显式传 undefined 是合法形态（未选中节点时） */
   nodeId?: string | undefined;
-  /** 中立表单目录摘要（#73）：传入即启用表单集成模式的覆盖选择；
-   *  exactOptional 下显式传 undefined 是合法形态（纯流程宿主） */
   formOptions?: readonly DesignerFormOption[] | undefined;
 }>();
-
-const emit = defineEmits<{
-  saved: [];
-  /** 守卫抛错的可读消息：由宿主接入内联提示通道，不冒泡炸视图 */
-  error: [message: string];
-  /** 字段缓冲被编辑（#76）：未提交输入也属于「未保存内容」，宿主据此提示替换影响 */
-  draftModified: [];
-}>();
-
+const emit = defineEmits<{ saved: []; error: [message: string]; draftModified: [] }>();
 const visible = defineModel<boolean>({ default: false });
-
-const name = ref("");
-const assignee = ref("");
-const formKey = ref("");
-const condition = ref("");
-const recipients = ref("");
-/** 完成方式：single = 单签（单实例）；三档 = 多实例（审批人字段变集合变量） */
-const approvalKind = ref<"single" | ApprovalMode>("single");
-/**
- * 逐实例元素变量名缓冲（评审 W-1）：readApprovalMulti 返回后回填，
- * save 时透传给 convertApprovalToMulti / setApprovalMode。不透传会让
- * setApprovalMode 回落 DEFAULT_ELEMENT_VARIABLE，静默改写 assignee 表达式，
- * 流程内引用原变量名的表单/监听器/后续节点全部失效。
- */
-const elementVariable = ref<string | undefined>(undefined);
-/**
- * 单↔多切换时暂存的旧审批人值（评审 S-3）：同一抽屉会话内误点后切回不丢字段。
- * 只存在内存 ref，不持久化到模型；抽屉关闭重开后以模型当前形态为准。
- */
-const lastSingleAssignee = ref<string | undefined>(undefined);
-const lastCollection = ref<string | undefined>(undefined);
-
-/**
- * 取当前抽屉指向的模型元素；节点已被宿主删除时返回 undefined。
- * isTask / 回填 watch / save 三处共享这一防御口径，避免渲染期抛未捕获异常。
- */
-function currentNode(): ModdleElement | undefined {
-  if (props.nodeId === undefined) return undefined;
-  try {
-    return props.model.elementOf(props.nodeId);
-  } catch {
-    return undefined;
-  }
-}
-
-const isTask = computed(() => currentNode()?.$type === "bpmn:UserTask");
-const isCcTask = computed(() => {
-  const el = currentNode();
-  return el?.$type === "bpmn:ServiceTask" && el.get("ccTo") !== undefined;
-});
-
-// ── 表单覆盖选择（#73，仅表单集成模式）：继承 / 覆盖 / 失效保留 ──
-
-/** 同名不同 ID 的表单附 ID 呈现（A05），让选择界面可区分 */
-const labelledFormOptions = computed(() => {
-  return labelFormOptions(props.formOptions ?? []);
-});
-
-/** 继承选项文案：把「继承到什么」直接摆进选项（无默认时如实说明） */
-const inheritFormLabel = computed(() => {
-  const key = props.model.defaultFormKey;
-  if (key === undefined) return "继承默认（当前未设默认表单）";
-  const label = labelledFormOptions.value.find((option) => option.id === key)?.label;
-  return label === undefined ? `继承默认（${key}）` : `继承默认（${label}）`;
-});
-
-/** 当前 key 指向目录外定义（或含首尾空格）：保留原值的只读项供修复（A11） */
-const overrideKeyInvalid = computed(() => {
-  const options = props.formOptions;
-  if (options === undefined) return false;
-  const key = formKey.value;
-  // 只排除真正的空值（继承态）；全空白 key 属于失效引用，同样进只读项呈现
-  if (key === "") return false;
-  return key !== key.trim() || !options.some((option) => option.id === key);
-});
-
-// ── 条件分支抽屉（#24）：点支路头连线时呈现条件表达式字段 ──
-const isBranchHead = computed(() => {
-  const el = currentNode();
-  if (el?.$type !== "bpmn:SequenceFlow") return false;
-  return (el.get("sourceRef") as ModdleElement).$type === "bpmn:ExclusiveGateway";
-});
-
-// hint 统一 4 字：~73px 卡宽下杜绝孤字断行（#43）
-const KIND_OPTIONS: { key: "single" | ApprovalMode; label: string; hint: string }[] = [
-  { key: "single", label: "单签", hint: "一人审批" },
-  { key: "all", label: "会签", hint: "全员同意" },
-  { key: "any", label: "或签", hint: "任一同意" },
-  { key: "sequential", label: "依次", hint: "顺序逐人" },
-];
-
-/**
- * 集合变量应是裸标识符（运行时注入名单，如 approvers，可带点路径）。
- * ${...} 表达式或逗号名单是单签语义的值，切多人时若沿用会被当集合名落盘，
- * 运行时 collection 求值不到 Collection 直接抛错（#25 评审 S1）。
- * ASCII-only 是有意的 UX 收口：JUEL/Java 理论上支持 Unicode 标识符，但只读画布 /
- * 宿主表单引用一致性上 ASCII 更安全；错误文案需与限制一致（评审 S-4）。
- */
-function isCollectionVariable(value: string): boolean {
-  return /^[A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*)*$/.test(value);
-}
-
-/**
- * 用户点完成方式卡片：单↔多切换时暂存旧审批人缓冲并尝试恢复同侧旧值（评审 S-3）。
- * 字段语义在「字面 assignee」与「集合变量名」之间翻转——不暂存/清空会让旧语义
- * 值被当新语义落盘（多→单把集合名当字面 assignee，单→多把 ${manager} 当集合名）。
- * 只在用户交互时触发，不走 watch，避免打开抽屉回填多实例时被误清（#25 评审 C1/S1）。
- */
-function selectKind(kind: "single" | ApprovalMode): void {
-  emit("draftModified");
-  const prev = approvalKind.value;
-  if (prev === kind) return;
-  approvalKind.value = kind;
-  const crossedBoundary = (prev === "single") !== (kind === "single");
-  if (!crossedBoundary) return;
-  // 暂存旧侧值：单→多 暂存 assignee；多→单 暂存 collection（同一字段不同语义）
-  if (prev === "single") {
-    lastSingleAssignee.value = assignee.value;
-  } else {
-    lastCollection.value = assignee.value;
-  }
-  // 切到新侧：若同会话内曾暂存过该侧的值则恢复，否则置空（避免旧语义污染）
-  assignee.value = (kind === "single" ? lastSingleAssignee.value : lastCollection.value) ?? "";
-}
-
+const model = computed(() => toRaw(props.model));
+const draft = ref<FlowPropertyDraft>();
+const fieldsRef = ref<InstanceType<typeof NodePropertyFields>>();
 watch(
-  () => [props.nodeId, visible.value] as const,
+  () => [props.nodeId, visible.value, props.model] as const,
   () => {
-    if (!visible.value) return;
-    const el = currentNode();
-    if (el === undefined) return;
-    name.value = String(el.get("name") ?? "");
-    assignee.value = String(el.get("assignee") ?? "");
-    formKey.value = String(el.get("formKey") ?? "");
-    recipients.value = String(el.get("ccTo") ?? "");
-    condition.value =
-      (el.get("conditionExpression") as ModdleElement | undefined)?.get("body") !== undefined
-        ? String((el.get("conditionExpression") as ModdleElement).get("body"))
-        : "";
-    const multi = readMultiSafe();
-    approvalKind.value = multi === null ? "single" : multi.mode;
-    // 重新打开抽屉 = 新会话，上一次暂存的单↔多旧值作废，避免跨会话污染
-    lastSingleAssignee.value = undefined;
-    lastCollection.value = undefined;
-    if (multi !== null) {
-      // 集合变量回填到审批人字段（多人形态下该字段即集合名）；
-      // 元素变量名同步回填，保存时透传避免静默重置（评审 W-1）
-      assignee.value = multi.collection;
-      elementVariable.value = multi.elementVariable;
-    } else {
-      elementVariable.value = undefined;
+    if (!visible.value || props.nodeId === undefined) return;
+    try {
+      draft.value = readPropertyDraft(model.value, props.nodeId);
+    } catch (error) {
+      emit("error", error instanceof Error ? error.message : String(error));
+      // 保留旧抽屉的可见回填；提交仍由共享规则再次识别真实多实例，拒绝未知配置。
+      try {
+        const el = model.value.elementOf(props.nodeId);
+        draft.value =
+          el.$type === "bpmn:UserTask"
+            ? {
+                kind: "approval",
+                name: String(el.get("name") ?? ""),
+                approvalKind: "single",
+                assignee: String(el.get("assignee") ?? ""),
+                formKey: String(el.get("formKey") ?? ""),
+              }
+            : undefined;
+      } catch {
+        draft.value = undefined;
+      }
     }
   },
+  { immediate: true },
 );
-
-/**
- * 回填期安全读取多实例形态：非内核固化完成条件（多见于外部导入 XML）时
- * readApprovalMulti 会抛错，此处捕获转 error emit，不猜语义。save() 会再次读取并
- * 同样抛错拦截，避免把多人节点静默转成单人（#25 评审 W2）。
- */
-function readMultiSafe(): ReturnType<typeof readApprovalMulti> {
-  if (props.nodeId === undefined) return null;
-  try {
-    return readApprovalMulti(props.model, props.nodeId);
-  } catch (e) {
-    emit("error", e instanceof Error ? e.message : String(e));
-    return null;
-  }
+function update(value: FlowPropertyDraft) {
+  draft.value = value;
+  emit("draftModified");
 }
-
-/**
- * 提交抽屉当前输入（#76 保存收集边界）：复用「确定」按钮的写模型路径，显式草稿选项仅容许业务缺失，
- * 供宿主在保存设计文档前收集未提交的抽屉输入，不遗漏当前设计变更。
- * 抽屉未打开时无未提交内容，直接视为成功；守卫拦截返回 false，输入保留待修正。
- */
+/** 显式草稿选项仍由调用方提供，默认确定不放宽；容器切换不改业务校验。 */
 function commit(options: ApprovalDraftOptions = {}): boolean {
-  if (!visible.value) return true;
-  if (props.nodeId === undefined) return true;
-  const el = currentNode();
-  if (el === undefined) {
-    // 抽屉打开期间宿主可能已删除该节点——不在此抛未捕获异常
+  if (!visible.value || props.nodeId === undefined) return true;
+  try {
+    model.value.elementOf(props.nodeId);
+  } catch {
     visible.value = false;
     return true;
   }
-
-  const trimmedName = name.value.trim();
-
-  // ── 分支条件抽屉（#24）：只有 name + condition，条件写回可能因守卫抛错 ──
-  if (isBranchHead.value) {
-    try {
-      setBranchCondition(props.model, props.nodeId, condition.value);
-    } catch (e) {
-      emit("error", e instanceof Error ? e.message : String(e));
-      return false;
-    }
-    // 条件写成功后才写 name，避免半写模型（#25 评审 C2）
-    el.set("name", trimmedName === "" ? undefined : trimmedName);
-    visible.value = false;
-    emit("saved");
-    return true;
+  fieldsRef.value?.flush();
+  const captured = fieldsRef.value?.capture();
+  if (captured === null) {
+    emit("error", "输入法尚未完成本次输入，请完成后重试");
+    return false;
   }
-
-  const trimmedAssignee = assignee.value.trim();
-  // 表单双形态的取值口径：集成模式（select）产出目录 id 或原 key 原值——
-  // 带空格的失效 key 原样保留（AC5：不自动清除/修正），trim 只属于
-  // 纯流程模式的自由文本合同（手写值去空白）。
-  const formKeyValue = props.formOptions !== undefined ? formKey.value : formKey.value.trim();
-  const trimmedRecipients = recipients.value.trim();
-
-  // ── 前置校验（一律不写模型）：任一条不过即 emit error 返回，模型零变更 ──
-  if (isTask.value && approvalKind.value !== "single") {
-    if (trimmedAssignee === "" && options.allowIncomplete !== true) {
-      emit("error", "多人审批需要填写审批人集合变量名（运行时注入名单）");
-      return false;
-    }
-    if (trimmedAssignee !== "" && !isCollectionVariable(trimmedAssignee)) {
-      // 文案与限制对齐（评审 S-4）：明确 ASCII-only，避免用户误以为字段不接受任何名单
-      emit(
-        "error",
-        "审批人集合变量名仅支持英文字母/数字/下划线（如 approvers 或 dept.approvers），不接受 ${...} 表达式或逗号名单",
-      );
-      return false;
-    }
-  } else if (isCcTask.value) {
-    // 普通确定仍拒绝空白与占位串；显式草稿收集容许缺失，由部署校验拦截。
-    if (
-      options.allowIncomplete !== true &&
-      (trimmedRecipients === "" || trimmedRecipients === CC_RECIPIENTS_PLACEHOLDER)
-    ) {
-      emit("error", "抄送收件人不能为空白或占位文本（字面量逗号分隔或表达式）");
-      return false;
-    }
-  }
-
-  // ── 校验通过后才写模型 ──
-  if (isTask.value) {
-    // 完成方式分流：single 走单实例；三档走多实例（单人→转换，档间→直改）。
-    // 结构性转换已 fail-fast 校验，抛错时 name 尚未写、模型未被破坏（#25 评审 C2/W3）。
-    // elementVariable 透传（评审 W-1）：不透传则 setApprovalMode 会回落 DEFAULT_ELEMENT_VARIABLE
-    // 静默改写 loop.elementVariable 与 assignee 表达式，流程内引用旧变量名的地方全失效。
-    const multiSpec = {
-      collection: trimmedAssignee,
-      mode: approvalKind.value as ApprovalMode,
-      ...(elementVariable.value !== undefined ? { elementVariable: elementVariable.value } : {}),
-    };
-    try {
-      if (approvalKind.value === "single") {
-        if (readApprovalMulti(props.model, props.nodeId) !== null) {
-          convertMultiToSingle(props.model, props.nodeId);
-        }
-      } else {
-        const multi = readApprovalMulti(props.model, props.nodeId);
-        if (multi === null) {
-          convertApprovalToMulti(props.model, props.nodeId, multiSpec, options);
-        } else {
-          setApprovalMode(props.model, props.nodeId, multiSpec, options);
-        }
-      }
-    } catch (e) {
-      emit("error", e instanceof Error ? e.message : String(e));
-      return false;
-    }
-    // 形态转换原位保留任务；成功后再写名称与其余字段，失败时保留原配置。
-    const current = currentNode();
-    if (current !== undefined) {
-      current.set("name", trimmedName === "" ? undefined : trimmedName);
-      if (approvalKind.value === "single") {
-        current.set("assignee", trimmedAssignee === "" ? undefined : trimmedAssignee);
-      }
-      // 单/多两形态同口径：formKey 清空保存同样落盘（不残留旧值）；
-      // 集成模式下带空格 key 以原值落盘（select 原样保留，trim 由改选完成）
-      current.set("formKey", formKeyValue === "" ? undefined : formKeyValue);
-    }
-  } else if (isCcTask.value) {
-    el.set("name", trimmedName === "" ? undefined : trimmedName);
-    el.set("ccTo", trimmedRecipients);
+  if (captured) draft.value = captured;
+  try {
+    if (draft.value)
+      applyPropertyDraft(model.value, props.nodeId, draft.value, {
+        ...options,
+        integratedForms: props.formOptions !== undefined,
+      });
+  } catch (error) {
+    emit("error", error instanceof Error ? error.message : String(error));
+    return false;
   }
   visible.value = false;
   emit("saved");
   return true;
 }
-
 defineExpose({ commit });
 </script>
-
 <template>
   <ElDrawer
     v-model="visible"
-    :title="isBranchHead ? '分支条件' : isCcTask ? '抄送节点' : '审批节点'"
+    :title="draft?.kind === 'branch' ? '分支条件' : draft?.kind === 'cc' ? '抄送节点' : '审批节点'"
     size="360px"
     data-test="node-drawer"
     :modal="false"
   >
-    <ElForm v-if="isTask" label-position="top">
-      <ElFormItem label="节点名称">
-        <ElInput
-          v-model="name"
-          data-test="drawer-name"
-          @input="emit('draftModified')"
-          placeholder="如：经理审批"
-        />
-      </ElFormItem>
-      <ElFormItem :label="approvalKind === 'single' ? '审批人' : '审批人（集合变量）'">
-        <ElInput
-          v-model="assignee"
-          data-test="drawer-assignee"
-          @input="emit('draftModified')"
-          :placeholder="
-            approvalKind === 'single' ? '如 ${manager} 或 张三' : '如 approvers，运行时注入名单'
-          "
-        />
-      </ElFormItem>
-      <ElFormItem label="完成方式">
-        <div class="kind-cards" data-test="kind-cards">
-          <button
-            v-for="option in KIND_OPTIONS"
-            :key="option.key"
-            class="kind-card"
-            :class="{ 'kind-card--on': approvalKind === option.key }"
-            :data-test="`kind-${option.key}`"
-            type="button"
-            @click="selectKind(option.key)"
-          >
-            <span class="kind-card-label">{{ option.label }}</span>
-            <span class="kind-card-hint">{{ option.hint }}</span>
-          </button>
-        </div>
-      </ElFormItem>
-      <!-- 表单双形态（#73）：集成模式 = 目录选择（原生 select，与默认表单条语汇一致，
-           也规避 ElSelect 泛型组件的 vue-tsc 严格模板检查）；纯流程模式 = 自由文本占位 -->
-      <ElFormItem v-if="formOptions" label="表单">
-        <select
-          class="drawer-form-select"
-          data-test="drawer-form-select"
-          :value="formKey"
-          @change="
-            emit('draftModified');
-            formKey = ($event.target as HTMLSelectElement).value;
-          "
-        >
-          <option value="" data-test="drawer-form-inherit">{{ inheritFormLabel }}</option>
-          <option
-            v-for="form in labelledFormOptions"
-            :key="form.id"
-            :value="form.id"
-            :data-test="`drawer-form-option-${form.id}`"
-          >
-            {{ form.label }}
-          </option>
-          <!-- key 不在目录中：追加只读项呈现原值，用户可见并可改选修复 -->
-          <option v-if="overrideKeyInvalid" :value="formKey">{{ formKey }}（目录外）</option>
-        </select>
-      </ElFormItem>
-      <ElFormItem v-else label="表单标识（占位）">
-        <ElInput v-model="formKey" data-test="drawer-formkey" placeholder="如 leave_form_v1" />
-      </ElFormItem>
-    </ElForm>
-    <ElForm v-else-if="isCcTask" label-position="top">
-      <ElFormItem label="节点名称">
-        <ElInput
-          v-model="name"
-          data-test="drawer-name"
-          @input="emit('draftModified')"
-          placeholder="如：抄送知会"
-        />
-      </ElFormItem>
-      <ElFormItem label="收件人">
-        <ElInput
-          v-model="recipients"
-          data-test="drawer-recipients"
-          @input="emit('draftModified')"
-          placeholder="字面量逗号分隔（张三,李四）或表达式（${ccUsers}）"
-        />
-      </ElFormItem>
-    </ElForm>
-    <ElForm v-else-if="isBranchHead" label-position="top">
-      <ElFormItem label="节点名称">
-        <ElInput
-          v-model="name"
-          data-test="drawer-name"
-          @input="emit('draftModified')"
-          placeholder="分支名（如：金额较大）"
-        />
-      </ElFormItem>
-      <ElFormItem label="条件表达式">
-        <ElInput
-          v-model="condition"
-          data-test="drawer-condition"
-          @input="emit('draftModified')"
-          placeholder="如 ${amount > 1000}；留空表示无条件"
-        />
-      </ElFormItem>
-    </ElForm>
+    <NodePropertyFields
+      ref="fieldsRef"
+      v-if="draft"
+      :draft="draft"
+      :form-options="formOptions"
+      :default-form-key="model.defaultFormKey"
+      @update:draft="update"
+      @unserialized-input="emit('draftModified')"
+    />
     <div v-else class="drawer-empty">该元素无可配置字段</div>
-    <template #footer>
-      <ElButton data-test="drawer-cancel" @click="visible = false">取消</ElButton>
-      <ElButton type="primary" data-test="drawer-save" @click="commit()">确定</ElButton>
-    </template>
+    <template #footer
+      ><ElButton data-test="drawer-cancel" @click="visible = false">取消</ElButton
+      ><ElButton type="primary" data-test="drawer-save" @click="commit()">确定</ElButton></template
+    >
   </ElDrawer>
 </template>
-
 <style scoped>
-/* 完成方式三档卡片（视觉定稿：分段选项卡式，选中态靛蓝描边） */
-.kind-cards {
-  display: flex;
-  gap: 6px;
-  width: 100%;
-}
-
-.kind-card {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  padding: 8px 6px;
-  border: 1px solid #dcdfe6;
-  border-radius: 6px;
-  background: #fff;
-  cursor: pointer;
-  text-align: center;
-}
-
-.kind-card--on {
-  border-color: #2d3e97;
-  background: rgba(45, 62, 151, 0.06);
-  outline: 1px solid #2d3e97;
-}
-
-.kind-card-label {
-  font-size: 13px;
-  color: #303133;
-}
-
-.kind-card-hint {
-  font-size: 10px;
-  color: #909399;
-}
-
 .drawer-empty {
   color: #909399;
   font-size: 13px;
   padding: 12px 0;
-}
-
-.drawer-form-select {
-  width: 100%;
-  height: 32px;
-  padding: 0 8px;
-  border: 1px solid #dcdfe6;
-  border-radius: 4px;
-  background: #fff;
-  color: #303133;
-  font-size: 13px;
 }
 </style>

@@ -1,0 +1,6 @@
+### Result
+{"active":["受控改名当前表单","删除并重建当前表单（实验确认）","重建表单（当前）"],"input":"导出失败时保留输入","alert":"Error: 注入的表单2导出失败，验证控制器失败边界","mounted":1}
+### Ran Playwright code
+```js
+await (async (page) => { await page.getByRole("button",{name:"重建表单",exact:true}).click(); await page.getByRole("textbox",{name:"表单名称",exact:true}).fill("导出失败时保留输入"); await page.getByRole("checkbox",{name:"注入表单2收集失败"}).check(); await page.getByRole("button",{name:"表单1",exact:true}).click(); return {active:(await page.getByRole("button").allTextContents()).filter(t=>t.includes("当前")),input:await page.getByRole("textbox",{name:"表单名称",exact:true}).inputValue(),alert:await page.getByRole("alert").textContent(),mounted:await page.locator("[data-test=form-designer]").count()}; })(page);
+```

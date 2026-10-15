@@ -1,0 +1,39 @@
+import { it, expect } from '/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/vitest/dist/index.js';
+import { fixture } from '/private/tmp/flowduet-p2-independent-review/fixed/apps/playground/probes/stage-zero/contracts/fixtures';
+import { createContractController } from '/private/tmp/flowduet-p2-independent-review/fixed/apps/playground/probes/stage-zero/contracts/controller';
+function ready(){const f=fixture();f.model.elementOf('b').set('assignee','carol');return {...f,c:createContractController(f),t:f.target('approval_1')};}
+it('定位捕获失败后恢复可读状态仍需重验',async()=>{
+ const f=ready();expect(await f.c.validate()).toMatchObject({ok:true});expect(f.c.validationCurrent).toBe(true);
+ f.model.elementOf('approval_1').set('extraFlag',1n);
+ expect(await f.c.locate(f.t)).toMatchObject({status:'failed'});
+ f.model.elementOf('approval_1').set('extraFlag',undefined);
+ expect(f.c.validationCurrent).toBe(false);
+});
+it('结构入口捕获失败后恢复可读状态仍需重验',async()=>{
+ const f=ready();expect(await f.c.validate()).toMatchObject({ok:true});
+ f.model.elementOf('approval_1').set('extraFlag',1n);
+ expect(await f.c.executeOperation({model:f.model,renderRevision:f.c.revision,operation:{type:'insert-after',nodeId:'approval_1',kind:'approval'}})).toMatchObject({ok:false});
+ f.model.elementOf('approval_1').set('extraFlag',undefined);
+ expect(f.c.validationCurrent).toBe(false);
+});
+it('kind守卫允许合法未完成审批输入且拒绝跨facet覆盖',async()=>{
+ const f=ready(),draft=f.read(f.t);if(draft.kind!=='approval')throw Error('fixture');
+ const incomplete={...draft,approvalKind:'all' as const,assignee:''};
+ expect(f.c.stage(f.t,incomplete)).toMatchObject({ok:true});
+ expect(await f.c.prepare('draft-save')).toMatchObject({ok:true});
+ const before=f.drafts.input(f.t),rev=f.drafts.revision;
+ expect(f.c.stage(f.t,{kind:'default-form',formKey:'x'})).toMatchObject({ok:false,code:'unsupported'});
+ expect(f.drafts.input(f.t)).toEqual(before);expect(f.drafts.revision).toBe(rev);
+});
+it('还原撤销旧租约且迟到注销不撤销新租约',()=>{
+ const f=ready(),a=f.read(f.t),other=f.target('tail');
+ f.c.openEditor(f.t);f.c.stage(f.t,{...a,name:'放弃'});f.c.stage(other,{...f.read(other),name:'保留'});
+ const old=f.store.registerEditor(f.t,{flush(){},capture:()=>({...a,name:'放弃'})});
+ expect(f.c.restore(f.t)).toMatchObject({ok:true});expect(f.store.editor(f.t)).toBeUndefined();
+ const fresh=f.store.registerEditor(f.t,{flush(){},capture:()=>a});f.store.releaseEditor(old);
+ expect(f.store.editor(f.t)?.lease).toBe(fresh);expect(f.drafts.input(other)).toMatchObject({name:'保留'});
+});
+it('无变化属性还原保持有效校验',async()=>{
+ const f=ready();const a=f.read(f.t);f.store.registerEditor(f.t,{flush(){},capture:()=>a});
+ expect(await f.c.validate()).toMatchObject({ok:true});expect(f.c.restore(f.t)).toMatchObject({ok:true});expect(f.c.validationCurrent).toBe(true);
+});

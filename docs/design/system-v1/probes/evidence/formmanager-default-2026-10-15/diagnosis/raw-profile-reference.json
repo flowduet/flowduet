@@ -1,0 +1,7 @@
+{
+  "path": "/tmp/flowduet-formmanager-diagnosis/profiles/CPU.20261015.143150.28197.0.001.cpuprofile",
+  "bytes": 18067394,
+  "sha256": "1794b2ee6d3d39d062564bcb3b496d514e0414d594a9f90ff888cb702558f13b",
+  "archivedInGit": false,
+  "limit": "Summary and timing traces archived; raw local CPU profile is not a portable repository artifact."
+}

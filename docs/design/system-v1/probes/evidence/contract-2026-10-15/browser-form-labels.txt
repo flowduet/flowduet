@@ -1,0 +1,6 @@
+### Result
+"form_2\n取消\n保存表单内容\n组件\n大纲\n基础组件\n输入框\n多行输入框\n计数器\n单选框\n多选框\n选择器\n日期\n开关\n布局组件\n栅格布局\n预览\n清空\n事项2\n说明\n金额\n级别\n一般\n紧急\n地区\n广州\n深圳\n部门\nSelect\n日期\n加急\n表单配置\n表单名称\nClass\n标签的位置\n左对齐\n右对齐\n顶部\n表单的尺寸\n大\n默认\n小\n标签的后缀\n标签的宽度\npx\n隐藏必填字段的标签旁边的红色星号\n显示校验错误信息\n以行内形式展示校验信息\n是否显示表单提交按钮\n是否显示表单重置按钮"
+### Ran Playwright code
+```js
+await (async (page) => { const form=page.locator("[data-contract-owner=A] [data-form-id=form_2]:visible"); return (await form.innerText()).slice(0,3000); })(page);
+```

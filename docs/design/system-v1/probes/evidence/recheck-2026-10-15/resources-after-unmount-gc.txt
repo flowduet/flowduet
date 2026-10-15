@@ -1,0 +1,6 @@
+### Result
+{"scope":"form editor probe unmounted; host/location page remains","forcedGC":true,"dom":{"documents":1,"nodes":8873,"jsEventListeners":2820},"heap":{"usedSize":49810560,"totalSize":50950144,"embedderHeapUsedSize":6112720,"backingStorageSize":19566491}}
+### Ran Playwright code
+```js
+await (async (page) => { await page.getByRole("button",{name:"Close this dialog",exact:true}).click(); const cdp=await page.context().newCDPSession(page); await cdp.send("HeapProfiler.collectGarbage"); const result={scope:"form editor probe unmounted; host/location page remains",forcedGC:true,dom:await cdp.send("Memory.getDOMCounters"),heap:await cdp.send("Runtime.getHeapUsage")}; await cdp.detach(); return result; })(page);
+```

@@ -1,0 +1,44 @@
+
+ RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground
+
+stderr | probes/stage-zero/contracts/error-boundary.test.ts > locate捕获失败后恢复可读状态仍需重新校验
+[BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+
+stderr | probes/stage-zero/contracts/error-boundary.test.ts > execute捕获失败后恢复可读状态仍需重新校验
+[BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+
+ ❯ probes/stage-zero/contracts/error-boundary.test.ts (13 tests | 2 failed | 11 skipped) 64ms
+   × locate捕获失败后恢复可读状态仍需重新校验 45ms
+   × execute捕获失败后恢复可读状态仍需重新校验 18ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  probes/stage-zero/contracts/error-boundary.test.ts > locate捕获失败后恢复可读状态仍需重新校验
+ FAIL  probes/stage-zero/contracts/error-boundary.test.ts > execute捕获失败后恢复可读状态仍需重新校验
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ probes/stage-zero/contracts/error-boundary.test.ts:125:33
+    123|   })).toMatchObject({ ok: false });
+    124|   f.model.elementOf(f.t.ref.id).set("extraFlag", undefined);
+    125|   expect(f.c.validationCurrent).toBe(false);
+       |                                 ^
+    126|   expect(f.c.dirty).toBe(true);
+    127|   expect(f.model.process.get("flowElements")).toBe(elements);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 11 skipped (13)
+   Start at  14:00:49
+   Duration  3.46s (import 46%, transform 27%, environment 25%, tests 2%)
+
+undefined
+/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run probes/stage-zero/contracts/error-boundary.test.ts -t 恢复可读状态仍需

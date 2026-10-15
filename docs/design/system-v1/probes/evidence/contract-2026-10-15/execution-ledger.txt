@@ -1,0 +1,40 @@
+# SDD ledger — plan: docs/design/plans/2026-10-15-stage-zero-contract-slices.md
+用户已批准A/B及A4，本会话逐片；不推送、不正式工作台。
+Base: 产品02d3474；输入/评审基线e78d56a；当前refactor/stage-zero-editing-contract；复用已附托管工作树。
+Pre-flight: A1→A2 beforeInvalidate/lease，先转存再注销；A2→A3候选冲突阻断；A3→A4共享字段规则后回跑全字段；A4→A5实际选择不冒充生命周期校验；B零错误为最终出口。
+Ruling: 原计划任务B/A1等标题改为数字执行编号，语义不变 — task-start只接受数字；代价为文档编号映射，A01–A15不改。
+Ruling: develop仍02d3474，从e78d56a新建refactor分支保留已批准输入 — 避免重复迁入历史，无生产差异；若误判会污染基线，因此已比对产品路径。
+Baseline: 全包548/548通过；原13处EP类型错误复现。
+Task 1: source complete — 原13 + 正向类型3项RED；局部声明映射修复，非法文本/值Symbol仍拒绝；浏览器真实EP验收留Task6。
+Ruling: 新增ep-select-binding.ts集中精确映射EP描述值类型，运行值仍为原ElSelect/Option — 不降低strict或变依赖；unknown只用于声明不兼容的精确断言，若映射失准会损失类型约束，正负类型用例与运行身份验收兜底。
+Ruling: EP公开Object值类型在TS允许函数结构，负向改用其明确不支持的Symbol — 不擅自缩小第三方合同；代价是函数型输入不由本片额外守卫。
+Task 2: complete — A1五项RED→GREEN，真实模型/session21/21（含原16）通过；epoch/process/foreign引用及迟到租约覆盖。无生产源码变更。
+Task 3: source complete — 八项冲突/删除RED→GREEN；含A1共13/13，严格探针类型退出0。真实编辑器与未知替换的原生证据在Task5/6接入后取证，未提前计为B02通过。
+Ruling: 旧ProbeDesignState保留为历史策略，新合同使用独立入口 — 不改旧负向诊断预期掩盖差异；新入口须在真实组件验收后才可替代旧结论。
+Task 4: source complete — A3八项及控制器两项RED→GREEN；追加删除通知时点失败后修复；累计24/24。严格类型通过；A4后全字段仍需回跑。
+Ruling: 完整自有属性图包含不可枚举default/sourceRef等，排除moddle元数据/父指针 — Object.keys实测漏检共享default，已用失败用例证明；若投影有遗漏则外部变更漏检，最终复核重点。
+Ruling: 属性事务只撤销可见属性/表单集合，提交内以已校验的FlowDesignState.forms一次赋值 — 保持state/原数组引用可回滚，不改session私有字段；不宣称此撤销器能恢复core私有结构登记表。
+Ruling: 结构命令沿用既有守卫、先副本核验，A3原子性专指属性提交 — 不增加通用model回调；任何需要私有登记回滚的失败应报告阻断，不能整体换模型伪恢复。
+Task 5: source complete — 共享字段、旧抽屉兼容、外置命令请求和实际ID聚焦已接入；designer183/183，定位/租约/跨阶段用例通过。实际表单和B05浏览器取证继续Task6。
+Ruling: A4增加modelRevision输入和字段flush/capture接缝 — 同模型引用需要重投影与捕获屏障；默认抽屉不变，公共命名仍待发布审阅。
+Ruling: 新增/替换租约会改变校验覆盖版本，未证明等价时待复核但不算文档编辑 — 防止未捕获的新实例假通过；代价是首次打开未经覆盖编辑器需复验。
+Ruling: 候选构建后发覆盖先发；旧失败不清新校验；WeakMap签发证据在最终消费前再核对 — 防异步交付窗口错标；被替代操作返回cancelled，不丢输入。
+Ruling: dispose为宿主确认离开后的终止动作，立即失效引用/租约/请求 — 不把取消后台结果当成功；正式路由卸载保护仍归宿主集成，不在探针中冒充已验收。
+Ruling: 重启比较材料与原实例保持挂载、只读，所有组件事件同时核对租约 — 不采用单例重挂捷径；资源代价留B04测量。
+Task 6: in progress — 首轮全包620、第二轮621均全绿，build/lint/严格类型通过；布尔props默认夹具问题有RED→GREEN，最终新增1项待总验收。B01/B03/B04未施工。
+Ruling: openEditor在显示字段前绑定clean基线；受控命令仅续基线于无待应用输入的上下文 — 防首次输入把宿主新值当旧编辑基础；未知变化仍显式冲突，代价为保守重确认。
+Ruling: 已解析的待绑定表单引用保存生命期依赖，阻止跨同ID替换自动绑定；原失效文本不伪造旧生命期 — 保留既有引用修复语义，当次候选仍锁定完整读集。
+Ruling: 受控删除检查已应用与未应用引用；确认回调传完整删除集，页面明确提示丢弃该范围输入 — 不隐式应用别的对象以解除引用，调用者需先明确还原/应用绑定。
+Ruling: probe默认配置控件固定过程引用；未知文档替换后禁用旧控件，不猜新目标 — 正式加载/路由需宿主重建或重新绑定，未冒充全宿主集成。
+Task 5/6: 当前候选74项及designer共享字段4项通过，完整验证与原生最终结构/默认入口取证进行中；新增输入协议形状检查不复制业务格式规则。
+Task 6: complete (commits 08ba1ee..10b66f4, tests: pnpm -r test --testTimeout 20000 → apps/playground test: Done)
+
+Final review: independent fresh-context review e78d56a..f2e8f4c — Critical0 Important3 Minor0; independently258 + strict; 3/3 added reproductions fail.
+Final: fixed restore basis — 还原后的显示基线不能被下一次输入悄悄重置 RED→GREEN; suite638/638.
+Final: fixed flush conflict fence — 失焦过程中宿主更新模型仍拒绝覆盖并保留本地输入 RED→GREEN; suite638/638.
+Final: fixed discard lease — 放弃同生命期冲突后可以继续编辑当前对象 RED→GREEN; suite638/638.
+Final: fixed I2 capture identity boundary — capture期间内容相同的未知替换也拒绝旧实例输入 RED→GREEN; suite638/638.
+Task 1/2/3/4/5/6: complete — final638/638, strict/build/lint0; browser final restore/discard/flush pass; no second independent review.
+Verified working tree source committed as 9c8a8f5 after task-done (the log reported prior HEAD10b66f4); hashes record exact tested source.
+Final: Rulings and all declined-to-judge dispositions archived in contract-rulings.md and independent-review.md; Minor deferred0.
+Final status: B02/B05 candidate feasibility passed; B01/B03/B04 still blocked; no C/D/E implementation, no workbench, no push.

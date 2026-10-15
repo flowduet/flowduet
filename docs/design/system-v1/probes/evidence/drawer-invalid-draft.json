@@ -1,0 +1,12 @@
+{
+  "error": "审批人集合变量名仅支持英文字母/数字/下划线（如 approvers 或 dept.approvers），不接受 ${...} 表达式或逗号名单",
+  "result": {
+    "ok": false,
+    "nodeId": "approval_1",
+    "pendingIssues": [
+      "多人审批节点「先改名称的草稿（approval_1）」的集合变量为空白，请在抽屉补填后再导出"
+    ],
+    "modelName": "先改名称的草稿",
+    "collection": ""
+  }
+}

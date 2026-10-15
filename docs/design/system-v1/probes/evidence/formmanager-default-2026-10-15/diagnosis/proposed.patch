@@ -1,0 +1,78 @@
+--- a/packages/form-create/src/components.test.ts
++++ b/packages/form-create/src/components.test.ts
+@@ -1,5 +1,5 @@
+ // @vitest-environment happy-dom
+-import { afterEach, describe, expect, it, vi } from "vitest";
++import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+ import { defineComponent, h, ref } from "vue";
+ import { ElSelect, ElOption } from "element-plus";
+ import { flushPromises, mount } from "@vue/test-utils";
+@@ -17,11 +17,31 @@
+  */
+ 
+ let wrapper: ReturnType<typeof mount> | undefined;
++let originalElementString: PropertyDescriptor | undefined;
++
++/** 仅本测试文件对齐浏览器的元素字符串语义，保留真实组件并避免模拟DOM整树序列化。 */
++beforeEach(() => {
++  originalElementString = Object.getOwnPropertyDescriptor(Element.prototype, "toString");
++  Object.defineProperty(Element.prototype, "toString", {
++    configurable: true,
++    writable: true,
++    value: Object.prototype.toString,
++  });
++});
+ 
+ afterEach(() => {
+-  wrapper?.unmount();
+-  wrapper = undefined;
+-  document.body.innerHTML = "";
++  try {
++    wrapper?.unmount();
++  } finally {
++    wrapper = undefined;
++    document.body.innerHTML = "";
++    if (originalElementString) {
++      Object.defineProperty(Element.prototype, "toString", originalElementString);
++    } else {
++      Reflect.deleteProperty(Element.prototype, "toString");
++    }
++    originalElementString = undefined;
++  }
+ });
+ 
+ const APPLY_FORM: FormDefinition = {
+@@ -210,7 +230,8 @@
+   });
+ 
+   it("内容守卫前置：超范围字段不 emit 且编辑器保持打开供修正", async () => {
+-    const manager = mount(FormManager, { props: { forms: [APPLY_FORM] }, attachTo: document.body });
++    wrapper = mount(FormManager, { props: { forms: [APPLY_FORM] }, attachTo: document.body });
++    const manager = wrapper;
+     await manager.find('[data-test="form-edit-btn-form_apply"]').trigger("click");
+     await flushPromises();
+ 
+@@ -218,6 +239,7 @@
+     // 否则坏内容会静默关闭编辑器。构造超范围内容经组件实例触发保存。
+     const designer = manager.findComponent({ name: "FormDesigner" });
+     expect(designer.exists()).toBe(true);
++    expect(designer.find("._fc-l-item").exists()).toBe(true);
+     designer.vm.$emit(
+       "save",
+       JSON.stringify([{ type: "upload", field: "u1", title: "上传" }]),
+@@ -228,7 +250,6 @@
+     expect(manager.emitted("updateContent")).toBeUndefined();
+     expect(manager.find('[data-test="form-manager-error"]').text()).toContain("支持的组件");
+     expect(manager.find('[data-test="form-manager-edit-dialog"]').exists()).toBe(true);
+-    manager.unmount();
+   });
+ 
+   it("重复字段标识不能关闭编辑器或上报保存", async () => {
+@@ -236,6 +257,7 @@
+     await wrapper.find('[data-test="form-edit-btn-form_apply"]').trigger("click");
+     await flushPromises();
+ 
++    expect(wrapper.findComponent(FormDesigner).find("._fc-l-item").exists()).toBe(true);
+     wrapper.findComponent({ name: "FormDesigner" }).vm.$emit(
+       "save",
+       JSON.stringify([

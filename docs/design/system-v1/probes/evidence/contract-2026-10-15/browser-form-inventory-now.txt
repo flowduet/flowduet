@@ -1,0 +1,9 @@
+### Result
+{"buttons":["流程实验","BPMN 只读","表单实验","定位首节点","定位同名后继","定位支路 fa","定位默认表单","收集候选","显式校验","请求宿主保存","实验：外部改首节点名称"," 实验：外部替换表单二 ","应用默认表单"," 受控改名表单二 "],"text":"","forms":[]}
+### Ran Playwright code
+```js
+await (async (page) => { const a=page.locator("[data-contract-owner=A]"); return {buttons:await a.getByRole("button").allTextContents(),text:(await a.locator("[data-test=contract-result]").textContent()), forms:JSON.parse(await a.locator("[data-test=contract-state]").textContent()).forms.map(f=>({id:f.id,name:f.name}))}; })(page);
+```
+### Page
+- Page URL: http://127.0.0.1:5175/probes/stage-zero/index.html
+- Page Title: FlowDuet 阶段零探针

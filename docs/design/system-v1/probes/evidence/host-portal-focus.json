@@ -1,0 +1,20 @@
+[
+  {
+    "instance": 0,
+    "epoch": 1,
+    "dirty": true,
+    "generation": 2,
+    "saved": 1,
+    "validation": false,
+    "pending": false
+  },
+  {
+    "instance": 1,
+    "epoch": 1,
+    "dirty": true,
+    "generation": 1,
+    "saved": 0,
+    "validation": false,
+    "pending": true
+  }
+]

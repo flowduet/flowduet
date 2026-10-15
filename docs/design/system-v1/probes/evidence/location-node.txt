@@ -1,0 +1,139 @@
+Browser tab: 3, Title: "FlowDuet 阶段零探针", URL: "http://127.0.0.1:5173/probes/stage-zero/index.html".
+1 AXWebArea FlowDuet 阶段零探针, URL: 127.0.0.1:5173/probes/stage-zero/index.html
+	2 container app
+		3 heading FlowDuet 阶段零 · 真实组件探针, Value: 1
+			4 text FlowDuet 阶段零 · 真实组件探针
+		5 text 隔离的实验入口，不是正式工作台；只使用虚构样例。生产结构缺陷尚未修复。
+		6 container
+			7 button 编辑保留
+			8 button 主题隔离
+			9 button 宿主协议
+		177 container
+			178 checkbox (settable, integer) Description: 提供实验保存适配器, Value: 0
+			263 text 人工控制异步返回；不连接外部存储。保存请求数：2 宿主输入
+			180 text field (settable) 宿主输入
+			266 text 宿主快捷键次数：1
+			182 heading 实例 甲, Value: 3
+				183 text 实例 甲
+			184 container
+				185 text 候选名称
+				186 text field (settable) Description: 实例0候选名称, Value: 保存期间的新编辑
+			187 container
+				188 combo box (collapsed, settable) ID: el-id-1500-546, Secondary Actions: Expand
+				189 text 打开所属弹层
+				190 image
+			191 button 打开所属测试弹层
+			192 button 标记候选已校验（模拟）
+			193 button 原样应用
+			195 button 宿主确认成功
+			196 button 宿主确认失败
+			197 button 模拟新建替换
+			198 button 取消离开
+			199 heading 实例 乙, Value: 3
+				200 text 实例 乙
+			201 container
+				202 text 候选名称
+				203 text field (settable) Description: 实例1候选名称, Value: 候选乙
+			204 container
+				205 combo box (collapsed, settable) ID: el-id-1500-547, Secondary Actions: Expand
+				206 text 打开所属弹层
+				207 image
+			208 button 打开所属测试弹层
+			209 button 标记候选已校验（模拟）
+			210 button 原样应用
+			212 button 宿主确认成功
+			213 button 宿主确认失败
+			214 button 模拟新建替换
+			215 button 取消离开
+			264 text [
+  {
+    "instance": 0,
+    "epoch": 1,
+    "dirty": true,
+    "generation": 2,
+    "saved": 1,
+    "validation": false,
+    "pending": false
+  },
+  {
+    "instance": 1,
+    "epoch": 1,
+    "dirty": true,
+    "generation": 1,
+    "saved": 0,
+    "validation": false,
+    "pending": false
+  }
+]
+			217 heading 真实只读视图 → 编辑定位, Value: 3
+				218 text 真实只读视图 → 编辑定位
+			219 container
+				220 button 回到 BPMN 只读
+				221 button 定位采购审批
+				222 button 定位金额分支
+				223 button 定位默认表单问题
+				224 button 删除并复用节点 ID
+			267 text 已定位 approval_1（内部 DOM 桥接）
+			268 container
+				269 text 起
+				270 text s
+				271 pop up button (collapsed) +, Help: 在此后添加节点, ID: el-id-1500-548, Secondary Actions: Expand
+				272 container
+					273 text 条件分支
+					274 button 默认1, Help: 把该支路设为默认（其余情况走此支路）
+					275 button 默认2, Help: 点击取消默认（其余情况无兜底支路）
+					276 button + 分支, Help: 添加分支
+					277 button 删块, Help: 删除整块（前后直连）
+				278 container
+					279 button 金额分支 ${amount > 100}, Help: 金额分支：${amount > 100}；点击配置此分支
+						280 text 金额分支
+						281 text ${amount > 100}
+					282 container
+						283 text 审 采购审批 审批人 alice
+					284 pop up button (collapsed) +, Help: 在此后添加节点, ID: el-id-1500-552, Secondary Actions: Expand
+					285 container
+						286 text 审 财务复核 审批人 bob
+					287 pop up button (collapsed) +, Help: 在此后添加节点, ID: el-id-1500-556, Secondary Actions: Expand
+					288 button 支路 2 其他情况（默认）, Help: 支路 2：其他情况（默认）；点击配置此分支
+						289 text 支路 2
+						290 text 其他情况（默认）
+					291 container
+						292 text 审 其他审批 审批人 carol
+					293 pop up button (collapsed) +, Help: 在此后添加节点, ID: el-id-1500-560, Secondary Actions: Expand
+				294 text 终
+				295 text e
+				296 container 审批节点
+					297 container
+					298 container
+						299 heading 审批节点, Value: 2, ID: el-id-1500-564
+							300 text 审批节点
+						301 button Close this dialog
+					302 container
+						303 text 节点名称
+						304 text field (settable) 节点名称, Value: 采购审批, ID: el-id-1500-570
+						305 text 审批人
+						306 text field (settable) 审批人, Value: alice, ID: el-id-1500-571
+						307 container 完成方式
+							308 text 完成方式
+							309 container
+								310 button 单签 一人审批
+									311 text 单签
+									312 text 一人审批
+								313 button 会签 全员同意
+									314 text 会签
+									315 text 全员同意
+								316 button 或签 任一同意
+									317 text 或签
+									318 text 任一同意
+								319 button 依次 顺序逐人
+									320 text 依次
+									321 text 顺序逐人
+						322 text 表单标识（占位）
+						323 text field (settable) 表单标识（占位）, ID: el-id-1500-572
+					324 container
+						325 button 取消
+						326 button 确定
+		175 button (collapsed) 探针事件记录 5, Secondary Actions: Expand
+			327 text 探针事件记录 5
+
+The focused UI element is 297 container

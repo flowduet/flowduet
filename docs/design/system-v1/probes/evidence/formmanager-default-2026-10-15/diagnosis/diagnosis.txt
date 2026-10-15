@@ -1,0 +1,40 @@
+FormManager 两项默认5秒超时：只读诊断与最小方案
+
+基线：f139036301dbedb8ae40dd2836df94d9c75ea0c7，Node24.16.0，Happy DOM20.14.5，@sxzz/popperjs-es2.11.8。
+仓库代码、测试时限、依赖、Git提交均未修改；全部计时、故障注入和候选方案仅在/tmp副本中运行。proposed.patch尚未应用，git apply --check通过。
+
+一、已证实的主耗时路径
+真实FormCreate/Element Plus打开编辑器 -> Popper窗口/元素判别 -> getWindow中的element.toString() -> Happy DOM Element.toString返回outerHTML -> 递归HTMLSerializer序列化整棵子树。
+Chromium实测同一div.toString返回[object HTMLDivElement]，不序列化HTML；Happy DOM返回<div><span>样例</span></div>。两者的Object.prototype.toString.call(div)均返回对象类型标识。
+CPU profile中serializeToString累计约1969ms，属性编码约488ms；调用栈包含Popper。不是表单内容守卫计算耗时。
+
+二、阶段区分（真实组件，3轮同配置）
+打开真实设计器：首项1.50–1.62秒，次项1.25–1.99秒。
+首次flushPromises：0.65–1.03秒，CPU时间接近墙钟时间；test-utils实现只是setImmediate(resolve)，测到的是排队的DOM/Popper计算，不是长时间空等。
+保存错误事件/守卫：首项约0.5–0.7毫秒，次项约2.6–2.7毫秒；不是5秒根因。
+正常unmount：13–22毫秒，不是正常路径的秒级瓶颈。
+FormManager空壳mount约5–35毫秒，插件install及setRule/setOption调用本身均在毫秒级；主要成本在随后的真实子组件渲染/弹层计算。
+
+三、清理缺口（独立于上述热点）
+components.test.ts第213行用局部manager，公共afterEach只处理wrapper，末尾第231行才手动unmount。
+注入“编辑器就绪后断言失败”后，afterEach结束仍有1个挂载实例，下一项从alive=1开始；仅把实例纳入公共afterEach后，故障后alive=0。
+这是异常路径清理缺口，不等于正常卸载很慢；未证明历史第二项超时全部由前项残留导致。
+
+四、对照结果与证据边界
+本轮未经修改的原始两项默认5秒通过，耗时4.128/2.229秒；所以历史超时并非持续必现。
+同配置未插桩副本，原版整文件34/34通过，用时48.04秒，目标两项2.197/2.045秒。
+只对齐元素字符串语义、保留所有真实组件的三轮：目标两项约0.76/0.49秒；它们的异步首刷新降为约24–32毫秒。
+最终待确认单文件方案的副本：34/34默认5秒通过，用时12.74秒，目标两项0.744/0.540秒。
+曾尝试仅两项局部对齐，整文件另一条A13真实设计器用例仍发生5秒超时；最终方案将兼容层限制在本测试文件的beforeEach/afterEach，而非全仓库配置。
+原版与方案副本均仍有同类Vue告警，本轮不将其改写为无警告，也未扩展处理。
+历史超时发生时没有CPU分段记录，本轮没有完全复刻每次宿主负载；已确定可消除的模拟DOM/Popper开销，不能据此断言每次历史尖峰只有一个原因。
+没有实施全量657或远端Node22/24 CI验证，没有产品性能预算、C/D/E或正式工作台结论。
+
+五、建议的最小处理方案（待用户确认）
+仅修改packages/form-create/src/components.test.ts（proposed.patch：28行增加、6行删除）：
+1. beforeEach保存Element.prototype.toString描述符，暂时使用Object.prototype.toString；afterEach恢复原描述符，避免跨用例污染。只适用于该Happy DOM测试文件。
+2. 第一项manager统一交给现有wrapper/afterEach管理，以finally确保卸载、清DOM和撤销测试兼容层。
+3. 保留所有原断言、真实FormManager/FormDesigner/FcDesigner及默认5秒；增加真实设计器菜单在场断言，不用组件桩、不伪造序列化结果、不改生产实现。
+确认后实施并验证：两项默认命令多轮、完整34项、默认全量pnpm test，再按可用环境核对Node22/24；未运行的CI不宣称通过。继续不推进C/D/E、不推送。
+
+主要材料：trace.jsonl、summary.json、profile-summary.json、dom-happydom.json、dom-chromium.txt、matched-original.log、candidate-final.log、failure-local.log、failure-central.log、proposed.patch。

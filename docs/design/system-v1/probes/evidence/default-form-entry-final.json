@@ -1,0 +1,11 @@
+{
+  "sourceCommit": "a293b24",
+  "afterReload": true,
+  "selectors": [
+    {
+      "embedded": false,
+      "value": "form_1",
+      "visible": true
+    }
+  ]
+}

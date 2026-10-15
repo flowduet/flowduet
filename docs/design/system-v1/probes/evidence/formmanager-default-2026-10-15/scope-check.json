@@ -1,0 +1,15 @@
+{
+  "oldExpectStatements": 137,
+  "newExpectStatements": 139,
+  "allOriginalExpectLinesRetained": true,
+  "addedExpectLines": [
+    "expect(designer.find(\"._fc-l-item\").exists()).toBe(true);",
+    "expect(wrapper.findComponent(FormDesigner).find(\"._fc-l-item\").exists()).toBe(true);"
+  ],
+  "exactApprovedSource": true,
+  "testTimeoutOverrideAdded": false,
+  "productionSourceChanged": false,
+  "changedTrackedPaths": [
+    "packages/form-create/src/components.test.ts"
+  ]
+}

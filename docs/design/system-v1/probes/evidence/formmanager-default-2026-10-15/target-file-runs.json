@@ -1,0 +1,117 @@
+[
+  {
+    "name": "target-1",
+    "command": [
+      "pnpm",
+      "--filter",
+      "@flowduet/form-create",
+      "exec",
+      "vitest",
+      "run",
+      "src/components.test.ts",
+      "-t",
+      "内容守卫前置|重复字段标识不能",
+      "--reporter=verbose"
+    ],
+    "exitCode": 0,
+    "wallSeconds": 5.68
+  },
+  {
+    "name": "target-2",
+    "command": [
+      "pnpm",
+      "--filter",
+      "@flowduet/form-create",
+      "exec",
+      "vitest",
+      "run",
+      "src/components.test.ts",
+      "-t",
+      "内容守卫前置|重复字段标识不能",
+      "--reporter=verbose"
+    ],
+    "exitCode": 0,
+    "wallSeconds": 4.93
+  },
+  {
+    "name": "target-3",
+    "command": [
+      "pnpm",
+      "--filter",
+      "@flowduet/form-create",
+      "exec",
+      "vitest",
+      "run",
+      "src/components.test.ts",
+      "-t",
+      "内容守卫前置|重复字段标识不能",
+      "--reporter=verbose"
+    ],
+    "exitCode": 0,
+    "wallSeconds": 4.83
+  },
+  {
+    "name": "target-4",
+    "command": [
+      "pnpm",
+      "--filter",
+      "@flowduet/form-create",
+      "exec",
+      "vitest",
+      "run",
+      "src/components.test.ts",
+      "-t",
+      "内容守卫前置|重复字段标识不能",
+      "--reporter=verbose"
+    ],
+    "exitCode": 0,
+    "wallSeconds": 4.792
+  },
+  {
+    "name": "target-5",
+    "command": [
+      "pnpm",
+      "--filter",
+      "@flowduet/form-create",
+      "exec",
+      "vitest",
+      "run",
+      "src/components.test.ts",
+      "-t",
+      "内容守卫前置|重复字段标识不能",
+      "--reporter=verbose"
+    ],
+    "exitCode": 0,
+    "wallSeconds": 5.123
+  },
+  {
+    "name": "whole-file-1",
+    "command": [
+      "pnpm",
+      "--filter",
+      "@flowduet/form-create",
+      "exec",
+      "vitest",
+      "run",
+      "src/components.test.ts",
+      "--reporter=verbose"
+    ],
+    "exitCode": 0,
+    "wallSeconds": 14.572
+  },
+  {
+    "name": "whole-file-2",
+    "command": [
+      "pnpm",
+      "--filter",
+      "@flowduet/form-create",
+      "exec",
+      "vitest",
+      "run",
+      "src/components.test.ts",
+      "--reporter=verbose"
+    ],
+    "exitCode": 0,
+    "wallSeconds": 15.179
+  }
+]

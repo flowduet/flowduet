@@ -1,0 +1,210 @@
+[
+  {
+    "bg": "rgb(255, 255, 255)",
+    "client": 0,
+    "cls": "_fd-ai-panel",
+    "color": "rgb(228, 233, 243)",
+    "scroll": 0,
+    "width": 0
+  },
+  {
+    "bg": "rgb(255, 255, 255)",
+    "client": 0,
+    "cls": "_fd-ai-header",
+    "color": "rgb(228, 233, 243)",
+    "scroll": 0,
+    "width": 0
+  },
+  {
+    "bg": "rgba(0, 0, 0, 0)",
+    "client": 0,
+    "cls": "_fd-ai-title",
+    "color": "rgb(228, 233, 243)",
+    "scroll": 0,
+    "width": 0
+  },
+  {
+    "bg": "rgba(0, 0, 0, 0)",
+    "client": 0,
+    "cls": "_fd-ai-content _fd-ai-content--centered",
+    "color": "rgb(228, 233, 243)",
+    "scroll": 0,
+    "width": 0
+  },
+  {
+    "bg": "rgba(0, 0, 0, 0)",
+    "client": 0,
+    "cls": "_fd-ai-welcome",
+    "color": "rgb(102, 102, 102)",
+    "scroll": 0,
+    "width": 0
+  },
+  {
+    "bg": "rgb(245, 245, 245)",
+    "client": 0,
+    "cls": "_fd-ai-welcome-icon",
+    "color": "rgb(102, 102, 102)",
+    "scroll": 0,
+    "width": 0
+  },
+  {
+    "bg": "rgba(0, 0, 0, 0)",
+    "client": 0,
+    "cls": "_fd-ai-welcome-suggestions",
+    "color": "rgb(102, 102, 102)",
+    "scroll": 0,
+    "width": 0
+  },
+  {
+    "bg": "rgba(0, 0, 0, 0)",
+    "client": 0,
+    "cls": "_fd-ai-suggestions-header",
+    "color": "rgb(102, 102, 102)",
+    "scroll": 0,
+    "width": 0
+  },
+  {
+    "bg": "rgba(0, 0, 0, 0)",
+    "client": 0,
+    "cls": "_fd-ai-refresh-btn",
+    "color": "rgb(170, 170, 170)",
+    "scroll": 0,
+    "width": 0
+  },
+  {
+    "bg": "rgba(0, 0, 0, 0)",
+    "client": 0,
+    "cls": "_fd-ai-suggestions-list",
+    "color": "rgb(102, 102, 102)",
+    "scroll": 0,
+    "width": 0
+  },
+  {
+    "bg": "rgb(245, 245, 245)",
+    "client": 0,
+    "cls": "_fd-ai-suggestion-item",
+    "color": "rgb(38, 38, 38)",
+    "scroll": 0,
+    "width": 0
+  },
+  {
+    "bg": "rgb(245, 245, 245)",
+    "client": 0,
+    "cls": "_fd-ai-suggestion-item",
+    "color": "rgb(38, 38, 38)",
+    "scroll": 0,
+    "width": 0
+  },
+  {
+    "bg": "rgb(245, 245, 245)",
+    "client": 0,
+    "cls": "_fd-ai-suggestion-item",
+    "color": "rgb(38, 38, 38)",
+    "scroll": 0,
+    "width": 0
+  },
+  {
+    "bg": "rgb(245, 245, 245)",
+    "client": 0,
+    "cls": "_fd-ai-suggestion-item",
+    "color": "rgb(38, 38, 38)",
+    "scroll": 0,
+    "width": 0
+  },
+  {
+    "bg": "rgba(0, 0, 0, 0)",
+    "client": 0,
+    "cls": "_fd-ai-messages",
+    "color": "rgb(228, 233, 243)",
+    "scroll": 0,
+    "width": 0
+  },
+  {
+    "bg": "rgb(255, 255, 255)",
+    "client": 0,
+    "cls": "_fd-ai-input",
+    "color": "rgb(228, 233, 243)",
+    "scroll": 0,
+    "width": 0
+  },
+  {
+    "bg": "rgb(245, 245, 245)",
+    "client": 0,
+    "cls": "_fd-ai-input-container",
+    "color": "rgb(228, 233, 243)",
+    "scroll": 0,
+    "width": 0
+  },
+  {
+    "bg": "rgb(170, 170, 170)",
+    "client": 0,
+    "cls": "_fd-ai-send-btn _fd-ai-send-btn--disabled",
+    "color": "rgb(255, 255, 255)",
+    "scroll": 0,
+    "width": 0
+  },
+  {
+    "bg": "rgba(0, 0, 0, 0)",
+    "client": 49,
+    "cls": "el-col el-col-24 _fd-draggable-drag _fd-drag-box",
+    "color": "rgb(228, 233, 243)",
+    "scroll": 49,
+    "width": 64
+  },
+  {
+    "bg": "rgba(0, 0, 0, 0)",
+    "client": 45,
+    "cls": "_fc-draggable-item _fd-drag-item",
+    "color": "rgb(228, 233, 243)",
+    "scroll": 45,
+    "width": 45
+  },
+  {
+    "bg": "rgba(0, 0, 0, 0)",
+    "client": 45,
+    "cls": "_fd-drag-tool",
+    "color": "rgb(228, 233, 243)",
+    "scroll": 159,
+    "width": 45
+  },
+  {
+    "bg": "rgba(0, 0, 0, 0)",
+    "client": 45,
+    "cls": "_fd-drag-mask",
+    "color": "rgb(228, 233, 243)",
+    "scroll": 45,
+    "width": 45
+  },
+  {
+    "bg": "rgba(0, 0, 0, 0)",
+    "client": 0,
+    "cls": "_fd-drag-l",
+    "color": "rgb(228, 233, 243)",
+    "scroll": 0,
+    "width": 0
+  },
+  {
+    "bg": "rgb(46, 115, 255)",
+    "client": 0,
+    "cls": "_fd-drag-btn",
+    "color": "rgb(255, 255, 255)",
+    "scroll": 0,
+    "width": 0
+  },
+  {
+    "bg": "rgba(0, 0, 0, 0)",
+    "client": 0,
+    "cls": "_fd-drag-r",
+    "color": "rgb(228, 233, 243)",
+    "scroll": 0,
+    "width": 0
+  },
+  {
+    "bg": "rgb(46, 115, 255)",
+    "client": 0,
+    "cls": "_fd-drag-btn",
+    "color": "rgb(255, 255, 255)",
+    "scroll": 0,
+    "width": 0
+  }
+]

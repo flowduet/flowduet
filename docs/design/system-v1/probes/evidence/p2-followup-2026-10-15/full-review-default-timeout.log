@@ -1,0 +1,60 @@
+
+> flowduet-monorepo@0.0.0 test /Users/l/.codex/worktrees/design-system-stage-zero/flowduet
+> pnpm -r test
+
+Scope: 4 of 5 workspace projects
+packages/core test$ vitest run
+packages/core test:  RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/core
+packages/core test:  Test Files  14 passed (14)
+packages/core test:       Tests  148 passed (148)
+packages/core test:    Start at  14:01:34
+packages/core test:    Duration  1.58s (transform 56%, tests 25%, import 17%, worker 1%)
+packages/core test:   Transform  transforming modules took 4.21s · 56% of tracked time, re-done on every run
+packages/core test:              persist transforms across runs with fsModuleCache: true
+packages/core test:              learn more: https://vitest.dev/guide/improving-performance#caching-between-reruns
+packages/core test: Done
+packages/designer test$ vitest run
+packages/designer test:  RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/designer
+packages/designer test:  Test Files  14 passed (14)
+packages/designer test:       Tests  184 passed (184)
+packages/designer test:    Start at  14:01:36
+packages/designer test:    Duration  19.28s (tests 50%, import 19%, transform 16%, environment 15%)
+packages/designer test: Done
+packages/form-create test$ vitest run
+packages/form-create test:  RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/form-create
+packages/form-create test:  ❯ src/components.test.ts (34 tests | 2 failed) 70779ms
+packages/form-create test:    ❯ FormManager（目录管理面板） (6)
+packages/form-create test:      × 内容守卫前置：超范围字段不 emit 且编辑器保持打开供修正 9518ms
+packages/form-create test:      × 重复字段标识不能关闭编辑器或上报保存 7476ms
+packages/form-create test: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+packages/form-create test:  FAIL  src/components.test.ts > FormManager（目录管理面板） > 内容守卫前置：超范围字段不 emit 且编辑器保持打开供修正
+packages/form-create test: Error: Test timed out in 5000ms.
+packages/form-create test: If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+packages/form-create test:  ❯ src/components.test.ts:212:3
+packages/form-create test:     210|   });
+packages/form-create test:     211|
+packages/form-create test:     212|   it("内容守卫前置：超范围字段不 emit 且编辑器保持打开供修正", async () => {
+packages/form-create test:        |   ^
+packages/form-create test:     213|     const manager = mount(FormManager, { props: { forms: [APPLY_FORM] …
+packages/form-create test:     214|     await manager.find('[data-test="form-edit-btn-form_apply"]').trigg…
+packages/form-create test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+packages/form-create test:  FAIL  src/components.test.ts > FormManager（目录管理面板） > 重复字段标识不能关闭编辑器或上报保存
+packages/form-create test: Error: Test timed out in 5000ms.
+packages/form-create test: If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+packages/form-create test:  ❯ src/components.test.ts:234:3
+packages/form-create test:     232|   });
+packages/form-create test:     233|
+packages/form-create test:     234|   it("重复字段标识不能关闭编辑器或上报保存", async () => {
+packages/form-create test:        |   ^
+packages/form-create test:     235|     wrapper = mount(FormManager, { props: { forms: [APPLY_FORM] }, att…
+packages/form-create test:     236|     await wrapper.find('[data-test="form-edit-btn-form_apply"]').trigg…
+packages/form-create test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+packages/form-create test:  Test Files  1 failed | 8 passed (9)
+packages/form-create test:       Tests  2 failed | 135 passed (137)
+packages/form-create test:    Start at  14:01:56
+packages/form-create test:    Duration  78.47s (tests 59%, import 16%, environment 16%, transform 8%)
+packages/form-create test: Failed
+/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/form-create:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @flowduet/form-create@0.1.0 test: `vitest run`
+Exit status 1
+ ELIFECYCLE  Test failed. See above for more details.
