@@ -1,0 +1,12 @@
+{
+  "auditedCommit": "bf24d3a33be8faef4674469338de0c89dbc47d07",
+  "manifestSha256": "ff219774c3a00d86bdb65f85b9507e3ab4fcf33fb008167925238991b390c839",
+  "evidenceFiles": 296,
+  "sourceFiles": 20,
+  "gitBlobsMatchManifestAndDisk": true,
+  "exclusions": [
+    "manifest.json",
+    "git-blob-audit.json"
+  ],
+  "scope": "doc commit against actual c53004e verification; no new test run implied"
+}
