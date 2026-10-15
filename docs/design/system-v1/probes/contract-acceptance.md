@@ -2,16 +2,16 @@
 
 日期：2026-10-15。产品基线`develop@02d3474`，批准输入`e78d56a`；分支`refactor/stage-zero-editing-contract`，保留原探针分支。依据[已批准规格](../../2026-10-15-stage-zero-editing-contract.md)及[薄切片计划](../../plans/2026-10-15-stage-zero-contract-slices.md)。
 
-**当前：四项P2及独立补充问题已闭环，B02在本地20秒条件下恢复候选功能合同通过，B05锁定入口通过；阶段零整体出口仍未通过。** 最新证据见[四项P2补修验收](p2-followup-2026-10-15.md)。默认测试仍有两项原有5秒超时，不能宣称默认命令/远端CI已绿。 此前第一轮独立复核发现的三个 Important 已完成失败回归、补修和执行方全量复验，没有延后的 Minor。 本文中“通过”只指所列候选合同与夹具，不是正式工作台、公共控制器发布或任意第三方状态保真声明。B01/B03/B04未解除。
+**当前：四项P2及独立补充问题已闭环，B02候选功能合同通过且本地默认全量已657/657通过，B05锁定入口通过；阶段零整体出口仍未通过。** 最新证据见[默认时限补修验证](formmanager-default-2026-10-15.md)，此前[四项P2补修验收](p2-followup-2026-10-15.md)保留原时限边界。远端CI未经本分支验证。 此前第一轮独立复核发现的三个 Important 已完成失败回归、补修和执行方全量复验，没有延后的 Minor。 本文中“通过”只指所列候选合同与夹具，不是正式工作台、公共控制器发布或任意第三方状态保真声明。B01/B03/B04未解除。
 
 ## 1. 实施范围
 
 - designer只改批准的共享属性规则/字段、NodeDrawer兼容包装、DingtalkDesigner外置模式与选择接缝、BlockNodeList身份属性、对应测试及minor changeset。
 - 候选身份/缓冲/候选事务/版本控制器仍位于`apps/playground/probes/stage-zero/contracts/`。`ContractProbe`是最小真实集成实验，不是正式工作台。
-- 没有改core、form-create生产源码、三包根导出、package.json、lockfile或主Playground入口；没有新增依赖，没有推送、开PR或发包。
+- 没有改core、form-create生产源码、三包根导出、package.json、lockfile或主Playground入口；默认时限补修仅另改form-create的components.test.ts；没有新增依赖，没有推送、开PR或发包。
 - NodeDrawer默认“确定”、旧DingtalkDesigner切换/commitPendingChanges合同与部署守卫保持；只有显式external模式使用外置输入。新模式误调用旧收集方法返回false，避免假收集成功。
 
-本地提交已按严格类型修订、身份、冲突、候选事务、共享字段、选择接缝、集成实验及复核补修分组；此前补修源码为`10b66f4`、`9c8a8f5`，本轮为`83ec03d`及`1506b16`。最终源文件与证据身份记录在本目录证据manifest中。
+本地提交已按严格类型修订、身份、冲突、候选事务、共享字段、选择接缝、集成实验及复核补修分组；此前补修源码为`10b66f4`、`9c8a8f5`，本轮为`83ec03d`及`1506b16`，默认时限测试补修为`c6fa670`。最终源文件与证据身份记录在本目录证据manifest中。
 
 ## 2. 验收矩阵
 
@@ -66,16 +66,16 @@ B05另在原HostProtocolProbe中打开真实EP下拉并选择，检查选择值�
 
 ## 4. 验证记录
 
-本轮最终全包 **657/657通过**：core148、designer184、form-create137、Playground188（正式测试513项、探针144项），命令为本地`pnpm -r test --testTimeout 20000`。默认命令的两项超时及独立复跑限制见补修报告。正式build、lint及严格probe类型检查均退出0；正式build不覆盖probe入口，严格vue-tsc单独执行。较早620/621/634/638/655轮次仅作历史过程，不替代最终结果。原正式结构及保存重开三档转换、错误方向拒绝用例随全套回归再次通过。
+当前全包 **657/657通过**：core148、designer184、form-create137、Playground188（正式测试513项、探针144项），命令为原样`pnpm test`，无超时覆盖。两项目标5轮、整文件34项2轮均默认5秒通过，兼容处理恢复及异常清理已另验；见[默认时限补修验证](formmanager-default-2026-10-15.md)。此前本地20秒通过、默认超时及独立复跑记录作为历史保留。正式build、lint及严格probe类型检查均退出0；正式build不覆盖probe入口，严格vue-tsc单独执行。较早620/621/634/638/655轮次仅作历史过程，不替代最终结果。原正式结构及保存重开三档转换、错误方向拒绝用例随全套回归再次通过。
 
-日志：[全包](evidence/p2-followup-2026-10-15/full-tests.log)、[构建](evidence/p2-followup-2026-10-15/build-final.log)、[lint](evidence/p2-followup-2026-10-15/lint-final.log)、[严格类型](evidence/p2-followup-2026-10-15/types-final.log)。严格类型成功无诊断输出，退出状态另记在manifest，空日志不是未执行。
+最新默认全包日志及源码身份见[新manifest](evidence/formmanager-default-2026-10-15/manifest.json)。此前补修日志：[20秒全包](evidence/p2-followup-2026-10-15/full-tests.log)、[构建](evidence/p2-followup-2026-10-15/build-final.log)、[lint](evidence/p2-followup-2026-10-15/lint-final.log)、[严格类型](evidence/p2-followup-2026-10-15/types-final.log)。严格类型成功无诊断输出，退出状态另记在manifest，空日志不是未执行。
 
-- 全包：`pnpm -r test --testTimeout 20000`。
+- 当前全包：`pnpm test`；此前20秒命令仅为历史对照。
 - 正式构建：`pnpm build`，保留既有大chunk提示，不当作类型/天然异常通过。
 - 源码/格式：`pnpm lint`与源码diff检查；原始证据目录保留字节。
 - 严格探针：`pnpm --filter @flowduet/form-create exec vue-tsc --noEmit -p ../../apps/playground/probes/stage-zero/tsconfig.json`。
 
-本地Node24；20秒测试时限仅为本地运行参数，不改生产默认。Node22/24远端CI及消费者安装下限未经本分支验证，不能引用PR #92的旧CI替代。
+本地Node24；当前默认全量无20秒覆盖，Playground既有真实FormCreate单例60秒预算未改。本轮兼容处理仅作用于components.test.ts，不改生产默认。Node22/24远端CI及消费者安装下限未经本分支验证，不能引用PR #92的旧CI替代。
 
 ## 5. 实现裁定与代价
 

@@ -1,0 +1,595 @@
+{
+  "sourceProfileSha256": "1794b2ee6d3d39d062564bcb3b496d514e0414d594a9f90ff888cb702558f13b",
+  "matchingStacks": 1305,
+  "topStacks": [
+    {
+      "sampledMs": 33.154,
+      "leafToRoot": [
+        {
+          "functionName": "serializeToString",
+          "scriptId": "424",
+          "url": "file:///Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/happy-dom@20.14.5/node_modules/happy-dom/lib/html-serializer/HTMLSerializer.js",
+          "lineNumber": 47,
+          "columnNumber": 21
+        },
+        {
+          "functionName": "serializeToString",
+          "scriptId": "424",
+          "url": "file:///Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/happy-dom@20.14.5/node_modules/happy-dom/lib/html-serializer/HTMLSerializer.js",
+          "lineNumber": 47,
+          "columnNumber": 21
+        },
+        {
+          "functionName": "serializeToString",
+          "scriptId": "424",
+          "url": "file:///Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/happy-dom@20.14.5/node_modules/happy-dom/lib/html-serializer/HTMLSerializer.js",
+          "lineNumber": 47,
+          "columnNumber": 21
+        },
+        {
+          "functionName": "serializeToString",
+          "scriptId": "424",
+          "url": "file:///Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/happy-dom@20.14.5/node_modules/happy-dom/lib/html-serializer/HTMLSerializer.js",
+          "lineNumber": 47,
+          "columnNumber": 21
+        },
+        {
+          "functionName": "serializeToString",
+          "scriptId": "424",
+          "url": "file:///Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/happy-dom@20.14.5/node_modules/happy-dom/lib/html-serializer/HTMLSerializer.js",
+          "lineNumber": 47,
+          "columnNumber": 21
+        },
+        {
+          "functionName": "serializeToString",
+          "scriptId": "424",
+          "url": "file:///Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/happy-dom@20.14.5/node_modules/happy-dom/lib/html-serializer/HTMLSerializer.js",
+          "lineNumber": 47,
+          "columnNumber": 21
+        },
+        {
+          "functionName": "serializeToString",
+          "scriptId": "424",
+          "url": "file:///Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/happy-dom@20.14.5/node_modules/happy-dom/lib/html-serializer/HTMLSerializer.js",
+          "lineNumber": 47,
+          "columnNumber": 21
+        },
+        {
+          "functionName": "serializeToString",
+          "scriptId": "424",
+          "url": "file:///Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/happy-dom@20.14.5/node_modules/happy-dom/lib/html-serializer/HTMLSerializer.js",
+          "lineNumber": 47,
+          "columnNumber": 21
+        },
+        {
+          "functionName": "serializeToString",
+          "scriptId": "424",
+          "url": "file:///Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/happy-dom@20.14.5/node_modules/happy-dom/lib/html-serializer/HTMLSerializer.js",
+          "lineNumber": 47,
+          "columnNumber": 21
+        },
+        {
+          "functionName": "get outerHTML",
+          "scriptId": "417",
+          "url": "file:///Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/happy-dom@20.14.5/node_modules/happy-dom/lib/nodes/element/Element.js",
+          "lineNumber": 365,
+          "columnNumber": 17
+        },
+        {
+          "functionName": "toString",
+          "scriptId": "417",
+          "url": "file:///Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/happy-dom@20.14.5/node_modules/happy-dom/lib/nodes/element/Element.js",
+          "lineNumber": 786,
+          "columnNumber": 12
+        },
+        {
+          "functionName": "G",
+          "scriptId": "1477",
+          "url": "file:///Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/@sxzz+popperjs-es@2.11.8/node_modules/@sxzz/popperjs-es/dist/index.mjs",
+          "lineNumber": 0,
+          "columnNumber": 660
+        },
+        {
+          "functionName": "ne",
+          "scriptId": "1477",
+          "url": "file:///Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/@sxzz+popperjs-es@2.11.8/node_modules/@sxzz/popperjs-es/dist/index.mjs",
+          "lineNumber": 0,
+          "columnNumber": 2225
+        },
+        {
+          "functionName": "Re",
+          "scriptId": "1477",
+          "url": "file:///Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/@sxzz+popperjs-es@2.11.8/node_modules/@sxzz/popperjs-es/dist/index.mjs",
+          "lineNumber": 0,
+          "columnNumber": 8301
+        },
+        {
+          "functionName": "Xt",
+          "scriptId": "1477",
+          "url": "file:///Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/@sxzz+popperjs-es@2.11.8/node_modules/@sxzz/popperjs-es/dist/index.mjs",
+          "lineNumber": 0,
+          "columnNumber": 8354
+        },
+        {
+          "functionName": "vt",
+          "scriptId": "1477",
+          "url": "file:///Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/@sxzz+popperjs-es@2.11.8/node_modules/@sxzz/popperjs-es/dist/index.mjs",
+          "lineNumber": 0,
+          "columnNumber": 9697
+        },
+        {
+          "functionName": "",
+          "scriptId": "1477",
+          "url": "file:///Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/@sxzz+popperjs-es@2.11.8/node_modules/@sxzz/popperjs-es/dist/index.mjs",
+          "lineNumber": 0,
+          "columnNumber": 10042
+        },
+        {
+          "functionName": "Kt",
+          "scriptId": "1477",
+          "url": "file:///Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/@sxzz+popperjs-es@2.11.8/node_modules/@sxzz/popperjs-es/dist/index.mjs",
+          "lineNumber": 0,
+          "columnNumber": 9940
+        },
+        {
+          "functionName": "oe",
+          "scriptId": "1477",
+          "url": "file:///Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/@sxzz+popperjs-es@2.11.8/node_modules/@sxzz/popperjs-es/dist/index.mjs",
+          "lineNumber": 0,
+          "columnNumber": 10757
+        },
+        {
+          "functionName": "en",
+          "scriptId": "1477",
+          "url": "file:///Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/@sxzz+popperjs-es@2.11.8/node_modules/@sxzz/popperjs-es/dist/index.mjs",
+          "lineNumber": 0,
+          "columnNumber": 12120
+        },
+        {
+          "functionName": "forceUpdate",
+          "scriptId": "1477",
+          "url": "file:///Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/@sxzz+popperjs-es@2.11.8/node_modules/@sxzz/popperjs-es/dist/index.mjs",
+          "lineNumber": 0,
+          "columnNumber": 18961
+        },
+        {
+          "functionName": "",
+          "scriptId": "1477",
+          "url": "file:///Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/@sxzz+popperjs-es@2.11.8/node_modules/@sxzz/popperjs-es/dist/index.mjs",
+          "lineNumber": 0,
+          "columnNumber": 19522
+        },
+        {
+          "functionName": "",
+          "scriptId": "1477",
+          "url": "file:///Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/@sxzz+popperjs-es@2.11.8/node_modules/@sxzz/popperjs-es/dist/index.mjs",
+          "lineNumber": 0,
+          "columnNumber": 19492
+        },
+        {
+          "functionName": "",
+          "scriptId": "1477",
+          "url": "file:///Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/@sxzz+popperjs-es@2.11.8/node_modules/@sxzz/popperjs-es/dist/index.mjs",
+          "lineNumber": 0,
+          "columnNumber": 17773
+        },
+        {
+          "functionName": "runMicrotasks",
+          "scriptId": "0",
+          "url": "",
+          "lineNumber": -1,
+          "columnNumber": -1
+        },
+        {
+          "functionName": "processTicksAndRejections",
+          "scriptId": "32",
+          "url": "node:internal/process/task_queues",
+          "lineNumber": 71,
+          "columnNumber": 34
+        },
+        {
+          "functionName": "(root)",
+          "scriptId": "0",
+          "url": "",
+          "lineNumber": -1,
+          "columnNumber": -1
+        }
+      ]
+    },
+    {
+      "sampledMs": 8.053,
+      "leafToRoot": [
+        {
+          "functionName": "serializeToString",
+          "scriptId": "424",
+          "url": "file:///Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/happy-dom@20.14.5/node_modules/happy-dom/lib/html-serializer/HTMLSerializer.js",
+          "lineNumber": 47,
+          "columnNumber": 21
+        },
+        {
+          "functionName": "serializeToString",
+          "scriptId": "424",
+          "url": "file:///Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/happy-dom@20.14.5/node_modules/happy-dom/lib/html-serializer/HTMLSerializer.js",
+          "lineNumber": 47,
+          "columnNumber": 21
+        },
+        {
+          "functionName": "serializeToString",
+          "scriptId": "424",
+          "url": "file:///Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/happy-dom@20.14.5/node_modules/happy-dom/lib/html-serializer/HTMLSerializer.js",
+          "lineNumber": 47,
+          "columnNumber": 21
+        },
+        {
+          "functionName": "serializeToString",
+          "scriptId": "424",
+          "url": "file:///Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/happy-dom@20.14.5/node_modules/happy-dom/lib/html-serializer/HTMLSerializer.js",
+          "lineNumber": 47,
+          "columnNumber": 21
+        },
+        {
+          "functionName": "serializeToString",
+          "scriptId": "424",
+          "url": "file:///Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/happy-dom@20.14.5/node_modules/happy-dom/lib/html-serializer/HTMLSerializer.js",
+          "lineNumber": 47,
+          "columnNumber": 21
+        },
+        {
+          "functionName": "serializeToString",
+          "scriptId": "424",
+          "url": "file:///Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/happy-dom@20.14.5/node_modules/happy-dom/lib/html-serializer/HTMLSerializer.js",
+          "lineNumber": 47,
+          "columnNumber": 21
+        },
+        {
+          "functionName": "serializeToString",
+          "scriptId": "424",
+          "url": "file:///Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/happy-dom@20.14.5/node_modules/happy-dom/lib/html-serializer/HTMLSerializer.js",
+          "lineNumber": 47,
+          "columnNumber": 21
+        },
+        {
+          "functionName": "serializeToString",
+          "scriptId": "424",
+          "url": "file:///Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/happy-dom@20.14.5/node_modules/happy-dom/lib/html-serializer/HTMLSerializer.js",
+          "lineNumber": 47,
+          "columnNumber": 21
+        },
+        {
+          "functionName": "get outerHTML",
+          "scriptId": "417",
+          "url": "file:///Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/happy-dom@20.14.5/node_modules/happy-dom/lib/nodes/element/Element.js",
+          "lineNumber": 365,
+          "columnNumber": 17
+        },
+        {
+          "functionName": "toString",
+          "scriptId": "417",
+          "url": "file:///Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/happy-dom@20.14.5/node_modules/happy-dom/lib/nodes/element/Element.js",
+          "lineNumber": 786,
+          "columnNumber": 12
+        },
+        {
+          "functionName": "B",
+          "scriptId": "1477",
+          "url": "file:///Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/@sxzz+popperjs-es@2.11.8/node_modules/@sxzz/popperjs-es/dist/index.mjs",
+          "lineNumber": 0,
+          "columnNumber": 521
+        },
+        {
+          "functionName": "ce",
+          "scriptId": "1477",
+          "url": "file:///Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/@sxzz+popperjs-es@2.11.8/node_modules/@sxzz/popperjs-es/dist/index.mjs",
+          "lineNumber": 0,
+          "columnNumber": 9164
+        },
+        {
+          "functionName": "Jt",
+          "scriptId": "1477",
+          "url": "file:///Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/@sxzz+popperjs-es@2.11.8/node_modules/@sxzz/popperjs-es/dist/index.mjs",
+          "lineNumber": 0,
+          "columnNumber": 9768
+        },
+        {
+          "functionName": "Kt",
+          "scriptId": "1477",
+          "url": "file:///Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/@sxzz+popperjs-es@2.11.8/node_modules/@sxzz/popperjs-es/dist/index.mjs",
+          "lineNumber": 0,
+          "columnNumber": 9940
+        },
+        {
+          "functionName": "oe",
+          "scriptId": "1477",
+          "url": "file:///Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/@sxzz+popperjs-es@2.11.8/node_modules/@sxzz/popperjs-es/dist/index.mjs",
+          "lineNumber": 0,
+          "columnNumber": 10757
+        },
+        {
+          "functionName": "en",
+          "scriptId": "1477",
+          "url": "file:///Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/@sxzz+popperjs-es@2.11.8/node_modules/@sxzz/popperjs-es/dist/index.mjs",
+          "lineNumber": 0,
+          "columnNumber": 12120
+        },
+        {
+          "functionName": "forceUpdate",
+          "scriptId": "1477",
+          "url": "file:///Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/@sxzz+popperjs-es@2.11.8/node_modules/@sxzz/popperjs-es/dist/index.mjs",
+          "lineNumber": 0,
+          "columnNumber": 18961
+        },
+        {
+          "functionName": "",
+          "scriptId": "1477",
+          "url": "file:///Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/@sxzz+popperjs-es@2.11.8/node_modules/@sxzz/popperjs-es/dist/index.mjs",
+          "lineNumber": 0,
+          "columnNumber": 19522
+        },
+        {
+          "functionName": "",
+          "scriptId": "1477",
+          "url": "file:///Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/@sxzz+popperjs-es@2.11.8/node_modules/@sxzz/popperjs-es/dist/index.mjs",
+          "lineNumber": 0,
+          "columnNumber": 19492
+        },
+        {
+          "functionName": "",
+          "scriptId": "1477",
+          "url": "file:///Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/@sxzz+popperjs-es@2.11.8/node_modules/@sxzz/popperjs-es/dist/index.mjs",
+          "lineNumber": 0,
+          "columnNumber": 17773
+        },
+        {
+          "functionName": "(root)",
+          "scriptId": "0",
+          "url": "",
+          "lineNumber": -1,
+          "columnNumber": -1
+        }
+      ]
+    },
+    {
+      "sampledMs": 6.248,
+      "leafToRoot": [
+        {
+          "functionName": "serializeToString",
+          "scriptId": "424",
+          "url": "file:///Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/happy-dom@20.14.5/node_modules/happy-dom/lib/html-serializer/HTMLSerializer.js",
+          "lineNumber": 47,
+          "columnNumber": 21
+        },
+        {
+          "functionName": "serializeToString",
+          "scriptId": "424",
+          "url": "file:///Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/happy-dom@20.14.5/node_modules/happy-dom/lib/html-serializer/HTMLSerializer.js",
+          "lineNumber": 47,
+          "columnNumber": 21
+        },
+        {
+          "functionName": "serializeToString",
+          "scriptId": "424",
+          "url": "file:///Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/happy-dom@20.14.5/node_modules/happy-dom/lib/html-serializer/HTMLSerializer.js",
+          "lineNumber": 47,
+          "columnNumber": 21
+        },
+        {
+          "functionName": "serializeToString",
+          "scriptId": "424",
+          "url": "file:///Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/happy-dom@20.14.5/node_modules/happy-dom/lib/html-serializer/HTMLSerializer.js",
+          "lineNumber": 47,
+          "columnNumber": 21
+        },
+        {
+          "functionName": "serializeToString",
+          "scriptId": "424",
+          "url": "file:///Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/happy-dom@20.14.5/node_modules/happy-dom/lib/html-serializer/HTMLSerializer.js",
+          "lineNumber": 47,
+          "columnNumber": 21
+        },
+        {
+          "functionName": "serializeToString",
+          "scriptId": "424",
+          "url": "file:///Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/happy-dom@20.14.5/node_modules/happy-dom/lib/html-serializer/HTMLSerializer.js",
+          "lineNumber": 47,
+          "columnNumber": 21
+        },
+        {
+          "functionName": "serializeToString",
+          "scriptId": "424",
+          "url": "file:///Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/happy-dom@20.14.5/node_modules/happy-dom/lib/html-serializer/HTMLSerializer.js",
+          "lineNumber": 47,
+          "columnNumber": 21
+        },
+        {
+          "functionName": "serializeToString",
+          "scriptId": "424",
+          "url": "file:///Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/happy-dom@20.14.5/node_modules/happy-dom/lib/html-serializer/HTMLSerializer.js",
+          "lineNumber": 47,
+          "columnNumber": 21
+        },
+        {
+          "functionName": "serializeToString",
+          "scriptId": "424",
+          "url": "file:///Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/happy-dom@20.14.5/node_modules/happy-dom/lib/html-serializer/HTMLSerializer.js",
+          "lineNumber": 47,
+          "columnNumber": 21
+        },
+        {
+          "functionName": "serializeToString",
+          "scriptId": "424",
+          "url": "file:///Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/happy-dom@20.14.5/node_modules/happy-dom/lib/html-serializer/HTMLSerializer.js",
+          "lineNumber": 47,
+          "columnNumber": 21
+        },
+        {
+          "functionName": "serializeToString",
+          "scriptId": "424",
+          "url": "file:///Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/happy-dom@20.14.5/node_modules/happy-dom/lib/html-serializer/HTMLSerializer.js",
+          "lineNumber": 47,
+          "columnNumber": 21
+        },
+        {
+          "functionName": "serializeToString",
+          "scriptId": "424",
+          "url": "file:///Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/happy-dom@20.14.5/node_modules/happy-dom/lib/html-serializer/HTMLSerializer.js",
+          "lineNumber": 47,
+          "columnNumber": 21
+        },
+        {
+          "functionName": "serializeToString",
+          "scriptId": "424",
+          "url": "file:///Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/happy-dom@20.14.5/node_modules/happy-dom/lib/html-serializer/HTMLSerializer.js",
+          "lineNumber": 47,
+          "columnNumber": 21
+        },
+        {
+          "functionName": "serializeToString",
+          "scriptId": "424",
+          "url": "file:///Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/happy-dom@20.14.5/node_modules/happy-dom/lib/html-serializer/HTMLSerializer.js",
+          "lineNumber": 47,
+          "columnNumber": 21
+        },
+        {
+          "functionName": "serializeToString",
+          "scriptId": "424",
+          "url": "file:///Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/happy-dom@20.14.5/node_modules/happy-dom/lib/html-serializer/HTMLSerializer.js",
+          "lineNumber": 47,
+          "columnNumber": 21
+        },
+        {
+          "functionName": "serializeToString",
+          "scriptId": "424",
+          "url": "file:///Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/happy-dom@20.14.5/node_modules/happy-dom/lib/html-serializer/HTMLSerializer.js",
+          "lineNumber": 47,
+          "columnNumber": 21
+        },
+        {
+          "functionName": "serializeToString",
+          "scriptId": "424",
+          "url": "file:///Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/happy-dom@20.14.5/node_modules/happy-dom/lib/html-serializer/HTMLSerializer.js",
+          "lineNumber": 47,
+          "columnNumber": 21
+        },
+        {
+          "functionName": "serializeToString",
+          "scriptId": "424",
+          "url": "file:///Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/happy-dom@20.14.5/node_modules/happy-dom/lib/html-serializer/HTMLSerializer.js",
+          "lineNumber": 47,
+          "columnNumber": 21
+        },
+        {
+          "functionName": "serializeToString",
+          "scriptId": "424",
+          "url": "file:///Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/happy-dom@20.14.5/node_modules/happy-dom/lib/html-serializer/HTMLSerializer.js",
+          "lineNumber": 47,
+          "columnNumber": 21
+        },
+        {
+          "functionName": "serializeToString",
+          "scriptId": "424",
+          "url": "file:///Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/happy-dom@20.14.5/node_modules/happy-dom/lib/html-serializer/HTMLSerializer.js",
+          "lineNumber": 47,
+          "columnNumber": 21
+        },
+        {
+          "functionName": "serializeToString",
+          "scriptId": "424",
+          "url": "file:///Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/happy-dom@20.14.5/node_modules/happy-dom/lib/html-serializer/HTMLSerializer.js",
+          "lineNumber": 47,
+          "columnNumber": 21
+        },
+        {
+          "functionName": "get outerHTML",
+          "scriptId": "417",
+          "url": "file:///Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/happy-dom@20.14.5/node_modules/happy-dom/lib/nodes/element/Element.js",
+          "lineNumber": 365,
+          "columnNumber": 17
+        },
+        {
+          "functionName": "toString",
+          "scriptId": "417",
+          "url": "file:///Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/happy-dom@20.14.5/node_modules/happy-dom/lib/nodes/element/Element.js",
+          "lineNumber": 786,
+          "columnNumber": 12
+        },
+        {
+          "functionName": "He",
+          "scriptId": "1477",
+          "url": "file:///Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/@sxzz+popperjs-es@2.11.8/node_modules/@sxzz/popperjs-es/dist/index.mjs",
+          "lineNumber": 0,
+          "columnNumber": 8939
+        },
+        {
+          "functionName": "ce",
+          "scriptId": "1477",
+          "url": "file:///Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/@sxzz+popperjs-es@2.11.8/node_modules/@sxzz/popperjs-es/dist/index.mjs",
+          "lineNumber": 0,
+          "columnNumber": 9164
+        },
+        {
+          "functionName": "Jt",
+          "scriptId": "1477",
+          "url": "file:///Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/@sxzz+popperjs-es@2.11.8/node_modules/@sxzz/popperjs-es/dist/index.mjs",
+          "lineNumber": 0,
+          "columnNumber": 9768
+        },
+        {
+          "functionName": "Kt",
+          "scriptId": "1477",
+          "url": "file:///Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/@sxzz+popperjs-es@2.11.8/node_modules/@sxzz/popperjs-es/dist/index.mjs",
+          "lineNumber": 0,
+          "columnNumber": 9940
+        },
+        {
+          "functionName": "oe",
+          "scriptId": "1477",
+          "url": "file:///Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/@sxzz+popperjs-es@2.11.8/node_modules/@sxzz/popperjs-es/dist/index.mjs",
+          "lineNumber": 0,
+          "columnNumber": 10757
+        },
+        {
+          "functionName": "en",
+          "scriptId": "1477",
+          "url": "file:///Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/@sxzz+popperjs-es@2.11.8/node_modules/@sxzz/popperjs-es/dist/index.mjs",
+          "lineNumber": 0,
+          "columnNumber": 12120
+        },
+        {
+          "functionName": "forceUpdate",
+          "scriptId": "1477",
+          "url": "file:///Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/@sxzz+popperjs-es@2.11.8/node_modules/@sxzz/popperjs-es/dist/index.mjs",
+          "lineNumber": 0,
+          "columnNumber": 18961
+        },
+        {
+          "functionName": "",
+          "scriptId": "1477",
+          "url": "file:///Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/@sxzz+popperjs-es@2.11.8/node_modules/@sxzz/popperjs-es/dist/index.mjs",
+          "lineNumber": 0,
+          "columnNumber": 19522
+        },
+        {
+          "functionName": "",
+          "scriptId": "1477",
+          "url": "file:///Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/@sxzz+popperjs-es@2.11.8/node_modules/@sxzz/popperjs-es/dist/index.mjs",
+          "lineNumber": 0,
+          "columnNumber": 19492
+        },
+        {
+          "functionName": "",
+          "scriptId": "1477",
+          "url": "file:///Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/@sxzz+popperjs-es@2.11.8/node_modules/@sxzz/popperjs-es/dist/index.mjs",
+          "lineNumber": 0,
+          "columnNumber": 17773
+        },
+        {
+          "functionName": "(root)",
+          "scriptId": "0",
+          "url": "",
+          "lineNumber": -1,
+          "columnNumber": -1
+        }
+      ]
+    }
+  ]
+}
