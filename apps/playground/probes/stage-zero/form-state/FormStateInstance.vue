@@ -7,6 +7,7 @@ import { formStateFixture, type FixtureOptions } from "./fixtures";
 import { observeLiveState } from "./state-evidence";
 import type { FormContent, LiveState, MountedEditor, RetentionHost } from "./types";
 import { assertCaptureReady, runLocalShortcut } from "./input-boundary";
+import { installDragBoundary } from "./drag-boundary";
 import { createRetentionPolicy } from "./retention-policy";
 const props = defineProps<{ owner: string; fixture: FixtureOptions }>();
 const { controller: c, forms } = formStateFixture(props.owner, props.fixture);
@@ -29,6 +30,7 @@ type View = {
   provisional: boolean;
   composing: boolean;
   dragging: boolean;
+  stopDrag?: () => void;
 };
 const views = shallowRef<View[]>([]),
   activeId = ref(""),
@@ -58,8 +60,19 @@ function busy(v: View) {
 }
 
 function bind(v: View, value: unknown) {
-  if (!value || typeof value !== "object") return;
+  if (!value || typeof value !== "object" || v.vm === value) return;
+  v.stopDrag?.();
   v.vm = value as InstanceType<typeof FormDesigner>;
+  v.stopDrag = installDragBoundary(
+    v.vm.$el as HTMLElement,
+    (value) => {
+      v.dragging = value;
+      tick.value++;
+    },
+    (task) => {
+      void nextTick(task);
+    },
+  );
 }
 function make(target: EditTarget, content: FormContent, provisional = false) {
   let cached: DraftValue | null | undefined;
@@ -115,6 +128,7 @@ function show(editor: MountedEditor) {
 function unmount(editor: MountedEditor) {
   const v = views.value.find((view) => view.editor === editor);
   if (!v) return;
+  v.stopDrag?.();
   if (v.lease) c.store.releaseEditor(v.lease);
   views.value = views.value.filter((view) => view !== v);
 }
@@ -241,6 +255,7 @@ function state() {
 onBeforeUnmount(() => {
   disposed = true;
   policy.dispose();
+  views.value.forEach((v) => v.stopDrag?.());
   c.dispose();
 });
 void choose(forms[0]!);
