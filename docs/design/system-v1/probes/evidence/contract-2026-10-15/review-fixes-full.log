@@ -1,0 +1,29 @@
+Scope: 4 of 5 workspace projects
+packages/core test$ vitest run --testTimeout 20000
+packages/core test:  RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/core
+packages/core test:  Test Files  14 passed (14)
+packages/core test:       Tests  148 passed (148)
+packages/core test:    Start at  12:30:16
+packages/core test:    Duration  786ms (transform 44%, tests 41%, import 13%, worker 2%)
+packages/core test: Done
+packages/designer test$ vitest run --testTimeout 20000
+packages/designer test:  RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/designer
+packages/designer test:  Test Files  14 passed (14)
+packages/designer test:       Tests  184 passed (184)
+packages/designer test:    Start at  12:30:17
+packages/designer test:    Duration  7.28s (tests 44%, import 21%, transform 18%, environment 17%, worker 1%)
+packages/designer test: Done
+packages/form-create test$ vitest run --testTimeout 20000
+packages/form-create test:  RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/form-create
+packages/form-create test:  Test Files  9 passed (9)
+packages/form-create test:       Tests  137 passed (137)
+packages/form-create test:    Start at  12:30:25
+packages/form-create test:    Duration  50.50s (tests 72%, import 15%, environment 7%, transform 6%)
+packages/form-create test: Done
+apps/playground test$ vitest run --testTimeout 20000
+apps/playground test:  RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground
+apps/playground test:  Test Files  15 passed (15)
+apps/playground test:       Tests  168 passed (168)
+apps/playground test:    Start at  12:31:16
+apps/playground test:    Duration  41.63s (tests 49%, import 32%, transform 10%, environment 9%)
+apps/playground test: Done

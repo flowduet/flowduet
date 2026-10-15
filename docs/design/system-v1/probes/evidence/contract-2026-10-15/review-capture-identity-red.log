@@ -1,0 +1,43 @@
+
+ RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground
+
+stderr | probes/stage-zero/contracts/candidate.test.ts > 隔离候选与当前编辑版本 > capture期间内容相同的未知替换也拒绝旧实例输入
+[BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+
+ ❯ probes/stage-zero/contracts/candidate.test.ts (11 tests | 1 failed) 268ms
+   ❯ 隔离候选与当前编辑版本 (11)
+     × capture期间内容相同的未知替换也拒绝旧实例输入 43ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  probes/stage-zero/contracts/candidate.test.ts > 隔离候选与当前编辑版本 > capture期间内容相同的未知替换也拒绝旧实例输入
+AssertionError: expected { ok: true, value: { id: 1, …(6) } } to match object { ok: false }
+(8 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "ok": false,
++   "ok": true,
+  }
+
+ ❯ probes/stage-zero/contracts/candidate.test.ts:158:20
+    156|     });
+    157|     const result = await f.c.prepare("draft-save");
+    158|     expect(result).toMatchObject({ ok: false });
+       |                    ^
+    159|     expect(f.session.current!.forms[0]?.options).toBe("{}");
+    160|     expect(f.store.resolve(target.ref)).toBeUndefined();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 10 passed (11)
+   Start at  12:34:37
+   Duration  5.64s (import 56%, transform 27%, environment 12%, tests 5%)
+
+undefined
+/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run probes/stage-zero/contracts/candidate.test.ts --testTimeout 20000

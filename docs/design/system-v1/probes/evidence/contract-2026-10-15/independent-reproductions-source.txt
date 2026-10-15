@@ -1,0 +1,33 @@
+import { it, expect, afterEach } from 'vitest';
+import { mount, flushPromises } from '@vue/test-utils';
+import ContractInstanceProbe from '/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground/probes/stage-zero/ContractInstanceProbe.vue';
+const mounted: any[]=[];
+afterEach(()=> {mounted.splice(0).forEach(w=>w.unmount()); document.body.innerHTML='';});
+it('discard-local must permit subsequent edits on current live object',async()=>{
+ const w=mount(ContractInstanceProbe,{props:{owner:'review',includeForms:false},attachTo:document.body});mounted.push(w);await flushPromises();
+ const edit=async(value:string)=>{const input=w.get('[data-property-target="approval_1"] [data-test="drawer-name"]').element as HTMLInputElement;input.value=value;input.dispatchEvent(new Event('input',{bubbles:true}));await flushPromises();};
+ await edit('旧输入');
+ await w.findAll('button').find(b=>b.text()==='实验：外部改首节点名称')!.trigger('click');
+ await w.findAll('button').find(b=>b.text()==='明确放弃旧输入')!.trigger('click');await flushPromises();
+ await edit('放弃后新输入');
+ await w.findAll('button').find(b=>b.text()==='应用')!.trigger('click');await flushPromises();
+ expect(w.vm.controller.model.elementOf('approval_1').get('name')).toBe('放弃后新输入');
+});
+it('restore must lock the displayed basis before later first input',async()=>{
+ const w=mount(ContractInstanceProbe,{props:{owner:'restore',includeForms:false},attachTo:document.body});mounted.push(w);await flushPromises();
+ await w.findAll('button').find(b=>b.text()==='还原')!.trigger('click');await flushPromises();
+ w.vm.controller.model.elementOf('approval_1').set('assignee','external-new');
+ const input=w.get('[data-property-target="approval_1"] [data-test="drawer-name"]').element as HTMLInputElement;input.value='只改名称';input.dispatchEvent(new Event('input',{bubbles:true}));await flushPromises();
+ const target=w.vm.controller.target('node','approval_1','properties');if(!target.ok)throw Error('target');
+ const result=await w.vm.controller.apply(target.value);
+ expect({result,assignee:w.vm.controller.model.elementOf('approval_1').get('assignee')}).toMatchObject({result:{ok:false,code:'conflict'},assignee:'external-new'});
+});
+it('flush-time external edit must not overwrite freshly conflicted input',async()=>{
+ const w=mount(ContractInstanceProbe,{props:{owner:'flush',includeForms:false},attachTo:document.body});mounted.push(w);await flushPromises();
+ const input=w.get('[data-property-target="approval_1"] [data-test="drawer-name"]').element as HTMLInputElement;
+ input.value='我的名称';input.dispatchEvent(new Event('input',{bubbles:true}));await flushPromises();
+ input.addEventListener('blur',()=>w.vm.controller.model.elementOf('approval_1').set('assignee','external-on-blur'),{once:true});input.focus();
+ const target=w.vm.controller.target('node','approval_1','properties');if(!target.ok)throw Error('target');
+ const result=await w.vm.controller.apply(target.value);
+ expect({result,assignee:w.vm.controller.model.elementOf('approval_1').get('assignee')}).toMatchObject({result:{ok:false},assignee:'external-on-blur'});
+});

@@ -1,0 +1,90 @@
+
+ RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground
+
+stderr | probes/stage-zero/contract-location.test.ts > 独立复核：还原、失焦冲突与放弃后的真实编辑器 > 放弃同生命期冲突后可以继续编辑当前对象
+[BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+
+stderr | probes/stage-zero/contract-location.test.ts > 独立复核：还原、失焦冲突与放弃后的真实编辑器 > 还原后的显示基线不能被下一次输入悄悄重置
+[BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+
+stderr | probes/stage-zero/contract-location.test.ts > 独立复核：还原、失焦冲突与放弃后的真实编辑器 > 失焦过程中宿主更新模型仍拒绝覆盖并保留本地输入
+[BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+
+ ❯ probes/stage-zero/contract-location.test.ts (18 tests | 3 failed) 5171ms
+   ❯ 独立复核：还原、失焦冲突与放弃后的真实编辑器 (3)
+     × 放弃同生命期冲突后可以继续编辑当前对象 338ms
+     × 还原后的显示基线不能被下一次输入悄悄重置 323ms
+     × 失焦过程中宿主更新模型仍拒绝覆盖并保留本地输入 333ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  probes/stage-zero/contract-location.test.ts > 独立复核：还原、失焦冲突与放弃后的真实编辑器 > 放弃同生命期冲突后可以继续编辑当前对象
+AssertionError: expected '外部节点名称' to be '放弃后新输入' // Object.is equality
+
+Expected: "放弃后新输入"
+Received: "外部节点名称"
+
+ ❯ probes/stage-zero/contract-location.test.ts:304:71
+    302|     await w.findAll("button").find((b) => b.text() === "应用")!.trigger(…
+    303|     await flushPromises();
+    304|     expect(w.vm.controller.model.elementOf("approval_1").get("name")).…
+       |                                                                       ^
+    305|   });
+    306|   it("还原后的显示基线不能被下一次输入悄悄重置", async () => {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  probes/stage-zero/contract-location.test.ts > 独立复核：还原、失焦冲突与放弃后的真实编辑器 > 还原后的显示基线不能被下一次输入悄悄重置
+AssertionError: expected { ok: true, value: { revision: 3 } } to match object { ok: false, code: 'conflict' }
+(2 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "code": "conflict",
+-   "ok": false,
++   "ok": true,
+  }
+
+ ❯ probes/stage-zero/contract-location.test.ts:317:20
+    315|     if (!target.ok) throw new Error(target.message);
+    316|     const result = await w.vm.controller.apply(target.value);
+    317|     expect(result).toMatchObject({ ok: false, code: "conflict" });
+       |                    ^
+    318|     expect(w.vm.controller.model.elementOf("approval_1").get("assignee…
+    319|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  probes/stage-zero/contract-location.test.ts > 独立复核：还原、失焦冲突与放弃后的真实编辑器 > 失焦过程中宿主更新模型仍拒绝覆盖并保留本地输入
+AssertionError: expected { ok: true, value: { revision: 3 } } to match object { ok: false }
+(2 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "ok": false,
++   "ok": true,
+  }
+
+ ❯ probes/stage-zero/contract-location.test.ts:334:20
+    332|     if (!target.ok) throw new Error(target.message);
+    333|     const result = await w.vm.controller.apply(target.value);
+    334|     expect(result).toMatchObject({ ok: false });
+       |                    ^
+    335|     expect(w.vm.controller.model.elementOf("approval_1").get("assignee…
+    336|     expect(w.vm.controller.drafts.input(target.value)).toMatchObject({…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  3 failed | 15 passed (18)
+   Start at  12:29:08
+   Duration  7.69s (tests 69%, import 18%, transform 10%, environment 4%)
+
+undefined
+/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run probes/stage-zero/contract-location.test.ts --testTimeout 20000

@@ -2,7 +2,7 @@
 
 日期：2026-10-15。产品基线`develop@02d3474`，批准输入`e78d56a`；分支`refactor/stage-zero-editing-contract`，保留原探针分支。依据[已批准规格](../../2026-10-15-stage-zero-editing-contract.md)及[薄切片计划](../../plans/2026-10-15-stage-zero-contract-slices.md)。
 
-**当前：实现和回归证据就绪，独立复核待完成；阶段零整体出口仍未通过。** 本文中“通过”只指所列候选合同与夹具，不是正式工作台、公共控制器发布或任意第三方状态保真声明。B01/B03/B04未解除。
+**当前：A/B 候选合同验收通过，B02/B05 阶段零阻断解除；阶段零整体出口仍未通过。** 独立复核发现的三个 Important 已完成失败回归、补修和执行方全量复验，没有延后的 Minor。 本文中“通过”只指所列候选合同与夹具，不是正式工作台、公共控制器发布或任意第三方状态保真声明。B01/B03/B04未解除。
 
 ## 1. 实施范围
 
@@ -11,7 +11,7 @@
 - 没有改core、form-create生产源码、三包根导出、package.json、lockfile或主Playground入口；没有新增依赖，没有推送、开PR或发包。
 - NodeDrawer默认“确定”、旧DingtalkDesigner切换/commitPendingChanges合同与部署守卫保持；只有显式external模式使用外置输入。新模式误调用旧收集方法返回false，避免假收集成功。
 
-本地提交已按严格类型修订、身份、冲突、候选事务、共享字段、选择接缝及集成实验分组；最终源文件与证据身份记录在本目录证据manifest中。
+本地提交已按严格类型修订、身份、冲突、候选事务、共享字段、选择接缝、集成实验及复核补修分组；补修源码为`10b66f4`、`9c8a8f5`。最终源文件与证据身份记录在本目录证据manifest中。
 
 ## 2. 验收矩阵
 
@@ -34,7 +34,7 @@
 | A15 | 副本编译不改变当前DI/引用；额外字段保留或明确拒绝；无私自新增clone/transaction内核API。candidate、transaction、正式往返/编译回归              |
 | B05 | 当前锁定版本严格入口已转绿；正向类型和非法placeholder/选项/modelValue拒绝用例在同一入口检查。不是升级依赖、降低strict或替换真实控件           |
 
-补充边界：同轮两个字段事件不丢前值；自定义elementVariable省略时保持；相同内容的对象替换也换生命期/渲染版本；只读惰性空数组不制造dirty；特殊属性名不漏版本投影或失败撤销。
+补充边界：还原后立即锁定干净基线、flush模型变更阻断、放弃同生命期冲突后重建编辑器均已有真实组件回归；同轮两个字段事件不丢前值；自定义elementVariable省略时保持；相同内容的对象替换也换生命期/渲染版本；只读惰性空数组不制造dirty；特殊属性名不漏版本投影或失败撤销。
 
 ## 3. 真实浏览器证据
 
@@ -51,6 +51,8 @@ Playwright CLI驱动真实Chromium；三包别名指向源码。完整原始结�
 
 B05另在原HostProtocolProbe中打开真实EP下拉并选择，检查选择值和第二实例不变；见[browser-real-ep](evidence/contract-2026-10-15/browser-real-ep.txt)。该项不把旧入口的“模拟校验”计作新控制器的校验通过。
 
+补修浏览器[还原/放弃](evidence/contract-2026-10-15/review-final-restore-discard.txt)确认外部值不被覆盖且放弃后新输入可应用；[失焦竞态](evidence/contract-2026-10-15/review-final-flush-conflict.txt)确认flush中出现模型变化时拒绝，保留本地及外部值。后者用既有实验按钮注入外部更新，以DOM click保持焦点直到适配器flush，不是普通鼠标交互时序或OS输入法证据。审批人字段的精确复现另由真实Vue回归覆盖。
+
 原生脚本结果必须同时核对实际模型、字段值、目标身份和操作返回，不以成功文案或派发click判通过。默认配置使用固定过程引用；未知文档替换后旧控件禁用，不能猜同名新对象。
 
 ### 保留的负证据及取证边界
@@ -64,9 +66,9 @@ B05另在原HostProtocolProbe中打开真实EP下拉并选择，检查选择值�
 
 ## 4. 验证记录
 
-最终全包 **634/634通过**：core148、designer184、form-create137、Playground165。正式build、lint及严格probe类型检查均退出0；正式build不覆盖probe入口，严格vue-tsc单独执行。较早620/621轮次仅作历史过程，不替代最终结果。原正式结构及保存重开三档转换、错误方向拒绝用例随全套回归再次通过。
+补修后最终全包 **638/638通过**：core148、designer184、form-create137、Playground169（正式测试513项、探针125项）。正式build、lint及严格probe类型检查均退出0；正式build不覆盖probe入口，严格vue-tsc单独执行。较早620/621/634轮次仅作历史过程，不替代最终结果。原正式结构及保存重开三档转换、错误方向拒绝用例随全套回归再次通过。
 
-日志：[全包](evidence/contract-2026-10-15/full-final.log)、[构建](evidence/contract-2026-10-15/build-final.log)、[lint](evidence/contract-2026-10-15/lint-final.log)、[严格类型](evidence/contract-2026-10-15/probe-types.log)。严格类型成功无诊断输出，退出状态另记在manifest，空日志不是未执行。
+日志：[全包](evidence/contract-2026-10-15/review-final-full.log)、[构建](evidence/contract-2026-10-15/review-final-build.log)、[lint](evidence/contract-2026-10-15/review-final-lint.log)、[严格类型](evidence/contract-2026-10-15/review-final-types.log)。严格类型成功无诊断输出，退出状态另记在manifest，空日志不是未执行。
 
 - 全包：`pnpm -r test --testTimeout 20000`。
 - 正式构建：`pnpm build`，保留既有大chunk提示，不当作类型/天然异常通过。
@@ -92,10 +94,14 @@ B05另在原HostProtocolProbe中打开真实EP下拉并选择，检查选择值�
 
 ## 6. 剩余阻断与下一步
 
-A/B通过候选合同验收后也只解除B02/B05的阶段零可行性门槛，不直接发布接口或进入正式工作台。B01主题/弹层隔离、B03全部内部状态/天然异常、B04资源预算/容器任务仍需独立补充方案、实施及复审。未自动降低双主题、密度、隔离或保真范围。
+A/B本轮仅解除B02/B05的阶段零可行性门槛，不直接发布接口或进入正式工作台。B01主题/弹层隔离、B03全部内部状态/天然异常、B04资源预算/容器任务仍需独立补充方案、实施及复审。未自动降低双主题、密度、隔离或保真范围。
 
 下一步由agent先整理C/D补充方案与E测量协议，维护者审阅后再执行；本轮不自动开工后续组，也不推送。
 
 ## 7. 独立复核
 
-尚未执行。将记录固定审阅范围、Standards/Spec结论、独立运行项、未判定范围及执行方处置，完成前不把A/B最终验收标为通过。
+新上下文审阅者只读核对`e78d56a..f2e8f4c`，确认B05，发现A04/A06三个Important；无Critical/Minor。独立重跑A/B 74项、designer 184项及严格类型，另写三项真实Vue复现并全部观察到失败。没有冒充独立重跑全包或浏览器。
+
+执行方将三项纳入`contract-location.test.ts`并观察失败，修复后A/B 78/78、原复现3/3、全包638/638、build/lint/严格类型和浏览器补验通过。`10b66f4`、`9c8a8f5`修改仅限probe的基线、flush检查与恢复重绑，没有扩大生产白名单。按已选执行方式完成一次补修，没有派第二次复审；因此结论是“独立复核发现项已由失败回归与执行方全量验证闭环”，不是“修订head再次独立审阅零问题”。
+
+逐项问题、未判定范围与处置见[独立复核](independent-review.md)；全部施工裁定及误判代价见[裁定归档](contract-rulings.md)。原始红灯、补修绿灯及修前manifest均保留，不重写旧证据。

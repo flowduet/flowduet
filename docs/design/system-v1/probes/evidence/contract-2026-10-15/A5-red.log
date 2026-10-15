@@ -1,0 +1,83 @@
+
+ RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground
+
+ ❯ probes/stage-zero/contracts/validation.test.ts (4 tests | 4 failed) 22ms
+   ❯ 完整候选校验章 (4)
+     × equivalent_apply_keeps_validation_not_saved 11ms
+     × normalization_invalidates_validation 3ms
+     × unknown_change_requires_revalidation 4ms
+     × 校验不能用旧模型掩盖非法缓冲 3ms
+ ❯ probes/stage-zero/contracts/host.test.ts (4 tests | 4 failed) 24ms
+   ❯ 宿主快照确认 (4)
+     × save_during_edit_keeps_dirty 11ms
+     × stale_epoch_save_does_not_confirm 4ms
+     × 宿主失败保留输入及未保存状态 4ms
+     × saved_candidate_apply_stays_clean 3ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 8 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  probes/stage-zero/contracts/host.test.ts > 宿主快照确认 > save_during_edit_keeps_dirty
+TypeError: f.c.save is not a function
+ ❯ probes/stage-zero/contracts/host.test.ts:6:144
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/8]⎯
+
+ FAIL  probes/stage-zero/contracts/host.test.ts > 宿主快照确认 > stale_epoch_save_does_not_confirm
+TypeError: f.c.save is not a function
+ ❯ probes/stage-zero/contracts/host.test.ts:7:149
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/8]⎯
+
+ FAIL  probes/stage-zero/contracts/host.test.ts > 宿主快照确认 > 宿主失败保留输入及未保存状态
+TypeError: f.c.save is not a function
+ ❯ probes/stage-zero/contracts/host.test.ts:8:74
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/8]⎯
+
+ FAIL  probes/stage-zero/contracts/host.test.ts > 宿主快照确认 > saved_candidate_apply_stays_clean
+TypeError: f.c.save is not a function
+ ❯ probes/stage-zero/contracts/host.test.ts:9:93
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/8]⎯
+
+ FAIL  probes/stage-zero/contracts/validation.test.ts > 完整候选校验章 > equivalent_apply_keeps_validation_not_saved
+TypeError: f.c.validate is not a function
+ ❯ probes/stage-zero/contracts/validation.test.ts:6:153
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/8]⎯
+
+ FAIL  probes/stage-zero/contracts/validation.test.ts > 完整候选校验章 > normalization_invalidates_validation
+TypeError: f.c.validate is not a function
+ ❯ probes/stage-zero/contracts/validation.test.ts:7:147
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/8]⎯
+
+ FAIL  probes/stage-zero/contracts/validation.test.ts > 完整候选校验章 > unknown_change_requires_revalidation
+TypeError: f.c.validate is not a function
+ ❯ probes/stage-zero/contracts/validation.test.ts:8:96
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/8]⎯
+
+ FAIL  probes/stage-zero/contracts/validation.test.ts > 完整候选校验章 > 校验不能用旧模型掩盖非法缓冲
+TypeError: f.c.validate is not a function
+ ❯ probes/stage-zero/contracts/validation.test.ts:9:152
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/8]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  8 failed (8)
+   Start at  10:08:40
+   Duration  2.90s (import 61%, transform 26%, environment 12%, tests 1%)
+
+undefined
+/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run probes/stage-zero/contracts/validation.test.ts probes/stage-zero/contracts/host.test.ts --testTimeout 20000

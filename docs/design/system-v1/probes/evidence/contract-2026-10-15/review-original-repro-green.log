@@ -1,0 +1,9 @@
+
+ RUN  v5.0.1 /private/tmp/flowduet-final-review
+
+
+ Test Files  1 passed (1)
+      Tests  3 passed (3)
+   Start at  12:32:03
+   Duration  3.81s (import 38%, tests 32%, transform 22%, environment 8%)
+

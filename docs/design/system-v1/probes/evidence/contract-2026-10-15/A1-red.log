@@ -1,0 +1,87 @@
+
+ RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground
+
+ ❯ probes/stage-zero/contracts/entity-store.test.ts (5 tests | 5 failed) 19ms
+   ❯ 控制器归属与租约 (5)
+     × foreign_ref_rejected 8ms
+     × facet_kind_rejected 3ms
+     × same_command_reuse_new_lifetime 2ms
+     × late_release_keeps_new_editor 2ms
+     × process_ref_expires_on_replace 2ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  probes/stage-zero/contracts/entity-store.test.ts > 控制器归属与租约 > foreign_ref_rejected
+Error: EntityStore尚未实现
+ ❯ createEntityStore probes/stage-zero/contracts/entity-store.ts:2:63
+      1| // 合同桩：先观察真实模型用例失败。
+      2| export function createEntityStore(_id: string): never { throw new Erro…
+       |                                                               ^
+      3| export function observeSession(_session: unknown): never { throw new E…
+      4|
+ ❯ fixture probes/stage-zero/contracts/entity-store.test.ts:8:17
+ ❯ probes/stage-zero/contracts/entity-store.test.ts:20:15
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/5]⎯
+
+ FAIL  probes/stage-zero/contracts/entity-store.test.ts > 控制器归属与租约 > facet_kind_rejected
+Error: EntityStore尚未实现
+ ❯ createEntityStore probes/stage-zero/contracts/entity-store.ts:2:63
+      1| // 合同桩：先观察真实模型用例失败。
+      2| export function createEntityStore(_id: string): never { throw new Erro…
+       |                                                               ^
+      3| export function observeSession(_session: unknown): never { throw new E…
+      4|
+ ❯ fixture probes/stage-zero/contracts/entity-store.test.ts:8:17
+ ❯ probes/stage-zero/contracts/entity-store.test.ts:27:23
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/5]⎯
+
+ FAIL  probes/stage-zero/contracts/entity-store.test.ts > 控制器归属与租约 > same_command_reuse_new_lifetime
+Error: EntityStore尚未实现
+ ❯ createEntityStore probes/stage-zero/contracts/entity-store.ts:2:63
+      1| // 合同桩：先观察真实模型用例失败。
+      2| export function createEntityStore(_id: string): never { throw new Erro…
+       |                                                               ^
+      3| export function observeSession(_session: unknown): never { throw new E…
+      4|
+ ❯ fixture probes/stage-zero/contracts/entity-store.test.ts:8:17
+ ❯ probes/stage-zero/contracts/entity-store.test.ts:32:32
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/5]⎯
+
+ FAIL  probes/stage-zero/contracts/entity-store.test.ts > 控制器归属与租约 > late_release_keeps_new_editor
+Error: EntityStore尚未实现
+ ❯ createEntityStore probes/stage-zero/contracts/entity-store.ts:2:63
+      1| // 合同桩：先观察真实模型用例失败。
+      2| export function createEntityStore(_id: string): never { throw new Erro…
+       |                                                               ^
+      3| export function observeSession(_session: unknown): never { throw new E…
+      4|
+ ❯ fixture probes/stage-zero/contracts/entity-store.test.ts:8:17
+ ❯ probes/stage-zero/contracts/entity-store.test.ts:41:23
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/5]⎯
+
+ FAIL  probes/stage-zero/contracts/entity-store.test.ts > 控制器归属与租约 > process_ref_expires_on_replace
+Error: EntityStore尚未实现
+ ❯ createEntityStore probes/stage-zero/contracts/entity-store.ts:2:63
+      1| // 合同桩：先观察真实模型用例失败。
+      2| export function createEntityStore(_id: string): never { throw new Erro…
+       |                                                               ^
+      3| export function observeSession(_session: unknown): never { throw new E…
+      4|
+ ❯ fixture probes/stage-zero/contracts/entity-store.test.ts:8:17
+ ❯ probes/stage-zero/contracts/entity-store.test.ts:50:32
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/5]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  5 failed (5)
+   Start at  09:34:59
+   Duration  2.67s (import 56%, transform 28%, environment 15%, tests 1%)
+
+undefined
+/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run probes/stage-zero/contracts/entity-store.test.ts --testTimeout 20000
