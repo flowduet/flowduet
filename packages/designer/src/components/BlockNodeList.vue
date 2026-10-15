@@ -68,6 +68,8 @@ function branchDisplay(forkId: string, index: number): { name: string; detail: s
       <template v-if="item.kind === 'element'">
         <NodeCard
           :node="item"
+          :data-entity-id="item.id"
+          tabindex="-1"
           :active="item.id === activeId"
           :form-summary="formSummaries.get(item.id)"
           @open="$emit('open', item.id)"
@@ -145,6 +147,7 @@ function branchDisplay(forkId: string, index: number): { name: string; detail: s
                 v-if="item.gateway === 'exclusive'"
                 class="branch-tag branch-tag--btn"
                 :data-test="`branch-head-${item.forkId}-${i}`"
+                :data-entity-id="branchHeadFlowId(model, item.forkId, i)"
                 :title="`${branchDisplay(item.forkId, i).name}：${branchDisplay(item.forkId, i).detail}；点击配置此分支`"
                 @click="$emit('branchConfig', branchHeadFlowId(model, item.forkId, i))"
               >

@@ -1,9 +1,15 @@
 <script setup lang="ts">
-import { computed, ref, toRaw, watch } from "vue";
+import { computed, ref, toRaw, watch, nextTick, onBeforeUnmount } from "vue";
 import type { ApprovalDraftOptions, BpmnModel, BlockTreeNode } from "@flowduet/core";
 import { deriveBlockTree, resolveEffectiveForm } from "@flowduet/core";
 import BlockNodeList from "./BlockNodeList.vue";
 import NodeDrawer from "./NodeDrawer.vue";
+import type {
+  DesignerOperation,
+  DesignerOperationRequest,
+  DesignerSelectionRequest,
+  FocusResult,
+} from "../property-editing.js";
 import {
   labelFormOptions,
   type DesignerFormOption,
@@ -15,6 +21,7 @@ import {
   insertApprovalAfter,
   insertCcAfter,
   isDefaultBranch,
+  branchHeadFlowId,
   removeApprovalNode,
   removeBlock,
   removeBranch,
@@ -30,29 +37,85 @@ import {
  * toRaw：宿主可能把模型放进 reactive store（或测试工具会包裹 props），
  * 私有字段无法穿越 Vue 代理——这里统一解掉代理，只解代理不解状态。
  */
-const props = defineProps<{
-  model: BpmnModel;
-  /**
-   * 表单目录摘要（#72 中立接缝）：传入即启用表单集成模式——展示流程默认
-   * 表单选择条与审批节点的有效表单摘要；不传（未安装表单包的宿主）则
-   * 完全不出现相关入口，原有纯流程使用方式不变。选项内容与表单实现解耦。
-   */
-  formOptions?: readonly DesignerFormOption[];
-}>();
+const props = withDefaults(
+  defineProps<{
+    model: BpmnModel;
+    /**
+     * 表单目录摘要（#72 中立接缝）：传入即启用表单集成模式——展示流程默认
+     * 表单选择条与审批节点的有效表单摘要；不传（未安装表单包的宿主）则
+     * 完全不出现相关入口，原有纯流程使用方式不变。选项内容与表单实现解耦。
+     */
+    formOptions?: readonly DesignerFormOption[];
+    propertyEditing?: "drawer" | "external";
+    selectedId?: string | undefined;
+    showDefaultForm?: boolean;
+    /** 外置控制器提交版本，驱动同一模型引用的重投影及请求核对。 */
+    modelRevision?: number;
+  }>(),
+  { propertyEditing: "drawer", showDefaultForm: true, modelRevision: 0 },
+);
 
 const emit = defineEmits<{
   change: [];
+  "selection-request": [request: DesignerSelectionRequest];
+  "operation-request": [request: DesignerOperationRequest];
   /** 抽屉字段缓冲被编辑（#76）：未提交输入也计入宿主的未保存判定 */
   draftChange: [];
 }>();
 
 const model = computed(() => toRaw(props.model));
 
+const hostRef = ref<HTMLElement>();
+let focusTicket = 0,
+  disposed = false;
+onBeforeUnmount(() => {
+  disposed = true;
+  focusTicket++;
+});
 const drawerRef = ref<InstanceType<typeof NodeDrawer> | null>(null);
 
 const version = ref(0);
 const activeId = ref<string>();
 const drawerVisible = ref(false);
+watch(
+  () => [props.selectedId, props.modelRevision, props.model, props.propertyEditing] as const,
+  () => {
+    focusTicket++;
+    if (props.propertyEditing === "external") {
+      activeId.value = props.selectedId;
+      drawerVisible.value = false;
+      version.value++;
+    }
+  },
+  { immediate: true },
+);
+function requestExternal(operation: DesignerOperation): boolean {
+  if (props.propertyEditing !== "external") return false;
+  focusTicket++;
+  emit("operation-request", { model: model.value, renderRevision: props.modelRevision, operation });
+  return true;
+}
+async function focusElement(id: string, signal?: AbortSignal): Promise<FocusResult> {
+  const ticket = ++focusTicket;
+  await nextTick();
+  if (disposed || signal?.aborted || ticket !== focusTicket) return { status: "cancelled" };
+  const element = [
+    ...(hostRef.value?.querySelectorAll<HTMLElement>("[data-entity-id]") ?? []),
+  ].find((el) => el.dataset.entityId === id);
+  if (
+    !element?.isConnected ||
+    activeId.value !== id ||
+    getComputedStyle(hostRef.value!).display === "none"
+  )
+    return { status: "missing" };
+  element.scrollIntoView?.({ block: "nearest", inline: "nearest" });
+  element.focus();
+  if (disposed || signal?.aborted || ticket !== focusTicket) return { status: "cancelled" };
+  return element.ownerDocument.activeElement === element
+    ? { status: "focused", selectedId: activeId.value }
+    : { status: "missing" };
+}
+
 /** 块操作 / 抽屉守卫抛错的可读呈现（issue #24：第二处默认等被拦截时 UI 有反馈） */
 const actionError = ref("");
 
@@ -147,6 +210,10 @@ const formSummaries = computed<Map<string, NodeFormSummary>>(() => {
 });
 
 function onDefaultFormChange(value: string): void {
+  if (props.propertyEditing === "external") {
+    actionError.value = "外置编辑请在流程默认表单配置区修改";
+    return;
+  }
   runGuarded(() => {
     // 空串即「无」：清除默认引用，继承节点随之回到无表单状态
     model.value.setDefaultFormKey(value === "" ? undefined : value);
@@ -174,6 +241,7 @@ function runGuarded(action: () => void): void {
 }
 
 function insertAfter(kind: "approval" | "cc", nodeId: string): void {
+  if (requestExternal({ type: "insert-after", nodeId, kind })) return;
   runGuarded(() => {
     if (kind === "cc") {
       // 新抄送默认收件人占位，抽屉里改成真实名单（空白/占位保存均被守卫拦截）
@@ -185,6 +253,15 @@ function insertAfter(kind: "approval" | "cc", nodeId: string): void {
 }
 
 function openNode(nodeId: string): void {
+  if (props.propertyEditing === "external") {
+    focusTicket++;
+    emit("selection-request", {
+      model: model.value,
+      renderRevision: props.modelRevision,
+      id: nodeId,
+    });
+    return;
+  }
   if (drawerVisible.value && activeId.value === nodeId) return;
   // 换目标前先保存当前缓冲；格式非法时停留原节点供修正。
   // 集成宿主明确允许业务草稿，纯流程宿主仍沿用确定按钮的严格守卫。
@@ -194,6 +271,7 @@ function openNode(nodeId: string): void {
 }
 
 function deleteNode(nodeId: string): void {
+  if (requestExternal({ type: "remove-node", nodeId })) return;
   // #24 评审 S7：删节点同样走 runGuarded——空分支守卫抛错时呈现可读提示，
   // 不再以未捕获异常形式冒出（与块操作统一错误口径）。
   runGuarded(() => {
@@ -207,10 +285,16 @@ function deleteNode(nodeId: string): void {
 }
 
 function addBranch(forkId: string): void {
+  if (requestExternal({ type: "add-branch", forkId })) return;
   runGuarded(() => addBranchToBlock(model.value, forkId));
 }
 
 function removeBranchFrom(forkId: string, branchIndex: number): void {
+  if (props.propertyEditing === "external") {
+    const flowId = branchHeadFlowId(model.value, forkId, branchIndex);
+    if (flowId) requestExternal({ type: "remove-branch", flowId });
+    return;
+  }
   runGuarded(() => {
     removeBranch(model.value, forkId, branchIndex);
     clearStaleActive();
@@ -218,10 +302,16 @@ function removeBranchFrom(forkId: string, branchIndex: number): void {
 }
 
 function applyDefault(forkId: string, branchIndex: number | null): void {
+  if (props.propertyEditing === "external") {
+    const flowId = branchIndex === null ? null : branchHeadFlowId(model.value, forkId, branchIndex);
+    if (flowId !== undefined) requestExternal({ type: "set-default", forkId, flowId });
+    return;
+  }
   runGuarded(() => setDefaultBranch(model.value, forkId, branchIndex));
 }
 
 function removeBlockAt(forkId: string): void {
+  if (requestExternal({ type: "remove-block", forkId })) return;
   runGuarded(() => {
     removeBlock(model.value, forkId);
     clearStaleActive();
@@ -272,23 +362,36 @@ function onDrawerSaved(): void {
  * （错误已走内联提示通道），宿主应中止保存而非绕过守卫落半写模型。
  */
 function commitPendingChanges(options: ApprovalDraftOptions = {}): boolean {
+  if (props.propertyEditing === "external") {
+    actionError.value = "外置编辑请由控制器收集";
+    return false;
+  }
   return drawerRef.value?.commit(options) ?? true;
 }
 
-defineExpose({ commitPendingChanges });
+defineExpose({
+  commitPendingChanges,
+  focusElement,
+  actualSelectedId: computed(() => activeId.value),
+});
 </script>
 
 <template>
-  <div class="dingtalk-designer" data-test="dingtalk-designer">
+  <div ref="hostRef" class="dingtalk-designer" data-test="dingtalk-designer">
     <p v-if="actionError" class="action-error" data-test="action-error">{{ actionError }}</p>
     <!-- 流程默认表单选择条（#72）：仅在表单集成模式（传入 formOptions）出现。
          原生 select：与钉钉式视图的原生按钮语汇一致，也避开 ElSelect 泛型
          组件在 vue-tsc 严格检查下的模板推断问题 -->
-    <div v-if="formOptions" class="default-form-bar" data-test="default-form-bar">
+    <div
+      v-if="formOptions && showDefaultForm"
+      class="default-form-bar"
+      data-test="default-form-bar"
+    >
       <span class="default-form-bar-label">流程默认表单</span>
       <select
         class="default-form-select"
         data-test="default-form-select"
+        :disabled="propertyEditing === 'external'"
         :value="model.defaultFormKey ?? ''"
         @change="onDefaultFormChange(($event.target as HTMLSelectElement).value)"
       >
@@ -326,6 +429,7 @@ defineExpose({ commitPendingChanges });
       @branch-config="openBranchConfig"
     />
     <NodeDrawer
+      v-if="propertyEditing === 'drawer'"
       ref="drawerRef"
       v-model="drawerVisible"
       :model="model"
