@@ -2,11 +2,23 @@
 import { nextTick, onBeforeUnmount, ref, shallowRef } from "vue";
 import { FormDesigner } from "@flowduet/form-create";
 import { targetKey, type EditTarget, type EditorLease, type DraftValue } from "../contracts/types";
+import { stateSignature } from "../contracts/candidate";
 import { formStateFixture, type FixtureOptions } from "./fixtures";
 import { observeLiveState } from "./state-evidence";
 import type { FormContent, LiveState, MountedEditor } from "./types";
 const props = defineProps<{ owner: string; fixture: FixtureOptions }>();
 const { controller: c, forms } = formStateFixture(props.owner, props.fixture);
+const initialState = c.session.current!,
+  initialModel = c.model,
+  initialForms = [...initialState.forms],
+  initialSignature = stateSignature(c.session);
+function graphUnchanged() {
+  try {
+    return stateSignature(c.session) === initialSignature;
+  } catch {
+    return false;
+  }
+}
 type View = {
   editor: MountedEditor;
   content: FormContent;
@@ -20,6 +32,7 @@ const views = shallowRef<View[]>([]),
   activeId = ref(""),
   phase = ref("forms"),
   tick = ref(0);
+const resultSequence = ref(0);
 const result = ref<unknown>(null),
   observation = ref<LiveState | null>(null);
 let serial = 0,
@@ -135,10 +148,12 @@ function snapshot() {
 }
 async function collect() {
   result.value = await c.prepare("draft-save");
+  resultSequence.value++;
   tick.value++;
 }
 async function validate() {
   result.value = await c.validate();
+  resultSequence.value++;
   tick.value++;
 }
 async function save() {
@@ -161,6 +176,12 @@ function state() {
   void tick.value;
   return {
     owner: props.owner,
+    sameSession: c.session.current === initialState,
+    sameModel: c.model === initialModel,
+    sameForms:
+      c.session.current!.forms.every((form, i) => form === initialForms[i]) &&
+      c.session.current!.forms.length === initialForms.length,
+    sameGraph: graphUnchanged(),
     activeId: activeId.value,
     phase: phase.value,
     persistCalls,
@@ -176,6 +197,7 @@ function state() {
     })),
     conflicts: c.drafts.conflicts(),
     result: result.value,
+    resultSequence: resultSequence.value,
   };
 }
 onBeforeUnmount(() => {

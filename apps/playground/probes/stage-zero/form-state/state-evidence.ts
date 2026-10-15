@@ -41,12 +41,13 @@ export function observeLiveState(
   owner = "",
 ): LiveState {
   const doc = root.ownerDocument;
-  const related = [...root.querySelectorAll<HTMLElement>("[aria-controls],[aria-owns]")].flatMap(
-    (el) =>
+  const related = [...root.querySelectorAll<HTMLElement>("[aria-controls],[aria-owns]")]
+    .filter((el) => el.getAttribute("aria-expanded") !== "false")
+    .flatMap((el) =>
       `${el.getAttribute("aria-controls") ?? ""} ${el.getAttribute("aria-owns") ?? ""}`
         .split(/\s+/)
         .filter(Boolean),
-  );
+    );
   const layers = [...new Set(related)]
     .map((id) => doc.getElementById(id))
     .filter((el): el is HTMLElement =>
