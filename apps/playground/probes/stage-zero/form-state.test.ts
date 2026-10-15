@@ -1,3 +1,6 @@
+import "./form-state/browser-element.cases";
+import "./form-state/drag-boundary.cases";
+import "./form-state/input-boundary.cases";
 import { withBrowserElementString } from "./form-state/browser-element.test-support";
 import { afterEach, describe, expect, it } from "vitest";
 import { flushPromises, mount } from "@vue/test-utils";

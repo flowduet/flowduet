@@ -1,3 +1,4 @@
+import "./rebuild-policy.cases";
 import { describe, expect, it } from "vitest";
 import { deferred } from "../contracts/fixtures";
 import { formStateFixture } from "./fixtures";
