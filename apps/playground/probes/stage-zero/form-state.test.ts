@@ -1,15 +1,11 @@
+import { withBrowserElementString } from "./form-state/browser-element.test-support";
 import { afterEach, describe, expect, it } from "vitest";
 import { flushPromises, mount } from "@vue/test-utils";
 import FormDesigner from "../../../../packages/form-create/src/components/FormDesigner.vue";
 import { describeValue, equivalentContent, observeLiveState } from "./form-state/state-evidence";
 
-const mounted: { unmount(): void }[] = [];
 afterEach(() => {
-  try {
-    mounted.splice(0).forEach((view) => view.unmount());
-  } finally {
-    document.body.innerHTML = "";
-  }
+  document.body.innerHTML = "";
 });
 const content = (rule: Record<string, unknown>) => ({
   rules: JSON.stringify([rule]),
@@ -90,18 +86,22 @@ describe("C0 表单状态观察", () => {
     expect(document.activeElement).toBe(input);
     expect(blurred).toBe(0);
   });
-  it("真实FormDesigner装载与菜单仍在，不用组件桩证明观察", async () => {
-    const view = mount(FormDesigner, {
-      props: { name: "C观察", rules: "[]", options: "{}" },
-      attachTo: document.body,
-    });
-    mounted.push(view);
-    await flushPromises();
-    expect(view.findAll("._fc-l-item").length).toBeGreaterThan(0);
-    observeLiveState(view.element as HTMLElement, { composing: false, dragging: false });
-    expect(view.emitted("save")).toBeUndefined();
-    expect(view.props("rules")).toBe("[]");
-  });
+  it("真实FormDesigner装载与菜单仍在，不用组件桩证明观察", async () =>
+    withBrowserElementString(async () => {
+      const view = mount(FormDesigner, {
+        props: { name: "C观察", rules: "[]", options: "{}" },
+        attachTo: document.body,
+      });
+      try {
+        await flushPromises();
+        expect(view.findAll("._fc-l-item").length).toBeGreaterThan(0);
+        observeLiveState(view.element as HTMLElement, { composing: false, dragging: false });
+        expect(view.emitted("save")).toBeUndefined();
+        expect(view.props("rules")).toBe("[]");
+      } finally {
+        view.unmount();
+      }
+    }));
 });
 
 // 夹具的业务值用手工期望核对；提供者往返另外经真实浏览器执行。
