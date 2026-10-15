@@ -1,0 +1,76 @@
+[
+  {
+    "field": "F03",
+    "layout": "top",
+    "fieldReadonly": true,
+    "action": "edit",
+    "status": "passed",
+    "actual": {
+      "type": "inputNumber",
+      "field": "a_amount",
+      "title": "配置F03",
+      "value": 1.5,
+      "_fc_id": "id_F024mv9p7df9vvc",
+      "name": "ref_F092mv9p7df9vwc",
+      "display": true,
+      "hidden": false,
+      "_fc_drag_tag": "inputNumber",
+      "$required": true
+    },
+    "sessionUnchanged": true
+  },
+  {
+    "field": "F03",
+    "layout": "top",
+    "action": "clear",
+    "status": "passed",
+    "actual": {
+      "type": "inputNumber",
+      "field": "a_amount",
+      "title": "配置F03",
+      "_fc_id": "id_F024mv9p7df9vvc",
+      "name": "ref_F092mv9p7df9vwc",
+      "display": true,
+      "hidden": false,
+      "_fc_drag_tag": "inputNumber",
+      "$required": true
+    }
+  },
+  {
+    "field": "F03",
+    "layout": "grid",
+    "fieldReadonly": true,
+    "action": "edit",
+    "status": "passed",
+    "actual": {
+      "type": "inputNumber",
+      "field": "a_amount",
+      "title": "配置F03",
+      "value": 1.5,
+      "_fc_id": "id_Fcx6mv9p7e63vzc",
+      "name": "ref_F44xmv9p7e63w0c",
+      "display": true,
+      "hidden": false,
+      "_fc_drag_tag": "inputNumber",
+      "$required": true
+    },
+    "sessionUnchanged": true
+  },
+  {
+    "field": "F03",
+    "layout": "grid",
+    "action": "clear",
+    "status": "passed",
+    "actual": {
+      "type": "inputNumber",
+      "field": "a_amount",
+      "title": "配置F03",
+      "_fc_id": "id_Fcx6mv9p7e63vzc",
+      "name": "ref_F44xmv9p7e63w0c",
+      "display": true,
+      "hidden": false,
+      "_fc_drag_tag": "inputNumber",
+      "$required": true
+    }
+  }
+]

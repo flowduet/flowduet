@@ -1,0 +1,710 @@
+[
+  {
+    "field": "F04",
+    "layout": "top",
+    "action": "option-label",
+    "status": "passed",
+    "actual": [
+      {
+        "label": "改名数值零",
+        "value": 0
+      },
+      {
+        "label": "a字符串零",
+        "value": "0"
+      },
+      {
+        "label": "a普通",
+        "value": "normal"
+      },
+      {
+        "label": "a广州",
+        "value": "gz"
+      },
+      {
+        "label": "a深圳",
+        "value": "sz"
+      }
+    ]
+  },
+  {
+    "field": "F04",
+    "layout": "top",
+    "action": "option-value-number",
+    "status": "passed",
+    "actual": [
+      {
+        "label": "改名数值零",
+        "value": 2
+      },
+      {
+        "label": "a字符串零",
+        "value": "0"
+      },
+      {
+        "label": "a普通",
+        "value": "normal"
+      },
+      {
+        "label": "a广州",
+        "value": "gz"
+      },
+      {
+        "label": "a深圳",
+        "value": "sz"
+      }
+    ],
+    "default": 0
+  },
+  {
+    "field": "F04",
+    "layout": "top",
+    "action": "option-add",
+    "status": "passed",
+    "actual": [
+      {
+        "label": "改名数值零",
+        "value": 2
+      },
+      {
+        "label": "a字符串零",
+        "value": "0"
+      },
+      {
+        "label": "a普通",
+        "value": "normal"
+      },
+      {
+        "label": "a广州",
+        "value": "gz"
+      },
+      {
+        "label": "a深圳",
+        "value": "sz"
+      },
+      {
+        "label": "新增选项",
+        "value": "new-id"
+      }
+    ]
+  },
+  {
+    "field": "F04",
+    "layout": "top",
+    "action": "option-delete-first",
+    "status": "passed",
+    "actual": [
+      {
+        "label": "a字符串零",
+        "value": "0"
+      },
+      {
+        "label": "a普通",
+        "value": "normal"
+      },
+      {
+        "label": "a广州",
+        "value": "gz"
+      },
+      {
+        "label": "a深圳",
+        "value": "sz"
+      },
+      {
+        "label": "新增选项",
+        "value": "new-id"
+      }
+    ],
+    "default": 0
+  },
+  {
+    "field": "F04",
+    "layout": "grid",
+    "action": "option-label",
+    "status": "passed",
+    "actual": [
+      {
+        "label": "改名数值零",
+        "value": 0
+      },
+      {
+        "label": "a字符串零",
+        "value": "0"
+      },
+      {
+        "label": "a普通",
+        "value": "normal"
+      },
+      {
+        "label": "a广州",
+        "value": "gz"
+      },
+      {
+        "label": "a深圳",
+        "value": "sz"
+      }
+    ]
+  },
+  {
+    "field": "F04",
+    "layout": "grid",
+    "action": "option-value-number",
+    "status": "passed",
+    "actual": [
+      {
+        "label": "改名数值零",
+        "value": 2
+      },
+      {
+        "label": "a字符串零",
+        "value": "0"
+      },
+      {
+        "label": "a普通",
+        "value": "normal"
+      },
+      {
+        "label": "a广州",
+        "value": "gz"
+      },
+      {
+        "label": "a深圳",
+        "value": "sz"
+      }
+    ],
+    "default": 0
+  },
+  {
+    "field": "F04",
+    "layout": "grid",
+    "action": "option-add",
+    "status": "passed",
+    "actual": [
+      {
+        "label": "改名数值零",
+        "value": 2
+      },
+      {
+        "label": "a字符串零",
+        "value": "0"
+      },
+      {
+        "label": "a普通",
+        "value": "normal"
+      },
+      {
+        "label": "a广州",
+        "value": "gz"
+      },
+      {
+        "label": "a深圳",
+        "value": "sz"
+      },
+      {
+        "label": "新增选项",
+        "value": "new-id"
+      }
+    ]
+  },
+  {
+    "field": "F04",
+    "layout": "grid",
+    "action": "option-delete-first",
+    "status": "passed",
+    "actual": [
+      {
+        "label": "a字符串零",
+        "value": "0"
+      },
+      {
+        "label": "a普通",
+        "value": "normal"
+      },
+      {
+        "label": "a广州",
+        "value": "gz"
+      },
+      {
+        "label": "a深圳",
+        "value": "sz"
+      },
+      {
+        "label": "新增选项",
+        "value": "new-id"
+      }
+    ],
+    "default": 0
+  },
+  {
+    "field": "F05",
+    "layout": "top",
+    "action": "option-label",
+    "status": "passed",
+    "actual": [
+      {
+        "label": "改名数值零",
+        "value": 0
+      },
+      {
+        "label": "a字符串零",
+        "value": "0"
+      },
+      {
+        "label": "a普通",
+        "value": "normal"
+      },
+      {
+        "label": "a广州",
+        "value": "gz"
+      },
+      {
+        "label": "a深圳",
+        "value": "sz"
+      }
+    ]
+  },
+  {
+    "field": "F05",
+    "layout": "top",
+    "action": "option-value-number",
+    "status": "passed",
+    "actual": [
+      {
+        "label": "改名数值零",
+        "value": 2
+      },
+      {
+        "label": "a字符串零",
+        "value": "0"
+      },
+      {
+        "label": "a普通",
+        "value": "normal"
+      },
+      {
+        "label": "a广州",
+        "value": "gz"
+      },
+      {
+        "label": "a深圳",
+        "value": "sz"
+      }
+    ],
+    "default": []
+  },
+  {
+    "field": "F05",
+    "layout": "top",
+    "action": "option-add",
+    "status": "passed",
+    "actual": [
+      {
+        "label": "改名数值零",
+        "value": 2
+      },
+      {
+        "label": "a字符串零",
+        "value": "0"
+      },
+      {
+        "label": "a普通",
+        "value": "normal"
+      },
+      {
+        "label": "a广州",
+        "value": "gz"
+      },
+      {
+        "label": "a深圳",
+        "value": "sz"
+      },
+      {
+        "label": "新增选项",
+        "value": "new-id"
+      }
+    ]
+  },
+  {
+    "field": "F05",
+    "layout": "top",
+    "action": "option-delete-first",
+    "status": "passed",
+    "actual": [
+      {
+        "label": "a字符串零",
+        "value": "0"
+      },
+      {
+        "label": "a普通",
+        "value": "normal"
+      },
+      {
+        "label": "a广州",
+        "value": "gz"
+      },
+      {
+        "label": "a深圳",
+        "value": "sz"
+      },
+      {
+        "label": "新增选项",
+        "value": "new-id"
+      }
+    ],
+    "default": []
+  },
+  {
+    "field": "F05",
+    "layout": "grid",
+    "action": "option-label",
+    "status": "passed",
+    "actual": [
+      {
+        "label": "改名数值零",
+        "value": 0
+      },
+      {
+        "label": "a字符串零",
+        "value": "0"
+      },
+      {
+        "label": "a普通",
+        "value": "normal"
+      },
+      {
+        "label": "a广州",
+        "value": "gz"
+      },
+      {
+        "label": "a深圳",
+        "value": "sz"
+      }
+    ]
+  },
+  {
+    "field": "F05",
+    "layout": "grid",
+    "action": "option-value-number",
+    "status": "passed",
+    "actual": [
+      {
+        "label": "改名数值零",
+        "value": 2
+      },
+      {
+        "label": "a字符串零",
+        "value": "0"
+      },
+      {
+        "label": "a普通",
+        "value": "normal"
+      },
+      {
+        "label": "a广州",
+        "value": "gz"
+      },
+      {
+        "label": "a深圳",
+        "value": "sz"
+      }
+    ],
+    "default": []
+  },
+  {
+    "field": "F05",
+    "layout": "grid",
+    "action": "option-add",
+    "status": "passed",
+    "actual": [
+      {
+        "label": "改名数值零",
+        "value": 2
+      },
+      {
+        "label": "a字符串零",
+        "value": "0"
+      },
+      {
+        "label": "a普通",
+        "value": "normal"
+      },
+      {
+        "label": "a广州",
+        "value": "gz"
+      },
+      {
+        "label": "a深圳",
+        "value": "sz"
+      },
+      {
+        "label": "新增选项",
+        "value": "new-id"
+      }
+    ]
+  },
+  {
+    "field": "F05",
+    "layout": "grid",
+    "action": "option-delete-first",
+    "status": "passed",
+    "actual": [
+      {
+        "label": "a字符串零",
+        "value": "0"
+      },
+      {
+        "label": "a普通",
+        "value": "normal"
+      },
+      {
+        "label": "a广州",
+        "value": "gz"
+      },
+      {
+        "label": "a深圳",
+        "value": "sz"
+      },
+      {
+        "label": "新增选项",
+        "value": "new-id"
+      }
+    ],
+    "default": []
+  },
+  {
+    "field": "F06",
+    "layout": "top",
+    "action": "option-label",
+    "status": "passed",
+    "actual": [
+      {
+        "label": "改名数值零",
+        "value": 0
+      },
+      {
+        "label": "a字符串零",
+        "value": "0"
+      },
+      {
+        "label": "a普通",
+        "value": "normal"
+      },
+      {
+        "label": "a广州",
+        "value": "gz"
+      },
+      {
+        "label": "a深圳",
+        "value": "sz"
+      }
+    ]
+  },
+  {
+    "field": "F06",
+    "layout": "top",
+    "action": "option-value-number",
+    "status": "passed",
+    "actual": [
+      {
+        "label": "改名数值零",
+        "value": 2
+      },
+      {
+        "label": "a字符串零",
+        "value": "0"
+      },
+      {
+        "label": "a普通",
+        "value": "normal"
+      },
+      {
+        "label": "a广州",
+        "value": "gz"
+      },
+      {
+        "label": "a深圳",
+        "value": "sz"
+      }
+    ],
+    "default": 0
+  },
+  {
+    "field": "F06",
+    "layout": "top",
+    "action": "option-add",
+    "status": "passed",
+    "actual": [
+      {
+        "label": "改名数值零",
+        "value": 2
+      },
+      {
+        "label": "a字符串零",
+        "value": "0"
+      },
+      {
+        "label": "a普通",
+        "value": "normal"
+      },
+      {
+        "label": "a广州",
+        "value": "gz"
+      },
+      {
+        "label": "a深圳",
+        "value": "sz"
+      },
+      {
+        "label": "新增选项",
+        "value": "new-id"
+      }
+    ]
+  },
+  {
+    "field": "F06",
+    "layout": "top",
+    "action": "option-delete-first",
+    "status": "passed",
+    "actual": [
+      {
+        "label": "a字符串零",
+        "value": "0"
+      },
+      {
+        "label": "a普通",
+        "value": "normal"
+      },
+      {
+        "label": "a广州",
+        "value": "gz"
+      },
+      {
+        "label": "a深圳",
+        "value": "sz"
+      },
+      {
+        "label": "新增选项",
+        "value": "new-id"
+      }
+    ],
+    "default": 0
+  },
+  {
+    "field": "F06",
+    "layout": "grid",
+    "action": "option-label",
+    "status": "passed",
+    "actual": [
+      {
+        "label": "改名数值零",
+        "value": 0
+      },
+      {
+        "label": "a字符串零",
+        "value": "0"
+      },
+      {
+        "label": "a普通",
+        "value": "normal"
+      },
+      {
+        "label": "a广州",
+        "value": "gz"
+      },
+      {
+        "label": "a深圳",
+        "value": "sz"
+      }
+    ]
+  },
+  {
+    "field": "F06",
+    "layout": "grid",
+    "action": "option-value-number",
+    "status": "passed",
+    "actual": [
+      {
+        "label": "改名数值零",
+        "value": 2
+      },
+      {
+        "label": "a字符串零",
+        "value": "0"
+      },
+      {
+        "label": "a普通",
+        "value": "normal"
+      },
+      {
+        "label": "a广州",
+        "value": "gz"
+      },
+      {
+        "label": "a深圳",
+        "value": "sz"
+      }
+    ],
+    "default": 0
+  },
+  {
+    "field": "F06",
+    "layout": "grid",
+    "action": "option-add",
+    "status": "passed",
+    "actual": [
+      {
+        "label": "改名数值零",
+        "value": 2
+      },
+      {
+        "label": "a字符串零",
+        "value": "0"
+      },
+      {
+        "label": "a普通",
+        "value": "normal"
+      },
+      {
+        "label": "a广州",
+        "value": "gz"
+      },
+      {
+        "label": "a深圳",
+        "value": "sz"
+      },
+      {
+        "label": "新增选项",
+        "value": "new-id"
+      }
+    ]
+  },
+  {
+    "field": "F06",
+    "layout": "grid",
+    "action": "option-delete-first",
+    "status": "passed",
+    "actual": [
+      {
+        "label": "a字符串零",
+        "value": "0"
+      },
+      {
+        "label": "a普通",
+        "value": "normal"
+      },
+      {
+        "label": "a广州",
+        "value": "gz"
+      },
+      {
+        "label": "a深圳",
+        "value": "sz"
+      },
+      {
+        "label": "新增选项",
+        "value": "new-id"
+      }
+    ],
+    "default": 0
+  }
+]

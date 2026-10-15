@@ -1,0 +1,9 @@
+### Result
+{"url":"http://127.0.0.1:5173/probes/stage-zero/index.html","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36","viewport":{"width":1440,"height":1000},"dpr":1}
+### Ran Playwright code
+```js
+await (async(page)=>{await page.setViewportSize({width:1440,height:1000});await page.goto('http://127.0.0.1:5173/probes/stage-zero/index.html');await page.getByRole('button',{name:'表单状态 C',exact:true}).click();return {url:page.url(),userAgent:await page.evaluate(()=>navigator.userAgent),viewport:page.viewportSize(),dpr:await page.evaluate(()=>devicePixelRatio)}})(page);
+```
+### Page
+- Page URL: http://127.0.0.1:5173/probes/stage-zero/index.html
+- Page Title: FlowDuet 阶段零探针

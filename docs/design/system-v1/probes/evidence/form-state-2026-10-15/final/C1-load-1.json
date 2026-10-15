@@ -1,0 +1,138 @@
+[
+  {
+    "caseId": "F02/top/normal-default/K/load",
+    "field": "F02",
+    "layout": "top",
+    "variant": "normal-default",
+    "want": "第一行\n第二行",
+    "present": true,
+    "status": "passed",
+    "actual": {
+      "present": true,
+      "value": "第一行\n第二行",
+      "type": "input",
+      "field": "a_notes",
+      "props": {
+        "type": "textarea",
+        "placeholder": "输入说明"
+      }
+    },
+    "unchanged": true,
+    "typePass": true,
+    "datePass": true,
+    "gridPass": true
+  },
+  {
+    "caseId": "F02/top/empty/K/load",
+    "field": "F02",
+    "layout": "top",
+    "variant": "empty",
+    "want": "",
+    "present": true,
+    "status": "passed",
+    "actual": {
+      "present": true,
+      "value": "",
+      "type": "input",
+      "field": "a_notes",
+      "props": {
+        "type": "textarea",
+        "placeholder": "输入说明"
+      }
+    },
+    "unchanged": true,
+    "typePass": true,
+    "datePass": true,
+    "gridPass": true
+  },
+  {
+    "caseId": "F02/top/unset/K/load",
+    "field": "F02",
+    "layout": "top",
+    "variant": "unset",
+    "want": null,
+    "present": false,
+    "status": "passed",
+    "actual": {
+      "present": false,
+      "type": "input",
+      "field": "a_notes",
+      "props": {
+        "type": "textarea",
+        "placeholder": "输入说明"
+      }
+    },
+    "unchanged": true,
+    "typePass": true,
+    "datePass": true,
+    "gridPass": true
+  },
+  {
+    "caseId": "F02/grid/normal-default/K/load",
+    "field": "F02",
+    "layout": "grid",
+    "variant": "normal-default",
+    "want": "第一行\n第二行",
+    "present": true,
+    "status": "passed",
+    "actual": {
+      "present": true,
+      "value": "第一行\n第二行",
+      "type": "input",
+      "field": "a_notes",
+      "props": {
+        "type": "textarea",
+        "placeholder": "输入说明"
+      }
+    },
+    "unchanged": true,
+    "typePass": true,
+    "datePass": true,
+    "gridPass": true
+  },
+  {
+    "caseId": "F02/grid/empty/K/load",
+    "field": "F02",
+    "layout": "grid",
+    "variant": "empty",
+    "want": "",
+    "present": true,
+    "status": "passed",
+    "actual": {
+      "present": true,
+      "value": "",
+      "type": "input",
+      "field": "a_notes",
+      "props": {
+        "type": "textarea",
+        "placeholder": "输入说明"
+      }
+    },
+    "unchanged": true,
+    "typePass": true,
+    "datePass": true,
+    "gridPass": true
+  },
+  {
+    "caseId": "F02/grid/unset/K/load",
+    "field": "F02",
+    "layout": "grid",
+    "variant": "unset",
+    "want": null,
+    "present": false,
+    "status": "passed",
+    "actual": {
+      "present": false,
+      "type": "input",
+      "field": "a_notes",
+      "props": {
+        "type": "textarea",
+        "placeholder": "输入说明"
+      }
+    },
+    "unchanged": true,
+    "typePass": true,
+    "datePass": true,
+    "gridPass": true
+  }
+]

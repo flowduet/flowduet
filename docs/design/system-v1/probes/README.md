@@ -6,9 +6,11 @@
 
 本轮详见[默认时限补修验证](formmanager-default-2026-10-15.md)、[四项P2补修验收](p2-followup-2026-10-15.md)、[编辑合同验收](contract-acceptance.md)、[批准规格](../../2026-10-15-stage-zero-editing-contract.md)及[执行计划](../../plans/2026-10-15-stage-zero-contract-slices.md)。
 
-## C组文档入口（待审阅）
+## C组实验交付
 
-已整理[内部状态保真补充方案](../../2026-10-15-stage-zero-form-state-proposal.md)和[薄切片执行计划](../../plans/2026-10-15-stage-zero-form-state-slices.md)。范围含八类字段/既有日期导入形态、焦点/组合输入、真实拖拽、两表单切换、异常恢复及保持挂载/验证后重建对照。本轮仅文档，矩阵尚未执行，B03状态不变；C实施、D/E及推送均未授权。
+维护者已批准[内部状态保真方案](../../2026-10-15-stage-zero-form-state-proposal.md)及[逐片计划](../../plans/2026-10-15-stage-zero-form-state-slices.md)。本轮按C0–C5执行，具体范围、原生失败、K/R回退和未验证项见[验收结论](editor-state-acceptance.md)、[状态矩阵](editor-state-matrix.md)及[便携证据](evidence/form-state-2026-10-15/README.md)。B03仍阻断：文字清空、数值/日期中间输入导航、Escape取消存在失败；OS输入法/native pointercancel和ERR05未验证。D/E与正式工作台未推进，未推送。
+
+本轮C最终本地默认 **748/748**（正式513/探针235）、build/lint/严格probe类型通过；一次独立复核P2已由作者补齐证据。历史默认全量超时仍归档，未宣称根因修复；远端Node22/24未运行。B03继续阻断。
 
 ## 当前结论
 
@@ -27,15 +29,15 @@
 - A/B本地与上述双矩阵的`pnpm build`、`pnpm lint`通过；CI另验core原生ESM导入，构建保留既有chunk告警。
 - A/B本地严格probe（常规CI不包含该入口）：`pnpm --filter @flowduet/form-create exec vue-tsc --noEmit -p ../../apps/playground/probes/stage-zero/tsconfig.json`退出0，包含正负类型用例；不是靠常规build间接认定。
 - A/B原生浏览器补验四项P2及真实EP；旧矩阵未全量重跑，历史证据保留。旧轮次验证非法缓冲切换、等价应用/保存竞态、冲突恢复、真实FormDesigner保留、结构操作后定位、唯一默认配置和真实EP选择。逐项证据及边界见验收记录。
-- 本地Node24；当前全量无超时覆盖参数，目标两项及整文件保留默认5秒，Playground既有真实FormCreate回归单例60秒未改；未改全局测试配置；远端Node22/24只证明上述CI范围，未重跑真实业务存储、路由卸载、下载文件或新引擎部署。本轮C文档未执行新实验/测试，不将A/B结果计作C通过。
+- 本地Node24；当前全量无超时覆盖参数，目标两项及整文件保留默认5秒，Playground既有真实FormCreate回归单例60秒未改；未改全局测试配置；远端Node22/24只证明上述CI范围，未重跑真实业务存储、路由卸载、下载文件或新引擎部署。C新增实验与回归见单独验收记录；不将历史A/B结果计作C通过。
 
 ## 剩余工作的责任与门槛
 
-A/B累计复审发现项已闭环，PR #93完成合并前最终核对并按维护者授权合入develop；最近FormManager独立复审仅覆盖两提交，审阅范围与历史证据保持分列。C组补充方案和计划当前待维护者审阅；确认后才由agent实施C0–C5并更新B03结论。
+A/B累计复审发现项已闭环，PR #93完成合并前最终核对并按维护者授权合入develop；最近FormManager独立复审仅覆盖两提交，审阅范围与历史证据保持分列。C组方案和执行方式已获批准，C0–C5实验结果单独归档，新增生产修复仍须先提案确认。
 
 B03需补支持字段的内部状态、焦点/拖拽/恢复与天然失败。B01主题/弹层/对比度/键盘及B04冷启动、GC、多轮资源和容器预算保持阻断，D/E仍须独立补充方案及授权。不因C采用保持挂载参照或拒绝不安全重建就宣称资源预算通过。
 
-两项默认时限超时及其复跑保留历史；当前PR和合入后CI已各按真实head核对，不能由其替代C组矩阵。本轮只整理文档，不推进C实现、D/E、正式工作台或推送。下一步由维护者审阅C方案/计划与执行方式，agent收到确认后再继续。
+两项默认时限超时及其复跑保留历史；当前PR和合入后CI已各按真实head核对，不能由其替代C组矩阵。本轮完成C探针交付；下一步由代理据C的负证据整理最小生产修复提案供维护者确认，不自动进入D/E、正式工作台或推送。
 
 ## 历史依据与复现
 
@@ -48,4 +50,4 @@ B03需补支持字段的内部状态、焦点/拖拽/恢复与天然失败。B01
 pnpm --filter @flowduet/playground exec vite --config probes/stage-zero/vite.config.ts --host 127.0.0.1
 ```
 
-打开返回端口的`/probes/stage-zero/index.html`，选择“编辑合同 A/B”。只用虚构夹具；实验切换会销毁可丢弃会话。完整成果以原始记录与manifest为准，不将实验页作为正式工作台交付。
+打开返回端口的`/probes/stage-zero/index.html`，选择“表单状态 C”（历史A/B仍选“编辑合同 A/B”）。只用虚构夹具；实验切换会销毁可丢弃会话。完整成果以原始记录与manifest为准，不将实验页作为正式工作台交付。

@@ -1,0 +1,36 @@
+
+> flowduet-monorepo@0.0.0 test /Users/l/.codex/worktrees/design-system-stage-zero/flowduet
+> pnpm -r test
+
+Scope: 4 of 5 workspace projects
+packages/core test$ vitest run
+packages/core test:  RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/core
+packages/core test:  Test Files  14 passed (14)
+packages/core test:       Tests  148 passed (148)
+packages/core test:    Start at  00:51:56
+packages/core test:    Duration  1.79s (transform 59%, tests 24%, import 12%, worker 5%)
+packages/core test:   Transform  transforming modules took 5.28s · 59% of tracked time, re-done on every run
+packages/core test:              persist transforms across runs with fsModuleCache: true
+packages/core test:              learn more: https://vitest.dev/guide/improving-performance#caching-between-reruns
+packages/core test: Done
+packages/designer test$ vitest run
+packages/designer test:  RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/designer
+packages/designer test:  Test Files  14 passed (14)
+packages/designer test:       Tests  184 passed (184)
+packages/designer test:    Start at  00:51:59
+packages/designer test:    Duration  10.68s (tests 44%, import 20%, environment 20%, transform 15%)
+packages/designer test: Done
+packages/form-create test$ vitest run
+packages/form-create test:  RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/form-create
+packages/form-create test:  Test Files  9 passed (9)
+packages/form-create test:       Tests  137 passed (137)
+packages/form-create test:    Start at  00:52:10
+packages/form-create test:    Duration  16.89s (tests 36%, import 32%, environment 19%, transform 13%, worker 1%)
+packages/form-create test: Done
+apps/playground test$ vitest run
+apps/playground test:  RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground
+apps/playground test:  Test Files  16 passed (16)
+apps/playground test:       Tests  279 passed (279)
+apps/playground test:    Start at  00:52:27
+apps/playground test:    Duration  59.51s (tests 57%, import 29%, environment 8%, transform 6%)
+apps/playground test: Done

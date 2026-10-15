@@ -1,0 +1,44 @@
+[
+  {
+    "field": "F01",
+    "layout": "top",
+    "action": "edit-or-clear",
+    "status": "failed",
+    "reason": "TimeoutError: locator.fill: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[data-c-owner=\"C-A\"]').locator('._fc-r-config .el-form-item').filter({ has: locator('.el-form-item__label').filter({ hasText: /^字段 ID$/ }) }).locator('input')\u001b[22m\n\u001b[2m    - locator resolved to <input disabled readonly type=\"text\" tabindex=\"0\" autocomplete=\"off\" id=\"el-id-8033-17947\" class=\"el-input__inner\"/>\u001b[22m\n\u001b[2m    - fill(\"a_edited_F01\")\u001b[22m\n\u001b[2m  - attempting fill action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and editable\u001b[22m\n\u001b[2m      - element is not enabled\u001b[22m\n\u001b[2m    - retrying fill action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and editable\u001b[22m\n\u001b[2m      - element is not enabled\u001b[22m\n\u001b[2m    - retrying fill action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    60 × waiting for element to be visible, enabled and editable\u001b[22m\n\u001b[2m       - element is not enabled\u001b[22m\n\u001b[2m     - retrying fill action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n"
+  },
+  {
+    "field": "F01",
+    "layout": "grid",
+    "action": "edit-or-clear",
+    "status": "failed",
+    "reason": "TimeoutError: locator.fill: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[data-c-owner=\"C-A\"]').locator('._fc-r-config .el-form-item').filter({ has: locator('.el-form-item__label').filter({ hasText: /^字段 ID$/ }) }).locator('input')\u001b[22m\n\u001b[2m    - locator resolved to <input disabled readonly type=\"text\" tabindex=\"0\" autocomplete=\"off\" id=\"el-id-8033-18268\" class=\"el-input__inner\"/>\u001b[22m\n\u001b[2m    - fill(\"a_edited_F01\")\u001b[22m\n\u001b[2m  - attempting fill action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and editable\u001b[22m\n\u001b[2m      - element is not enabled\u001b[22m\n\u001b[2m    - retrying fill action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and editable\u001b[22m\n\u001b[2m      - element is not enabled\u001b[22m\n\u001b[2m    - retrying fill action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    60 × waiting for element to be visible, enabled and editable\u001b[22m\n\u001b[2m       - element is not enabled\u001b[22m\n\u001b[2m     - retrying fill action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n"
+  },
+  {
+    "field": "F02",
+    "layout": "top",
+    "action": "edit-or-clear",
+    "status": "failed",
+    "reason": "TimeoutError: locator.fill: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[data-c-owner=\"C-A\"]').locator('._fc-r-config .el-form-item').filter({ has: locator('.el-form-item__label').filter({ hasText: /^字段 ID$/ }) }).locator('input')\u001b[22m\n\u001b[2m    - locator resolved to <input disabled readonly type=\"text\" tabindex=\"0\" autocomplete=\"off\" id=\"el-id-8033-18589\" class=\"el-input__inner\"/>\u001b[22m\n\u001b[2m    - fill(\"a_edited_F02\")\u001b[22m\n\u001b[2m  - attempting fill action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and editable\u001b[22m\n\u001b[2m      - element is not enabled\u001b[22m\n\u001b[2m    - retrying fill action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and editable\u001b[22m\n\u001b[2m      - element is not enabled\u001b[22m\n\u001b[2m    - retrying fill action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    60 × waiting for element to be visible, enabled and editable\u001b[22m\n\u001b[2m       - element is not enabled\u001b[22m\n\u001b[2m     - retrying fill action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n"
+  },
+  {
+    "field": "F02",
+    "layout": "grid",
+    "action": "edit-or-clear",
+    "status": "failed",
+    "reason": "TimeoutError: locator.fill: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[data-c-owner=\"C-A\"]').locator('._fc-r-config .el-form-item').filter({ has: locator('.el-form-item__label').filter({ hasText: /^字段 ID$/ }) }).locator('input')\u001b[22m\n\u001b[2m    - locator resolved to <input disabled readonly type=\"text\" tabindex=\"0\" autocomplete=\"off\" id=\"el-id-8033-18910\" class=\"el-input__inner\"/>\u001b[22m\n\u001b[2m    - fill(\"a_edited_F02\")\u001b[22m\n\u001b[2m  - attempting fill action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and editable\u001b[22m\n\u001b[2m      - element is not enabled\u001b[22m\n\u001b[2m    - retrying fill action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and editable\u001b[22m\n\u001b[2m      - element is not enabled\u001b[22m\n\u001b[2m    - retrying fill action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    60 × waiting for element to be visible, enabled and editable\u001b[22m\n\u001b[2m       - element is not enabled\u001b[22m\n\u001b[2m     - retrying fill action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n"
+  },
+  {
+    "field": "F03",
+    "layout": "top",
+    "action": "edit-or-clear",
+    "status": "failed",
+    "reason": "TimeoutError: locator.fill: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[data-c-owner=\"C-A\"]').locator('._fc-r-config .el-form-item').filter({ has: locator('.el-form-item__label').filter({ hasText: /^字段 ID$/ }) }).locator('input')\u001b[22m\n\u001b[2m    - locator resolved to <input disabled readonly type=\"text\" tabindex=\"0\" autocomplete=\"off\" id=\"el-id-8033-19230\" class=\"el-input__inner\"/>\u001b[22m\n\u001b[2m    - fill(\"a_edited_F03\")\u001b[22m\n\u001b[2m  - attempting fill action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and editable\u001b[22m\n\u001b[2m      - element is not enabled\u001b[22m\n\u001b[2m    - retrying fill action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and editable\u001b[22m\n\u001b[2m      - element is not enabled\u001b[22m\n\u001b[2m    - retrying fill action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    60 × waiting for element to be visible, enabled and editable\u001b[22m\n\u001b[2m       - element is not enabled\u001b[22m\n\u001b[2m     - retrying fill action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n"
+  },
+  {
+    "field": "F03",
+    "layout": "grid",
+    "action": "edit-or-clear",
+    "status": "failed",
+    "reason": "TimeoutError: locator.fill: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[data-c-owner=\"C-A\"]').locator('._fc-r-config .el-form-item').filter({ has: locator('.el-form-item__label').filter({ hasText: /^字段 ID$/ }) }).locator('input')\u001b[22m\n\u001b[2m    - locator resolved to <input disabled readonly type=\"text\" tabindex=\"0\" autocomplete=\"off\" id=\"el-id-8033-19553\" class=\"el-input__inner\"/>\u001b[22m\n\u001b[2m    - fill(\"a_edited_F03\")\u001b[22m\n\u001b[2m  - attempting fill action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and editable\u001b[22m\n\u001b[2m      - element is not enabled\u001b[22m\n\u001b[2m    - retrying fill action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and editable\u001b[22m\n\u001b[2m      - element is not enabled\u001b[22m\n\u001b[2m    - retrying fill action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    60 × waiting for element to be visible, enabled and editable\u001b[22m\n\u001b[2m       - element is not enabled\u001b[22m\n\u001b[2m     - retrying fill action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n"
+  }
+]

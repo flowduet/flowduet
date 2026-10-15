@@ -1,0 +1,132 @@
+[
+  {
+    "caseId": "F01/top/normal-default/K/load",
+    "field": "F01",
+    "layout": "top",
+    "variant": "normal-default",
+    "want": "事项甲",
+    "present": true,
+    "status": "passed",
+    "actual": {
+      "present": true,
+      "value": "事项甲",
+      "type": "input",
+      "field": "a_subject",
+      "props": {
+        "placeholder": "输入事项"
+      }
+    },
+    "unchanged": true,
+    "typePass": true,
+    "datePass": true,
+    "gridPass": true
+  },
+  {
+    "caseId": "F01/top/empty/K/load",
+    "field": "F01",
+    "layout": "top",
+    "variant": "empty",
+    "want": "",
+    "present": true,
+    "status": "passed",
+    "actual": {
+      "present": true,
+      "value": "",
+      "type": "input",
+      "field": "a_subject",
+      "props": {
+        "placeholder": "输入事项"
+      }
+    },
+    "unchanged": true,
+    "typePass": true,
+    "datePass": true,
+    "gridPass": true
+  },
+  {
+    "caseId": "F01/top/unset/K/load",
+    "field": "F01",
+    "layout": "top",
+    "variant": "unset",
+    "want": null,
+    "present": false,
+    "status": "passed",
+    "actual": {
+      "present": false,
+      "type": "input",
+      "field": "a_subject",
+      "props": {
+        "placeholder": "输入事项"
+      }
+    },
+    "unchanged": true,
+    "typePass": true,
+    "datePass": true,
+    "gridPass": true
+  },
+  {
+    "caseId": "F01/grid/normal-default/K/load",
+    "field": "F01",
+    "layout": "grid",
+    "variant": "normal-default",
+    "want": "事项甲",
+    "present": true,
+    "status": "passed",
+    "actual": {
+      "present": true,
+      "value": "事项甲",
+      "type": "input",
+      "field": "a_subject",
+      "props": {
+        "placeholder": "输入事项"
+      }
+    },
+    "unchanged": true,
+    "typePass": true,
+    "datePass": true,
+    "gridPass": true
+  },
+  {
+    "caseId": "F01/grid/empty/K/load",
+    "field": "F01",
+    "layout": "grid",
+    "variant": "empty",
+    "want": "",
+    "present": true,
+    "status": "passed",
+    "actual": {
+      "present": true,
+      "value": "",
+      "type": "input",
+      "field": "a_subject",
+      "props": {
+        "placeholder": "输入事项"
+      }
+    },
+    "unchanged": true,
+    "typePass": true,
+    "datePass": true,
+    "gridPass": true
+  },
+  {
+    "caseId": "F01/grid/unset/K/load",
+    "field": "F01",
+    "layout": "grid",
+    "variant": "unset",
+    "want": null,
+    "present": false,
+    "status": "passed",
+    "actual": {
+      "present": false,
+      "type": "input",
+      "field": "a_subject",
+      "props": {
+        "placeholder": "输入事项"
+      }
+    },
+    "unchanged": true,
+    "typePass": true,
+    "datePass": true,
+    "gridPass": true
+  }
+]

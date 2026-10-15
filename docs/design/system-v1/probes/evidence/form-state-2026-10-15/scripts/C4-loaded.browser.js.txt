@@ -1,0 +1,10 @@
+async(page)=>{
+ const rows=[],root=page.locator('[data-c-owner="C-A"]');const state=async()=>JSON.parse(await root.locator('[data-test=c-state]').textContent());
+ for(const layout of ['top','grid'])for(let i=1;i<=8;i++){
+  const field='F0'+i;await page.locator('[data-test=c-field]').selectOption(field);await page.locator('[data-test=c-layout]').selectOption(layout);await page.locator('[data-test=c-reset]').click();await root.locator('[data-test=c-strategy]').selectOption('rebuild-verified');const before=await state();
+  await root.locator('[data-test=c-select-1]').click();await page.waitForFunction(n=>JSON.parse(document.querySelector('[data-c-owner="C-A"] [data-test=c-state]').textContent).resultSequence>n,before.resultSequence);const b=await state();
+  await root.locator('[data-test=c-select-0]').click();await page.waitForFunction(n=>JSON.parse(document.querySelector('[data-c-owner="C-A"] [data-test=c-state]').textContent).resultSequence>n,b.resultSequence);const a=await state();
+  rows.push({field,layout,before,b,a,actual:b.result.ok?b.result.value.actual:b.result,returned:a.result.ok?a.result.value.actual:a.result,unchanged:a.sameForms&&a.sameGraph,persist:a.persistCalls,liveCount:a.views.filter(v=>v.live).length});
+ }
+ return rows;
+}

@@ -1,0 +1,479 @@
+{
+  "kind": "real-ui-inventory",
+  "rows": [
+    {
+      "id": "F01",
+      "defaults": [
+        {
+          "label": "字段 ID",
+          "controls": [
+            {
+              "tag": "INPUT",
+              "type": "text",
+              "role": null,
+              "readonly": true,
+              "text": "a_subject"
+            }
+          ]
+        },
+        {
+          "label": "字段名称",
+          "controls": [
+            {
+              "tag": "INPUT",
+              "type": "text",
+              "role": null,
+              "readonly": false,
+              "text": "甲文本"
+            }
+          ]
+        },
+        {
+          "label": "默认值",
+          "controls": [
+            {
+              "tag": "INPUT",
+              "type": "text",
+              "role": null,
+              "readonly": false,
+              "text": "事项甲"
+            }
+          ]
+        },
+        {
+          "label": "是否必填",
+          "controls": [
+            {
+              "tag": "INPUT",
+              "type": "checkbox",
+              "role": "switch",
+              "readonly": false,
+              "text": "on"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "F02",
+      "defaults": [
+        {
+          "label": "字段 ID",
+          "controls": [
+            {
+              "tag": "INPUT",
+              "type": "text",
+              "role": null,
+              "readonly": true,
+              "text": "a_notes"
+            }
+          ]
+        },
+        {
+          "label": "字段名称",
+          "controls": [
+            {
+              "tag": "INPUT",
+              "type": "text",
+              "role": null,
+              "readonly": false,
+              "text": "甲多行文本"
+            }
+          ]
+        },
+        {
+          "label": "默认值",
+          "controls": [
+            {
+              "tag": "TEXTAREA",
+              "type": null,
+              "role": null,
+              "readonly": false,
+              "text": "第一行\n第二行"
+            }
+          ]
+        },
+        {
+          "label": "是否必填",
+          "controls": [
+            {
+              "tag": "INPUT",
+              "type": "checkbox",
+              "role": "switch",
+              "readonly": false,
+              "text": "on"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "F03",
+      "defaults": [
+        {
+          "label": "字段 ID",
+          "controls": [
+            {
+              "tag": "INPUT",
+              "type": "text",
+              "role": null,
+              "readonly": true,
+              "text": "a_amount"
+            }
+          ]
+        },
+        {
+          "label": "字段名称",
+          "controls": [
+            {
+              "tag": "INPUT",
+              "type": "text",
+              "role": null,
+              "readonly": false,
+              "text": "甲数字"
+            }
+          ]
+        },
+        {
+          "label": "默认值",
+          "controls": [
+            {
+              "tag": "INPUT",
+              "type": "number",
+              "role": "spinbutton",
+              "readonly": false,
+              "text": "0"
+            }
+          ]
+        },
+        {
+          "label": "是否必填",
+          "controls": [
+            {
+              "tag": "INPUT",
+              "type": "checkbox",
+              "role": "switch",
+              "readonly": false,
+              "text": "on"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "F04",
+      "defaults": [
+        {
+          "label": "字段 ID",
+          "controls": [
+            {
+              "tag": "INPUT",
+              "type": "text",
+              "role": null,
+              "readonly": true,
+              "text": "a_priority"
+            }
+          ]
+        },
+        {
+          "label": "字段名称",
+          "controls": [
+            {
+              "tag": "INPUT",
+              "type": "text",
+              "role": null,
+              "readonly": false,
+              "text": "甲单选"
+            }
+          ]
+        },
+        {
+          "label": "默认值",
+          "controls": [
+            {
+              "tag": "INPUT",
+              "type": "text",
+              "role": "combobox",
+              "readonly": true,
+              "text": ""
+            }
+          ]
+        },
+        {
+          "label": "是否必填",
+          "controls": [
+            {
+              "tag": "INPUT",
+              "type": "checkbox",
+              "role": "switch",
+              "readonly": false,
+              "text": "on"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "F05",
+      "defaults": [
+        {
+          "label": "字段 ID",
+          "controls": [
+            {
+              "tag": "INPUT",
+              "type": "text",
+              "role": null,
+              "readonly": true,
+              "text": "a_areas"
+            }
+          ]
+        },
+        {
+          "label": "字段名称",
+          "controls": [
+            {
+              "tag": "INPUT",
+              "type": "text",
+              "role": null,
+              "readonly": false,
+              "text": "甲多选"
+            }
+          ]
+        },
+        {
+          "label": "设置默认值",
+          "controls": [
+            {
+              "tag": "INPUT",
+              "type": "checkbox",
+              "role": "switch",
+              "readonly": false,
+              "text": "on"
+            }
+          ]
+        },
+        {
+          "label": "默认选项",
+          "controls": [
+            {
+              "tag": "INPUT",
+              "type": "text",
+              "role": "combobox",
+              "readonly": true,
+              "text": ""
+            }
+          ]
+        },
+        {
+          "label": "是否必填",
+          "controls": [
+            {
+              "tag": "INPUT",
+              "type": "checkbox",
+              "role": "switch",
+              "readonly": false,
+              "text": "on"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "F06",
+      "defaults": [
+        {
+          "label": "字段 ID",
+          "controls": [
+            {
+              "tag": "INPUT",
+              "type": "text",
+              "role": null,
+              "readonly": true,
+              "text": "a_department"
+            }
+          ]
+        },
+        {
+          "label": "字段名称",
+          "controls": [
+            {
+              "tag": "INPUT",
+              "type": "text",
+              "role": null,
+              "readonly": false,
+              "text": "甲下拉单选"
+            }
+          ]
+        },
+        {
+          "label": "是否可以清空选项",
+          "controls": [
+            {
+              "tag": "INPUT",
+              "type": "checkbox",
+              "role": "switch",
+              "readonly": false,
+              "text": "on"
+            }
+          ]
+        },
+        {
+          "label": "选项为空时显示的文字",
+          "controls": [
+            {
+              "tag": "INPUT",
+              "type": "text",
+              "role": null,
+              "readonly": false,
+              "text": ""
+            }
+          ]
+        },
+        {
+          "label": "多选且可搜索时，是否在选中一个选项后保留当前的搜索关键词",
+          "controls": [
+            {
+              "tag": "INPUT",
+              "type": "checkbox",
+              "role": "switch",
+              "readonly": false,
+              "text": "on"
+            }
+          ]
+        },
+        {
+          "label": "默认值",
+          "controls": [
+            {
+              "tag": "INPUT",
+              "type": "text",
+              "role": "combobox",
+              "readonly": true,
+              "text": ""
+            }
+          ]
+        },
+        {
+          "label": "是否必填",
+          "controls": [
+            {
+              "tag": "INPUT",
+              "type": "checkbox",
+              "role": "switch",
+              "readonly": false,
+              "text": "on"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "F07",
+      "defaults": [
+        {
+          "label": "字段 ID",
+          "controls": [
+            {
+              "tag": "INPUT",
+              "type": "text",
+              "role": null,
+              "readonly": true,
+              "text": "a_date"
+            }
+          ]
+        },
+        {
+          "label": "字段名称",
+          "controls": [
+            {
+              "tag": "INPUT",
+              "type": "text",
+              "role": null,
+              "readonly": false,
+              "text": "甲日期"
+            }
+          ]
+        },
+        {
+          "label": "默认值",
+          "controls": [
+            {
+              "tag": "INPUT",
+              "type": "text",
+              "role": "combobox",
+              "readonly": false,
+              "text": "2026-10-15"
+            }
+          ]
+        },
+        {
+          "label": "是否必填",
+          "controls": [
+            {
+              "tag": "INPUT",
+              "type": "checkbox",
+              "role": "switch",
+              "readonly": false,
+              "text": "on"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "F08",
+      "defaults": [
+        {
+          "label": "字段 ID",
+          "controls": [
+            {
+              "tag": "INPUT",
+              "type": "text",
+              "role": null,
+              "readonly": true,
+              "text": "a_urgent"
+            }
+          ]
+        },
+        {
+          "label": "字段名称",
+          "controls": [
+            {
+              "tag": "INPUT",
+              "type": "text",
+              "role": null,
+              "readonly": false,
+              "text": "甲开关"
+            }
+          ]
+        },
+        {
+          "label": "默认值",
+          "controls": [
+            {
+              "tag": "INPUT",
+              "type": "text",
+              "role": "combobox",
+              "readonly": true,
+              "text": ""
+            }
+          ]
+        },
+        {
+          "label": "是否必填",
+          "controls": [
+            {
+              "tag": "INPUT",
+              "type": "checkbox",
+              "role": "switch",
+              "readonly": false,
+              "text": "on"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "maskCount": 8,
+  "menuCount": 9
+}

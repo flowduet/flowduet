@@ -1,0 +1,5 @@
+[refactor/stage-zero-form-state a75dca7] test(probe): 验证编辑器重建移交与失败保留
+ 9 files changed, 770 insertions(+), 131 deletions(-)
+ create mode 100644 apps/playground/probes/stage-zero/editor-recovery.test.ts
+ create mode 100644 apps/playground/probes/stage-zero/form-state/rebuild-policy.test.ts
+ create mode 100644 apps/playground/probes/stage-zero/form-state/test-host.ts

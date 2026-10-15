@@ -1,0 +1,240 @@
+[
+  {
+    "caseId": "I01/omitted/top/K/load",
+    "field": "I01",
+    "layout": "top",
+    "variant": "normal-default",
+    "dateType": "",
+    "want": "2026-10-15",
+    "present": true,
+    "actualStrategy": {
+      "outward": {
+        "ok": true,
+        "value": {
+          "active": {
+            "ref": {
+              "controllerId": "C-A",
+              "documentEpoch": 1,
+              "kind": "form",
+              "id": "form_2",
+              "lifetime": 8
+            },
+            "facet": "form-content"
+          },
+          "actual": "kept-fallback",
+          "reason": "临时实例内容或value存在性不等价"
+        }
+      },
+      "inward": {
+        "ok": true,
+        "value": {
+          "active": {
+            "ref": {
+              "controllerId": "C-A",
+              "documentEpoch": 1,
+              "kind": "form",
+              "id": "form_1",
+              "lifetime": 7
+            },
+            "facet": "form-content"
+          },
+          "actual": "kept-fallback",
+          "reason": "目标已有活实例，复用K"
+        }
+      }
+    },
+    "status": "passed",
+    "actual": {
+      "present": true,
+      "value": "2026-10-15",
+      "type": "datePicker",
+      "field": "a_date",
+      "props": {
+        "valueFormat": "YYYY-MM-DD"
+      }
+    },
+    "unchanged": true,
+    "typePass": true,
+    "datePass": true,
+    "gridPass": true
+  },
+  {
+    "caseId": "I01/omitted/grid/K/load",
+    "field": "I01",
+    "layout": "grid",
+    "variant": "normal-default",
+    "dateType": "",
+    "want": "2026-10-15",
+    "present": true,
+    "actualStrategy": {
+      "outward": {
+        "ok": true,
+        "value": {
+          "active": {
+            "ref": {
+              "controllerId": "C-A",
+              "documentEpoch": 1,
+              "kind": "form",
+              "id": "form_2",
+              "lifetime": 8
+            },
+            "facet": "form-content"
+          },
+          "actual": "kept-fallback",
+          "reason": "临时实例内容或value存在性不等价"
+        }
+      },
+      "inward": {
+        "ok": true,
+        "value": {
+          "active": {
+            "ref": {
+              "controllerId": "C-A",
+              "documentEpoch": 1,
+              "kind": "form",
+              "id": "form_1",
+              "lifetime": 7
+            },
+            "facet": "form-content"
+          },
+          "actual": "kept-fallback",
+          "reason": "目标已有活实例，复用K"
+        }
+      }
+    },
+    "status": "passed",
+    "actual": {
+      "present": true,
+      "value": "2026-10-15",
+      "type": "datePicker",
+      "field": "a_date",
+      "props": {
+        "valueFormat": "YYYY-MM-DD"
+      }
+    },
+    "unchanged": true,
+    "typePass": true,
+    "datePass": true,
+    "gridPass": true
+  },
+  {
+    "caseId": "I01/date/top/K/load",
+    "field": "I01",
+    "layout": "top",
+    "variant": "normal-default",
+    "dateType": "date",
+    "want": "2026-10-15",
+    "present": true,
+    "actualStrategy": {
+      "outward": {
+        "ok": true,
+        "value": {
+          "active": {
+            "ref": {
+              "controllerId": "C-A",
+              "documentEpoch": 1,
+              "kind": "form",
+              "id": "form_2",
+              "lifetime": 8
+            },
+            "facet": "form-content"
+          },
+          "actual": "kept-fallback",
+          "reason": "临时实例内容或value存在性不等价"
+        }
+      },
+      "inward": {
+        "ok": true,
+        "value": {
+          "active": {
+            "ref": {
+              "controllerId": "C-A",
+              "documentEpoch": 1,
+              "kind": "form",
+              "id": "form_1",
+              "lifetime": 7
+            },
+            "facet": "form-content"
+          },
+          "actual": "kept-fallback",
+          "reason": "目标已有活实例，复用K"
+        }
+      }
+    },
+    "status": "passed",
+    "actual": {
+      "present": true,
+      "value": "2026-10-15",
+      "type": "datePicker",
+      "field": "a_date",
+      "props": {
+        "type": "date",
+        "valueFormat": "YYYY-MM-DD"
+      }
+    },
+    "unchanged": true,
+    "typePass": true,
+    "datePass": true,
+    "gridPass": true
+  },
+  {
+    "caseId": "I01/date/grid/K/load",
+    "field": "I01",
+    "layout": "grid",
+    "variant": "normal-default",
+    "dateType": "date",
+    "want": "2026-10-15",
+    "present": true,
+    "actualStrategy": {
+      "outward": {
+        "ok": true,
+        "value": {
+          "active": {
+            "ref": {
+              "controllerId": "C-A",
+              "documentEpoch": 1,
+              "kind": "form",
+              "id": "form_2",
+              "lifetime": 8
+            },
+            "facet": "form-content"
+          },
+          "actual": "kept-fallback",
+          "reason": "临时实例内容或value存在性不等价"
+        }
+      },
+      "inward": {
+        "ok": true,
+        "value": {
+          "active": {
+            "ref": {
+              "controllerId": "C-A",
+              "documentEpoch": 1,
+              "kind": "form",
+              "id": "form_1",
+              "lifetime": 7
+            },
+            "facet": "form-content"
+          },
+          "actual": "kept-fallback",
+          "reason": "目标已有活实例，复用K"
+        }
+      }
+    },
+    "status": "passed",
+    "actual": {
+      "present": true,
+      "value": "2026-10-15",
+      "type": "datePicker",
+      "field": "a_date",
+      "props": {
+        "type": "date",
+        "valueFormat": "YYYY-MM-DD"
+      }
+    },
+    "unchanged": true,
+    "typePass": true,
+    "datePass": true,
+    "gridPass": true
+  }
+]

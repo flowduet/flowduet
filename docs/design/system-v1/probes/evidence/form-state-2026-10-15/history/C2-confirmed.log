@@ -1,0 +1,56 @@
+
+ RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground
+
+ ✓ probes/stage-zero/form-state/input-boundary.test.ts > C2 输入边界 > 只读快捷键不再传入第三方潜在编辑监听，其他键保持原路由 6ms
+ ✓ probes/stage-zero/form-state/input-boundary.test.ts > C2 输入边界 > composition待确认时不允许序列化旧值 1ms
+ ✓ probes/stage-zero/form-state/input-boundary.test.ts > C2 输入边界 > drag待确认时不允许序列化旧值 0ms
+ ✓ probes/stage-zero/form-state/input-boundary.test.ts > C2 输入边界 > owner待确认时不允许序列化旧值 0ms
+ ✓ probes/stage-zero/form-state/input-boundary.test.ts > C2 输入边界 > popup待确认时不允许序列化旧值 0ms
+ ✓ probes/stage-zero/form-state/input-boundary.test.ts > C2 输入边界 > badInput待确认时不允许序列化旧值 0ms
+ ✓ probes/stage-zero/form-state/input-boundary.test.ts > C2 输入边界 > 已确认输入不会被误挡 0ms
+ ✓ probes/stage-zero/form-state/retention-policy.test.ts > C2 保持挂载导航 > two_forms_switch_without_session_write：忙碌和未捕获输入也不触发导出 16ms
+ ✓ probes/stage-zero/form-state/retention-policy.test.ts > C2 保持挂载导航 > 外来/错误facet在触碰宿主前拒绝 7ms
+ ✓ probes/stage-zero/form-state/retention-policy.test.ts > C2 保持挂载导航 > 后一次导航获胜，迟到挂载不能显示或卸载当前实例 4ms
+ ✓ probes/stage-zero/form-state/retention-policy.test.ts > C2 保持挂载导航 > 目标删除或dispose期间完成的挂载不再导航 4ms
+ ✓ probes/stage-zero/form-state.test.ts > C0 表单状态观察 > value_presence_and_types_are_distinct：{} 3ms
+ ✓ probes/stage-zero/form-state.test.ts > C0 表单状态观察 > value_presence_and_types_are_distinct：{"value":0} 0ms
+ ✓ probes/stage-zero/form-state.test.ts > C0 表单状态观察 > value_presence_and_types_are_distinct：{"value":false} 0ms
+ ✓ probes/stage-zero/form-state.test.ts > C0 表单状态观察 > value_presence_and_types_are_distinct：{"value":[]} 0ms
+ ✓ probes/stage-zero/form-state.test.ts > C0 表单状态观察 > value_presence_and_types_are_distinct：{"value":""} 0ms
+ ✓ probes/stage-zero/form-state.test.ts > C0 表单状态观察 > value_presence_and_types_are_distinct：{"value":null} 0ms
+ ✓ probes/stage-zero/form-state.test.ts > C0 表单状态观察 > 不把不同默认值归一：0 / "0" 12ms
+ ✓ probes/stage-zero/form-state.test.ts > C0 表单状态观察 > 不把不同默认值归一：false / undefined 0ms
+ ✓ probes/stage-zero/form-state.test.ts > C0 表单状态观察 > 不把不同默认值归一：[] / undefined 0ms
+ ✓ probes/stage-zero/form-state.test.ts > C0 表单状态观察 > 不把不同默认值归一："" / undefined 0ms
+ ✓ probes/stage-zero/form-state.test.ts > C0 表单状态观察 > 允许运行态元数据变化，但字段/选项/列顺序变化不等价 1ms
+ ✓ probes/stage-zero/form-state.test.ts > C0 表单状态观察 > observe_does_not_flush_focused_input：读取原生文字/选区不失焦 6ms
+ ✓ probes/stage-zero/form-state.test.ts > C0 表单状态观察 > 真实FormDesigner装载与菜单仍在，不用组件桩证明观察 2415ms
+ ✓ probes/stage-zero/form-state.test.ts > C1 typed_defaults_roundtrip 夹具与既有守卫 > typed_defaults_roundtrip F01/empty 1ms
+ ✓ probes/stage-zero/form-state.test.ts > C1 typed_defaults_roundtrip 夹具与既有守卫 > typed_defaults_roundtrip F02/normal-default 0ms
+ ✓ probes/stage-zero/form-state.test.ts > C1 typed_defaults_roundtrip 夹具与既有守卫 > typed_defaults_roundtrip F03/zero 0ms
+ ✓ probes/stage-zero/form-state.test.ts > C1 typed_defaults_roundtrip 夹具与既有守卫 > typed_defaults_roundtrip F03/negative 0ms
+ ✓ probes/stage-zero/form-state.test.ts > C1 typed_defaults_roundtrip 夹具与既有守卫 > typed_defaults_roundtrip F03/decimal 0ms
+ ✓ probes/stage-zero/form-state.test.ts > C1 typed_defaults_roundtrip 夹具与既有守卫 > typed_defaults_roundtrip F04/zero 0ms
+ ✓ probes/stage-zero/form-state.test.ts > C1 typed_defaults_roundtrip 夹具与既有守卫 > typed_defaults_roundtrip F04/string-zero 0ms
+ ✓ probes/stage-zero/form-state.test.ts > C1 typed_defaults_roundtrip 夹具与既有守卫 > typed_defaults_roundtrip F05/empty-array 0ms
+ ✓ probes/stage-zero/form-state.test.ts > C1 typed_defaults_roundtrip 夹具与既有守卫 > typed_defaults_roundtrip F05/selected-array 0ms
+ ✓ probes/stage-zero/form-state.test.ts > C1 typed_defaults_roundtrip 夹具与既有守卫 > typed_defaults_roundtrip F06/zero 0ms
+ ✓ probes/stage-zero/form-state.test.ts > C1 typed_defaults_roundtrip 夹具与既有守卫 > typed_defaults_roundtrip F06/string-zero 0ms
+ ✓ probes/stage-zero/form-state.test.ts > C1 typed_defaults_roundtrip 夹具与既有守卫 > typed_defaults_roundtrip F08/false 0ms
+ ✓ probes/stage-zero/form-state.test.ts > C1 typed_defaults_roundtrip 夹具与既有守卫 > typed_defaults_roundtrip F08/true 0ms
+ ✓ probes/stage-zero/form-state.test.ts > C1 typed_defaults_roundtrip 夹具与既有守卫 > checkbox_empty_array_vs_absent；textarea_newline_and_grid_order 0ms
+ ✓ probes/stage-zero/form-state.test.ts > C1 typed_defaults_roundtrip 夹具与既有守卫 > imported_single_date_shapes_keep_type  0ms
+ ✓ probes/stage-zero/form-state.test.ts > C1 typed_defaults_roundtrip 夹具与既有守卫 > imported_single_date_shapes_keep_type date 0ms
+ ✓ probes/stage-zero/form-state.test.ts > C1 typed_defaults_roundtrip 夹具与既有守卫 > imported_single_date_shapes_keep_type datetime 0ms
+ ✓ probes/stage-zero/form-state.test.ts > C1 typed_defaults_roundtrip 夹具与既有守卫 > imported_single_date_shapes_keep_type week 0ms
+ ✓ probes/stage-zero/form-state.test.ts > C1 typed_defaults_roundtrip 夹具与既有守卫 > imported_single_date_shapes_keep_type month 0ms
+ ✓ probes/stage-zero/form-state.test.ts > C1 typed_defaults_roundtrip 夹具与既有守卫 > imported_single_date_shapes_keep_type year 0ms
+ ✓ probes/stage-zero/form-state.test.ts > C1 typed_defaults_roundtrip 夹具与既有守卫 > 同ID双控制器不共享当前定义或编辑目标 12ms
+ ✓ probes/stage-zero/form-state.test.ts > 逻辑已关闭的弹层退场动画不能误判为未确认输入 5ms
+ ✓ probes/stage-zero/form-state.test.ts > foreign_popup_never_blurred：只读观察识别其他实例弹层而不抢焦点 1ms
+
+ Test Files  3 passed (3)
+      Tests  47 passed (47)
+   Start at  21:26:15
+   Duration  6.22s (import 43%, tests 24%, environment 19%, transform 13%, worker 1%)
+

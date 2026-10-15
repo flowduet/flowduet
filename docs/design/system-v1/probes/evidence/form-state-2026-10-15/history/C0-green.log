@@ -1,0 +1,60 @@
+
+ RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground
+
+ ✓ probes/stage-zero/form-state.test.ts > C0 表单状态观察 > value_presence_and_types_are_distinct：{} 3ms
+ ✓ probes/stage-zero/form-state.test.ts > C0 表单状态观察 > value_presence_and_types_are_distinct：{"value":0} 0ms
+ ✓ probes/stage-zero/form-state.test.ts > C0 表单状态观察 > value_presence_and_types_are_distinct：{"value":false} 0ms
+ ✓ probes/stage-zero/form-state.test.ts > C0 表单状态观察 > value_presence_and_types_are_distinct：{"value":[]} 0ms
+ ✓ probes/stage-zero/form-state.test.ts > C0 表单状态观察 > value_presence_and_types_are_distinct：{"value":""} 1ms
+ ✓ probes/stage-zero/form-state.test.ts > C0 表单状态观察 > value_presence_and_types_are_distinct：{"value":null} 0ms
+ ✓ probes/stage-zero/form-state.test.ts > C0 表单状态观察 > 不把不同默认值归一：0 / "0" 12ms
+ ✓ probes/stage-zero/form-state.test.ts > C0 表单状态观察 > 不把不同默认值归一：false / undefined 1ms
+ ✓ probes/stage-zero/form-state.test.ts > C0 表单状态观察 > 不把不同默认值归一：[] / undefined 1ms
+ ✓ probes/stage-zero/form-state.test.ts > C0 表单状态观察 > 不把不同默认值归一："" / undefined 0ms
+ ✓ probes/stage-zero/form-state.test.ts > C0 表单状态观察 > 允许运行态元数据变化，但字段/选项/列顺序变化不等价 1ms
+ × probes/stage-zero/form-state.test.ts > C0 表单状态观察 > observe_does_not_flush_focused_input：真实设计器菜单、焦点文字及选区保留 3419ms
+   → expected undefined to be truthy
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  probes/stage-zero/form-state.test.ts > C0 表单状态观察 > observe_does_not_flush_focused_input：真实设计器菜单、焦点文字及选区保留
+AssertionError: expected undefined to be truthy
+
+- Expected:
+true
+
++ Received:
+undefined
+
+ ❯ probes/stage-zero/form-state.test.ts:46:17
+     44|     await flushPromises();
+     45|     const row = view.findAll("._fc-r-config .el-form-item").find((item…
+     46|     expect(row).toBeTruthy();
+       |                 ^
+     47|     const input = row!.find("input");
+     48|     input.element.focus();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+⎯⎯⎯⎯⎯⎯ Unhandled Errors ⎯⎯⎯⎯⎯⎯
+
+Vitest caught 1 unhandled error during the test run.
+This might cause false positive tests. Resolve unhandled errors to make sure your tests are not affected.
+
+⎯⎯⎯⎯ Unhandled Rejection ⎯⎯⎯⎯⎯
+TypeError: g.validateForm.api.hidden is not a function
+ ❯ Object.<anonymous> ../../node_modules/.pnpm/@form-create+designer@3.5.0_vue@3.5.43_typescript@5.9.3_/node_modules/@form-create/designer/dist/index.umd.js:317:7833
+
+This error originated in "probes/stage-zero/form-state.test.ts" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 11 passed (12)
+     Errors  1 error
+   Start at  17:05:34
+   Duration  5.76s (tests 62%, import 29%, environment 6%, transform 3%)
+
+undefined
+/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run probes/stage-zero/form-state.test.ts --reporter=verbose

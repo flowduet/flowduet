@@ -1,0 +1,4 @@
+[refactor/stage-zero-form-state 01c56ae] test(probe): 统一C组回归入口并保留全部断言
+ 3 files changed, 2 insertions(+)
+ rename apps/playground/probes/stage-zero/{editor-recovery.test.ts => editor-recovery.cases.ts} (100%)
+ rename apps/playground/probes/stage-zero/form-state/{retention-policy.test.ts => retention-policy.cases.ts} (100%)

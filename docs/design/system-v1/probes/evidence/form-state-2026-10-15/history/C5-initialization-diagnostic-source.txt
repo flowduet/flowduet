@@ -1,0 +1,10 @@
+import {appendFileSync} from 'node:fs';
+import {it} from 'vitest';
+import {mount,flushPromises} from '@vue/test-utils';
+import FormDesigner from '../../../../packages/form-create/src/components/FormDesigner.vue';
+for(const browser of [false,true])it(`diagnostic/browserString=${browser}`,async()=>{
+ const descriptor=Object.getOwnPropertyDescriptor(Element.prototype,'toString');const original=Element.prototype.toString;
+ let calls=0,cost=0,stack='';const metrics:Record<string,unknown>={browser};let view:ReturnType<typeof mount>|undefined;
+ Object.defineProperty(Element.prototype,'toString',{configurable:true,writable:true,value:function(this:Element){const start=performance.now();calls++;if(!stack)stack=new Error().stack??'';try{return browser?Object.prototype.toString.call(this):original.call(this)}finally{cost+=performance.now()-start}}});
+ let start=performance.now();try{view=mount(FormDesigner,{props:{name:'诊断',rules:'[]',options:'{}'},attachTo:document.body});metrics.mount=performance.now()-start;start=performance.now();await flushPromises();metrics.wait=performance.now()-start;}finally{start=performance.now();try{view?.unmount()}finally{metrics.unmount=performance.now()-start;metrics.calls=calls;metrics.toStringMs=cost;metrics.stack=stack;appendFileSync('/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/.superpowers/sdd/2026-10-15-stage-zero-form-state-slices/C5-init-metrics.jsonl',JSON.stringify(metrics)+'\n');document.body.innerHTML='';if(descriptor)Object.defineProperty(Element.prototype,'toString',descriptor);else Reflect.deleteProperty(Element.prototype,'toString')}}
+});

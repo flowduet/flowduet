@@ -259,3 +259,7 @@ pnpm --filter @flowduet/playground exec vite --config probes/stage-zero/vite.con
 自审已核对：方法名/类型与上位A/B一致，选项/日期兼容和value存在性有独立断言，五条Review Focus均落入任务；无默认“全部成功”或资源阈值。C0–C5当前均未执行，仅本计划的本地链接/格式/范围核对在文档收尾时执行。
 
 请维护者审阅本计划与配套方案，确认矩阵、R暂停/恢复与回退合同、probe只读候选复验入口、探针白名单及本会话逐片执行方式。批准前agent停在文档交付，不写C组实现；D/E仍需各自补充方案，正式工作台不在此审批范围。
+
+## 执行记录入口（2026-10-16）
+
+本计划已获本会话确认执行。当前实际结果和偏离裁定见[验收结论](../system-v1/probes/editor-state-acceptance.md)及归档账本。为保留全部89条C断言同时减少默认全量重复worker装载，最终由既有`contracts/candidate.test.ts`导入`form-state.cases.ts`；`editor-recovery.cases.ts`及`form-state/*.cases.ts`由该入口间接导入。本文逐片命令/文件名保留历史，不将改名解释为删除断言。最终命令见证据README。
