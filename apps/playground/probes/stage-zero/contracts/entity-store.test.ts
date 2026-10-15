@@ -63,4 +63,11 @@ describe("控制器归属与租约", () => {
     const json = (await session.save()).json;
     expect(json).not.toMatch(/controllerId|documentEpoch|lifetime|EditorLease/);
   });
+  it("未知facet不能获得合法目标", () => {
+    const { store } = fixture();
+    expect(store.target("node", "approval_1", "unknown" as never)).toMatchObject({
+      ok: false,
+      code: "unsupported",
+    });
+  });
 });

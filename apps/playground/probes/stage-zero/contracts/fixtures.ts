@@ -1,11 +1,11 @@
 import { BpmnModel, flowableAdapter, type ModdleElement } from "@flowduet/core";
 import { FlowDesignSession, type FormDefinition } from "@flowduet/form-create";
-import { readApprovalMulti } from "../../../../../packages/designer/src/operations";
+import { readPropertyDraft } from "../../../../../packages/designer/src/property-editing";
 import { createEntityStore, observeSession } from "./entity-store";
 import { createDraftStore } from "./draft-store";
 import type { DraftValue, EditTarget } from "./types";
-export function branchModel() {
-  return BpmnModel.create({ processId: "contract", adapter: flowableAdapter })
+export function branchModel(nested = false) {
+  const model = BpmnModel.create({ processId: "contract", adapter: flowableAdapter })
     .addStartEvent({ id: "s" })
     .addExclusiveGateway({ id: "fork" })
     .addUserTask({ id: "approval_1", name: "同名审批", assignee: "alice" })
@@ -25,6 +25,20 @@ export function branchModel() {
     .addSequenceFlow({ id: "fb", sourceRef: "fork", targetRef: "b", default: true })
     .addSequenceFlow({ id: "bj", sourceRef: "b", targetRef: "join" })
     .addSequenceFlow({ id: "je", sourceRef: "join", targetRef: "e" });
+  if (nested) {
+    model
+      .addParallelGateway({ id: "inner" })
+      .addParallelGateway({ id: "inner_join" })
+      .addUserTask({ id: "i1", assignee: "inner_a" })
+      .addUserTask({ id: "i2", assignee: "inner_b" })
+      .retargetSequenceFlow("fa", "inner")
+      .addSequenceFlow({ id: "ii1", sourceRef: "inner", targetRef: "i1" })
+      .addSequenceFlow({ id: "ii2", sourceRef: "inner", targetRef: "i2" })
+      .addSequenceFlow({ id: "i1j", sourceRef: "i1", targetRef: "inner_join" })
+      .addSequenceFlow({ id: "i2j", sourceRef: "i2", targetRef: "inner_join" })
+      .addSequenceFlow({ id: "inner_tail", sourceRef: "inner_join", targetRef: "approval_1" });
+  }
+  return model;
 }
 export function deferred<T>() {
   let resolve!: (value: T) => void, reject!: (reason?: unknown) => void;
@@ -55,33 +69,11 @@ export function createContext(session: FlowDesignSession, owner = "A") {
       const f = object as FormDefinition;
       return { kind: "form-content", rules: f.rules, options: f.options };
     }
-    const el = object as ModdleElement;
     if (t.facet === "default-form")
       return { kind: "default-form", formKey: session.current!.model.defaultFormKey };
-    if (t.ref.kind === "process") return { kind: "process", name: String(el.get("name") ?? "") };
-    if (t.ref.kind === "flow")
-      return {
-        kind: "branch",
-        name: String(el.get("name") ?? ""),
-        condition: String(
-          (el.get("conditionExpression") as ModdleElement | undefined)?.get("body") ?? "",
-        ),
-      };
-    if (el.$type === "bpmn:ServiceTask")
-      return {
-        kind: "cc",
-        name: String(el.get("name") ?? ""),
-        recipients: String(el.get("ccTo") ?? ""),
-      };
-    const multi = readApprovalMulti(session.current!.model, t.ref.id);
-    return {
-      kind: "approval",
-      name: String(el.get("name") ?? ""),
-      approvalKind: multi?.mode ?? "single",
-      assignee: multi?.collection ?? String(el.get("assignee") ?? ""),
-      formKey: String(el.get("formKey") ?? ""),
-      ...(multi?.elementVariable !== undefined ? { elementVariable: multi.elementVariable } : {}),
-    };
+    const value = readPropertyDraft(session.current!.model, t.ref.id);
+    if (!value) throw new Error("对象没有可编辑字段");
+    return value;
   };
   const basis = (t: EditTarget) => {
     const object = store.resolve(t.ref);
@@ -89,12 +81,31 @@ export function createContext(session: FlowDesignSession, owner = "A") {
       t.ref.kind === "flow" && object
         ? ((object as ModdleElement).get("sourceRef") as ModdleElement).get("default") === object
         : undefined;
-    return JSON.stringify([read(t), extra]);
+    return JSON.stringify([
+      read(t),
+      extra,
+      t.ref.kind === "form" ? (object as FormDefinition | undefined)?.provider : undefined,
+    ]);
   };
-  const drafts = createDraftStore(store, read, basis);
+  const referenceId = (input: DraftValue) =>
+    input.kind === "approval"
+      ? input.formKey
+      : input.kind === "default-form"
+        ? input.formKey?.trim()
+        : undefined;
+  const drafts = createDraftStore(store, read, basis, {
+    selection: (input) => `${input.kind}:${referenceId(input) ?? ""}`,
+    current(target, input) {
+      if (!store.resolve(target.ref)) return {};
+      const id = referenceId(input);
+      if (!id) return {};
+      const ref = store.target("form", id, "form-content");
+      return ref.ok ? { [id]: JSON.stringify(ref.value.ref) } : {};
+    },
+  });
   return { session, store, drafts, target, read, basis, sync, model: session.current!.model };
 }
 
-export function fixture(owner = "A") {
-  return createContext(new FlowDesignSession(branchModel()), owner);
+export function fixture(owner = "A", nested = false) {
+  return createContext(new FlowDesignSession(branchModel(nested)), owner);
 }

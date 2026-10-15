@@ -5,7 +5,7 @@ import {
   type FormDefinition,
 } from "@flowduet/form-create";
 import { assertFormDefinitionValid } from "../../../../../packages/form-create/src/form-schema";
-import { setBranchCondition } from "../../../../../packages/designer/src/operations";
+import { applyPropertyDraft } from "../../../../../packages/designer/src/property-editing";
 import { failure, type DraftValue, type EditTarget, type EditResult } from "./types";
 export type CandidateInput = { target: EditTarget; input: DraftValue };
 export type PreparedCandidate = Readonly<{
@@ -29,11 +29,14 @@ export function graphValue(root: unknown, withoutDi = false): string {
     if (seen.has(value)) return { ref: seen.get(value) };
     seen.set(value, seen.size);
     if (Array.isArray(value)) return value.map(project);
-    const result: Record<string, unknown> = {};
+    const result: Record<string, unknown> = Object.create(null);
     for (const key of Object.getOwnPropertyNames(value).sort()) {
       if (["$model", "$descriptor", "$parent"].includes(key) || (withoutDi && key === "diagrams"))
         continue;
-      result[key] = project(Reflect.get(value, key));
+      const child = Reflect.get(value, key);
+      // moddle读取多值属性会惰性创建空数组；它不产生XML，也不构成设计变更。
+      if (Array.isArray(child) && child.length === 0) continue;
+      result[key] = project(child);
     }
     return result;
   }
@@ -82,24 +85,11 @@ export function applyCandidateInput(
     state.model.setDefaultFormKey(input.formKey);
     return;
   }
-  const element =
-    target.ref.kind === "process" ? state.model.process : state.model.elementOf(target.ref.id);
-  if (input.kind === "branch") {
-    if (target.ref.kind !== "flow") throw new Error("支路目标不匹配");
-    setBranchCondition(state.model, target.ref.id, input.condition);
-  }
-  if (input.kind === "approval") {
-    // A3先验证名称命令；全字段在A4共享规则接入后启用，不能忽略未实现的编辑。
-    if (
-      input.approvalKind !== "single" ||
-      input.assignee !== String(element.get("assignee") ?? "") ||
-      input.formKey !== String(element.get("formKey") ?? "")
-    )
-      throw new Error("审批全字段待共享编辑规则接入");
-  }
-  if (input.kind === "cc" && input.recipients !== String(element.get("ccTo") ?? ""))
-    throw new Error("抄送全字段待共享编辑规则接入");
-  element.set("name", input.name.trim() || undefined);
+  if (target.facet !== "properties") throw new Error("流程属性入口不匹配");
+  applyPropertyDraft(state.model, target.ref.id, input, {
+    allowIncomplete: true,
+    integratedForms: true,
+  });
 }
 export async function prepareCandidate(
   session: FlowDesignSession,
@@ -123,6 +113,7 @@ export async function prepareCandidate(
       rejectWarnings: true,
       rejectUnregisteredNamespaces: true,
     });
+    if (!unchanged()) return failure("version-changed", "解析候选期间设计已变化");
     const state: CandidateState = { model, forms: current.forms.map((f) => ({ ...f })) };
     for (const entry of inputs) {
       try {
@@ -148,6 +139,7 @@ export async function prepareCandidate(
       },
     };
   } catch (error) {
+    if (!unchanged()) return failure("version-changed", "候选失败前设计已变化");
     return failure("capture-failed", error instanceof Error ? error.message : String(error));
   }
 }

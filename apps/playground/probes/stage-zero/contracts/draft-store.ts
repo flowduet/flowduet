@@ -1,6 +1,7 @@
 import type { EntityStore } from "./entity-store";
 import {
   failure,
+  isDraftValue,
   targetKey,
   type DraftValue,
   type DraftStatus,
@@ -18,11 +19,17 @@ export type DraftRecord = {
   status: DraftStatus;
   reason?: string;
   retained?: EditorEntry;
+  uncapturedVersion?: number;
+  dependencies?: Readonly<Record<string, string>>;
 };
 export function createDraftStore(
   store: EntityStore,
   read: (target: EditTarget) => DraftValue,
   basis: (target: EditTarget) => string,
+  references?: {
+    selection(input: DraftValue): string;
+    current(target: EditTarget, input: DraftValue): Readonly<Record<string, string>>;
+  },
 ) {
   let revision = 0,
     sequence = 0;
@@ -32,14 +39,23 @@ export function createDraftStore(
     id: `conflict_${++sequence}`,
     target,
     basis: basis(target),
-    input: read(target),
+    input: Object.freeze({ ...read(target) }),
     status: "dirty",
+    dependencies: Object.freeze({ ...(references?.current(target, read(target)) ?? {}) }),
   });
   function refresh() {
     for (const record of records.values()) {
       if (record.status === "detached") continue;
       try {
-        if (record.basis !== basis(record.target)) {
+        const currentDeps = record.input
+          ? (references?.current(record.target, record.input) ?? {})
+          : {};
+        if (
+          record.basis !== basis(record.target) ||
+          Object.entries(record.dependencies ?? {}).some(
+            ([key, value]) => currentDeps[key] !== value,
+          )
+        ) {
           record.status = "conflicted";
           record.reason = "基础配置已变化";
         }
@@ -68,7 +84,7 @@ export function createDraftStore(
         record.retained = editor;
         try {
           const value = editor.adapter.capture();
-          if (value) record.input = { ...value };
+          if (value && isDraftValue(value)) record.input = Object.freeze({ ...value });
         } catch {
           /* 由保留实例承载输入。 */
         }
@@ -84,18 +100,52 @@ export function createDraftStore(
       return revision;
     },
     refresh,
+    begin(target: EditTarget): EditResult<DraftValue> {
+      if (!store.resolve(target.ref)) return failure("stale-target", "编辑目标已失效");
+      try {
+        let record = records.get(targetKey(target));
+        if (!record) {
+          record = { ...make(target), status: "clean" };
+          records.set(targetKey(target), record);
+          revision++;
+        }
+        return { ok: true, value: record.input ?? read(target) };
+      } catch (error) {
+        return failure("unsupported", error instanceof Error ? error.message : String(error));
+      }
+    },
+    rebaseClean() {
+      for (const [key, record] of records)
+        if (
+          record.status === "clean" &&
+          !record.uncapturedVersion &&
+          store.resolve(record.target.ref)
+        )
+          records.set(key, { ...make(record.target), status: "clean" });
+    },
     touch(target: EditTarget): EditResult<DraftStatus> {
       if (!store.resolve(target.ref)) return failure("stale-target", "编辑目标已失效");
       if (!records.has(targetKey(target))) records.set(targetKey(target), make(target));
       revision++;
+      records.get(targetKey(target))!.uncapturedVersion = revision;
+      if (records.get(targetKey(target))!.status === "clean")
+        records.get(targetKey(target))!.status = "dirty";
       refresh();
       return { ok: true, value: records.get(targetKey(target))!.status };
     },
     stage(target: EditTarget, input: DraftValue): EditResult<DraftStatus> {
+      if (!isDraftValue(input)) return failure("unsupported", "编辑输入类型或字段不受支持");
       if (!store.resolve(target.ref)) return failure("stale-target", "编辑目标已失效");
+      refresh();
       const record = records.get(targetKey(target)) ?? make(target);
-      record.input = { ...input };
-      if (record.status === "invalid") record.status = "dirty";
+      if (
+        references &&
+        (!record.input || references.selection(record.input) !== references.selection(input))
+      )
+        record.dependencies = Object.freeze({ ...references.current(target, input) });
+      record.input = Object.freeze({ ...input });
+      delete record.uncapturedVersion;
+      if (record.status === "invalid" || record.status === "clean") record.status = "dirty";
       records.set(targetKey(target), record);
       revision++;
       refresh();
@@ -114,17 +164,24 @@ export function createDraftStore(
     },
     conflicts() {
       refresh();
-      return [...records.values()].filter(
-        (r) => r.status === "conflicted" || r.status === "detached",
-      );
+      return [...records.values()]
+        .map((r) => Object.freeze({ ...r }))
+        .filter((r) => r.status === "conflicted" || r.status === "detached");
     },
-    comparisons: () => [...comparisons.values()],
+    closeComparison(id: string) {
+      const r = comparisons.get(id);
+      if (r?.retained) store.releaseEditor(r.retained.lease);
+      comparisons.delete(id);
+    },
+    comparisons: () => [...comparisons.values()].map((r) => Object.freeze({ ...r })),
     buffers() {
       refresh();
-      return [...records.values()];
+      return [...records.values()].map((r) => Object.freeze({ ...r }));
     },
     clearApplied(target: EditTarget) {
-      records.delete(targetKey(target));
+      if (store.editor(target))
+        records.set(targetKey(target), { ...make(target), status: "clean" });
+      else records.delete(targetKey(target));
       revision++;
     },
     restore(target: EditTarget): OperationResult {

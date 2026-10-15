@@ -8,20 +8,9 @@ export type EntityRef = Readonly<{
   lifetime: number;
 }>;
 export type EditTarget = Readonly<{ ref: EntityRef; facet: Facet }>;
-export type FlowPropertyDraft =
-  | { kind: "process"; name: string }
-  | {
-      kind: "approval";
-      name: string;
-      approvalKind: "single" | "all" | "any" | "sequential";
-      assignee: string;
-      formKey: string;
-      elementVariable?: string;
-      lastSingleAssignee?: string;
-      lastCollection?: string;
-    }
-  | { kind: "cc"; name: string; recipients: string }
-  | { kind: "branch"; name: string; condition: string };
+import { KIND_OPTIONS } from "../../../../../packages/designer/src/property-editing";
+import type { FlowPropertyDraft } from "../../../../../packages/designer/src/property-editing";
+export type { FlowPropertyDraft } from "../../../../../packages/designer/src/property-editing";
 export type DraftValue =
   | FlowPropertyDraft
   | { kind: "default-form"; formKey: string | undefined }
@@ -57,3 +46,49 @@ export const failure = (code: EditFailureCode, message: string): EditResult<neve
   code,
   message,
 });
+
+/** 只检查协议数据形状，业务格式/完整性仍由designer共享规则检查。 */
+export function isDraftValue(value: unknown): value is DraftValue {
+  try {
+    if (!value || typeof value !== "object") return false;
+    const v = value as Record<string, unknown>;
+    const fields: Record<string, readonly string[]> = {
+      process: ["kind", "name"],
+      approval: [
+        "kind",
+        "name",
+        "approvalKind",
+        "assignee",
+        "formKey",
+        "elementVariable",
+        "lastSingleAssignee",
+        "lastCollection",
+      ],
+      cc: ["kind", "name", "recipients"],
+      branch: ["kind", "name", "condition"],
+      "default-form": ["kind", "formKey"],
+      "form-content": ["kind", "rules", "options"],
+    };
+    if (typeof v.kind !== "string" || !Object.hasOwn(fields, v.kind)) return false;
+    if (!Object.getOwnPropertyNames(v).every((key) => fields[v.kind as string]!.includes(key)))
+      return false;
+    if (v.kind === "default-form") return v.formKey === undefined || typeof v.formKey === "string";
+    if (v.kind === "form-content")
+      return typeof v.rules === "string" && typeof v.options === "string";
+    if (typeof v.name !== "string") return false;
+    if (v.kind === "approval")
+      return (
+        typeof v.assignee === "string" &&
+        typeof v.formKey === "string" &&
+        KIND_OPTIONS.some((option) => option.key === v.approvalKind) &&
+        [v.elementVariable, v.lastSingleAssignee, v.lastCollection].every(
+          (item) => item === undefined || typeof item === "string",
+        )
+      );
+    if (v.kind === "cc") return typeof v.recipients === "string";
+    if (v.kind === "branch") return typeof v.condition === "string";
+    return true;
+  } catch {
+    return false;
+  }
+}

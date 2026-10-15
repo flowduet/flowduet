@@ -24,7 +24,7 @@ export function commitAtomicProperties(
   } catch (error) {
     for (const [object, descriptors] of [...journal].reverse()) {
       for (const key of Object.getOwnPropertyNames(object))
-        if (!(key in descriptors)) Reflect.deleteProperty(object, key);
+        if (!Object.hasOwn(descriptors, key)) Reflect.deleteProperty(object, key);
       Object.defineProperties(object, descriptors);
     }
     return failure("commit-failed", error instanceof Error ? error.message : String(error));

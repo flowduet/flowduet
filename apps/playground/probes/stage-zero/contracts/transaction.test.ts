@@ -30,4 +30,15 @@ describe("属性提交原子性", () => {
     expect(f.model.definitions.get("diagrams")).toBe(diagrams);
     expect((await f.model.toXML()).xml).toBe(xml);
   });
+  it("失败撤销不能把继承属性名当作原有字段", () => {
+    const f = fixture(),
+      state = f.session.current!;
+    const root = f.model.definitions;
+    const result = commitAtomicProperties(state, () => {
+      Object.defineProperty(root, "toString", { value: "temporary", configurable: true });
+      throw new Error("中断");
+    });
+    expect(result.ok).toBe(false);
+    expect(Object.hasOwn(root, "toString")).toBe(false);
+  });
 });

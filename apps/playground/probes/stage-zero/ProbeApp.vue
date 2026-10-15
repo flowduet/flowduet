@@ -3,8 +3,9 @@ import { ref } from "vue";
 import EditorRetentionProbe from "./EditorRetentionProbe.vue";
 import ThemeIsolationProbe from "./ThemeIsolationProbe.vue";
 import HostProtocolProbe from "./HostProtocolProbe.vue";
+import ContractProbe from "./ContractProbe.vue";
 import { entries } from "./probe-log";
-const selected = ref("editor");
+const selected = ref("contract");
 </script>
 <template>
   <div class="probe">
@@ -14,10 +15,12 @@ const selected = ref("editor");
       02d3474；本入口用于剩余阶段零复验。
     </p>
     <nav>
+      <button @click="selected = 'contract'">编辑合同 A/B</button>
       <button @click="selected = 'editor'">编辑保留</button
       ><button @click="selected = 'theme'">主题隔离</button
       ><button @click="selected = 'host'">宿主协议</button>
     </nav>
+    <ContractProbe v-if="selected === 'contract'" />
     <EditorRetentionProbe v-if="selected === 'editor'" /><ThemeIsolationProbe
       v-if="selected === 'theme'"
     /><HostProtocolProbe v-if="selected === 'host'" />

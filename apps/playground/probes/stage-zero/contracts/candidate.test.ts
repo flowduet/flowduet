@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { compile, verticalDiLayout, type ModdleElement } from "@flowduet/core";
 import { fixture } from "./fixtures";
+import { graphValue } from "./candidate";
 import { createContractController } from "./controller";
 
 function withForms() {
@@ -101,5 +102,44 @@ describe("隔离候选与当前编辑版本", () => {
     f.model.setDefaultFormKey("form_1");
     expect(await pending).toMatchObject({ ok: false, code: "version-changed" });
     expect(f.session.current!.forms).toHaveLength(2);
+  });
+  it("flush更换租约后拒绝捕获旧实例", async () => {
+    const f = withForms(),
+      target = f.target("form_1", "form");
+    const latest = {
+      flush() {},
+      capture: () => ({
+        kind: "form-content" as const,
+        rules: "[]",
+        options: '{"formName":"新实例"}',
+      }),
+    };
+    f.store.registerEditor(target, {
+      flush() {
+        f.store.registerEditor(target, latest);
+      },
+      capture: () => ({ kind: "form-content", rules: "[]", options: '{"formName":"旧实例"}' }),
+    });
+    expect(await f.c.prepare("draft-save")).toMatchObject({ ok: false, code: "version-changed" });
+    expect(f.drafts.input(target)).not.toMatchObject({ options: '{"formName":"旧实例"}' });
+  });
+  it("候选等待期间更换同对象编辑器租约也拒绝", async () => {
+    const f = withForms(),
+      target = f.target("form_1", "form");
+    f.store.registerEditor(target, {
+      flush() {},
+      capture: () => ({ kind: "form-content", rules: "[]", options: "{}" }),
+    });
+    const pending = f.c.prepare("draft-save");
+    f.store.registerEditor(target, {
+      flush() {},
+      capture: () => ({ kind: "form-content", rules: "[]", options: '{"formName":"新实例"}' }),
+    });
+    expect(await pending).toMatchObject({ ok: false, code: "version-changed" });
+  });
+  it("特殊自有属性名也必须进入版本投影", () => {
+    const value = Object.create(null) as Record<string, string>;
+    value["__proto__"] = "changed";
+    expect(graphValue(value)).toContain('"__proto__":"changed"');
   });
 });
