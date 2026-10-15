@@ -110,3 +110,26 @@ it("不可读状态下创建表单失败不留下半次创建", () => {
   expect(f.c.createForm("不应创建")).toMatchObject({ ok: false, code: "capture-failed" });
   expect(f.session.current!.forms).toHaveLength(0);
 });
+
+it.each(["locate", "execute"] as const)("%s捕获失败后恢复可读状态仍需重新校验", async (entry) => {
+  const f = setup();
+  expect(await f.c.validate()).toMatchObject({ ok: true });
+  const elements = f.model.process.get("flowElements");
+  f.model.elementOf(f.t.ref.id).set("extraFlag", 1n);
+  if (entry === "locate") expect(await f.c.locate(f.t)).toMatchObject({ status: "failed" });
+  else
+    expect(
+      await f.c.executeOperation({
+        model: f.model,
+        renderRevision: f.c.revision,
+        operation: { type: "insert-after", nodeId: f.t.ref.id, kind: "approval" },
+      }),
+    ).toMatchObject({ ok: false });
+  f.model.elementOf(f.t.ref.id).set("extraFlag", undefined);
+  expect(f.c.validationCurrent).toBe(false);
+  expect(f.c.dirty).toBe(true);
+  expect(f.model.process.get("flowElements")).toBe(elements);
+  expect(await f.c.prepare("draft-save")).toMatchObject({ ok: true });
+  expect(f.c.validationCurrent).toBe(false);
+  expect(await f.c.validate()).toMatchObject({ ok: true });
+});

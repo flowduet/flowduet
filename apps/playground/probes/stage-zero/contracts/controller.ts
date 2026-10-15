@@ -254,7 +254,14 @@ export function createContractController(context: ReturnType<typeof createContex
     }
   }
   let lastGeneration = 0;
-  const locator = createLocator(store, drafts, sync);
+  const locator = createLocator(store, drafts, () => {
+    try {
+      sync();
+    } catch (error) {
+      unexpected(error);
+      throw error;
+    }
+  });
   return {
     ...context,
     sync: () =>
@@ -414,6 +421,8 @@ export function createContractController(context: ReturnType<typeof createContex
         notify();
         return { ok: true, value: { revision } };
       } catch (error) {
+        // 无法确认结构请求的捕获/执行结果时，恢复可读也不能自动复用旧校验章。
+        unexpected(error);
         return failure("commit-failed", error instanceof Error ? error.message : String(error));
       }
     },
