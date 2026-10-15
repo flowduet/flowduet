@@ -169,3 +169,91 @@ describe("隔离候选与当前编辑版本", () => {
     );
   });
 });
+
+describe("C4只读候选移交闸门", () => {
+  it("candidate_gate_rejects_foreign_stale_or_disposed", async () => {
+    const a = withForms(),
+      b = withForms();
+    try {
+      const prepared = await a.c.prepare("draft-save");
+      expect(prepared.ok).toBe(true);
+      if (!prepared.ok) return;
+      expect(a.c.checkPreparedCandidate(prepared.value)).toEqual({ ok: true, value: undefined });
+      expect(b.c.checkPreparedCandidate(prepared.value)).toMatchObject({
+        ok: false,
+        code: "version-changed",
+      });
+      expect(a.c.checkPreparedCandidate({ ...prepared.value })).toMatchObject({
+        ok: false,
+        code: "version-changed",
+      });
+      a.c.drafts.touch(a.target("form_1", "form"));
+      expect(a.c.checkPreparedCandidate(prepared.value)).toMatchObject({
+        ok: false,
+        code: "version-changed",
+      });
+      const newer = await a.c.prepare("draft-save");
+      expect(newer.ok).toBe(true);
+      if (!newer.ok) return;
+      a.store.registerEditor(a.target("form_1", "form"), {
+        flush() {},
+        capture: () => ({ kind: "form-content", rules: "[]", options: "{}" }),
+      });
+      expect(a.c.checkPreparedCandidate(newer.value)).toMatchObject({
+        ok: false,
+        code: "version-changed",
+      });
+      a.c.dispose();
+      expect(a.c.checkPreparedCandidate(prepared.value)).toMatchObject({
+        ok: false,
+        code: "cancelled",
+      });
+    } finally {
+      a.c.dispose();
+      b.c.dispose();
+    }
+  });
+  it("candidate_gate_does_not_recapture_or_write：旧候选不清新成功", async () => {
+    const f = withForms();
+    let calls = 0;
+    try {
+      f.store.registerEditor(f.target("form_1", "form"), {
+        flush() {
+          calls++;
+        },
+        capture() {
+          calls++;
+          return { kind: "form-content", rules: "[]", options: "{}" };
+        },
+      });
+      const old = await f.c.prepare("draft-save");
+      expect(old.ok).toBe(true);
+      if (!old.ok) return;
+      f.drafts.touch(f.target("form_1", "form"));
+      const latest = await f.c.prepare("draft-save");
+      expect(latest.ok).toBe(true);
+      if (!latest.ok) return;
+      const before = calls,
+        session = f.session.current,
+        xml = (await f.model.toXML()).xml,
+        revision = f.drafts.revision;
+      expect(f.c.checkPreparedCandidate(old.value)).toMatchObject({
+        ok: false,
+        code: "version-changed",
+      });
+      expect(f.c.checkPreparedCandidate(latest.value).ok).toBe(true);
+      expect(f.c.checkPreparedCandidate(latest.value).ok).toBe(true);
+      expect(calls).toBe(before);
+      expect(f.session.current).toBe(session);
+      expect((await f.model.toXML()).xml).toBe(xml);
+      expect(f.drafts.revision).toBe(revision);
+      f.model.elementOf("approval_1").set("extraFlag", 1n);
+      expect(f.c.checkPreparedCandidate(latest.value)).toMatchObject({
+        ok: false,
+        code: "capture-failed",
+      });
+    } finally {
+      f.c.dispose();
+    }
+  });
+});
