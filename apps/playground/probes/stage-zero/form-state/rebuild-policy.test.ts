@@ -332,3 +332,97 @@ it("临时清理抛错如实保留并可重试，不伪装K成功", async () => 
     finish(f);
   }
 });
+it.each(["replacement", "lease"] as const)(
+  "临时恢复期间%s使移交失效且保留新对象/租约",
+  async (kind) => {
+    const f = await started(),
+      old = f.current()!,
+      restore = f.host.restoreContext;
+    let changed = false,
+      latest: ReturnType<typeof f.c.store.registerEditor> | undefined;
+    try {
+      f.host.restoreContext = async (editor, before) => {
+        if (!changed) {
+          changed = true;
+          if (kind === "replacement")
+            f.c.session.updateFormContent(
+              old.target.ref.id,
+              '[{"type":"input","field":"external","value":"外部新对象"}]',
+              "{}",
+            );
+          else
+            latest = f.c.store.registerEditor(old.target, {
+              flush() {},
+              capture: () => ({
+                kind: "form-content",
+                rules: '[{"type":"input","field":"latest"}]',
+                options: "{}",
+              }),
+            });
+        }
+        return restore(editor, before);
+      };
+      expect(await f.policy.select(f.forms[1]!, "rebuild-verified")).toMatchObject({
+        ok: true,
+        value: { actual: "kept-fallback" },
+      });
+      expect(f.entry(old).unmounted).toBe(false);
+      if (kind === "replacement") {
+        expect(f.c.session.current!.forms[0]!.rules).toContain("外部新对象");
+        expect(f.c.store.resolve(old.target.ref)).toBeUndefined();
+        expect(f.c.drafts.conflicts().some((r) => r.target.ref === old.target.ref)).toBe(true);
+      } else expect(f.c.store.editor(old.target)!.lease).toBe(latest);
+      expect(f.policy.recoveryState().temporary).toBe(0);
+    } finally {
+      finish(f);
+    }
+  },
+);
+it("闸门至签发B/撤销A同步段没有宿主回调", async () => {
+  const f = await started(),
+    events: string[] = [];
+  try {
+    const gate = f.c.checkPreparedCandidate,
+      register = f.c.store.registerEditor,
+      release = f.c.store.releaseEditor;
+    f.c.checkPreparedCandidate = (c) => {
+      events.push("gate");
+      return gate(c);
+    };
+    f.c.store.registerEditor = (...args) => {
+      events.push("register");
+      return register(...args);
+    };
+    f.c.store.releaseEditor = (l) => {
+      events.push("release");
+      return release(l);
+    };
+    for (const key of ["adopt", "show", "unmount"] as const) {
+      if (key === "adopt") {
+        const method = f.host.adopt;
+        f.host.adopt = (...args) => {
+          events.push("adopt");
+          return method(...args);
+        };
+      } else {
+        const method = f.host[key];
+        f.host[key] = (e) => {
+          events.push(key);
+          return method(e);
+        };
+      }
+    }
+    expect(await f.policy.select(f.forms[1]!, "rebuild-verified")).toMatchObject({
+      ok: true,
+      value: { actual: "rebuilt" },
+    });
+    expect(events.slice(events.indexOf("gate"), events.indexOf("gate") + 4)).toEqual([
+      "gate",
+      "register",
+      "release",
+      "adopt",
+    ]);
+  } finally {
+    finish(f);
+  }
+});
