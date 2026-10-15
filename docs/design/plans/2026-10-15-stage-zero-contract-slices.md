@@ -61,11 +61,11 @@
 
 **Interfaces:** 消费当前真实ElSelect/ElOption组件类型；产出同一真实组件、运行参数与事件语义不变的严格模板入口。类型问题无关业务控件实现，不顺手更改NodeDrawer。
 
-- [ ] 先运行下方严格命令并保存原始输出；核对是否仍为13处声明推断错误。预期是该错误基线；数量/根因变化时先更新诊断，不按旧结论盲修。
-- [ ] 做最小真实Select/Option声明解析复现，记录解析文件、编译器与实际版本；核对生产包和探针为何有差异。若需依赖/公共声明调整，停止本项并提交方案。
-- [ ] 在探针内实施已证实的最小绑定修订，保留真实组件。类型拒绝用例包含非法modelValue/option类型，必须继续被拒绝，不能通过整体断言为宽泛组件类型来消音。
-- [ ] 同一严格命令转绿；原生选择器下拉/值变更及主题样本仍用真实EP。最后随A全套验证，不提前声称B已解除。
-- [ ] 原子提交：`fix(probe): 修正真实选择器的严格模板类型接缝`；若未解决，仅提交根因和阻断记录，不提交绕过实现。
+- [x] 先运行下方严格命令并保存原始输出；核对是否仍为13处声明推断错误。预期是该错误基线；数量/根因变化时先更新诊断，不按旧结论盲修。
+- [x] 做最小真实Select/Option声明解析复现，记录解析文件、编译器与实际版本；核对生产包和探针为何有差异。若需依赖/公共声明调整，停止本项并提交方案。
+- [x] 在探针内实施已证实的最小绑定修订，保留真实组件。类型拒绝用例包含非法modelValue/option类型，必须继续被拒绝，不能通过整体断言为宽泛组件类型来消音。
+- [x] 同一严格命令转绿；原生选择器下拉/值变更及主题样本仍用真实EP。最后随A全套验证，不提前声称B已解除。
+- [x] 原子提交：`fix(probe): 修正真实选择器的严格模板类型接缝`；若未解决，仅提交根因和阻断记录，不提交绕过实现。
 
 Run：
 
@@ -81,11 +81,11 @@ Expected：起初复现实际错误；修订后退出0，非法输入类型测�
 
 **Interfaces:** `createEntityStore(controllerId: string)`返回`target(kind, id, facet)`、`resolve(ref)`、`reconcile(observed)`、`registerEditor(target, editor)`及`releaseEditor(lease)`。target/错误按规格§4；reconcile的延续信息只能来自内部受控命令。EditorAdapter签名为`flush(): void`及`capture(): DraftValue | null`，可抛错，租约由store签发，宿主不提供continuity名单。
 
-- [ ] 写测试`foreign_ref_rejected`、`facet_kind_rejected`、`same_command_reuse_new_lifetime`、`late_release_keeps_new_editor`、`process_ref_expires_on_replace`。断言外来引用即使所有其他字段相同也拒绝；新生命期不能读取旧缓冲；旧release不改变新租约。覆盖A01/A02及Review Focus 2。
-- [ ] 运行测试观察预期合同失败；测试桩缺失可用于初次红灯，但夹具必须使用真实BpmnModel与FlowDesignSession。
-- [ ] 实现内部归属登记与租约；reconcile先通知draft-store转移待处置输入，再注销旧身份，不能沿用旧registry直接删除缓冲的次序。为A2留生命周期回调`beforeInvalidate(ref, reason)`。
-- [ ] 运行新用例与原identity/design-state测试，全部通过；断言保存文档不含controllerId/epoch/lifetime/lease。
-- [ ] 原子提交：`test(probe): 验证控制器归属与编辑器生命期`。
+- [x] 写测试`foreign_ref_rejected`、`facet_kind_rejected`、`same_command_reuse_new_lifetime`、`late_release_keeps_new_editor`、`process_ref_expires_on_replace`。断言外来引用即使所有其他字段相同也拒绝；新生命期不能读取旧缓冲；旧release不改变新租约。覆盖A01/A02及Review Focus 2。
+- [x] 运行测试观察预期合同失败；测试桩缺失可用于初次红灯，但夹具必须使用真实BpmnModel与FlowDesignSession。
+- [x] 实现内部归属登记与租约；reconcile先通知draft-store转移待处置输入，再注销旧身份，不能沿用旧registry直接删除缓冲的次序。为A2留生命周期回调`beforeInvalidate(ref, reason)`。
+- [x] 运行新用例与原identity/design-state测试，全部通过；断言保存文档不含controllerId/epoch/lifetime/lease。
+- [x] 原子提交：`test(probe): 验证控制器归属与编辑器生命期`。
 
 Run：`pnpm --filter @flowduet/playground exec vitest run probes/stage-zero/contracts/entity-store.test.ts probes/stage-zero/design-state.test.ts --testTimeout 20000`；Expected：先合同红灯，再全部PASS。原designer身份11项在A5一起复跑。
 
@@ -95,11 +95,11 @@ Run：`pnpm --filter @flowduet/playground exec vitest run probes/stage-zero/cont
 
 **Interfaces:** 消费A1的`beforeInvalidate`与EditorLease；产出`stage(target, draft)`、`status(target)`、`conflicts()`、`resolveConflict(id, "discard-local" | "restart-on-current")`。内部`requestDelete(impact, confirm)`绑定确认时的版本/影响集；confirm由实验宿主注入，不作为未来公共任意命令执行器。
 
-- [ ] 写`unknown_form_replace_keeps_live_editor_on_capture_throw`、`in_place_change_keeps_original_basis`、`discard_affects_one_record`、`restart_uses_current_without_copying_local`、`deleted_target_cannot_restart`。断言旧输入保留，模型零写入，重启只是从当前值建新缓冲并保留比较材料。覆盖A03/A04及Review Focus 3。
-- [ ] 写`delete_confirmation_expires_after_edit`、`failed_cascade_keeps_buffers`、`successful_cascade_clears_only_deleted`；使用真实removeBranch/removeBlock与表单引用守卫，不手工拼删除结果。覆盖A02/A05及Review Focus 1。
-- [ ] 运行看到合同红灯，再实现状态转移；已确认删除才清输入，未知替换改为detached；不能序列化时不卸载原编辑器。restore在冲突态返回conflict，不能当隐式discard。
-- [ ] 定向全绿，实际两FormDesigner模拟未知替换并验证原实例仍在、两个恢复动作不改模型。文档切换期间迟到捕获不得写新文档。
-- [ ] 原子提交：`test(probe): 验证冲突输入保留与显式恢复`。
+- [x] 写`unknown_form_replace_keeps_live_editor_on_capture_throw`、`in_place_change_keeps_original_basis`、`discard_affects_one_record`、`restart_uses_current_without_copying_local`、`deleted_target_cannot_restart`。断言旧输入保留，模型零写入，重启只是从当前值建新缓冲并保留比较材料。覆盖A03/A04及Review Focus 3。
+- [x] 写`delete_confirmation_expires_after_edit`、`failed_cascade_keeps_buffers`、`successful_cascade_clears_only_deleted`；使用真实removeBranch/removeBlock与表单引用守卫，不手工拼删除结果。覆盖A02/A05及Review Focus 1。
+- [x] 运行看到合同红灯，再实现状态转移；已确认删除才清输入，未知替换改为detached；不能序列化时不卸载原编辑器。restore在冲突态返回conflict，不能当隐式discard。
+- [x] 定向全绿，实际两FormDesigner模拟未知替换并验证原实例仍在、两个恢复动作不改模型。文档切换期间迟到捕获不得写新文档。
+- [x] 原子提交：`test(probe): 验证冲突输入保留与显式恢复`。
 
 Run：`pnpm --filter @flowduet/playground exec vitest run probes/stage-zero/contracts/draft-store.test.ts probes/stage-zero/contracts/entity-store.test.ts --testTimeout 20000`；Expected：红→绿；不把注入异常称为天然第三方异常。
 
@@ -109,12 +109,12 @@ Run：`pnpm --filter @flowduet/playground exec vitest run probes/stage-zero/cont
 
 **Interfaces:** 消费A1/A2，产出控制层`prepare(purpose: "draft-save" | "validate")`、`apply(target): Promise<OperationResult>`、`restore(target): OperationResult`；结果与规格§4一致。内部`prepareCandidate(context)`生成只读候选及受控令牌，`commitPrepared(command, token)`只供同步内部提交，不对宿主公开。context含实际session、身份/缓冲与已核验命令规则，不接受不受信任的任意model回调。A3先以现有operations及名称、默认引用、表单更新命令证明事务；审批全字段校验适配在A4接入共享规则后再跑本片全套，A3不得提前声称所有节点字段合同已完成。
 
-- [ ] 写`focused_flush_included_in_first_candidate`、`second_capture_failure_zero_live_writes`、`prepare_new_input_rejected`、`snapshot_compile_keeps_original_di`、`unsupported_extension_preserved_or_rejected`，断言原model/session/forms、字段/数组引用、DI及所有输入不变，编译只发生在隔离副本。覆盖A06/A15。
-- [ ] 写`fork_default_readset_detects_sibling_change`、`new_form_reference_blocks_stale_delete`；目标局部值相同但共享读集已变也须拒绝。覆盖A08及Review Focus 4。
-- [ ] 写`commit_middle_failure_rolls_back_identity_arrays_di_events`；在写入中段注入异常，核对原对象/数组身份及内容、default、顺序、DI、租约、版本和事件数量。覆盖A07及Review Focus 5。
-- [ ] 红灯后实现隔离prepare与同步提交策略。快照先验证现有`model.toXML()`→`parse`（同适配器）的无副作用路径，只在副本上运行compile；若无法无副作用取得副本，记录阻断并提出最小core接缝方案，本片不改core。
-- [ ] 验证不靠整体替换当前模型“回滚”；如果无法证明原子性，停止A3，保留证据，不进入A4或宣布B02通过。
-- [ ] 全部定向通过，复跑A1/A2；原子提交：`test(probe): 验证候选隔离与原子应用合同`。
+- [x] 写`focused_flush_included_in_first_candidate`、`second_capture_failure_zero_live_writes`、`prepare_new_input_rejected`、`snapshot_compile_keeps_original_di`、`unsupported_extension_preserved_or_rejected`，断言原model/session/forms、字段/数组引用、DI及所有输入不变，编译只发生在隔离副本。覆盖A06/A15。
+- [x] 写`fork_default_readset_detects_sibling_change`、`new_form_reference_blocks_stale_delete`；目标局部值相同但共享读集已变也须拒绝。覆盖A08及Review Focus 4。
+- [x] 写`commit_middle_failure_rolls_back_identity_arrays_di_events`；在写入中段注入异常，核对原对象/数组身份及内容、default、顺序、DI、租约、版本和事件数量。覆盖A07及Review Focus 5。
+- [x] 红灯后实现隔离prepare与同步提交策略。快照先验证现有`model.toXML()`→`parse`（同适配器）的无副作用路径，只在副本上运行compile；若无法无副作用取得副本，记录阻断并提出最小core接缝方案，本片不改core。
+- [x] 验证不靠整体替换当前模型“回滚”；如果无法证明原子性，停止A3，保留证据，不进入A4或宣布B02通过。
+- [x] 全部定向通过，复跑A1/A2；原子提交：`test(probe): 验证候选隔离与原子应用合同`。
 
 Run：`pnpm --filter @flowduet/playground exec vitest run probes/stage-zero/contracts --testTimeout 20000`；Expected：新增针对性红灯后全部PASS，失败路径有同等强度断言。
 
@@ -132,13 +132,13 @@ Run：`pnpm --filter @flowduet/playground exec vitest run probes/stage-zero/cont
 
 **Interfaces:** 按规格§7提供`propertyEditing: "drawer" | "external"`（默认drawer）、`selectedId?: string`、`showDefaultForm: boolean`（默认true）、`selection-request`、`operation-request`与`focusElement(id, signal?): Promise<FocusResult>`。共享字段使用规格§4.3的FlowPropertyDraft，不从form-create反向导入。事件签名与语义命令联合严格按规格§7，在`property-editing.ts`中定义；不增加新操作。表单内容/默认引用的DraftValue仍只在候选控制器中定义。
 
-- [ ] 在片前核对批准结论；没有A4授权则停止并标明A01–A08局部通过，不制作复制版组件绕过。
-- [ ] 写`legacy_drawer_contract_unchanged`、`external_switch_keeps_two_invalid_drafts`、`external_commit_pending_refuses`、`draft_apply_does_not_relax_legacy_confirm`、`external_structure_request_does_not_mutate_first`。先证明新接缝尚不存在/不满足合同，再抽离共享规则；旧测试保留。覆盖A09。
-- [ ] 写`locate_same_name_by_actual_id`、`foreign_instance_refused`、`late_locate_cannot_steal_manual_selection`、`destroyed_view_cancels_focus`、`default_form_unique_real_entry`、`bpmn_remains_readonly`。读取实际selectedId和字段目标，不断言成功文案或DOM模拟click。覆盖A10/A12及Review Focus 1/2。
-- [ ] 写`fa_after_convert_delete_and_nested_block`，结合真实PR #92操作、缓冲200/模型100不同值夹具，断言ID/条件/default/顺序与输入归属；保存重开三档转单签仍通过。覆盖A11。
-- [ ] 实施最小接缝与实验定位协调：每次await后重查租约/引用/请求号，用户主动选择也推进请求号；旧抽屉路径不附加新的自动提交/缓冲策略。
-- [ ] 组件测试通过后，原生浏览器使用两个实例、同名不同ID及冲突输入执行上述路径，核对真实activeId/选择状态、焦点与模型；保留无法定位/取消/失效的负证据。
-- [ ] 分组提交共享字段兼容抽离与实际选择接缝，建议`refactor(designer): 抽离共享属性字段并保持抽屉合同`、`feat(designer): 增加显式外置编辑实验接缝`。A4附上述changeset，公共发布名称、迁移与实际发布仍另行审阅，本计划不发包。
+- [x] 在片前核对批准结论；没有A4授权则停止并标明A01–A08局部通过，不制作复制版组件绕过。
+- [x] 写`legacy_drawer_contract_unchanged`、`external_switch_keeps_two_invalid_drafts`、`external_commit_pending_refuses`、`draft_apply_does_not_relax_legacy_confirm`、`external_structure_request_does_not_mutate_first`。先证明新接缝尚不存在/不满足合同，再抽离共享规则；旧测试保留。覆盖A09。
+- [x] 写`locate_same_name_by_actual_id`、`foreign_instance_refused`、`late_locate_cannot_steal_manual_selection`、`destroyed_view_cancels_focus`、`default_form_unique_real_entry`、`bpmn_remains_readonly`。读取实际selectedId和字段目标，不断言成功文案或DOM模拟click。覆盖A10/A12及Review Focus 1/2。
+- [x] 写`fa_after_convert_delete_and_nested_block`，结合真实PR #92操作、缓冲200/模型100不同值夹具，断言ID/条件/default/顺序与输入归属；保存重开三档转单签仍通过。覆盖A11。
+- [x] 实施最小接缝与实验定位协调：每次await后重查租约/引用/请求号，用户主动选择也推进请求号；旧抽屉路径不附加新的自动提交/缓冲策略。
+- [x] 组件测试通过后，原生浏览器使用两个实例、同名不同ID及冲突输入执行上述路径，核对真实activeId/选择状态、焦点与模型；保留无法定位/取消/失效的负证据。
+- [x] 分组提交共享字段兼容抽离与实际选择接缝，建议`refactor(designer): 抽离共享属性字段并保持抽屉合同`、`feat(designer): 增加显式外置编辑实验接缝`。A4附上述changeset，公共发布名称、迁移与实际发布仍另行审阅，本计划不发包。
 
 Run：
 
@@ -155,10 +155,10 @@ Expected：新接缝用例先红后绿，既有designer用例全部通过。浏�
 
 **Interfaces:** 沿用§8的ValidationStamp与`{ snapshotId, controllerId, documentEpoch, generation, json }`保存消息。宿主适配器签名`persist(snapshot): Promise<void>`；只确认同一世代/请求快照，控制器不内置存储或下载。
 
-- [ ] 写`equivalent_apply_keeps_validation_not_saved`、`normalization_invalidates_validation`、`unknown_change_requires_revalidation`、`save_during_edit_keeps_dirty`、`stale_epoch_save_does_not_confirm`；未解决conflict/detached时prepare拒绝并保留输入。覆盖A13/A14。
-- [ ] 红灯后实现候选内容/目标身份/规则版本及宿主快照确认；不使用当前局部JSON指纹代表完整模型。运行A1–A5全部测试转绿。
-- [ ] 原生浏览器执行焦点未失去的输入、跨对象切换、冲突比较/两种处置、捕获失败、实际ID定位及保存竞态。没有执行的状态明确列未测。
-- [ ] 运行下方共同命令，记录各包实际数量/版本/耗时与告警。严格类型仍失败时A/B不得标全通过，不据全套测试绿掩盖。
+- [x] 写`equivalent_apply_keeps_validation_not_saved`、`normalization_invalidates_validation`、`unknown_change_requires_revalidation`、`save_during_edit_keeps_dirty`、`stale_epoch_save_does_not_confirm`；未解决conflict/detached时prepare拒绝并保留输入。覆盖A13/A14。
+- [x] 红灯后实现候选内容/目标身份/规则版本及宿主快照确认；不使用当前局部JSON指纹代表完整模型。运行A1–A5全部测试转绿。
+- [x] 原生浏览器执行焦点未失去的输入、跨对象切换、冲突比较/两种处置、捕获失败、实际ID定位及保存竞态。没有执行的状态明确列未测。
+- [x] 运行下方共同命令，记录各包实际数量/版本/耗时与告警。严格类型仍失败时A/B不得标全通过，不据全套测试绿掩盖。
 - [ ] 自审接口一致性、A01–A15与证据链接；做一次独立全范围复核，区分重新执行与只核读。修改核心接缝的复核问题先按严重度处置，不能直接进入工作台。
 - [ ] 更新B02/B05结论，B01/B03/B04保留原状态及后续门槛；原子提交`docs(design): 记录编辑合同与严格类型验收`。不推送或开PR。
 
@@ -201,3 +201,7 @@ Expected：每条退出0；测试数量依据实际输出，不预填548。无�
 ## 批准与本轮基线
 
 2026-10-15，用户明确批准规格、计划及A4，选择本会话逐片执行，要求回归和独立复核，不推送。产品develop重新fetch仍为`02d3474`；在已有托管工作树新建`refactor/stage-zero-editing-contract`，从`e78d56a`保留已批准文档和隔离探针输入；相对develop无生产改动。数字任务编号仅适配执行工具，A/B语义编号不变。
+
+## 当前执行状态
+
+A/B及A4实现完成，本地全包634/634、build/lint/严格probe检查通过；原生证据已归档。独立全分支复核和最终验收结论尚待收尾，C/D/E未启动，未推送。实际新增openEditor基线、已解析表单引用依赖及最终消费凭据检查见[验收记录](../system-v1/probes/contract-acceptance.md)，不把控制器原型直接冻结为公共API。

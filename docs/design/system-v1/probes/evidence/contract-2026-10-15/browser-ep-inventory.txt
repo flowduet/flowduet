@@ -1,0 +1,6 @@
+### Result
+{"comboboxes":["",""],"selects":2}
+### Ran Playwright code
+```js
+await (async (page) => { await page.getByRole("button",{name:"宿主协议",exact:true}).click(); return {comboboxes:await page.getByRole("combobox").allTextContents(), selects:await page.locator("[data-host-instance]").count()}; })(page);
+```
