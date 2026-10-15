@@ -22,6 +22,7 @@ export type LiveState = {
     text: string;
     selectedOptions: readonly string[];
     selection: readonly [number, number] | null;
+    badInput?: boolean;
   }[];
   openLayers: readonly { path: string; ownerTargetKey: string; confirmed: boolean }[];
   composing: boolean;

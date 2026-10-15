@@ -197,3 +197,25 @@ it("逻辑已关闭的弹层退场动画不能误判为未确认输入", () => {
   input.setAttribute("aria-expanded", "true");
   expect(observeLiveState(root, { composing: false, dragging: false }).openLayers).toHaveLength(1);
 });
+
+it("foreign_popup_never_blurred：只读观察识别其他实例弹层而不抢焦点", () => {
+  const a = document.createElement("div"),
+    b = document.createElement("div"),
+    control = document.createElement("input"),
+    popup = document.createElement("div"),
+    input = document.createElement("input");
+  a.className = b.className = "form-designer-host";
+  control.setAttribute("aria-controls", "foreign_popup");
+  b.append(control);
+  popup.id = "foreign_popup";
+  popup.setAttribute("role", "dialog");
+  popup.append(input);
+  document.body.append(a, b, popup);
+  input.value = "另一实例未提交";
+  input.focus();
+  const seen = observeLiveState(a, { composing: false, dragging: false });
+  expect(seen.ownerKnown).toBe(true);
+  expect(seen.openLayers).toEqual([]);
+  expect(document.activeElement).toBe(input);
+  expect(input.value).toBe("另一实例未提交");
+});

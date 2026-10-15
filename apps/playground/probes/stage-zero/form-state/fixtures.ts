@@ -104,6 +104,7 @@ export function formRules(prefix: "a" | "b", options: FixtureOptions = {}): stri
 export function formStateFixture(owner = "C-A", options: FixtureOptions = {}) {
   const session = new FlowDesignSession();
   session.newDesign({ processId: "c_probe", processName: "C表单内部状态" });
+  session.current!.model.elementOf("approval_1").set("assignee", "alice");
   const a = session.createForm("甲表单"),
     b = session.createForm("乙表单");
   session.updateFormContent(a.id, formRules("a", options), "{}");

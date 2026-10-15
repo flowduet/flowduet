@@ -91,6 +91,7 @@ export function observeLiveState(
     pendingControls: [...new Set(controls)].map((el, index) => ({
       path: `${index}:${el.closest(".el-form-item")?.querySelector("label")?.textContent?.trim() ?? el.tagName}`,
       text: el.value,
+      badInput: el instanceof HTMLInputElement ? el.validity.badInput : false,
       selectedOptions:
         el instanceof HTMLSelectElement
           ? [...el.selectedOptions].map((o) => o.value)

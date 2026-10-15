@@ -5,7 +5,9 @@ import { targetKey, type EditTarget, type EditorLease, type DraftValue } from ".
 import { stateSignature } from "../contracts/candidate";
 import { formStateFixture, type FixtureOptions } from "./fixtures";
 import { observeLiveState } from "./state-evidence";
-import type { FormContent, LiveState, MountedEditor } from "./types";
+import type { FormContent, LiveState, MountedEditor, RetentionHost } from "./types";
+import { assertCaptureReady, runLocalShortcut } from "./input-boundary";
+import { createRetentionPolicy } from "./retention-policy";
 const props = defineProps<{ owner: string; fixture: FixtureOptions }>();
 const { controller: c, forms } = formStateFixture(props.owner, props.fixture);
 const initialState = c.session.current!,
@@ -52,11 +54,9 @@ function observe(v: View) {
       };
 }
 function busy(v: View) {
-  if (v.composing) throw new Error("输入法尚未完成");
-  if (v.dragging) throw new Error("拖拽尚未完成");
-  const state = observe(v);
-  if (!state.ownerKnown || state.openLayers.length) throw new Error("弹层输入尚未确认或归属不明");
+  assertCaptureReady(observe(v));
 }
+
 function bind(v: View, value: unknown) {
   if (!value || typeof value !== "object") return;
   v.vm = value as InstanceType<typeof FormDesigner>;
@@ -93,6 +93,7 @@ async function mountActive(target: EditTarget) {
   const old = views.value.find(
     (v) =>
       !v.provisional &&
+      v.lease &&
       targetKey(v.editor.target) === targetKey(target) &&
       c.store.editor(target)?.lease === v.lease,
   );
@@ -111,14 +112,49 @@ function show(editor: MountedEditor) {
   phase.value = "forms";
   tick.value++;
 }
-async function choose(target: EditTarget) {
-  try {
-    show(await mountActive(target));
-    result.value = { ok: true, actual: "kept", active: target.ref };
-  } catch (error) {
-    result.value = { ok: false, message: String(error) };
-  }
+function unmount(editor: MountedEditor) {
+  const v = views.value.find((view) => view.editor === editor);
+  if (!v) return;
+  if (v.lease) c.store.releaseEditor(v.lease);
+  views.value = views.value.filter((view) => view !== v);
 }
+const host: RetentionHost = {
+  current: () => current()?.editor,
+  observe(editor) {
+    const v = views.value.find((view) => view.editor === editor);
+    if (!v) throw new Error("实例不存在");
+    return observe(v);
+  },
+  mountActive,
+  show,
+  unmount,
+  async mountProvisional() {
+    throw new Error("C2尚未开放重建");
+  },
+  async restoreContext() {
+    return false;
+  },
+  adopt() {
+    throw new Error("C2尚未开放重建");
+  },
+};
+const policy = createRetentionPolicy(c, host);
+let navigation = 0;
+async function choose(target: EditTarget) {
+  const ticket = ++navigation;
+  const outcome = await policy.select(target, "keep-mounted");
+  if (disposed || ticket !== navigation) return;
+  result.value = outcome;
+  resultSequence.value++;
+  tick.value++;
+}
+async function changePhase() {
+  const desired = phase.value === "forms" ? "flow" : "forms",
+    ticket = ++navigation;
+  await policy.select(current()?.editor.target ?? forms[0]!, "keep-mounted");
+  if (!disposed && ticket === navigation) phase.value = desired;
+}
+
 function touch(v: View) {
   if (
     !v.provisional &&
@@ -160,18 +196,18 @@ async function save() {
   result.value = await c.save(async () => {
     persistCalls++;
   });
+  resultSequence.value++;
   tick.value++;
 }
 function keys(event: KeyboardEvent) {
-  if (!event.altKey) return;
-  if (event.key.toLowerCase() === "o") {
-    event.preventDefault();
-    snapshot();
-  } else if (event.key.toLowerCase() === "s") {
-    event.preventDefault();
-    void collect();
-  }
+  runLocalShortcut(event, {
+    observe: snapshot,
+    collect: () => {
+      void collect();
+    },
+  });
 }
+
 function state() {
   void tick.value;
   return {
@@ -194,6 +230,8 @@ function state() {
       target: v.editor.target.ref,
       live: Boolean(v.lease && c.store.editor(v.editor.target)?.lease === v.lease),
       provisional: v.provisional,
+      composing: v.composing,
+      dragging: v.dragging,
     })),
     conflicts: c.drafts.conflicts(),
     result: result.value,
@@ -202,6 +240,7 @@ function state() {
 }
 onBeforeUnmount(() => {
   disposed = true;
+  policy.dispose();
   c.dispose();
 });
 void choose(forms[0]!);
@@ -226,11 +265,9 @@ defineExpose({
       >
         表单{{ i === 0 ? "甲" : "乙" }}
       </button>
-      <button data-test="c-phase" @click="phase = phase === 'forms' ? 'flow' : 'forms'">
-        切换表单/流程阶段
-      </button>
+      <button data-test="c-phase" @click="changePhase()">切换表单/流程阶段</button>
       <button data-test="c-observe" @mousedown.prevent @click="snapshot">只读观察（Alt+O）</button>
-      <button data-test="c-collect" @click="collect">收集候选（Alt+S）</button>
+      <button data-test="c-collect" @mousedown.prevent @click="collect">收集候选（Alt+S）</button>
       <button data-test="c-validate" @click="validate">显式校验</button>
       <button data-test="c-save" @click="save">内存宿主保存</button>
     </div>
