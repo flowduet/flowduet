@@ -135,7 +135,14 @@ export function createDraftStore(
     },
     stage(target: EditTarget, input: DraftValue): EditResult<DraftStatus> {
       if (!isDraftValue(input)) return failure("unsupported", "编辑输入类型或字段不受支持");
-      if (!store.resolve(target.ref)) return failure("stale-target", "编辑目标已失效");
+      const accepted = store.validateTarget(target);
+      if (!accepted.ok) return accepted;
+      try {
+        if (read(target).kind !== input.kind)
+          return failure("unsupported", "编辑目标与输入类型不匹配");
+      } catch {
+        return failure("unsupported", "当前对象没有兼容的编辑字段");
+      }
       refresh();
       const record = records.get(targetKey(target)) ?? make(target);
       if (

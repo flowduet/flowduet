@@ -353,3 +353,85 @@ describe("独立复核：还原、失焦冲突与放弃后的真实编辑器", (
     expect(w.vm.controller.drafts.input(target.value)).toMatchObject({ name: "我的名称" });
   });
 });
+
+describe("四项P2的真实组件回归", () => {
+  it("表单还原后下一次候选不复活已放弃字段且保留其他表单输入", async () => {
+    // 两张空表单足以复现内部字段复活，避免将八类控件全量初始化带入此接缝回归。
+    const w = mount(ContractInstanceProbe, {
+      props: { owner: "p2-form-restore", includeForms: false },
+      attachTo: document.body,
+    });
+    mounted.push(w);
+    await flushPromises();
+    const c = w.vm.controller;
+    const t = c.createForm("表单一"),
+      other = c.createForm("表单二");
+    if (!t.ok || !other.ok) throw new Error("创建失败");
+    await flushPromises();
+    const node = c.store.resolve(t.value.ref);
+    const button = (text: string) => w.findAll("button").find((b) => b.text() === text)!;
+    for (const [name, id] of [
+      ["表单一", "form_1"],
+      ["表单二", "form_2"],
+    ]) {
+      await button(`编辑 ${name} · ${id}`).trigger("click");
+      await flushPromises();
+      const view = w.get(`[data-form-id="${id}"]`);
+      expect(view.isVisible()).toBe(true);
+      await view
+        .findAll("._fc-l-item")
+        .find((item) => item.text() === "输入框")!
+        .trigger("click");
+      await flushPromises();
+    }
+    await button("编辑 表单一 · form_1").trigger("click");
+    await flushPromises();
+    const oldLease = c.store.editor(t.value)!.lease;
+    const live = c.store.editor(t.value)!.adapter.capture();
+    if (live?.kind !== "form-content") throw new Error("捕获失败");
+    expect(JSON.parse(live.rules)).toHaveLength(1);
+    expect(c.restore(t.value)).toMatchObject({ ok: true });
+    await flushPromises();
+    expect(c.store.resolve(t.value.ref)).toBe(node);
+    const result = await c.prepare("draft-save");
+    if (!result.ok) throw new Error(result.message);
+    const forms: { id: string; rules: string }[] = JSON.parse(result.value.json).forms;
+    expect(JSON.parse(forms.find((f) => f.id === "form_1")!.rules)).toHaveLength(0);
+    expect(JSON.parse(forms.find((f) => f.id === "form_2")!.rules)).toHaveLength(1);
+    expect(c.store.editor(t.value)?.lease).not.toBe(oldLease);
+  }, 60000);
+  it.each(["基于当前值重新编辑", "明确放弃旧输入"] as const)(
+    "默认表单冲突%s后留在配置区且保留原流程选择",
+    async (action) => {
+      const w = mount(ContractInstanceProbe, {
+        props: { owner: "p2-default", includeForms: false },
+        attachTo: document.body,
+      });
+      mounted.push(w);
+      await flushPromises();
+      const button = (text: string) => w.findAll("button").find((b) => b.text() === text)!;
+      await button("定位默认表单").trigger("click");
+      await flushPromises();
+      const t = w.vm.controller.target("process", "contract", "default-form");
+      if (!t.ok) throw new Error(t.message);
+      w.vm.controller.stage(t.value, { kind: "default-form", formKey: "local" });
+      w.vm.controller.model.setDefaultFormKey("external");
+      w.vm.refresh();
+      await flushPromises();
+      await button(action).trigger("click");
+      await flushPromises();
+      const visible = w.get('[data-test="contract-default-form"]').isVisible();
+      expect(w.vm.controller.drafts.input(t.value)).toMatchObject({
+        kind: "default-form",
+        formKey: "external",
+      });
+      await button("流程实验").trigger("click");
+      await flushPromises();
+      const state = JSON.parse(w.get('[data-test="contract-state"]').text());
+      expect({ visible, selected: state.selected.ref.id }).toEqual({
+        visible: true,
+        selected: "approval_1",
+      });
+    },
+  );
+});

@@ -125,7 +125,20 @@ function feedback(value: unknown) {
   record(`contract-${props.owner}`, "result", value, undefined, controller.store.epoch);
   refresh();
 }
-const unsubscribe = controller.subscribe(refresh);
+const unsubscribe = controller.subscribe((event) => {
+  if (event.type === "restored" && event.target && !controller.store.editor(event.target)) {
+    const old = views.value.find(
+      (v) => !v.archived && targetKey(v.target) === targetKey(event.target!),
+    );
+    if (old) {
+      views.value = views.value.filter((v) => v !== old);
+      const current = viewFor(event.target);
+      if (formKey.value === old.key) formKey.value = current.key;
+      if (selectedKey.value === old.key) selectedKey.value = current.key;
+    }
+  }
+  refresh();
+});
 function inputFor(view: View): DraftValue {
   void tick.value;
   if (view.archived) return view.initial;
@@ -222,8 +235,18 @@ function choose(target: EditTarget) {
   }
   controller.cancelLocate();
   selected.value = target;
+  if (target.facet === "default-form") {
+    const opened = controller.openEditor(target);
+    if (!opened.ok) {
+      feedback(opened);
+      return;
+    }
+    phase.value = "forms";
+    refresh();
+    return;
+  }
   const view = viewFor(target);
-  if (target.ref.kind === "form") {
+  if (target.facet === "form-content") {
     formKey.value = view.key;
     phase.value = "forms";
   } else {
@@ -343,6 +366,18 @@ const selectedReadonly = computed(() => {
     Boolean(flowTarget.value && !controller.store.resolve(flowTarget.value.ref))
   );
 });
+// 仅实验页提供故障入口，原始异常与恢复都经过同一控制器接缝观察。
+function externalProperty(unreadable: boolean) {
+  controller.model.elementOf("approval_1").set("extraFlag", unreadable ? 1n : undefined);
+  feedback(controller.sync());
+}
+function mismatchedDraft() {
+  feedback(controller.stage(ctx.target("approval_1"), { kind: "process", name: "错误类型" }));
+}
+function externalDefault() {
+  controller.model.setDefaultFormKey("external_form");
+  refresh();
+}
 function unknownNode() {
   controller.model.elementOf("approval_1").set("name", "外部节点名称");
   refresh();
@@ -484,6 +519,10 @@ defineExpose({ controller, refresh });
       ><button v-if="saveGate" @click="finishSave(false)">模拟宿主失败</button>
       <label><input type="checkbox" v-model="injectFailure" />注入第二张收集失败</label
       ><button @click="unknownNode">实验：外部改首节点名称</button
+      ><button @click="externalProperty(true)">实验：不可序列化外部属性</button
+      ><button @click="externalProperty(false)">实验：恢复外部属性</button
+      ><button @click="mismatchedDraft">实验：错误类型输入</button
+      ><button @click="externalDefault">实验：外部改默认表单</button
       ><button :disabled="includeForms === false" @click="unknownReplace">
         实验：外部替换表单二
       </button>
@@ -588,6 +627,16 @@ defineExpose({ controller, refresh });
           受控改名表单二
         </button>
       </div>
+      <button
+        :disabled="
+          selected?.facet !== 'form-content' ||
+          !controller.store.resolve(selected.ref) ||
+          views.some((v) => v.key === formKey && v.archived)
+        "
+        @click="selected && feedback(controller.restore(selected))"
+      >
+        还原当前表单（实验）
+      </button>
       <div
         v-for="view in views.filter((v) => v.initial.kind === 'form-content')"
         :key="view.key"

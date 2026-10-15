@@ -51,10 +51,10 @@ export function createLocator(store: EntityStore, drafts: DraftStore, sync: () =
           return { status: "conflict", message: "请先查看该目标的冲突输入" };
         return undefined;
       };
-      const initial = check();
-      if (initial) return initial;
-      if (!adapter) return { status: "unsupported", message: "尚未连接实际编辑视图" };
       try {
+        const initial = check();
+        if (initial) return initial;
+        if (!adapter) return { status: "unsupported", message: "尚未连接实际编辑视图" };
         await adapter.route(target);
         const afterRoute = check();
         if (afterRoute) return afterRoute;

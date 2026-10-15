@@ -105,3 +105,12 @@ describe("完整候选校验章", () => {
     expect(f.c.dirty).toBe(false);
   });
 });
+
+it("无变化的属性还原保留已覆盖租约和校验章", async () => {
+  const f = ready();
+  const lease = f.store.registerEditor(f.t, { flush() {}, capture: () => f.draft });
+  expect(await f.c.validate()).toMatchObject({ ok: true });
+  expect(f.c.restore(f.t)).toMatchObject({ ok: true });
+  expect(f.store.editor(f.t)?.lease).toBe(lease);
+  expect(f.c.validationCurrent).toBe(true);
+});

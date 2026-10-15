@@ -202,3 +202,33 @@ describe("候选控制器应用", () => {
     expect(f.model.elementOf(target.ref.id).get("name")).toBe("同名审批");
   });
 });
+
+it("不可序列化外部状态返回捕获失败且保留输入", async () => {
+  const f = fixture(),
+    c = createContractController(f),
+    t = f.target("approval_1");
+  const input = f.read(t);
+  if (input.kind !== "approval") throw new Error("夹具不符");
+  c.stage(t, { ...input, name: "保留本地输入" });
+  f.model.elementOf(t.ref.id).set("extraFlag", 1n);
+  await expect(c.prepare("draft-save")).resolves.toMatchObject({
+    ok: false,
+    code: "capture-failed",
+  });
+  expect(f.drafts.input(t)).toMatchObject({ name: "保留本地输入" });
+});
+
+it("错误kind不能覆盖审批目标已有输入", () => {
+  const f = fixture(),
+    c = createContractController(f),
+    t = f.target("approval_1");
+  const input = { ...f.read(t), name: "审批未应用输入" };
+  c.stage(t, input);
+  const revision = f.drafts.revision;
+  expect(c.stage(t, { kind: "process", name: "wrong" })).toMatchObject({
+    ok: false,
+    code: "unsupported",
+  });
+  expect(f.drafts.input(t)).toEqual(input);
+  expect(f.drafts.revision).toBe(revision);
+});
