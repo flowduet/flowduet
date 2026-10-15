@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref } from "vue";
-import { ElSelect, ElOption, ElPopover, ElButton } from "element-plus";
+import { ElPopover, ElButton } from "element-plus";
 import { ProbeHostController } from "./host-protocol";
 import { ValidationTracker } from "./identity-policy";
+import { ProbeSelect as ElSelect, ProbeOption as ElOption } from "./contracts/ep-select-binding";
 import { record } from "./probe-log";
 import LocationProbe from "./LocationProbe.vue";
 const controllers = [new ProbeHostController(), new ProbeHostController()];
@@ -112,7 +113,8 @@ onUnmounted(() => document.removeEventListener("keydown", shortcut));
             :aria-label="'实例' + i + '候选名称'"
             @input="edit(i)" /></label
         ><ElSelect
-          v-model="values[i]"
+          :model-value="values[i] ?? ''"
+          @update:model-value="values[i] = String($event ?? '')"
           :popper-class="'owned-' + i"
           filterable
           placeholder="打开所属弹层"

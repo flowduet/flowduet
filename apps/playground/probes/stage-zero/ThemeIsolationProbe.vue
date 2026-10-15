@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import { ElSelect, ElOption, ElInput, ElDatePicker } from "element-plus";
+import { ElInput, ElDatePicker } from "element-plus";
 import { FormDesigner, FormPreview } from "@flowduet/form-create";
 import { rulesFor } from "./fixtures";
+import { ProbeSelect as ElSelect, ProbeOption as ElOption } from "./contracts/ep-select-binding";
 import { record } from "./probe-log";
 const width = ref(1024),
   density = ref("compact"),
@@ -54,7 +55,8 @@ function measure() {
   </div>
   <div class="host-control">
     宿主对照 <ElInput placeholder="宿主输入" /><ElSelect
-      v-model="chosen.host"
+      :model-value="chosen.host ?? ''"
+      @update:model-value="chosen.host = String($event ?? '')"
       placeholder="宿主下拉"
       ><ElOption label="宿主选项" value="host"
     /></ElSelect>
@@ -70,7 +72,8 @@ function measure() {
     >
       <h3>{{ theme === "dark" ? "深色实例" : "浅色实例" }} · 真实 FormCreate / Element Plus</h3>
       <ElInput placeholder="实例输入" /><ElSelect
-        v-model="chosen[String(index)]"
+        :model-value="chosen[String(index)] ?? ''"
+        @update:model-value="chosen[String(index)] = String($event ?? '')"
         :teleported="!localTeleport"
         :popper-class="'probe-' + theme + '-popper'"
         placeholder="实例下拉"

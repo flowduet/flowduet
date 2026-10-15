@@ -1,6 +1,6 @@
 # 阶段零编辑合同薄切片执行计划
 
-> **For agentic workers:** REQUIRED SUB-SKILL: 使用 superpowers:executing-plans（建议在本会话逐片执行）或经用户选择的 superpowers:subagent-driven-development。按复选框跟踪；**本计划待审阅，不得因文件已存在就启动实施。**
+> **For agentic workers:** REQUIRED SUB-SKILL: 使用 superpowers:executing-plans（建议在本会话逐片执行）或经用户选择的 superpowers:subagent-driven-development。按复选框跟踪；**用户已批准本规格、计划、A4及本会话逐片执行；仅执行A/B，不进入正式工作台。**
 
 **Goal:** 优先验证B02的身份、编辑、冲突恢复和实际定位合同，同时解除B05的严格类型阻断；保持正式工作台未实施。
 
@@ -55,7 +55,7 @@
 
 下述`contracts/*`均相对于`apps/playground/probes/stage-zero/`。A1–A3只改此目录及原探针接入代码、报告；A4才可触碰明确列出的生产文件。原始历史证据不改写。
 
-## Task B：严格模板类型入口（P0，A最终验收前完成）
+## Task 1：B — 严格模板类型入口（P0，A最终验收前完成）
 
 **Files:** 读取已有`evidence/recheck-2026-10-15/probe-types.txt`；候选修改仅`HostProtocolProbe.vue`、`ThemeIsolationProbe.vue`及probe `tsconfig.json`中的准确绑定。新增`contracts/type-contract.test-d.ts`验证本地接缝类型，不能降低严格检查。
 
@@ -75,7 +75,7 @@ pnpm --filter @flowduet/form-create exec vue-tsc --noEmit -p ../../apps/playgrou
 
 Expected：起初复现实际错误；修订后退出0，非法输入类型测试仍受约束。
 
-## Task A1：所属控制器、生命期和租约
+## Task 2：A1 — 所属控制器、生命期和租约
 
 **Files:** Create `contracts/types.ts`、`entity-store.ts`、`entity-store.test.ts`、`fixtures.ts`；Modify 原`design-state.ts`的实验接入，旧测试不删除。
 
@@ -89,7 +89,7 @@ Expected：起初复现实际错误；修订后退出0，非法输入类型测�
 
 Run：`pnpm --filter @flowduet/playground exec vitest run probes/stage-zero/contracts/entity-store.test.ts probes/stage-zero/design-state.test.ts --testTimeout 20000`；Expected：先合同红灯，再全部PASS。原designer身份11项在A5一起复跑。
 
-## Task A2：冲突输入与明确恢复
+## Task 3：A2 — 冲突输入与明确恢复
 
 **Files:** Create `contracts/draft-store.ts`、`draft-store.test.ts`、`controller.ts`骨架；Modify `design-state.ts`和`EditorRetentionProbe.vue`的候选接入。
 
@@ -103,7 +103,7 @@ Run：`pnpm --filter @flowduet/playground exec vitest run probes/stage-zero/cont
 
 Run：`pnpm --filter @flowduet/playground exec vitest run probes/stage-zero/contracts/draft-store.test.ts probes/stage-zero/contracts/entity-store.test.ts --testTimeout 20000`；Expected：红→绿；不把注入异常称为天然第三方异常。
 
-## Task A3：隔离候选、读写集与原子提交
+## Task 4：A3 — 隔离候选、读写集与原子提交
 
 **Files:** Create `contracts/candidate.ts`、`candidate.test.ts`、`transaction.ts`、`transaction.test.ts`、`controller.test.ts`；Modify `contracts/controller.ts`。
 
@@ -118,7 +118,7 @@ Run：`pnpm --filter @flowduet/playground exec vitest run probes/stage-zero/cont
 
 Run：`pnpm --filter @flowduet/playground exec vitest run probes/stage-zero/contracts --testTimeout 20000`；Expected：新增针对性红灯后全部PASS，失败路径有同等强度断言。
 
-## Task A4：共享字段与真实选择最小接缝（需明确批准）
+## Task 5：A4 — 共享字段与真实选择最小接缝（需明确批准）
 
 **Files / 生产白名单：**
 
@@ -149,7 +149,7 @@ pnpm --filter @flowduet/playground exec vitest run probes/stage-zero/contract-lo
 
 Expected：新接缝用例先红后绿，既有designer用例全部通过。浏览器失败不能以happy-dom替代通过。
 
-## Task A5：校验/保存版本与A/B汇总
+## Task 6：A5 — 校验/保存版本与A/B汇总
 
 **Files:** Create `contracts/validation.test.ts`、`contracts/host.test.ts`及必要候选控制器内部实现；Modify `ContractProbe.vue`、当前验收README；Create `contract-acceptance.md`和实际证据目录。
 
@@ -197,3 +197,7 @@ Expected：每条退出0；测试数量依据实际输出，不预填548。无�
 已核对规格A01–A15均映射到任务，候选字段/结果类型及相邻切片依赖一致；A3的全字段验证依赖A4后回跑，不提前宣称完成。焦点flush纳入首个捕获版本，未知替换保留租约，A4实际选择与归属校验分层。生产白名单包含必要changeset，公共控制器和core变更仍在范围外。
 
 本轮只验证文档本地链接、格式与差异范围；没有执行未来计划中的测试、浏览器实验或类型修复，原B01–B05状态保持不变。
+
+## 批准与本轮基线
+
+2026-10-15，用户明确批准规格、计划及A4，选择本会话逐片执行，要求回归和独立复核，不推送。产品develop重新fetch仍为`02d3474`；在已有托管工作树新建`refactor/stage-zero-editing-contract`，从`e78d56a`保留已批准文档和隔离探针输入；相对develop无生产改动。数字任务编号仅适配执行工具，A/B语义编号不变。
