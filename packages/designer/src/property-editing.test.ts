@@ -49,4 +49,19 @@ describe("共享属性编辑规则", () => {
     expect(switchApprovalKind(single, "any").assignee).toBe("approvers");
     expect(m.elementOf("a").get("loopCharacteristics")).toBeUndefined();
   });
+  it("未传元素变量时保持既有自定义变量", () => {
+    const m = BpmnModel.create({ processId: "variable", adapter: flowableAdapter }).addApprovalTask(
+      { id: "a", name: "原", collection: "approvers", mode: "all", elementVariable: "reviewer" },
+    );
+    const draft = readPropertyDraft(m, "a");
+    if (draft?.kind !== "approval") throw new Error("夹具不符");
+    const input = { ...draft, name: "新名称" };
+    delete input.elementVariable;
+    applyPropertyDraft(m, "a", input);
+    expect(readPropertyDraft(m, "a")).toMatchObject({
+      elementVariable: "reviewer",
+      name: "新名称",
+    });
+    expect(m.elementOf("a").get("assignee")).toBe("${reviewer}");
+  });
 });

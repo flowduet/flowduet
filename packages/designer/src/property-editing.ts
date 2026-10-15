@@ -113,10 +113,13 @@ export function applyPropertyDraft(
       if (readApprovalMulti(model, id) !== null) convertMultiToSingle(model, id);
       el.set("assignee", assignee || undefined);
     } else {
+      const elementVariable =
+        draft.elementVariable ??
+        (current.kind === "approval" ? current.elementVariable : undefined);
       const spec = {
         collection: assignee,
         mode: draft.approvalKind,
-        ...(draft.elementVariable !== undefined ? { elementVariable: draft.elementVariable } : {}),
+        ...(elementVariable !== undefined ? { elementVariable } : {}),
       };
       if (readApprovalMulti(model, id) === null) convertApprovalToMulti(model, id, spec, options);
       else setApprovalMode(model, id, spec, options);
