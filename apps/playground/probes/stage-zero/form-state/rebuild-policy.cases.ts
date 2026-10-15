@@ -98,41 +98,72 @@ describe("C4 验证重建协议（宿主替身，不冒充FormCreate）", () => 
     const f = await started();
     try {
       const a = f.current()!,
-        third = f.c.createForm("其他活编辑器");
+        third = f.c.createForm("第二份活输入（目的表单仍未挂载）");
       if (!third.ok) throw Error("夹具");
-      const target = index === 0 ? a.target : third.value;
-      f.c.store.registerEditor(target, {
-        flush() {},
-        capture() {
+      const other = await f.host.mountActive(third.value);
+      const editors = [a, other],
+        order: string[] = [];
+      const values: Record<string, unknown> = {
+        json: { kind: "form-content", rules: "{", options: "{}" },
+        kind: { kind: "process", name: "错误入口" },
+        duplicate: {
+          kind: "form-content",
+          rules: '[{"type":"input","field":"x"},{"type":"input","field":"x"}]',
+          options: "{}",
+        },
+        range: { kind: "form-content", rules: '[{"type":"upload","field":"x"}]', options: "{}" },
+        options: { kind: "form-content", rules: "[]", options: "[]" },
+      };
+      const original = editors.map((e) => e.adapter.capture);
+      const leases = editors.map((e) => f.c.store.editor(e.target)!.lease);
+      let faultCaptures = 0;
+      editors.forEach((editor, i) => {
+        f.entry(editor).content.rules = JSON.stringify([
+          { type: "input", field: `pending_${i}`, value: i === 0 ? "待保留甲" : "待保留另" },
+        ]);
+        f.c.drafts.touch(editor.target);
+        // 保留同一adapter与租约；替换注册会在prepare前被源身份保护挡住。
+        editor.adapter.capture = () => {
+          order.push(String(i));
+          if (i !== index) return original[i]!();
+          faultCaptures++;
           if (fault === "throw") throw Error("注入适配器失败");
           if (fault === "null") return null;
-          const values: Record<string, unknown> = {
-            json: { kind: "form-content", rules: "{", options: "{}" },
-            kind: { kind: "process", name: "错误入口" },
-            duplicate: {
-              kind: "form-content",
-              rules: '[{"type":"input","field":"x"},{"type":"input","field":"x"}]',
-              options: "{}",
-            },
-            range: {
-              kind: "form-content",
-              rules: '[{"type":"upload","field":"x"}]',
-              options: "{}",
-            },
-            options: { kind: "form-content", rules: "[]", options: "[]" },
-          };
           return values[fault] as DraftValue;
-        },
+        };
       });
+      const input = editors.map((e) => ({ ...f.entry(e).content }));
       const state = f.c.session.current,
         signature = JSON.stringify(state!.forms),
         xml = (await f.c.model.toXML()).xml;
       const result = await f.policy.select(f.forms[1]!, "rebuild-verified");
-      expect(result).toMatchObject({ ok: true, value: { actual: "kept-fallback" } });
-      expect(f.entry(a).unmounted).toBe(false);
+      expect(faultCaptures).toBe(1);
+      expect(order).toEqual(
+        index === 0 && ["throw", "null", "kind"].includes(fault) ? ["0"] : ["0", "1"],
+      );
+      expect(result).toMatchObject({
+        ok: true,
+        value: {
+          actual: "kept-fallback",
+          reason: expect.stringMatching(/^(capture-failed|invalid-input)：/),
+        },
+      });
+      editors.forEach((editor, i) => {
+        expect(f.entry(editor).unmounted).toBe(false);
+        expect(f.entry(editor).content).toEqual(input[i]);
+        expect(f.c.store.editor(editor.target)!.lease).toBe(leases[i]);
+        expect(f.c.store.editor(editor.target)!.adapter).toBe(editor.adapter);
+        editor.adapter.capture = original[i]!;
+      });
       expect(f.c.session.current).toBe(state);
       expect(JSON.stringify(state!.forms)).toBe(signature);
       expect((await f.c.model.toXML()).xml).toBe(xml);
+      const retry = await f.c.prepare("draft-save");
+      expect(retry.ok).toBe(true);
+      if (retry.ok) {
+        expect(retry.value.json).toContain("待保留甲");
+        expect(retry.value.json).toContain("待保留另");
+      }
       expect(f.c.hasPersisted).toBe(false);
     } finally {
       finish(f);
