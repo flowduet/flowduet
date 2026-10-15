@@ -4,6 +4,7 @@ import EditorRetentionProbe from "./EditorRetentionProbe.vue";
 import ThemeIsolationProbe from "./ThemeIsolationProbe.vue";
 import HostProtocolProbe from "./HostProtocolProbe.vue";
 import ContractProbe from "./ContractProbe.vue";
+import FormStateProbe from "./FormStateProbe.vue";
 import { entries } from "./probe-log";
 const selected = ref("contract");
 </script>
@@ -16,11 +17,13 @@ const selected = ref("contract");
     </p>
     <nav>
       <button @click="selected = 'contract'">编辑合同 A/B</button>
+      <button @click="selected = 'form-state'">表单状态 C</button>
       <button @click="selected = 'editor'">编辑保留</button
       ><button @click="selected = 'theme'">主题隔离</button
       ><button @click="selected = 'host'">宿主协议</button>
     </nav>
     <ContractProbe v-if="selected === 'contract'" />
+    <FormStateProbe v-if="selected === 'form-state'" />
     <EditorRetentionProbe v-if="selected === 'editor'" /><ThemeIsolationProbe
       v-if="selected === 'theme'"
     /><HostProtocolProbe v-if="selected === 'host'" />
