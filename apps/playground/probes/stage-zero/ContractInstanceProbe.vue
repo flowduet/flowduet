@@ -181,7 +181,7 @@ function bind(view: View, raw: unknown) {
   if (
     !raw ||
     typeof raw !== "object" ||
-    previous?.vm === raw ||
+    (previous?.vm === raw && controller.store.editor(view.target)?.lease === previous.lease) ||
     !controller.store.resolve(view.target.ref) ||
     view.archived
   )
@@ -319,16 +319,19 @@ function resolve(id: string, action: "discard-local" | "restart-on-current") {
   const conflict = controller.drafts.conflicts().find((r) => r.id === id);
   if (!conflict) return;
   const result = controller.resolveConflict(id, action);
-  if (result.ok && action === "restart-on-current") {
+  if (result.ok) {
     const old = views.value.find(
       (v) => !v.archived && targetKey(v.target) === targetKey(conflict.target),
     );
-    if (old) {
+    if (old && action === "restart-on-current") {
       old.initial = conflict.input ?? old.initial;
       old.archived = true;
       old.comparisonId = id;
+    } else if (old) {
+      // 明确放弃后旧组件必须销毁，重新从当前对象建立字段、基线与租约。
+      views.value = views.value.filter((v) => v !== old);
     }
-    choose(conflict.target);
+    if (controller.store.resolve(conflict.target.ref)) choose(conflict.target);
   }
   feedback(result);
 }

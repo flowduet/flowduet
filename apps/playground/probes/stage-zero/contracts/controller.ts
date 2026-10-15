@@ -137,8 +137,8 @@ export function createContractController(context: ReturnType<typeof createContex
   > {
     sync();
     if (only && !store.resolve(only.ref)) return failure("stale-target", "目标已失效");
-    const conflicts = drafts.conflicts().filter((r) => !only || r.target.ref === only.ref);
-    if (conflicts.length) return failure("conflict", "请先处置保留的冲突输入");
+    const hasConflict = () => drafts.conflicts().some((r) => !only || r.target.ref === only.ref);
+    if (hasConflict()) return failure("conflict", "请先处置保留的冲突输入");
     const editors = store
       .editors()
       .filter((e) => !skipCapture.has(targetKey(e.lease.target)))
@@ -146,7 +146,23 @@ export function createContractController(context: ReturnType<typeof createContex
         (e) => !only || (e.lease.target.ref === only.ref && e.lease.target.facet === only.facet),
       );
     try {
-      for (const e of editors) e.adapter.flush();
+      // 失焦可以产生属于编辑器的输入，但不能把宿主模型修改或租约替换吸收为新基线。
+      const flushState = stateSignature(session),
+        flushIdentity = identities(),
+        flushLeases = store.leaseRevision;
+      for (const e of editors) {
+        if (store.editor(e.lease.target)?.lease !== e.lease)
+          return failure("version-changed", "失焦前编辑器租约已变化");
+        e.adapter.flush();
+        sync();
+        if (hasConflict()) return failure("conflict", "失焦期间出现冲突输入");
+        if (
+          stateSignature(session) !== flushState ||
+          identities() !== flushIdentity ||
+          store.leaseRevision !== flushLeases
+        )
+          return failure("version-changed", "失焦期间基础设计或编辑器已变化");
+      }
       const before = stateSignature(session);
       let captureRevision = drafts.revision;
       for (const e of editors) {
@@ -160,6 +176,7 @@ export function createContractController(context: ReturnType<typeof createContex
         if (!value) return failure("capture-failed", "编辑器尚未就绪或无法收集");
         const staged = drafts.stage(e.lease.target, value);
         if (!staged.ok) return failure("capture-failed", staged.message);
+        if (hasConflict()) return failure("conflict", "收集期间出现冲突输入");
         captureRevision = drafts.revision;
       }
     } catch (error) {

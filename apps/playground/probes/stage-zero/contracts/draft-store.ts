@@ -190,7 +190,12 @@ export function createDraftStore(
       if (record?.status === "conflicted" || record?.status === "detached")
         return failure("conflict", "请先明确处置冲突输入");
       if (!store.resolve(target.ref)) return failure("stale-target", "还原目标已失效");
-      records.delete(targetKey(target));
+      // 还原后字段仍然可编辑，必须在下一次输入前锁住当前显示值的基础版本。
+      try {
+        records.set(targetKey(target), { ...make(target), status: "clean" });
+      } catch {
+        return failure("unsupported", "当前对象不支持还原");
+      }
       revision++;
       return { ok: true, value: { revision } };
     },

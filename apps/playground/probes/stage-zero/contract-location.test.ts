@@ -276,3 +276,80 @@ describe("真实外置定位与输入", () => {
     expect(w.vm.controller.model.defaultFormKey).toBe("external_form");
   });
 });
+
+describe("独立复核：还原、失焦冲突与放弃后的真实编辑器", () => {
+  function probe(owner: string) {
+    const wrapper = mount(ContractInstanceProbe, {
+      props: { owner, includeForms: false },
+      attachTo: document.body,
+    });
+    mounted.push(wrapper);
+    return wrapper;
+  }
+  it("放弃同生命期冲突后可以继续编辑当前对象", async () => {
+    const w = probe("review-discard");
+    await flushPromises();
+    const edit = async (value: string) => {
+      await w.get('[data-property-target="approval_1"] [data-test="drawer-name"]').setValue(value);
+      await flushPromises();
+    };
+    await edit("旧输入");
+    await w
+      .findAll("button")
+      .find((b) => b.text() === "实验：外部改首节点名称")!
+      .trigger("click");
+    await w
+      .findAll("button")
+      .find((b) => b.text() === "明确放弃旧输入")!
+      .trigger("click");
+    await flushPromises();
+    await edit("放弃后新输入");
+    await w
+      .findAll("button")
+      .find((b) => b.text() === "应用")!
+      .trigger("click");
+    await flushPromises();
+    expect(w.vm.controller.model.elementOf("approval_1").get("name")).toBe("放弃后新输入");
+  });
+  it("还原后的显示基线不能被下一次输入悄悄重置", async () => {
+    const w = probe("review-restore");
+    await flushPromises();
+    await w
+      .findAll("button")
+      .find((b) => b.text() === "还原")!
+      .trigger("click");
+    await flushPromises();
+    w.vm.controller.model.elementOf("approval_1").set("assignee", "external-new");
+    await w
+      .get('[data-property-target="approval_1"] [data-test="drawer-name"]')
+      .setValue("只改名称");
+    await flushPromises();
+    const target = w.vm.controller.target("node", "approval_1", "properties");
+    if (!target.ok) throw new Error(target.message);
+    const result = await w.vm.controller.apply(target.value);
+    expect(result).toMatchObject({ ok: false, code: "conflict" });
+    expect(w.vm.controller.model.elementOf("approval_1").get("assignee")).toBe("external-new");
+  });
+  it("失焦过程中宿主更新模型仍拒绝覆盖并保留本地输入", async () => {
+    const w = probe("review-blur");
+    await flushPromises();
+    const field = w.get('[data-property-target="approval_1"] [data-test="drawer-name"]');
+    await field.setValue("我的名称");
+    await flushPromises();
+    const input = field.element as HTMLInputElement;
+    input.addEventListener(
+      "blur",
+      () => {
+        w.vm.controller.model.elementOf("approval_1").set("assignee", "external-on-blur");
+      },
+      { once: true },
+    );
+    input.focus();
+    const target = w.vm.controller.target("node", "approval_1", "properties");
+    if (!target.ok) throw new Error(target.message);
+    const result = await w.vm.controller.apply(target.value);
+    expect(result).toMatchObject({ ok: false });
+    expect(w.vm.controller.model.elementOf("approval_1").get("assignee")).toBe("external-on-blur");
+    expect(w.vm.controller.drafts.input(target.value)).toMatchObject({ name: "我的名称" });
+  });
+});
