@@ -1,3 +1,4 @@
+import "../form-state.cases";
 import { describe, expect, it } from "vitest";
 import { compile, verticalDiLayout, type ModdleElement } from "@flowduet/core";
 import { fixture } from "./fixtures";
