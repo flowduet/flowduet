@@ -1,0 +1,111 @@
+
+ RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground
+
+ ❯ probes/stage-zero/contracts/controller.test.ts (18 tests | 2 failed | 16 skipped) 26ms
+   × 不可序列化外部状态返回捕获失败且保留输入 17ms
+   × 错误kind不能覆盖审批目标已有输入 8ms
+stderr | probes/stage-zero/contract-location.test.ts > 四项P2的真实组件回归 > 表单还原后下一次候选不复活已放弃的字段
+[BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+
+ ❯ probes/stage-zero/contract-location.test.ts (20 tests | 2 failed | 18 skipped) 16700ms
+   ❯ 四项P2的真实组件回归 (2)
+     × 表单还原后下一次候选不复活已放弃的字段 16336ms
+     × 默认表单冲突重新编辑后留在配置区且保留原流程选择 363ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  probes/stage-zero/contract-location.test.ts > 四项P2的真实组件回归 > 表单还原后下一次候选不复活已放弃的字段
+AssertionError: expected [ { type: 'input', …(9) }, …(8) ] to have a length of 8 but got 9
+
+- Expected
++ Received
+
+- 8
++ 9
+
+ ❯ probes/stage-zero/contract-location.test.ts:392:36
+    390|     if (!result.ok) throw new Error(result.message);
+    391|     const form = JSON.parse(result.value.json).forms.find((f: { id: st…
+    392|     expect(JSON.parse(form.rules)).toHaveLength(8);
+       |                                    ^
+    393|   });
+    394|   it("默认表单冲突重新编辑后留在配置区且保留原流程选择", async () => {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  probes/stage-zero/contract-location.test.ts > 四项P2的真实组件回归 > 默认表单冲突重新编辑后留在配置区且保留原流程选择
+AssertionError: expected { Object (visible, selected) } to deeply equal { visible: true, …(1) }
+
+- Expected
++ Received
+
+  {
+-   "selected": "approval_1",
+-   "visible": true,
++   "selected": "contract",
++   "visible": false,
+  }
+
+ ❯ probes/stage-zero/contract-location.test.ts:416:58
+    414|     await flushPromises();
+    415|     const state = JSON.parse(w.get('[data-test="contract-state"]').tex…
+    416|     expect({ visible, selected: state.selected.ref.id }).toEqual({
+       |                                                          ^
+    417|       visible: true,
+    418|       selected: "approval_1",
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  probes/stage-zero/contracts/controller.test.ts > 不可序列化外部状态返回捕获失败且保留输入
+AssertionError: promise rejected "TypeError: Do not know how to serialize a…" instead of resolving
+ ❯ probes/stage-zero/contracts/controller.test.ts:214:40
+    212|   c.stage(t, { ...input, name: "保留本地输入" });
+    213|   f.model.elementOf(t.ref.id).set("extraFlag", 1n);
+    214|   await expect(c.prepare("draft-save")).resolves.toMatchObject({
+       |                                        ^
+    215|     ok: false,
+    216|     code: "capture-failed",
+
+Caused by: TypeError: Do not know how to serialize a BigInt
+ ❯ graphValue probes/stage-zero/contracts/candidate.ts:43:15
+ ❯ stateSignature probes/stage-zero/contracts/candidate.ts:63:10
+ ❯ sync probes/stage-zero/contracts/controller.ts:45:20
+ ❯ buildUnsafe probes/stage-zero/contracts/controller.ts:138:5
+ ❯ build probes/stage-zero/contracts/controller.ts:121:26
+ ❯ Object.prepare probes/stage-zero/contracts/controller.ts:365:23
+ ❯ probes/stage-zero/contracts/controller.test.ts:214:18
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+ FAIL  probes/stage-zero/contracts/controller.test.ts > 错误kind不能覆盖审批目标已有输入
+AssertionError: expected { ok: true, value: 'dirty' } to match object { ok: false, code: 'unsupported' }
+(1 matching property omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "code": "unsupported",
+-   "ok": false,
++   "ok": true,
+  }
+
+ ❯ probes/stage-zero/contracts/controller.test.ts:228:58
+    226|   c.stage(t, input);
+    227|   const revision = f.drafts.revision;
+    228|   expect(c.stage(t, { kind: "process", name: "wrong" })).toMatchObject…
+       |                                                          ^
+    229|     ok: false,
+    230|     code: "unsupported",
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/4]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  4 failed | 34 skipped (38)
+   Start at  13:40:26
+   Duration  19.63s (tests 75%, import 14%, transform 7%, environment 4%)
+
+undefined
+/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run probes/stage-zero/contracts/controller.test.ts probes/stage-zero/contract-location.test.ts --testTimeout 90000 -t 不可序列化外部状态|错误kind|表单还原后|默认表单冲突重新

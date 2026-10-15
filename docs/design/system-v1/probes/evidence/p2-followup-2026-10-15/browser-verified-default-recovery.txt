@@ -1,0 +1,30 @@
+### Result
+{"checks":{"configVisible":true,"currentValue":true,"baselineReady":true,"flowContextKept":true},"cases":[{"action":"基于当前值重新编辑","visible":true,"value":"external_form","basis":{"id":"conflict_5","target":{"ref":{"controllerId":"A","documentEpoch":1,"kind":"process","id":"contract","lifetime":1},"facet":"default-form"},"input":{"kind":"default-form","formKey":"external_form"},"status":"dirty","retained":false},"returnedId":"approval_1","fieldVisible":true},{"action":"明确放弃旧输入","visible":true,"value":"external_form","basis":{"id":"conflict_5","target":{"ref":{"controllerId":"A","documentEpoch":1,"kind":"process","id":"contract","lifetime":1},"facet":"default-form"},"input":{"kind":"default-form","formKey":"external_form"},"status":"clean","retained":false},"returnedId":"approval_1","fieldVisible":true}]}
+### Ran Playwright code
+```js
+await (async (page) => {
+ const cases=[];
+ for (const action of ['基于当前值重新编辑','明确放弃旧输入']) {
+  await page.reload(); const a=page.locator('[data-contract-owner=A]');
+  const button=(name)=>a.getByRole('button',{name,exact:true});
+  const state=async()=>JSON.parse(await a.locator('[data-test=contract-state]').textContent());
+  await button('定位默认表单').click();
+  const select=a.locator('[data-test=contract-default-form]');
+  await select.selectOption('form_1');
+  await button('实验：外部改默认表单').click();
+  await button(action).click();
+  const restored=await state();
+  const visible=await select.isVisible(), value=await select.inputValue();
+  const basis=restored.buffers.find(r=>r.target.facet==='default-form');
+  await button('流程实验').click();
+  const returned=await state();
+  cases.push({action,visible,value,basis,returnedId:returned.selected.ref.id,fieldVisible:await a.locator('[data-property-target=approval_1]:visible [data-test=drawer-name]').isVisible()});
+ }
+ const checks={configVisible:cases.every(c=>c.visible),currentValue:cases.every(c=>c.value==='external_form'),baselineReady:cases.every(c=>c.basis?.input.formKey==='external_form'),flowContextKept:cases.every(c=>c.returnedId==='approval_1'&&c.fieldVisible)};
+ if(Object.values(checks).some(v=>!v)) throw Error(JSON.stringify({checks,cases}));
+ return {checks,cases};
+})(page);
+```
+### Page
+- Page URL: http://127.0.0.1:5175/probes/stage-zero/index.html
+- Page Title: FlowDuet 阶段零探针

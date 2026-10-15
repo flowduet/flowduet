@@ -1,0 +1,40 @@
+
+ RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground
+
+ ❯ probes/stage-zero/contract-location.test.ts (21 tests | 1 failed | 20 skipped) 19556ms
+   ❯ 四项P2的真实组件回归 (3)
+     × 表单还原后下一次候选不复活已放弃字段且保留其他表单输入 19554ms
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 20 skipped (21)
+   Start at  13:48:38
+   Duration  22.12s (tests 89%, import 6%, transform 3%, environment 1%)
+
+undefined
+/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run probes/stage-zero/contract-location.test.ts -t 表单还原后
+stderr | probes/stage-zero/contract-location.test.ts > 四项P2的真实组件回归 > 表单还原后下一次候选不复活已放弃字段且保留其他表单输入
+[BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  probes/stage-zero/contract-location.test.ts > 四项P2的真实组件回归 > 表单还原后下一次候选不复活已放弃字段且保留其他表单输入
+AssertionError: expected [ { type: 'input', …(9) } ] to have a length of +0 but got 1
+
+- Expected
++ Received
+
+- 0
++ 1
+
+ ❯ probes/stage-zero/contract-location.test.ts:399:69
+    397|     if (!result.ok) throw new Error(result.message);
+    398|     const forms: { id: string; rules: string }[] = JSON.parse(result.v…
+    399|     expect(JSON.parse(forms.find((f) => f.id === "form_1")!.rules)).to…
+       |                                                                     ^
+    400|     expect(JSON.parse(forms.find((f) => f.id === "form_2")!.rules)).to…
+    401|     expect(c.store.editor(t.value)?.lease).not.toBe(oldLease);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

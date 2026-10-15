@@ -2,7 +2,7 @@
 
 日期：2026-10-15。产品基线`develop@02d3474`，批准输入`e78d56a`；分支`refactor/stage-zero-editing-contract`，保留原探针分支。依据[已批准规格](../../2026-10-15-stage-zero-editing-contract.md)及[薄切片计划](../../plans/2026-10-15-stage-zero-contract-slices.md)。
 
-**当前：A/B 候选合同验收通过，B02/B05 阶段零阻断解除；阶段零整体出口仍未通过。** 独立复核发现的三个 Important 已完成失败回归、补修和执行方全量复验，没有延后的 Minor。 本文中“通过”只指所列候选合同与夹具，不是正式工作台、公共控制器发布或任意第三方状态保真声明。B01/B03/B04未解除。
+**当前：四项P2及独立补充问题已闭环，B02在本地20秒条件下恢复候选功能合同通过，B05锁定入口通过；阶段零整体出口仍未通过。** 最新证据见[四项P2补修验收](p2-followup-2026-10-15.md)。默认测试仍有两项原有5秒超时，不能宣称默认命令/远端CI已绿。 此前第一轮独立复核发现的三个 Important 已完成失败回归、补修和执行方全量复验，没有延后的 Minor。 本文中“通过”只指所列候选合同与夹具，不是正式工作台、公共控制器发布或任意第三方状态保真声明。B01/B03/B04未解除。
 
 ## 1. 实施范围
 
@@ -11,7 +11,7 @@
 - 没有改core、form-create生产源码、三包根导出、package.json、lockfile或主Playground入口；没有新增依赖，没有推送、开PR或发包。
 - NodeDrawer默认“确定”、旧DingtalkDesigner切换/commitPendingChanges合同与部署守卫保持；只有显式external模式使用外置输入。新模式误调用旧收集方法返回false，避免假收集成功。
 
-本地提交已按严格类型修订、身份、冲突、候选事务、共享字段、选择接缝、集成实验及复核补修分组；补修源码为`10b66f4`、`9c8a8f5`。最终源文件与证据身份记录在本目录证据manifest中。
+本地提交已按严格类型修订、身份、冲突、候选事务、共享字段、选择接缝、集成实验及复核补修分组；此前补修源码为`10b66f4`、`9c8a8f5`，本轮为`83ec03d`及`1506b16`。最终源文件与证据身份记录在本目录证据manifest中。
 
 ## 2. 验收矩阵
 
@@ -66,9 +66,9 @@ B05另在原HostProtocolProbe中打开真实EP下拉并选择，检查选择值�
 
 ## 4. 验证记录
 
-补修后最终全包 **638/638通过**：core148、designer184、form-create137、Playground169（正式测试513项、探针125项）。正式build、lint及严格probe类型检查均退出0；正式build不覆盖probe入口，严格vue-tsc单独执行。较早620/621/634轮次仅作历史过程，不替代最终结果。原正式结构及保存重开三档转换、错误方向拒绝用例随全套回归再次通过。
+本轮最终全包 **657/657通过**：core148、designer184、form-create137、Playground188（正式测试513项、探针144项），命令为本地`pnpm -r test --testTimeout 20000`。默认命令的两项超时及独立复跑限制见补修报告。正式build、lint及严格probe类型检查均退出0；正式build不覆盖probe入口，严格vue-tsc单独执行。较早620/621/634/638/655轮次仅作历史过程，不替代最终结果。原正式结构及保存重开三档转换、错误方向拒绝用例随全套回归再次通过。
 
-日志：[全包](evidence/contract-2026-10-15/review-final-full.log)、[构建](evidence/contract-2026-10-15/review-final-build.log)、[lint](evidence/contract-2026-10-15/review-final-lint.log)、[严格类型](evidence/contract-2026-10-15/review-final-types.log)。严格类型成功无诊断输出，退出状态另记在manifest，空日志不是未执行。
+日志：[全包](evidence/p2-followup-2026-10-15/full-tests.log)、[构建](evidence/p2-followup-2026-10-15/build-final.log)、[lint](evidence/p2-followup-2026-10-15/lint-final.log)、[严格类型](evidence/p2-followup-2026-10-15/types-final.log)。严格类型成功无诊断输出，退出状态另记在manifest，空日志不是未执行。
 
 - 全包：`pnpm -r test --testTimeout 20000`。
 - 正式构建：`pnpm build`，保留既有大chunk提示，不当作类型/天然异常通过。
@@ -99,6 +99,8 @@ A/B本轮仅解除B02/B05的阶段零可行性门槛，不直接发布接口或�
 下一步由agent先整理C/D补充方案与E测量协议，维护者审阅后再执行；本轮不自动开工后续组，也不推送。
 
 ## 7. 独立复核
+
+本轮固定`247acb4..83ec03d`独立复核Critical 0、Important 1、Minor 0，原四项已符合规格，新增定位/结构入口捕获失败的覆盖失效遗漏。执行方在`1506b16`用两条失败回归补修，最终657项及严格类型/构建/lint通过；最终head没有二次独立全审。独立亲跑95项与五条补充测试（3通过/2失败）、严格类型；655全量/浏览器只核读。详见补修验收及独立复核记录。以下为此前历史阶段。
 
 新上下文审阅者只读核对`e78d56a..f2e8f4c`，确认B05，发现A04/A06三个Important；无Critical/Minor。独立重跑A/B 74项、designer 184项及严格类型，另写三项真实Vue复现并全部观察到失败。没有冒充独立重跑全包或浏览器。
 

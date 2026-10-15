@@ -205,3 +205,17 @@ Expected：每条退出0；测试数量依据实际输出，不预填548。无�
 ## 当前执行状态
 
 A/B及A4实现完成，独立复核发现三个Important，已在`10b66f4`以三项真实组件失败回归补修，并在`9c8a8f5`补齐capture同内容替换的失败回归与屏障，执行方全包638/638、build/lint/严格probe及浏览器补验通过。B02/B05候选合同验收通过；C/D/E未启动、B01/B03/B04仍阻断，未推送。没有二次独立复审，初审及处置范围分别记载。实际新增openEditor基线、已解析表单引用依赖及最终消费凭据检查见[验收记录](../system-v1/probes/contract-acceptance.md)，不把控制器原型直接冻结为公共API。
+
+## 四项P2补修（2026-10-15，用户已授权执行）
+
+基线`247acb4`，继续原隔离分支；先将四条独立复现纳入仓库回归，再逐项RED→GREEN，不扩大生产白名单。
+
+- [x] 异常边界：`contracts/controller.ts`及`location.ts`统一接住初始/异步版本核对异常，保留缓冲、失效当前校验，不将不可读状态伪装为已保存；测试初始同步、异步期间不可序列化、save/validate/locate及恢复后重试。
+- [x] 类型匹配：`contracts/draft-store.ts`在覆盖前核对target/facet与当前可编辑kind；拒绝错误联合类型且原缓冲/版本不变，合法业务未完成输入仍允许保留。
+- [x] 表单还原：还原成功撤销旧EditorLease，通知探针宿主按目标重建当前实例；不改FormDesigner生产API。真实可见表单8→9→还原→候选8，另表单输入保留，旧回调无权写新会话。
+- [x] 默认配置恢复：`ContractInstanceProbe.vue`按facet区分默认配置，保持flowTarget；restart及discard均验证默认区可见、流程返回原节点。
+- [x] 全包test、build、lint及严格probe类型；真实浏览器补验适用路径；对固定补修head做独立Standards/Spec复核，归档本轮证据与边界后更新B02/B05并分组提交。
+
+验收：四条原复现及相邻边界全部转绿，独立复核无未处置阻断；B02只恢复候选可行性通过，B05只覆盖锁定版本；B01/B03/B04仍阻断。C/D/E、正式工作台、推送与发布均不在本轮。
+
+本轮补修源码`83ec03d`，独立复核固定此head发现一项Important（定位/结构两个入口）。执行方`1506b16`以两条RED→GREEN闭环；最终657/657在本地20秒参数下通过，build/lint/strict通过。默认命令及独立复跑两项原有5秒超时保留，不作默认CI通过声明；最终head无二次独立全审。详情及完整边界见[补修验收](../system-v1/probes/p2-followup-2026-10-15.md)。C/D/E未启动，未推送。

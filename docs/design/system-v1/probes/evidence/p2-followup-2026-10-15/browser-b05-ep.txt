@@ -1,0 +1,19 @@
+### Result
+{"checks":{"actualEP":true,"firstSelected":true,"secondUnchanged":true},"first":["","候选二"],"second":["","打开所属弹层"],"version":"155.0.8059.41","viewport":{"width":1440,"height":1000}}
+### Ran Playwright code
+```js
+await (async (page) => {
+ await page.getByRole('button',{name:'宿主协议',exact:true}).click();
+ const roots=page.locator('[data-host-instance]');
+ await roots.first().getByRole('combobox').click();
+ await page.getByRole('option',{name:'候选二',exact:true}).click();
+ const first=await roots.first().locator('.el-select__selected-item').allTextContents(),second=await roots.nth(1).locator('.el-select__selected-item').allTextContents();
+ const checks={actualEP:await roots.locator('.el-select').count()===2,firstSelected:first.includes('候选二'),secondUnchanged:!second.includes('候选二')};
+ if(Object.values(checks).some(v=>!v))throw Error(JSON.stringify({checks,first,second}));
+ return {checks,first,second,version:page.context().browser().version(),viewport:page.viewportSize()};
+})(page);
+```
+### Page
+- Page URL: http://127.0.0.1:5175/probes/stage-zero/index.html
+- Page Title: FlowDuet 阶段零探针
+- Console: 0 errors, 3 warnings

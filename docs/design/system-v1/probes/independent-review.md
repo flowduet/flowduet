@@ -2,6 +2,20 @@
 
 下方分别保留本轮与历史审阅，不将旧结果当成本轮重新执行。
 
+## 2026-10-15：四项P2补修及新增覆盖失效遗漏
+
+新上下文审阅者只读核对`247acb4..83ec03d`，以`git archive 83ec03d`建立独立副本。初审 **Critical 0 / Important 1 / Minor 0**；Standards与Spec命中同一项，不重复计数。原四项P2（异常穿透、表单还原复活输入、错误kind覆盖、默认配置恢复区域）已按规格修复。
+
+唯一新增Important/P2：validate成功后注入`extraFlag=1n`，locate返回failed或合法结构请求失败，再移除该属性，validationCurrent仍true；两个入口捕获异常但没有撤销覆盖。违反规格§8捕获失败不能保留当前通过。独立原始测试和固定提交结果见[源码](evidence/p2-followup-2026-10-15/independent-additional-source.txt)与[输出](evidence/p2-followup-2026-10-15/independent-additional-red.log)。
+
+执行方将两个入口纳入正式error-boundary回归，观察2/2 RED，在`1506b16`统一撤销未知失败的覆盖；该文件13/13 GREEN，最终全包657/657在本地20秒参数下通过，build/lint/严格probe退出0。最终head没有再次独立全审，因此是“初审发现项经执行方回归闭环”，不是“最终head独立零问题批准”。
+
+独立亲跑：A/B 95/95、严格probe退出0，另五条测试3通过/2失败；核对源码hash与diff检查。仅核读655全量、build/lint和浏览器；不记为亲跑。审查环境外部Vitest路径配置失败已纠正，不计产品缺陷。
+
+未判定范围及执行方裁定：FormCreate无变化仍保守重建租约，不能套用原生字段等价结论；60秒单例测试时限不构成产品性能预算证明；历史manifest保留历史身份，新源码使用新manifest；施工中文档待同步不当作源码缺陷。四项误判代价与完整证据见[补修验收](p2-followup-2026-10-15.md)。没有延后Minor。
+
+B02在本地20秒条件下恢复候选功能合同通过，B05锁定入口通过。默认命令及单独复跑有两个原有5秒超时，不能宣称默认测试或远端CI通过；B01/B03/B04与C/D/E、工作台、发布仍未判定。
+
 ## 2026-10-15：A/B 编辑合同与严格类型
 
 只读新上下文审阅者（gpt-6-astra）核对固定范围`e78d56a..f2e8f4c`，从Standards与Spec核查批准A4白名单、A01–A15及失败边界。初审结论：**Critical 0、Important 3、Minor 0；B05通过，B02需修订。** 没有修改工作树、浏览器或GitHub。
