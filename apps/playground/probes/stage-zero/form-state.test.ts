@@ -219,3 +219,18 @@ it("foreign_popup_never_blurred：只读观察识别其他实例弹层而不抢�
   expect(document.activeElement).toBe(input);
   expect(input.value).toBe("另一实例未提交");
 });
+it("R语义不能遗漏提示信息或额外规则属性", () => {
+  const a = content({ type: "input", field: "a", info: "必须保留", custom: { flag: true } });
+  expect(
+    equivalentContent(
+      a,
+      content({ type: "input", field: "a", info: "丢失", custom: { flag: true } }),
+    ),
+  ).toBe(false);
+  expect(
+    equivalentContent(
+      a,
+      content({ type: "input", field: "a", info: "必须保留", custom: { flag: false } }),
+    ),
+  ).toBe(false);
+});

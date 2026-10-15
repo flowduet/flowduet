@@ -36,6 +36,7 @@ const views = shallowRef<View[]>([]),
   activeId = ref(""),
   phase = ref("forms"),
   tick = ref(0);
+const strategy = ref<"keep-mounted" | "rebuild-verified">("keep-mounted");
 const resultSequence = ref(0);
 const result = ref<unknown>(null),
   observation = ref<LiveState | null>(null);
@@ -116,7 +117,10 @@ async function mountActive(target: EditTarget) {
     throw new Error(opened.ok ? "不是表单" : opened.message);
   const v = make(target, opened.value);
   await nextTick();
-  if (disposed || !c.store.resolve(target.ref)) throw new Error("目标已失效");
+  if (disposed || !c.store.resolve(target.ref)) {
+    unmount(v.editor);
+    throw new Error("目标已失效");
+  }
   v.lease = c.store.registerEditor(target, v.editor.adapter);
   return v.editor;
 }
@@ -142,21 +146,38 @@ const host: RetentionHost = {
   mountActive,
   show,
   unmount,
-  async mountProvisional() {
-    throw new Error("C2尚未开放重建");
+  async mountProvisional(target, content) {
+    const v = make(target, content, true);
+    try {
+      await nextTick();
+      if (disposed || !c.store.resolve(target.ref) || !v.vm)
+        throw new Error("临时实例未就绪或目标失效");
+      return v.editor;
+    } catch (error) {
+      unmount(v.editor);
+      throw error;
+    }
   },
-  async restoreContext() {
-    return false;
+  async restoreContext(editor, before) {
+    await nextTick();
+    const v = views.value.find((view) => view.editor === editor);
+    // 上游没有恢复属性页/未确认弹层的公开API；现有UI也不能安全设置隐藏实例的中间输入。
+    // 仅接受自然恢复后逐项相等的上下文，不写FormCreate私有状态，也不删掉不等字段蒙混通过。
+    return Boolean(v && JSON.stringify(observe(v)) === JSON.stringify(before));
   },
-  adopt() {
-    throw new Error("C2尚未开放重建");
+  adopt(editor, lease) {
+    const v = views.value.find((view) => view.editor === editor);
+    if (!v) throw new Error("接管实例不存在");
+    v.lease = lease;
+    v.provisional = false;
+    tick.value++;
   },
 };
 const policy = createRetentionPolicy(c, host);
 let navigation = 0;
 async function choose(target: EditTarget) {
   const ticket = ++navigation;
-  const outcome = await policy.select(target, "keep-mounted");
+  const outcome = await policy.select(target, strategy.value);
   if (disposed || ticket !== navigation) return;
   result.value = outcome;
   resultSequence.value++;
@@ -248,6 +269,7 @@ function state() {
       dragging: v.dragging,
     })),
     conflicts: c.drafts.conflicts(),
+    recovery: policy.recoveryState(),
     result: result.value,
     resultSequence: resultSequence.value,
   };
@@ -272,6 +294,22 @@ defineExpose({
   <section class="c-instance" :data-c-owner="owner" @keydown.capture="keys">
     <h2>{{ owner }} · 表单状态实验</h2>
     <div class="c-controls">
+      <label
+        >实验策略<select data-test="c-strategy" v-model="strategy">
+          <option value="keep-mounted">K 保持挂载</option>
+          <option value="rebuild-verified">R 验证后重建</option>
+        </select></label
+      >
+      <button
+        data-test="c-retry"
+        @click="
+          result = policy.retryRecovery();
+          resultSequence++;
+          tick++;
+        "
+      >
+        重试显示/清理
+      </button>
       <button
         v-for="(target, i) in forms"
         :key="i"

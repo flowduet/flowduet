@@ -25,10 +25,40 @@ function presence(rules: Record<string, unknown>[]): unknown {
     Array.isArray(rule.children) ? presence(rule.children as Record<string, unknown>[]) : null,
   ]);
 }
+// 既有语义辅助只投影常用字段；重建还须防止info/未知扩展被静默丢掉。
+function extras(rules: Record<string, unknown>[]): unknown {
+  const projected = new Set([
+    "type",
+    "field",
+    "title",
+    "value",
+    "$required",
+    "props",
+    "options",
+    "validate",
+    "children",
+    "_fc_id",
+    "name",
+    "_fc_drag_tag",
+    "display",
+    "hidden",
+  ]);
+  return rules.map((rule) => [
+    Object.fromEntries(Object.entries(rule).filter(([key]) => !projected.has(key))),
+    rule.display ?? true,
+    rule.hidden ?? false,
+    Array.isArray(rule.children) ? extras(rule.children as Record<string, unknown>[]) : null,
+  ]);
+}
 export function equivalentContent(a: FormContent, b: FormContent): boolean {
   try {
     const project = (v: FormContent) =>
-      ordered([rulesSemantics(v.rules), presence(JSON.parse(v.rules)), JSON.parse(v.options)]);
+      ordered([
+        rulesSemantics(v.rules),
+        presence(JSON.parse(v.rules)),
+        extras(JSON.parse(v.rules)),
+        JSON.parse(v.options),
+      ]);
     return JSON.stringify(project(a)) === JSON.stringify(project(b));
   } catch {
     return false;
