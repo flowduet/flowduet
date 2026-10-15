@@ -25,8 +25,10 @@
 - `pnpm -r test --testTimeout 20000`：**548/548 通过**，core 148、designer 172、form-create 137、Playground 91。其中新增/迁入探针 47 项，既有生产回归 501 项；负向诊断的“暴露缺口”不能计为产品通过。
 - 身份原策略 11、真实状态 16、宿主 9、实际定位 9、日志 2 分别通过。结构+身份定向共 43 项通过。
 - `pnpm build` 通过，仍有既有 Playground chunk 告警；常规构建不覆盖临时入口，不能替代严格探针检查。
-- lint/格式按实际输出记录；原始证据目录保留字节，正式源码和文本报告仍检查。
+- `pnpm lint` 通过；原始证据目录保留字节，正式源码和文本报告仍检查。
 - 严格模板命令：`pnpm --filter @flowduet/form-create exec vue-tsc --noEmit -p ../../apps/playground/probes/stage-zero/tsconfig.json`，当前 13 处 EP 声明错误仍失败。
+
+独立复核未发现新增 Critical、Important 或 Minor；另行复跑状态/定位/日志27/27通过，并核对manifest源码及证据哈希一致。范围与限制见[独立复核](independent-review.md)。
 
 本地运行仍使用 20 秒单例时限；不改变生产默认测试配置，不声称本轮新探针已跑远端 CI。PR #92 合并前后 Node 22/24 的 501 项 CI 为产品基线证据，本轮未重新部署引擎。
 
