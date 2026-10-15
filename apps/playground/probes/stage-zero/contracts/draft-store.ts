@@ -95,10 +95,15 @@ export function createDraftStore(
       if (!store.resolve(target.ref)) return failure("stale-target", "编辑目标已失效");
       const record = records.get(targetKey(target)) ?? make(target);
       record.input = { ...input };
+      if (record.status === "invalid") record.status = "dirty";
       records.set(targetKey(target), record);
       revision++;
       refresh();
       return { ok: true, value: record.status };
+    },
+    markInvalid(target: EditTarget) {
+      const r = records.get(targetKey(target));
+      if (r && r.status !== "conflicted" && r.status !== "detached") r.status = "invalid";
     },
     input(target: EditTarget) {
       return records.get(targetKey(target))?.input;

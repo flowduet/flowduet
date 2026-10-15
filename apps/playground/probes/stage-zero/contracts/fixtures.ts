@@ -34,9 +34,8 @@ export function deferred<T>() {
   });
   return { promise, resolve, reject };
 }
-export function fixture(owner = "A") {
-  const session = new FlowDesignSession(branchModel()),
-    store = createEntityStore(owner);
+export function createContext(session: FlowDesignSession, owner = "A") {
+  const store = createEntityStore(owner);
   const sync = (continued: ReadonlySet<string> = new Set()) =>
     store.reconcile(observeSession(session), continued);
   sync();
@@ -94,4 +93,8 @@ export function fixture(owner = "A") {
   };
   const drafts = createDraftStore(store, read, basis);
   return { session, store, drafts, target, read, basis, sync, model: session.current!.model };
+}
+
+export function fixture(owner = "A") {
+  return createContext(new FlowDesignSession(branchModel()), owner);
 }
