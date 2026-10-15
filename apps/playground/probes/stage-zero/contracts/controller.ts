@@ -169,9 +169,16 @@ export function createContractController(context: ReturnType<typeof createContex
         if (store.editor(e.lease.target)?.lease !== e.lease)
           return failure("version-changed", "编辑器租约已变化");
         const value = e.adapter.capture();
+        // capture也可能调用宿主；同内容的新对象不能被候选末尾的sync吸收。
+        sync();
         if (store.editor(e.lease.target)?.lease !== e.lease)
           return failure("version-changed", "捕获期间编辑器已替换");
-        if (drafts.revision !== captureRevision || stateSignature(session) !== before)
+        if (
+          drafts.revision !== captureRevision ||
+          stateSignature(session) !== before ||
+          identities() !== flushIdentity ||
+          store.leaseRevision !== flushLeases
+        )
           return failure("version-changed", "捕获期间出现其他编辑");
         if (!value) return failure("capture-failed", "编辑器尚未就绪或无法收集");
         const staged = drafts.stage(e.lease.target, value);

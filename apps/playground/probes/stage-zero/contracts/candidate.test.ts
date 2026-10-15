@@ -142,4 +142,30 @@ describe("隔离候选与当前编辑版本", () => {
     value["__proto__"] = "changed";
     expect(graphValue(value)).toContain('"__proto__":"changed"');
   });
+  it("capture期间内容相同的未知替换也拒绝旧实例输入", async () => {
+    const f = withForms(),
+      target = f.target("form_1", "form");
+    f.c.openEditor(target);
+    let captures = 0;
+    f.store.registerEditor(target, {
+      flush() {},
+      capture() {
+        if (++captures === 1) f.session.updateFormContent("form_1", "[]", "{}");
+        return { kind: "form-content", rules: "[]", options: '{"formName":"旧实例输入"}' };
+      },
+    });
+    const result = await f.c.prepare("draft-save");
+    expect(result).toMatchObject({ ok: false });
+    expect(f.session.current!.forms[0]?.options).toBe("{}");
+    expect(f.store.resolve(target.ref)).toBeUndefined();
+    expect(f.drafts.conflicts()).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          target,
+          status: "detached",
+          input: expect.objectContaining({ options: '{"formName":"旧实例输入"}' }),
+        }),
+      ]),
+    );
+  });
 });
