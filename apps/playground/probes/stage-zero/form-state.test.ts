@@ -1,3 +1,5 @@
+import "./editor-recovery.cases";
+import "./form-state/retention-policy.cases";
 import "./form-state/browser-element.cases";
 import "./form-state/drag-boundary.cases";
 import "./form-state/input-boundary.cases";
