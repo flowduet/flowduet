@@ -21,7 +21,7 @@ describe("C0 表单状态观察", () => {
     [{ value: 0 }, { present: true, type: "number", json: "0" }],
     [{ value: false }, { present: true, type: "boolean", json: "false" }],
     [{ value: [] }, { present: true, type: "array", json: "[]" }],
-    [{ value: "" }, { present: true, type: "string", json: '\"\"' }],
+    [{ value: "" }, { present: true, type: "string", json: '""' }],
     [{ value: null }, { present: true, type: "object", json: "null" }],
   ])("value_presence_and_types_are_distinct：%j", (rule, expected) => {
     expect(describeValue(rule)).toEqual(expected);
