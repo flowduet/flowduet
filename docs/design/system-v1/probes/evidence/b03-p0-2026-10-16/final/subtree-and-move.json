@@ -1,0 +1,637 @@
+[
+  {
+    "case": "parent-delete-descendant-token-reachability",
+    "run": 1,
+    "source": "native-pointer",
+    "deleted": {
+      "sequence": 3,
+      "event": "public-delete",
+      "detail": {
+        "owner": "A",
+        "token": "P0:239",
+        "sourceToken": null,
+        "knownSubtree": [
+          {
+            "field": "a_subject",
+            "token": "P0:231"
+          },
+          {
+            "field": "a_notes",
+            "token": "P0:232"
+          },
+          {
+            "field": "a_amount",
+            "token": "P0:233"
+          },
+          {
+            "field": "a_priority",
+            "token": "P0:234"
+          },
+          {
+            "field": "a_areas",
+            "token": "P0:235"
+          },
+          {
+            "field": "a_department",
+            "token": "P0:236"
+          },
+          {
+            "field": "a_date",
+            "token": "P0:237"
+          },
+          {
+            "field": "a_urgent",
+            "token": "P0:238"
+          }
+        ],
+        "children": [
+          {
+            "token": "P0:240"
+          },
+          {
+            "token": "P0:241"
+          }
+        ],
+        "publicFieldsAtEvent": [
+          "a_subject",
+          "a_notes",
+          "a_amount",
+          "a_priority",
+          "a_areas",
+          "a_department",
+          "a_date",
+          "a_urgent"
+        ]
+      }
+    },
+    "trace": [
+      {
+        "sequence": 1,
+        "event": "native-pointerdown",
+        "detail": {
+          "owner": "A",
+          "trusted": true,
+          "target": "I"
+        }
+      },
+      {
+        "sequence": 2,
+        "event": "native-pointerup",
+        "detail": {
+          "owner": "A",
+          "trusted": true,
+          "target": "I"
+        }
+      },
+      {
+        "sequence": 3,
+        "event": "public-delete",
+        "detail": {
+          "owner": "A",
+          "token": "P0:239",
+          "sourceToken": null,
+          "knownSubtree": [
+            {
+              "field": "a_subject",
+              "token": "P0:231"
+            },
+            {
+              "field": "a_notes",
+              "token": "P0:232"
+            },
+            {
+              "field": "a_amount",
+              "token": "P0:233"
+            },
+            {
+              "field": "a_priority",
+              "token": "P0:234"
+            },
+            {
+              "field": "a_areas",
+              "token": "P0:235"
+            },
+            {
+              "field": "a_department",
+              "token": "P0:236"
+            },
+            {
+              "field": "a_date",
+              "token": "P0:237"
+            },
+            {
+              "field": "a_urgent",
+              "token": "P0:238"
+            }
+          ],
+          "children": [
+            {
+              "token": "P0:240"
+            },
+            {
+              "token": "P0:241"
+            }
+          ],
+          "publicFieldsAtEvent": [
+            "a_subject",
+            "a_notes",
+            "a_amount",
+            "a_priority",
+            "a_areas",
+            "a_department",
+            "a_date",
+            "a_urgent"
+          ]
+        }
+      }
+    ],
+    "pass": true
+  },
+  {
+    "case": "parent-delete-descendant-token-reachability",
+    "run": 2,
+    "source": "native-pointer",
+    "deleted": {
+      "sequence": 3,
+      "event": "public-delete",
+      "detail": {
+        "owner": "A",
+        "token": "P0:250",
+        "sourceToken": null,
+        "knownSubtree": [
+          {
+            "field": "a_subject",
+            "token": "P0:242"
+          },
+          {
+            "field": "a_notes",
+            "token": "P0:243"
+          },
+          {
+            "field": "a_amount",
+            "token": "P0:244"
+          },
+          {
+            "field": "a_priority",
+            "token": "P0:245"
+          },
+          {
+            "field": "a_areas",
+            "token": "P0:246"
+          },
+          {
+            "field": "a_department",
+            "token": "P0:247"
+          },
+          {
+            "field": "a_date",
+            "token": "P0:248"
+          },
+          {
+            "field": "a_urgent",
+            "token": "P0:249"
+          }
+        ],
+        "children": [
+          {
+            "token": "P0:251"
+          },
+          {
+            "token": "P0:252"
+          }
+        ],
+        "publicFieldsAtEvent": [
+          "a_subject",
+          "a_notes",
+          "a_amount",
+          "a_priority",
+          "a_areas",
+          "a_department",
+          "a_date",
+          "a_urgent"
+        ]
+      }
+    },
+    "trace": [
+      {
+        "sequence": 1,
+        "event": "native-pointerdown",
+        "detail": {
+          "owner": "A",
+          "trusted": true,
+          "target": "I"
+        }
+      },
+      {
+        "sequence": 2,
+        "event": "native-pointerup",
+        "detail": {
+          "owner": "A",
+          "trusted": true,
+          "target": "I"
+        }
+      },
+      {
+        "sequence": 3,
+        "event": "public-delete",
+        "detail": {
+          "owner": "A",
+          "token": "P0:250",
+          "sourceToken": null,
+          "knownSubtree": [
+            {
+              "field": "a_subject",
+              "token": "P0:242"
+            },
+            {
+              "field": "a_notes",
+              "token": "P0:243"
+            },
+            {
+              "field": "a_amount",
+              "token": "P0:244"
+            },
+            {
+              "field": "a_priority",
+              "token": "P0:245"
+            },
+            {
+              "field": "a_areas",
+              "token": "P0:246"
+            },
+            {
+              "field": "a_department",
+              "token": "P0:247"
+            },
+            {
+              "field": "a_date",
+              "token": "P0:248"
+            },
+            {
+              "field": "a_urgent",
+              "token": "P0:249"
+            }
+          ],
+          "children": [
+            {
+              "token": "P0:251"
+            },
+            {
+              "token": "P0:252"
+            }
+          ],
+          "publicFieldsAtEvent": [
+            "a_subject",
+            "a_notes",
+            "a_amount",
+            "a_priority",
+            "a_areas",
+            "a_department",
+            "a_date",
+            "a_urgent"
+          ]
+        }
+      }
+    ],
+    "pass": true
+  },
+  {
+    "case": "parent-delete-descendant-token-reachability",
+    "run": 3,
+    "source": "native-pointer",
+    "deleted": {
+      "sequence": 3,
+      "event": "public-delete",
+      "detail": {
+        "owner": "A",
+        "token": "P0:261",
+        "sourceToken": null,
+        "knownSubtree": [
+          {
+            "field": "a_subject",
+            "token": "P0:253"
+          },
+          {
+            "field": "a_notes",
+            "token": "P0:254"
+          },
+          {
+            "field": "a_amount",
+            "token": "P0:255"
+          },
+          {
+            "field": "a_priority",
+            "token": "P0:256"
+          },
+          {
+            "field": "a_areas",
+            "token": "P0:257"
+          },
+          {
+            "field": "a_department",
+            "token": "P0:258"
+          },
+          {
+            "field": "a_date",
+            "token": "P0:259"
+          },
+          {
+            "field": "a_urgent",
+            "token": "P0:260"
+          }
+        ],
+        "children": [
+          {
+            "token": "P0:262"
+          },
+          {
+            "token": "P0:263"
+          }
+        ],
+        "publicFieldsAtEvent": [
+          "a_subject",
+          "a_notes",
+          "a_amount",
+          "a_priority",
+          "a_areas",
+          "a_department",
+          "a_date",
+          "a_urgent"
+        ]
+      }
+    },
+    "trace": [
+      {
+        "sequence": 1,
+        "event": "native-pointerdown",
+        "detail": {
+          "owner": "A",
+          "trusted": true,
+          "target": "I"
+        }
+      },
+      {
+        "sequence": 2,
+        "event": "native-pointerup",
+        "detail": {
+          "owner": "A",
+          "trusted": true,
+          "target": "I"
+        }
+      },
+      {
+        "sequence": 3,
+        "event": "public-delete",
+        "detail": {
+          "owner": "A",
+          "token": "P0:261",
+          "sourceToken": null,
+          "knownSubtree": [
+            {
+              "field": "a_subject",
+              "token": "P0:253"
+            },
+            {
+              "field": "a_notes",
+              "token": "P0:254"
+            },
+            {
+              "field": "a_amount",
+              "token": "P0:255"
+            },
+            {
+              "field": "a_priority",
+              "token": "P0:256"
+            },
+            {
+              "field": "a_areas",
+              "token": "P0:257"
+            },
+            {
+              "field": "a_department",
+              "token": "P0:258"
+            },
+            {
+              "field": "a_date",
+              "token": "P0:259"
+            },
+            {
+              "field": "a_urgent",
+              "token": "P0:260"
+            }
+          ],
+          "children": [
+            {
+              "token": "P0:262"
+            },
+            {
+              "token": "P0:263"
+            }
+          ],
+          "publicFieldsAtEvent": [
+            "a_subject",
+            "a_notes",
+            "a_amount",
+            "a_priority",
+            "a_areas",
+            "a_department",
+            "a_date",
+            "a_urgent"
+          ]
+        }
+      }
+    ],
+    "pass": true
+  },
+  {
+    "beforeFields": [
+      "a_subject",
+      "a_notes",
+      "a_amount",
+      "a_priority",
+      "a_areas",
+      "a_department",
+      "a_date",
+      "a_urgent"
+    ],
+    "afterFields": [
+      "a_amount",
+      "a_subject",
+      "a_notes",
+      "a_priority",
+      "a_areas",
+      "a_department",
+      "a_date",
+      "a_urgent"
+    ],
+    "case": "sort-source-token-stable",
+    "layout": "top",
+    "source": "native-pointer-drag",
+    "token": "P0:264",
+    "after": "P0:264",
+    "trace": [
+      {
+        "sequence": 10,
+        "event": "sample-mounted",
+        "detail": {
+          "owner": "A",
+          "field": "a_amount",
+          "token": "P0:264",
+          "value": "P0:264",
+          "publicValue": 0
+        }
+      },
+      {
+        "sequence": 16,
+        "event": "native-dragstart",
+        "detail": {
+          "owner": "A",
+          "trusted": true,
+          "target": "DIV"
+        }
+      },
+      {
+        "sequence": 18,
+        "event": "native-dragend",
+        "detail": {
+          "owner": "A",
+          "trusted": true,
+          "target": "DIV"
+        }
+      },
+      {
+        "sequence": 28,
+        "event": "sample-mounted",
+        "detail": {
+          "owner": "A",
+          "field": "a_amount",
+          "token": "P0:264",
+          "value": "P0:264",
+          "publicValue": 0
+        }
+      }
+    ],
+    "pass": true
+  },
+  {
+    "beforeFields": [
+      "a_subject",
+      "a_notes",
+      "a_amount",
+      "a_priority",
+      "a_areas",
+      "a_department",
+      "a_date",
+      "a_urgent"
+    ],
+    "afterFields": [
+      "a_amount",
+      "a_subject",
+      "a_notes",
+      "a_priority",
+      "a_areas",
+      "a_department",
+      "a_date",
+      "a_urgent"
+    ],
+    "case": "sort-source-token-stable",
+    "layout": "grid",
+    "source": "native-pointer-drag",
+    "token": "P0:269",
+    "after": "P0:269",
+    "trace": [
+      {
+        "sequence": 10,
+        "event": "sample-mounted",
+        "detail": {
+          "owner": "A",
+          "field": "a_amount",
+          "token": "P0:264",
+          "value": "P0:264",
+          "publicValue": 0
+        }
+      },
+      {
+        "sequence": 16,
+        "event": "native-dragstart",
+        "detail": {
+          "owner": "A",
+          "trusted": true,
+          "target": "DIV"
+        }
+      },
+      {
+        "sequence": 18,
+        "event": "native-dragend",
+        "detail": {
+          "owner": "A",
+          "trusted": true,
+          "target": "DIV"
+        }
+      },
+      {
+        "sequence": 28,
+        "event": "sample-mounted",
+        "detail": {
+          "owner": "A",
+          "field": "a_amount",
+          "token": "P0:264",
+          "value": "P0:264",
+          "publicValue": 0
+        }
+      },
+      {
+        "sequence": 37,
+        "event": "sample-mounted",
+        "detail": {
+          "owner": "A",
+          "field": "a_amount",
+          "token": "P0:264",
+          "value": "P0:264",
+          "publicValue": 0
+        }
+      },
+      {
+        "sequence": 43,
+        "event": "sample-mounted",
+        "detail": {
+          "owner": "A",
+          "field": "a_amount",
+          "token": "P0:269",
+          "value": "P0:269",
+          "publicValue": 0
+        }
+      },
+      {
+        "sequence": 49,
+        "event": "native-dragstart",
+        "detail": {
+          "owner": "A",
+          "trusted": true,
+          "target": "DIV"
+        }
+      },
+      {
+        "sequence": 51,
+        "event": "native-dragend",
+        "detail": {
+          "owner": "A",
+          "trusted": true,
+          "target": "DIV"
+        }
+      },
+      {
+        "sequence": 61,
+        "event": "sample-mounted",
+        "detail": {
+          "owner": "A",
+          "field": "a_amount",
+          "token": "P0:269",
+          "value": "P0:269",
+          "publicValue": 0
+        }
+      }
+    ],
+    "pass": true
+  }
+]

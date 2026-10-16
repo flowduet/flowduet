@@ -1,6 +1,6 @@
 # B03 最小生产修复薄切片计划
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans or superpowers:subagent-driven-development to implement this plan task-by-task after user approval. Steps use checkbox (`- [ ]`) syntax for tracking. 本轮仅交计划；实施方式待维护者确认，不自动启动任务或子代理。
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans or superpowers:subagent-driven-development to implement this plan task-by-task after user approval. Steps use checkbox (`- [ ]`) syntax for tracking. 此为计划编写时说明；现仅P0获维护者授权，执行记录见Task 1末尾，后续片不自动启动。
 
 **Goal:** 按数值/日期中间输入、文字空串、拖拽取消的顺序，修复明确启用retained模式的K路径，并保留全部既有合同与负证据。
 
@@ -32,7 +32,7 @@
 
 ## 执行与基线门
 
-本地已存在C分支，书面材料基于`686ecc0`，不在本轮fetch/切换/实施。获准开工时先核对最新develop与C提交依赖，按仓库分支规则建立实施分支；若C尚未进入该基线，先报告依赖缺口并确认取入方式，不默默cherry-pick整批未合并代码或直接在develop/main提交。
+计划编写时本地已存在C分支，书面材料基于`686ecc0`，该文档阶段不fetch/切换/实施。获准开工时先核对最新develop与C提交依赖，按仓库分支规则建立实施分支；若C尚未进入该基线，先报告依赖缺口并确认取入方式，不默默cherry-pick整批未合并代码或直接在develop/main提交。
 
 将下面P0→P4映射进同一执行账本，每片写BASE、命令、退出码、来源和范围；P0、P3门失败不执行后续依赖步骤，不自动降级合同。没有日历时间盒，以成果复审控制；成本扩大再决策。每片只提交其源码/测试与证据，推送/发布另获授权。
 
@@ -46,17 +46,19 @@
 
 **Interfaces:** 消费锁定版本componentRule/组件注册与现有C夹具、只读观察、target/lease；产出“实例注入、字段token、删除时点、同步回显、日历确认”及Dialog公开关闭/键盘路由的能力证据及可继续/停止裁定。P1消费这些证据，不能消费一个未经证明的私有字段名。
 
-- [ ] 写并先跑失败断言`public_default_editor_preserves_pending_number/date`：普通切换前后要看到`-`/`2026-`，捕获不得返回旧业务值；明确区分当前生产路径失败与新样稿能力证据。
-- [ ] 在真实FormCreate中仅使用公开扩展注册无状态的样稿组件，观察每实例owner、componentRule回调对象身份和v-model回显顺序。测切字段、回到原字段、顶层/col、删除后立即复用同名field、同ID两控制器、卸载；不从getRule副本建立身份。
-- [ ] 核对自定义数值文本入口、日期手工文本与原日历确认可分离；核对六类I01无编辑保真及非标准valueFormat编辑的可支持范围。不新开日期类型选择器。
-- [ ] 明确drag/composition/busy和外来弹层能否通过本实例公开/原生信号识别；泛化`@drag`不作为可靠start/end，未确认状态一律不可收集。
-- [ ] 用锁定ElDialog公开props/before-close核对Escape默认关闭、X/遮罩回调、程序化关闭和卸载的不同路径；样稿证明关闭触发的pointerdown/键盘前置保护可先于blur，拒绝的手势后续click也不会放行；retained关闭协调在公开边界完成且不误拦正常输入/另一实例，不能假设before-close拦所有销毁，不改现有FormManager产品代码。
-- [ ] 按提案§9裁定。缺稳定身份、每实例隔离、安全日历输入或公开关闭/键盘接线时保存失败样本并停止P1，不改第三方/依赖来强行通过。
-- [ ] 证据输出标明sourceRef/clone的区别、删除回调时点、actualMode、真实/协议来源；提交`test(probe): 验证B03默认值公开编辑接缝`。
+- [x] 写并先跑失败断言`public_default_editor_preserves_pending_number/date`：普通切换前后要看到`-`/`2026-`，捕获不得返回旧业务值；明确区分当前生产路径失败与新样稿能力证据。
+- [x] 在真实FormCreate中仅使用公开扩展注册无状态的样稿组件，观察每实例owner、componentRule回调对象身份和v-model回显顺序。测切字段、回到原字段、顶层/col、删除后立即复用同名field、同ID两控制器、卸载；不从getRule副本建立身份。
+- [x] 核对自定义数值文本入口、日期手工文本与原日历确认可分离；核对六类I01无编辑保真及非标准valueFormat编辑的可支持范围。不新开日期类型选择器。
+- [x] 明确drag/composition/busy和外来弹层能否通过本实例公开/原生信号识别；泛化`@drag`不作为可靠start/end，未确认状态一律不可收集。
+- [x] 用锁定ElDialog公开props/before-close核对Escape默认关闭、X/遮罩回调、程序化关闭和卸载的不同路径；样稿证明关闭触发的pointerdown/键盘前置保护可先于blur，拒绝的手势后续click也不会放行；retained关闭协调在公开边界完成且不误拦正常输入/另一实例，不能假设before-close拦所有销毁，不改现有FormManager产品代码。
+- [x] 按提案§9裁定。缺稳定身份、每实例隔离、安全日历输入或公开关闭/键盘接线时保存失败样本并停止P1，不改第三方/依赖来强行通过。
+- [x] 证据输出标明sourceRef/clone的区别、删除回调时点、actualMode、真实/协议来源；提交`test(probe): 验证B03默认值公开编辑接缝`。
 
 **Run:** 接缝样稿经Playground专用探针Vite入口、真实浏览器逐项执行；新增纯检查从既有`contracts/candidate.test.ts`导入，`pnpm --filter @flowduet/playground exec vitest run probes/stage-zero/contracts/candidate.test.ts`。
 
 **Expected:** 只能是五项编辑接缝与Dialog接线均有真实证据的“可进入P1”，或可定位的“停止”。样稿输出、派发事件、类型可编译不能代替稳定性证据。覆盖Review Focus 1/2/3。
+
+P0执行记录：见[公开接缝报告](../system-v1/probes/b03-repair-seams.md)。仅Task 1获授权并完成；公开能力门通过，P1–P4未执行，B03未解除。取入C依赖的方式已由维护者问题卡确认，具体基线、原样默认超时及末次结果保留在独立证据目录。
 
 ### Task 2（P1）：数值/日期原文与同步捕获
 
