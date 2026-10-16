@@ -1,0 +1,36 @@
+
+ RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/form-create
+
+ ❯ src/components.test.ts (67 tests | 1 failed | 66 skipped) 1638ms
+   × 确认期间宿主替换同ID同内容表单，旧肯定答复与保存均拒绝且保留输入 1636ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/components.test.ts > 确认期间宿主替换同ID同内容表单，旧肯定答复与保存均拒绝且保留输入
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ src/components.test.ts:1535:32
+    1533|     await wrapper!.setProps({ forms: [{ ...APPLY_FORM, rules: numericD…
+    1534|     resolve("confirm"); await flushPromises();
+    1535|     expect(vm.hasOpenEditor()).toBe(true);
+       |                                ^
+    1536|     expect(input.element.value).toBe("7");
+    1537|     expect(vm.readEditingState()?.blockers[0]?.code).toBe("version-cha…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 66 skipped (67)
+   Start at  18:43:51
+   Duration  4.02s (tests 42%, import 35%, transform 14%, environment 8%)
+
+undefined
+/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/form-create:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run src/components.test.ts -t 同ID同内容表单

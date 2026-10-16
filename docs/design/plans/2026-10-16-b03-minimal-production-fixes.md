@@ -1,6 +1,6 @@
 # B03 最小生产修复薄切片计划
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans or superpowers:subagent-driven-development to implement this plan task-by-task after user approval. Steps use checkbox (`- [ ]`) syntax for tracking. 此为计划编写时说明；现仅P0获维护者授权，执行记录见Task 1末尾，后续片不自动启动。
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans or superpowers:subagent-driven-development to implement this plan task-by-task after user approval. Steps use checkbox (`- [ ]`) syntax for tracking. P0已随PR #94合入develop；本会话追加授权仅执行Task 2（P1），P2/P3/P4、D/E与正式工作台不启动。
 
 **Goal:** 按数值/日期中间输入、文字空串、拖拽取消的顺序，修复明确启用retained模式的K路径，并保留全部既有合同与负证据。
 
@@ -60,7 +60,7 @@
 
 P0执行记录：见[公开接缝报告](../system-v1/probes/b03-repair-seams.md)。仅Task 1获授权并完成；公开能力门通过，P1–P4未执行，B03未解除。取入C依赖的方式已由维护者问题卡确认，具体基线、原样默认超时及末次结果保留在独立证据目录。
 
-两项P2补修：原初轮整体通过曾被全面复审收紧；本次仅按明确授权补修P0。Dialog测试私有组件与6项事件协议回归见`form-repair/DialogCloseSeamProbe.vue`、`dialog-close.cases.ts`，原生交叉及弹层断言见[补修报告](../system-v1/probes/b03-p0-p2-followup.md)。当前门裁定以该报告为准，不自动启动P1。
+两项P2补修（此处P2指评审优先级，不是本计划的文字空串切片）：原初轮整体通过曾被全面复审收紧；本次仅按明确授权补修P0。Dialog测试私有组件与6项事件协议回归见`form-repair/DialogCloseSeamProbe.vue`、`dialog-close.cases.ts`，原生交叉及弹层断言见[补修报告](../system-v1/probes/b03-p0-p2-followup.md)。当前门裁定以该报告为准，不自动启动P1。
 
 ### Task 2（P1）：数值/日期原文与同步捕获
 
@@ -73,24 +73,26 @@ P0执行记录：见[公开接缝报告](../system-v1/probes/b03-repair-seams.md
 
 **Interfaces:** 消费P0已证明的owner/字段生命期接缝；产出提案§4.3三个DTO、FormDesigner实例`readEditingState()/captureContent()`及`editingStateChange`；FormManager新增`readEditingState(): FormDesignerEditingState | null`与nullable状态转发，关闭授权按§4.4，`editingMode`精确为legacy|retained。P2复用同一状态控制器，P3复用busy/版本状态，不另造输入事实源。
 
-- [ ] 先写状态/真实组件失败用例：`pending_number_text_survives_navigation`、`partial_date_does_not_normalize_on_blur`、`valid_echo_pending_blocks_capture`、`composition_end_same_tick_is_blocked`、`foreign_editor_keeps_focus`、`deleted_field_lifetime_never_reuses_raw`。
-- [ ] RED中明确断言实际mode为retained，避免未知prop被当HTML attr忽略；数字`-`必须真在文本控件raw中，不能把空value+badInput消失记成保持。
-- [ ] 实现每实例控制器与自有默认值编辑器；以公开prop回显确认合法值已进入规则，中间原文继续留缓存。沿用原props/规则开放范围，不改schema来接纳中间串。
-- [ ] 实现三个DTO的根导出及mode固定、只读/捕获API；成对出口捕获前后复验本地revision，blocked不序列化/不写session。FormManager精确显示retained阻断原因；旧方法签名和legacy默认行为不变，retained按规格§4.4协调关闭。
-- [ ] 先写`manager_retained_query_and_forward`、`manager_suspend_is_not_discard`、`manager_ime_escape_keeps_editor`、`manager_dismiss_requires_discard`、`manager_late_discard_rejected`、`manager_old_editor_state_dropped`、`manager_busy_close_gesture_cannot_blur_then_close`、`manager_old_close_request_cannot_target_reopened_editor`、`legacy_dialog_dismiss_unchanged` RED；使用真实FormManager/Dialog/FormDesigner，不能只测新状态机或capture返回值。
-- [ ] 实现FormManager只读代理/当前子状态转发：会话未就绪/收尾中返回not-ready快照，完全无编辑器才null；使用内部唯一editorInstanceKey丢弃旧子状态/save/cancel/旧关闭null，即使formId相同也不复用。查询/转发不发draftChange、不确认保存。
-- [ ] retained明确禁用Dialog自动Escape关闭，X/遮罩/取消触发先于blur执行pointerdown/键盘状态检查，拒绝后续click；公共before-close、表单cancel及程序化关闭统一走授权入口。before-close并非万能拦截器；不得用canSuspend/canCapture或v-model=false直接放行销毁，FormManager不在本片实现K隐藏。
-- [ ] 按§4.4优先级保留IME/内部弹层的Escape语义，组合/拖中/unknown等忙碌关闭不弹抢焦点确认；空闲Escape也不关闭。P3尚未支持时，拖动Escape不得调用不存在的取消API或退化为关闭表单。
-- [ ] 普通未完成原文可进入“继续编辑/放弃并关闭”的统一确认，不先序列化/写会话；拒绝、关闭确认或异常都保留同一实例。请求入口绑定事件所属key；nextTick等所有等待后先核对该key/模式，肯定答复后再复验key/revision/就绪状态，过期答复不生效；最终复验到内部一次性授权关闭无await、无对外bypass。
-- [ ] 成功提交仅在既有捕获/内容守卫与当前会话检查成功后关闭；blocked/failed继续打开。授权销毁先使旧回调失效，收尾null不能清空新实例；显式放弃只丢当前raw，不发updateContent/save，不改另一表单或持久化状态。父级破坏性卸载/替换须先遵守宿主确认，不宣称Dialog可拦强制unmount。
-- [ ] 实验宿主在pointerdown/快捷键前查canSuspend；普通中间输入可K隐藏并保留，busy阻止破坏性切换。UI收集可先nextTick，再重读状态并进入既有controller.prepare；不改EditorAdapter同步合同。
-- [ ] 实跑B03-N01–N08、H01–H03及M01–M08的数值/日期与关闭保护子项；M05先验未支持取消时Dialog也不误关。文本子项由P2补、真实取消由P3补，未执行子项保持待执行，不计通过也不反向阻止P1交付。第一/第二活对象故障保留adapter/lease，显式断言故障方法计数和顺序、两份输入、persist=0、修正后的最新候选；不能重复C的假覆盖。
-- [ ] 复验legacy未传mode时的真实export/save/cancel与全部旧断言。只读查询、纯K切换不touch；busy期间不展示当前校验通过，捕获不当作持久化。
-- [ ] 提交`fix(form-create): 显式保留数值日期中间输入并保护捕获`，记录允许模式、I01/自定义格式边界与未验证项。
+- [x] 先写状态/真实组件失败用例：`pending_number_text_survives_navigation`、`partial_date_does_not_normalize_on_blur`、`valid_echo_pending_blocks_capture`、`composition_end_same_tick_is_blocked`、`foreign_editor_keeps_focus`、`deleted_field_lifetime_never_reuses_raw`。
+- [x] RED中明确断言实际mode为retained，避免未知prop被当HTML attr忽略；数字`-`必须真在文本控件raw中，不能把空value+badInput消失记成保持。
+- [x] 实现每实例控制器与自有默认值编辑器；以公开prop回显确认合法值已进入规则，中间原文继续留缓存。沿用原props/规则开放范围，不改schema来接纳中间串。
+- [x] 实现三个DTO的根导出及mode固定、只读/捕获API；成对出口捕获前后复验本地revision，blocked不序列化/不写session。FormManager精确显示retained阻断原因；旧方法签名和legacy默认行为不变，retained按规格§4.4协调关闭。
+- [x] 先写`manager_retained_query_and_forward`、`manager_suspend_is_not_discard`、`manager_ime_escape_keeps_editor`、`manager_dismiss_requires_discard`、`manager_late_discard_rejected`、`manager_old_editor_state_dropped`、`manager_busy_close_gesture_cannot_blur_then_close`、`manager_old_close_request_cannot_target_reopened_editor`、`legacy_dialog_dismiss_unchanged` RED；使用真实FormManager/Dialog/FormDesigner，不能只测新状态机或capture返回值。
+- [x] 实现FormManager只读代理/当前子状态转发：会话未就绪/收尾中返回not-ready快照，完全无编辑器才null；使用内部唯一editorInstanceKey丢弃旧子状态/save/cancel/旧关闭null，即使formId相同也不复用。查询/转发不发draftChange、不确认保存。
+- [x] retained明确禁用Dialog自动Escape关闭，X/遮罩/取消触发先于blur执行pointerdown/键盘状态检查，拒绝后续click；公共before-close、表单cancel及程序化关闭统一走授权入口。before-close并非万能拦截器；不得用canSuspend/canCapture或v-model=false直接放行销毁，FormManager不在本片实现K隐藏。
+- [x] 按§4.4优先级保留IME/内部弹层的Escape语义，组合/拖中/unknown等忙碌关闭不弹抢焦点确认；空闲Escape也不关闭。P3尚未支持时，拖动Escape不得调用不存在的取消API或退化为关闭表单。
+- [x] 普通未完成原文可进入“继续编辑/放弃并关闭”的统一确认，不先序列化/写会话；拒绝、关闭确认或异常都保留同一实例。请求入口绑定事件所属key；nextTick等所有等待后先核对该key/模式，肯定答复后再复验key/revision/就绪状态，过期答复不生效；最终复验到内部一次性授权关闭无await、无对外bypass。
+- [x] 成功提交仅在既有捕获/内容守卫与当前会话检查成功后关闭；blocked/failed继续打开。授权销毁先使旧回调失效，收尾null不能清空新实例；显式放弃只丢当前raw，不发updateContent/save，不改另一表单或持久化状态。父级破坏性卸载/替换须先遵守宿主确认，不宣称Dialog可拦强制unmount。
+- [x] 实验宿主在pointerdown/快捷键前查canSuspend；普通中间输入可K隐藏并保留，busy阻止破坏性切换。UI收集可先nextTick，再重读状态并进入既有controller.prepare；不改EditorAdapter同步合同。
+- [x] 实跑B03-N01–N08、H01–H03及M01–M08的数值/日期与关闭保护子项；M05先验未支持取消时Dialog也不误关。文本子项由P2补、真实取消由P3补，未执行子项保持待执行，不计通过也不反向阻止P1交付。第一/第二活对象故障保留adapter/lease，显式断言故障方法计数和顺序、两份输入、persist=0、修正后的最新候选；不能重复C的假覆盖。
+- [x] 复验legacy未传mode时的真实export/save/cancel与全部旧断言。只读查询、纯K切换不touch；busy期间不展示当前校验通过，捕获不当作持久化。
+- [x] 提交`fix(form-create): 显式保留数值日期中间输入并保护捕获`，记录允许模式、I01/自定义格式边界与未验证项。
 
 **Run:** `pnpm --filter @flowduet/form-create exec vitest run src/editor-input-state.test.ts src/components.test.ts`；`pnpm --filter @flowduet/playground exec vitest run probes/stage-zero/contracts/candidate.test.ts probes/stage-zero/contracts/validation.test.ts probes/stage-zero/contracts/error-boundary.test.ts`；新UI经真实浏览器、1440×1000/DPR1、顶层/列内和3轮关键轨迹。
 
 **Expected:** 数值/日期原文在K切换后逐字保持，非法中间输入明确blocked，合法number/date及未编辑I01往返保持；两份候选故障零live写入；真实FormManager的状态/关闭/重开符合上述本片M子项，legacy默认回归无变化；不宣称P2文本或P3真实取消子项已通过。未取得OS证据不勾V01。覆盖Review Focus 1–4。
+
+P1执行记录：基线`develop@56d9e07`，实现`23fb826`、补修`46f720b`/`d9617b0`；见[P1限定验收](../system-v1/probes/b03-p1-repair.md)。最终默认828/828、build/lint/strict通过，初轮125条与补修受影响30条UI重放分列。初轮Standards/Spec各0，收尾自审两项P2级缺陷已补修并经Spec限定静态补核0，页头同类迟到click另补回归并限定核对0；RED与补充回归的证据边界分列，不声称每个后补断言都先见RED。P1交付不解除B03，P2/P3/P4未启动，APP-T仍单列，未推送。
 
 ### Task 3（P2）：文字显式空串与未设置
 

@@ -1,0 +1,1026 @@
+{
+  "viewport": {
+    "width": 1440,
+    "height": 1000
+  },
+  "dpr": 1,
+  "source": "real Chromium UI; no OS IME claim",
+  "rows": [
+    {
+      "id": "N01/N04",
+      "layout": "top",
+      "round": 1,
+      "kind": "number",
+      "text": "-",
+      "after": "-",
+      "state": {
+        "mode": "retained",
+        "revision": 2,
+        "canSuspend": true,
+        "canCapture": false,
+        "blockers": [
+          {
+            "code": "pending-input",
+            "field": "a_amount",
+            "message": "默认值尚未完成，请补全数值或有效日期"
+          }
+        ]
+      },
+      "liveUnchanged": true,
+      "pass": true
+    },
+    {
+      "id": "N01/N04",
+      "layout": "top",
+      "round": 1,
+      "kind": "number",
+      "text": "1.",
+      "after": "1.",
+      "state": {
+        "mode": "retained",
+        "revision": 5,
+        "canSuspend": true,
+        "canCapture": false,
+        "blockers": [
+          {
+            "code": "pending-input",
+            "field": "a_amount",
+            "message": "默认值尚未完成，请补全数值或有效日期"
+          }
+        ]
+      },
+      "liveUnchanged": true,
+      "pass": true
+    },
+    {
+      "id": "N01/N04",
+      "layout": "top",
+      "round": 1,
+      "kind": "number",
+      "text": "1e",
+      "after": "1e",
+      "state": {
+        "mode": "retained",
+        "revision": 8,
+        "canSuspend": true,
+        "canCapture": false,
+        "blockers": [
+          {
+            "code": "pending-input",
+            "field": "a_amount",
+            "message": "默认值尚未完成，请补全数值或有效日期"
+          }
+        ]
+      },
+      "liveUnchanged": true,
+      "pass": true
+    },
+    {
+      "id": "N01/N04",
+      "layout": "top",
+      "round": 1,
+      "kind": "date",
+      "text": "2026-",
+      "after": "2026-",
+      "state": {
+        "mode": "retained",
+        "revision": 11,
+        "canSuspend": true,
+        "canCapture": false,
+        "blockers": [
+          {
+            "code": "pending-input",
+            "field": "a_date",
+            "message": "默认值尚未完成，请补全数值或有效日期"
+          }
+        ]
+      },
+      "liveUnchanged": true,
+      "pass": true
+    },
+    {
+      "id": "N01/N04",
+      "layout": "top",
+      "round": 1,
+      "kind": "date",
+      "text": "2026-02-30",
+      "after": "2026-02-30",
+      "state": {
+        "mode": "retained",
+        "revision": 14,
+        "canSuspend": true,
+        "canCapture": false,
+        "blockers": [
+          {
+            "code": "pending-input",
+            "field": "a_date",
+            "message": "默认值尚未完成，请补全数值或有效日期"
+          }
+        ]
+      },
+      "liveUnchanged": true,
+      "pass": true
+    },
+    {
+      "id": "N02",
+      "layout": "top",
+      "round": 1,
+      "text": "0",
+      "value": 0,
+      "raw": "0",
+      "pass": true
+    },
+    {
+      "id": "N02",
+      "layout": "top",
+      "round": 1,
+      "text": "-2",
+      "value": -2,
+      "raw": "-2",
+      "pass": true
+    },
+    {
+      "id": "N02",
+      "layout": "top",
+      "round": 1,
+      "text": "1.5",
+      "value": 1.5,
+      "raw": "1.5",
+      "pass": true
+    },
+    {
+      "id": "N02",
+      "layout": "top",
+      "round": 1,
+      "text": ".5",
+      "value": 0.5,
+      "raw": ".5",
+      "pass": true
+    },
+    {
+      "id": "N02",
+      "layout": "top",
+      "round": 1,
+      "text": "1e3",
+      "value": 1000,
+      "raw": "1e3",
+      "pass": true
+    },
+    {
+      "id": "N01/N04",
+      "layout": "top",
+      "round": 2,
+      "kind": "number",
+      "text": "-",
+      "after": "-",
+      "state": {
+        "mode": "retained",
+        "revision": 27,
+        "canSuspend": true,
+        "canCapture": false,
+        "blockers": [
+          {
+            "code": "pending-input",
+            "field": "a_amount",
+            "message": "默认值尚未完成，请补全数值或有效日期"
+          }
+        ]
+      },
+      "liveUnchanged": true,
+      "pass": true
+    },
+    {
+      "id": "N01/N04",
+      "layout": "top",
+      "round": 2,
+      "kind": "number",
+      "text": "1.",
+      "after": "1.",
+      "state": {
+        "mode": "retained",
+        "revision": 30,
+        "canSuspend": true,
+        "canCapture": false,
+        "blockers": [
+          {
+            "code": "pending-input",
+            "field": "a_amount",
+            "message": "默认值尚未完成，请补全数值或有效日期"
+          }
+        ]
+      },
+      "liveUnchanged": true,
+      "pass": true
+    },
+    {
+      "id": "N01/N04",
+      "layout": "top",
+      "round": 2,
+      "kind": "number",
+      "text": "1e",
+      "after": "1e",
+      "state": {
+        "mode": "retained",
+        "revision": 33,
+        "canSuspend": true,
+        "canCapture": false,
+        "blockers": [
+          {
+            "code": "pending-input",
+            "field": "a_amount",
+            "message": "默认值尚未完成，请补全数值或有效日期"
+          }
+        ]
+      },
+      "liveUnchanged": true,
+      "pass": true
+    },
+    {
+      "id": "N01/N04",
+      "layout": "top",
+      "round": 2,
+      "kind": "date",
+      "text": "2026-",
+      "after": "2026-",
+      "state": {
+        "mode": "retained",
+        "revision": 36,
+        "canSuspend": true,
+        "canCapture": false,
+        "blockers": [
+          {
+            "code": "pending-input",
+            "field": "a_date",
+            "message": "默认值尚未完成，请补全数值或有效日期"
+          }
+        ]
+      },
+      "liveUnchanged": true,
+      "pass": true
+    },
+    {
+      "id": "N01/N04",
+      "layout": "top",
+      "round": 2,
+      "kind": "date",
+      "text": "2026-02-30",
+      "after": "2026-02-30",
+      "state": {
+        "mode": "retained",
+        "revision": 39,
+        "canSuspend": true,
+        "canCapture": false,
+        "blockers": [
+          {
+            "code": "pending-input",
+            "field": "a_date",
+            "message": "默认值尚未完成，请补全数值或有效日期"
+          }
+        ]
+      },
+      "liveUnchanged": true,
+      "pass": true
+    },
+    {
+      "id": "N02",
+      "layout": "top",
+      "round": 2,
+      "text": "0",
+      "value": 0,
+      "raw": "0",
+      "pass": true
+    },
+    {
+      "id": "N02",
+      "layout": "top",
+      "round": 2,
+      "text": "-2",
+      "value": -2,
+      "raw": "-2",
+      "pass": true
+    },
+    {
+      "id": "N02",
+      "layout": "top",
+      "round": 2,
+      "text": "1.5",
+      "value": 1.5,
+      "raw": "1.5",
+      "pass": true
+    },
+    {
+      "id": "N02",
+      "layout": "top",
+      "round": 2,
+      "text": ".5",
+      "value": 0.5,
+      "raw": ".5",
+      "pass": true
+    },
+    {
+      "id": "N02",
+      "layout": "top",
+      "round": 2,
+      "text": "1e3",
+      "value": 1000,
+      "raw": "1e3",
+      "pass": true
+    },
+    {
+      "id": "N01/N04",
+      "layout": "top",
+      "round": 3,
+      "kind": "number",
+      "text": "-",
+      "after": "-",
+      "state": {
+        "mode": "retained",
+        "revision": 52,
+        "canSuspend": true,
+        "canCapture": false,
+        "blockers": [
+          {
+            "code": "pending-input",
+            "field": "a_amount",
+            "message": "默认值尚未完成，请补全数值或有效日期"
+          }
+        ]
+      },
+      "liveUnchanged": true,
+      "pass": true
+    },
+    {
+      "id": "N01/N04",
+      "layout": "top",
+      "round": 3,
+      "kind": "number",
+      "text": "1.",
+      "after": "1.",
+      "state": {
+        "mode": "retained",
+        "revision": 55,
+        "canSuspend": true,
+        "canCapture": false,
+        "blockers": [
+          {
+            "code": "pending-input",
+            "field": "a_amount",
+            "message": "默认值尚未完成，请补全数值或有效日期"
+          }
+        ]
+      },
+      "liveUnchanged": true,
+      "pass": true
+    },
+    {
+      "id": "N01/N04",
+      "layout": "top",
+      "round": 3,
+      "kind": "number",
+      "text": "1e",
+      "after": "1e",
+      "state": {
+        "mode": "retained",
+        "revision": 58,
+        "canSuspend": true,
+        "canCapture": false,
+        "blockers": [
+          {
+            "code": "pending-input",
+            "field": "a_amount",
+            "message": "默认值尚未完成，请补全数值或有效日期"
+          }
+        ]
+      },
+      "liveUnchanged": true,
+      "pass": true
+    },
+    {
+      "id": "N01/N04",
+      "layout": "top",
+      "round": 3,
+      "kind": "date",
+      "text": "2026-",
+      "after": "2026-",
+      "state": {
+        "mode": "retained",
+        "revision": 61,
+        "canSuspend": true,
+        "canCapture": false,
+        "blockers": [
+          {
+            "code": "pending-input",
+            "field": "a_date",
+            "message": "默认值尚未完成，请补全数值或有效日期"
+          }
+        ]
+      },
+      "liveUnchanged": true,
+      "pass": true
+    },
+    {
+      "id": "N01/N04",
+      "layout": "top",
+      "round": 3,
+      "kind": "date",
+      "text": "2026-02-30",
+      "after": "2026-02-30",
+      "state": {
+        "mode": "retained",
+        "revision": 64,
+        "canSuspend": true,
+        "canCapture": false,
+        "blockers": [
+          {
+            "code": "pending-input",
+            "field": "a_date",
+            "message": "默认值尚未完成，请补全数值或有效日期"
+          }
+        ]
+      },
+      "liveUnchanged": true,
+      "pass": true
+    },
+    {
+      "id": "N02",
+      "layout": "top",
+      "round": 3,
+      "text": "0",
+      "value": 0,
+      "raw": "0",
+      "pass": true
+    },
+    {
+      "id": "N02",
+      "layout": "top",
+      "round": 3,
+      "text": "-2",
+      "value": -2,
+      "raw": "-2",
+      "pass": true
+    },
+    {
+      "id": "N02",
+      "layout": "top",
+      "round": 3,
+      "text": "1.5",
+      "value": 1.5,
+      "raw": "1.5",
+      "pass": true
+    },
+    {
+      "id": "N02",
+      "layout": "top",
+      "round": 3,
+      "text": ".5",
+      "value": 0.5,
+      "raw": ".5",
+      "pass": true
+    },
+    {
+      "id": "N02",
+      "layout": "top",
+      "round": 3,
+      "text": "1e3",
+      "value": 1000,
+      "raw": "1e3",
+      "pass": true
+    },
+    {
+      "id": "N03",
+      "layout": "top",
+      "text": "",
+      "status": "captured",
+      "pass": true
+    },
+    {
+      "id": "N03",
+      "layout": "top",
+      "text": " 1",
+      "status": "blocked",
+      "pass": true
+    },
+    {
+      "id": "N03",
+      "layout": "top",
+      "text": "NaN",
+      "status": "blocked",
+      "pass": true
+    },
+    {
+      "id": "N03",
+      "layout": "top",
+      "text": "Infinity",
+      "status": "blocked",
+      "pass": true
+    },
+    {
+      "id": "N01/N04",
+      "layout": "grid",
+      "round": 1,
+      "kind": "number",
+      "text": "-",
+      "after": "-",
+      "state": {
+        "mode": "retained",
+        "revision": 2,
+        "canSuspend": true,
+        "canCapture": false,
+        "blockers": [
+          {
+            "code": "pending-input",
+            "field": "a_amount",
+            "message": "默认值尚未完成，请补全数值或有效日期"
+          }
+        ]
+      },
+      "liveUnchanged": true,
+      "pass": true
+    },
+    {
+      "id": "N01/N04",
+      "layout": "grid",
+      "round": 1,
+      "kind": "number",
+      "text": "1.",
+      "after": "1.",
+      "state": {
+        "mode": "retained",
+        "revision": 5,
+        "canSuspend": true,
+        "canCapture": false,
+        "blockers": [
+          {
+            "code": "pending-input",
+            "field": "a_amount",
+            "message": "默认值尚未完成，请补全数值或有效日期"
+          }
+        ]
+      },
+      "liveUnchanged": true,
+      "pass": true
+    },
+    {
+      "id": "N01/N04",
+      "layout": "grid",
+      "round": 1,
+      "kind": "number",
+      "text": "1e",
+      "after": "1e",
+      "state": {
+        "mode": "retained",
+        "revision": 8,
+        "canSuspend": true,
+        "canCapture": false,
+        "blockers": [
+          {
+            "code": "pending-input",
+            "field": "a_amount",
+            "message": "默认值尚未完成，请补全数值或有效日期"
+          }
+        ]
+      },
+      "liveUnchanged": true,
+      "pass": true
+    },
+    {
+      "id": "N01/N04",
+      "layout": "grid",
+      "round": 1,
+      "kind": "date",
+      "text": "2026-",
+      "after": "2026-",
+      "state": {
+        "mode": "retained",
+        "revision": 11,
+        "canSuspend": true,
+        "canCapture": false,
+        "blockers": [
+          {
+            "code": "pending-input",
+            "field": "a_date",
+            "message": "默认值尚未完成，请补全数值或有效日期"
+          }
+        ]
+      },
+      "liveUnchanged": true,
+      "pass": true
+    },
+    {
+      "id": "N01/N04",
+      "layout": "grid",
+      "round": 1,
+      "kind": "date",
+      "text": "2026-02-30",
+      "after": "2026-02-30",
+      "state": {
+        "mode": "retained",
+        "revision": 14,
+        "canSuspend": true,
+        "canCapture": false,
+        "blockers": [
+          {
+            "code": "pending-input",
+            "field": "a_date",
+            "message": "默认值尚未完成，请补全数值或有效日期"
+          }
+        ]
+      },
+      "liveUnchanged": true,
+      "pass": true
+    },
+    {
+      "id": "N02",
+      "layout": "grid",
+      "round": 1,
+      "text": "0",
+      "value": 0,
+      "raw": "0",
+      "pass": true
+    },
+    {
+      "id": "N02",
+      "layout": "grid",
+      "round": 1,
+      "text": "-2",
+      "value": -2,
+      "raw": "-2",
+      "pass": true
+    },
+    {
+      "id": "N02",
+      "layout": "grid",
+      "round": 1,
+      "text": "1.5",
+      "value": 1.5,
+      "raw": "1.5",
+      "pass": true
+    },
+    {
+      "id": "N02",
+      "layout": "grid",
+      "round": 1,
+      "text": ".5",
+      "value": 0.5,
+      "raw": ".5",
+      "pass": true
+    },
+    {
+      "id": "N02",
+      "layout": "grid",
+      "round": 1,
+      "text": "1e3",
+      "value": 1000,
+      "raw": "1e3",
+      "pass": true
+    },
+    {
+      "id": "N01/N04",
+      "layout": "grid",
+      "round": 2,
+      "kind": "number",
+      "text": "-",
+      "after": "-",
+      "state": {
+        "mode": "retained",
+        "revision": 27,
+        "canSuspend": true,
+        "canCapture": false,
+        "blockers": [
+          {
+            "code": "pending-input",
+            "field": "a_amount",
+            "message": "默认值尚未完成，请补全数值或有效日期"
+          }
+        ]
+      },
+      "liveUnchanged": true,
+      "pass": true
+    },
+    {
+      "id": "N01/N04",
+      "layout": "grid",
+      "round": 2,
+      "kind": "number",
+      "text": "1.",
+      "after": "1.",
+      "state": {
+        "mode": "retained",
+        "revision": 30,
+        "canSuspend": true,
+        "canCapture": false,
+        "blockers": [
+          {
+            "code": "pending-input",
+            "field": "a_amount",
+            "message": "默认值尚未完成，请补全数值或有效日期"
+          }
+        ]
+      },
+      "liveUnchanged": true,
+      "pass": true
+    },
+    {
+      "id": "N01/N04",
+      "layout": "grid",
+      "round": 2,
+      "kind": "number",
+      "text": "1e",
+      "after": "1e",
+      "state": {
+        "mode": "retained",
+        "revision": 33,
+        "canSuspend": true,
+        "canCapture": false,
+        "blockers": [
+          {
+            "code": "pending-input",
+            "field": "a_amount",
+            "message": "默认值尚未完成，请补全数值或有效日期"
+          }
+        ]
+      },
+      "liveUnchanged": true,
+      "pass": true
+    },
+    {
+      "id": "N01/N04",
+      "layout": "grid",
+      "round": 2,
+      "kind": "date",
+      "text": "2026-",
+      "after": "2026-",
+      "state": {
+        "mode": "retained",
+        "revision": 36,
+        "canSuspend": true,
+        "canCapture": false,
+        "blockers": [
+          {
+            "code": "pending-input",
+            "field": "a_date",
+            "message": "默认值尚未完成，请补全数值或有效日期"
+          }
+        ]
+      },
+      "liveUnchanged": true,
+      "pass": true
+    },
+    {
+      "id": "N01/N04",
+      "layout": "grid",
+      "round": 2,
+      "kind": "date",
+      "text": "2026-02-30",
+      "after": "2026-02-30",
+      "state": {
+        "mode": "retained",
+        "revision": 39,
+        "canSuspend": true,
+        "canCapture": false,
+        "blockers": [
+          {
+            "code": "pending-input",
+            "field": "a_date",
+            "message": "默认值尚未完成，请补全数值或有效日期"
+          }
+        ]
+      },
+      "liveUnchanged": true,
+      "pass": true
+    },
+    {
+      "id": "N02",
+      "layout": "grid",
+      "round": 2,
+      "text": "0",
+      "value": 0,
+      "raw": "0",
+      "pass": true
+    },
+    {
+      "id": "N02",
+      "layout": "grid",
+      "round": 2,
+      "text": "-2",
+      "value": -2,
+      "raw": "-2",
+      "pass": true
+    },
+    {
+      "id": "N02",
+      "layout": "grid",
+      "round": 2,
+      "text": "1.5",
+      "value": 1.5,
+      "raw": "1.5",
+      "pass": true
+    },
+    {
+      "id": "N02",
+      "layout": "grid",
+      "round": 2,
+      "text": ".5",
+      "value": 0.5,
+      "raw": ".5",
+      "pass": true
+    },
+    {
+      "id": "N02",
+      "layout": "grid",
+      "round": 2,
+      "text": "1e3",
+      "value": 1000,
+      "raw": "1e3",
+      "pass": true
+    },
+    {
+      "id": "N01/N04",
+      "layout": "grid",
+      "round": 3,
+      "kind": "number",
+      "text": "-",
+      "after": "-",
+      "state": {
+        "mode": "retained",
+        "revision": 52,
+        "canSuspend": true,
+        "canCapture": false,
+        "blockers": [
+          {
+            "code": "pending-input",
+            "field": "a_amount",
+            "message": "默认值尚未完成，请补全数值或有效日期"
+          }
+        ]
+      },
+      "liveUnchanged": true,
+      "pass": true
+    },
+    {
+      "id": "N01/N04",
+      "layout": "grid",
+      "round": 3,
+      "kind": "number",
+      "text": "1.",
+      "after": "1.",
+      "state": {
+        "mode": "retained",
+        "revision": 55,
+        "canSuspend": true,
+        "canCapture": false,
+        "blockers": [
+          {
+            "code": "pending-input",
+            "field": "a_amount",
+            "message": "默认值尚未完成，请补全数值或有效日期"
+          }
+        ]
+      },
+      "liveUnchanged": true,
+      "pass": true
+    },
+    {
+      "id": "N01/N04",
+      "layout": "grid",
+      "round": 3,
+      "kind": "number",
+      "text": "1e",
+      "after": "1e",
+      "state": {
+        "mode": "retained",
+        "revision": 58,
+        "canSuspend": true,
+        "canCapture": false,
+        "blockers": [
+          {
+            "code": "pending-input",
+            "field": "a_amount",
+            "message": "默认值尚未完成，请补全数值或有效日期"
+          }
+        ]
+      },
+      "liveUnchanged": true,
+      "pass": true
+    },
+    {
+      "id": "N01/N04",
+      "layout": "grid",
+      "round": 3,
+      "kind": "date",
+      "text": "2026-",
+      "after": "2026-",
+      "state": {
+        "mode": "retained",
+        "revision": 61,
+        "canSuspend": true,
+        "canCapture": false,
+        "blockers": [
+          {
+            "code": "pending-input",
+            "field": "a_date",
+            "message": "默认值尚未完成，请补全数值或有效日期"
+          }
+        ]
+      },
+      "liveUnchanged": true,
+      "pass": true
+    },
+    {
+      "id": "N01/N04",
+      "layout": "grid",
+      "round": 3,
+      "kind": "date",
+      "text": "2026-02-30",
+      "after": "2026-02-30",
+      "state": {
+        "mode": "retained",
+        "revision": 64,
+        "canSuspend": true,
+        "canCapture": false,
+        "blockers": [
+          {
+            "code": "pending-input",
+            "field": "a_date",
+            "message": "默认值尚未完成，请补全数值或有效日期"
+          }
+        ]
+      },
+      "liveUnchanged": true,
+      "pass": true
+    },
+    {
+      "id": "N02",
+      "layout": "grid",
+      "round": 3,
+      "text": "0",
+      "value": 0,
+      "raw": "0",
+      "pass": true
+    },
+    {
+      "id": "N02",
+      "layout": "grid",
+      "round": 3,
+      "text": "-2",
+      "value": -2,
+      "raw": "-2",
+      "pass": true
+    },
+    {
+      "id": "N02",
+      "layout": "grid",
+      "round": 3,
+      "text": "1.5",
+      "value": 1.5,
+      "raw": "1.5",
+      "pass": true
+    },
+    {
+      "id": "N02",
+      "layout": "grid",
+      "round": 3,
+      "text": ".5",
+      "value": 0.5,
+      "raw": ".5",
+      "pass": true
+    },
+    {
+      "id": "N02",
+      "layout": "grid",
+      "round": 3,
+      "text": "1e3",
+      "value": 1000,
+      "raw": "1e3",
+      "pass": true
+    },
+    {
+      "id": "N03",
+      "layout": "grid",
+      "text": "",
+      "status": "captured",
+      "pass": true
+    },
+    {
+      "id": "N03",
+      "layout": "grid",
+      "text": " 1",
+      "status": "blocked",
+      "pass": true
+    },
+    {
+      "id": "N03",
+      "layout": "grid",
+      "text": "NaN",
+      "status": "blocked",
+      "pass": true
+    },
+    {
+      "id": "N03",
+      "layout": "grid",
+      "text": "Infinity",
+      "status": "blocked",
+      "pass": true
+    }
+  ]
+}

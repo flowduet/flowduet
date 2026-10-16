@@ -1,0 +1,47 @@
+
+ RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/form-create
+
+ ❯ src/components.test.ts (68 tests | 1 failed | 67 skipped) 1836ms
+   × 授权关闭的真实Dialog closed事件完成收尾并转发null 1834ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/components.test.ts > 授权关闭的真实Dialog closed事件完成收尾并转发null
+AssertionError: expected { Object (mode, revision, ...) } to be null
+
+- Expected:
+null
+
++ Received:
+{
+  "blockers": [
+    {
+      "code": "not-ready",
+      "message": "表单编辑会话尚未就绪或正在收尾",
+    },
+  ],
+  "canCapture": false,
+  "canSuspend": false,
+  "mode": "retained",
+  "revision": 0,
+}
+
+ ❯ src/components.test.ts:1549:33
+    1547|   expect(vm.readEditingState()?.blockers[0]?.code).toBe("not-ready");
+    1548|   dialog.vm.$emit("closed"); await flushPromises();
+    1549|   expect(vm.readEditingState()).toBeNull();
+       |                                 ^
+    1550|   expect(wrapper!.emitted("editingStateChange")?.at(-1)?.[0]).toBeNull…
+    1551| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 67 skipped (68)
+   Start at  18:45:13
+   Duration  4.13s (tests 46%, import 34%, transform 12%, environment 8%)
+
+undefined
+/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/form-create:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run src/components.test.ts -t 真实Dialog

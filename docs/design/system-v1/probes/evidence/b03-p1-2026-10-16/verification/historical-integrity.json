@@ -1,0 +1,10 @@
+{
+  "baseline": "56d9e07",
+  "counts": {
+    "form-state-2026-10-15": 296,
+    "b03-p0-2026-10-16": 79,
+    "b03-p0-p2-2026-10-16": 78
+  },
+  "total": 453,
+  "sha256AndBaselineGitBytesMatch": true
+}

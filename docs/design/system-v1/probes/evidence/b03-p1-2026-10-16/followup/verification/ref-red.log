@@ -1,0 +1,36 @@
+
+ RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/form-create
+
+ ❯ src/components.test.ts (75 tests | 1 failed | 73 skipped) 3895ms
+   × 同ID新会话尚未挂载时不读取或收集旧子ref 1773ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/components.test.ts > 同ID新会话尚未挂载时不读取或收集旧子ref
+AssertionError: expected undefined to be 'not-ready' // Object.is equality
+
+- Expected:
+"not-ready"
+
++ Received:
+undefined
+
+ ❯ src/components.test.ts:1657:52
+    1655|   expect(vm.commitPendingEdit()).toBe(true);
+    1656|   wrapper!.get('[data-test="form-edit-btn-form_apply"]').element.dispa…
+    1657|   expect(vm.readEditingState()?.blockers[0]?.code).toBe("not-ready");
+       |                                                    ^
+    1658|   expect(vm.commitPendingEdit()).toBe(false);
+    1659|   expect(wrapper!.emitted("updateContent")?.length).toBe(1);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 1 passed | 73 skipped (75)
+   Start at  19:23:26
+   Duration  6.30s (tests 64%, import 23%, transform 8%, environment 5%)
+
+undefined
+/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/form-create:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run src/components.test.ts -t 尚未挂载时不读取|迟到modelValue

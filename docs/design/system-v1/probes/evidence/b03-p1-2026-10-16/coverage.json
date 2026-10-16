@@ -1,0 +1,214 @@
+{
+  "sourceCommit": "23fb82653aa0f7119622186a2bc72733e6ed439e",
+  "p1": "passed-limited",
+  "B03": "blocked",
+  "counts": {
+    "numbers-dates": 68,
+    "candidates": 21,
+    "dialogs": 21,
+    "calendar-shortcuts": 6,
+    "dialog-boundaries": 9
+  },
+  "total": 125,
+  "legacyFailureMapping": [
+    {
+      "legacy": {
+        "file": "../form-state-2026-10-15/final/C2-pending.json",
+        "arrayIndex": 2,
+        "field": "F03",
+        "layout": "top",
+        "run": 1,
+        "pass": false
+      },
+      "retained": {
+        "file": "final/numbers-dates.json",
+        "arrayIndex": 0,
+        "pass": true
+      }
+    },
+    {
+      "legacy": {
+        "file": "../form-state-2026-10-15/final/C2-pending.json",
+        "arrayIndex": 6,
+        "field": "F07",
+        "layout": "top",
+        "run": 1,
+        "pass": false
+      },
+      "retained": {
+        "file": "final/numbers-dates.json",
+        "arrayIndex": 3,
+        "pass": true
+      }
+    },
+    {
+      "legacy": {
+        "file": "../form-state-2026-10-15/final/C2-pending.json",
+        "arrayIndex": 10,
+        "field": "F03",
+        "layout": "grid",
+        "run": 1,
+        "pass": false
+      },
+      "retained": {
+        "file": "final/numbers-dates.json",
+        "arrayIndex": 34,
+        "pass": true
+      }
+    },
+    {
+      "legacy": {
+        "file": "../form-state-2026-10-15/final/C2-pending.json",
+        "arrayIndex": 14,
+        "field": "F07",
+        "layout": "grid",
+        "run": 1,
+        "pass": false
+      },
+      "retained": {
+        "file": "final/numbers-dates.json",
+        "arrayIndex": 37,
+        "pass": true
+      }
+    },
+    {
+      "legacy": {
+        "file": "../form-state-2026-10-15/final/C2-pending.json",
+        "arrayIndex": 18,
+        "field": "F03",
+        "layout": "top",
+        "run": 2,
+        "pass": false
+      },
+      "retained": {
+        "file": "final/numbers-dates.json",
+        "arrayIndex": 10,
+        "pass": true
+      }
+    },
+    {
+      "legacy": {
+        "file": "../form-state-2026-10-15/final/C2-pending.json",
+        "arrayIndex": 22,
+        "field": "F07",
+        "layout": "top",
+        "run": 2,
+        "pass": false
+      },
+      "retained": {
+        "file": "final/numbers-dates.json",
+        "arrayIndex": 13,
+        "pass": true
+      }
+    },
+    {
+      "legacy": {
+        "file": "../form-state-2026-10-15/final/C2-pending.json",
+        "arrayIndex": 26,
+        "field": "F03",
+        "layout": "grid",
+        "run": 2,
+        "pass": false
+      },
+      "retained": {
+        "file": "final/numbers-dates.json",
+        "arrayIndex": 44,
+        "pass": true
+      }
+    },
+    {
+      "legacy": {
+        "file": "../form-state-2026-10-15/final/C2-pending.json",
+        "arrayIndex": 30,
+        "field": "F07",
+        "layout": "grid",
+        "run": 2,
+        "pass": false
+      },
+      "retained": {
+        "file": "final/numbers-dates.json",
+        "arrayIndex": 47,
+        "pass": true
+      }
+    },
+    {
+      "legacy": {
+        "file": "../form-state-2026-10-15/final/C2-pending.json",
+        "arrayIndex": 34,
+        "field": "F03",
+        "layout": "top",
+        "run": 3,
+        "pass": false
+      },
+      "retained": {
+        "file": "final/numbers-dates.json",
+        "arrayIndex": 20,
+        "pass": true
+      }
+    },
+    {
+      "legacy": {
+        "file": "../form-state-2026-10-15/final/C2-pending.json",
+        "arrayIndex": 38,
+        "field": "F07",
+        "layout": "top",
+        "run": 3,
+        "pass": false
+      },
+      "retained": {
+        "file": "final/numbers-dates.json",
+        "arrayIndex": 23,
+        "pass": true
+      }
+    },
+    {
+      "legacy": {
+        "file": "../form-state-2026-10-15/final/C2-pending.json",
+        "arrayIndex": 42,
+        "field": "F03",
+        "layout": "grid",
+        "run": 3,
+        "pass": false
+      },
+      "retained": {
+        "file": "final/numbers-dates.json",
+        "arrayIndex": 54,
+        "pass": true
+      }
+    },
+    {
+      "legacy": {
+        "file": "../form-state-2026-10-15/final/C2-pending.json",
+        "arrayIndex": 46,
+        "field": "F07",
+        "layout": "grid",
+        "run": 3,
+        "pass": false
+      },
+      "retained": {
+        "file": "final/numbers-dates.json",
+        "arrayIndex": 57,
+        "pass": true
+      }
+    }
+  ],
+  "remaining": {
+    "P2-text": 4,
+    "P3-Escape-cancel": 3,
+    "V01": "unverified",
+    "APP-T": "independent; no root-cause-fix claim"
+  },
+  "note": "12条只在retained修复，不改legacy旧负例；协议故障/组合/双开设置不是OS或ERR05自然异常。",
+  "finalSourceCommit": "d9617b0a4f46a6699e4123bdf8ee1b9b70a250b3",
+  "followup": {
+    "directory": "followup",
+    "fullTest": 827,
+    "replayedSubset": 30,
+    "note": "Dialog子集补修重放；不把初轮125宣称为最终head重放。"
+  },
+  "headerFollowup": {
+    "directory": "header-followup",
+    "fullTest": 828,
+    "replayedSubset": 30
+  }
+}

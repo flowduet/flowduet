@@ -1,0 +1,13 @@
+### Browser `b03-p1` opened with pid 53075.
+### Ran Playwright code
+```js
+await page.goto('http://127.0.0.1:5178/probes/stage-zero/index.html');
+```
+### Page
+- Page URL: http://127.0.0.1:5178/probes/stage-zero/index.html
+- Page Title: FlowDuet 阶段零探针
+- Console: 1 errors, 0 warnings
+### Snapshot
+- [Snapshot](.playwright-cli/page-2026-10-16T10-58-26-193Z.yml)
+### Events
+- New console entries: .playwright-cli/console-2026-10-16T10-58-23-732Z.log#L1

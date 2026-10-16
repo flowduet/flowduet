@@ -1,0 +1,9 @@
+
+ RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground
+
+
+ Test Files  3 passed (3)
+      Tests  143 passed (143)
+   Start at  18:28:41
+   Duration  5.79s (import 43%, tests 26%, transform 22%, environment 8%)
+
