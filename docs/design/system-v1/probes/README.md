@@ -14,7 +14,7 @@
 
 ## B03后续修复材料（待审阅）
 
-已整理[B03最小生产修复提案](../../2026-10-16-b03-minimal-production-fixes-proposal.md)及[薄切片计划](../../plans/2026-10-16-b03-minimal-production-fixes.md)，顺序为数值/日期中间输入、文字空串、拖拽取消。建议显式retained模式且保留legacy默认，R不采用；取消须先证明公开非重建通道，否则停片另审。APP-T默认超时独立列项。本次仅文档，未改产品/探针代码，B03结论不变，未推进D/E或推送。
+已整理[B03最小生产修复提案](../../2026-10-16-b03-minimal-production-fixes-proposal.md)及[薄切片计划](../../plans/2026-10-16-b03-minimal-production-fixes.md)，顺序为数值/日期中间输入、文字空串、拖拽取消。建议显式retained模式且保留legacy默认，R不采用；取消须先证明公开非重建通道，否则停片另审。APP-T默认超时独立列项。复审P2已在提案§4.4及M01–M08补充retained FormManager状态转发、关闭授权和Escape优先级，legacy默认不变；薄切片计划同步列入真实Dialog关闭/重开回归。本次仅文档，未改产品/探针代码，B03结论不变，未推进D/E或推送。
 
 ## 当前结论
 
