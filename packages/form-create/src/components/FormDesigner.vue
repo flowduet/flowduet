@@ -175,17 +175,12 @@ function hasBadInput(target: Element): boolean {
   return target instanceof HTMLInputElement && target.validity.badInput;
 }
 function confirmControl(target: Element, token: symbol) {
-  const value = controlValue(target);
   void nextTick(() => {
     // 旧change/恢复回调不能放行同一控件在该tick内更新后的输入。
-    if (
-      disposed ||
-      hasBadInput(target) ||
-      pendingControls.get(target) !== token ||
-      controlValue(target) !== value
-    )
-      return;
+    if (disposed || hasBadInput(target) || pendingControls.get(target) !== token) return;
     pendingControls.delete(target);
+    // 同次公开确认允许provider把01等合法字形归一；新输入由token判断，不能靠字符串相等。
+    const value = controlValue(target);
     if (value !== undefined) focusValues.set(target, value);
     notifyState();
   });

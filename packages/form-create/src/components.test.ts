@@ -1903,3 +1903,24 @@ it("P1复审P2：原生number的badInput空串不能冒充恢复初始空值", a
   await flushPromises();
   expect(vm.captureContent().status).toBe("captured");
 });
+
+it("P1复审P2：同次change和blur的合法number归一后解除等待", async () => {
+  const vm = await retainedEditor();
+  await selectRetained("amount");
+  const item = wrapper!
+    .findComponent(FcDesigner)
+    .findAll("._fc-r-config .el-form-item")
+    .find((row) => row.text().includes("设置计数器允许的最小值"))!;
+  const input = item.get<HTMLInputElement>('input[type="number"]');
+  input.element.focus();
+  typeNative(input.element, "01");
+  input.element.dispatchEvent(new Event("change", { bubbles: true }));
+  input.element.blur();
+  await flushPromises();
+  expect(input.element.value).toBe("1");
+  expect(vm.readEditingState().canSuspend).toBe(true);
+  const captured = vm.captureContent();
+  expect(captured.status).toBe("captured");
+  if (captured.status === "captured")
+    expect(JSON.parse(captured.content.rules)[0].props.min).toBe(1);
+});
