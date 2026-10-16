@@ -635,7 +635,7 @@ defineExpose({ commitPendingEdit, hasOpenEditor, readEditingState });
         <button
           :data-form-close-owner="editorSession?.key"
           data-test="form-manager-close"
-          @click="editorSession?.requestClose()"
+          v-bind="{ onClick: editorSession?.requestClose ?? (() => {}) }"
         >
           关闭
         </button>

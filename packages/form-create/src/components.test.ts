@@ -1679,3 +1679,24 @@ it("同ID新会话尚未挂载时不读取或收集旧子ref", async () => {
   expect(content.status).toBe("captured");
   if (content.status === "captured") expect(JSON.parse(content.content.rules)[0].value).toBe(0);
 });
+
+it("旧页头关闭按钮的迟到click不取得新会话的放弃授权", async () => {
+  const vm = await retainedManager();
+  await managerRaw("7");
+  const oldX = wrapper!.get('[data-test="form-manager-close"]').element;
+  expect(vm.commitPendingEdit()).toBe(true);
+  await flushPromises();
+  await wrapper!.get('[data-test="form-edit-btn-form_apply"]').trigger("click");
+  await flushPromises();
+  await managerRaw("8");
+  const confirm = vi.spyOn(ElMessageBox, "confirm").mockRejectedValue("cancel");
+  try {
+    oldX.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+    await flushPromises();
+    expect(confirm).not.toHaveBeenCalled();
+    expect(vm.hasOpenEditor()).toBe(true);
+    expect(wrapper!.emitted("updateContent")?.length).toBe(1);
+  } finally {
+    confirm.mockRestore();
+  }
+});
