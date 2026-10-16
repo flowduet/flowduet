@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { onBeforeMount, onMounted, ref } from "vue";
+import { nextTick, onBeforeMount, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { ElButton } from "element-plus";
 import FcDesigner from "@form-create/designer";
 import { parseFormOptions } from "../form-schema.js";
 import { ensureFormCreateInstalled } from "../form-create-setup.js";
-import { DESIGNER_CONFIG, FIELD_MENU } from "./designer-config.js";
+import { DESIGNER_CONFIG, FIELD_MENU, retainedDesignerConfig } from "./designer-config.js";
 import { prepareCheckboxDefaults, restoreCheckboxDefaults } from "./checkbox-defaults.js";
 
 /**
@@ -18,9 +18,19 @@ import { prepareCheckboxDefaults, restoreCheckboxDefaults } from "./checkbox-def
  * UI 入口；栅格布局只能拖入顶层（checkDrag 拒绝嵌套）。AI 模块关闭
  * （迭代三不接入 Pro / AI 助理）。
  */
+import type {
+  FormDesignerBlocker,
+  FormDesignerEditingState,
+  FormDesignerCaptureResult,
+} from "../editor-state.js";
+import { createEditorInputState, createEditorInstanceKey } from "./editor-input-state.js";
+import NumberDefaultEditor from "./NumberDefaultEditor.vue";
+import DateDefaultEditor from "./DateDefaultEditor.vue";
+
 const props = defineProps<{
   /** 表单名（展示用） */
   name: string;
+  editingMode?: "legacy" | "retained";
   /** 字段规则序列化串（JSON 字符串，空内容传 "[]"） */
   rules: string;
   /** 表单配置序列化串（JSON 字符串） */
@@ -33,10 +43,163 @@ const emit = defineEmits<{
   cancel: [];
   /** 未提交输入或结构编辑也属于当前设计变更。 */
   draftChange: [];
+  editingStateChange: [state: FormDesignerEditingState];
 }>();
 
 const designerRef = ref<InstanceType<typeof FcDesigner> | null>(null);
 const hostRef = ref<HTMLElement | null>(null);
+const mode = props.editingMode ?? "legacy";
+const owner = `flowduet-calendar-${createEditorInstanceKey()}`;
+let revision = 0,
+  ready = false,
+  disposed = false,
+  dragging = false,
+  dragSettling = false,
+  foreignComposition = false;
+let changedMode = false,
+  replaced = false;
+const pendingControls = new Set<EventTarget>();
+const captureError = ref("");
+const inputState = createEditorInputState((edited) => {
+  if (edited) {
+    revision++;
+    emit("draftChange");
+  }
+  notifyState();
+});
+const config =
+  mode === "retained"
+    ? retainedDesignerConfig((source) => inputState.bind(source), owner)
+    : DESIGNER_CONFIG;
+function blockers(): FormDesignerBlocker[] {
+  if (disposed) return [{ code: "disposed", message: "编辑器已销毁" }];
+  if (mode !== "retained" || changedMode)
+    return [
+      { code: "unsupported-mode", message: "编辑模式仅在挂载时确定；legacy请使用exportContent" },
+    ];
+  if (!ready) return [{ code: "not-ready", message: "编辑器尚未准备好" }];
+  if (replaced)
+    return [{ code: "version-changed", message: "外部定义发生替换，请保留输入并确认替换" }];
+  const result = inputState.blockers();
+  // visible-change在弹层动画结束后才通知；公开ARIA展开状态覆盖动画开始的窗口。
+  if (
+    hostRef.value?.querySelector(
+      '[role="combobox"][aria-expanded="true"], input[aria-expanded="true"]',
+    )
+  )
+    result.push({ code: "pending-update", message: "请先确认或关闭本编辑器的弹层" });
+
+  if (foreignComposition) result.push({ code: "composing", message: "属性输入法组合尚未确认" });
+  if (dragging || dragSettling)
+    result.push({ code: "dragging", message: "拖动尚未确认结束，P3取消能力尚未提供" });
+  if (pendingControls.size)
+    result.push({ code: "pending-update", message: "请先在原属性控件中确认当前输入" });
+  return result;
+}
+function readEditingState(): FormDesignerEditingState {
+  const issues = blockers();
+  return Object.freeze({
+    mode,
+    revision,
+    canSuspend: issues.every((b) => b.code === "pending-input" || b.code === "unsupported-input"),
+    canCapture: issues.length === 0,
+    blockers: Object.freeze(issues.map((b) => Object.freeze(b))),
+  });
+}
+function notifyState() {
+  if (mode === "retained" && !disposed) emit("editingStateChange", readEditingState());
+}
+watch(
+  () => props.editingMode,
+  (value) => {
+    if ((value ?? "legacy") !== mode) {
+      changedMode = true;
+      revision++;
+      notifyState();
+    }
+  },
+  { flush: "sync" },
+);
+watch(
+  () => [props.rules, props.options],
+  () => {
+    if (mode === "retained") {
+      replaced = true;
+      revision++;
+      notifyState();
+    }
+  },
+  { flush: "sync" },
+);
+function nativeInput(event: Event) {
+  // 自有输入已由缓冲控制器记账；失焦产生的change不是新的设计修改。
+  if (
+    mode === "retained" &&
+    event.target instanceof Element &&
+    event.target.matches("[data-retained-input]")
+  )
+    return;
+  if (
+    mode === "retained" &&
+    event.target instanceof Element &&
+    !event.target.matches("[data-retained-input]")
+  ) {
+    if (event.type === "input") pendingControls.add(event.target);
+    else {
+      const target = event.target;
+      void nextTick(() => {
+        pendingControls.delete(target);
+        notifyState();
+      });
+    }
+    notifyState();
+  }
+  notifyDraftChange();
+}
+function composition(event: CompositionEvent) {
+  if (
+    mode !== "retained" ||
+    (event.target instanceof Element && event.target.matches("[data-retained-input]"))
+  )
+    return;
+  foreignComposition = true;
+  revision++;
+  notifyState();
+  if (event.type === "compositionend")
+    void nextTick(() => {
+      foreignComposition = false;
+      notifyState();
+    });
+}
+function drag(event: DragEvent) {
+  if (mode !== "retained") return;
+  if (event.type === "dragstart") {
+    dragging = true;
+    revision++;
+    notifyState();
+  } else {
+    dragging = false;
+    dragSettling = true;
+    notifyState();
+    void nextTick(() => {
+      dragSettling = false;
+      notifyState();
+    });
+  }
+}
+function removeField(source: Parameters<typeof inputState.release>[0]) {
+  if (mode === "retained") inputState.release(source);
+  notifyDraftChange();
+}
+function clearFields() {
+  if (mode === "retained") inputState.clear();
+  notifyDraftChange();
+}
+onBeforeUnmount(() => {
+  disposed = true;
+  inputState.clear();
+  pendingControls.clear();
+});
 
 /** 第三方下拉与选项表格仅发 Vue 事件，交互时保守标记潜在编辑，避免漏报。 */
 function onDesignInteraction(event: MouseEvent | KeyboardEvent): void {
@@ -48,20 +211,35 @@ function onDesignInteraction(event: MouseEvent | KeyboardEvent): void {
   )
     return;
   notifyDraftChange();
+  if (mode === "retained") void nextTick(notifyState);
 }
 
 function notifyDraftChange(): void {
+  if (mode === "retained") {
+    revision++;
+    notifyState();
+  }
   emit("draftChange");
 }
 
 // 宿主未全局安装时补装（画布字段渲染依赖 elm 组件映射注册）
-onBeforeMount(ensureFormCreateInstalled);
+onBeforeMount(() => {
+  ensureFormCreateInstalled();
+  if (mode === "retained") {
+    FcDesigner.component("flowduetNumberDefault", NumberDefaultEditor);
+    FcDesigner.component("flowduetDateDefault", DateDefaultEditor);
+  }
+});
 
 onMounted(() => {
   const designer = designerRef.value;
   if (designer === null) return;
   designer.setRule(prepareCheckboxDefaults(props.rules) as never);
   designer.setOption(parseFormOptions(props.options) as never);
+  void nextTick(() => {
+    ready = true;
+    notifyState();
+  });
 });
 
 /**
@@ -70,6 +248,13 @@ onMounted(() => {
  * （挂载未完成）时返回 null，调用方据此中止保存而不是误报成功。
  */
 function exportContent(): { rules: string; options: string } | null {
+  if (mode === "retained") {
+    const result = captureContent();
+    if (result.status === "captured") return result.content;
+    if (result.status === "failed") throw new Error(result.message);
+    captureError.value = result.blockers.map((b) => b.message).join("；");
+    return null;
+  }
   const designer = designerRef.value;
   if (designer === null) return null;
   // ValueInput 在失焦时才提交；快捷键不会自然失焦，先收集本编辑器内的焦点缓冲。
@@ -80,11 +265,42 @@ function exportContent(): { rules: string; options: string } | null {
   return { rules: FcDesigner.designerForm.toJson(rules), options: designer.getOptionsJson() };
 }
 
-defineExpose({ exportContent });
+function captureContent(): FormDesignerCaptureResult {
+  const before = readEditingState();
+  if (!before.canCapture) return { status: "blocked", blockers: before.blockers };
+  const designer = designerRef.value;
+  if (!designer)
+    return { status: "blocked", blockers: [{ code: "not-ready", message: "编辑器尚未准备好" }] };
+  try {
+    const rules = restoreCheckboxDefaults(designer.getJson());
+    const content = {
+      rules: FcDesigner.designerForm.toJson(rules),
+      options: designer.getOptionsJson(),
+    };
+    const after = readEditingState();
+    if (after.revision !== before.revision || !after.canCapture)
+      return {
+        status: "blocked",
+        blockers: [{ code: "version-changed", message: "捕获期间输入已变化，请重新收集" }],
+      };
+    return { status: "captured", revision: before.revision, content };
+  } catch (error) {
+    return { status: "failed", message: error instanceof Error ? error.message : String(error) };
+  }
+}
+defineExpose({ exportContent, readEditingState, captureContent });
 
 function save(): void {
-  const content = exportContent();
+  let content;
+  try {
+    content = exportContent();
+  } catch (error) {
+    if (mode === "legacy") throw error;
+    captureError.value = error instanceof Error ? error.message : String(error);
+    return;
+  }
   if (content === null) return;
+  captureError.value = "";
   emit("save", content.rules, content.options);
 }
 </script>
@@ -96,28 +312,38 @@ function save(): void {
     data-test="form-designer"
     @click.capture="onDesignInteraction"
     @keydown.capture="onDesignInteraction"
-    @input.capture="notifyDraftChange"
-    @change.capture="notifyDraftChange"
+    @input.capture="nativeInput"
+    @change.capture="nativeInput"
+    @compositionstart.capture="composition"
+    @compositionend.capture="composition"
+    @focusin.capture="mode === 'retained' && nextTick(notifyState)"
+    @dragstart.capture="drag"
+    @dragend.capture="drag"
   >
     <div class="form-designer-toolbar">
       <span class="form-designer-name" data-test="form-designer-name">{{ name }}</span>
-      <ElButton size="small" data-test="form-designer-cancel" @click="emit('cancel')"
+      <ElButton
+        size="small"
+        data-test="form-designer-cancel"
+        data-form-close-control
+        @click="emit('cancel')"
         >取消</ElButton
       >
       <ElButton size="small" type="primary" data-test="form-designer-save" @click="save">
         保存表单内容
       </ElButton>
     </div>
+    <p v-if="captureError" role="alert">{{ captureError }}</p>
     <FcDesigner
       ref="designerRef"
       :menu="FIELD_MENU"
-      :config="DESIGNER_CONFIG"
+      :config="config"
       height="460px"
       @create="notifyDraftChange"
       @copy="notifyDraftChange"
-      @delete="notifyDraftChange"
+      @delete="removeField"
       @drag="notifyDraftChange"
-      @clear="notifyDraftChange"
+      @clear="clearFields"
       @paste-rule="notifyDraftChange"
       @sort-up="notifyDraftChange"
       @sort-down="notifyDraftChange"

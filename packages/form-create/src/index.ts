@@ -40,3 +40,9 @@ export type { FieldRule } from "./form-schema.js";
 export { default as FormManager } from "./components/FormManager.vue";
 export { default as FormDesigner } from "./components/FormDesigner.vue";
 export { default as FormPreview } from "./components/FormPreview.vue";
+
+export type {
+  FormDesignerBlocker,
+  FormDesignerEditingState,
+  FormDesignerCaptureResult,
+} from "./editor-state.js";

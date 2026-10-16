@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ref } from "vue";
-import { ElButton, ElDialog, ElInput } from "element-plus";
+import { ref, shallowRef, nextTick, onMounted, onBeforeUnmount, watch } from "vue";
+import { ElButton, ElDialog, ElInput, ElMessageBox } from "element-plus";
 import type { FormDefinition } from "../document.js";
 import { assertFormDefinitionValid } from "../form-schema.js";
 import FormDesigner from "./FormDesigner.vue";
@@ -11,9 +11,13 @@ import FormDesigner from "./FormDesigner.vue";
  * 引用守卫在会话侧（deleteForm），面板只经事件上抛操作，状态归
  * FlowDesignSession，宿主接线即可。
  */
-defineProps<{
+const props = defineProps<{
   forms: readonly FormDefinition[];
+  editingMode?: "legacy" | "retained";
 }>();
+
+import { createEditorInstanceKey } from "./editor-input-state.js";
+import type { FormDesignerEditingState } from "../editor-state.js";
 
 const emit = defineEmits<{
   create: [name: string];
@@ -24,6 +28,7 @@ const emit = defineEmits<{
   delete: [id: string];
   /** 表单编辑器尚未提交的设计变更，供宿主更新未保存状态。 */
   draftChange: [];
+  editingStateChange: [state: FormDesignerEditingState | null];
 }>();
 
 const newName = ref("");
@@ -37,6 +42,251 @@ const deletingId = ref<string | null>(null);
 const editing = ref<FormDefinition | null>(null);
 const editVisible = ref(false);
 const editError = ref("");
+const mode = props.editingMode ?? "legacy";
+const ownerKey = createEditorInstanceKey();
+const modalClass = `flowduet-manager-modal-${ownerKey}`;
+const contentClass = `flowduet-manager-content-${ownerKey}`;
+type EditorSession = {
+  key: string;
+  source: FormDefinition;
+  invalidated: boolean;
+  closing: boolean;
+  refused: boolean;
+  confirming: boolean;
+  handlers: Record<string, (...args: never[]) => unknown>;
+  closed: () => void;
+  requestClose: () => void;
+};
+const editorSession = shallowRef<EditorSession | null>(null);
+let disposed = false,
+  unsupportedMode = false;
+function current(session: EditorSession | null): session is EditorSession {
+  return session !== null && editorSession.value === session && !session.closing && !disposed;
+}
+function definitionMatches(session: EditorSession): boolean {
+  const source = props.forms.find((form) => form.id === session.source.id);
+  const loaded = editing.value;
+  return (
+    source === session.source &&
+    loaded !== null &&
+    source.rules === loaded.rules &&
+    source.options === loaded.options &&
+    source.name === loaded.name &&
+    source.provider === loaded.provider
+  );
+}
+function readEditingState(): FormDesignerEditingState | null {
+  if (editorSession.value === null && editing.value === null) return null;
+  if (unsupportedMode)
+    return Object.freeze({
+      mode,
+      revision: 0,
+      canCapture: false,
+      canSuspend: false,
+      blockers: Object.freeze([
+        { code: "unsupported-mode" as const, message: "编辑模式不可在当前挂载中切换" },
+      ]),
+    });
+  if (editorSession.value?.closing || !designerRef.value)
+    return Object.freeze({
+      mode,
+      revision: 0,
+      canSuspend: false,
+      canCapture: false,
+      blockers: Object.freeze([
+        { code: "not-ready" as const, message: "表单编辑会话尚未就绪或正在收尾" },
+      ]),
+    });
+  const child = designerRef.value.readEditingState();
+  if (
+    mode === "retained" &&
+    editorSession.value &&
+    (editorSession.value.invalidated || !definitionMatches(editorSession.value))
+  )
+    return Object.freeze({
+      ...child,
+      canSuspend: false,
+      canCapture: false,
+      blockers: Object.freeze([
+        {
+          code: "version-changed" as const,
+          message: "表单定义已被替换，请由宿主确认处理后重开；当前输入仍保留",
+        },
+      ]),
+    });
+  return child;
+}
+function forwardState() {
+  if (mode === "retained" && !disposed) emit("editingStateChange", readEditingState());
+}
+watch(
+  () => props.editingMode,
+  (value) => {
+    if ((value ?? "legacy") !== mode) {
+      unsupportedMode = true;
+      forwardState();
+    }
+  },
+  { flush: "sync" },
+);
+watch(
+  () => {
+    const source = props.forms.find((form) => form.id === editing.value?.id);
+    return [source, source?.rules, source?.options, source?.name, source?.provider] as const;
+  },
+  () => {
+    const session = editorSession.value;
+    if (mode === "retained" && current(session) && !definitionMatches(session)) {
+      session.invalidated = true;
+      forwardState();
+    }
+  },
+  { flush: "sync" },
+);
+function finishClose(session: EditorSession) {
+  if (!current(session)) return;
+  session.closing = true;
+  editing.value = null;
+  editVisible.value = false;
+  forwardState();
+}
+async function requestClose(session: EditorSession) {
+  if (!current(session) || session.confirming || mode !== "retained") return;
+  if (session.refused) {
+    session.refused = false;
+    return;
+  }
+  let state = readEditingState();
+  if (
+    state?.blockers.some((b) => b.code === "pending-update") &&
+    !state.blockers.some((b) => b.code === "composing" || b.code === "dragging")
+  ) {
+    await nextTick();
+    if (!current(session) || unsupportedMode) return;
+    state = readEditingState();
+  }
+  if (!state?.canSuspend) {
+    editError.value = state?.blockers.map((b) => b.message).join("；") ?? "表单编辑器尚未准备好";
+    return;
+  }
+  const revision = state.revision;
+  session.confirming = true;
+  try {
+    await ElMessageBox.confirm("放弃本表单全部未提交修改并关闭？", "关闭表单", {
+      confirmButtonText: "放弃并关闭",
+      cancelButtonText: "继续编辑",
+      type: "warning",
+    });
+    if (!current(session) || unsupportedMode) return;
+    const after = readEditingState();
+    if (!after?.canSuspend || after.revision !== revision) {
+      editError.value = "确认期间编辑状态已变化，请重新确认";
+      return;
+    }
+    // 最终复验到撤销回调资格之间没有await，授权只属于此次会话。
+    finishClose(session);
+  } catch {
+    /* 取消、关闭确认或异常均未获得放弃授权。 */
+  } finally {
+    session.confirming = false;
+  }
+}
+function closeGesture(event: Event) {
+  const session = editorSession.value;
+  if (mode !== "retained" || !current(session) || !editVisible.value) return;
+  const path = event.composedPath();
+  const ownModal = path.some(
+    (el) => el instanceof HTMLElement && el.classList.contains(modalClass),
+  );
+  const ownContent = path.some(
+    (el) => el instanceof HTMLElement && el.classList.contains(contentClass),
+  );
+  const ownButton = path.some(
+    (el) =>
+      el instanceof HTMLElement &&
+      (el.dataset.formCloseOwner === session.key ||
+        (ownModal && el.hasAttribute("data-form-close-control"))),
+  );
+  const keyboard = event instanceof KeyboardEvent;
+  if (keyboard && event.key === "Tab" && ownContent && !readEditingState()?.canSuspend) {
+    const content = path.find(
+      (el) => el instanceof HTMLElement && el.classList.contains(contentClass),
+    );
+    if (!(content instanceof HTMLElement)) return;
+    const controls = [
+      ...content.querySelectorAll<HTMLElement>(
+        "button, input, select, textarea, a[href], [tabindex]",
+      ),
+    ].filter(
+      (el) =>
+        el.tabIndex >= 0 &&
+        !el.hasAttribute("disabled") &&
+        el.getAttribute("aria-disabled") !== "true" &&
+        el.getClientRects().length > 0,
+    );
+    const index = controls.indexOf(content.ownerDocument.activeElement as HTMLElement);
+    const target =
+      controls[(index + (event.shiftKey ? -1 : 1) + controls.length) % controls.length];
+    if (
+      target &&
+      (target.dataset.formCloseOwner === session.key ||
+        target.hasAttribute("data-form-close-control"))
+    ) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+    return;
+  }
+
+  if (
+    (!ownModal && !ownButton) ||
+    (!ownButton && ownContent) ||
+    (keyboard && !["Enter", " "].includes(event.key))
+  )
+    return;
+  session.refused = false;
+  const state = readEditingState();
+  if (!state?.canSuspend) {
+    editError.value = state?.blockers.map((b) => b.message).join("；") ?? "表单编辑器尚未准备好";
+    session.refused = true;
+    event.preventDefault();
+    event.stopPropagation();
+  }
+}
+onMounted(() => {
+  if (mode !== "retained") return;
+  document.addEventListener("pointerdown", closeGesture, true);
+  document.addEventListener("keydown", closeGesture, true);
+  document.addEventListener("click", refusedClick, true);
+});
+function refusedClick(event: Event) {
+  const session = editorSession.value;
+  if (mode !== "retained" || !current(session) || !session.refused) return;
+  const path = event.composedPath();
+  const ownModal = path.some(
+    (el) => el instanceof HTMLElement && el.classList.contains(modalClass),
+  );
+  const ownContent = path.some(
+    (el) => el instanceof HTMLElement && el.classList.contains(contentClass),
+  );
+  const closeButton = path.some(
+    (el) =>
+      el instanceof HTMLElement &&
+      (el.dataset.formCloseOwner === session.key ||
+        (ownModal && el.hasAttribute("data-form-close-control"))),
+  );
+  const own = closeButton || (ownModal && !ownContent);
+  if (!own) return;
+  session.refused = false;
+  event.preventDefault();
+  event.stopPropagation();
+}
+onBeforeUnmount(() => {
+  disposed = true;
+  document.removeEventListener("pointerdown", closeGesture, true);
+  document.removeEventListener("keydown", closeGesture, true);
+  document.removeEventListener("click", refusedClick, true);
+});
 
 function submitCreate(): void {
   if (newName.value.trim() === "") {
@@ -82,25 +332,76 @@ function submitRename(): void {
 }
 
 function openEditor(form: FormDefinition): void {
+  if (mode === "retained" && current(editorSession.value)) return;
   editError.value = "";
+  const session: EditorSession = {
+    key: createEditorInstanceKey(),
+    source: form,
+    invalidated: false,
+    closing: false,
+    refused: false,
+    confirming: false,
+    handlers: {},
+    closed: () => {},
+    requestClose: () => {},
+  };
+  session.handlers = {
+    save: (rules: string, options: string) => {
+      if (mode === "legacy" || current(session)) submitContent(rules, options, session);
+    },
+    cancel: () => {
+      if (mode === "legacy") cancelEdit();
+      else void requestClose(session);
+    },
+    draftChange: () => {
+      if (mode === "legacy" || current(session)) emit("draftChange");
+    },
+    editingStateChange: () => {
+      if (mode === "retained" && current(session)) forwardState();
+    },
+  };
+  session.requestClose = () => {
+    if (mode === "retained") void requestClose(session);
+  };
+  session.closed = () => {
+    if (editorSession.value !== session) return;
+    if (mode === "legacy") editing.value = null;
+    else if (!session.closing) return;
+    editorSession.value = null;
+    forwardState();
+  };
+  editorSession.value = session;
   editing.value = { ...form };
   editVisible.value = true;
+  forwardState();
 }
-
 function cancelEdit(): void {
+  if (mode === "retained") {
+    const session = editorSession.value;
+    if (session) void requestClose(session);
+    return;
+  }
   editing.value = null;
   editVisible.value = false;
+  editorSession.value = null;
 }
-
-function onDesignerSave(rules: string, options: string): void {
-  submitContent(rules, options);
+function beforeClose(done: () => void) {
+  if (mode === "legacy") done();
+  else editorSession.value?.requestClose();
 }
 
 /**
  * 提交编辑器内容（守卫 + 上抛 + 收尾）的单一出口：按钮保存与宿主收集
  * （#76 commitPendingEdit）共用。守卫失败返回 false 且编辑器保持打开。
  */
-function submitContent(rules: string, options: string): boolean {
+function submitContent(rules: string, options: string, session = editorSession.value): boolean {
+  if (
+    mode === "retained" &&
+    (!current(session) || unsupportedMode || session.invalidated || !definitionMatches(session))
+  ) {
+    editError.value = "表单编辑会话已变化，请由宿主确认处理后重开";
+    return false;
+  }
   const form = editing.value;
   if (form === null) return false;
   editError.value = "";
@@ -114,8 +415,12 @@ function submitContent(rules: string, options: string): boolean {
     return false;
   }
   emit("updateContent", form.id, rules, options);
-  editing.value = null;
-  editVisible.value = false;
+  if (mode === "retained" && session) finishClose(session);
+  else {
+    editing.value = null;
+    editVisible.value = false;
+    editorSession.value = null;
+  }
   return true;
 }
 
@@ -127,6 +432,19 @@ function submitContent(rules: string, options: string): boolean {
 function commitPendingEdit(): boolean {
   if (!hasOpenEditor()) return true;
   try {
+    if (mode === "retained") {
+      const result = designerRef.value?.captureContent();
+      if (result?.status !== "captured") {
+        editError.value =
+          result?.status === "blocked"
+            ? result.blockers.map((b) => b.message).join("；")
+            : result?.status === "failed"
+              ? result.message
+              : "表单编辑器尚未准备好，请稍后重试";
+        return false;
+      }
+      return submitContent(result.content.rules, result.content.options);
+    }
     const content = designerRef.value?.exportContent();
     if (content === null || content === undefined) {
       editError.value = "表单编辑器尚未准备好，请稍后重试";
@@ -145,7 +463,7 @@ function hasOpenEditor(): boolean {
   return editVisible.value && editing.value !== null;
 }
 
-defineExpose({ commitPendingEdit, hasOpenEditor });
+defineExpose({ commitPendingEdit, hasOpenEditor, readEditingState });
 </script>
 
 <template>
@@ -264,23 +582,42 @@ defineExpose({ commitPendingEdit, hasOpenEditor });
 
     <ElDialog
       v-model="editVisible"
+      :key="mode === 'retained' ? (editorSession?.key ?? 'closed') : 'legacy'"
+      :class="contentClass"
+      :modal-class="modalClass"
+      :show-close="mode === 'legacy'"
+      :close-on-press-escape="mode === 'legacy'"
+      :before-close="
+        mode === 'retained' ? (editorSession?.requestClose ?? (() => {})) : beforeClose
+      "
+      v-bind="{ onClosed: editorSession?.closed }"
       :title="editing ? `编辑表单：${editing.name}` : '编辑表单'"
       width="920px"
       data-test="form-manager-edit-dialog"
       destroy-on-close
     >
+      <template v-if="mode === 'retained'" #header>
+        <span>{{ editing ? `编辑表单：${editing.name}` : "编辑表单" }}</span>
+        <button
+          :data-form-close-owner="editorSession?.key"
+          data-test="form-manager-close"
+          @click="editorSession?.requestClose()"
+        >
+          关闭
+        </button>
+      </template>
       <p v-if="editError" class="form-manager-error" data-test="form-manager-error">
         {{ editError }}
       </p>
       <FormDesigner
         v-if="editing"
         ref="designerRef"
-        @draft-change="emit('draftChange')"
+        :key="editorSession?.key ?? 'closed'"
+        :editing-mode="props.editingMode ?? 'legacy'"
+        v-on="editorSession?.handlers ?? {}"
         :name="editing.name"
         :rules="editing.rules"
         :options="editing.options"
-        @save="onDesignerSave"
-        @cancel="cancelEdit"
       />
     </ElDialog>
   </div>

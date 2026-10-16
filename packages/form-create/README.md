@@ -143,3 +143,19 @@ const xml = await exportDeployXml(session.current!.model, session.current!.forms
 ## License
 
 Apache-2.0（见 [LICENSE](./LICENSE)）
+
+### 显式保留数值/日期输入（retained）
+
+`FormDesigner`、`FormManager` 可传 `editingMode="retained"`；缺省和显式 `legacy` 保持原有导出、保存、取消与 Dialog 行为。模式在挂载时固定，活动期间修改会报告 `unsupported-mode`；更换模式或文档前须由宿主确认放弃/替换，再创建新实例。相同字符串内容的文档替换也须由宿主管理生命期，组件不能仅凭两个 JSON 字符串识别文档身份。
+
+retained 使用自有文本入口保留数值 `-`、`1.`、`1e` 与日期 `2026-` 等中间原文；合法有限数值写入规则为 number，普通日期仅接受有效 `YYYY-MM-DD`，日历仍可明确确认日期。空输入表示未设置，`0` 是有效默认值。六类既有单值日期和自定义 `valueFormat` 未编辑时原样往返；非普通 date/自定义格式的手工编辑会保留原文并报告 `unsupported-input`。这些原文仅存于当前挂载的编辑器，不能序列化到设计文档。
+
+新增三种根导出 DTO：`FormDesignerBlocker`、`FormDesignerEditingState`、`FormDesignerCaptureResult`。`FormDesigner#readEditingState()` 只读返回本实例模式、编辑版本、`canSuspend`、`canCapture` 与原因；`captureContent()` 同步返回 `captured`（成对 rules/options）、`blocked` 或 `failed`。合法输入须经过公开 prop 回显与原规则确认；组合、拖动、弹层、未确认的第三方输入或捕获期间版本变化都会阻断。宿主 UI 可等待一次 `nextTick` 再重读，不能把同步适配器改为异步，也不能在失败时保存旧值。legacy 的新捕获接口返回 `unsupported-mode`，原 `exportContent()` 不变。
+
+retained 的 `exportContent()`、工具栏保存和 `FormManager#commitPendingEdit()` 共用新捕获边界，不主动 blur；blocked 返回 null/false 并保持编辑器，序列化异常仍保留既有错误边界。`editing-state-change` 转发只读状态，与实际设计变更的 `draft-change` 分开，二者都不确认宿主持久化。
+
+`canSuspend=true` 只允许宿主将 **同一 FormDesigner 保持挂载隐藏（K）**；不授权 Dialog 关闭或卸载。FormManager 不提供 K 隐藏/目录缓存。retained 的 X、遮罩和取消均要求明确选择“放弃并关闭”，取消/异常或确认期间实例、版本变化都会保持原编辑器；成功提交才走原内容守卫并关闭。Escape 保留 IME/内部弹层语义，空闲时也不关闭表单；拖动取消尚未交付，Escape 不代表已取消拖动。关闭保护只处理自有实例的手势，不能拦截父级强制卸载。
+
+`FormManager#readEditingState()` 查询/`editing-state-change` 转发当前子状态；活动未就绪或关闭收尾时为不可捕获的 `not-ready` 快照，完全没有编辑器才为 null。未知的同 ID 表单定义替换会保留当前输入并阻断提交，由宿主确认处理后重开。每次打开使用独立会话 key，旧状态、保存、取消、确认和关闭动画回调不能影响同 ID 重开的实例。查询不改编辑版本、不发 `draft-change`。
+
+此能力仅覆盖本轮数值/日期及对应关闭保护。文字显式空串、非重建拖拽取消、OS 输入法与其他未验证项仍需后续验收，B03 整体尚未通过；默认 legacy 不获得 retained 保真承诺。

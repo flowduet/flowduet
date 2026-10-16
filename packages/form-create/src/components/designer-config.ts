@@ -144,3 +144,29 @@ export const DESIGNER_CONFIG: Config = {
   // 对 fcRow 一律拒绝即可杜绝布局嵌套（顶层拖入不走此钩子）
   checkDrag: ({ menu }) => menu.name !== "fcRow",
 };
+
+/** 每实例扩展仅替换数值/日期默认值；其余八类与布局配置沿用legacy。 */
+export function retainedDesignerConfig(
+  bind: (
+    source: Parameters<NonNullable<NonNullable<Config["componentRule"]>["default"]>>[0],
+  ) => unknown,
+  owner: string,
+): Config {
+  return {
+    ...DESIGNER_CONFIG,
+    componentRule: {
+      default: (rule, arg) => {
+        if (rule.type === "inputNumber" || rule.type === "datePicker")
+          return [
+            {
+              type: rule.type === "inputNumber" ? "flowduetNumberDefault" : "flowduetDateDefault",
+              field: "formCreateValue",
+              title: "默认值",
+              props: { binding: bind(rule), owner },
+            },
+          ];
+        return DESIGNER_CONFIG.componentRule!.default!(rule, arg);
+      },
+    },
+  };
+}
