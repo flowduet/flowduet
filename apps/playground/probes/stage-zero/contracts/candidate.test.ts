@@ -4,6 +4,23 @@ import { compile, verticalDiLayout, type ModdleElement } from "@flowduet/core";
 import { fixture } from "./fixtures";
 import { graphValue } from "./candidate";
 import { createContractController } from "./controller";
+import { createSeamRecorder } from "../form-repair/seam-proof";
+
+describe("P0公开接缝观察器（不是产品身份实现）", () => {
+  it("same_field_string_does_not_make_clone_a_source_token", () => {
+    const recorder = createSeamRecorder("A");
+    const source = { field: "same" };
+    expect(recorder.token(source)).toBe(recorder.token(source));
+    expect(recorder.token({ ...source })).not.toBe(recorder.token(source));
+  });
+  it("owners_and_recreated_sources_have_distinct_observation_tokens", () => {
+    const a = createSeamRecorder("A"),
+      b = createSeamRecorder("B");
+    const source = { field: "same" };
+    expect(a.token(source)).not.toBe(b.token(source));
+    expect(a.token({ field: "same" })).not.toBe(a.token(source));
+  });
+});
 
 function withForms() {
   const f = fixture();
