@@ -1,0 +1,20 @@
+[
+  {
+    "preventPopupOpen": false,
+    "source": "native-actions",
+    "intercepted": 0,
+    "popupOpened": 1,
+    "popupStillOpen": 1,
+    "archivedPass": true,
+    "pass": true
+  },
+  {
+    "preventPopupOpen": true,
+    "source": "injected-click-capture-plus-native-actions",
+    "intercepted": 1,
+    "popupOpened": 0,
+    "popupStillOpen": 0,
+    "archivedPass": true,
+    "pass": false
+  }
+]

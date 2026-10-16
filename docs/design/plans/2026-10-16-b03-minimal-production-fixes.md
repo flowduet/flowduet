@@ -60,6 +60,8 @@
 
 P0执行记录：见[公开接缝报告](../system-v1/probes/b03-repair-seams.md)。仅Task 1获授权并完成；公开能力门通过，P1–P4未执行，B03未解除。取入C依赖的方式已由维护者问题卡确认，具体基线、原样默认超时及末次结果保留在独立证据目录。
 
+两项P2补修：原初轮整体通过曾被全面复审收紧；本次仅按明确授权补修P0。Dialog测试私有组件与6项事件协议回归见`form-repair/DialogCloseSeamProbe.vue`、`dialog-close.cases.ts`，原生交叉及弹层断言见[补修报告](../system-v1/probes/b03-p0-p2-followup.md)。当前门裁定以该报告为准，不自动启动P1。
+
 ### Task 2（P1）：数值/日期原文与同步捕获
 
 **Files:**
