@@ -94,6 +94,8 @@ P0执行记录：见[公开接缝报告](../system-v1/probes/b03-repair-seams.md
 
 P1执行记录：基线`develop@56d9e07`，实现`23fb826`、补修`46f720b`/`d9617b0`；见[P1限定验收](../system-v1/probes/b03-p1-repair.md)。最终默认828/828、build/lint/strict通过，初轮125条与补修受影响30条UI重放分列。初轮Standards/Spec各0，收尾自审两项P2级缺陷已补修并经Spec限定静态补核0，页头同类迟到click另补回归并限定核对0；RED与补充回归的证据边界分列，不声称每个后补断言都先见RED。P1交付不解除B03，P2/P3/P4未启动，APP-T仍单列，未推送。
 
+2026-10-17 P1复审补修：生产提交978e957/78a7a78，新增17项正式回归；最终测试保留9aadac4的单数字删除夹具及0851e17的原双Dialog分阶段准备，全局等待助手调整已回撤。当前验证状态及证据以[补修报告](../system-v1/probes/b03-p1-p2-followup.md)为准；既有超时与未通过全量不覆盖，不将后续片自动勾选。
+
 ### Task 3（P2）：文字显式空串与未设置
 
 **Files:** Create: `packages/form-create/src/components/TextDefaultEditor.vue`、`text-defaults.ts`、`text-defaults.test.ts`。Modify: `components/designer-config.ts`、`components/FormDesigner.vue`、`components.test.ts`及P1的`editor-input-state.ts`（均在form-create/src）。只有确需共享递归才局部调整`checkbox-defaults.ts`及其测试，保留旧语义。扩展form-repair样稿、存在性cases和证据。

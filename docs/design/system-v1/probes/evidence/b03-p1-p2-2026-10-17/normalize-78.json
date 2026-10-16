@@ -1,0 +1,11 @@
+{
+  "value": "1",
+  "state": {
+    "mode": "retained",
+    "revision": 4,
+    "canSuspend": true,
+    "canCapture": true,
+    "blockers": []
+  },
+  "capture": "captured"
+}

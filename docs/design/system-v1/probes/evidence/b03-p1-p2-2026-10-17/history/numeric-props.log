@@ -1,0 +1,6 @@
+### Result
+[{"value":"","aria":null,"text":"标签的宽度\npx"},{"value":"","aria":null,"text":"设置计数器允许的最小值"},{"value":"","aria":null,"text":"设置计数器允许的最大值"},{"value":"","aria":null,"text":"数值精度"},{"value":"","aria":null,"text":"计数器步长"},{"value":"","aria":null,"text":"外边距\n内边距\n尺寸\n颜色\n背景\n边框\n圆角\npx\n文字\n样式预览\n阴影\n位置\nSelect\n透明度\n100%\n缩放\n100%\n自定义"}]
+### Ran Playwright code
+```js
+await (async page => {await page.getByRole('button',{name:'B03 P1 修复'}).click(); const r=page.locator('[data-repair-instance="0"]'); await r.locator('._fc-m-drag ._fd-drag-mask').nth(2).click(); return await r.locator('._fc-r-config input[type=number]').evaluateAll(xs=>xs.map(x=>({value:x.value,aria:x.getAttribute('aria-label'),text:x.closest('.el-form-item')?.innerText}))); })(page);
+```

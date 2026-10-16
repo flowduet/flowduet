@@ -1,0 +1,9 @@
+
+ RUN  v5.0.1 /private/tmp/b03-p1-p2-2026-10-17/harness-before
+
+
+ Test Files  1 passed (1)
+      Tests  2 passed | 88 skipped (90)
+   Start at  01:25:11
+   Duration  9.92s (tests 68%, import 19%, transform 9%, environment 4%)
+

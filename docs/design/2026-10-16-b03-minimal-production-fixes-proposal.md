@@ -4,6 +4,8 @@
 
 本文保留已获批的方案合同与[薄切片计划](plans/2026-10-16-b03-minimal-production-fixes.md)。最初文档基于本地C分支`686ecc0`，当时C尚未合入；现C/P0已通过PR #94进入develop。本轮P1基线为`develop@56d9e07`，实际实施与证据见[P1验收记录](system-v1/probes/b03-p1-repair.md)；旧归档不覆盖，后续片不因方案通过而自动获得执行授权。
 
+2026-10-17补充：P1全面复审三项P2的补修与独立复核见[限定验收更新](system-v1/probes/b03-p1-p2-followup.md)。保持本提案接口与legacy默认边界；未因补修启动后续片。
+
 ## 1. 目标、顺序与出口
 
 保持已确认的“切换保留输入，保存统一收集”合同，按 **数值/日期中间输入 → 文字空串 → 拖拽取消** 推进。交付的是`@flowduet/form-create`中可复用的编辑能力及Playground验收接线，不实现工作台。

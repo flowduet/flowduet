@@ -1,0 +1,37 @@
+
+ RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/form-create
+
+ ❯ src/components.test.ts (87 tests | 1 failed | 75 skipped) 19790ms
+   ❯ P1复审P2：属性控件确认与删除生命期 (4)
+     × delete撤销已移除控件的等待，不要求change 2540ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/components.test.ts > P1复审P2：属性控件确认与删除生命期 > delete撤销已移除控件的等待，不要求change
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ src/components.test.ts:1750:46
+    1748|     await flushPromises();
+    1749|     expect(input.element.isConnected).toBe(false);
+    1750|     expect(vm.readEditingState().canSuspend).toBe(true);
+       |                                              ^
+    1751|     const captured = vm.captureContent();
+    1752|     expect(captured.status).toBe("captured");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 13 passed | 95 skipped (109)
+   Start at  00:54:37
+   Duration  22.98s (tests 84%, import 8%, environment 4%, transform 4%)
+
+undefined
+/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/form-create:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run src/editor-input-state.test.ts src/components.test.ts -t P1复审P2|等价

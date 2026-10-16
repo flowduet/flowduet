@@ -1,0 +1,20 @@
+import json, subprocess
+from pathlib import Path
+root=Path('/tmp/b03-p1-p2-2026-10-17')
+cli='/Users/l/.codex/skills/playwright/scripts/playwright_cli.sh'
+def run(name,*args):
+ r=subprocess.run([cli,'-s=b03-p1-p2-extra',*args],cwd='/tmp',capture_output=True,text=True)
+ (root/(name+'.log')).write_text(r.stdout+r.stderr)
+ if r.returncode: raise RuntimeError(name+': '+str(r.returncode))
+ return r.stdout
+try:
+ run('extra-open','open','http://127.0.0.1:5178/probes/stage-zero/index.html','--headed')
+ run('extra-resize','resize','1440','1000')
+ for name,script in [('recovery-78','recovery.js'),('normalize-78','normalize.js')]:
+  raw=run(name,'run-code','--filename',str(root/script))
+  obj=json.loads(raw.split('### Result\n',1)[1].split('\n### Ran Playwright code',1)[0])
+  if 'rows' in obj: assert len(obj['rows'])==12 and all(r['pass'] for r in obj['rows'])
+  else: assert obj['capture']=='captured' and obj['value']=='1'
+  (root/(name+'.json')).write_text(json.dumps(obj,ensure_ascii=False,indent=2)+'\n')
+  print(name,'PASS',flush=True)
+finally: run('extra-close','close')

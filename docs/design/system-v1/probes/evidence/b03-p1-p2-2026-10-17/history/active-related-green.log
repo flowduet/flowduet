@@ -1,0 +1,46 @@
+
+ RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/form-create
+
+ ❯ src/components.test.ts (90 tests | 2 failed | 74 skipped) 36412ms
+   ❯ retained 真实数值日期回归 (6)
+     × partial_date_does_not_normalize_on_blur 6031ms
+   ❯ retained 真实字段删除复用 (1)
+     × 公开delete时点撤销缓存，菜单新建后同名field不复用旧raw 5119ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/components.test.ts > retained 真实数值日期回归 > partial_date_does_not_normalize_on_blur
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ src/components.test.ts:1041:3
+    1039| }
+    1040| describe("retained 真实数值日期回归", () => {
+    1041|   it("partial_date_does_not_normalize_on_blur", async () => {
+       |   ^
+    1042|     const vm = await retainedEditor();
+    1043|     const input = await selectRetained("date");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/components.test.ts > retained 真实字段删除复用 > 公开delete时点撤销缓存，菜单新建后同名field不复用旧raw
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ src/components.test.ts:1474:3
+    1472|
+    1473| describe("retained 真实字段删除复用", () => {
+    1474|   it("公开delete时点撤销缓存，菜单新建后同名field不复用旧raw", async () => {
+       |   ^
+    1475|     const state = createEditorInputState(() => {});
+    1476|     // 仅此测试通过第三方公开配置开放字段改名，用于立即复用ID；产品默认仍只读。
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 14 passed | 74 skipped (90)
+   Start at  01:34:31
+   Duration  40.24s (tests 91%, import 6%, transform 2%, environment 1%)
+
+undefined
+/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/form-create:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run src/components.test.ts -t P1复审P2|公开delete时点|partial_date_does

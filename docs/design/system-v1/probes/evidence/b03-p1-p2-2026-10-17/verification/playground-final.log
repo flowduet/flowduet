@@ -1,0 +1,73 @@
+
+> @flowduet/playground@0.0.0 test /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground
+> vitest run
+
+
+ RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground
+
+stderr | probes/stage-zero/location.test.ts > 真实视图定位确认 > 单↔多转换后原分支诊断仍定位fa，条件与顺序保留
+[Vue Flow]: The Vue Flow parent container needs a width and a height to render the graph
+[Vue Flow]: It seems that you haven't loaded the necessary styles. Please import '@vue-flow/core/dist/style.css' to ensure that the graph is rendered correctly
+
+ ❯ probes/stage-zero/location.test.ts (9 tests | 1 failed) 19586ms
+   ❯ 真实视图定位确认 (9)
+     × 单↔多转换后原分支诊断仍定位fa，条件与顺序保留 5126ms
+stderr | src/App.integration.test.ts
+[BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+
+ ❯ src/App.integration.test.ts (45 tests | 2 failed) 79141ms
+   ❯ Playground 与 designer 的导出链路 (1)
+     × 插入抄送草稿后自动与手动导出均报错，配置收件人后自动恢复 XML 5194ms
+   ❯ E16 文件读取期间新编辑保护 (2)
+     × 读取期间新打开表单编辑器也保持当前目录及编辑器 8172ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/App.integration.test.ts > Playground 与 designer 的导出链路 > 插入抄送草稿后自动与手动导出均报错，配置收件人后自动恢复 XML
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ src/App.integration.test.ts:68:3
+     66|
+     67| describe("Playground 与 designer 的导出链路", () => {
+     68|   it("插入抄送草稿后自动与手动导出均报错，配置收件人后自动恢复 XML", async () => {
+       |   ^
+     69|     wrapper = mount(App, { attachTo: document.body });
+     70|     await wrapper.find('[data-test="export-btn"]').trigger("click");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  src/App.integration.test.ts > E16 文件读取期间新编辑保护 > 读取期间新打开表单编辑器也保持当前目录及编辑器
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ src/App.integration.test.ts:1640:3
+    1638|   });
+    1639|
+    1640|   it("读取期间新打开表单编辑器也保持当前目录及编辑器", async () => {
+       |   ^
+    1641|     wrapper = mount(App, { attachTo: document.body });
+    1642|     await setupWithForms(["保留编辑器76"]);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  probes/stage-zero/location.test.ts > 真实视图定位确认 > 单↔多转换后原分支诊断仍定位fa，条件与顺序保留
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ probes/stage-zero/location.test.ts:42:3
+     40|     expect(wrapper!.find('[data-test="location-result"]').text()).toCo…
+     41|   });
+     42|   it("单↔多转换后原分支诊断仍定位fa，条件与顺序保留", async () => {
+       |   ^
+     43|     await setup();
+     44|     await click("切为会签");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+
+ Test Files  2 failed | 14 passed (16)
+      Tests  3 failed | 294 passed (297)
+   Start at  01:41:56
+   Duration  89.38s (tests 59%, import 27%, environment 7%, transform 7%)
+
+/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @flowduet/playground@0.0.0 test: `vitest run`
+Exit status 1
