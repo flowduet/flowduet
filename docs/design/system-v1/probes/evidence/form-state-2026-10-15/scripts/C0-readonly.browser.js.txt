@@ -1,0 +1,15 @@
+async (page) => {
+  const owner = page.locator('[data-c-owner="C-A"]');
+  const row = owner.locator('._fc-r-config .el-form-item').filter({ has: page.locator('label', { hasText: /^默认值$/ }) });
+  const input = row.locator('input');
+  await input.fill('中文末尾未失焦C0');
+  await input.evaluate(el => el.setSelectionRange(2, 5));
+  const before = JSON.parse(await owner.locator('[data-test=c-state]').textContent());
+  await owner.locator('[data-test=c-observe]').click();
+  const observed = JSON.parse(await owner.locator('[data-test=c-observation]').textContent());
+  const after = JSON.parse(await owner.locator('[data-test=c-state]').textContent());
+  const focused = await input.evaluate(el => el.ownerDocument.activeElement === el);
+  if (!focused || !observed.pendingControls.some(v => v.text === '中文末尾未失焦C0' && v.selection?.[0] === 2 && v.selection[1] === 5)) throw new Error('观察改变焦点或丢失原输入');
+  if (JSON.stringify(before.forms)!==JSON.stringify(after.forms) || before.generation!==after.generation) throw new Error('观察修改会话或版本');
+  return { observed, focused, generation:after.generation, sessionUnchanged:true, menuCount:await owner.locator('._fc-l-item').count(), browser:await page.evaluate(()=>navigator.userAgent) };
+}

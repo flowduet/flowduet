@@ -1,0 +1,47 @@
+### Result
+[{"case":"guarded-idle-popup-normal","run":1,"source":"native-pointer-keyboard","idleEscapeKept":true,"popupEscapeKept":true,"trace":[{"sequence":1,"event":"dialog-open","detail":{"dialogSerial":2}},{"sequence":2,"event":"dialog-blur","detail":null},{"sequence":3,"event":"dialog-normal","detail":null}],"pass":true},{"case":"busy-preblur-dialog-x","run":1,"source":"native-pointer-keyboard","stillFocused":true,"trace":[{"sequence":1,"event":"dialog-open","detail":{"dialogSerial":3}},{"sequence":2,"event":"dialog-preflight","detail":{"type":"pointerdown","key":null,"busy":true,"active":"dialog-raw"}},{"sequence":3,"event":"dialog-before-close","detail":{"busy":true,"refusedGesture":true}}],"pass":true},{"case":"busy-preblur-dialog-cancel","run":1,"source":"native-pointer-keyboard","stillFocused":true,"trace":[{"sequence":1,"event":"dialog-open","detail":{"dialogSerial":4}},{"sequence":2,"event":"dialog-preflight","detail":{"type":"pointerdown","key":null,"busy":true,"active":"dialog-raw"}},{"sequence":3,"event":"dialog-before-close","detail":{"busy":true,"refusedGesture":true}}],"pass":true},{"case":"busy-preblur-mask","run":1,"source":"native-pointer-keyboard","stillFocused":true,"trace":[{"sequence":1,"event":"dialog-open","detail":{"dialogSerial":5}},{"sequence":2,"event":"dialog-preflight","detail":{"type":"pointerdown","key":null,"busy":true,"active":"dialog-raw"}}],"pass":true},{"case":"guarded-idle-popup-normal","run":2,"source":"native-pointer-keyboard","idleEscapeKept":true,"popupEscapeKept":true,"trace":[{"sequence":1,"event":"dialog-open","detail":{"dialogSerial":6}},{"sequence":2,"event":"dialog-blur","detail":null},{"sequence":3,"event":"dialog-normal","detail":null}],"pass":true},{"case":"busy-preblur-dialog-x","run":2,"source":"native-pointer-keyboard","stillFocused":true,"trace":[{"sequence":1,"event":"dialog-open","detail":{"dialogSerial":7}},{"sequence":2,"event":"dialog-preflight","detail":{"type":"pointerdown","key":null,"busy":true,"active":"dialog-raw"}},{"sequence":3,"event":"dialog-before-close","detail":{"busy":true,"refusedGesture":true}}],"pass":true},{"case":"busy-preblur-dialog-cancel","run":2,"source":"native-pointer-keyboard","stillFocused":true,"trace":[{"sequence":1,"event":"dialog-open","detail":{"dialogSerial":8}},{"sequence":2,"event":"dialog-preflight","detail":{"type":"pointerdown","key":null,"busy":true,"active":"dialog-raw"}},{"sequence":3,"event":"dialog-before-close","detail":{"busy":true,"refusedGesture":true}}],"pass":true},{"case":"busy-preblur-mask","run":2,"source":"native-pointer-keyboard","stillFocused":true,"trace":[{"sequence":1,"event":"dialog-open","detail":{"dialogSerial":9}},{"sequence":2,"event":"dialog-preflight","detail":{"type":"pointerdown","key":null,"busy":true,"active":"dialog-raw"}}],"pass":true},{"case":"guarded-idle-popup-normal","run":3,"source":"native-pointer-keyboard","idleEscapeKept":true,"popupEscapeKept":true,"trace":[{"sequence":1,"event":"dialog-open","detail":{"dialogSerial":10}},{"sequence":2,"event":"dialog-blur","detail":null},{"sequence":3,"event":"dialog-normal","detail":null}],"pass":true},{"case":"busy-preblur-dialog-x","run":3,"source":"native-pointer-keyboard","stillFocused":true,"trace":[{"sequence":1,"event":"dialog-open","detail":{"dialogSerial":11}},{"sequence":2,"event":"dialog-preflight","detail":{"type":"pointerdown","key":null,"busy":true,"active":"dialog-raw"}},{"sequence":3,"event":"dialog-before-close","detail":{"busy":true,"refusedGesture":true}}],"pass":true},{"case":"busy-preblur-dialog-cancel","run":3,"source":"native-pointer-keyboard","stillFocused":true,"trace":[{"sequence":1,"event":"dialog-open","detail":{"dialogSerial":12}},{"sequence":2,"event":"dialog-preflight","detail":{"type":"pointerdown","key":null,"busy":true,"active":"dialog-raw"}},{"sequence":3,"event":"dialog-before-close","detail":{"busy":true,"refusedGesture":true}}],"pass":true},{"case":"busy-preblur-mask","run":3,"source":"native-pointer-keyboard","stillFocused":true,"trace":[{"sequence":1,"event":"dialog-open","detail":{"dialogSerial":13}},{"sequence":2,"event":"dialog-preflight","detail":{"type":"pointerdown","key":null,"busy":true,"active":"dialog-raw"}}],"pass":true},{"case":"programmatic-close-bypasses-before-close","source":"owned-programmatic-control","trace":[{"sequence":1,"event":"dialog-open","detail":{"dialogSerial":14}},{"sequence":2,"event":"dialog-blur","detail":null},{"sequence":3,"event":"dialog-closed","detail":{"dialogSerial":14}}],"pass":true},{"case":"parent-unmount-bypasses-before-close","source":"owned-programmatic-control","trace":[{"sequence":1,"event":"dialog-open","detail":{"dialogSerial":15}}],"pass":true},{"case":"default-escape-close-control","source":"native-keyboard","trace":[{"sequence":1,"event":"dialog-before-close","detail":{"busy":false,"refusedGesture":false}},{"sequence":2,"event":"dialog-blur","detail":null},{"sequence":3,"event":"dialog-closed","detail":{"dialogSerial":16}}],"pass":true},{"case":"composition-escape-protocol","source":"synthetic-CompositionEvent-plus-native-Escape","trace":[{"sequence":1,"event":"dialog-open","detail":{"dialogSerial":17}},{"sequence":2,"event":"dialog-compositionstart","detail":null}],"pass":true,"OSVerified":false}]
+### Ran Playwright code
+```js
+await (async page => {
+ page.setDefaultTimeout(7000);const rows=[];
+ const events=async()=>JSON.parse(await page.locator('[data-test=seam-events]').textContent());
+ const visible=()=>page.locator('.b03-seam-dialog').isVisible();
+ const clear=()=>page.locator('[data-test=seam-clear]').click();
+ const open=async()=>{await page.locator('[data-test=dialog-open]').click();await page.locator('[data-test=dialog-raw]').waitFor();};
+ const dismiss=async()=>{await page.locator('[data-test=dialog-x]').click();await page.locator('.b03-seam-dialog').waitFor({state:'hidden'});};
+ const toggle=async(test,value)=>{const x=page.locator('[data-test='+test+']');if(value)await x.check();else await x.uncheck();};
+ await page.locator('[data-test=dialog-program-close]').evaluate(el=>el.click());
+ await toggle('dialog-guarded',true);await toggle('dialog-busy',false);
+ for(let run=1;run<=3;run++) {
+  await clear(); await open(); const raw=page.locator('[data-test=dialog-raw]');await raw.fill('保持-2026-');
+  await raw.press('Escape');const idleEscapeKept=await visible();
+  await page.locator('.b03-seam-dialog').getByText('内部弹层',{exact:true}).click();
+  await page.keyboard.press('Escape');const popupEscapeKept=await visible();
+  await page.locator('[data-test=dialog-normal]').click();
+  let trace=await events();rows.push({case:'guarded-idle-popup-normal',run,source:'native-pointer-keyboard',idleEscapeKept,popupEscapeKept,trace,pass:idleEscapeKept&&popupEscapeKept&&trace.some(e=>e.event==='dialog-normal')&&!trace.some(e=>e.event==='dialog-before-close')});
+  await dismiss();
+  await toggle('dialog-busy',true);
+  for(const control of ['dialog-x','dialog-cancel','mask']) {
+   await clear();await open();await raw.fill('busy-原文');
+   if(control==='mask') await page.locator('.b03-seam-modal').click({position:{x:5,y:5}});else await page.locator('[data-test='+control+']').click();
+   trace=await events();const stillFocused=await raw.evaluate(el=>el.ownerDocument.activeElement===el);
+   rows.push({case:'busy-preblur-'+control,run,source:'native-pointer-keyboard',stillFocused,trace,pass:await visible()&&stillFocused&&await raw.inputValue()==='busy-原文'&&trace.some(e=>e.event==='dialog-preflight'&&e.detail.active==='dialog-raw')&&!trace.some(e=>e.event==='dialog-blur')});
+   // 外部强制关闭是对照，不宣称守卫能拦截；不使用私有Dialog句柄。
+   await page.locator('[data-test=dialog-program-close]').evaluate(el=>el.click());await page.locator('.b03-seam-dialog').waitFor({state:'hidden'});
+  }
+  await toggle('dialog-busy',false);
+ }
+ await clear();await open();await page.locator('[data-test=dialog-raw]').fill('program');
+ await page.locator('[data-test=dialog-program-close]').evaluate(el=>el.click());await page.locator('.b03-seam-dialog').waitFor({state:'hidden'});
+ let trace=await events();rows.push({case:'programmatic-close-bypasses-before-close',source:'owned-programmatic-control',trace,pass:!trace.some(e=>e.event==='dialog-before-close')});
+ await clear();await open();await page.locator('[data-test=dialog-destroy]').evaluate(el=>el.click());await page.locator('.b03-seam-dialog').waitFor({state:'detached'});
+ trace=await events();rows.push({case:'parent-unmount-bypasses-before-close',source:'owned-programmatic-control',trace,pass:!trace.some(e=>e.event==='dialog-before-close')});
+ await toggle('dialog-guarded',false);await clear();await open();await page.locator('[data-test=dialog-raw]').press('Escape');await page.locator('.b03-seam-dialog').waitFor({state:'hidden'});
+ trace=await events();rows.push({case:'default-escape-close-control',source:'native-keyboard',trace,pass:trace.some(e=>e.event==='dialog-before-close')});
+ await toggle('dialog-guarded',true);await toggle('dialog-busy',false);await clear();await open();
+ const raw=page.locator('[data-test=dialog-raw]');await raw.fill('IME协议');await raw.dispatchEvent('compositionstart',{data:'中'});await raw.press('Escape');
+ trace=await events();rows.push({case:'composition-escape-protocol',source:'synthetic-CompositionEvent-plus-native-Escape',trace,pass:await visible()&&trace.some(e=>e.event==='dialog-compositionstart')&&!trace.some(e=>e.event==='dialog-before-close'),OSVerified:false});
+ await raw.dispatchEvent('compositionend',{data:'中'});await dismiss();
+ return rows;
+})(page);
+```

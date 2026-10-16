@@ -1,0 +1,114 @@
+[
+  {
+    "caseId": "F06/top/normal/K/load",
+    "field": "F06",
+    "layout": "top",
+    "variant": "normal",
+    "want": "normal",
+    "present": true,
+    "status": "passed",
+    "actual": {
+      "present": true,
+      "value": "normal",
+      "type": "select",
+      "field": "a_department"
+    },
+    "unchanged": true,
+    "typePass": true,
+    "datePass": true,
+    "gridPass": true
+  },
+  {
+    "caseId": "F06/top/unset/K/load",
+    "field": "F06",
+    "layout": "top",
+    "variant": "unset",
+    "want": null,
+    "present": false,
+    "status": "passed",
+    "actual": {
+      "present": false,
+      "type": "select",
+      "field": "a_department"
+    },
+    "unchanged": true,
+    "typePass": true,
+    "datePass": true,
+    "gridPass": true
+  },
+  {
+    "caseId": "F06/grid/zero/K/load",
+    "field": "F06",
+    "layout": "grid",
+    "variant": "zero",
+    "want": 0,
+    "present": true,
+    "status": "passed",
+    "actual": {
+      "present": true,
+      "value": 0,
+      "type": "select",
+      "field": "a_department"
+    },
+    "unchanged": true,
+    "typePass": true,
+    "datePass": true,
+    "gridPass": true
+  },
+  {
+    "caseId": "F06/grid/string-zero/K/load",
+    "field": "F06",
+    "layout": "grid",
+    "variant": "string-zero",
+    "want": "0",
+    "present": true,
+    "status": "passed",
+    "actual": {
+      "present": true,
+      "value": "0",
+      "type": "select",
+      "field": "a_department"
+    },
+    "unchanged": true,
+    "typePass": true,
+    "datePass": true,
+    "gridPass": true
+  },
+  {
+    "caseId": "F06/grid/normal/K/load",
+    "field": "F06",
+    "layout": "grid",
+    "variant": "normal",
+    "want": "normal",
+    "present": true,
+    "status": "passed",
+    "actual": {
+      "present": true,
+      "value": "normal",
+      "type": "select",
+      "field": "a_department"
+    },
+    "unchanged": true,
+    "typePass": true,
+    "datePass": true,
+    "gridPass": true
+  },
+  {
+    "caseId": "F06/grid/unset/K/load",
+    "field": "F06",
+    "layout": "grid",
+    "variant": "unset",
+    "want": null,
+    "present": false,
+    "status": "passed",
+    "actual": {
+      "present": false,
+      "type": "select",
+      "field": "a_department"
+    },
+    "unchanged": true,
+    "typePass": true,
+    "datePass": true,
+    "gridPass": true
+  }
+]

@@ -1,0 +1,6 @@
+### Result
+{"screenshot":"seam-ui.png","observedRaw":"-"}
+### Ran Playwright code
+```js
+await (async page => { await page.locator("[data-test=seam-number-A]").click(); const raw=page.locator("[data-seam-input=A] [data-test=seam-raw]"); await raw.fill("-"); await raw.scrollIntoViewIfNeeded(); await page.screenshot({path:"/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/docs/design/system-v1/probes/evidence/b03-p0-2026-10-16/final/seam-ui.png"}); return {screenshot:"seam-ui.png",observedRaw:await raw.inputValue()}; })(page);
+```

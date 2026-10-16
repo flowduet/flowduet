@@ -1,0 +1,25 @@
+async page => {
+ page.setDefaultTimeout(7000);const rows=[];const events=async()=>JSON.parse(await page.locator('[data-test=seam-events]').textContent());
+ const root=page.locator('[data-seam-owner=A]');const flatten=rs=>rs.flatMap(r=>[...(r.field?[r.field]:[]),...flatten(r.children||[])]);
+ for(let run=1;run<=3;run++) {
+  await page.locator('[data-test=seam-layout]').selectOption('grid');await page.locator('[data-test=seam-load]').click();
+  const labels=['文本','多行文本','数字','单选','多选','下拉单选','日期','开关'];
+  for(const label of labels)await root.locator('._fc-m-drag ._fd-drag-tool').filter({has:page.locator('.el-form-item__label',{hasText:new RegExp('^甲'+label+'$')})}).last().click();
+  await page.locator('[data-test=seam-clear]').click();
+  const row=root.locator('._fc-m-drag ._fd-drag-tool').first();await row.hover();await row.locator(':scope > ._fd-drag-r .icon-delete').click();
+  const trace=await events();const deleted=trace.find(e=>e.event==='public-delete');
+  rows.push({case:'parent-delete-descendant-token-reachability',run,source:'native-pointer',deleted,trace,pass:deleted?.detail.knownSubtree.filter(x=>x.field).length===8});
+ }
+ for(const layout of ['top','grid']) {
+  await page.locator('[data-test=seam-layout]').selectOption(layout);await page.locator('[data-test=seam-load]').click();
+  const card=root.locator('._fc-m-drag ._fd-drag-tool').filter({has:page.locator('.el-form-item__label',{hasText:'甲数字'})}).last();
+  await card.click();await page.waitForFunction(()=>{const es=JSON.parse(document.querySelector('[data-test=seam-events]').textContent);const a=es.filter(e=>e.event==='public-active'&&e.detail.owner==='A'&&e.detail.field==='a_amount').at(-1);return a&&es.some(e=>e.event==='sample-mounted'&&e.detail.token===a.detail.token);});let trace=await events();const token=trace.filter(e=>e.event==='sample-mounted'&&e.detail.field==='a_amount').at(-1).detail.token;
+  await page.locator('[data-test=seam-clone-A]').click();const beforeFields=flatten((await events()).filter(e=>e.event==='public-clone').at(-1).detail.rules);
+  const dest=root.locator('._fc-m-drag ._fd-drag-tool').filter({has:page.locator('.el-form-item__label',{hasText:'甲文本'})}).last();
+  await card.locator('.icon-move').dragTo(dest,{targetPosition:{x:15,y:10}});
+  await page.locator('[data-test=seam-text-A]').click();await page.locator('[data-test=seam-number-A]').click();await page.locator('[data-seam-input=A][data-field=a_amount]').waitFor();trace=await events();const after=trace.filter(e=>e.event==='sample-mounted'&&e.detail.field==='a_amount').at(-1).detail.token;
+  await page.locator('[data-test=seam-clone-A]').click();const afterFields=flatten((await events()).filter(e=>e.event==='public-clone').at(-1).detail.rules);
+  rows.push({beforeFields,afterFields,case:'sort-source-token-stable',layout,source:'native-pointer-drag',token,after,trace:trace.filter(e=>e.event.startsWith('native-drag')||e.event==='sample-mounted'),pass:token===after&&JSON.stringify(beforeFields)!==JSON.stringify(afterFields)&&trace.some(e=>e.event==='native-dragstart'&&e.detail.trusted)});
+ }
+ return rows;
+}

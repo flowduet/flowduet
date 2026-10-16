@@ -1,0 +1,16 @@
+async(page)=>{
+ page.setDefaultTimeout(5000);if(!page.url().includes('/probes/stage-zero/index.html'))await page.goto('http://127.0.0.1:5173/probes/stage-zero/index.html');if(!(await page.locator('[data-test=form-state-probe]').count()))await page.getByRole('button',{name:'表单状态 C',exact:true}).click();
+ const rows=[];
+ for(const field of ['F01','F03','F07']){
+  await page.locator('[data-test=c-field]').selectOption(field);await page.locator('[data-test=c-layout]').selectOption('top');await page.locator('[data-test=c-variant]').selectOption('normal-default');await page.locator('[data-test=c-reset]').click();
+  const root=page.locator('[data-c-owner="C-A"]');await root.locator('._fc-m-drag ._fd-drag-tool').first().click();
+  const row=root.locator('._fc-r-config .el-form-item').filter({has:page.locator('.el-form-item__label',{hasText:/^默认值$/})}),input=row.locator('input');
+  if(field==='F03'){await input.fill('');await input.press('-');}else await input.fill(field==='F01'?'只读观察中':'2026-');
+  const before=await input.evaluate(el=>({value:el.value,badInput:el.validity.badInput,focused:el.ownerDocument.activeElement===el})),pre=JSON.parse(await root.locator('[data-test=c-state]').textContent());
+  await input.press('Alt+o');const obs=JSON.parse(await root.locator('[data-test=c-observation]').textContent()),post=JSON.parse(await root.locator('[data-test=c-state]').textContent());
+  await input.press('Alt+s');await page.waitForFunction(seq=>JSON.parse(document.querySelector('[data-c-owner="C-A"] [data-test=c-state]').textContent).resultSequence>seq,post.resultSequence);
+  const after=JSON.parse(await root.locator('[data-test=c-state]').textContent());
+  rows.push({field,before,observationChangedGeneration:post.generation!==pre.generation,obs,result:after.result,after:await input.evaluate(el=>({value:el.value,badInput:el.validity.badInput})),sameSession:after.sameForms&&after.sameGraph});
+ }
+ return rows;
+}

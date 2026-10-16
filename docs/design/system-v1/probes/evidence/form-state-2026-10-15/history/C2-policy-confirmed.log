@@ -1,0 +1,13 @@
+
+ RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground
+
+ ✓ probes/stage-zero/form-state/retention-policy.test.ts > C2 保持挂载导航 > two_forms_switch_without_session_write：忙碌和未捕获输入也不触发导出 14ms
+ ✓ probes/stage-zero/form-state/retention-policy.test.ts > C2 保持挂载导航 > 外来/错误facet在触碰宿主前拒绝 7ms
+ ✓ probes/stage-zero/form-state/retention-policy.test.ts > C2 保持挂载导航 > 后一次导航获胜，迟到挂载不能显示或卸载当前实例 3ms
+ ✓ probes/stage-zero/form-state/retention-policy.test.ts > C2 保持挂载导航 > 目标删除或dispose期间完成的挂载不再导航 3ms
+
+ Test Files  1 passed (1)
+      Tests  4 passed (4)
+   Start at  17:47:39
+   Duration  3.80s (import 61%, transform 24%, environment 13%, tests 1%)
+

@@ -1,0 +1,20 @@
+async page => {
+ page.setDefaultTimeout(7000);const rows=[];const events=async()=>JSON.parse(await page.locator('[data-test=seam-events]').textContent());
+ await page.locator('[data-test=seam-layout]').selectOption('top');await page.locator('[data-test=seam-date-type]').selectOption('date');await page.locator('[data-test=seam-format]').fill('YYYY-MM-DD');await page.locator('[data-test=seam-load]').click();
+ for(const owner of ['A','B']){
+  await page.locator('[data-seam-owner='+owner+'] ._fc-m-drag ._fd-drag-tool').filter({has:page.locator('.el-form-item__label',{hasText:'甲日期'})}).last().click();
+  await page.locator('[data-seam-input='+owner+'] .el-date-editor input').click();
+  const popup=page.locator('.b03-calendar-'+owner+':visible');await popup.waitFor();
+  rows.push({case:'public-calendar-popup-owner',owner,source:'native-pointer-plus-public-popperClass',pass:await popup.count()===1&&await page.locator('.b03-calendar-'+(owner==='A'?'B':'A')+':visible').count()===0});
+  await page.keyboard.press('Escape');await popup.waitFor({state:'hidden'});
+ }
+ await page.locator('[data-test=seam-number-A]').click();await page.locator('[data-test=seam-number-B]').click();await page.locator('[data-test=seam-clear]').click();
+ const raw=page.locator('[data-seam-input=A] [data-test=seam-raw]');
+ await raw.dispatchEvent('compositionstart',{data:'中'});await raw.fill('中文协议');
+ await raw.evaluate(el=>{el.dispatchEvent(new CompositionEvent('compositionend',{bubbles:true,data:'文'}));el.dispatchEvent(new KeyboardEvent('keydown',{bubbles:true,key:'s',altKey:true}));});
+ const trace=await events();const sync=trace.find(e=>e.event==='compositionend-sync'),after=trace.find(e=>e.event==='compositionend-nextTick');
+ rows.push({case:'owner-composition-sync-nextTick-observable',source:'synthetic-CompositionEvent',trace,OSVerified:false,pass:trace.some(e=>e.event==='compositionstart'&&e.detail.owner==='A')&&sync&&after&&sync.sequence<after.sequence&&!trace.some(e=>e.detail?.owner==='B'&&e.event.startsWith('composition'))});
+ rows.push({case:'OS-IME',status:'unverified-tool-limit',pass:null,reason:'本轮只有CompositionEvent协议；未操作真实操作系统输入法'});
+ rows.push({case:'native-pointercancel',status:'unverified-tool-limit',pass:null,reason:'未取得真实浏览器/OS取消手势，不派发合成事件冒充'});
+ return rows;
+}

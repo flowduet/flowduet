@@ -1,0 +1,247 @@
+[
+  {
+    "case": "refused-pointerdown-late-click",
+    "source": "native-pointer-plus-owned-busy-protocol",
+    "trace": [
+      {
+        "sequence": 1,
+        "event": "dialog-open",
+        "detail": {
+          "dialogSerial": 17
+        }
+      },
+      {
+        "sequence": 2,
+        "event": "dialog-preflight",
+        "detail": {
+          "type": "pointerdown",
+          "key": null,
+          "busy": true,
+          "active": "dialog-raw"
+        }
+      },
+      {
+        "sequence": 3,
+        "event": "dialog-before-close",
+        "detail": {
+          "busy": false,
+          "refusedGesture": true
+        }
+      }
+    ],
+    "pass": true
+  },
+  {
+    "case": "busy-owned-key-activation",
+    "source": "native-keyboard",
+    "trace": [
+      {
+        "sequence": 1,
+        "event": "dialog-open",
+        "detail": {
+          "dialogSerial": 18
+        }
+      },
+      {
+        "sequence": 2,
+        "event": "dialog-preflight",
+        "detail": {
+          "type": "keydown",
+          "key": "Enter",
+          "busy": true,
+          "active": "dialog-x"
+        }
+      }
+    ],
+    "pass": true
+  },
+  {
+    "case": "default-dialog-x-close",
+    "source": "native-pointer",
+    "trace": [
+      {
+        "sequence": 1,
+        "event": "dialog-open",
+        "detail": {
+          "dialogSerial": 19
+        }
+      },
+      {
+        "sequence": 2,
+        "event": "dialog-preflight",
+        "detail": {
+          "type": "pointerdown",
+          "key": null,
+          "busy": false,
+          "active": "dialog-raw"
+        }
+      },
+      {
+        "sequence": 3,
+        "event": "dialog-blur",
+        "detail": null
+      },
+      {
+        "sequence": 4,
+        "event": "dialog-before-close",
+        "detail": {
+          "busy": false,
+          "refusedGesture": false
+        }
+      },
+      {
+        "sequence": 5,
+        "event": "dialog-closed",
+        "detail": {
+          "dialogSerial": 19
+        }
+      }
+    ],
+    "pass": true
+  },
+  {
+    "case": "default-mask-close",
+    "source": "native-pointer",
+    "trace": [
+      {
+        "sequence": 1,
+        "event": "dialog-open",
+        "detail": {
+          "dialogSerial": 20
+        }
+      },
+      {
+        "sequence": 2,
+        "event": "dialog-preflight",
+        "detail": {
+          "type": "pointerdown",
+          "key": null,
+          "busy": false,
+          "active": "dialog-raw"
+        }
+      },
+      {
+        "sequence": 3,
+        "event": "dialog-blur",
+        "detail": null
+      },
+      {
+        "sequence": 4,
+        "event": "dialog-before-close",
+        "detail": {
+          "busy": false,
+          "refusedGesture": false
+        }
+      },
+      {
+        "sequence": 5,
+        "event": "dialog-closed",
+        "detail": {
+          "dialogSerial": 20
+        }
+      }
+    ],
+    "pass": true
+  },
+  {
+    "case": "other-instance-native-input-unaffected",
+    "source": "native-pointer-keyboard",
+    "trace": [
+      {
+        "sequence": 1,
+        "event": "native-pointerdown",
+        "detail": {
+          "owner": "B",
+          "trusted": true,
+          "target": "BUTTON"
+        }
+      },
+      {
+        "sequence": 2,
+        "event": "native-pointerup",
+        "detail": {
+          "owner": "B",
+          "trusted": true,
+          "target": "BUTTON"
+        }
+      },
+      {
+        "sequence": 3,
+        "event": "public-active",
+        "detail": {
+          "owner": "B",
+          "field": "a_amount",
+          "token": "P0:145",
+          "sourceToken": null,
+          "knownSubtree": [],
+          "children": [],
+          "publicFieldsAtEvent": [
+            "a_subject",
+            "a_notes",
+            "a_amount",
+            "a_priority",
+            "a_areas",
+            "a_department",
+            "a_date",
+            "a_urgent"
+          ]
+        }
+      },
+      {
+        "sequence": 4,
+        "event": "componentRule",
+        "detail": {
+          "owner": "B",
+          "field": "a_amount",
+          "token": "P0:145",
+          "type": "inputNumber"
+        }
+      },
+      {
+        "sequence": 5,
+        "event": "sample-mounted",
+        "detail": {
+          "owner": "B",
+          "field": "a_amount",
+          "token": "P0:145",
+          "value": "P0:145",
+          "publicValue": 0
+        }
+      },
+      {
+        "sequence": 6,
+        "event": "native-focusout",
+        "detail": {
+          "owner": "B",
+          "trusted": true,
+          "target": "BUTTON"
+        }
+      },
+      {
+        "sequence": 7,
+        "event": "native-input",
+        "detail": {
+          "owner": "B",
+          "trusted": true,
+          "target": "INPUT",
+          "inputType": "text",
+          "raw": "foreign",
+          "badInput": false,
+          "nativeControlToken": "P0:146"
+        }
+      },
+      {
+        "sequence": 8,
+        "event": "raw-input",
+        "detail": {
+          "owner": "B",
+          "field": "a_amount",
+          "token": "P0:145",
+          "value": "foreign",
+          "publicValue": 0
+        }
+      }
+    ],
+    "pass": true
+  }
+]

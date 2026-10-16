@@ -1,0 +1,17 @@
+async page => {
+ page.setDefaultTimeout(7000);const rows=[];const root=page.locator('[data-seam-owner=A]');
+ const events=async()=>JSON.parse(await page.locator('[data-test=seam-events]').textContent());
+ for(const layout of ['top','grid']){
+  await page.locator('[data-test=seam-layout]').selectOption(layout);await page.locator('[data-test=seam-load]').click();
+  await root.locator('._fc-m-drag ._fd-drag-tool').filter({has:page.locator('.el-form-item__label',{hasText:'甲单选'})}).last().click();
+  const input=root.locator('._td-table-opt .el-table__row').first().locator('._fd-value-input input.el-input__inner');
+  await page.locator('[data-test=seam-clear]').click();await input.fill('');await input.press('-');
+  const before=await input.evaluate(el=>({raw:el.value,badInput:el.validity.badInput,focused:document.activeElement===el}));
+  await page.locator('[data-test=seam-clone-A]').evaluate(el=>el.click());const trace=await events();
+  rows.push({case:'unowned-value-input-is-observably-pending',layout,source:'native-keyboard-plus-readonly-owned-snapshot',before,trace,pass:before.raw==='-'&&trace.some(e=>e.event==='native-input'&&e.detail.owner==='A'&&e.detail.raw==='-'&&e.detail.trusted===true)});
+  await input.fill('37');await input.press('Tab');await page.locator('[data-test=seam-clone-A]').click();
+  const after=await events();const clone=after.filter(e=>e.event==='public-clone').at(-1);const flatten=rs=>rs.flatMap(r=>[r,...flatten(r.children||[])]);const radio=flatten(clone.detail.rules).find(r=>r.field==='a_priority');
+  rows.push({case:'unowned-numeric-option-can-confirm-natively',layout,source:'native-pointer-keyboard',value:radio.options[0].value,trace:after.filter(e=>e.event.startsWith('native-')),pass:radio.options[0].value===37});
+ }
+ return rows;
+}

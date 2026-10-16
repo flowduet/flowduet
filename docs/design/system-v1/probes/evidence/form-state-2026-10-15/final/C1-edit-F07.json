@@ -1,0 +1,92 @@
+[
+  {
+    "field": "F07",
+    "layout": "top",
+    "fieldReadonly": true,
+    "action": "edit",
+    "status": "passed",
+    "actual": {
+      "type": "datePicker",
+      "field": "a_date",
+      "title": "配置F07",
+      "props": {
+        "type": "date",
+        "valueFormat": "YYYY-MM-DD"
+      },
+      "value": "2026-10-16",
+      "_fc_id": "id_Fo3jmv9p7qqsy5c",
+      "name": "ref_Ftl3mv9p7qqsy6c",
+      "display": true,
+      "hidden": false,
+      "_fc_drag_tag": "datePicker",
+      "$required": true
+    },
+    "sessionUnchanged": true
+  },
+  {
+    "field": "F07",
+    "layout": "top",
+    "action": "clear",
+    "status": "passed",
+    "actual": {
+      "type": "datePicker",
+      "field": "a_date",
+      "title": "配置F07",
+      "props": {
+        "type": "date",
+        "valueFormat": "YYYY-MM-DD"
+      },
+      "_fc_id": "id_Fo3jmv9p7qqsy5c",
+      "name": "ref_Ftl3mv9p7qqsy6c",
+      "display": true,
+      "hidden": false,
+      "_fc_drag_tag": "datePicker",
+      "$required": true
+    }
+  },
+  {
+    "field": "F07",
+    "layout": "grid",
+    "fieldReadonly": true,
+    "action": "edit",
+    "status": "passed",
+    "actual": {
+      "type": "datePicker",
+      "field": "a_date",
+      "title": "配置F07",
+      "props": {
+        "type": "date",
+        "valueFormat": "YYYY-MM-DD"
+      },
+      "value": "2026-10-16",
+      "_fc_id": "id_Fopcmv9p7rn0y9c",
+      "name": "ref_Fmtumv9p7rn0yac",
+      "display": true,
+      "hidden": false,
+      "_fc_drag_tag": "datePicker",
+      "$required": true
+    },
+    "sessionUnchanged": true
+  },
+  {
+    "field": "F07",
+    "layout": "grid",
+    "action": "clear",
+    "status": "passed",
+    "actual": {
+      "type": "datePicker",
+      "field": "a_date",
+      "title": "配置F07",
+      "props": {
+        "type": "date",
+        "valueFormat": "YYYY-MM-DD"
+      },
+      "_fc_id": "id_Fopcmv9p7rn0y9c",
+      "name": "ref_Fmtumv9p7rn0yac",
+      "display": true,
+      "hidden": false,
+      "_fc_drag_tag": "datePicker",
+      "$required": true
+    }
+  }
+]

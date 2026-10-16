@@ -1,0 +1,93 @@
+
+ RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground
+
+ ❯ probes/stage-zero/contracts/candidate.test.ts (110 tests | 4 failed) 1863ms
+   ❯ P0 Dialog关闭归属协议回归 (6)
+     × hidden_busy_instance_cannot_swallow_peer_enter 11ms
+     × two_open_dialogs_route_space_and_pointer_only_to_owner 5ms
+     × unmount_and_same_label_remount_do_not_reuse_close_ownership 5ms
+     × refused_own_pointer_cannot_be_authorized_by_later_busy_clear 4ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  probes/stage-zero/contracts/candidate.test.ts > P0 Dialog关闭归属协议回归 > hidden_busy_instance_cannot_swallow_peer_enter
+AssertionError: expected 'false' to be 'true' // Object.is equality
+
+Expected: "true"
+Received: "false"
+
+ ❯ open probes/stage-zero/form-repair/dialog-close.cases.ts:24:47
+     22|   await view.get('[data-test="dialog-open"]').trigger("click");
+     23|   await flushPromises();
+     24|   expect(view.attributes("data-dialog-open")).toBe("true");
+       |                                               ^
+     25| }
+     26| function closeButton(view: View) {
+ ❯ probes/stage-zero/form-repair/dialog-close.cases.ts:57:7
+ ❯ withPair probes/stage-zero/form-repair/dialog-close.cases.ts:14:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  probes/stage-zero/contracts/candidate.test.ts > P0 Dialog关闭归属协议回归 > two_open_dialogs_route_space_and_pointer_only_to_owner
+AssertionError: expected 'false' to be 'true' // Object.is equality
+
+Expected: "true"
+Received: "false"
+
+ ❯ open probes/stage-zero/form-repair/dialog-close.cases.ts:24:47
+     22|   await view.get('[data-test="dialog-open"]').trigger("click");
+     23|   await flushPromises();
+     24|   expect(view.attributes("data-dialog-open")).toBe("true");
+       |                                               ^
+     25| }
+     26| function closeButton(view: View) {
+ ❯ probes/stage-zero/form-repair/dialog-close.cases.ts:67:7
+ ❯ withPair probes/stage-zero/form-repair/dialog-close.cases.ts:14:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  probes/stage-zero/contracts/candidate.test.ts > P0 Dialog关闭归属协议回归 > unmount_and_same_label_remount_do_not_reuse_close_ownership
+AssertionError: expected 'false' to be 'true' // Object.is equality
+
+Expected: "true"
+Received: "false"
+
+ ❯ open probes/stage-zero/form-repair/dialog-close.cases.ts:24:47
+     22|   await view.get('[data-test="dialog-open"]').trigger("click");
+     23|   await flushPromises();
+     24|   expect(view.attributes("data-dialog-open")).toBe("true");
+       |                                               ^
+     25| }
+     26| function closeButton(view: View) {
+ ❯ probes/stage-zero/form-repair/dialog-close.cases.ts:91:7
+ ❯ withPair probes/stage-zero/form-repair/dialog-close.cases.ts:14:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+ FAIL  probes/stage-zero/contracts/candidate.test.ts > P0 Dialog关闭归属协议回归 > refused_own_pointer_cannot_be_authorized_by_later_busy_clear
+AssertionError: expected 'false' to be 'true' // Object.is equality
+
+Expected: "true"
+Received: "false"
+
+ ❯ open probes/stage-zero/form-repair/dialog-close.cases.ts:24:47
+     22|   await view.get('[data-test="dialog-open"]').trigger("click");
+     23|   await flushPromises();
+     24|   expect(view.attributes("data-dialog-open")).toBe("true");
+       |                                               ^
+     25| }
+     26| function closeButton(view: View) {
+ ❯ probes/stage-zero/form-repair/dialog-close.cases.ts:112:7
+ ❯ withPair probes/stage-zero/form-repair/dialog-close.cases.ts:14:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/4]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  4 failed | 106 passed (110)
+   Start at  16:02:49
+   Duration  5.10s (import 38%, tests 38%, transform 16%, environment 9%)
+
+undefined
+/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run probes/stage-zero/contracts/candidate.test.ts

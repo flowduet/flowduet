@@ -1,0 +1,91 @@
+[
+  {
+    "case": "public-calendar-popup-owner",
+    "owner": "A",
+    "source": "native-pointer-plus-public-popperClass",
+    "pass": true
+  },
+  {
+    "case": "public-calendar-popup-owner",
+    "owner": "B",
+    "source": "native-pointer-plus-public-popperClass",
+    "pass": true
+  },
+  {
+    "case": "owner-composition-sync-nextTick-observable",
+    "source": "synthetic-CompositionEvent",
+    "trace": [
+      {
+        "sequence": 1,
+        "event": "compositionstart",
+        "detail": {
+          "owner": "A",
+          "field": "a_amount",
+          "token": "P0:218",
+          "value": null,
+          "publicValue": 0
+        }
+      },
+      {
+        "sequence": 2,
+        "event": "native-input",
+        "detail": {
+          "owner": "A",
+          "trusted": true,
+          "target": "INPUT",
+          "inputType": "text",
+          "raw": "中文协议",
+          "badInput": false,
+          "nativeControlToken": "P0:220"
+        }
+      },
+      {
+        "sequence": 3,
+        "event": "raw-input",
+        "detail": {
+          "owner": "A",
+          "field": "a_amount",
+          "token": "P0:218",
+          "value": "中文协议",
+          "publicValue": 0
+        }
+      },
+      {
+        "sequence": 4,
+        "event": "compositionend-sync",
+        "detail": {
+          "owner": "A",
+          "field": "a_amount",
+          "token": "P0:218",
+          "value": null,
+          "publicValue": 0
+        }
+      },
+      {
+        "sequence": 5,
+        "event": "compositionend-nextTick",
+        "detail": {
+          "owner": "A",
+          "field": "a_amount",
+          "token": "P0:218",
+          "value": null,
+          "publicValue": 0
+        }
+      }
+    ],
+    "OSVerified": false,
+    "pass": true
+  },
+  {
+    "case": "OS-IME",
+    "status": "unverified-tool-limit",
+    "pass": null,
+    "reason": "本轮只有CompositionEvent协议；未操作真实操作系统输入法"
+  },
+  {
+    "case": "native-pointercancel",
+    "status": "unverified-tool-limit",
+    "pass": null,
+    "reason": "未取得真实浏览器/OS取消手势，不派发合成事件冒充"
+  }
+]

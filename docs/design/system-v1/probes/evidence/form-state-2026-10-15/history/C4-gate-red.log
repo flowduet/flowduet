@@ -1,0 +1,52 @@
+
+ RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground
+
+stderr | probes/stage-zero/contracts/candidate.test.ts > C4只读候选移交闸门 > candidate_gate_rejects_foreign_stale_or_disposed
+[BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+
+stderr | probes/stage-zero/contracts/candidate.test.ts > C4只读候选移交闸门 > candidate_gate_does_not_recapture_or_write：旧候选不清新成功
+[BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+
+stderr | probes/stage-zero/contracts/candidate.test.ts > C4只读候选移交闸门 > candidate_gate_does_not_recapture_or_write：旧候选不清新成功
+[BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+
+ ❯ probes/stage-zero/contracts/candidate.test.ts (13 tests | 2 failed) 204ms
+   ❯ C4只读候选移交闸门 (2)
+     × candidate_gate_rejects_foreign_stale_or_disposed 32ms
+     × candidate_gate_does_not_recapture_or_write：旧候选不清新成功 41ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  probes/stage-zero/contracts/candidate.test.ts > C4只读候选移交闸门 > candidate_gate_rejects_foreign_stale_or_disposed
+TypeError: a.c.checkPreparedCandidate is not a function
+ ❯ probes/stage-zero/contracts/candidate.test.ts:179:18
+    177|       const prepared = await a.c.prepare("draft-save");
+    178|       expect(prepared.ok).toBe(true); if (!prepared.ok) return;
+    179|       expect(a.c.checkPreparedCandidate(prepared.value)).toEqual({ ok:…
+       |                  ^
+    180|       expect(b.c.checkPreparedCandidate(prepared.value)).toMatchObject…
+    181|       expect(a.c.checkPreparedCandidate({ ...prepared.value })).toMatc…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  probes/stage-zero/contracts/candidate.test.ts > C4只读候选移交闸门 > candidate_gate_does_not_recapture_or_write：旧候选不清新成功
+TypeError: f.c.checkPreparedCandidate is not a function
+ ❯ probes/stage-zero/contracts/candidate.test.ts:199:18
+    197|       const latest=await f.c.prepare("draft-save");expect(latest.ok).t…
+    198|       const before=calls, session=f.session.current, xml=(await f.mode…
+    199|       expect(f.c.checkPreparedCandidate(old.value)).toMatchObject({ok:…
+       |                  ^
+    200|       expect(f.c.checkPreparedCandidate(latest.value).ok).toBe(true);
+    201|       expect(f.c.checkPreparedCandidate(latest.value).ok).toBe(true);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 11 passed (13)
+   Start at  22:29:11
+   Duration  3.91s (import 57%, transform 25%, environment 12%, tests 5%)
+
+undefined
+/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run probes/stage-zero/contracts/candidate.test.ts

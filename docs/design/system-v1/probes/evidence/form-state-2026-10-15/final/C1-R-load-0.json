@@ -1,0 +1,233 @@
+[
+  {
+    "caseId": "F01/top/normal-default/K/load",
+    "field": "F01",
+    "layout": "top",
+    "variant": "normal-default",
+    "want": "事项甲",
+    "present": true,
+    "actualStrategy": {
+      "outward": {
+        "ok": true,
+        "value": {
+          "active": {
+            "ref": {
+              "controllerId": "C-A",
+              "documentEpoch": 1,
+              "kind": "form",
+              "id": "form_2",
+              "lifetime": 8
+            },
+            "facet": "form-content"
+          },
+          "actual": "kept-fallback",
+          "reason": "临时实例内容或value存在性不等价"
+        }
+      },
+      "inward": {
+        "ok": true,
+        "value": {
+          "active": {
+            "ref": {
+              "controllerId": "C-A",
+              "documentEpoch": 1,
+              "kind": "form",
+              "id": "form_1",
+              "lifetime": 7
+            },
+            "facet": "form-content"
+          },
+          "actual": "kept-fallback",
+          "reason": "目标已有活实例，复用K"
+        }
+      }
+    },
+    "status": "passed",
+    "actual": {
+      "present": true,
+      "value": "事项甲",
+      "type": "input",
+      "field": "a_subject",
+      "props": {
+        "placeholder": "输入事项"
+      }
+    },
+    "unchanged": true,
+    "typePass": true,
+    "datePass": true,
+    "gridPass": true
+  },
+  {
+    "caseId": "F01/top/empty/K/load",
+    "field": "F01",
+    "layout": "top",
+    "variant": "empty",
+    "want": "",
+    "present": true,
+    "actualStrategy": {
+      "outward": {
+        "ok": true,
+        "value": {
+          "active": {
+            "ref": {
+              "controllerId": "C-A",
+              "documentEpoch": 1,
+              "kind": "form",
+              "id": "form_2",
+              "lifetime": 8
+            },
+            "facet": "form-content"
+          },
+          "actual": "kept-fallback",
+          "reason": "临时实例内容或value存在性不等价"
+        }
+      },
+      "inward": {
+        "ok": true,
+        "value": {
+          "active": {
+            "ref": {
+              "controllerId": "C-A",
+              "documentEpoch": 1,
+              "kind": "form",
+              "id": "form_1",
+              "lifetime": 7
+            },
+            "facet": "form-content"
+          },
+          "actual": "kept-fallback",
+          "reason": "目标已有活实例，复用K"
+        }
+      }
+    },
+    "status": "passed",
+    "actual": {
+      "present": true,
+      "value": "",
+      "type": "input",
+      "field": "a_subject",
+      "props": {
+        "placeholder": "输入事项"
+      }
+    },
+    "unchanged": true,
+    "typePass": true,
+    "datePass": true,
+    "gridPass": true
+  },
+  {
+    "caseId": "F01/top/unset/K/load",
+    "field": "F01",
+    "layout": "top",
+    "variant": "unset",
+    "want": null,
+    "present": false,
+    "actualStrategy": {
+      "outward": {
+        "ok": true,
+        "value": {
+          "active": {
+            "ref": {
+              "controllerId": "C-A",
+              "documentEpoch": 1,
+              "kind": "form",
+              "id": "form_2",
+              "lifetime": 8
+            },
+            "facet": "form-content"
+          },
+          "actual": "kept-fallback",
+          "reason": "临时实例内容或value存在性不等价"
+        }
+      },
+      "inward": {
+        "ok": true,
+        "value": {
+          "active": {
+            "ref": {
+              "controllerId": "C-A",
+              "documentEpoch": 1,
+              "kind": "form",
+              "id": "form_1",
+              "lifetime": 7
+            },
+            "facet": "form-content"
+          },
+          "actual": "kept-fallback",
+          "reason": "目标已有活实例，复用K"
+        }
+      }
+    },
+    "status": "passed",
+    "actual": {
+      "present": false,
+      "type": "input",
+      "field": "a_subject",
+      "props": {
+        "placeholder": "输入事项"
+      }
+    },
+    "unchanged": true,
+    "typePass": true,
+    "datePass": true,
+    "gridPass": true
+  },
+  {
+    "caseId": "F01/grid/normal-default/K/load",
+    "field": "F01",
+    "layout": "grid",
+    "variant": "normal-default",
+    "want": "事项甲",
+    "present": true,
+    "actualStrategy": {
+      "outward": {
+        "ok": true,
+        "value": {
+          "active": {
+            "ref": {
+              "controllerId": "C-A",
+              "documentEpoch": 1,
+              "kind": "form",
+              "id": "form_2",
+              "lifetime": 8
+            },
+            "facet": "form-content"
+          },
+          "actual": "kept-fallback",
+          "reason": "临时实例内容或value存在性不等价"
+        }
+      },
+      "inward": {
+        "ok": true,
+        "value": {
+          "active": {
+            "ref": {
+              "controllerId": "C-A",
+              "documentEpoch": 1,
+              "kind": "form",
+              "id": "form_1",
+              "lifetime": 7
+            },
+            "facet": "form-content"
+          },
+          "actual": "kept-fallback",
+          "reason": "目标已有活实例，复用K"
+        }
+      }
+    },
+    "status": "passed",
+    "actual": {
+      "present": true,
+      "value": "事项甲",
+      "type": "input",
+      "field": "a_subject",
+      "props": {
+        "placeholder": "输入事项"
+      }
+    },
+    "unchanged": true,
+    "typePass": true,
+    "datePass": true,
+    "gridPass": true
+  }
+]

@@ -1,0 +1,15 @@
+async page => {
+ page.setDefaultTimeout(7000);const rows=[];await page.getByRole('button',{name:'表单状态 C',exact:true}).click();
+ const root=page.locator('[data-c-owner=C-A]');const state=async()=>JSON.parse(await root.locator('[data-test=c-state]').textContent());
+ for(const field of ['F03','F07'])for(const layout of ['top','grid'])for(let run=1;run<=3;run++){
+  await page.locator('[data-test=c-field]').selectOption(field);await page.locator('[data-test=c-layout]').selectOption(layout);await page.locator('[data-test=c-reset]').click();
+  await root.locator('._fc-m-drag ._fd-drag-tool').filter({has:page.locator('.el-form-item__label',{hasText:field==='F03'?'甲数字':'甲日期'})}).last().click();
+  const input=root.locator('[data-c-view]:visible ._fc-r-config .el-form-item').filter({has:page.locator('.el-form-item__label',{hasText:/^默认值$/})}).locator('input').first();
+  await input.fill('');if(field==='F03')await input.press('-');else await input.fill('2026-');
+  const before=await input.evaluate(el=>({value:el.value,badInput:el.validity.badInput,focused:document.activeElement===el}));const old=await state();
+  await input.press('Alt+s');await page.waitForFunction(n=>JSON.parse(document.querySelector('[data-c-owner=C-A] [data-test=c-state]').textContent).resultSequence>n,old.resultSequence);
+  const after=await state();rows.push({case:'existing-C-wrapper-capture-pending',field,layout,run,actualMode:'legacy-with-C-guard',source:'native-keyboard',before,after,
+   pass:!after.result.ok&&after.sameSession&&after.sameForms&&after.sameGraph&&after.persistCalls===0});
+ }
+ await page.getByRole('button',{name:'B03 P0 接缝',exact:true}).click();return rows;
+}

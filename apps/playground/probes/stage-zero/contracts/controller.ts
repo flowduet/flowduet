@@ -91,6 +91,8 @@ export function createContractController(context: ReturnType<typeof createContex
             ];
       }),
     ]);
+  const isCurrentCandidate = (candidate: PreparedCandidate) =>
+    !disposed && candidates.get(candidate) === stamp();
   const versions = createVersions({
     key: rawKey,
     identity: () =>
@@ -107,7 +109,7 @@ export function createContractController(context: ReturnType<typeof createContex
       const r = await build();
       return r.ok ? { ok: true, value: r.value.public } : r;
     },
-    isCurrent: (candidate) => !disposed && candidates.get(candidate) === stamp(),
+    isCurrent: isCurrentCandidate,
     notify,
   });
   async function build(
@@ -429,6 +431,14 @@ export function createContractController(context: ReturnType<typeof createContex
     subscribe(callback: (event: ControllerEvent) => void) {
       subscribers.add(callback);
       return () => subscribers.delete(callback);
+    },
+    checkPreparedCandidate(candidate: PreparedCandidate): EditResult<void> {
+      return protect(() => {
+        if (disposed) return failure("cancelled", "编辑控制器已释放");
+        return isCurrentCandidate(candidate)
+          ? { ok: true, value: undefined }
+          : failure("version-changed", "候选已过期或不是当前控制器签发");
+      });
     },
     async prepare(purpose: "draft-save" | "validate"): Promise<EditResult<PreparedCandidate>> {
       if (purpose !== "draft-save" && purpose !== "validate")

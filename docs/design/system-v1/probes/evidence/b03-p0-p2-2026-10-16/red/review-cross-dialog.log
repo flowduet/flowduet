@@ -1,0 +1,25 @@
+### Result
+{"case":"two-real-probe-dialogs-native-Enter-isolation","setup":"mount unmodified Probe twice through public Vue createApp; A guarded busy while its Dialog closed; B idle Dialog open","source":"owned-state-protocol-plus-native-Enter","blockedByOther":1,"afterDisableForeignGuardClosed":true,"firstEvents":[{"sequence":3,"event":"dialog-preflight","detail":{"type":"keydown","key":"Enter","busy":true,"active":"dialog-x"}}],"peerEvents":[{"sequence":3,"event":"dialog-open","detail":{"dialogSerial":1}},{"sequence":4,"event":"dialog-preflight","detail":{"type":"keydown","key":"Enter","busy":false,"active":"dialog-x"}}],"control":[{"sequence":3,"event":"dialog-open","detail":{"dialogSerial":1}},{"sequence":4,"event":"dialog-preflight","detail":{"type":"keydown","key":"Enter","busy":false,"active":"dialog-x"}},{"sequence":5,"event":"dialog-preflight","detail":{"type":"keydown","key":"Enter","busy":false,"active":"dialog-x"}},{"sequence":6,"event":"dialog-before-close","detail":{"busy":false,"refusedGesture":false}},{"sequence":7,"event":"dialog-closed","detail":{"dialogSerial":1}}]}
+### Ran Playwright code
+```js
+await (async page => {
+ await page.getByRole('button',{name:'B03 P0 接缝',exact:true}).click();
+ const a=page.locator('#app [data-test=seam-probe]');await a.locator('[data-test=dialog-busy]').check();
+ await page.evaluate(async()=>{
+  const {createApp}=await import('/node_modules/.vite/deps/vue.js?v=de70a3f6');
+  const {default:Probe}=await import('/probes/stage-zero/form-repair/DefaultEditorSeamProbe.vue');
+  const host=document.createElement('div');host.id='review-peer';document.body.append(host);
+  window.__p0PeerApp=createApp(Probe);window.__p0PeerApp.mount(host);
+ });
+ const b=page.locator('#review-peer');await b.locator('[data-test=dialog-open]').click();
+ const x=page.locator('.b03-seam-dialog:visible [data-test=dialog-x]');await x.focus();await x.press('Enter');
+ const blockedByOther=await page.locator('.b03-seam-dialog:visible').count();
+ const firstEvents=JSON.parse(await a.locator('[data-test=seam-events]').textContent()).filter(e=>e.event.startsWith('dialog-'));
+ const peerEvents=JSON.parse(await b.locator('[data-test=seam-events]').textContent()).filter(e=>e.event.startsWith('dialog-'));
+ await a.locator('[data-test=dialog-guarded]').evaluate(el=>el.click());
+ await x.press('Enter');await page.locator('.b03-seam-dialog:visible').waitFor({state:'hidden'});
+ const control=JSON.parse(await b.locator('[data-test=seam-events]').textContent()).filter(e=>e.event.startsWith('dialog-'));
+ await page.evaluate(()=>{window.__p0PeerApp.unmount();document.querySelector('#review-peer').remove();delete window.__p0PeerApp;});
+ return {case:'two-real-probe-dialogs-native-Enter-isolation',setup:'mount unmodified Probe twice through public Vue createApp; A guarded busy while its Dialog closed; B idle Dialog open',source:'owned-state-protocol-plus-native-Enter',blockedByOther,afterDisableForeignGuardClosed:true,firstEvents,peerEvents,control};
+})(page);
+```

@@ -1,0 +1,322 @@
+[
+  {
+    "field": "F01",
+    "layout": "top",
+    "fieldReadonly": true,
+    "action": "edit",
+    "status": "passed",
+    "actual": {
+      "type": "input",
+      "field": "a_subject",
+      "title": "配置F01",
+      "value": "新事项甲",
+      "props": {
+        "placeholder": "输入事项"
+      },
+      "_fc_id": "id_Fokqmv9ctmhjczc",
+      "name": "ref_Fxvimv9ctmhjd0c",
+      "display": true,
+      "hidden": false,
+      "_fc_drag_tag": "input",
+      "$required": true
+    },
+    "sessionUnchanged": true
+  },
+  {
+    "field": "F01",
+    "layout": "top",
+    "action": "clear",
+    "status": "failed",
+    "actual": {
+      "type": "input",
+      "field": "a_subject",
+      "title": "配置F01",
+      "props": {
+        "placeholder": "输入事项"
+      },
+      "_fc_id": "id_Fokqmv9ctmhjczc",
+      "name": "ref_Fxvimv9ctmhjd0c",
+      "display": true,
+      "hidden": false,
+      "_fc_drag_tag": "input",
+      "$required": true
+    }
+  },
+  {
+    "field": "F01",
+    "layout": "grid",
+    "fieldReadonly": true,
+    "action": "edit",
+    "status": "passed",
+    "actual": {
+      "type": "input",
+      "field": "a_subject",
+      "title": "配置F01",
+      "value": "新事项甲",
+      "props": {
+        "placeholder": "输入事项"
+      },
+      "_fc_id": "id_F1wvmv9ctn6hd3c",
+      "name": "ref_Fmz8mv9ctn6hd4c",
+      "display": true,
+      "hidden": false,
+      "_fc_drag_tag": "input",
+      "$required": true
+    },
+    "sessionUnchanged": true
+  },
+  {
+    "field": "F01",
+    "layout": "grid",
+    "action": "clear",
+    "status": "failed",
+    "actual": {
+      "type": "input",
+      "field": "a_subject",
+      "title": "配置F01",
+      "props": {
+        "placeholder": "输入事项"
+      },
+      "_fc_id": "id_F1wvmv9ctn6hd3c",
+      "name": "ref_Fmz8mv9ctn6hd4c",
+      "display": true,
+      "hidden": false,
+      "_fc_drag_tag": "input",
+      "$required": true
+    }
+  },
+  {
+    "field": "F02",
+    "layout": "top",
+    "fieldReadonly": true,
+    "action": "edit",
+    "status": "passed",
+    "actual": {
+      "type": "input",
+      "field": "a_notes",
+      "title": "配置F02",
+      "props": {
+        "type": "textarea",
+        "placeholder": "输入说明"
+      },
+      "value": "新第一行\n新第二行",
+      "_fc_id": "id_Fo1amv9ctp6fdjc",
+      "name": "ref_F4qqmv9ctp6fdkc",
+      "display": true,
+      "hidden": false,
+      "_fc_drag_tag": "input",
+      "$required": true
+    },
+    "sessionUnchanged": true
+  },
+  {
+    "field": "F02",
+    "layout": "top",
+    "action": "clear",
+    "status": "failed",
+    "actual": {
+      "type": "input",
+      "field": "a_notes",
+      "title": "配置F02",
+      "props": {
+        "type": "textarea",
+        "placeholder": "输入说明"
+      },
+      "_fc_id": "id_Fo1amv9ctp6fdjc",
+      "name": "ref_F4qqmv9ctp6fdkc",
+      "display": true,
+      "hidden": false,
+      "_fc_drag_tag": "input",
+      "$required": true
+    }
+  },
+  {
+    "field": "F02",
+    "layout": "grid",
+    "fieldReadonly": true,
+    "action": "edit",
+    "status": "passed",
+    "actual": {
+      "type": "input",
+      "field": "a_notes",
+      "title": "配置F02",
+      "props": {
+        "type": "textarea",
+        "placeholder": "输入说明"
+      },
+      "value": "新第一行\n新第二行",
+      "_fc_id": "id_Fvzamv9ctpqgdnc",
+      "name": "ref_Fq83mv9ctpqgdoc",
+      "display": true,
+      "hidden": false,
+      "_fc_drag_tag": "input",
+      "$required": true
+    },
+    "sessionUnchanged": true
+  },
+  {
+    "field": "F02",
+    "layout": "grid",
+    "action": "clear",
+    "status": "failed",
+    "actual": {
+      "type": "input",
+      "field": "a_notes",
+      "title": "配置F02",
+      "props": {
+        "type": "textarea",
+        "placeholder": "输入说明"
+      },
+      "_fc_id": "id_Fvzamv9ctpqgdnc",
+      "name": "ref_Fq83mv9ctpqgdoc",
+      "display": true,
+      "hidden": false,
+      "_fc_drag_tag": "input",
+      "$required": true
+    }
+  },
+  {
+    "field": "F03",
+    "layout": "top",
+    "fieldReadonly": true,
+    "action": "edit",
+    "status": "passed",
+    "actual": {
+      "type": "inputNumber",
+      "field": "a_amount",
+      "title": "配置F03",
+      "value": 1.5,
+      "_fc_id": "id_F3ezmv9ctruze3c",
+      "name": "ref_Fz0dmv9ctruze4c",
+      "display": true,
+      "hidden": false,
+      "_fc_drag_tag": "inputNumber",
+      "$required": true
+    },
+    "sessionUnchanged": true
+  },
+  {
+    "field": "F03",
+    "layout": "top",
+    "action": "clear",
+    "status": "passed",
+    "actual": {
+      "type": "inputNumber",
+      "field": "a_amount",
+      "title": "配置F03",
+      "_fc_id": "id_F3ezmv9ctruze3c",
+      "name": "ref_Fz0dmv9ctruze4c",
+      "display": true,
+      "hidden": false,
+      "_fc_drag_tag": "inputNumber",
+      "$required": true
+    }
+  },
+  {
+    "field": "F03",
+    "layout": "grid",
+    "fieldReadonly": true,
+    "action": "edit",
+    "status": "passed",
+    "actual": {
+      "type": "inputNumber",
+      "field": "a_amount",
+      "title": "配置F03",
+      "value": 1.5,
+      "_fc_id": "id_F26emv9ctsfee7c",
+      "name": "ref_Fnpdmv9ctsfee8c",
+      "display": true,
+      "hidden": false,
+      "_fc_drag_tag": "inputNumber",
+      "$required": true
+    },
+    "sessionUnchanged": true
+  },
+  {
+    "field": "F03",
+    "layout": "grid",
+    "action": "clear",
+    "status": "passed",
+    "actual": {
+      "type": "inputNumber",
+      "field": "a_amount",
+      "title": "配置F03",
+      "_fc_id": "id_F26emv9ctsfee7c",
+      "name": "ref_Fnpdmv9ctsfee8c",
+      "display": true,
+      "hidden": false,
+      "_fc_drag_tag": "inputNumber",
+      "$required": true
+    }
+  },
+  {
+    "field": "F04",
+    "layout": "top",
+    "action": "edit-or-clear",
+    "status": "failed",
+    "reason": "TimeoutError: locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[data-c-owner=\"C-A\"]').locator('._fc-r-config .el-form-item').filter({ has: locator('.el-form-item__label').filter({ hasText: /^默认值$/ }) }).getByRole('combobox')\u001b[22m\n\u001b[2m    - locator resolved to <input readonly value=\"\" type=\"text\" tabindex=\"0\" role=\"combobox\" autocomplete=\"off\" spellcheck=\"false\" id=\"el-id-8112-3051\" aria-expanded=\"false\" aria-haspopup=\"listbox\" aria-activedescendant=\"\" aria-autocomplete=\"none\" aria-controls=\"el-id-8112-2984\" class=\"el-select__input is-small\"/>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <div class=\"el-select__selected-item el-select__placeholder\">…</div> intercepts pointer events\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <div class=\"el-select__selected-item el-select__placeholder\">…</div> intercepts pointer events\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    58 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is visible, enabled and stable\u001b[22m\n\u001b[2m       - scrolling into view if needed\u001b[22m\n\u001b[2m       - done scrolling\u001b[22m\n\u001b[2m       - <div class=\"el-select__selected-item el-select__placeholder\">…</div> intercepts pointer events\u001b[22m\n\u001b[2m     - retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n"
+  },
+  {
+    "field": "F04",
+    "layout": "grid",
+    "action": "edit-or-clear",
+    "status": "failed",
+    "reason": "TimeoutError: locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[data-c-owner=\"C-A\"]').locator('._fc-r-config .el-form-item').filter({ has: locator('.el-form-item__label').filter({ hasText: /^默认值$/ }) }).getByRole('combobox')\u001b[22m\n\u001b[2m    - locator resolved to <input readonly value=\"\" type=\"text\" tabindex=\"0\" role=\"combobox\" autocomplete=\"off\" spellcheck=\"false\" id=\"el-id-8112-3427\" aria-expanded=\"false\" aria-haspopup=\"listbox\" aria-activedescendant=\"\" aria-autocomplete=\"none\" aria-controls=\"el-id-8112-3360\" class=\"el-select__input is-small\"/>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <div class=\"el-select__selected-item el-select__placeholder\">…</div> intercepts pointer events\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <div class=\"el-select__selected-item el-select__placeholder\">…</div> intercepts pointer events\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    58 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is visible, enabled and stable\u001b[22m\n\u001b[2m       - scrolling into view if needed\u001b[22m\n\u001b[2m       - done scrolling\u001b[22m\n\u001b[2m       - <div class=\"el-select__selected-item el-select__placeholder\">…</div> intercepts pointer events\u001b[22m\n\u001b[2m     - retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n"
+  },
+  {
+    "field": "F05",
+    "layout": "top",
+    "action": "edit-or-clear",
+    "status": "failed",
+    "reason": "TimeoutError: locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[data-c-owner=\"C-A\"]').locator('._fc-r-config .el-form-item').filter({ has: locator('.el-form-item__label').filter({ hasText: /^默认选项$/ }) }).getByRole('combobox')\u001b[22m\n\u001b[2m    - locator resolved to <input readonly value=\"\" type=\"text\" tabindex=\"0\" role=\"combobox\" autocomplete=\"off\" spellcheck=\"false\" id=\"el-id-8112-3807\" aria-expanded=\"false\" aria-haspopup=\"listbox\" aria-activedescendant=\"\" aria-autocomplete=\"none\" aria-controls=\"el-id-8112-3737\" class=\"el-select__input is-small\"/>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <div class=\"el-select__selected-item el-select__placeholder is-transparent\">…</div> intercepts pointer events\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <div class=\"el-select__selected-item el-select__placeholder is-transparent\">…</div> intercepts pointer events\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    58 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is visible, enabled and stable\u001b[22m\n\u001b[2m       - scrolling into view if needed\u001b[22m\n\u001b[2m       - done scrolling\u001b[22m\n\u001b[2m       - <div class=\"el-select__selected-item el-select__placeholder is-transparent\">…</div> intercepts pointer events\u001b[22m\n\u001b[2m     - retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n"
+  },
+  {
+    "field": "F05",
+    "layout": "grid",
+    "action": "edit-or-clear",
+    "status": "failed",
+    "reason": "TimeoutError: locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[data-c-owner=\"C-A\"]').locator('._fc-r-config .el-form-item').filter({ has: locator('.el-form-item__label').filter({ hasText: /^默认选项$/ }) }).getByRole('combobox')\u001b[22m\n\u001b[2m    - locator resolved to <input readonly value=\"\" type=\"text\" tabindex=\"0\" role=\"combobox\" autocomplete=\"off\" spellcheck=\"false\" id=\"el-id-8112-4187\" aria-expanded=\"false\" aria-haspopup=\"listbox\" aria-activedescendant=\"\" aria-autocomplete=\"none\" aria-controls=\"el-id-8112-4117\" class=\"el-select__input is-small\"/>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <div class=\"el-select__selected-item el-select__placeholder is-transparent\">…</div> intercepts pointer events\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <div class=\"el-select__selected-item el-select__placeholder is-transparent\">…</div> intercepts pointer events\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    58 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is visible, enabled and stable\u001b[22m\n\u001b[2m       - scrolling into view if needed\u001b[22m\n\u001b[2m       - done scrolling\u001b[22m\n\u001b[2m       - <div class=\"el-select__selected-item el-select__placeholder is-transparent\">…</div> intercepts pointer events\u001b[22m\n\u001b[2m     - retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n"
+  },
+  {
+    "field": "F06",
+    "layout": "top",
+    "action": "edit-or-clear",
+    "status": "failed",
+    "reason": "TimeoutError: locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[data-c-owner=\"C-A\"]').locator('._fc-r-config .el-form-item').filter({ has: locator('.el-form-item__label').filter({ hasText: /^默认值$/ }) }).getByRole('combobox')\u001b[22m\n\u001b[2m    - locator resolved to <input readonly value=\"\" type=\"text\" tabindex=\"0\" role=\"combobox\" autocomplete=\"off\" spellcheck=\"false\" id=\"el-id-8112-4588\" aria-expanded=\"false\" aria-haspopup=\"listbox\" aria-activedescendant=\"\" aria-autocomplete=\"none\" aria-controls=\"el-id-8112-4517\" class=\"el-select__input is-small\"/>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <div class=\"el-select__selected-item el-select__placeholder\">…</div> intercepts pointer events\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <div class=\"el-select__selected-item el-select__placeholder\">…</div> intercepts pointer events\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    58 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is visible, enabled and stable\u001b[22m\n\u001b[2m       - scrolling into view if needed\u001b[22m\n\u001b[2m       - done scrolling\u001b[22m\n\u001b[2m       - <div class=\"el-select__selected-item el-select__placeholder\">…</div> intercepts pointer events\u001b[22m\n\u001b[2m     - retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n"
+  },
+  {
+    "field": "F06",
+    "layout": "grid",
+    "action": "edit-or-clear",
+    "status": "failed",
+    "reason": "TimeoutError: locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[data-c-owner=\"C-A\"]').locator('._fc-r-config .el-form-item').filter({ has: locator('.el-form-item__label').filter({ hasText: /^默认值$/ }) }).getByRole('combobox')\u001b[22m\n\u001b[2m    - locator resolved to <input readonly value=\"\" type=\"text\" tabindex=\"0\" role=\"combobox\" autocomplete=\"off\" spellcheck=\"false\" id=\"el-id-8112-4989\" aria-expanded=\"false\" aria-haspopup=\"listbox\" aria-activedescendant=\"\" aria-autocomplete=\"none\" aria-controls=\"el-id-8112-4918\" class=\"el-select__input is-small\"/>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <div class=\"el-select__selected-item el-select__placeholder\">…</div> intercepts pointer events\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <div class=\"el-select__selected-item el-select__placeholder\">…</div> intercepts pointer events\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    58 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is visible, enabled and stable\u001b[22m\n\u001b[2m       - scrolling into view if needed\u001b[22m\n\u001b[2m       - done scrolling\u001b[22m\n\u001b[2m       - <div class=\"el-select__selected-item el-select__placeholder\">…</div> intercepts pointer events\u001b[22m\n\u001b[2m     - retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n"
+  },
+  {
+    "field": "F07",
+    "layout": "top",
+    "action": "edit-or-clear",
+    "status": "failed",
+    "reason": "Error: {\"ok\":false,\"code\":\"capture-failed\",\"message\":\"弹层输入尚未确认或归属不明\"}"
+  },
+  {
+    "field": "F07",
+    "layout": "grid",
+    "action": "edit-or-clear",
+    "status": "failed",
+    "reason": "Error: {\"ok\":false,\"code\":\"capture-failed\",\"message\":\"弹层输入尚未确认或归属不明\"}"
+  },
+  {
+    "field": "F08",
+    "layout": "top",
+    "action": "edit-or-clear",
+    "status": "failed",
+    "reason": "TimeoutError: locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[data-c-owner=\"C-A\"]').locator('._fc-r-config .el-form-item').filter({ has: locator('.el-form-item__label').filter({ hasText: /^默认值$/ }) }).getByRole('combobox')\u001b[22m\n\u001b[2m    - locator resolved to <input readonly value=\"\" type=\"text\" tabindex=\"0\" role=\"combobox\" autocomplete=\"off\" spellcheck=\"false\" id=\"el-id-8112-6059\" aria-expanded=\"false\" aria-haspopup=\"listbox\" aria-activedescendant=\"\" aria-autocomplete=\"none\" aria-controls=\"el-id-8112-5991\" class=\"el-select__input is-small\"/>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <div class=\"el-select__selected-item el-select__placeholder\">…</div> intercepts pointer events\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <div class=\"el-select__selected-item el-select__placeholder\">…</div> intercepts pointer events\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    58 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is visible, enabled and stable\u001b[22m\n\u001b[2m       - scrolling into view if needed\u001b[22m\n\u001b[2m       - done scrolling\u001b[22m\n\u001b[2m       - <div class=\"el-select__selected-item el-select__placeholder\">…</div> intercepts pointer events\u001b[22m\n\u001b[2m     - retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n"
+  },
+  {
+    "field": "F08",
+    "layout": "grid",
+    "action": "edit-or-clear",
+    "status": "failed",
+    "reason": "TimeoutError: locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[data-c-owner=\"C-A\"]').locator('._fc-r-config .el-form-item').filter({ has: locator('.el-form-item__label').filter({ hasText: /^默认值$/ }) }).getByRole('combobox')\u001b[22m\n\u001b[2m    - locator resolved to <input readonly value=\"\" type=\"text\" tabindex=\"0\" role=\"combobox\" autocomplete=\"off\" spellcheck=\"false\" id=\"el-id-8112-6399\" aria-expanded=\"false\" aria-haspopup=\"listbox\" aria-activedescendant=\"\" aria-autocomplete=\"none\" aria-controls=\"el-id-8112-6331\" class=\"el-select__input is-small\"/>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <div class=\"el-select__selected-item el-select__placeholder\">…</div> intercepts pointer events\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <div class=\"el-select__selected-item el-select__placeholder\">…</div> intercepts pointer events\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    58 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is visible, enabled and stable\u001b[22m\n\u001b[2m       - scrolling into view if needed\u001b[22m\n\u001b[2m       - done scrolling\u001b[22m\n\u001b[2m       - <div class=\"el-select__selected-item el-select__placeholder\">…</div> intercepts pointer events\u001b[22m\n\u001b[2m     - retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n"
+  }
+]

@@ -1,0 +1,9 @@
+### Result
+{"userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36","viewport":{"width":1440,"height":1000,"dpr":1}}
+### Ran Playwright code
+```js
+await (async page => { await page.goto("http://127.0.0.1:5180/probes/stage-zero/index.html"); await page.setViewportSize({width:1440,height:1000}); return await page.evaluate(()=>({userAgent:navigator.userAgent,viewport:{width:innerWidth,height:innerHeight,dpr:devicePixelRatio}})); })(page);
+```
+### Page
+- Page URL: http://127.0.0.1:5180/probes/stage-zero/index.html
+- Page Title: FlowDuet 阶段零探针

@@ -1,0 +1,45 @@
+### Result
+[{"field":"F06","layout":"top","action":"option-label","status":"passed","actual":[{"label":"改名数值零","value":0},{"label":"a字符串零","value":"0"},{"label":"a普通","value":"normal"},{"label":"a广州","value":"gz"},{"label":"a深圳","value":"sz"}]},{"field":"F06","layout":"top","action":"option-value-number","status":"passed","actual":[{"label":"改名数值零","value":2},{"label":"a字符串零","value":"0"},{"label":"a普通","value":"normal"},{"label":"a广州","value":"gz"},{"label":"a深圳","value":"sz"}],"default":0},{"field":"F06","layout":"top","action":"option-add","status":"passed","actual":[{"label":"改名数值零","value":2},{"label":"a字符串零","value":"0"},{"label":"a普通","value":"normal"},{"label":"a广州","value":"gz"},{"label":"a深圳","value":"sz"},{"label":"新增选项","value":"new-id"}]},{"field":"F06","layout":"top","action":"option-delete-first","status":"passed","actual":[{"label":"a字符串零","value":"0"},{"label":"a普通","value":"normal"},{"label":"a广州","value":"gz"},{"label":"a深圳","value":"sz"},{"label":"新增选项","value":"new-id"}],"default":0},{"field":"F06","layout":"grid","action":"option-label","status":"passed","actual":[{"label":"改名数值零","value":0},{"label":"a字符串零","value":"0"},{"label":"a普通","value":"normal"},{"label":"a广州","value":"gz"},{"label":"a深圳","value":"sz"}]},{"field":"F06","layout":"grid","action":"option-value-number","status":"passed","actual":[{"label":"改名数值零","value":2},{"label":"a字符串零","value":"0"},{"label":"a普通","value":"normal"},{"label":"a广州","value":"gz"},{"label":"a深圳","value":"sz"}],"default":0},{"field":"F06","layout":"grid","action":"option-add","status":"passed","actual":[{"label":"改名数值零","value":2},{"label":"a字符串零","value":"0"},{"label":"a普通","value":"normal"},{"label":"a广州","value":"gz"},{"label":"a深圳","value":"sz"},{"label":"新增选项","value":"new-id"}]},{"field":"F06","layout":"grid","action":"option-delete-first","status":"passed","actual":[{"label":"a字符串零","value":"0"},{"label":"a普通","value":"normal"},{"label":"a广州","value":"gz"},{"label":"a深圳","value":"sz"},{"label":"新增选项","value":"new-id"}],"default":0}]
+### Ran Playwright code
+```js
+await (async (page) => {
+  page.setDefaultTimeout(5000);
+  if(!page.url().includes('/probes/stage-zero/index.html'))await page.goto('http://127.0.0.1:5173/probes/stage-zero/index.html');
+  if(!(await page.locator('[data-test=form-state-probe]').count()))await page.getByRole('button',{name:'表单状态 C',exact:true}).click();
+  const results=[],cases=[{"field": "F06", "layout": "top"}, {"field": "F06", "layout": "grid"}];
+  const names={F04:['单选','priority'],F05:['多选','areas'],F06:['下拉单选','department']};
+  const leaf=rs=>rs.flatMap(r=>r.children?leaf(r.children):[r]);
+  for(const item of cases){try{
+    await page.locator('[data-test=c-field]').selectOption(item.field);await page.locator('[data-test=c-layout]').selectOption(item.layout);await page.locator('[data-test=c-variant]').selectOption('normal-default');await page.locator('[data-test=c-reset]').click();
+    const root=page.locator('[data-c-owner="C-A"]');
+    await root.locator('._fc-m-drag .el-form-item__label').filter({hasText:'甲'+names[item.field][0]}).first().waitFor();
+    await root.locator('._fc-m-drag ._fd-drag-tool').filter({has:page.locator('.el-form-item__label',{hasText:'甲'+names[item.field][0]})}).last().click();
+    await page.waitForFunction(field=>[...document.querySelectorAll('[data-c-owner="C-A"] ._fc-r-config .el-form-item')].some(row=>/字段\s*ID/.test(row.querySelector('label')?.textContent??'')&&row.querySelector('input')?.value===field),'a_'+names[item.field][1]);
+    const table=root.locator('._fc-r-config ._td-table-opt'),getRow=i=>table.locator('.el-table__row').nth(i);
+    const original=JSON.parse(await root.locator('[data-test=c-state]').textContent());
+    const collect=async()=>{
+      const seq=JSON.parse(await root.locator('[data-test=c-state]').textContent()).resultSequence;
+      await root.locator('[data-test=c-collect]').click();await page.waitForFunction(seq=>JSON.parse(document.querySelector('[data-c-owner="C-A"] [data-test=c-state]').textContent).resultSequence>seq,seq);
+      const state=JSON.parse(await root.locator('[data-test=c-state]').textContent());
+      if(!state.result.ok)throw new Error(JSON.stringify(state.result));if(JSON.stringify(state.forms)!==JSON.stringify(original.forms)||!state.sameGraph||!state.sameForms)throw new Error('live state changed');
+      return leaf(JSON.parse(JSON.parse(state.result.value.json).forms[0].rules))[0];
+    };
+    await getRow(0).locator('td').nth(0).locator('input').fill('改名数值零');await getRow(0).locator('td').nth(0).locator('input').press('Tab');
+    let rule=await collect();results.push({...item,action:'option-label',status:rule.options[0].label==='改名数值零'&&rule.options[0].value===0?'passed':'failed',actual:rule.options});
+    await getRow(0).locator('._fd-value-input input.el-input__inner').fill('2');await getRow(0).locator('._fd-value-input input.el-input__inner').press('Tab');
+    rule=await collect();results.push({...item,action:'option-value-number',status:rule.options[0].value===2&&rule.options[1].value==='0'?'passed':'failed',actual:rule.options,default:rule.value});
+    await table.locator('._td-table-opt-handle button').click();const last=getRow(5);
+    await last.locator('td').nth(0).locator('input').fill('新增选项');await last.locator('._fd-value-input input.el-input__inner').fill('new-id');await last.locator('._fd-value-input input.el-input__inner').press('Tab');
+    rule=await collect();results.push({...item,action:'option-add',status:rule.options.length===6&&rule.options[5].label==='新增选项'&&rule.options[5].value==='new-id'?'passed':'failed',actual:rule.options});
+    await getRow(0).locator('.icon-delete').click();rule=await collect();results.push({...item,action:'option-delete-first',status:rule.options.length===5&&rule.options[0].value==='0'&&rule.options[4].value==='new-id'?'passed':'failed',actual:rule.options,default:rule.value});
+  }catch(error){results.push({...item,action:'option-edit',status:'failed',reason:String(error)});}}
+  return results;
+}
+)(page);
+```
+### Page
+- Page URL: http://127.0.0.1:5173/probes/stage-zero/index.html
+- Page Title: FlowDuet 阶段零探针
+- Console: 1 errors, 83 warnings
+### Events
+- New console entries: .playwright-cli/console-2026-10-15T09-55-40-910Z.log#L197-L204

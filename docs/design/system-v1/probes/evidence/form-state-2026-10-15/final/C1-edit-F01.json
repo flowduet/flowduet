@@ -1,0 +1,88 @@
+[
+  {
+    "field": "F01",
+    "layout": "top",
+    "fieldReadonly": true,
+    "action": "edit",
+    "status": "passed",
+    "actual": {
+      "type": "input",
+      "field": "a_subject",
+      "title": "配置F01",
+      "value": "新事项甲",
+      "props": {
+        "placeholder": "输入事项"
+      },
+      "_fc_id": "id_Fq20mv9p7896urc",
+      "name": "ref_Fwlwmv9p7896usc",
+      "display": true,
+      "hidden": false,
+      "_fc_drag_tag": "input",
+      "$required": true
+    },
+    "sessionUnchanged": true
+  },
+  {
+    "field": "F01",
+    "layout": "top",
+    "action": "clear",
+    "status": "failed",
+    "actual": {
+      "type": "input",
+      "field": "a_subject",
+      "title": "配置F01",
+      "props": {
+        "placeholder": "输入事项"
+      },
+      "_fc_id": "id_Fq20mv9p7896urc",
+      "name": "ref_Fwlwmv9p7896usc",
+      "display": true,
+      "hidden": false,
+      "_fc_drag_tag": "input",
+      "$required": true
+    }
+  },
+  {
+    "field": "F01",
+    "layout": "grid",
+    "fieldReadonly": true,
+    "action": "edit",
+    "status": "passed",
+    "actual": {
+      "type": "input",
+      "field": "a_subject",
+      "title": "配置F01",
+      "value": "新事项甲",
+      "props": {
+        "placeholder": "输入事项"
+      },
+      "_fc_id": "id_Fjtomv9p78teuvc",
+      "name": "ref_Ffpomv9p78teuwc",
+      "display": true,
+      "hidden": false,
+      "_fc_drag_tag": "input",
+      "$required": true
+    },
+    "sessionUnchanged": true
+  },
+  {
+    "field": "F01",
+    "layout": "grid",
+    "action": "clear",
+    "status": "failed",
+    "actual": {
+      "type": "input",
+      "field": "a_subject",
+      "title": "配置F01",
+      "props": {
+        "placeholder": "输入事项"
+      },
+      "_fc_id": "id_Fjtomv9p78teuvc",
+      "name": "ref_Ffpomv9p78teuwc",
+      "display": true,
+      "hidden": false,
+      "_fc_drag_tag": "input",
+      "$required": true
+    }
+  }
+]

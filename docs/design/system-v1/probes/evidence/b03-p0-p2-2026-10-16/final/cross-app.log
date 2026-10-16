@@ -1,0 +1,39 @@
+### Result
+[{"case":"same-label-cross-app-hidden-busy","run":1,"source":"owned-mount-busy-protocol-plus-native-Enter","vueUrl":"/node_modules/.vite/deps/vue.js?v=de70a3f6","owner":"704f7433-8477-4cfe-8132-eb8a6230c7cf","peerOwner":"edb5c609-889a-4cf7-a691-562d8c383ebf","peerClosed":true,"trace":[],"pass":true},{"case":"same-label-cross-app-hidden-busy","run":2,"source":"owned-mount-busy-protocol-plus-native-Enter","vueUrl":"/node_modules/.vite/deps/vue.js?v=de70a3f6","owner":"704f7433-8477-4cfe-8132-eb8a6230c7cf","peerOwner":"4998df07-9aef-4708-8a5a-11990afc5b88","peerClosed":true,"trace":[],"pass":true},{"case":"same-label-cross-app-hidden-busy","run":3,"source":"owned-mount-busy-protocol-plus-native-Enter","vueUrl":"/node_modules/.vite/deps/vue.js?v=de70a3f6","owner":"704f7433-8477-4cfe-8132-eb8a6230c7cf","peerOwner":"acaf26e8-ba14-4b53-9fea-393a3d3446b2","peerClosed":true,"trace":[],"pass":true}]
+### Ran Playwright code
+```js
+await (async page => { async function popupExercise(page, host) {
+ const contentClass=await host.getAttribute('data-content-class');
+ const popupClass=await host.getAttribute('data-popup-class');
+ const dialog=page.locator('.'+contentClass), popup=page.locator('[role=tooltip].'+popupClass);
+ await dialog.getByText('内部弹层',{exact:true}).click();
+ try{await popup.waitFor({state:'visible',timeout:2000});}catch(cause){throw Object.assign(new Error('弹层未证明打开',{cause}),{stage:'open'});}
+ const opened=await popup.isVisible();
+ await page.keyboard.press('Escape');
+ try{await popup.waitFor({state:'hidden',timeout:2000});}catch(cause){throw Object.assign(new Error('弹层未证明关闭',{cause}),{stage:'close'});}
+ const closed=!(await popup.isVisible()),dialogKept=await dialog.isVisible();
+ if(!opened||!closed||!dialogKept)throw Object.assign(new Error('弹层Escape证明不完整'),{stage:'incomplete'});
+ return {opened,closed,dialogKept};
+}
+; return await (async page => {
+ page.setDefaultTimeout(7000);const rows=[],a=page.locator('#app [data-test=seam-probe]');
+ const host=a.locator('[data-dialog-probe=A]');await host.locator('[data-test=dialog-busy]').check();
+ for(let run=1;run<=3;run++){
+  await a.locator('[data-test=seam-clear]').click();
+  const vueUrl=await page.evaluate(async()=>{
+   const module=await (await fetch('/probes/stage-zero/form-repair/DefaultEditorSeamProbe.vue')).text();
+   const match=module.match(/from "([^"]*\/vue\.js[^"]*)"/);if(!match)throw new Error('公开Vue入口未找到');return match[1];
+  });
+  await page.evaluate(async vueUrl=>{const {createApp}=await import(vueUrl);const {default:Probe}=await import('/probes/stage-zero/form-repair/DefaultEditorSeamProbe.vue');const root=document.createElement('div');root.id='p0-peer-app';document.body.append(root);window.__p0PeerApp=createApp(Probe);window.__p0PeerApp.mount(root);},vueUrl);
+  try{
+   const b=page.locator('#p0-peer-app'),peer=b.locator('[data-dialog-probe=A]');await peer.locator('[data-test=dialog-open]').click();
+   const owner=await host.getAttribute('data-owner-key'),peerOwner=await peer.getAttribute('data-owner-key'),d=page.locator('.'+await peer.getAttribute('data-content-class'));
+   await d.locator('[data-test=dialog-x]').focus();await d.locator('[data-test=dialog-x]').press('Enter');await d.waitFor({state:'hidden'});
+   const trace=JSON.parse(await a.locator('[data-test=seam-events]').textContent());
+   rows.push({case:'same-label-cross-app-hidden-busy',run,source:'owned-mount-busy-protocol-plus-native-Enter',vueUrl,owner,peerOwner,peerClosed:!(await d.isVisible()),trace,pass:owner!==peerOwner&&!trace.some(e=>e.event==='dialog-preflight')&&await peer.getAttribute('data-dialog-open')==='false'});
+  }finally{await page.evaluate(()=>{window.__p0PeerApp.unmount();document.querySelector('#p0-peer-app').remove();delete window.__p0PeerApp;});}
+ }
+ await host.locator('[data-test=dialog-busy]').uncheck();return rows;
+}
+)(page,popupExercise); })(page);
+```

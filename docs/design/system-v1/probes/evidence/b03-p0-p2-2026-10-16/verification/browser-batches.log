@@ -1,0 +1,14 @@
+{"batch": "production-red", "rows": 12, "passed": 0, "failed": 12, "unknown": 0}
+{"batch": "production-capture", "rows": 12, "passed": 12, "failed": 0, "unknown": 0}
+{"batch": "default-seam", "rows": 13, "passed": 13, "failed": 0, "unknown": 0}
+{"batch": "lifetime", "rows": 6, "passed": 6, "failed": 0, "unknown": 0}
+{"batch": "calendar", "rows": 18, "passed": 18, "failed": 0, "unknown": 0}
+{"batch": "dialog", "rows": 16, "passed": 16, "failed": 0, "unknown": 0}
+{"batch": "dialog-additional", "rows": 5, "passed": 5, "failed": 0, "unknown": 0}
+{"batch": "subtree-and-move", "rows": 5, "passed": 5, "failed": 0, "unknown": 0}
+{"batch": "drag-owner", "rows": 6, "passed": 6, "failed": 0, "unknown": 0}
+{"batch": "ownership-and-composition", "rows": 5, "passed": 3, "failed": 0, "unknown": 2}
+{"batch": "unowned-controls", "rows": 4, "passed": 4, "failed": 0, "unknown": 0}
+{"batch": "dialog-cross", "rows": 48, "passed": 48, "failed": 0, "unknown": 0}
+{"batch": "cross-app", "rows": 3, "passed": 3, "failed": 0, "unknown": 0}
+{"batch": "popup-oracle", "rows": 9, "passed": 9, "failed": 0, "unknown": 0}

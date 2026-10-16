@@ -1,0 +1,532 @@
+[
+  {
+    "caseId": "F01/top/normal-default/K/load",
+    "field": "F01",
+    "layout": "top",
+    "variant": "normal-default",
+    "want": "事项甲",
+    "present": true
+  },
+  {
+    "caseId": "F01/top/empty/K/load",
+    "field": "F01",
+    "layout": "top",
+    "variant": "empty",
+    "want": "",
+    "present": true
+  },
+  {
+    "caseId": "F01/top/unset/K/load",
+    "field": "F01",
+    "layout": "top",
+    "variant": "unset",
+    "want": null,
+    "present": false
+  },
+  {
+    "caseId": "F01/grid/normal-default/K/load",
+    "field": "F01",
+    "layout": "grid",
+    "variant": "normal-default",
+    "want": "事项甲",
+    "present": true
+  },
+  {
+    "caseId": "F01/grid/empty/K/load",
+    "field": "F01",
+    "layout": "grid",
+    "variant": "empty",
+    "want": "",
+    "present": true
+  },
+  {
+    "caseId": "F01/grid/unset/K/load",
+    "field": "F01",
+    "layout": "grid",
+    "variant": "unset",
+    "want": null,
+    "present": false
+  },
+  {
+    "caseId": "F02/top/normal-default/K/load",
+    "field": "F02",
+    "layout": "top",
+    "variant": "normal-default",
+    "want": "第一行\n第二行",
+    "present": true
+  },
+  {
+    "caseId": "F02/top/empty/K/load",
+    "field": "F02",
+    "layout": "top",
+    "variant": "empty",
+    "want": "",
+    "present": true
+  },
+  {
+    "caseId": "F02/top/unset/K/load",
+    "field": "F02",
+    "layout": "top",
+    "variant": "unset",
+    "want": null,
+    "present": false
+  },
+  {
+    "caseId": "F02/grid/normal-default/K/load",
+    "field": "F02",
+    "layout": "grid",
+    "variant": "normal-default",
+    "want": "第一行\n第二行",
+    "present": true
+  },
+  {
+    "caseId": "F02/grid/empty/K/load",
+    "field": "F02",
+    "layout": "grid",
+    "variant": "empty",
+    "want": "",
+    "present": true
+  },
+  {
+    "caseId": "F02/grid/unset/K/load",
+    "field": "F02",
+    "layout": "grid",
+    "variant": "unset",
+    "want": null,
+    "present": false
+  },
+  {
+    "caseId": "F03/top/zero/K/load",
+    "field": "F03",
+    "layout": "top",
+    "variant": "zero",
+    "want": 0,
+    "present": true
+  },
+  {
+    "caseId": "F03/top/negative/K/load",
+    "field": "F03",
+    "layout": "top",
+    "variant": "negative",
+    "want": -2,
+    "present": true
+  },
+  {
+    "caseId": "F03/top/decimal/K/load",
+    "field": "F03",
+    "layout": "top",
+    "variant": "decimal",
+    "want": 1.5,
+    "present": true
+  },
+  {
+    "caseId": "F03/top/unset/K/load",
+    "field": "F03",
+    "layout": "top",
+    "variant": "unset",
+    "want": null,
+    "present": false
+  },
+  {
+    "caseId": "F03/grid/zero/K/load",
+    "field": "F03",
+    "layout": "grid",
+    "variant": "zero",
+    "want": 0,
+    "present": true
+  },
+  {
+    "caseId": "F03/grid/negative/K/load",
+    "field": "F03",
+    "layout": "grid",
+    "variant": "negative",
+    "want": -2,
+    "present": true
+  },
+  {
+    "caseId": "F03/grid/decimal/K/load",
+    "field": "F03",
+    "layout": "grid",
+    "variant": "decimal",
+    "want": 1.5,
+    "present": true
+  },
+  {
+    "caseId": "F03/grid/unset/K/load",
+    "field": "F03",
+    "layout": "grid",
+    "variant": "unset",
+    "want": null,
+    "present": false
+  },
+  {
+    "caseId": "F04/top/zero/K/load",
+    "field": "F04",
+    "layout": "top",
+    "variant": "zero",
+    "want": 0,
+    "present": true
+  },
+  {
+    "caseId": "F04/top/string-zero/K/load",
+    "field": "F04",
+    "layout": "top",
+    "variant": "string-zero",
+    "want": "0",
+    "present": true
+  },
+  {
+    "caseId": "F04/top/normal/K/load",
+    "field": "F04",
+    "layout": "top",
+    "variant": "normal",
+    "want": "normal",
+    "present": true
+  },
+  {
+    "caseId": "F04/top/unset/K/load",
+    "field": "F04",
+    "layout": "top",
+    "variant": "unset",
+    "want": null,
+    "present": false
+  },
+  {
+    "caseId": "F04/grid/zero/K/load",
+    "field": "F04",
+    "layout": "grid",
+    "variant": "zero",
+    "want": 0,
+    "present": true
+  },
+  {
+    "caseId": "F04/grid/string-zero/K/load",
+    "field": "F04",
+    "layout": "grid",
+    "variant": "string-zero",
+    "want": "0",
+    "present": true
+  },
+  {
+    "caseId": "F04/grid/normal/K/load",
+    "field": "F04",
+    "layout": "grid",
+    "variant": "normal",
+    "want": "normal",
+    "present": true
+  },
+  {
+    "caseId": "F04/grid/unset/K/load",
+    "field": "F04",
+    "layout": "grid",
+    "variant": "unset",
+    "want": null,
+    "present": false
+  },
+  {
+    "caseId": "F05/top/empty-array/K/load",
+    "field": "F05",
+    "layout": "top",
+    "variant": "empty-array",
+    "want": [],
+    "present": true
+  },
+  {
+    "caseId": "F05/top/selected-array/K/load",
+    "field": "F05",
+    "layout": "top",
+    "variant": "selected-array",
+    "want": [
+      "gz",
+      "sz"
+    ],
+    "present": true
+  },
+  {
+    "caseId": "F05/top/unset/K/load",
+    "field": "F05",
+    "layout": "top",
+    "variant": "unset",
+    "want": null,
+    "present": false
+  },
+  {
+    "caseId": "F05/grid/empty-array/K/load",
+    "field": "F05",
+    "layout": "grid",
+    "variant": "empty-array",
+    "want": [],
+    "present": true
+  },
+  {
+    "caseId": "F05/grid/selected-array/K/load",
+    "field": "F05",
+    "layout": "grid",
+    "variant": "selected-array",
+    "want": [
+      "gz",
+      "sz"
+    ],
+    "present": true
+  },
+  {
+    "caseId": "F05/grid/unset/K/load",
+    "field": "F05",
+    "layout": "grid",
+    "variant": "unset",
+    "want": null,
+    "present": false
+  },
+  {
+    "caseId": "F06/top/zero/K/load",
+    "field": "F06",
+    "layout": "top",
+    "variant": "zero",
+    "want": 0,
+    "present": true
+  },
+  {
+    "caseId": "F06/top/string-zero/K/load",
+    "field": "F06",
+    "layout": "top",
+    "variant": "string-zero",
+    "want": "0",
+    "present": true
+  },
+  {
+    "caseId": "F06/top/normal/K/load",
+    "field": "F06",
+    "layout": "top",
+    "variant": "normal",
+    "want": "normal",
+    "present": true
+  },
+  {
+    "caseId": "F06/top/unset/K/load",
+    "field": "F06",
+    "layout": "top",
+    "variant": "unset",
+    "want": null,
+    "present": false
+  },
+  {
+    "caseId": "F06/grid/zero/K/load",
+    "field": "F06",
+    "layout": "grid",
+    "variant": "zero",
+    "want": 0,
+    "present": true
+  },
+  {
+    "caseId": "F06/grid/string-zero/K/load",
+    "field": "F06",
+    "layout": "grid",
+    "variant": "string-zero",
+    "want": "0",
+    "present": true
+  },
+  {
+    "caseId": "F06/grid/normal/K/load",
+    "field": "F06",
+    "layout": "grid",
+    "variant": "normal",
+    "want": "normal",
+    "present": true
+  },
+  {
+    "caseId": "F06/grid/unset/K/load",
+    "field": "F06",
+    "layout": "grid",
+    "variant": "unset",
+    "want": null,
+    "present": false
+  },
+  {
+    "caseId": "F07/top/normal-default/K/load",
+    "field": "F07",
+    "layout": "top",
+    "variant": "normal-default",
+    "want": "2026-10-15",
+    "present": true
+  },
+  {
+    "caseId": "F07/top/unset/K/load",
+    "field": "F07",
+    "layout": "top",
+    "variant": "unset",
+    "want": null,
+    "present": false
+  },
+  {
+    "caseId": "F07/grid/normal-default/K/load",
+    "field": "F07",
+    "layout": "grid",
+    "variant": "normal-default",
+    "want": "2026-10-15",
+    "present": true
+  },
+  {
+    "caseId": "F07/grid/unset/K/load",
+    "field": "F07",
+    "layout": "grid",
+    "variant": "unset",
+    "want": null,
+    "present": false
+  },
+  {
+    "caseId": "F08/top/false/K/load",
+    "field": "F08",
+    "layout": "top",
+    "variant": "false",
+    "want": false,
+    "present": true
+  },
+  {
+    "caseId": "F08/top/true/K/load",
+    "field": "F08",
+    "layout": "top",
+    "variant": "true",
+    "want": true,
+    "present": true
+  },
+  {
+    "caseId": "F08/top/unset/K/load",
+    "field": "F08",
+    "layout": "top",
+    "variant": "unset",
+    "want": null,
+    "present": false
+  },
+  {
+    "caseId": "F08/grid/false/K/load",
+    "field": "F08",
+    "layout": "grid",
+    "variant": "false",
+    "want": false,
+    "present": true
+  },
+  {
+    "caseId": "F08/grid/true/K/load",
+    "field": "F08",
+    "layout": "grid",
+    "variant": "true",
+    "want": true,
+    "present": true
+  },
+  {
+    "caseId": "F08/grid/unset/K/load",
+    "field": "F08",
+    "layout": "grid",
+    "variant": "unset",
+    "want": null,
+    "present": false
+  },
+  {
+    "caseId": "I01/omitted/top/K/load",
+    "field": "I01",
+    "layout": "top",
+    "variant": "normal-default",
+    "dateType": "",
+    "want": "2026-10-15",
+    "present": true
+  },
+  {
+    "caseId": "I01/omitted/grid/K/load",
+    "field": "I01",
+    "layout": "grid",
+    "variant": "normal-default",
+    "dateType": "",
+    "want": "2026-10-15",
+    "present": true
+  },
+  {
+    "caseId": "I01/date/top/K/load",
+    "field": "I01",
+    "layout": "top",
+    "variant": "normal-default",
+    "dateType": "date",
+    "want": "2026-10-15",
+    "present": true
+  },
+  {
+    "caseId": "I01/date/grid/K/load",
+    "field": "I01",
+    "layout": "grid",
+    "variant": "normal-default",
+    "dateType": "date",
+    "want": "2026-10-15",
+    "present": true
+  },
+  {
+    "caseId": "I01/datetime/top/K/load",
+    "field": "I01",
+    "layout": "top",
+    "variant": "normal-default",
+    "dateType": "datetime",
+    "want": "2026-10-15 10:30:00",
+    "present": true
+  },
+  {
+    "caseId": "I01/datetime/grid/K/load",
+    "field": "I01",
+    "layout": "grid",
+    "variant": "normal-default",
+    "dateType": "datetime",
+    "want": "2026-10-15 10:30:00",
+    "present": true
+  },
+  {
+    "caseId": "I01/week/top/K/load",
+    "field": "I01",
+    "layout": "top",
+    "variant": "normal-default",
+    "dateType": "week",
+    "want": "2026-10-15",
+    "present": true
+  },
+  {
+    "caseId": "I01/week/grid/K/load",
+    "field": "I01",
+    "layout": "grid",
+    "variant": "normal-default",
+    "dateType": "week",
+    "want": "2026-10-15",
+    "present": true
+  },
+  {
+    "caseId": "I01/month/top/K/load",
+    "field": "I01",
+    "layout": "top",
+    "variant": "normal-default",
+    "dateType": "month",
+    "want": "2026-10",
+    "present": true
+  },
+  {
+    "caseId": "I01/month/grid/K/load",
+    "field": "I01",
+    "layout": "grid",
+    "variant": "normal-default",
+    "dateType": "month",
+    "want": "2026-10",
+    "present": true
+  },
+  {
+    "caseId": "I01/year/top/K/load",
+    "field": "I01",
+    "layout": "top",
+    "variant": "normal-default",
+    "dateType": "year",
+    "want": "2026",
+    "present": true
+  },
+  {
+    "caseId": "I01/year/grid/K/load",
+    "field": "I01",
+    "layout": "grid",
+    "variant": "normal-default",
+    "dateType": "year",
+    "want": "2026",
+    "present": true
+  }
+]

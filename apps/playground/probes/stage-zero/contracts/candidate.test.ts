@@ -1,8 +1,27 @@
+import "../form-state.cases";
+import "../form-repair/dialog-close.cases";
 import { describe, expect, it } from "vitest";
 import { compile, verticalDiLayout, type ModdleElement } from "@flowduet/core";
 import { fixture } from "./fixtures";
 import { graphValue } from "./candidate";
 import { createContractController } from "./controller";
+import { createSeamRecorder } from "../form-repair/seam-proof";
+
+describe("P0公开接缝观察器（不是产品身份实现）", () => {
+  it("same_field_string_does_not_make_clone_a_source_token", () => {
+    const recorder = createSeamRecorder("A");
+    const source = { field: "same" };
+    expect(recorder.token(source)).toBe(recorder.token(source));
+    expect(recorder.token({ ...source })).not.toBe(recorder.token(source));
+  });
+  it("owners_and_recreated_sources_have_distinct_observation_tokens", () => {
+    const a = createSeamRecorder("A"),
+      b = createSeamRecorder("B");
+    const source = { field: "same" };
+    expect(a.token(source)).not.toBe(b.token(source));
+    expect(a.token({ field: "same" })).not.toBe(a.token(source));
+  });
+});
 
 function withForms() {
   const f = fixture();
@@ -167,5 +186,93 @@ describe("隔离候选与当前编辑版本", () => {
         }),
       ]),
     );
+  });
+});
+
+describe("C4只读候选移交闸门", () => {
+  it("candidate_gate_rejects_foreign_stale_or_disposed", async () => {
+    const a = withForms(),
+      b = withForms();
+    try {
+      const prepared = await a.c.prepare("draft-save");
+      expect(prepared.ok).toBe(true);
+      if (!prepared.ok) return;
+      expect(a.c.checkPreparedCandidate(prepared.value)).toEqual({ ok: true, value: undefined });
+      expect(b.c.checkPreparedCandidate(prepared.value)).toMatchObject({
+        ok: false,
+        code: "version-changed",
+      });
+      expect(a.c.checkPreparedCandidate({ ...prepared.value })).toMatchObject({
+        ok: false,
+        code: "version-changed",
+      });
+      a.c.drafts.touch(a.target("form_1", "form"));
+      expect(a.c.checkPreparedCandidate(prepared.value)).toMatchObject({
+        ok: false,
+        code: "version-changed",
+      });
+      const newer = await a.c.prepare("draft-save");
+      expect(newer.ok).toBe(true);
+      if (!newer.ok) return;
+      a.store.registerEditor(a.target("form_1", "form"), {
+        flush() {},
+        capture: () => ({ kind: "form-content", rules: "[]", options: "{}" }),
+      });
+      expect(a.c.checkPreparedCandidate(newer.value)).toMatchObject({
+        ok: false,
+        code: "version-changed",
+      });
+      a.c.dispose();
+      expect(a.c.checkPreparedCandidate(prepared.value)).toMatchObject({
+        ok: false,
+        code: "cancelled",
+      });
+    } finally {
+      a.c.dispose();
+      b.c.dispose();
+    }
+  });
+  it("candidate_gate_does_not_recapture_or_write：旧候选不清新成功", async () => {
+    const f = withForms();
+    let calls = 0;
+    try {
+      f.store.registerEditor(f.target("form_1", "form"), {
+        flush() {
+          calls++;
+        },
+        capture() {
+          calls++;
+          return { kind: "form-content", rules: "[]", options: "{}" };
+        },
+      });
+      const old = await f.c.prepare("draft-save");
+      expect(old.ok).toBe(true);
+      if (!old.ok) return;
+      f.drafts.touch(f.target("form_1", "form"));
+      const latest = await f.c.prepare("draft-save");
+      expect(latest.ok).toBe(true);
+      if (!latest.ok) return;
+      const before = calls,
+        session = f.session.current,
+        xml = (await f.model.toXML()).xml,
+        revision = f.drafts.revision;
+      expect(f.c.checkPreparedCandidate(old.value)).toMatchObject({
+        ok: false,
+        code: "version-changed",
+      });
+      expect(f.c.checkPreparedCandidate(latest.value).ok).toBe(true);
+      expect(f.c.checkPreparedCandidate(latest.value).ok).toBe(true);
+      expect(calls).toBe(before);
+      expect(f.session.current).toBe(session);
+      expect((await f.model.toXML()).xml).toBe(xml);
+      expect(f.drafts.revision).toBe(revision);
+      f.model.elementOf("approval_1").set("extraFlag", 1n);
+      expect(f.c.checkPreparedCandidate(latest.value)).toMatchObject({
+        ok: false,
+        code: "capture-failed",
+      });
+    } finally {
+      f.c.dispose();
+    }
   });
 });

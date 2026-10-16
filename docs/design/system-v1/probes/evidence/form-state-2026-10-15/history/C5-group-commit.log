@@ -1,0 +1,6 @@
+[refactor/stage-zero-form-state 3649244] test(probe): 合并协议用例入口以减少并发装载
+ 6 files changed, 4 insertions(+)
+ rename apps/playground/probes/stage-zero/form-state/{browser-element.test-support.test.ts => browser-element.cases.ts} (100%)
+ rename apps/playground/probes/stage-zero/form-state/{drag-boundary.test.ts => drag-boundary.cases.ts} (100%)
+ rename apps/playground/probes/stage-zero/form-state/{input-boundary.test.ts => input-boundary.cases.ts} (100%)
+ rename apps/playground/probes/stage-zero/form-state/{rebuild-policy.test.ts => rebuild-policy.cases.ts} (100%)

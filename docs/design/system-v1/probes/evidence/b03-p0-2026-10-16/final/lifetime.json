@@ -1,0 +1,3020 @@
+[
+  {
+    "case": "delete-immediate-field-reuse",
+    "layout": "top",
+    "run": 1,
+    "source": "native-pointer-keyboard",
+    "actualMode": "public-seam-sample",
+    "deleted": {
+      "sequence": 3,
+      "event": "public-delete",
+      "detail": {
+        "owner": "A",
+        "field": "a_amount",
+        "token": "P0:55",
+        "sourceToken": "P0:55",
+        "knownSubtree": [
+          {
+            "field": "a_amount",
+            "token": "P0:55"
+          }
+        ],
+        "children": [],
+        "publicFieldsAtEvent": [
+          "a_subject",
+          "a_notes",
+          "a_amount",
+          "a_priority",
+          "a_areas",
+          "a_department",
+          "a_date",
+          "a_urgent"
+        ]
+      }
+    },
+    "active": {
+      "sequence": 9,
+      "event": "public-active",
+      "detail": {
+        "owner": "A",
+        "field": "Fewfmvalzzy3jnc",
+        "token": "P0:57",
+        "sourceToken": null,
+        "knownSubtree": [],
+        "children": [],
+        "publicFieldsAtEvent": [
+          "a_subject",
+          "a_notes",
+          "a_priority",
+          "a_areas",
+          "a_department",
+          "a_date",
+          "a_urgent",
+          "Fewfmvalzzy3jnc"
+        ]
+      }
+    },
+    "trace": [
+      {
+        "sequence": 1,
+        "event": "native-pointerdown",
+        "detail": {
+          "owner": "A",
+          "trusted": true,
+          "target": "I"
+        }
+      },
+      {
+        "sequence": 2,
+        "event": "native-pointerup",
+        "detail": {
+          "owner": "A",
+          "trusted": true,
+          "target": "I"
+        }
+      },
+      {
+        "sequence": 3,
+        "event": "public-delete",
+        "detail": {
+          "owner": "A",
+          "field": "a_amount",
+          "token": "P0:55",
+          "sourceToken": "P0:55",
+          "knownSubtree": [
+            {
+              "field": "a_amount",
+              "token": "P0:55"
+            }
+          ],
+          "children": [],
+          "publicFieldsAtEvent": [
+            "a_subject",
+            "a_notes",
+            "a_amount",
+            "a_priority",
+            "a_areas",
+            "a_department",
+            "a_date",
+            "a_urgent"
+          ]
+        }
+      },
+      {
+        "sequence": 4,
+        "event": "sample-unmounted",
+        "detail": {
+          "owner": "A",
+          "field": "a_amount",
+          "token": "P0:55",
+          "value": "P0:55"
+        }
+      },
+      {
+        "sequence": 5,
+        "event": "sample-mounted",
+        "detail": {
+          "owner": "A",
+          "field": "a_amount",
+          "token": "P0:55",
+          "value": "P0:55"
+        }
+      },
+      {
+        "sequence": 6,
+        "event": "native-pointerdown",
+        "detail": {
+          "owner": "A",
+          "trusted": true,
+          "target": "DIV"
+        }
+      },
+      {
+        "sequence": 7,
+        "event": "native-pointerup",
+        "detail": {
+          "owner": "A",
+          "trusted": true,
+          "target": "DIV"
+        }
+      },
+      {
+        "sequence": 8,
+        "event": "public-drag",
+        "detail": {
+          "owner": "A",
+          "token": "P0:56",
+          "sourceToken": null,
+          "knownSubtree": [],
+          "publicFieldsAtEvent": [
+            "a_subject",
+            "a_notes",
+            "a_priority",
+            "a_areas",
+            "a_department",
+            "a_date",
+            "a_urgent"
+          ]
+        }
+      },
+      {
+        "sequence": 9,
+        "event": "public-active",
+        "detail": {
+          "owner": "A",
+          "field": "Fewfmvalzzy3jnc",
+          "token": "P0:57",
+          "sourceToken": null,
+          "knownSubtree": [],
+          "children": [],
+          "publicFieldsAtEvent": [
+            "a_subject",
+            "a_notes",
+            "a_priority",
+            "a_areas",
+            "a_department",
+            "a_date",
+            "a_urgent",
+            "Fewfmvalzzy3jnc"
+          ]
+        }
+      },
+      {
+        "sequence": 10,
+        "event": "componentRule",
+        "detail": {
+          "owner": "A",
+          "field": "Fewfmvalzzy3jnc",
+          "token": "P0:57",
+          "type": "inputNumber"
+        }
+      },
+      {
+        "sequence": 11,
+        "event": "sample-unmounted",
+        "detail": {
+          "owner": "A",
+          "field": "a_amount",
+          "token": "P0:55",
+          "value": "P0:55"
+        }
+      },
+      {
+        "sequence": 12,
+        "event": "sample-mounted",
+        "detail": {
+          "owner": "A",
+          "field": "Fewfmvalzzy3jnc",
+          "token": "P0:57",
+          "value": "P0:57"
+        }
+      },
+      {
+        "sequence": 13,
+        "event": "native-input",
+        "detail": {
+          "owner": "A",
+          "trusted": true,
+          "target": "INPUT",
+          "inputType": "text",
+          "raw": "a_amount",
+          "badInput": false,
+          "nativeControlToken": "P0:58"
+        }
+      },
+      {
+        "sequence": 14,
+        "event": "native-change",
+        "detail": {
+          "owner": "A",
+          "trusted": true,
+          "target": "INPUT",
+          "inputType": "text",
+          "raw": "a_amount",
+          "badInput": false,
+          "nativeControlToken": "P0:58"
+        }
+      },
+      {
+        "sequence": 15,
+        "event": "public-change-field",
+        "detail": {
+          "owner": "A",
+          "field": "a_amount",
+          "token": "P0:59",
+          "sourceToken": null,
+          "knownSubtree": [],
+          "publicFieldsAtEvent": [
+            "a_subject",
+            "a_notes",
+            "a_priority",
+            "a_areas",
+            "a_department",
+            "a_date",
+            "a_urgent",
+            "Fewfmvalzzy3jnc"
+          ]
+        }
+      },
+      {
+        "sequence": 16,
+        "event": "native-focusout",
+        "detail": {
+          "owner": "A",
+          "trusted": true,
+          "target": "INPUT",
+          "inputType": "text",
+          "raw": "a_amount",
+          "badInput": false,
+          "nativeControlToken": "P0:58"
+        }
+      },
+      {
+        "sequence": 17,
+        "event": "native-pointerdown",
+        "detail": {
+          "owner": "A",
+          "trusted": true,
+          "target": "BUTTON"
+        }
+      },
+      {
+        "sequence": 18,
+        "event": "native-focusout",
+        "detail": {
+          "owner": "A",
+          "trusted": true,
+          "target": "INPUT",
+          "inputType": "text",
+          "raw": "计数器",
+          "badInput": false,
+          "nativeControlToken": "P0:60"
+        }
+      },
+      {
+        "sequence": 19,
+        "event": "native-pointerup",
+        "detail": {
+          "owner": "A",
+          "trusted": true,
+          "target": "BUTTON"
+        }
+      },
+      {
+        "sequence": 20,
+        "event": "public-clone",
+        "detail": {
+          "owner": "A",
+          "fields": [
+            {
+              "field": "a_amount",
+              "source": "P0:57",
+              "clone": "P0:61",
+              "sameReference": false
+            }
+          ],
+          "rules": [
+            {
+              "type": "input",
+              "field": "a_subject",
+              "title": "甲文本",
+              "value": "事项甲",
+              "props": {
+                "placeholder": "输入事项"
+              },
+              "_fc_id": "id_Fk7kmvalzzjuirc",
+              "name": "ref_Fhejmvalzzjuisc",
+              "display": true,
+              "hidden": false,
+              "_fc_drag_tag": "input"
+            },
+            {
+              "type": "input",
+              "field": "a_notes",
+              "title": "甲多行文本",
+              "props": {
+                "type": "textarea",
+                "placeholder": "输入说明"
+              },
+              "value": "第一行\n第二行",
+              "_fc_id": "id_F90hmvalzzjuitc",
+              "name": "ref_Fm1ymvalzzjuiuc",
+              "display": true,
+              "hidden": false,
+              "_fc_drag_tag": "input"
+            },
+            {
+              "type": "radio",
+              "field": "a_priority",
+              "title": "甲单选",
+              "options": [
+                {
+                  "label": "a数值零",
+                  "value": 0
+                },
+                {
+                  "label": "a字符串零",
+                  "value": "0"
+                },
+                {
+                  "label": "a普通",
+                  "value": "normal"
+                },
+                {
+                  "label": "a广州",
+                  "value": "gz"
+                },
+                {
+                  "label": "a深圳",
+                  "value": "sz"
+                }
+              ],
+              "value": 0,
+              "_fc_id": "id_F2bfmvalzzjuixc",
+              "name": "ref_Fqeamvalzzjuiyc",
+              "display": true,
+              "hidden": false,
+              "_fc_drag_tag": "radio"
+            },
+            {
+              "type": "checkbox",
+              "field": "a_areas",
+              "title": "甲多选",
+              "options": [
+                {
+                  "label": "a数值零",
+                  "value": 0
+                },
+                {
+                  "label": "a字符串零",
+                  "value": "0"
+                },
+                {
+                  "label": "a普通",
+                  "value": "normal"
+                },
+                {
+                  "label": "a广州",
+                  "value": "gz"
+                },
+                {
+                  "label": "a深圳",
+                  "value": "sz"
+                }
+              ],
+              "_fc_id": "id_Fj1dmvalzzjuizc",
+              "name": "ref_Fb68mvalzzjuj0c",
+              "display": true,
+              "hidden": false,
+              "_fc_drag_tag": "checkbox"
+            },
+            {
+              "type": "select",
+              "field": "a_department",
+              "title": "甲下拉单选",
+              "options": [
+                {
+                  "label": "a数值零",
+                  "value": 0
+                },
+                {
+                  "label": "a字符串零",
+                  "value": "0"
+                },
+                {
+                  "label": "a普通",
+                  "value": "normal"
+                },
+                {
+                  "label": "a广州",
+                  "value": "gz"
+                },
+                {
+                  "label": "a深圳",
+                  "value": "sz"
+                }
+              ],
+              "value": 0,
+              "_fc_id": "id_Fkizmvalzzjuj1c",
+              "name": "ref_F9jdmvalzzjuj2c",
+              "display": true,
+              "hidden": false,
+              "_fc_drag_tag": "select"
+            },
+            {
+              "type": "datePicker",
+              "field": "a_date",
+              "title": "甲日期",
+              "props": {
+                "type": "date",
+                "valueFormat": "YYYY-MM-DD"
+              },
+              "value": "2026-10-15",
+              "_fc_id": "id_Fu36mvalzzjuj3c",
+              "name": "ref_F81smvalzzjuj4c",
+              "display": true,
+              "hidden": false,
+              "_fc_drag_tag": "datePicker"
+            },
+            {
+              "type": "switch",
+              "field": "a_urgent",
+              "title": "甲开关",
+              "value": false,
+              "_fc_id": "id_Fvsymvalzzjuj5c",
+              "name": "ref_Fqlcmvalzzjuj6c",
+              "display": true,
+              "hidden": false,
+              "_fc_drag_tag": "switch"
+            },
+            {
+              "type": "inputNumber",
+              "field": "a_amount",
+              "title": "计数器",
+              "info": "",
+              "$required": false,
+              "_fc_id": "id_F7oemvalzzy3joc",
+              "name": "ref_Fu4nmvalzzy3jpc",
+              "display": true,
+              "hidden": false,
+              "_fc_drag_tag": "inputNumber"
+            }
+          ]
+        }
+      }
+    ],
+    "pass": true
+  },
+  {
+    "case": "delete-immediate-field-reuse",
+    "layout": "top",
+    "run": 2,
+    "source": "native-pointer-keyboard",
+    "actualMode": "public-seam-sample",
+    "deleted": {
+      "sequence": 3,
+      "event": "public-delete",
+      "detail": {
+        "owner": "A",
+        "field": "a_amount",
+        "token": "P0:62",
+        "sourceToken": "P0:62",
+        "knownSubtree": [
+          {
+            "field": "a_amount",
+            "token": "P0:62"
+          }
+        ],
+        "children": [],
+        "publicFieldsAtEvent": [
+          "a_subject",
+          "a_notes",
+          "a_amount",
+          "a_priority",
+          "a_areas",
+          "a_department",
+          "a_date",
+          "a_urgent"
+        ]
+      }
+    },
+    "active": {
+      "sequence": 9,
+      "event": "public-active",
+      "detail": {
+        "owner": "A",
+        "field": "Fzlgmvam00plkmc",
+        "token": "P0:64",
+        "sourceToken": null,
+        "knownSubtree": [],
+        "children": [],
+        "publicFieldsAtEvent": [
+          "a_subject",
+          "a_notes",
+          "a_priority",
+          "a_areas",
+          "a_department",
+          "a_date",
+          "a_urgent",
+          "Fzlgmvam00plkmc"
+        ]
+      }
+    },
+    "trace": [
+      {
+        "sequence": 1,
+        "event": "native-pointerdown",
+        "detail": {
+          "owner": "A",
+          "trusted": true,
+          "target": "I"
+        }
+      },
+      {
+        "sequence": 2,
+        "event": "native-pointerup",
+        "detail": {
+          "owner": "A",
+          "trusted": true,
+          "target": "I"
+        }
+      },
+      {
+        "sequence": 3,
+        "event": "public-delete",
+        "detail": {
+          "owner": "A",
+          "field": "a_amount",
+          "token": "P0:62",
+          "sourceToken": "P0:62",
+          "knownSubtree": [
+            {
+              "field": "a_amount",
+              "token": "P0:62"
+            }
+          ],
+          "children": [],
+          "publicFieldsAtEvent": [
+            "a_subject",
+            "a_notes",
+            "a_amount",
+            "a_priority",
+            "a_areas",
+            "a_department",
+            "a_date",
+            "a_urgent"
+          ]
+        }
+      },
+      {
+        "sequence": 4,
+        "event": "sample-unmounted",
+        "detail": {
+          "owner": "A",
+          "field": "a_amount",
+          "token": "P0:62",
+          "value": "P0:62"
+        }
+      },
+      {
+        "sequence": 5,
+        "event": "sample-mounted",
+        "detail": {
+          "owner": "A",
+          "field": "a_amount",
+          "token": "P0:62",
+          "value": "P0:62"
+        }
+      },
+      {
+        "sequence": 6,
+        "event": "native-pointerdown",
+        "detail": {
+          "owner": "A",
+          "trusted": true,
+          "target": "DIV"
+        }
+      },
+      {
+        "sequence": 7,
+        "event": "native-pointerup",
+        "detail": {
+          "owner": "A",
+          "trusted": true,
+          "target": "DIV"
+        }
+      },
+      {
+        "sequence": 8,
+        "event": "public-drag",
+        "detail": {
+          "owner": "A",
+          "token": "P0:63",
+          "sourceToken": null,
+          "knownSubtree": [],
+          "publicFieldsAtEvent": [
+            "a_subject",
+            "a_notes",
+            "a_priority",
+            "a_areas",
+            "a_department",
+            "a_date",
+            "a_urgent"
+          ]
+        }
+      },
+      {
+        "sequence": 9,
+        "event": "public-active",
+        "detail": {
+          "owner": "A",
+          "field": "Fzlgmvam00plkmc",
+          "token": "P0:64",
+          "sourceToken": null,
+          "knownSubtree": [],
+          "children": [],
+          "publicFieldsAtEvent": [
+            "a_subject",
+            "a_notes",
+            "a_priority",
+            "a_areas",
+            "a_department",
+            "a_date",
+            "a_urgent",
+            "Fzlgmvam00plkmc"
+          ]
+        }
+      },
+      {
+        "sequence": 10,
+        "event": "componentRule",
+        "detail": {
+          "owner": "A",
+          "field": "Fzlgmvam00plkmc",
+          "token": "P0:64",
+          "type": "inputNumber"
+        }
+      },
+      {
+        "sequence": 11,
+        "event": "sample-unmounted",
+        "detail": {
+          "owner": "A",
+          "field": "a_amount",
+          "token": "P0:62",
+          "value": "P0:62"
+        }
+      },
+      {
+        "sequence": 12,
+        "event": "sample-mounted",
+        "detail": {
+          "owner": "A",
+          "field": "Fzlgmvam00plkmc",
+          "token": "P0:64",
+          "value": "P0:64"
+        }
+      },
+      {
+        "sequence": 13,
+        "event": "native-input",
+        "detail": {
+          "owner": "A",
+          "trusted": true,
+          "target": "INPUT",
+          "inputType": "text",
+          "raw": "a_amount",
+          "badInput": false,
+          "nativeControlToken": "P0:65"
+        }
+      },
+      {
+        "sequence": 14,
+        "event": "native-change",
+        "detail": {
+          "owner": "A",
+          "trusted": true,
+          "target": "INPUT",
+          "inputType": "text",
+          "raw": "a_amount",
+          "badInput": false,
+          "nativeControlToken": "P0:65"
+        }
+      },
+      {
+        "sequence": 15,
+        "event": "public-change-field",
+        "detail": {
+          "owner": "A",
+          "field": "a_amount",
+          "token": "P0:66",
+          "sourceToken": null,
+          "knownSubtree": [],
+          "publicFieldsAtEvent": [
+            "a_subject",
+            "a_notes",
+            "a_priority",
+            "a_areas",
+            "a_department",
+            "a_date",
+            "a_urgent",
+            "Fzlgmvam00plkmc"
+          ]
+        }
+      },
+      {
+        "sequence": 16,
+        "event": "native-focusout",
+        "detail": {
+          "owner": "A",
+          "trusted": true,
+          "target": "INPUT",
+          "inputType": "text",
+          "raw": "a_amount",
+          "badInput": false,
+          "nativeControlToken": "P0:65"
+        }
+      },
+      {
+        "sequence": 17,
+        "event": "native-pointerdown",
+        "detail": {
+          "owner": "A",
+          "trusted": true,
+          "target": "BUTTON"
+        }
+      },
+      {
+        "sequence": 18,
+        "event": "native-focusout",
+        "detail": {
+          "owner": "A",
+          "trusted": true,
+          "target": "INPUT",
+          "inputType": "text",
+          "raw": "计数器",
+          "badInput": false,
+          "nativeControlToken": "P0:67"
+        }
+      },
+      {
+        "sequence": 19,
+        "event": "native-pointerup",
+        "detail": {
+          "owner": "A",
+          "trusted": true,
+          "target": "BUTTON"
+        }
+      },
+      {
+        "sequence": 20,
+        "event": "public-clone",
+        "detail": {
+          "owner": "A",
+          "fields": [
+            {
+              "field": "a_amount",
+              "source": "P0:64",
+              "clone": "P0:68",
+              "sameReference": false
+            }
+          ],
+          "rules": [
+            {
+              "type": "input",
+              "field": "a_subject",
+              "title": "甲文本",
+              "value": "事项甲",
+              "props": {
+                "placeholder": "输入事项"
+              },
+              "_fc_id": "id_Fk8fmvam0061jqc",
+              "name": "ref_Furvmvam0061jrc",
+              "display": true,
+              "hidden": false,
+              "_fc_drag_tag": "input"
+            },
+            {
+              "type": "input",
+              "field": "a_notes",
+              "title": "甲多行文本",
+              "props": {
+                "type": "textarea",
+                "placeholder": "输入说明"
+              },
+              "value": "第一行\n第二行",
+              "_fc_id": "id_Ffkomvam0061jsc",
+              "name": "ref_Fzwnmvam0061jtc",
+              "display": true,
+              "hidden": false,
+              "_fc_drag_tag": "input"
+            },
+            {
+              "type": "radio",
+              "field": "a_priority",
+              "title": "甲单选",
+              "options": [
+                {
+                  "label": "a数值零",
+                  "value": 0
+                },
+                {
+                  "label": "a字符串零",
+                  "value": "0"
+                },
+                {
+                  "label": "a普通",
+                  "value": "normal"
+                },
+                {
+                  "label": "a广州",
+                  "value": "gz"
+                },
+                {
+                  "label": "a深圳",
+                  "value": "sz"
+                }
+              ],
+              "value": 0,
+              "_fc_id": "id_F7bsmvam0061jwc",
+              "name": "ref_Ffvpmvam0061jxc",
+              "display": true,
+              "hidden": false,
+              "_fc_drag_tag": "radio"
+            },
+            {
+              "type": "checkbox",
+              "field": "a_areas",
+              "title": "甲多选",
+              "options": [
+                {
+                  "label": "a数值零",
+                  "value": 0
+                },
+                {
+                  "label": "a字符串零",
+                  "value": "0"
+                },
+                {
+                  "label": "a普通",
+                  "value": "normal"
+                },
+                {
+                  "label": "a广州",
+                  "value": "gz"
+                },
+                {
+                  "label": "a深圳",
+                  "value": "sz"
+                }
+              ],
+              "_fc_id": "id_Fy2qmvam0061jyc",
+              "name": "ref_Fzdvmvam0061jzc",
+              "display": true,
+              "hidden": false,
+              "_fc_drag_tag": "checkbox"
+            },
+            {
+              "type": "select",
+              "field": "a_department",
+              "title": "甲下拉单选",
+              "options": [
+                {
+                  "label": "a数值零",
+                  "value": 0
+                },
+                {
+                  "label": "a字符串零",
+                  "value": "0"
+                },
+                {
+                  "label": "a普通",
+                  "value": "normal"
+                },
+                {
+                  "label": "a广州",
+                  "value": "gz"
+                },
+                {
+                  "label": "a深圳",
+                  "value": "sz"
+                }
+              ],
+              "value": 0,
+              "_fc_id": "id_F5yomvam0061k0c",
+              "name": "ref_Fwxomvam0061k1c",
+              "display": true,
+              "hidden": false,
+              "_fc_drag_tag": "select"
+            },
+            {
+              "type": "datePicker",
+              "field": "a_date",
+              "title": "甲日期",
+              "props": {
+                "type": "date",
+                "valueFormat": "YYYY-MM-DD"
+              },
+              "value": "2026-10-15",
+              "_fc_id": "id_Fif2mvam0061k2c",
+              "name": "ref_Fux2mvam0061k3c",
+              "display": true,
+              "hidden": false,
+              "_fc_drag_tag": "datePicker"
+            },
+            {
+              "type": "switch",
+              "field": "a_urgent",
+              "title": "甲开关",
+              "value": false,
+              "_fc_id": "id_Fea9mvam0061k4c",
+              "name": "ref_Fqzjmvam0061k5c",
+              "display": true,
+              "hidden": false,
+              "_fc_drag_tag": "switch"
+            },
+            {
+              "type": "inputNumber",
+              "field": "a_amount",
+              "title": "计数器",
+              "info": "",
+              "$required": false,
+              "_fc_id": "id_Fsvxmvam00plknc",
+              "name": "ref_Fk4nmvam00plkoc",
+              "display": true,
+              "hidden": false,
+              "_fc_drag_tag": "inputNumber"
+            }
+          ]
+        }
+      }
+    ],
+    "pass": true
+  },
+  {
+    "case": "delete-immediate-field-reuse",
+    "layout": "top",
+    "run": 3,
+    "source": "native-pointer-keyboard",
+    "actualMode": "public-seam-sample",
+    "deleted": {
+      "sequence": 3,
+      "event": "public-delete",
+      "detail": {
+        "owner": "A",
+        "field": "a_amount",
+        "token": "P0:69",
+        "sourceToken": "P0:69",
+        "knownSubtree": [
+          {
+            "field": "a_amount",
+            "token": "P0:69"
+          }
+        ],
+        "children": [],
+        "publicFieldsAtEvent": [
+          "a_subject",
+          "a_notes",
+          "a_amount",
+          "a_priority",
+          "a_areas",
+          "a_department",
+          "a_date",
+          "a_urgent"
+        ]
+      }
+    },
+    "active": {
+      "sequence": 9,
+      "event": "public-active",
+      "detail": {
+        "owner": "A",
+        "field": "Fknomvam01hellc",
+        "token": "P0:71",
+        "sourceToken": null,
+        "knownSubtree": [],
+        "children": [],
+        "publicFieldsAtEvent": [
+          "a_subject",
+          "a_notes",
+          "a_priority",
+          "a_areas",
+          "a_department",
+          "a_date",
+          "a_urgent",
+          "Fknomvam01hellc"
+        ]
+      }
+    },
+    "trace": [
+      {
+        "sequence": 1,
+        "event": "native-pointerdown",
+        "detail": {
+          "owner": "A",
+          "trusted": true,
+          "target": "I"
+        }
+      },
+      {
+        "sequence": 2,
+        "event": "native-pointerup",
+        "detail": {
+          "owner": "A",
+          "trusted": true,
+          "target": "I"
+        }
+      },
+      {
+        "sequence": 3,
+        "event": "public-delete",
+        "detail": {
+          "owner": "A",
+          "field": "a_amount",
+          "token": "P0:69",
+          "sourceToken": "P0:69",
+          "knownSubtree": [
+            {
+              "field": "a_amount",
+              "token": "P0:69"
+            }
+          ],
+          "children": [],
+          "publicFieldsAtEvent": [
+            "a_subject",
+            "a_notes",
+            "a_amount",
+            "a_priority",
+            "a_areas",
+            "a_department",
+            "a_date",
+            "a_urgent"
+          ]
+        }
+      },
+      {
+        "sequence": 4,
+        "event": "sample-unmounted",
+        "detail": {
+          "owner": "A",
+          "field": "a_amount",
+          "token": "P0:69",
+          "value": "P0:69"
+        }
+      },
+      {
+        "sequence": 5,
+        "event": "sample-mounted",
+        "detail": {
+          "owner": "A",
+          "field": "a_amount",
+          "token": "P0:69",
+          "value": "P0:69"
+        }
+      },
+      {
+        "sequence": 6,
+        "event": "native-pointerdown",
+        "detail": {
+          "owner": "A",
+          "trusted": true,
+          "target": "DIV"
+        }
+      },
+      {
+        "sequence": 7,
+        "event": "native-pointerup",
+        "detail": {
+          "owner": "A",
+          "trusted": true,
+          "target": "DIV"
+        }
+      },
+      {
+        "sequence": 8,
+        "event": "public-drag",
+        "detail": {
+          "owner": "A",
+          "token": "P0:70",
+          "sourceToken": null,
+          "knownSubtree": [],
+          "publicFieldsAtEvent": [
+            "a_subject",
+            "a_notes",
+            "a_priority",
+            "a_areas",
+            "a_department",
+            "a_date",
+            "a_urgent"
+          ]
+        }
+      },
+      {
+        "sequence": 9,
+        "event": "public-active",
+        "detail": {
+          "owner": "A",
+          "field": "Fknomvam01hellc",
+          "token": "P0:71",
+          "sourceToken": null,
+          "knownSubtree": [],
+          "children": [],
+          "publicFieldsAtEvent": [
+            "a_subject",
+            "a_notes",
+            "a_priority",
+            "a_areas",
+            "a_department",
+            "a_date",
+            "a_urgent",
+            "Fknomvam01hellc"
+          ]
+        }
+      },
+      {
+        "sequence": 10,
+        "event": "componentRule",
+        "detail": {
+          "owner": "A",
+          "field": "Fknomvam01hellc",
+          "token": "P0:71",
+          "type": "inputNumber"
+        }
+      },
+      {
+        "sequence": 11,
+        "event": "sample-unmounted",
+        "detail": {
+          "owner": "A",
+          "field": "a_amount",
+          "token": "P0:69",
+          "value": "P0:69"
+        }
+      },
+      {
+        "sequence": 12,
+        "event": "sample-mounted",
+        "detail": {
+          "owner": "A",
+          "field": "Fknomvam01hellc",
+          "token": "P0:71",
+          "value": "P0:71"
+        }
+      },
+      {
+        "sequence": 13,
+        "event": "native-input",
+        "detail": {
+          "owner": "A",
+          "trusted": true,
+          "target": "INPUT",
+          "inputType": "text",
+          "raw": "a_amount",
+          "badInput": false,
+          "nativeControlToken": "P0:72"
+        }
+      },
+      {
+        "sequence": 14,
+        "event": "native-change",
+        "detail": {
+          "owner": "A",
+          "trusted": true,
+          "target": "INPUT",
+          "inputType": "text",
+          "raw": "a_amount",
+          "badInput": false,
+          "nativeControlToken": "P0:72"
+        }
+      },
+      {
+        "sequence": 15,
+        "event": "public-change-field",
+        "detail": {
+          "owner": "A",
+          "field": "a_amount",
+          "token": "P0:73",
+          "sourceToken": null,
+          "knownSubtree": [],
+          "publicFieldsAtEvent": [
+            "a_subject",
+            "a_notes",
+            "a_priority",
+            "a_areas",
+            "a_department",
+            "a_date",
+            "a_urgent",
+            "Fknomvam01hellc"
+          ]
+        }
+      },
+      {
+        "sequence": 16,
+        "event": "native-focusout",
+        "detail": {
+          "owner": "A",
+          "trusted": true,
+          "target": "INPUT",
+          "inputType": "text",
+          "raw": "a_amount",
+          "badInput": false,
+          "nativeControlToken": "P0:72"
+        }
+      },
+      {
+        "sequence": 17,
+        "event": "native-pointerdown",
+        "detail": {
+          "owner": "A",
+          "trusted": true,
+          "target": "BUTTON"
+        }
+      },
+      {
+        "sequence": 18,
+        "event": "native-focusout",
+        "detail": {
+          "owner": "A",
+          "trusted": true,
+          "target": "INPUT",
+          "inputType": "text",
+          "raw": "计数器",
+          "badInput": false,
+          "nativeControlToken": "P0:74"
+        }
+      },
+      {
+        "sequence": 19,
+        "event": "native-pointerup",
+        "detail": {
+          "owner": "A",
+          "trusted": true,
+          "target": "BUTTON"
+        }
+      },
+      {
+        "sequence": 20,
+        "event": "public-clone",
+        "detail": {
+          "owner": "A",
+          "fields": [
+            {
+              "field": "a_amount",
+              "source": "P0:71",
+              "clone": "P0:75",
+              "sameReference": false
+            }
+          ],
+          "rules": [
+            {
+              "type": "input",
+              "field": "a_subject",
+              "title": "甲文本",
+              "value": "事项甲",
+              "props": {
+                "placeholder": "输入事项"
+              },
+              "_fc_id": "id_F0pbmvam00xtkpc",
+              "name": "ref_Fz6imvam00xtkqc",
+              "display": true,
+              "hidden": false,
+              "_fc_drag_tag": "input"
+            },
+            {
+              "type": "input",
+              "field": "a_notes",
+              "title": "甲多行文本",
+              "props": {
+                "type": "textarea",
+                "placeholder": "输入说明"
+              },
+              "value": "第一行\n第二行",
+              "_fc_id": "id_Fqyfmvam00xtkrc",
+              "name": "ref_Flktmvam00xtksc",
+              "display": true,
+              "hidden": false,
+              "_fc_drag_tag": "input"
+            },
+            {
+              "type": "radio",
+              "field": "a_priority",
+              "title": "甲单选",
+              "options": [
+                {
+                  "label": "a数值零",
+                  "value": 0
+                },
+                {
+                  "label": "a字符串零",
+                  "value": "0"
+                },
+                {
+                  "label": "a普通",
+                  "value": "normal"
+                },
+                {
+                  "label": "a广州",
+                  "value": "gz"
+                },
+                {
+                  "label": "a深圳",
+                  "value": "sz"
+                }
+              ],
+              "value": 0,
+              "_fc_id": "id_Fab7mvam00xtkvc",
+              "name": "ref_F0armvam00xtkwc",
+              "display": true,
+              "hidden": false,
+              "_fc_drag_tag": "radio"
+            },
+            {
+              "type": "checkbox",
+              "field": "a_areas",
+              "title": "甲多选",
+              "options": [
+                {
+                  "label": "a数值零",
+                  "value": 0
+                },
+                {
+                  "label": "a字符串零",
+                  "value": "0"
+                },
+                {
+                  "label": "a普通",
+                  "value": "normal"
+                },
+                {
+                  "label": "a广州",
+                  "value": "gz"
+                },
+                {
+                  "label": "a深圳",
+                  "value": "sz"
+                }
+              ],
+              "_fc_id": "id_Fynfmvam00xtkxc",
+              "name": "ref_Flommvam00xtkyc",
+              "display": true,
+              "hidden": false,
+              "_fc_drag_tag": "checkbox"
+            },
+            {
+              "type": "select",
+              "field": "a_department",
+              "title": "甲下拉单选",
+              "options": [
+                {
+                  "label": "a数值零",
+                  "value": 0
+                },
+                {
+                  "label": "a字符串零",
+                  "value": "0"
+                },
+                {
+                  "label": "a普通",
+                  "value": "normal"
+                },
+                {
+                  "label": "a广州",
+                  "value": "gz"
+                },
+                {
+                  "label": "a深圳",
+                  "value": "sz"
+                }
+              ],
+              "value": 0,
+              "_fc_id": "id_Fky9mvam00xtkzc",
+              "name": "ref_Fwidmvam00xtl0c",
+              "display": true,
+              "hidden": false,
+              "_fc_drag_tag": "select"
+            },
+            {
+              "type": "datePicker",
+              "field": "a_date",
+              "title": "甲日期",
+              "props": {
+                "type": "date",
+                "valueFormat": "YYYY-MM-DD"
+              },
+              "value": "2026-10-15",
+              "_fc_id": "id_Fc50mvam00xtl1c",
+              "name": "ref_Fnrkmvam00xtl2c",
+              "display": true,
+              "hidden": false,
+              "_fc_drag_tag": "datePicker"
+            },
+            {
+              "type": "switch",
+              "field": "a_urgent",
+              "title": "甲开关",
+              "value": false,
+              "_fc_id": "id_Fwewmvam00xtl3c",
+              "name": "ref_F950mvam00xtl4c",
+              "display": true,
+              "hidden": false,
+              "_fc_drag_tag": "switch"
+            },
+            {
+              "type": "inputNumber",
+              "field": "a_amount",
+              "title": "计数器",
+              "info": "",
+              "$required": false,
+              "_fc_id": "id_Fipgmvam01helmc",
+              "name": "ref_Fgdtmvam01helnc",
+              "display": true,
+              "hidden": false,
+              "_fc_drag_tag": "inputNumber"
+            }
+          ]
+        }
+      }
+    ],
+    "pass": true
+  },
+  {
+    "case": "delete-immediate-field-reuse",
+    "layout": "grid",
+    "run": 1,
+    "source": "native-pointer-keyboard",
+    "actualMode": "public-seam-sample",
+    "deleted": {
+      "sequence": 3,
+      "event": "public-delete",
+      "detail": {
+        "owner": "A",
+        "field": "a_amount",
+        "token": "P0:76",
+        "sourceToken": "P0:76",
+        "knownSubtree": [
+          {
+            "field": "a_amount",
+            "token": "P0:76"
+          }
+        ],
+        "children": [],
+        "publicFieldsAtEvent": [
+          "a_subject",
+          "a_notes",
+          "a_amount",
+          "a_priority",
+          "a_areas",
+          "a_department",
+          "a_date",
+          "a_urgent"
+        ]
+      }
+    },
+    "active": {
+      "sequence": 9,
+      "event": "public-active",
+      "detail": {
+        "owner": "A",
+        "field": "F91jmvam02i6mwc",
+        "token": "P0:78",
+        "sourceToken": null,
+        "knownSubtree": [],
+        "children": [],
+        "publicFieldsAtEvent": [
+          "a_subject",
+          "a_notes",
+          "a_priority",
+          "a_areas",
+          "a_department",
+          "a_date",
+          "a_urgent",
+          "F91jmvam02i6mwc"
+        ]
+      }
+    },
+    "trace": [
+      {
+        "sequence": 1,
+        "event": "native-pointerdown",
+        "detail": {
+          "owner": "A",
+          "trusted": true,
+          "target": "I"
+        }
+      },
+      {
+        "sequence": 2,
+        "event": "native-pointerup",
+        "detail": {
+          "owner": "A",
+          "trusted": true,
+          "target": "I"
+        }
+      },
+      {
+        "sequence": 3,
+        "event": "public-delete",
+        "detail": {
+          "owner": "A",
+          "field": "a_amount",
+          "token": "P0:76",
+          "sourceToken": "P0:76",
+          "knownSubtree": [
+            {
+              "field": "a_amount",
+              "token": "P0:76"
+            }
+          ],
+          "children": [],
+          "publicFieldsAtEvent": [
+            "a_subject",
+            "a_notes",
+            "a_amount",
+            "a_priority",
+            "a_areas",
+            "a_department",
+            "a_date",
+            "a_urgent"
+          ]
+        }
+      },
+      {
+        "sequence": 4,
+        "event": "sample-unmounted",
+        "detail": {
+          "owner": "A",
+          "field": "a_amount",
+          "token": "P0:76",
+          "value": "P0:76"
+        }
+      },
+      {
+        "sequence": 5,
+        "event": "sample-mounted",
+        "detail": {
+          "owner": "A",
+          "field": "a_amount",
+          "token": "P0:76",
+          "value": "P0:76"
+        }
+      },
+      {
+        "sequence": 6,
+        "event": "native-pointerdown",
+        "detail": {
+          "owner": "A",
+          "trusted": true,
+          "target": "DIV"
+        }
+      },
+      {
+        "sequence": 7,
+        "event": "native-pointerup",
+        "detail": {
+          "owner": "A",
+          "trusted": true,
+          "target": "DIV"
+        }
+      },
+      {
+        "sequence": 8,
+        "event": "public-drag",
+        "detail": {
+          "owner": "A",
+          "token": "P0:77",
+          "sourceToken": null,
+          "knownSubtree": [],
+          "publicFieldsAtEvent": [
+            "a_subject",
+            "a_notes",
+            "a_priority",
+            "a_areas",
+            "a_department",
+            "a_date",
+            "a_urgent"
+          ]
+        }
+      },
+      {
+        "sequence": 9,
+        "event": "public-active",
+        "detail": {
+          "owner": "A",
+          "field": "F91jmvam02i6mwc",
+          "token": "P0:78",
+          "sourceToken": null,
+          "knownSubtree": [],
+          "children": [],
+          "publicFieldsAtEvent": [
+            "a_subject",
+            "a_notes",
+            "a_priority",
+            "a_areas",
+            "a_department",
+            "a_date",
+            "a_urgent",
+            "F91jmvam02i6mwc"
+          ]
+        }
+      },
+      {
+        "sequence": 10,
+        "event": "componentRule",
+        "detail": {
+          "owner": "A",
+          "field": "F91jmvam02i6mwc",
+          "token": "P0:78",
+          "type": "inputNumber"
+        }
+      },
+      {
+        "sequence": 11,
+        "event": "sample-unmounted",
+        "detail": {
+          "owner": "A",
+          "field": "a_amount",
+          "token": "P0:76",
+          "value": "P0:76"
+        }
+      },
+      {
+        "sequence": 12,
+        "event": "sample-mounted",
+        "detail": {
+          "owner": "A",
+          "field": "F91jmvam02i6mwc",
+          "token": "P0:78",
+          "value": "P0:78"
+        }
+      },
+      {
+        "sequence": 13,
+        "event": "native-input",
+        "detail": {
+          "owner": "A",
+          "trusted": true,
+          "target": "INPUT",
+          "inputType": "text",
+          "raw": "a_amount",
+          "badInput": false,
+          "nativeControlToken": "P0:79"
+        }
+      },
+      {
+        "sequence": 14,
+        "event": "native-change",
+        "detail": {
+          "owner": "A",
+          "trusted": true,
+          "target": "INPUT",
+          "inputType": "text",
+          "raw": "a_amount",
+          "badInput": false,
+          "nativeControlToken": "P0:79"
+        }
+      },
+      {
+        "sequence": 15,
+        "event": "public-change-field",
+        "detail": {
+          "owner": "A",
+          "field": "a_amount",
+          "token": "P0:80",
+          "sourceToken": null,
+          "knownSubtree": [],
+          "publicFieldsAtEvent": [
+            "a_subject",
+            "a_notes",
+            "a_priority",
+            "a_areas",
+            "a_department",
+            "a_date",
+            "a_urgent",
+            "F91jmvam02i6mwc"
+          ]
+        }
+      },
+      {
+        "sequence": 16,
+        "event": "native-focusout",
+        "detail": {
+          "owner": "A",
+          "trusted": true,
+          "target": "INPUT",
+          "inputType": "text",
+          "raw": "a_amount",
+          "badInput": false,
+          "nativeControlToken": "P0:79"
+        }
+      },
+      {
+        "sequence": 17,
+        "event": "native-pointerdown",
+        "detail": {
+          "owner": "A",
+          "trusted": true,
+          "target": "BUTTON"
+        }
+      },
+      {
+        "sequence": 18,
+        "event": "native-focusout",
+        "detail": {
+          "owner": "A",
+          "trusted": true,
+          "target": "INPUT",
+          "inputType": "text",
+          "raw": "计数器",
+          "badInput": false,
+          "nativeControlToken": "P0:81"
+        }
+      },
+      {
+        "sequence": 19,
+        "event": "native-pointerup",
+        "detail": {
+          "owner": "A",
+          "trusted": true,
+          "target": "BUTTON"
+        }
+      },
+      {
+        "sequence": 20,
+        "event": "public-clone",
+        "detail": {
+          "owner": "A",
+          "fields": [
+            {
+              "field": "a_amount",
+              "source": "P0:78",
+              "clone": "P0:82",
+              "sameReference": false
+            }
+          ],
+          "rules": [
+            {
+              "type": "fcRow",
+              "children": [
+                {
+                  "type": "col",
+                  "props": {
+                    "span": 12
+                  },
+                  "children": [
+                    {
+                      "type": "input",
+                      "field": "a_subject",
+                      "title": "甲文本",
+                      "value": "事项甲",
+                      "props": {
+                        "placeholder": "输入事项"
+                      },
+                      "_fc_id": "id_Ferlmvam01pmloc",
+                      "name": "ref_Fjafmvam01pmlpc",
+                      "display": true,
+                      "hidden": false,
+                      "_fc_drag_tag": "input"
+                    },
+                    {
+                      "type": "input",
+                      "field": "a_notes",
+                      "title": "甲多行文本",
+                      "props": {
+                        "type": "textarea",
+                        "placeholder": "输入说明"
+                      },
+                      "value": "第一行\n第二行",
+                      "_fc_id": "id_Fe22mvam01pmlqc",
+                      "name": "ref_Fphzmvam01pmlrc",
+                      "display": true,
+                      "hidden": false,
+                      "_fc_drag_tag": "input"
+                    },
+                    {
+                      "type": "radio",
+                      "field": "a_priority",
+                      "title": "甲单选",
+                      "options": [
+                        {
+                          "label": "a数值零",
+                          "value": 0
+                        },
+                        {
+                          "label": "a字符串零",
+                          "value": "0"
+                        },
+                        {
+                          "label": "a普通",
+                          "value": "normal"
+                        },
+                        {
+                          "label": "a广州",
+                          "value": "gz"
+                        },
+                        {
+                          "label": "a深圳",
+                          "value": "sz"
+                        }
+                      ],
+                      "value": 0,
+                      "_fc_id": "id_Fso2mvam01pmluc",
+                      "name": "ref_Fe33mvam01pmlvc",
+                      "display": true,
+                      "hidden": false,
+                      "_fc_drag_tag": "radio"
+                    },
+                    {
+                      "type": "checkbox",
+                      "field": "a_areas",
+                      "title": "甲多选",
+                      "options": [
+                        {
+                          "label": "a数值零",
+                          "value": 0
+                        },
+                        {
+                          "label": "a字符串零",
+                          "value": "0"
+                        },
+                        {
+                          "label": "a普通",
+                          "value": "normal"
+                        },
+                        {
+                          "label": "a广州",
+                          "value": "gz"
+                        },
+                        {
+                          "label": "a深圳",
+                          "value": "sz"
+                        }
+                      ],
+                      "_fc_id": "id_Fwvfmvam01pmlwc",
+                      "name": "ref_Fiozmvam01pmlxc",
+                      "display": true,
+                      "hidden": false,
+                      "_fc_drag_tag": "checkbox"
+                    },
+                    {
+                      "type": "select",
+                      "field": "a_department",
+                      "title": "甲下拉单选",
+                      "options": [
+                        {
+                          "label": "a数值零",
+                          "value": 0
+                        },
+                        {
+                          "label": "a字符串零",
+                          "value": "0"
+                        },
+                        {
+                          "label": "a普通",
+                          "value": "normal"
+                        },
+                        {
+                          "label": "a广州",
+                          "value": "gz"
+                        },
+                        {
+                          "label": "a深圳",
+                          "value": "sz"
+                        }
+                      ],
+                      "value": 0,
+                      "_fc_id": "id_Fwaxmvam01pmlyc",
+                      "name": "ref_Fzf1mvam01pmlzc",
+                      "display": true,
+                      "hidden": false,
+                      "_fc_drag_tag": "select"
+                    },
+                    {
+                      "type": "datePicker",
+                      "field": "a_date",
+                      "title": "甲日期",
+                      "props": {
+                        "type": "date",
+                        "valueFormat": "YYYY-MM-DD"
+                      },
+                      "value": "2026-10-15",
+                      "_fc_id": "id_Fwymmvam01pmm0c",
+                      "name": "ref_Fr2smvam01pmm1c",
+                      "display": true,
+                      "hidden": false,
+                      "_fc_drag_tag": "datePicker"
+                    },
+                    {
+                      "type": "switch",
+                      "field": "a_urgent",
+                      "title": "甲开关",
+                      "value": false,
+                      "_fc_id": "id_Flu6mvam01pmm2c",
+                      "name": "ref_Fsqrmvam01pmm3c",
+                      "display": true,
+                      "hidden": false,
+                      "_fc_drag_tag": "switch"
+                    }
+                  ],
+                  "_fc_id": "id_Fo6qmvam01pmm4c",
+                  "name": "ref_Fm7vmvam01pmm5c",
+                  "display": true,
+                  "hidden": false,
+                  "_fc_drag_tag": "col"
+                },
+                {
+                  "type": "col",
+                  "props": {
+                    "span": 12
+                  },
+                  "_fc_id": "id_Fxo4mvam01pmm6c",
+                  "name": "ref_F0tgmvam01pmm7c",
+                  "display": true,
+                  "hidden": false,
+                  "_fc_drag_tag": "col"
+                }
+              ],
+              "_fc_id": "id_Fct5mvam01pmm8c",
+              "name": "ref_Fcvzmvam01pmm9c",
+              "display": true,
+              "hidden": false,
+              "_fc_drag_tag": "fcRow"
+            },
+            {
+              "type": "inputNumber",
+              "field": "a_amount",
+              "title": "计数器",
+              "info": "",
+              "$required": false,
+              "_fc_id": "id_F5ddmvam02i6mxc",
+              "name": "ref_Fjx9mvam02i6myc",
+              "display": true,
+              "hidden": false,
+              "_fc_drag_tag": "inputNumber"
+            }
+          ]
+        }
+      }
+    ],
+    "pass": true
+  },
+  {
+    "case": "delete-immediate-field-reuse",
+    "layout": "grid",
+    "run": 2,
+    "source": "native-pointer-keyboard",
+    "actualMode": "public-seam-sample",
+    "deleted": {
+      "sequence": 3,
+      "event": "public-delete",
+      "detail": {
+        "owner": "A",
+        "field": "a_amount",
+        "token": "P0:83",
+        "sourceToken": "P0:83",
+        "knownSubtree": [
+          {
+            "field": "a_amount",
+            "token": "P0:83"
+          }
+        ],
+        "children": [],
+        "publicFieldsAtEvent": [
+          "a_subject",
+          "a_notes",
+          "a_amount",
+          "a_priority",
+          "a_areas",
+          "a_department",
+          "a_date",
+          "a_urgent"
+        ]
+      }
+    },
+    "active": {
+      "sequence": 9,
+      "event": "public-active",
+      "detail": {
+        "owner": "A",
+        "field": "Fws8mvam038ro7c",
+        "token": "P0:85",
+        "sourceToken": null,
+        "knownSubtree": [],
+        "children": [],
+        "publicFieldsAtEvent": [
+          "a_subject",
+          "a_notes",
+          "a_priority",
+          "a_areas",
+          "a_department",
+          "a_date",
+          "a_urgent",
+          "Fws8mvam038ro7c"
+        ]
+      }
+    },
+    "trace": [
+      {
+        "sequence": 1,
+        "event": "native-pointerdown",
+        "detail": {
+          "owner": "A",
+          "trusted": true,
+          "target": "I"
+        }
+      },
+      {
+        "sequence": 2,
+        "event": "native-pointerup",
+        "detail": {
+          "owner": "A",
+          "trusted": true,
+          "target": "I"
+        }
+      },
+      {
+        "sequence": 3,
+        "event": "public-delete",
+        "detail": {
+          "owner": "A",
+          "field": "a_amount",
+          "token": "P0:83",
+          "sourceToken": "P0:83",
+          "knownSubtree": [
+            {
+              "field": "a_amount",
+              "token": "P0:83"
+            }
+          ],
+          "children": [],
+          "publicFieldsAtEvent": [
+            "a_subject",
+            "a_notes",
+            "a_amount",
+            "a_priority",
+            "a_areas",
+            "a_department",
+            "a_date",
+            "a_urgent"
+          ]
+        }
+      },
+      {
+        "sequence": 4,
+        "event": "sample-unmounted",
+        "detail": {
+          "owner": "A",
+          "field": "a_amount",
+          "token": "P0:83",
+          "value": "P0:83"
+        }
+      },
+      {
+        "sequence": 5,
+        "event": "sample-mounted",
+        "detail": {
+          "owner": "A",
+          "field": "a_amount",
+          "token": "P0:83",
+          "value": "P0:83"
+        }
+      },
+      {
+        "sequence": 6,
+        "event": "native-pointerdown",
+        "detail": {
+          "owner": "A",
+          "trusted": true,
+          "target": "DIV"
+        }
+      },
+      {
+        "sequence": 7,
+        "event": "native-pointerup",
+        "detail": {
+          "owner": "A",
+          "trusted": true,
+          "target": "DIV"
+        }
+      },
+      {
+        "sequence": 8,
+        "event": "public-drag",
+        "detail": {
+          "owner": "A",
+          "token": "P0:84",
+          "sourceToken": null,
+          "knownSubtree": [],
+          "publicFieldsAtEvent": [
+            "a_subject",
+            "a_notes",
+            "a_priority",
+            "a_areas",
+            "a_department",
+            "a_date",
+            "a_urgent"
+          ]
+        }
+      },
+      {
+        "sequence": 9,
+        "event": "public-active",
+        "detail": {
+          "owner": "A",
+          "field": "Fws8mvam038ro7c",
+          "token": "P0:85",
+          "sourceToken": null,
+          "knownSubtree": [],
+          "children": [],
+          "publicFieldsAtEvent": [
+            "a_subject",
+            "a_notes",
+            "a_priority",
+            "a_areas",
+            "a_department",
+            "a_date",
+            "a_urgent",
+            "Fws8mvam038ro7c"
+          ]
+        }
+      },
+      {
+        "sequence": 10,
+        "event": "componentRule",
+        "detail": {
+          "owner": "A",
+          "field": "Fws8mvam038ro7c",
+          "token": "P0:85",
+          "type": "inputNumber"
+        }
+      },
+      {
+        "sequence": 11,
+        "event": "sample-unmounted",
+        "detail": {
+          "owner": "A",
+          "field": "a_amount",
+          "token": "P0:83",
+          "value": "P0:83"
+        }
+      },
+      {
+        "sequence": 12,
+        "event": "sample-mounted",
+        "detail": {
+          "owner": "A",
+          "field": "Fws8mvam038ro7c",
+          "token": "P0:85",
+          "value": "P0:85"
+        }
+      },
+      {
+        "sequence": 13,
+        "event": "native-input",
+        "detail": {
+          "owner": "A",
+          "trusted": true,
+          "target": "INPUT",
+          "inputType": "text",
+          "raw": "a_amount",
+          "badInput": false,
+          "nativeControlToken": "P0:86"
+        }
+      },
+      {
+        "sequence": 14,
+        "event": "native-change",
+        "detail": {
+          "owner": "A",
+          "trusted": true,
+          "target": "INPUT",
+          "inputType": "text",
+          "raw": "a_amount",
+          "badInput": false,
+          "nativeControlToken": "P0:86"
+        }
+      },
+      {
+        "sequence": 15,
+        "event": "public-change-field",
+        "detail": {
+          "owner": "A",
+          "field": "a_amount",
+          "token": "P0:87",
+          "sourceToken": null,
+          "knownSubtree": [],
+          "publicFieldsAtEvent": [
+            "a_subject",
+            "a_notes",
+            "a_priority",
+            "a_areas",
+            "a_department",
+            "a_date",
+            "a_urgent",
+            "Fws8mvam038ro7c"
+          ]
+        }
+      },
+      {
+        "sequence": 16,
+        "event": "native-focusout",
+        "detail": {
+          "owner": "A",
+          "trusted": true,
+          "target": "INPUT",
+          "inputType": "text",
+          "raw": "a_amount",
+          "badInput": false,
+          "nativeControlToken": "P0:86"
+        }
+      },
+      {
+        "sequence": 17,
+        "event": "native-pointerdown",
+        "detail": {
+          "owner": "A",
+          "trusted": true,
+          "target": "BUTTON"
+        }
+      },
+      {
+        "sequence": 18,
+        "event": "native-focusout",
+        "detail": {
+          "owner": "A",
+          "trusted": true,
+          "target": "INPUT",
+          "inputType": "text",
+          "raw": "计数器",
+          "badInput": false,
+          "nativeControlToken": "P0:88"
+        }
+      },
+      {
+        "sequence": 19,
+        "event": "native-pointerup",
+        "detail": {
+          "owner": "A",
+          "trusted": true,
+          "target": "BUTTON"
+        }
+      },
+      {
+        "sequence": 20,
+        "event": "public-clone",
+        "detail": {
+          "owner": "A",
+          "fields": [
+            {
+              "field": "a_amount",
+              "source": "P0:85",
+              "clone": "P0:89",
+              "sameReference": false
+            }
+          ],
+          "rules": [
+            {
+              "type": "fcRow",
+              "children": [
+                {
+                  "type": "col",
+                  "props": {
+                    "span": 12
+                  },
+                  "children": [
+                    {
+                      "type": "input",
+                      "field": "a_subject",
+                      "title": "甲文本",
+                      "value": "事项甲",
+                      "props": {
+                        "placeholder": "输入事项"
+                      },
+                      "_fc_id": "id_Fst2mvam02qemzc",
+                      "name": "ref_Ffhamvam02qen0c",
+                      "display": true,
+                      "hidden": false,
+                      "_fc_drag_tag": "input"
+                    },
+                    {
+                      "type": "input",
+                      "field": "a_notes",
+                      "title": "甲多行文本",
+                      "props": {
+                        "type": "textarea",
+                        "placeholder": "输入说明"
+                      },
+                      "value": "第一行\n第二行",
+                      "_fc_id": "id_Fsl2mvam02qen1c",
+                      "name": "ref_Fc03mvam02qen2c",
+                      "display": true,
+                      "hidden": false,
+                      "_fc_drag_tag": "input"
+                    },
+                    {
+                      "type": "radio",
+                      "field": "a_priority",
+                      "title": "甲单选",
+                      "options": [
+                        {
+                          "label": "a数值零",
+                          "value": 0
+                        },
+                        {
+                          "label": "a字符串零",
+                          "value": "0"
+                        },
+                        {
+                          "label": "a普通",
+                          "value": "normal"
+                        },
+                        {
+                          "label": "a广州",
+                          "value": "gz"
+                        },
+                        {
+                          "label": "a深圳",
+                          "value": "sz"
+                        }
+                      ],
+                      "value": 0,
+                      "_fc_id": "id_Fqgumvam02qen5c",
+                      "name": "ref_Fztmmvam02qen6c",
+                      "display": true,
+                      "hidden": false,
+                      "_fc_drag_tag": "radio"
+                    },
+                    {
+                      "type": "checkbox",
+                      "field": "a_areas",
+                      "title": "甲多选",
+                      "options": [
+                        {
+                          "label": "a数值零",
+                          "value": 0
+                        },
+                        {
+                          "label": "a字符串零",
+                          "value": "0"
+                        },
+                        {
+                          "label": "a普通",
+                          "value": "normal"
+                        },
+                        {
+                          "label": "a广州",
+                          "value": "gz"
+                        },
+                        {
+                          "label": "a深圳",
+                          "value": "sz"
+                        }
+                      ],
+                      "_fc_id": "id_Ftqwmvam02qen7c",
+                      "name": "ref_Fvxhmvam02qen8c",
+                      "display": true,
+                      "hidden": false,
+                      "_fc_drag_tag": "checkbox"
+                    },
+                    {
+                      "type": "select",
+                      "field": "a_department",
+                      "title": "甲下拉单选",
+                      "options": [
+                        {
+                          "label": "a数值零",
+                          "value": 0
+                        },
+                        {
+                          "label": "a字符串零",
+                          "value": "0"
+                        },
+                        {
+                          "label": "a普通",
+                          "value": "normal"
+                        },
+                        {
+                          "label": "a广州",
+                          "value": "gz"
+                        },
+                        {
+                          "label": "a深圳",
+                          "value": "sz"
+                        }
+                      ],
+                      "value": 0,
+                      "_fc_id": "id_Fmitmvam02qen9c",
+                      "name": "ref_Fwsfmvam02qenac",
+                      "display": true,
+                      "hidden": false,
+                      "_fc_drag_tag": "select"
+                    },
+                    {
+                      "type": "datePicker",
+                      "field": "a_date",
+                      "title": "甲日期",
+                      "props": {
+                        "type": "date",
+                        "valueFormat": "YYYY-MM-DD"
+                      },
+                      "value": "2026-10-15",
+                      "_fc_id": "id_Fcn9mvam02qenbc",
+                      "name": "ref_Fm4zmvam02qencc",
+                      "display": true,
+                      "hidden": false,
+                      "_fc_drag_tag": "datePicker"
+                    },
+                    {
+                      "type": "switch",
+                      "field": "a_urgent",
+                      "title": "甲开关",
+                      "value": false,
+                      "_fc_id": "id_Fp1gmvam02qendc",
+                      "name": "ref_Fhftmvam02qenec",
+                      "display": true,
+                      "hidden": false,
+                      "_fc_drag_tag": "switch"
+                    }
+                  ],
+                  "_fc_id": "id_Ffermvam02qenfc",
+                  "name": "ref_Fhb4mvam02qengc",
+                  "display": true,
+                  "hidden": false,
+                  "_fc_drag_tag": "col"
+                },
+                {
+                  "type": "col",
+                  "props": {
+                    "span": 12
+                  },
+                  "_fc_id": "id_Fafemvam02qenhc",
+                  "name": "ref_Fxpnmvam02qenic",
+                  "display": true,
+                  "hidden": false,
+                  "_fc_drag_tag": "col"
+                }
+              ],
+              "_fc_id": "id_Ftggmvam02qenjc",
+              "name": "ref_F08jmvam02qenkc",
+              "display": true,
+              "hidden": false,
+              "_fc_drag_tag": "fcRow"
+            },
+            {
+              "type": "inputNumber",
+              "field": "a_amount",
+              "title": "计数器",
+              "info": "",
+              "$required": false,
+              "_fc_id": "id_F8xcmvam038ro8c",
+              "name": "ref_Fb43mvam038ro9c",
+              "display": true,
+              "hidden": false,
+              "_fc_drag_tag": "inputNumber"
+            }
+          ]
+        }
+      }
+    ],
+    "pass": true
+  },
+  {
+    "case": "delete-immediate-field-reuse",
+    "layout": "grid",
+    "run": 3,
+    "source": "native-pointer-keyboard",
+    "actualMode": "public-seam-sample",
+    "deleted": {
+      "sequence": 3,
+      "event": "public-delete",
+      "detail": {
+        "owner": "A",
+        "field": "a_amount",
+        "token": "P0:90",
+        "sourceToken": "P0:90",
+        "knownSubtree": [
+          {
+            "field": "a_amount",
+            "token": "P0:90"
+          }
+        ],
+        "children": [],
+        "publicFieldsAtEvent": [
+          "a_subject",
+          "a_notes",
+          "a_amount",
+          "a_priority",
+          "a_areas",
+          "a_department",
+          "a_date",
+          "a_urgent"
+        ]
+      }
+    },
+    "active": {
+      "sequence": 9,
+      "event": "public-active",
+      "detail": {
+        "owner": "A",
+        "field": "F6qdmvam03z0pic",
+        "token": "P0:92",
+        "sourceToken": null,
+        "knownSubtree": [],
+        "children": [],
+        "publicFieldsAtEvent": [
+          "a_subject",
+          "a_notes",
+          "a_priority",
+          "a_areas",
+          "a_department",
+          "a_date",
+          "a_urgent",
+          "F6qdmvam03z0pic"
+        ]
+      }
+    },
+    "trace": [
+      {
+        "sequence": 1,
+        "event": "native-pointerdown",
+        "detail": {
+          "owner": "A",
+          "trusted": true,
+          "target": "I"
+        }
+      },
+      {
+        "sequence": 2,
+        "event": "native-pointerup",
+        "detail": {
+          "owner": "A",
+          "trusted": true,
+          "target": "I"
+        }
+      },
+      {
+        "sequence": 3,
+        "event": "public-delete",
+        "detail": {
+          "owner": "A",
+          "field": "a_amount",
+          "token": "P0:90",
+          "sourceToken": "P0:90",
+          "knownSubtree": [
+            {
+              "field": "a_amount",
+              "token": "P0:90"
+            }
+          ],
+          "children": [],
+          "publicFieldsAtEvent": [
+            "a_subject",
+            "a_notes",
+            "a_amount",
+            "a_priority",
+            "a_areas",
+            "a_department",
+            "a_date",
+            "a_urgent"
+          ]
+        }
+      },
+      {
+        "sequence": 4,
+        "event": "sample-unmounted",
+        "detail": {
+          "owner": "A",
+          "field": "a_amount",
+          "token": "P0:90",
+          "value": "P0:90"
+        }
+      },
+      {
+        "sequence": 5,
+        "event": "sample-mounted",
+        "detail": {
+          "owner": "A",
+          "field": "a_amount",
+          "token": "P0:90",
+          "value": "P0:90"
+        }
+      },
+      {
+        "sequence": 6,
+        "event": "native-pointerdown",
+        "detail": {
+          "owner": "A",
+          "trusted": true,
+          "target": "DIV"
+        }
+      },
+      {
+        "sequence": 7,
+        "event": "native-pointerup",
+        "detail": {
+          "owner": "A",
+          "trusted": true,
+          "target": "DIV"
+        }
+      },
+      {
+        "sequence": 8,
+        "event": "public-drag",
+        "detail": {
+          "owner": "A",
+          "token": "P0:91",
+          "sourceToken": null,
+          "knownSubtree": [],
+          "publicFieldsAtEvent": [
+            "a_subject",
+            "a_notes",
+            "a_priority",
+            "a_areas",
+            "a_department",
+            "a_date",
+            "a_urgent"
+          ]
+        }
+      },
+      {
+        "sequence": 9,
+        "event": "public-active",
+        "detail": {
+          "owner": "A",
+          "field": "F6qdmvam03z0pic",
+          "token": "P0:92",
+          "sourceToken": null,
+          "knownSubtree": [],
+          "children": [],
+          "publicFieldsAtEvent": [
+            "a_subject",
+            "a_notes",
+            "a_priority",
+            "a_areas",
+            "a_department",
+            "a_date",
+            "a_urgent",
+            "F6qdmvam03z0pic"
+          ]
+        }
+      },
+      {
+        "sequence": 10,
+        "event": "componentRule",
+        "detail": {
+          "owner": "A",
+          "field": "F6qdmvam03z0pic",
+          "token": "P0:92",
+          "type": "inputNumber"
+        }
+      },
+      {
+        "sequence": 11,
+        "event": "sample-unmounted",
+        "detail": {
+          "owner": "A",
+          "field": "a_amount",
+          "token": "P0:90",
+          "value": "P0:90"
+        }
+      },
+      {
+        "sequence": 12,
+        "event": "sample-mounted",
+        "detail": {
+          "owner": "A",
+          "field": "F6qdmvam03z0pic",
+          "token": "P0:92",
+          "value": "P0:92"
+        }
+      },
+      {
+        "sequence": 13,
+        "event": "native-input",
+        "detail": {
+          "owner": "A",
+          "trusted": true,
+          "target": "INPUT",
+          "inputType": "text",
+          "raw": "a_amount",
+          "badInput": false,
+          "nativeControlToken": "P0:93"
+        }
+      },
+      {
+        "sequence": 14,
+        "event": "native-change",
+        "detail": {
+          "owner": "A",
+          "trusted": true,
+          "target": "INPUT",
+          "inputType": "text",
+          "raw": "a_amount",
+          "badInput": false,
+          "nativeControlToken": "P0:93"
+        }
+      },
+      {
+        "sequence": 15,
+        "event": "public-change-field",
+        "detail": {
+          "owner": "A",
+          "field": "a_amount",
+          "token": "P0:94",
+          "sourceToken": null,
+          "knownSubtree": [],
+          "publicFieldsAtEvent": [
+            "a_subject",
+            "a_notes",
+            "a_priority",
+            "a_areas",
+            "a_department",
+            "a_date",
+            "a_urgent",
+            "F6qdmvam03z0pic"
+          ]
+        }
+      },
+      {
+        "sequence": 16,
+        "event": "native-focusout",
+        "detail": {
+          "owner": "A",
+          "trusted": true,
+          "target": "INPUT",
+          "inputType": "text",
+          "raw": "a_amount",
+          "badInput": false,
+          "nativeControlToken": "P0:93"
+        }
+      },
+      {
+        "sequence": 17,
+        "event": "native-pointerdown",
+        "detail": {
+          "owner": "A",
+          "trusted": true,
+          "target": "BUTTON"
+        }
+      },
+      {
+        "sequence": 18,
+        "event": "native-focusout",
+        "detail": {
+          "owner": "A",
+          "trusted": true,
+          "target": "INPUT",
+          "inputType": "text",
+          "raw": "计数器",
+          "badInput": false,
+          "nativeControlToken": "P0:95"
+        }
+      },
+      {
+        "sequence": 19,
+        "event": "native-pointerup",
+        "detail": {
+          "owner": "A",
+          "trusted": true,
+          "target": "BUTTON"
+        }
+      },
+      {
+        "sequence": 20,
+        "event": "public-clone",
+        "detail": {
+          "owner": "A",
+          "fields": [
+            {
+              "field": "a_amount",
+              "source": "P0:92",
+              "clone": "P0:96",
+              "sameReference": false
+            }
+          ],
+          "rules": [
+            {
+              "type": "fcRow",
+              "children": [
+                {
+                  "type": "col",
+                  "props": {
+                    "span": 12
+                  },
+                  "children": [
+                    {
+                      "type": "input",
+                      "field": "a_subject",
+                      "title": "甲文本",
+                      "value": "事项甲",
+                      "props": {
+                        "placeholder": "输入事项"
+                      },
+                      "_fc_id": "id_Fe94mvam03gcoac",
+                      "name": "ref_Fs0ymvam03gcobc",
+                      "display": true,
+                      "hidden": false,
+                      "_fc_drag_tag": "input"
+                    },
+                    {
+                      "type": "input",
+                      "field": "a_notes",
+                      "title": "甲多行文本",
+                      "props": {
+                        "type": "textarea",
+                        "placeholder": "输入说明"
+                      },
+                      "value": "第一行\n第二行",
+                      "_fc_id": "id_Fq33mvam03gcocc",
+                      "name": "ref_Fu3omvam03gcodc",
+                      "display": true,
+                      "hidden": false,
+                      "_fc_drag_tag": "input"
+                    },
+                    {
+                      "type": "radio",
+                      "field": "a_priority",
+                      "title": "甲单选",
+                      "options": [
+                        {
+                          "label": "a数值零",
+                          "value": 0
+                        },
+                        {
+                          "label": "a字符串零",
+                          "value": "0"
+                        },
+                        {
+                          "label": "a普通",
+                          "value": "normal"
+                        },
+                        {
+                          "label": "a广州",
+                          "value": "gz"
+                        },
+                        {
+                          "label": "a深圳",
+                          "value": "sz"
+                        }
+                      ],
+                      "value": 0,
+                      "_fc_id": "id_Fypzmvam03gcogc",
+                      "name": "ref_Fr4hmvam03gcohc",
+                      "display": true,
+                      "hidden": false,
+                      "_fc_drag_tag": "radio"
+                    },
+                    {
+                      "type": "checkbox",
+                      "field": "a_areas",
+                      "title": "甲多选",
+                      "options": [
+                        {
+                          "label": "a数值零",
+                          "value": 0
+                        },
+                        {
+                          "label": "a字符串零",
+                          "value": "0"
+                        },
+                        {
+                          "label": "a普通",
+                          "value": "normal"
+                        },
+                        {
+                          "label": "a广州",
+                          "value": "gz"
+                        },
+                        {
+                          "label": "a深圳",
+                          "value": "sz"
+                        }
+                      ],
+                      "_fc_id": "id_Fi82mvam03gcoic",
+                      "name": "ref_Ftztmvam03gcojc",
+                      "display": true,
+                      "hidden": false,
+                      "_fc_drag_tag": "checkbox"
+                    },
+                    {
+                      "type": "select",
+                      "field": "a_department",
+                      "title": "甲下拉单选",
+                      "options": [
+                        {
+                          "label": "a数值零",
+                          "value": 0
+                        },
+                        {
+                          "label": "a字符串零",
+                          "value": "0"
+                        },
+                        {
+                          "label": "a普通",
+                          "value": "normal"
+                        },
+                        {
+                          "label": "a广州",
+                          "value": "gz"
+                        },
+                        {
+                          "label": "a深圳",
+                          "value": "sz"
+                        }
+                      ],
+                      "value": 0,
+                      "_fc_id": "id_Fp2zmvam03gcokc",
+                      "name": "ref_Fk2ymvam03gcolc",
+                      "display": true,
+                      "hidden": false,
+                      "_fc_drag_tag": "select"
+                    },
+                    {
+                      "type": "datePicker",
+                      "field": "a_date",
+                      "title": "甲日期",
+                      "props": {
+                        "type": "date",
+                        "valueFormat": "YYYY-MM-DD"
+                      },
+                      "value": "2026-10-15",
+                      "_fc_id": "id_Ftdomvam03gcomc",
+                      "name": "ref_Fcpjmvam03gconc",
+                      "display": true,
+                      "hidden": false,
+                      "_fc_drag_tag": "datePicker"
+                    },
+                    {
+                      "type": "switch",
+                      "field": "a_urgent",
+                      "title": "甲开关",
+                      "value": false,
+                      "_fc_id": "id_F1mgmvam03gcooc",
+                      "name": "ref_Ft72mvam03gcopc",
+                      "display": true,
+                      "hidden": false,
+                      "_fc_drag_tag": "switch"
+                    }
+                  ],
+                  "_fc_id": "id_Feyymvam03gcoqc",
+                  "name": "ref_Flw4mvam03gcorc",
+                  "display": true,
+                  "hidden": false,
+                  "_fc_drag_tag": "col"
+                },
+                {
+                  "type": "col",
+                  "props": {
+                    "span": 12
+                  },
+                  "_fc_id": "id_Ftismvam03gcosc",
+                  "name": "ref_Fej3mvam03gcotc",
+                  "display": true,
+                  "hidden": false,
+                  "_fc_drag_tag": "col"
+                }
+              ],
+              "_fc_id": "id_Fq07mvam03gcouc",
+              "name": "ref_Fx59mvam03gcovc",
+              "display": true,
+              "hidden": false,
+              "_fc_drag_tag": "fcRow"
+            },
+            {
+              "type": "inputNumber",
+              "field": "a_amount",
+              "title": "计数器",
+              "info": "",
+              "$required": false,
+              "_fc_id": "id_Fzt8mvam03z0pjc",
+              "name": "ref_Fm8kmvam03z0pkc",
+              "display": true,
+              "hidden": false,
+              "_fc_drag_tag": "inputNumber"
+            }
+          ]
+        }
+      }
+    ],
+    "pass": true
+  }
+]

@@ -1,0 +1,121 @@
+[
+  {
+    "caseId": "F04/grid/zero/K/load",
+    "field": "F04",
+    "layout": "grid",
+    "variant": "zero",
+    "want": 0,
+    "present": true,
+    "status": "passed",
+    "actual": {
+      "present": true,
+      "value": 0,
+      "type": "radio",
+      "field": "a_priority"
+    },
+    "unchanged": true,
+    "typePass": true,
+    "datePass": true,
+    "gridPass": true
+  },
+  {
+    "caseId": "F04/grid/string-zero/K/load",
+    "field": "F04",
+    "layout": "grid",
+    "variant": "string-zero",
+    "want": "0",
+    "present": true,
+    "status": "passed",
+    "actual": {
+      "present": true,
+      "value": "0",
+      "type": "radio",
+      "field": "a_priority"
+    },
+    "unchanged": true,
+    "typePass": true,
+    "datePass": true,
+    "gridPass": true
+  },
+  {
+    "caseId": "F04/grid/normal/K/load",
+    "field": "F04",
+    "layout": "grid",
+    "variant": "normal",
+    "want": "normal",
+    "present": true,
+    "status": "passed",
+    "actual": {
+      "present": true,
+      "value": "normal",
+      "type": "radio",
+      "field": "a_priority"
+    },
+    "unchanged": true,
+    "typePass": true,
+    "datePass": true,
+    "gridPass": true
+  },
+  {
+    "caseId": "F04/grid/unset/K/load",
+    "field": "F04",
+    "layout": "grid",
+    "variant": "unset",
+    "want": null,
+    "present": false,
+    "status": "passed",
+    "actual": {
+      "present": false,
+      "type": "radio",
+      "field": "a_priority"
+    },
+    "unchanged": true,
+    "typePass": true,
+    "datePass": true,
+    "gridPass": true
+  },
+  {
+    "caseId": "F05/top/empty-array/K/load",
+    "field": "F05",
+    "layout": "top",
+    "variant": "empty-array",
+    "want": [],
+    "present": true,
+    "status": "passed",
+    "actual": {
+      "present": true,
+      "value": [],
+      "type": "checkbox",
+      "field": "a_areas"
+    },
+    "unchanged": true,
+    "typePass": true,
+    "datePass": true,
+    "gridPass": true
+  },
+  {
+    "caseId": "F05/top/selected-array/K/load",
+    "field": "F05",
+    "layout": "top",
+    "variant": "selected-array",
+    "want": [
+      "gz",
+      "sz"
+    ],
+    "present": true,
+    "status": "passed",
+    "actual": {
+      "present": true,
+      "value": [
+        "gz",
+        "sz"
+      ],
+      "type": "checkbox",
+      "field": "a_areas"
+    },
+    "unchanged": true,
+    "typePass": true,
+    "datePass": true,
+    "gridPass": true
+  }
+]

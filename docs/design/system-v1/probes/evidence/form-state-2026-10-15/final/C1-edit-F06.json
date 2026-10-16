@@ -1,0 +1,164 @@
+[
+  {
+    "field": "F06",
+    "layout": "top",
+    "fieldReadonly": true,
+    "action": "edit",
+    "status": "passed",
+    "actual": {
+      "type": "select",
+      "field": "a_department",
+      "title": "配置F06",
+      "options": [
+        {
+          "label": "a数值零",
+          "value": 0
+        },
+        {
+          "label": "a字符串零",
+          "value": "0"
+        },
+        {
+          "label": "a普通",
+          "value": "normal"
+        },
+        {
+          "label": "a广州",
+          "value": "gz"
+        },
+        {
+          "label": "a深圳",
+          "value": "sz"
+        }
+      ],
+      "value": "0",
+      "_fc_id": "id_Frkvmv9p7n97xjc",
+      "name": "ref_Funfmv9p7n97xkc",
+      "display": true,
+      "hidden": false,
+      "_fc_drag_tag": "select",
+      "$required": true
+    },
+    "sessionUnchanged": true
+  },
+  {
+    "field": "F06",
+    "layout": "top",
+    "action": "clear",
+    "status": "passed",
+    "actual": {
+      "type": "select",
+      "field": "a_department",
+      "title": "配置F06",
+      "options": [
+        {
+          "label": "a数值零",
+          "value": 0
+        },
+        {
+          "label": "a字符串零",
+          "value": "0"
+        },
+        {
+          "label": "a普通",
+          "value": "normal"
+        },
+        {
+          "label": "a广州",
+          "value": "gz"
+        },
+        {
+          "label": "a深圳",
+          "value": "sz"
+        }
+      ],
+      "_fc_id": "id_Frkvmv9p7n97xjc",
+      "name": "ref_Funfmv9p7n97xkc",
+      "display": true,
+      "hidden": false,
+      "_fc_drag_tag": "select",
+      "$required": true
+    }
+  },
+  {
+    "field": "F06",
+    "layout": "grid",
+    "fieldReadonly": true,
+    "action": "edit",
+    "status": "passed",
+    "actual": {
+      "type": "select",
+      "field": "a_department",
+      "title": "配置F06",
+      "options": [
+        {
+          "label": "a数值零",
+          "value": 0
+        },
+        {
+          "label": "a字符串零",
+          "value": "0"
+        },
+        {
+          "label": "a普通",
+          "value": "normal"
+        },
+        {
+          "label": "a广州",
+          "value": "gz"
+        },
+        {
+          "label": "a深圳",
+          "value": "sz"
+        }
+      ],
+      "value": "0",
+      "_fc_id": "id_Fa1bmv9p7o9vxoc",
+      "name": "ref_F0lqmv9p7o9vxpc",
+      "display": true,
+      "hidden": false,
+      "_fc_drag_tag": "select",
+      "$required": true
+    },
+    "sessionUnchanged": true
+  },
+  {
+    "field": "F06",
+    "layout": "grid",
+    "action": "clear",
+    "status": "passed",
+    "actual": {
+      "type": "select",
+      "field": "a_department",
+      "title": "配置F06",
+      "options": [
+        {
+          "label": "a数值零",
+          "value": 0
+        },
+        {
+          "label": "a字符串零",
+          "value": "0"
+        },
+        {
+          "label": "a普通",
+          "value": "normal"
+        },
+        {
+          "label": "a广州",
+          "value": "gz"
+        },
+        {
+          "label": "a深圳",
+          "value": "sz"
+        }
+      ],
+      "_fc_id": "id_Fa1bmv9p7o9vxoc",
+      "name": "ref_F0lqmv9p7o9vxpc",
+      "display": true,
+      "hidden": false,
+      "_fc_drag_tag": "select",
+      "$required": true
+    }
+  }
+]

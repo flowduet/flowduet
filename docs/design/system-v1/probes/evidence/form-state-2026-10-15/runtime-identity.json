@@ -1,0 +1,50 @@
+{
+  "runtimeHead": "c82aed573bb942e2a8d6d932ae04df02d8ef5cfb",
+  "verificationHead": "c53004e2366b549320863140d934eb3a4056b98c",
+  "unchangedRuntimeFiles": [
+    {
+      "path": "apps/playground/probes/stage-zero/FormStateProbe.vue",
+      "sha256": "e363601ceee4fdcf60e507b21f0d135025db30fc999cfc853803eb7b438040da"
+    },
+    {
+      "path": "apps/playground/probes/stage-zero/ProbeApp.vue",
+      "sha256": "a36a570e55d539f3f9b2359806fe422e94e602649bc3db0a8c56756d5d41562f"
+    },
+    {
+      "path": "apps/playground/probes/stage-zero/contracts/controller.ts",
+      "sha256": "3f29873136ab96dafee41e7b4987ec55d2470daacc393a8c09e08f585a1bf230"
+    },
+    {
+      "path": "apps/playground/probes/stage-zero/form-state/FormStateInstance.vue",
+      "sha256": "0bbaa821953f3e3f666a99456153c1a07679c865a4d5da834ba6a48f335e6dba"
+    },
+    {
+      "path": "apps/playground/probes/stage-zero/form-state/drag-boundary.ts",
+      "sha256": "3aeac7fa129d1c4ff3436aaf9dcd16dd5ee526cfb2ef62fb36a772218c4aa5d1"
+    },
+    {
+      "path": "apps/playground/probes/stage-zero/form-state/fixtures.ts",
+      "sha256": "e19d5ae247099f98f0f31ee3bb98c3004782f7cc3dca3c2fd4b0f0b4218140f3"
+    },
+    {
+      "path": "apps/playground/probes/stage-zero/form-state/input-boundary.ts",
+      "sha256": "e6c3850266c2ac8f409e00058f1fe34d068b65d4c9abf74bfaf222bfec73fa96"
+    },
+    {
+      "path": "apps/playground/probes/stage-zero/form-state/retention-policy.ts",
+      "sha256": "120bc3ba1f1d97a08ee76010ef372b92f76bfcf8baadd613c7eaab7c5a98e340"
+    },
+    {
+      "path": "apps/playground/probes/stage-zero/form-state/state-evidence.ts",
+      "sha256": "d6fca30dd909be1d7cda37ca70ae71ad552f9c26ac51618692d087220726ed29"
+    },
+    {
+      "path": "apps/playground/probes/stage-zero/form-state/test-host.ts",
+      "sha256": "d93b615208f07f359d2556ceb6cfb31ded567b64bce5a94ba95621067ceb3394"
+    },
+    {
+      "path": "apps/playground/probes/stage-zero/form-state/types.ts",
+      "sha256": "f0c00f9d110354ca5ef8a92fd33e80e529eb22d66119a1204e53be9046e062ea"
+    }
+  ]
+}

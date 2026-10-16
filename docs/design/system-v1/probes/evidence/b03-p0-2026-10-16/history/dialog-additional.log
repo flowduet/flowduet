@@ -1,0 +1,34 @@
+### Result
+[{"case":"refused-pointerdown-late-click","source":"native-pointer-plus-owned-busy-protocol","trace":[{"sequence":1,"event":"dialog-open","detail":{"dialogSerial":1}},{"sequence":2,"event":"dialog-preflight","detail":{"type":"pointerdown","key":null,"busy":true,"active":"dialog-raw"}},{"sequence":3,"event":"dialog-before-close","detail":{"busy":false,"refusedGesture":true}}],"pass":true},{"case":"busy-owned-key-activation","source":"native-keyboard","trace":[{"sequence":1,"event":"dialog-open","detail":{"dialogSerial":2}},{"sequence":2,"event":"dialog-preflight","detail":{"type":"keydown","key":"Enter","busy":true,"active":"dialog-x"}}],"pass":true},{"case":"default-dialog-x-close","source":"native-pointer","trace":[{"sequence":1,"event":"dialog-open","detail":{"dialogSerial":3}},{"sequence":2,"event":"dialog-preflight","detail":{"type":"pointerdown","key":null,"busy":false,"active":"dialog-raw"}},{"sequence":3,"event":"dialog-blur","detail":null},{"sequence":4,"event":"dialog-before-close","detail":{"busy":false,"refusedGesture":false}},{"sequence":5,"event":"dialog-closed","detail":{"dialogSerial":3}}],"pass":true},{"case":"default-mask-close","source":"native-pointer","trace":[{"sequence":1,"event":"dialog-open","detail":{"dialogSerial":4}},{"sequence":2,"event":"dialog-preflight","detail":{"type":"pointerdown","key":null,"busy":false,"active":"dialog-raw"}},{"sequence":3,"event":"dialog-blur","detail":null},{"sequence":4,"event":"dialog-before-close","detail":{"busy":false,"refusedGesture":false}},{"sequence":5,"event":"dialog-closed","detail":{"dialogSerial":4}}],"pass":true},{"case":"other-instance-native-input-unaffected","source":"native-pointer-keyboard","trace":[{"sequence":1,"event":"native-pointerdown","detail":{"owner":"B","trusted":true,"target":"BUTTON"}},{"sequence":2,"event":"native-pointerup","detail":{"owner":"B","trusted":true,"target":"BUTTON"}},{"sequence":3,"event":"public-active","detail":{"owner":"B","field":"a_amount","token":"P0:1","sourceToken":null,"knownSubtree":[],"children":[],"publicFieldsAtEvent":["a_subject","a_notes","a_amount","a_priority","a_areas","a_department","a_date","a_urgent"]}},{"sequence":4,"event":"componentRule","detail":{"owner":"B","field":"a_amount","token":"P0:1","type":"inputNumber"}},{"sequence":5,"event":"sample-mounted","detail":{"owner":"B","field":"a_amount","token":"P0:1","value":"P0:1","publicValue":0}},{"sequence":6,"event":"raw-input","detail":{"owner":"B","field":"a_amount","token":"P0:1","value":"foreign","publicValue":0}}],"pass":true}]
+### Ran Playwright code
+```js
+await (async page => {
+ page.setDefaultTimeout(7000); const rows=[];
+ const events=async()=>JSON.parse(await page.locator('[data-test=seam-events]').textContent());
+ const clear=()=>page.locator('[data-test=seam-clear]').click();
+ await page.locator('[data-test=dialog-guarded]').check();await page.locator('[data-test=dialog-busy]').check();
+ await clear();await page.locator('[data-test=dialog-open]').click();
+ const raw=page.locator('[data-test=dialog-raw]');await raw.fill('拒绝后不可借click关闭');
+ const x=page.locator('[data-test=dialog-x]');const box=await x.boundingBox();
+ await page.mouse.move(box.x+box.width/2,box.y+box.height/2);await page.mouse.down();
+ await page.locator('[data-test=dialog-busy]').evaluate(el=>el.click());await page.mouse.up();
+ let trace=await events();rows.push({case:'refused-pointerdown-late-click',source:'native-pointer-plus-owned-busy-protocol',trace,pass:await raw.isVisible()&&await raw.inputValue()==='拒绝后不可借click关闭'&&trace.some(e=>e.event==='dialog-before-close'&&e.detail.refusedGesture===true)});
+ await page.locator('[data-test=dialog-program-close]').evaluate(el=>el.click());await page.locator('.b03-seam-dialog').waitFor({state:'hidden'});
+ await page.locator('[data-test=dialog-busy]').check();await clear();await page.locator('[data-test=dialog-open]').click();
+ await x.focus();await x.press('Enter');trace=await events();rows.push({case:'busy-owned-key-activation',source:'native-keyboard',trace,pass:await raw.isVisible()&&trace.some(e=>e.event==='dialog-preflight'&&e.detail.key==='Enter')});
+ await page.locator('[data-test=dialog-program-close]').evaluate(el=>el.click());await page.locator('.b03-seam-dialog').waitFor({state:'hidden'});
+ await page.locator('[data-test=dialog-busy]').uncheck();await page.locator('[data-test=dialog-guarded]').uncheck();
+ for(const control of ['dialog-x','mask']) {
+  await clear();await page.locator('[data-test=dialog-open]').click();await raw.fill('default-close');
+  if(control==='mask')await page.locator('.b03-seam-modal').click({position:{x:5,y:5}});else await x.click();
+  await page.locator('.b03-seam-dialog').waitFor({state:'hidden'});trace=await events();rows.push({case:'default-'+control+'-close',source:'native-pointer',trace,pass:trace.some(e=>e.event==='dialog-before-close')});
+ }
+ await clear();await page.locator('[data-test=seam-number-B]').click();const foreign=page.locator('[data-seam-input=B] [data-test=seam-raw]');await foreign.fill('foreign');await foreign.press('Escape');
+ trace=await events();rows.push({case:'other-instance-native-input-unaffected',source:'native-pointer-keyboard',trace,pass:await foreign.inputValue()==='foreign'&&!trace.some(e=>e.event==='dialog-preflight')&&!trace.some(e=>e.event==='dialog-before-close')});
+ return rows;
+})(page);
+```
+### Page
+- Page URL: http://127.0.0.1:5180/probes/stage-zero/index.html
+- Page Title: FlowDuet 阶段零探针
+- Console: 1 errors, 1 warnings

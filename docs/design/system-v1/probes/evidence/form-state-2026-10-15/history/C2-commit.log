@@ -1,0 +1,6 @@
+[refactor/stage-zero-form-state 48d890e] test(probe): 验证焦点输入与两表单切换保真
+ 10 files changed, 403 insertions(+), 23 deletions(-)
+ create mode 100644 apps/playground/probes/stage-zero/form-state/input-boundary.test.ts
+ create mode 100644 apps/playground/probes/stage-zero/form-state/input-boundary.ts
+ create mode 100644 apps/playground/probes/stage-zero/form-state/retention-policy.test.ts
+ create mode 100644 apps/playground/probes/stage-zero/form-state/retention-policy.ts

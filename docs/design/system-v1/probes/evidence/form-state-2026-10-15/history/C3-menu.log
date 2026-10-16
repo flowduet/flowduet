@@ -1,0 +1,9 @@
+### Result
+[{"c":"el-aside _fc-l","t":"智能助理欢迎使用 AI 助理我可以帮助您快速生成和修改表单，帮助您轻松高效地完成表单设计。试着问我 换一换生成一个就诊满意度问卷表单创建一个建议收集表单，包含联系人、联系邮箱、分类和建议内容追加一个用"}]
+### Ran Playwright code
+```js
+await (async(page)=>{await page.goto("http://127.0.0.1:5173/probes/stage-zero/index.html");await page.getByRole("button",{name:"表单状态 C",exact:true}).click();return await page.locator("[data-c-owner=C-A] .form-designer-host").evaluate(el=>[...el.querySelectorAll("li,._fc-l")].slice(0,25).map(x=>({c:x.className,t:x.textContent.slice(0,100)})))})(page);
+```
+### Page
+- Page URL: http://127.0.0.1:5173/probes/stage-zero/index.html
+- Page Title: FlowDuet 阶段零探针

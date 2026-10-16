@@ -1,0 +1,6 @@
+### Result
+{"before":null,"after":{"width":1440,"height":1000},"dpr":1}
+### Ran Playwright code
+```js
+await (async(page)=>{const before=page.viewportSize();await page.setViewportSize({width:1440,height:1000});return {before,after:page.viewportSize(),dpr:await page.evaluate(()=>devicePixelRatio)}})(page);
+```

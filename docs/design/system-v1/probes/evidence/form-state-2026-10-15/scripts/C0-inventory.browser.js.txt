@@ -1,0 +1,14 @@
+async (page) => {
+  if (!page.url().includes("/probes/stage-zero/index.html")) { await page.goto("http://127.0.0.1:5173/probes/stage-zero/index.html"); await page.getByRole("button", {name:"表单状态 C", exact:true}).click(); }
+  const root = page.locator('[data-c-owner="C-A"]'), rows=[];
+  const ids=['F01','F02','F03','F04','F05','F06','F07','F08'];
+  for(let i=0;i<8;i++) {
+    await root.locator('._fc-m-drag ._fd-drag-tool').nth(i).click();
+    await page.waitForFunction((field) => [...document.querySelectorAll('[data-c-owner="C-A"] ._fc-r-config .el-form-item')].some(row => /字段\s*ID/.test(row.querySelector('label')?.textContent ?? '') && row.querySelector('input')?.value === field), ['a_subject','a_notes','a_amount','a_priority','a_areas','a_department','a_date','a_urgent'][i]);
+    await root.locator('._fc-r-config .el-form-item').filter({has:page.locator('label',{hasText:/^字段 ID$/})}).locator('input').waitFor();
+    const data=await root.locator('._fc-r-config').evaluate(el=>[...el.querySelectorAll('.el-form-item')].map(row=>({label:row.querySelector('.el-form-item__label')?.textContent?.trim(),controls:[...row.querySelectorAll('input,textarea,button,[role=switch]')].map(c=>({tag:c.tagName,type:c.getAttribute('type'),role:c.getAttribute('role'),readonly:c.hasAttribute('readonly'),text:c instanceof HTMLInputElement||c instanceof HTMLTextAreaElement?c.value:c.textContent?.trim()}))})).filter(r=>r.label));
+    const defaults=data.filter(r=>/默认|选项|字段 ID|字段名称|是否必填/.test(r.label));
+    rows.push({id:ids[i],defaults, optionTables:await root.locator('._fc-r-config ._td-table-opt').count()});
+  }
+  return {kind:'real-ui-inventory',rows,maskCount:await root.locator('._fd-drag-mask').count(),menuCount:await root.locator('._fc-l-item').count()};
+}

@@ -1,0 +1,116 @@
+
+> flowduet-monorepo@0.0.0 test /Users/l/.codex/worktrees/design-system-stage-zero/flowduet
+> pnpm -r test
+
+Scope: 4 of 5 workspace projects
+packages/core test$ vitest run
+packages/core test:  RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/core
+packages/core test:  Test Files  14 passed (14)
+packages/core test:       Tests  148 passed (148)
+packages/core test:    Start at  23:38:30
+packages/core test:    Duration  1.42s (transform 51%, tests 35%, import 12%, worker 1%)
+packages/core test:   Transform  transforming modules took 3.50s · 51% of tracked time, re-done on every run
+packages/core test:              persist transforms across runs with fsModuleCache: true
+packages/core test:              learn more: https://vitest.dev/guide/improving-performance#caching-between-reruns
+packages/core test: Done
+packages/designer test$ vitest run
+packages/designer test:  RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/designer
+packages/designer test:  Test Files  14 passed (14)
+packages/designer test:       Tests  184 passed (184)
+packages/designer test:    Start at  23:38:32
+packages/designer test:    Duration  9.51s (tests 44%, environment 21%, import 19%, transform 16%, worker 1%)
+packages/designer test: Done
+packages/form-create test$ vitest run
+packages/form-create test:  RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/form-create
+packages/form-create test:  Test Files  9 passed (9)
+packages/form-create test:       Tests  137 passed (137)
+packages/form-create test:    Start at  23:38:42
+packages/form-create test:    Duration  15.54s (tests 36%, import 33%, environment 19%, transform 12%, worker 1%)
+packages/form-create test: Done
+apps/playground test$ vitest run
+apps/playground test:  RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground
+apps/playground test:  ❯ probes/stage-zero/editor-recovery.test.ts (1 test | 1 failed) 12171ms
+apps/playground test:    × 真实FormDesigner断言中断后卸载，已卸载导出明确返回null 12169ms
+apps/playground test: stderr | probes/stage-zero/location.test.ts > 真实视图定位确认 > 单↔多转换后原分支诊断仍定位fa，条件与顺序保留
+apps/playground test: [Vue Flow]: The Vue Flow parent container needs a width and a height to render the graph
+apps/playground test: [Vue Flow]: It seems that you haven't loaded the necessary styles. Please import '@vue-flow/core/dist/style.css' to ensure that the graph is rendered correctly
+apps/playground test:  ❯ probes/stage-zero/form-state.test.ts (37 tests | 1 failed) 12062ms
+apps/playground test:    ❯ C0 表单状态观察 (13)
+apps/playground test:      × 真实FormDesigner装载与菜单仍在，不用组件桩证明观察 11966ms
+apps/playground test:  ❯ probes/stage-zero/location.test.ts (9 tests | 1 failed) 17132ms
+apps/playground test:    ❯ 真实视图定位确认 (9)
+apps/playground test:      × 单↔多转换后原分支诊断仍定位fa，条件与顺序保留 6691ms
+apps/playground test:  ❯ src/App.integration.test.ts (45 tests | 2 failed) 53284ms
+apps/playground test:    ❯ Playground 与 designer 的导出链路 (1)
+apps/playground test:      × 插入抄送草稿后自动与手动导出均报错，配置收件人后自动恢复 XML 5923ms
+apps/playground test:    ❯ Playground 设计文档闭环（#71：保存 → 打开 → 继续编辑） (3)
+apps/playground test:      × 新建草稿可保存并报告待修复项；配齐后下载文档，从文件打开继续编辑，双视图同一新模型 1140ms
+apps/playground test: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+apps/playground test:  FAIL  src/App.integration.test.ts > Playground 与 designer 的导出链路 > 插入抄送草稿后自动与手动导出均报错，配置收件人后自动恢复 XML
+apps/playground test: Error: Test timed out in 5000ms.
+apps/playground test: If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+apps/playground test:  ❯ src/App.integration.test.ts:68:3
+apps/playground test:      66|
+apps/playground test:      67| describe("Playground 与 designer 的导出链路", () => {
+apps/playground test:      68|   it("插入抄送草稿后自动与手动导出均报错，配置收件人后自动恢复 XML", async () => {
+apps/playground test:        |   ^
+apps/playground test:      69|     wrapper = mount(App, { attachTo: document.body });
+apps/playground test:      70|     await wrapper.find('[data-test="export-btn"]').trigger("click");
+apps/playground test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/5]⎯
+apps/playground test:  FAIL  src/App.integration.test.ts > Playground 设计文档闭环（#71：保存 → 打开 → 继续编辑） > 新建草稿可保存并报告待修复项；配齐后下载文档，从文件打开继续编辑，双视图同一新模型
+apps/playground test: AssertionError: expected '已保存设计文档；待修复 1 项（部署导出仍会被拦截）：\n单签审批节点「审…' to contain '无待修复项'
+apps/playground test: - Expected
+apps/playground test: + Received
+apps/playground test: - 无待修复项
+apps/playground test: + 已保存设计文档；待修复 1 项（部署导出仍会被拦截）：
+apps/playground test: + 单签审批节点「审批节点（approval_1）」的审批人为空白，请在抽屉补填后再导出
+apps/playground test:  ❯ src/App.integration.test.ts:213:61
+apps/playground test:     211|     await wrapper.find('[data-test="save-doc-btn"]').trigger("click");
+apps/playground test:     212|     await flushPromises();
+apps/playground test:     213|     expect(wrapper.find('[data-test="doc-status"]').text()).toContain(…
+apps/playground test:        |                                                             ^
+apps/playground test:     214|     const json = await createdDraft[1]!.text();
+apps/playground test:     215|     clickSpy.mockRestore();
+apps/playground test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/5]⎯
+apps/playground test:  FAIL  probes/stage-zero/editor-recovery.test.ts > 真实FormDesigner断言中断后卸载，已卸载导出明确返回null
+apps/playground test: Error: Test timed out in 5000ms.
+apps/playground test: If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+apps/playground test:  ❯ probes/stage-zero/editor-recovery.test.ts:4:1
+apps/playground test:       2| import { mount, flushPromises } from "@vue/test-utils";
+apps/playground test:       3| import FormDesigner from "../../../../packages/form-create/src/compone…
+apps/playground test:       4| it("真实FormDesigner断言中断后卸载，已卸载导出明确返回null", async () => {
+apps/playground test:        | ^
+apps/playground test:       5|   const view = mount(FormDesigner, {
+apps/playground test:       6|     props: { name: "清理边界", rules: "[]", options: "{}" },
+apps/playground test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/5]⎯
+apps/playground test:  FAIL  probes/stage-zero/form-state.test.ts > C0 表单状态观察 > 真实FormDesigner装载与菜单仍在，不用组件桩证明观察
+apps/playground test: Error: Test timed out in 5000ms.
+apps/playground test: If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+apps/playground test:  ❯ probes/stage-zero/form-state.test.ts:93:3
+apps/playground test:      91|     expect(blurred).toBe(0);
+apps/playground test:      92|   });
+apps/playground test:      93|   it("真实FormDesigner装载与菜单仍在，不用组件桩证明观察", async () => {
+apps/playground test:        |   ^
+apps/playground test:      94|     const view = mount(FormDesigner, {
+apps/playground test:      95|       props: { name: "C观察", rules: "[]", options: "{}" },
+apps/playground test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/5]⎯
+apps/playground test:  FAIL  probes/stage-zero/location.test.ts > 真实视图定位确认 > 单↔多转换后原分支诊断仍定位fa，条件与顺序保留
+apps/playground test: Error: Test timed out in 5000ms.
+apps/playground test: If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+apps/playground test:  ❯ probes/stage-zero/location.test.ts:42:3
+apps/playground test:      40|     expect(wrapper!.find('[data-test="location-result"]').text()).toCo…
+apps/playground test:      41|   });
+apps/playground test:      42|   it("单↔多转换后原分支诊断仍定位fa，条件与顺序保留", async () => {
+apps/playground test:        |   ^
+apps/playground test:      43|     await setup();
+apps/playground test:      44|     await click("切为会签");
+apps/playground test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/5]⎯
+apps/playground test:  Test Files  4 failed | 18 passed (22)
+apps/playground test:       Tests  5 failed | 271 passed (276)
+apps/playground test:    Start at  23:38:59
+apps/playground test:    Duration  61.02s (tests 54%, import 32%, environment 9%, transform 5%)
+apps/playground test: Failed
+/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @flowduet/playground@0.0.0 test: `vitest run`
+Exit status 1
+ ELIFECYCLE  Test failed. See above for more details.

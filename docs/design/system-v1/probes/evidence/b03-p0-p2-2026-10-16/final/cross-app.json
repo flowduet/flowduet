@@ -1,0 +1,35 @@
+[
+  {
+    "case": "same-label-cross-app-hidden-busy",
+    "run": 1,
+    "source": "owned-mount-busy-protocol-plus-native-Enter",
+    "vueUrl": "/node_modules/.vite/deps/vue.js?v=de70a3f6",
+    "owner": "704f7433-8477-4cfe-8132-eb8a6230c7cf",
+    "peerOwner": "edb5c609-889a-4cf7-a691-562d8c383ebf",
+    "peerClosed": true,
+    "trace": [],
+    "pass": true
+  },
+  {
+    "case": "same-label-cross-app-hidden-busy",
+    "run": 2,
+    "source": "owned-mount-busy-protocol-plus-native-Enter",
+    "vueUrl": "/node_modules/.vite/deps/vue.js?v=de70a3f6",
+    "owner": "704f7433-8477-4cfe-8132-eb8a6230c7cf",
+    "peerOwner": "4998df07-9aef-4708-8a5a-11990afc5b88",
+    "peerClosed": true,
+    "trace": [],
+    "pass": true
+  },
+  {
+    "case": "same-label-cross-app-hidden-busy",
+    "run": 3,
+    "source": "owned-mount-busy-protocol-plus-native-Enter",
+    "vueUrl": "/node_modules/.vite/deps/vue.js?v=de70a3f6",
+    "owner": "704f7433-8477-4cfe-8132-eb8a6230c7cf",
+    "peerOwner": "acaf26e8-ba14-4b53-9fea-393a3d3446b2",
+    "peerClosed": true,
+    "trace": [],
+    "pass": true
+  }
+]
