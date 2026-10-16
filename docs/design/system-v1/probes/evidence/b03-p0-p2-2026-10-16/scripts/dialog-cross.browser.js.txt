@@ -1,0 +1,30 @@
+async page => {
+ page.setDefaultTimeout(7000);const rows=[];
+ const host=label=>page.locator('[data-dialog-probe='+label+']');
+ const events=async()=>JSON.parse(await page.locator('[data-test=seam-events]').textContent());
+ const dialog=async h=>page.locator('.'+await h.getAttribute('data-content-class'));
+ const flag=async(h,name,value)=>{const input=h.locator('[data-test='+name+']');if(await input.isChecked()!==value)await input.evaluate(el=>el.click());};
+ const open=async h=>{await h.locator('[data-test=dialog-open]').evaluate(el=>el.click());await (await dialog(h)).waitFor({state:'visible'});};
+ const close=async h=>{await h.locator('[data-test=dialog-program-close]').evaluate(el=>el.click());const d=await dialog(h);if(await d.count())await d.waitFor({state:'hidden'});};
+ const act=async(d,action)=>{const x=d.locator('[data-test=dialog-x]');if(action==='pointer')await x.click();else{await x.focus();await x.press(action);}};
+ if(await host('B').count()===0)await page.locator('[data-test=dialog-peer-toggle]').click();
+ try {
+  for(let run=1;run<=3;run++)for(const busyLabel of ['A','B'])for(const state of ['hidden','open'])for(const action of ['Enter','Space','pointer']){
+   const busy=host(busyLabel),idle=host(busyLabel==='A'?'B':'A');await close(busy);await close(idle);
+   await flag(busy,'dialog-guarded',true);await flag(idle,'dialog-guarded',true);await flag(busy,'dialog-busy',true);await flag(idle,'dialog-busy',false);
+   const busyDialog=await dialog(busy),idleDialog=await dialog(idle);const busyOwner=await busy.getAttribute('data-owner-key'),idleOwner=await idle.getAttribute('data-owner-key');
+   if(state==='open'){await open(busy);await busyDialog.locator('[data-test=dialog-raw]').fill('busy-'+busyLabel+'-原文');}
+   await open(idle);await idleDialog.locator('[data-test=dialog-raw]').fill('idle-原文');
+   await page.locator('[data-test=seam-clear]').evaluate(el=>el.click());await act(idleDialog,action);await idleDialog.waitFor({state:'hidden'});
+   const trace=await events(),busyPreserved=state==='hidden'?!(await busyDialog.isVisible()):await busyDialog.isVisible()&&await busyDialog.locator('[data-test=dialog-raw]').inputValue()==='busy-'+busyLabel+'-原文';
+   rows.push({case:'cross-dialog-idle-close',run,busyLabel,state,action,source:'owned-busy-open-protocol-plus-native-action',busyOwner,idleOwner,busyPreserved,trace,pass:busyOwner!==idleOwner&&busyPreserved&&!trace.some(e=>e.event==='dialog-preflight'&&e.detail.ownerKey===busyOwner)&&trace.filter(e=>e.event==='dialog-before-close'&&e.detail.ownerKey===idleOwner).length===1});
+  }
+  for(let run=1;run<=3;run++)for(const label of ['A','B'])for(const action of ['Enter','pointer']){
+   const current=host(label),other=host(label==='A'?'B':'A');await close(current);await close(other);await flag(current,'dialog-busy',true);await open(current);
+   const awaitOwner=await current.getAttribute('data-owner-key');const d=await dialog(current),raw=d.locator('[data-test=dialog-raw]');await raw.fill('own-busy-原文');await page.locator('[data-test=seam-clear]').evaluate(el=>el.click());
+   await act(d,action);const trace=await events(),kept=await d.isVisible(),rawKept=await raw.inputValue()==='own-busy-原文',focused=await raw.evaluate(el=>document.activeElement===el);
+   rows.push({case:'own-dialog-busy-protected',run,label,action,source:'owned-busy-protocol-plus-native-action',kept,rawKept,focused,trace,pass:kept&&rawKept&&(action!=='pointer'||focused)&&trace.some(e=>e.event==='dialog-preflight'&&e.detail.ownerKey===awaitOwner)});
+  }
+ } finally {await close(host('A'));await close(host('B'));await page.locator('[data-test=dialog-peer-toggle]').evaluate(el=>el.click());await flag(host('A'),'dialog-busy',false);}
+ return rows;
+}

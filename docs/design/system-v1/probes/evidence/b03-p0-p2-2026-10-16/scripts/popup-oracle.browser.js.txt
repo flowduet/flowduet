@@ -1,0 +1,23 @@
+async (page,popupExercise) => {
+ page.setDefaultTimeout(7000);const rows=[],host=page.locator('[data-dialog-probe=A]');
+ await host.locator('[data-test=dialog-guarded]').check();await host.locator('[data-test=dialog-busy]').uncheck();
+ for(const fault of ['none','no-open','no-close'])for(let run=1;run<=3;run++){
+  await host.locator('[data-test=dialog-open]').click();const ownerClass=await host.getAttribute('data-content-class');
+  await page.locator('.'+ownerClass+' [data-test=dialog-raw]').fill('fault-gate-原文');
+  await page.evaluate(({fault,ownerClass})=>{
+   window.__p0FaultCount=0;window.__p0PopupFault=e=>{
+    if(!e.composedPath().some(el=>el instanceof HTMLElement&&el.classList.contains(ownerClass)))return;
+    if((fault==='no-open'&&e.type==='click')||(fault==='no-close'&&e.type==='keydown'&&e.key==='Escape')){window.__p0FaultCount++;e.preventDefault();e.stopImmediatePropagation();}
+   };
+   if(fault!=='none'){document.addEventListener('click',window.__p0PopupFault,true);document.addEventListener('keydown',window.__p0PopupFault,true);}
+  },{fault,ownerClass});
+  let proof=null,error=null;try{proof=await popupExercise(page,host);}catch(e){error={stage:e.stage??'unexpected',message:String(e),cause:String(e.cause??'')};}
+  const count=await page.evaluate(()=>{document.removeEventListener('click',window.__p0PopupFault,true);document.removeEventListener('keydown',window.__p0PopupFault,true);const n=window.__p0FaultCount;delete window.__p0PopupFault;delete window.__p0FaultCount;return n;});
+  const dialog=page.locator('.'+ownerClass),kept=await dialog.isVisible(),raw=await dialog.locator('[data-test=dialog-raw]').inputValue();
+  rows.push({case:'popup-gate-'+fault,run,source:fault==='none'?'native-pointer-keyboard':'injected-capture-listener-plus-native-actions',proof,error,intercepted:count,dialogKept:kept,raw,pass:fault==='none'?!!proof&&proof.opened&&proof.closed&&kept:error!==null&&error.stage===(fault==='no-open'?'open':'close')&&count>0&&kept&&raw==='fault-gate-原文'});
+  await page.keyboard.press('Escape');
+  const popup=page.locator('[role=tooltip].'+await host.getAttribute('data-popup-class'));await popup.waitFor({state:'hidden'});
+  await dialog.locator('[data-test=dialog-x]').click();await dialog.waitFor({state:'hidden'});
+ }
+ return rows;
+}
