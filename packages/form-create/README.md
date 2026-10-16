@@ -148,6 +148,8 @@ Apache-2.0（见 [LICENSE](./LICENSE)）
 
 `FormDesigner`、`FormManager` 可传 `editingMode="retained"`；缺省和显式 `legacy` 保持原有导出、保存、取消与 Dialog 行为。模式在挂载时固定，活动期间修改会报告 `unsupported-mode`；更换模式或文档前须由宿主确认放弃/替换，再创建新实例。相同字符串内容的文档替换也须由宿主管理生命期，组件不能仅凭两个 JSON 字符串识别文档身份。
 
+FormManager 尚未打开编辑器或两次打开之间修改模式，也不会改变之后子编辑器的实现；模式冲突后，保存按钮与 `commitPendingEdit()` 均拒绝提交，不能通过旧出口绕过。须由宿主处理当前输入并创建新的 FormManager 实例才能选择其他模式。
+
 retained 使用自有文本入口保留数值 `-`、`1.`、`1e` 与日期 `2026-` 等中间原文；合法有限数值写入规则为 number，普通日期仅接受有效 `YYYY-MM-DD`，日历仍可明确确认日期。空输入表示未设置，`0` 是有效默认值。六类既有单值日期和自定义 `valueFormat` 未编辑时原样往返；非普通 date/自定义格式的手工编辑会保留原文并报告 `unsupported-input`。这些原文仅存于当前挂载的编辑器，不能序列化到设计文档。
 
 新增三种根导出 DTO：`FormDesignerBlocker`、`FormDesignerEditingState`、`FormDesignerCaptureResult`。`FormDesigner#readEditingState()` 只读返回本实例模式、编辑版本、`canSuspend`、`canCapture` 与原因；`captureContent()` 同步返回 `captured`（成对 rules/options）、`blocked` 或 `failed`。合法输入须经过公开 prop 回显与原规则确认；组合、拖动、弹层、未确认的第三方输入或捕获期间版本变化都会阻断。宿主 UI 可等待一次 `nextTick` 再重读，不能把同步适配器改为异步，也不能在失败时保存旧值。legacy 的新捕获接口返回 `unsupported-mode`，原 `exportContent()` 不变。

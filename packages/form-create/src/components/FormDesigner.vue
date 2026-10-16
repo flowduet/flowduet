@@ -58,7 +58,8 @@ let revision = 0,
   foreignComposition = false;
 let changedMode = false,
   replaced = false;
-const pendingControls = new Set<EventTarget>();
+const pendingControls = new Map<Element, symbol>();
+const focusValues = new WeakMap<Element, string>();
 const captureError = ref("");
 const inputState = createEditorInputState((edited) => {
   if (edited) {
@@ -69,7 +70,11 @@ const inputState = createEditorInputState((edited) => {
 });
 const config =
   mode === "retained"
-    ? retainedDesignerConfig((source) => inputState.bind(source), owner)
+    ? {
+        ...retainedDesignerConfig((source) => inputState.bind(source), owner),
+        // 普通字段的delete事件晚于属性区移除；公开前置钩子先记录仍在场的控件。
+        beforeRemoveRule: releaseRemovedControls,
+      }
     : DESIGNER_CONFIG;
 function blockers(): FormDesignerBlocker[] {
   if (disposed) return [{ code: "disposed", message: "编辑器已销毁" }];
@@ -144,17 +149,71 @@ function nativeInput(event: Event) {
     event.target instanceof Element &&
     !event.target.matches("[data-retained-input]")
   ) {
-    if (event.type === "input") pendingControls.add(event.target);
-    else {
-      const target = event.target;
-      void nextTick(() => {
-        pendingControls.delete(target);
-        notifyState();
-      });
-    }
+    const target = event.target;
+    const token = Symbol();
+    pendingControls.set(target, token);
+    // 恢复聚焦前原值时浏览器不会发change；仍须等本次公开输入回填完成。
+    if (
+      event.type === "change" ||
+      (controlValue(target) !== undefined && controlValue(target) === focusValues.get(target))
+    )
+      confirmControl(target, token);
     notifyState();
   }
   notifyDraftChange();
+}
+function controlValue(target: Element): string | undefined {
+  // 原生number的非法中间串也可能显示为空；不能把badInput误判成恢复空值。
+  if (hasBadInput(target)) return undefined;
+  return target instanceof HTMLInputElement ||
+    target instanceof HTMLTextAreaElement ||
+    target instanceof HTMLSelectElement
+    ? target.value
+    : undefined;
+}
+function hasBadInput(target: Element): boolean {
+  return target instanceof HTMLInputElement && target.validity.badInput;
+}
+function confirmControl(target: Element, token: symbol) {
+  const value = controlValue(target);
+  void nextTick(() => {
+    // 旧change/恢复回调不能放行同一控件在该tick内更新后的输入。
+    if (
+      disposed ||
+      hasBadInput(target) ||
+      pendingControls.get(target) !== token ||
+      controlValue(target) !== value
+    )
+      return;
+    pendingControls.delete(target);
+    if (value !== undefined) focusValues.set(target, value);
+    notifyState();
+  });
+}
+function focusIn(event: FocusEvent) {
+  if (mode !== "retained") return;
+  const target = event.target;
+  if (target instanceof Element && !pendingControls.has(target)) {
+    const value = controlValue(target);
+    if (value !== undefined) focusValues.set(target, value);
+  }
+  void nextTick(notifyState);
+}
+function releaseRemovedControls() {
+  // 仅在已确认delete/clear的结构操作中回收其实际移除的控件；K隐藏、切字段不走此路。
+  const connected = [...pendingControls].filter(([target]) => hostRef.value?.contains(target));
+  queueMicrotask(() => {
+    // 前置钩子早于provider排入Vue更新；先让同步删除结束，再等待那一次刷新。
+    void nextTick(() => {
+      if (disposed) return;
+      for (const [target, token] of connected)
+        if (!hostRef.value?.contains(target) && pendingControls.get(target) === token) {
+          pendingControls.delete(target);
+          focusValues.delete(target);
+        }
+      notifyState();
+    });
+  });
 }
 function composition(event: CompositionEvent) {
   if (
@@ -188,11 +247,17 @@ function drag(event: DragEvent) {
   }
 }
 function removeField(source: Parameters<typeof inputState.release>[0]) {
-  if (mode === "retained") inputState.release(source);
+  if (mode === "retained") {
+    releaseRemovedControls();
+    inputState.release(source);
+  }
   notifyDraftChange();
 }
 function clearFields() {
-  if (mode === "retained") inputState.clear();
+  if (mode === "retained") {
+    releaseRemovedControls();
+    inputState.clear();
+  }
   notifyDraftChange();
 }
 onBeforeUnmount(() => {
@@ -316,7 +381,7 @@ function save(): void {
     @change.capture="nativeInput"
     @compositionstart.capture="composition"
     @compositionend.capture="composition"
-    @focusin.capture="mode === 'retained' && nextTick(notifyState)"
+    @focusin.capture="focusIn"
     @dragstart.capture="drag"
     @dragend.capture="drag"
   >

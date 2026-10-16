@@ -108,3 +108,41 @@ it("尚未绑定字段的raw不允许捕获或导航", () => {
   state.bind({ type: "inputNumber" }).input("-", () => {});
   expect(state.blockers()[0]?.code).toBe("unknown-owner");
 });
+
+it.each([
+  ["inputNumber", 1000, "1e3"],
+  ["datePicker", "2024-02-29", "2024-02-29"],
+] as const)("等价%s输入也先建立等待门再通知订阅者", (type, value, raw) => {
+  const observations: string[][] = [];
+  const state = createEditorInputState(() => {
+    observations.push(state.blockers().map((b) => b.code));
+  });
+  const source = { type, field: "value", value };
+  const input = state.bind(source);
+  input.input(raw, () => {
+    expect(observations.every((codes) => codes.includes("pending-update"))).toBe(true);
+  });
+  expect(observations[0]).toEqual(["pending-update"]);
+  expect(input.raw).toBe(raw);
+  input.echo(value);
+  expect(state.blockers()).toEqual([]);
+});
+
+it("同步订阅者重入输入后不发布旧原文", () => {
+  let reenter = true;
+  const source = { type: "inputNumber", field: "amount", value: 1000 };
+  const state = createEditorInputState(() => {
+    if (reenter) {
+      reenter = false;
+      input.input("-", () => {
+        throw new Error("非法重入不可发布");
+      });
+    }
+  });
+  const input = state.bind(source);
+  input.input("1e3", () => {
+    throw new Error("已被新输入替代，不可发布旧值");
+  });
+  expect(input.raw).toBe("-");
+  expect(state.blockers()[0]?.code).toBe("pending-input");
+});

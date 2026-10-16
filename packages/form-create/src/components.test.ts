@@ -1700,3 +1700,206 @@ it("旧页头关闭按钮的迟到click不取得新会话的放弃授权", async
     confirm.mockRestore();
   }
 });
+
+/** 原生input不等于change；测试不得用会额外派发change的setValue掩盖等待门。 */
+async function retainedTitle() {
+  await selectRetained("amount");
+  const item = wrapper!
+    .findComponent(FcDesigner)
+    .findAll("._fc-r-config .el-form-item")
+    .find((row) => row.text().includes("字段名称"));
+  expect(item).toBeDefined();
+  return item!.get<HTMLInputElement>("input");
+}
+function typeNative(input: HTMLInputElement, text: string) {
+  input.value = text;
+  input.dispatchEvent(new Event("input", { bubbles: true }));
+}
+
+describe("P1复审P2：属性控件确认与删除生命期", () => {
+  it("恢复原值且没有change时，刷新后可捕获；同步阶段仍阻断", async () => {
+    const vm = await retainedEditor();
+    const input = await retainedTitle();
+    input.element.focus();
+    const original = input.element.value;
+    typeNative(input.element, `${original}x`);
+    await flushPromises();
+    expect(vm.readEditingState().canCapture).toBe(false);
+    typeNative(input.element, original);
+    expect(vm.captureContent().status).toBe("blocked");
+    input.element.blur();
+    await flushPromises();
+    expect(vm.readEditingState().canSuspend).toBe(true);
+    const captured = vm.captureContent();
+    expect(captured.status).toBe("captured");
+    if (captured.status === "captured")
+      expect(JSON.parse(captured.content.rules)[0].title).toBe("金额");
+  });
+  it.each(["delete", "clear"] as const)(
+    "%s撤销已移除控件的等待，不要求change",
+    async (operation) => {
+      const vm = await retainedEditor();
+      const input = await retainedTitle();
+      input.element.focus();
+      typeNative(input.element, "未确认名称");
+      await flushPromises();
+      expect(vm.readEditingState().canCapture).toBe(false);
+      const fc = wrapper!.findComponent(FcDesigner).vm;
+      if (operation === "clear") fc.clearDragRule();
+      else
+        await wrapper!.findComponent(FcDesigner).get("._fc-m-drag .icon-delete").trigger("click");
+      await flushPromises();
+      expect(input.element.isConnected).toBe(false);
+      expect(vm.readEditingState().canSuspend).toBe(true);
+      const captured = vm.captureContent();
+      expect(captured.status).toBe("captured");
+      if (captured.status === "captured") {
+        const rules = JSON.parse(captured.content.rules);
+        expect(rules.some((r: { field: string }) => r.field === "amount")).toBe(false);
+        if (operation === "clear") expect(rules).toEqual([]);
+      }
+    },
+  );
+  it("旧change的下一tick不能清除同控件更新后的未确认输入", async () => {
+    const vm = await retainedEditor();
+    const input = await retainedTitle();
+    input.element.focus();
+    typeNative(input.element, "已确认");
+    input.element.dispatchEvent(new Event("change", { bubbles: true }));
+    typeNative(input.element, "更新但未确认");
+    await flushPromises();
+    expect(vm.captureContent().status).toBe("blocked");
+    input.element.dispatchEvent(new Event("change", { bubbles: true }));
+    await flushPromises();
+    expect(vm.captureContent().status).toBe("captured");
+  });
+});
+
+describe("P1复审P2：同步捕获重入", () => {
+  it.each([
+    ["inputNumber", 1000, "1e3"],
+    ["inputNumber", 1, "01"],
+    ["datePicker", "2024-02-29", "2024-02-29"],
+  ] as const)("%s的等价原文%s→%s在公开回显前也必须阻断", async (type, value, raw) => {
+    const seen: FormDesignerCaptureResult[] = [];
+    let armed = false;
+    wrapper = mount(FormDesigner, {
+      props: {
+        name: "同步重入",
+        rules: JSON.stringify([{ type, field: "amount", title: "值", value }]),
+        options: "{}",
+        editingMode: "retained",
+        onDraftChange: () => {
+          if (armed) seen.push((wrapper!.vm as unknown as RetainedVm).captureContent());
+        },
+      },
+      attachTo: document.body,
+    });
+    await flushPromises();
+    const input = await selectRetained("amount");
+    armed = true;
+    typeNative(input.element, raw);
+    armed = false;
+    expect(seen).toHaveLength(1);
+    expect(seen[0]).toMatchObject({ status: "blocked", blockers: [{ code: "pending-update" }] });
+    await flushPromises();
+    const captured = (wrapper.vm as unknown as RetainedVm).captureContent();
+    expect(captured.status).toBe("captured");
+    if (captured.status === "captured")
+      expect(JSON.parse(captured.content.rules)[0].value).toBe(value);
+    expect(input.element.value).toBe(raw);
+  });
+});
+
+describe("P1复审P2：模式冲突后打开与重开", () => {
+  it.each(["legacy", "retained"] as const)(
+    "%s挂载后改变模式不切换子实现，也不经旧出口提交",
+    async (initial) => {
+      wrapper = mount(FormManager, {
+        props: { forms: [{ ...APPLY_FORM, rules: numericDateRules }], editingMode: initial },
+        attachTo: document.body,
+      });
+      const vm = wrapper.vm as unknown as ManagerVm;
+      await wrapper.setProps({ editingMode: initial === "legacy" ? "retained" : "legacy" });
+      await wrapper.get('[data-test="form-edit-btn-form_apply"]').trigger("click");
+      await flushPromises();
+      expect(wrapper.findComponent(FormDesigner).props("editingMode")).toBe(initial);
+      expect(vm.readEditingState()?.blockers[0]?.code).toBe("unsupported-mode");
+      expect(vm.commitPendingEdit()).toBe(false);
+      wrapper.findComponent(FormDesigner).vm.$emit("save", "[]", "{}");
+      await flushPromises();
+      expect(vm.hasOpenEditor()).toBe(true);
+      expect(wrapper.emitted("updateContent")).toBeUndefined();
+    },
+  );
+  it.each(["legacy", "retained"] as const)(
+    "%s成功关闭后改模式重开，拒绝新模式且旧内容不再提交",
+    async (initial) => {
+      wrapper = mount(FormManager, {
+        props: { forms: [{ ...APPLY_FORM, rules: numericDateRules }], editingMode: initial },
+        attachTo: document.body,
+      });
+      const vm = wrapper.vm as unknown as ManagerVm;
+      await wrapper.get('[data-test="form-edit-btn-form_apply"]').trigger("click");
+      await flushPromises();
+      expect(vm.commitPendingEdit()).toBe(true);
+      await flushPromises();
+      await wrapper.setProps({ editingMode: initial === "legacy" ? "retained" : "legacy" });
+      await wrapper.get('[data-test="form-edit-btn-form_apply"]').trigger("click");
+      await flushPromises();
+      expect(wrapper.findComponent(FormDesigner).props("editingMode")).toBe(initial);
+      expect(vm.commitPendingEdit()).toBe(false);
+      expect(vm.hasOpenEditor()).toBe(true);
+      expect(wrapper.emitted("updateContent")).toHaveLength(1);
+    },
+  );
+});
+
+it("P1复审P2：删除其他字段不会清除仍在场的属性输入等待", async () => {
+  const vm = await retainedEditor();
+  const input = await retainedTitle();
+  input.element.focus();
+  typeNative(input.element, "等待确认的金额名称");
+  await flushPromises();
+  await wrapper!.findComponent(FcDesigner).findAll("._fc-m-drag .icon-delete")[1]!.trigger("click");
+  await flushPromises();
+  expect(input.element.isConnected).toBe(true);
+  expect(vm.captureContent().status).toBe("blocked");
+  input.element.dispatchEvent(new Event("change", { bubbles: true }));
+  await flushPromises();
+  const captured = vm.captureContent();
+  expect(captured.status).toBe("captured");
+  if (captured.status === "captured")
+    expect(JSON.parse(captured.content.rules)).toMatchObject([
+      { field: "amount", title: "等待确认的金额名称" },
+    ]);
+});
+
+it("P1复审P2：原生number的badInput空串不能冒充恢复初始空值", async () => {
+  const vm = await retainedEditor();
+  await selectRetained("amount");
+  const item = wrapper!
+    .findComponent(FcDesigner)
+    .findAll("._fc-r-config .el-form-item")
+    .find((row) => row.text().includes("设置计数器允许的最小值"))!;
+  const input = item.get<HTMLInputElement>('input[type="number"]');
+  input.element.focus();
+  // 模拟DOM不产生浏览器badInput；仅替换这个公开只读状态，输入与业务链路仍是真实组件。
+  const validity = input.element.validity;
+  const guard = vi
+    .spyOn(input.element, "validity", "get")
+    .mockReturnValue(Object.create(validity, { badInput: { value: true } }));
+  try {
+    typeNative(input.element, "");
+    await flushPromises();
+    expect(vm.captureContent().status).toBe("blocked");
+    input.element.dispatchEvent(new Event("change", { bubbles: true }));
+    await flushPromises();
+    expect(vm.captureContent().status).toBe("blocked");
+  } finally {
+    guard.mockRestore();
+  }
+  typeNative(input.element, "");
+  await flushPromises();
+  expect(vm.captureContent().status).toBe("captured");
+});

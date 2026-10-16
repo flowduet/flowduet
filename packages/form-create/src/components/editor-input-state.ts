@@ -45,6 +45,7 @@ function createBinding(source: Source, notify: (edited: boolean) => void) {
     waiting = false,
     dirty = false,
     conflict = false;
+  let inputVersion = 0;
   const state = shallowReactive({
     get field() {
       return String(source.field ?? "");
@@ -63,18 +64,15 @@ function createBinding(source: Source, notify: (edited: boolean) => void) {
     },
     input(raw: string, publish: Publish) {
       if (!alive) return;
+      const version = ++inputVersion;
       state.raw = raw;
       dirty = true;
-      waiting = false;
-      notify(true);
-      if (state.composing || !state.supported || conflict) return;
       const parsed = parseRaw(raw, kind);
-      if (!parsed.valid) return;
-      expected = parsed.value;
-      waiting = true;
-      // 即使与原业务值相等，也要等公开prop的确认；组件在下一次Vue刷新核对。
-      notify(false);
-      publish(expected);
+      waiting = !state.composing && state.supported && !conflict && parsed.valid;
+      if (waiting) expected = parsed.value;
+      // draftChange订阅者可同步捕获；包括业务值相等的输入，也须先关闭回显前的捕获窗口。
+      notify(true);
+      if (alive && version === inputVersion && waiting) publish(parsed.value);
     },
     echo(value: unknown) {
       if (!alive) return;

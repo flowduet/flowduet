@@ -427,8 +427,9 @@ function beforeClose(done: () => void) {
  */
 function submitContent(rules: string, options: string, session = editorSession.value): boolean {
   if (
-    mode === "retained" &&
-    (!current(session) || unsupportedMode || session.invalidated || !definitionMatches(session))
+    unsupportedMode ||
+    (mode === "retained" &&
+      (!current(session) || session.invalidated || !definitionMatches(session)))
   ) {
     editError.value = "表单编辑会话已变化，请由宿主确认处理后重开";
     return false;
@@ -462,6 +463,10 @@ function submitContent(rules: string, options: string, session = editorSession.v
  */
 function commitPendingEdit(): boolean {
   if (!hasOpenEditor()) return true;
+  if (unsupportedMode) {
+    editError.value = "编辑模式不可在当前挂载中切换，请确认处理后另开实例";
+    return false;
+  }
   try {
     if (mode === "retained") {
       const result = activeDesigner()?.captureContent();
@@ -647,7 +652,7 @@ defineExpose({ commitPendingEdit, hasOpenEditor, readEditingState });
         v-if="editing"
         :ref="editorSession?.bindDesigner ?? (() => {})"
         :key="editorSession?.key ?? 'closed'"
-        :editing-mode="props.editingMode ?? 'legacy'"
+        :editing-mode="mode"
         v-on="editorSession?.handlers ?? {}"
         :name="editing.name"
         :rules="editing.rules"
