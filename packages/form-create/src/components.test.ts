@@ -1613,3 +1613,69 @@ it.each(["legacy", "retained"] as const)(
     }
   },
 );
+
+it("旧Dialog迟到modelValue回调不能关闭同ID重开的编辑器", async () => {
+  const vm = await retainedManager();
+  await managerRaw("7");
+  const oldDialog = wrapper!.findComponent(ElDialog),
+    oldEditor = wrapper!.findComponent(FormDesigner);
+  expect(vm.commitPendingEdit()).toBe(true);
+  // 在Vue重渲染前重开；旧组件此刻仍挂载，确保迟到回调真的进入旧监听器。
+  wrapper!
+    .get('[data-test="form-edit-btn-form_apply"]')
+    .element.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+  expect(oldEditor.element.isConnected).toBe(true);
+  oldEditor.vm.$emit("editingStateChange", {
+    mode: "retained",
+    revision: 999,
+    canCapture: true,
+    canSuspend: true,
+    blockers: [],
+  });
+  oldEditor.vm.$emit("save", "[]", "{}");
+  oldEditor.vm.$emit("cancel");
+  oldDialog.vm.$emit("update:modelValue", false);
+  oldDialog.vm.$emit("closed");
+  expect(oldEditor.emitted("save")).toHaveLength(1);
+  expect(oldDialog.emitted("update:modelValue")).toHaveLength(1);
+  await flushPromises();
+  expect(vm.hasOpenEditor()).toBe(true);
+  expect(vm.readEditingState()?.revision).not.toBe(999);
+  expect(wrapper!.emitted("updateContent")?.length).toBe(1);
+});
+
+it("当前Dialog modelValue=false只请求关闭，未经明确放弃不销毁", async () => {
+  const vm = await retainedManager();
+  const input = await managerRaw();
+  const confirm = vi.spyOn(ElMessageBox, "confirm").mockRejectedValue("cancel");
+  try {
+    wrapper!.findComponent(ElDialog).vm.$emit("update:modelValue", false);
+    await flushPromises();
+    expect(vm.hasOpenEditor()).toBe(true);
+    expect(input.element.isConnected).toBe(true);
+    expect(input.element.value).toBe("-");
+    expect(confirm).toHaveBeenCalledTimes(1);
+    expect(wrapper!.emitted("updateContent")).toBeUndefined();
+  } finally {
+    confirm.mockRestore();
+  }
+});
+
+it("同ID新会话尚未挂载时不读取或收集旧子ref", async () => {
+  const vm = await retainedManager();
+  await managerRaw("7");
+  expect(vm.commitPendingEdit()).toBe(true);
+  wrapper!
+    .get('[data-test="form-edit-btn-form_apply"]')
+    .element.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+  expect(vm.readEditingState()?.blockers[0]?.code).toBe("not-ready");
+  expect(vm.commitPendingEdit()).toBe(false);
+  expect(wrapper!.emitted("updateContent")?.length).toBe(1);
+  await flushPromises();
+  expect(vm.hasOpenEditor()).toBe(true);
+  const content = (
+    wrapper!.findComponent(FormDesigner).vm as unknown as RetainedVm
+  ).captureContent();
+  expect(content.status).toBe("captured");
+  if (content.status === "captured") expect(JSON.parse(content.content.rules)[0].value).toBe(0);
+});

@@ -56,6 +56,9 @@ type EditorSession = {
   handlers: Record<string, (...args: never[]) => unknown>;
   closed: () => void;
   requestClose: () => void;
+  modelUpdate: (visible: boolean) => void;
+  designer: InstanceType<typeof FormDesigner> | null;
+  bindDesigner: (value: unknown) => void;
 };
 const editorSession = shallowRef<EditorSession | null>(null);
 let disposed = false,
@@ -75,6 +78,9 @@ function definitionMatches(session: EditorSession): boolean {
     source.provider === loaded.provider
   );
 }
+function activeDesigner() {
+  return mode === "retained" ? (editorSession.value?.designer ?? null) : designerRef.value;
+}
 function readEditingState(): FormDesignerEditingState | null {
   if (editorSession.value === null && editing.value === null) return null;
   if (unsupportedMode)
@@ -87,7 +93,8 @@ function readEditingState(): FormDesignerEditingState | null {
         { code: "unsupported-mode" as const, message: "编辑模式不可在当前挂载中切换" },
       ]),
     });
-  if (editorSession.value?.closing || !designerRef.value)
+  const designer = activeDesigner();
+  if (editorSession.value?.closing || !designer)
     return Object.freeze({
       mode,
       revision: 0,
@@ -97,7 +104,7 @@ function readEditingState(): FormDesignerEditingState | null {
         { code: "not-ready" as const, message: "表单编辑会话尚未就绪或正在收尾" },
       ]),
     });
-  const child = designerRef.value.readEditingState();
+  const child = designer.readEditingState();
   if (
     mode === "retained" &&
     editorSession.value &&
@@ -344,6 +351,19 @@ function openEditor(form: FormDefinition): void {
     handlers: {},
     closed: () => {},
     requestClose: () => {},
+    modelUpdate: () => {},
+    designer: null,
+    bindDesigner: () => {},
+  };
+  session.bindDesigner = (value) => {
+    const designer = value as InstanceType<typeof FormDesigner> | null;
+    if (session.designer === designer) return;
+    const previous = session.designer;
+    session.designer = designer;
+    if (designer === null && designerRef.value === previous) designerRef.value = null;
+    if (editorSession.value !== session || session.closing || disposed) return;
+    designerRef.value = session.designer;
+    forwardState();
   };
   session.handlers = {
     save: (rules: string, options: string) => {
@@ -362,6 +382,14 @@ function openEditor(form: FormDefinition): void {
   };
   session.requestClose = () => {
     if (mode === "retained") void requestClose(session);
+  };
+  // provider的v-model回调也绑定原会话；不能让旧动画回调直接写新会话的显示状态。
+  session.modelUpdate = (visible) => {
+    if (mode === "legacy") {
+      editVisible.value = visible;
+      return;
+    }
+    if (current(session) && !visible) void requestClose(session);
   };
   session.closed = () => {
     if (editorSession.value !== session) return;
@@ -384,6 +412,9 @@ function cancelEdit(): void {
   editing.value = null;
   editVisible.value = false;
   editorSession.value = null;
+}
+function legacyModelUpdate(visible: boolean) {
+  if (mode === "legacy") editVisible.value = visible;
 }
 function beforeClose(done: () => void) {
   if (mode === "legacy") done();
@@ -433,7 +464,7 @@ function commitPendingEdit(): boolean {
   if (!hasOpenEditor()) return true;
   try {
     if (mode === "retained") {
-      const result = designerRef.value?.captureContent();
+      const result = activeDesigner()?.captureContent();
       if (result?.status !== "captured") {
         editError.value =
           result?.status === "blocked"
@@ -581,7 +612,7 @@ defineExpose({ commitPendingEdit, hasOpenEditor, readEditingState });
     </ul>
 
     <ElDialog
-      v-model="editVisible"
+      :model-value="editVisible"
       :key="mode === 'retained' ? (editorSession?.key ?? 'closed') : 'legacy'"
       :class="contentClass"
       :modal-class="modalClass"
@@ -590,7 +621,10 @@ defineExpose({ commitPendingEdit, hasOpenEditor, readEditingState });
       :before-close="
         mode === 'retained' ? (editorSession?.requestClose ?? (() => {})) : beforeClose
       "
-      v-bind="{ onClosed: editorSession?.closed }"
+      v-bind="{
+        onClosed: editorSession?.closed,
+        'onUpdate:modelValue': editorSession?.modelUpdate ?? legacyModelUpdate,
+      }"
       :title="editing ? `编辑表单：${editing.name}` : '编辑表单'"
       width="920px"
       data-test="form-manager-edit-dialog"
@@ -611,7 +645,7 @@ defineExpose({ commitPendingEdit, hasOpenEditor, readEditingState });
       </p>
       <FormDesigner
         v-if="editing"
-        ref="designerRef"
+        :ref="editorSession?.bindDesigner ?? (() => {})"
         :key="editorSession?.key ?? 'closed'"
         :editing-mode="props.editingMode ?? 'legacy'"
         v-on="editorSession?.handlers ?? {}"
