@@ -1,0 +1,58 @@
+diff --git a/packages/form-create/src/components.test.ts b/packages/form-create/src/components.test.ts
+index 2b38e31..87386dd 100644
+--- a/packages/form-create/src/components.test.ts
++++ b/packages/form-create/src/components.test.ts
+@@ -1010,17 +1010,24 @@ const numericDateRules = JSON.stringify([
+     props: { type: "date", valueFormat: "YYYY-MM-DD" },
+   },
+ ]);
+-async function retainedEditor() {
++async function retainedEditor(rules = numericDateRules) {
+   wrapper = mount(FormDesigner, {
+-    props: { name: "原文", rules: numericDateRules, options: "{}", editingMode: "retained" },
++    props: { name: "原文", rules, options: "{}", editingMode: "retained" },
+     attachTo: document.body,
+   });
+   await flushPromises();
+   return wrapper.vm as unknown as RetainedVm;
+ }
+ async function selectRetained(field: string) {
++  const designer = wrapper!.findComponent(FcDesigner);
++  // setRule后画布尚未挂载时triggerActive无效；先只读等待真实画布，而非反复触发配置。
++  await vi.waitFor(() => {
++    expect(designer.find("._fc-m-drag ._fd-drag-mask").exists()).toBe(true);
++  });
++  await flushPromises();
++  // triggerActive会重建属性配置；轮询只观察，不能在等待期间重复选择同一字段。
++  designer.vm.triggerActive(field);
+   await vi.waitFor(() => {
+-    wrapper!.findComponent(FcDesigner).vm.triggerActive(field);
+     expect(wrapper!.find(`[data-retained-input][data-field="${field}"]`).exists()).toBe(true);
+   });
+   await flushPromises();
+@@ -1120,12 +1127,7 @@ async function retainedManager() {
+   return vm;
+ }
+ async function managerRaw(raw = "-") {
+-  await vi.waitFor(() => {
+-    wrapper!.findComponent(FcDesigner).vm.triggerActive("amount");
+-    expect(wrapper!.find('[data-retained-input="number"]').exists()).toBe(true);
+-  });
+-  await flushPromises();
+-  const input = wrapper!.get<HTMLInputElement>('[data-retained-input="number"]');
++  const input = await selectRetained("amount");
+   await input.setValue(raw);
+   return input;
+ }
+@@ -1738,7 +1740,10 @@ describe("P1复审P2：属性控件确认与删除生命期", () => {
+   it.each(["delete", "clear"] as const)(
+     "%s撤销已移除控件的等待，不要求change",
+     async (operation) => {
+-      const vm = await retainedEditor();
++      // 此复现只依赖被删除的数字字段；其他字段存活由独立双字段用例覆盖。
++      const vm = await retainedEditor(
++        JSON.stringify([{ type: "inputNumber", field: "amount", title: "金额", value: 0 }]),
++      );
+       const input = await retainedTitle();
+       input.element.focus();
+       typeNative(input.element, "未确认名称");

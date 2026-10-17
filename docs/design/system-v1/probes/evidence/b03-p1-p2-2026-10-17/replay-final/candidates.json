@@ -1,0 +1,1171 @@
+{
+  "source": "real retained FormDesigner + protocol-injected capture faults; not natural third-party failure",
+  "rows": [
+    {
+      "id": "H01",
+      "layout": "top",
+      "which": 0,
+      "position": 1,
+      "fault": "throw",
+      "failed": {
+        "prepared": {
+          "ok": false,
+          "code": "capture-failed",
+          "message": "injected-0"
+        },
+        "calls": [
+          "1:flush",
+          "0:flush",
+          "1:capture",
+          "0:capture"
+        ],
+        "liveUnchanged": true,
+        "persistCalls": 0,
+        "adaptersAndLeasesCurrent": true
+      },
+      "rejectedSave": {
+        "saved": {
+          "status": "failed",
+          "message": "injected-0"
+        },
+        "calls": [
+          "1:flush",
+          "0:flush",
+          "1:capture",
+          "0:capture"
+        ],
+        "liveUnchanged": true,
+        "persistCalls": 0,
+        "adaptersAndLeasesCurrent": true
+      },
+      "retry": {
+        "ok": true,
+        "calls": [
+          "1:flush",
+          "0:flush",
+          "1:capture",
+          "0:capture"
+        ],
+        "liveUnchanged": true,
+        "adaptersAndLeasesCurrent": true
+      },
+      "raw": [
+        "71",
+        "82"
+      ],
+      "pass": true
+    },
+    {
+      "id": "H01",
+      "layout": "top",
+      "which": 0,
+      "position": 1,
+      "fault": "null",
+      "failed": {
+        "prepared": {
+          "ok": false,
+          "code": "capture-failed",
+          "message": "编辑器尚未就绪或无法收集"
+        },
+        "calls": [
+          "1:flush",
+          "0:flush",
+          "1:capture",
+          "0:capture"
+        ],
+        "liveUnchanged": true,
+        "persistCalls": 0,
+        "adaptersAndLeasesCurrent": true
+      },
+      "rejectedSave": {
+        "saved": {
+          "status": "failed",
+          "message": "编辑器尚未就绪或无法收集"
+        },
+        "calls": [
+          "1:flush",
+          "0:flush",
+          "1:capture",
+          "0:capture"
+        ],
+        "liveUnchanged": true,
+        "persistCalls": 0,
+        "adaptersAndLeasesCurrent": true
+      },
+      "retry": {
+        "ok": true,
+        "calls": [
+          "1:flush",
+          "0:flush",
+          "1:capture",
+          "0:capture"
+        ],
+        "liveUnchanged": true,
+        "adaptersAndLeasesCurrent": true
+      },
+      "raw": [
+        "71",
+        "82"
+      ],
+      "pass": true
+    },
+    {
+      "id": "H01",
+      "layout": "top",
+      "which": 0,
+      "position": 1,
+      "fault": "json",
+      "failed": {
+        "prepared": {
+          "ok": false,
+          "code": "invalid-input",
+          "message": "表单 rules 不是合法 JSON：Unexpected end of JSON input",
+          "target": {
+            "ref": {
+              "controllerId": "P1-1",
+              "documentEpoch": 1,
+              "kind": "form",
+              "id": "form_1",
+              "lifetime": 7
+            },
+            "facet": "form-content"
+          }
+        },
+        "calls": [
+          "1:flush",
+          "0:flush",
+          "1:capture",
+          "0:capture"
+        ],
+        "liveUnchanged": true,
+        "persistCalls": 0,
+        "adaptersAndLeasesCurrent": true
+      },
+      "rejectedSave": {
+        "saved": {
+          "status": "failed",
+          "message": "表单 rules 不是合法 JSON：Unexpected end of JSON input"
+        },
+        "calls": [
+          "1:flush",
+          "0:flush",
+          "1:capture",
+          "0:capture"
+        ],
+        "liveUnchanged": true,
+        "persistCalls": 0,
+        "adaptersAndLeasesCurrent": true
+      },
+      "retry": {
+        "ok": true,
+        "calls": [
+          "1:flush",
+          "0:flush",
+          "1:capture",
+          "0:capture"
+        ],
+        "liveUnchanged": true,
+        "adaptersAndLeasesCurrent": true
+      },
+      "raw": [
+        "71",
+        "82"
+      ],
+      "pass": true
+    },
+    {
+      "id": "H01",
+      "layout": "top",
+      "which": 0,
+      "position": 1,
+      "fault": "kind",
+      "failed": {
+        "prepared": {
+          "ok": false,
+          "code": "capture-failed",
+          "message": "编辑目标与输入类型不匹配"
+        },
+        "calls": [
+          "1:flush",
+          "0:flush",
+          "1:capture",
+          "0:capture"
+        ],
+        "liveUnchanged": true,
+        "persistCalls": 0,
+        "adaptersAndLeasesCurrent": true
+      },
+      "rejectedSave": {
+        "saved": {
+          "status": "failed",
+          "message": "编辑目标与输入类型不匹配"
+        },
+        "calls": [
+          "1:flush",
+          "0:flush",
+          "1:capture",
+          "0:capture"
+        ],
+        "liveUnchanged": true,
+        "persistCalls": 0,
+        "adaptersAndLeasesCurrent": true
+      },
+      "retry": {
+        "ok": true,
+        "calls": [
+          "1:flush",
+          "0:flush",
+          "1:capture",
+          "0:capture"
+        ],
+        "liveUnchanged": true,
+        "adaptersAndLeasesCurrent": true
+      },
+      "raw": [
+        "71",
+        "82"
+      ],
+      "pass": true
+    },
+    {
+      "id": "H01",
+      "layout": "top",
+      "which": 0,
+      "position": 1,
+      "fault": "schema",
+      "failed": {
+        "prepared": {
+          "ok": false,
+          "code": "invalid-input",
+          "message": "表单字段「（bad）」的类型是 upload，本版本支持的组件：文本 / 多行文本 / 数字 / 单选 / 多选 / 下拉单选 / 日期 / 开关 / 栅格布局，拒绝导入",
+          "target": {
+            "ref": {
+              "controllerId": "P1-1",
+              "documentEpoch": 1,
+              "kind": "form",
+              "id": "form_1",
+              "lifetime": 7
+            },
+            "facet": "form-content"
+          }
+        },
+        "calls": [
+          "1:flush",
+          "0:flush",
+          "1:capture",
+          "0:capture"
+        ],
+        "liveUnchanged": true,
+        "persistCalls": 0,
+        "adaptersAndLeasesCurrent": true
+      },
+      "rejectedSave": {
+        "saved": {
+          "status": "failed",
+          "message": "表单字段「（bad）」的类型是 upload，本版本支持的组件：文本 / 多行文本 / 数字 / 单选 / 多选 / 下拉单选 / 日期 / 开关 / 栅格布局，拒绝导入"
+        },
+        "calls": [
+          "1:flush",
+          "0:flush",
+          "1:capture",
+          "0:capture"
+        ],
+        "liveUnchanged": true,
+        "persistCalls": 0,
+        "adaptersAndLeasesCurrent": true
+      },
+      "retry": {
+        "ok": true,
+        "calls": [
+          "1:flush",
+          "0:flush",
+          "1:capture",
+          "0:capture"
+        ],
+        "liveUnchanged": true,
+        "adaptersAndLeasesCurrent": true
+      },
+      "raw": [
+        "71",
+        "82"
+      ],
+      "pass": true
+    },
+    {
+      "id": "H01",
+      "layout": "top",
+      "which": 1,
+      "position": 0,
+      "fault": "throw",
+      "failed": {
+        "prepared": {
+          "ok": false,
+          "code": "capture-failed",
+          "message": "injected-1"
+        },
+        "calls": [
+          "1:flush",
+          "0:flush",
+          "1:capture"
+        ],
+        "liveUnchanged": true,
+        "persistCalls": 0,
+        "adaptersAndLeasesCurrent": true
+      },
+      "rejectedSave": {
+        "saved": {
+          "status": "failed",
+          "message": "injected-1"
+        },
+        "calls": [
+          "1:flush",
+          "0:flush",
+          "1:capture"
+        ],
+        "liveUnchanged": true,
+        "persistCalls": 0,
+        "adaptersAndLeasesCurrent": true
+      },
+      "retry": {
+        "ok": true,
+        "calls": [
+          "1:flush",
+          "0:flush",
+          "1:capture",
+          "0:capture"
+        ],
+        "liveUnchanged": true,
+        "adaptersAndLeasesCurrent": true
+      },
+      "raw": [
+        "71",
+        "82"
+      ],
+      "pass": true
+    },
+    {
+      "id": "H01",
+      "layout": "top",
+      "which": 1,
+      "position": 0,
+      "fault": "null",
+      "failed": {
+        "prepared": {
+          "ok": false,
+          "code": "capture-failed",
+          "message": "编辑器尚未就绪或无法收集"
+        },
+        "calls": [
+          "1:flush",
+          "0:flush",
+          "1:capture"
+        ],
+        "liveUnchanged": true,
+        "persistCalls": 0,
+        "adaptersAndLeasesCurrent": true
+      },
+      "rejectedSave": {
+        "saved": {
+          "status": "failed",
+          "message": "编辑器尚未就绪或无法收集"
+        },
+        "calls": [
+          "1:flush",
+          "0:flush",
+          "1:capture"
+        ],
+        "liveUnchanged": true,
+        "persistCalls": 0,
+        "adaptersAndLeasesCurrent": true
+      },
+      "retry": {
+        "ok": true,
+        "calls": [
+          "1:flush",
+          "0:flush",
+          "1:capture",
+          "0:capture"
+        ],
+        "liveUnchanged": true,
+        "adaptersAndLeasesCurrent": true
+      },
+      "raw": [
+        "71",
+        "82"
+      ],
+      "pass": true
+    },
+    {
+      "id": "H01",
+      "layout": "top",
+      "which": 1,
+      "position": 0,
+      "fault": "json",
+      "failed": {
+        "prepared": {
+          "ok": false,
+          "code": "invalid-input",
+          "message": "表单 rules 不是合法 JSON：Unexpected end of JSON input",
+          "target": {
+            "ref": {
+              "controllerId": "P1-1",
+              "documentEpoch": 1,
+              "kind": "form",
+              "id": "form_2",
+              "lifetime": 8
+            },
+            "facet": "form-content"
+          }
+        },
+        "calls": [
+          "1:flush",
+          "0:flush",
+          "1:capture",
+          "0:capture"
+        ],
+        "liveUnchanged": true,
+        "persistCalls": 0,
+        "adaptersAndLeasesCurrent": true
+      },
+      "rejectedSave": {
+        "saved": {
+          "status": "failed",
+          "message": "表单 rules 不是合法 JSON：Unexpected end of JSON input"
+        },
+        "calls": [
+          "1:flush",
+          "0:flush",
+          "1:capture",
+          "0:capture"
+        ],
+        "liveUnchanged": true,
+        "persistCalls": 0,
+        "adaptersAndLeasesCurrent": true
+      },
+      "retry": {
+        "ok": true,
+        "calls": [
+          "1:flush",
+          "0:flush",
+          "1:capture",
+          "0:capture"
+        ],
+        "liveUnchanged": true,
+        "adaptersAndLeasesCurrent": true
+      },
+      "raw": [
+        "71",
+        "82"
+      ],
+      "pass": true
+    },
+    {
+      "id": "H01",
+      "layout": "top",
+      "which": 1,
+      "position": 0,
+      "fault": "kind",
+      "failed": {
+        "prepared": {
+          "ok": false,
+          "code": "capture-failed",
+          "message": "编辑目标与输入类型不匹配"
+        },
+        "calls": [
+          "1:flush",
+          "0:flush",
+          "1:capture"
+        ],
+        "liveUnchanged": true,
+        "persistCalls": 0,
+        "adaptersAndLeasesCurrent": true
+      },
+      "rejectedSave": {
+        "saved": {
+          "status": "failed",
+          "message": "编辑目标与输入类型不匹配"
+        },
+        "calls": [
+          "1:flush",
+          "0:flush",
+          "1:capture"
+        ],
+        "liveUnchanged": true,
+        "persistCalls": 0,
+        "adaptersAndLeasesCurrent": true
+      },
+      "retry": {
+        "ok": true,
+        "calls": [
+          "1:flush",
+          "0:flush",
+          "1:capture",
+          "0:capture"
+        ],
+        "liveUnchanged": true,
+        "adaptersAndLeasesCurrent": true
+      },
+      "raw": [
+        "71",
+        "82"
+      ],
+      "pass": true
+    },
+    {
+      "id": "H01",
+      "layout": "top",
+      "which": 1,
+      "position": 0,
+      "fault": "schema",
+      "failed": {
+        "prepared": {
+          "ok": false,
+          "code": "invalid-input",
+          "message": "表单字段「（bad）」的类型是 upload，本版本支持的组件：文本 / 多行文本 / 数字 / 单选 / 多选 / 下拉单选 / 日期 / 开关 / 栅格布局，拒绝导入",
+          "target": {
+            "ref": {
+              "controllerId": "P1-1",
+              "documentEpoch": 1,
+              "kind": "form",
+              "id": "form_2",
+              "lifetime": 8
+            },
+            "facet": "form-content"
+          }
+        },
+        "calls": [
+          "1:flush",
+          "0:flush",
+          "1:capture",
+          "0:capture"
+        ],
+        "liveUnchanged": true,
+        "persistCalls": 0,
+        "adaptersAndLeasesCurrent": true
+      },
+      "rejectedSave": {
+        "saved": {
+          "status": "failed",
+          "message": "表单字段「（bad）」的类型是 upload，本版本支持的组件：文本 / 多行文本 / 数字 / 单选 / 多选 / 下拉单选 / 日期 / 开关 / 栅格布局，拒绝导入"
+        },
+        "calls": [
+          "1:flush",
+          "0:flush",
+          "1:capture",
+          "0:capture"
+        ],
+        "liveUnchanged": true,
+        "persistCalls": 0,
+        "adaptersAndLeasesCurrent": true
+      },
+      "retry": {
+        "ok": true,
+        "calls": [
+          "1:flush",
+          "0:flush",
+          "1:capture",
+          "0:capture"
+        ],
+        "liveUnchanged": true,
+        "adaptersAndLeasesCurrent": true
+      },
+      "raw": [
+        "71",
+        "82"
+      ],
+      "pass": true
+    },
+    {
+      "id": "H01",
+      "layout": "grid",
+      "which": 0,
+      "position": 1,
+      "fault": "throw",
+      "failed": {
+        "prepared": {
+          "ok": false,
+          "code": "capture-failed",
+          "message": "injected-0"
+        },
+        "calls": [
+          "1:flush",
+          "0:flush",
+          "1:capture",
+          "0:capture"
+        ],
+        "liveUnchanged": true,
+        "persistCalls": 0,
+        "adaptersAndLeasesCurrent": true
+      },
+      "rejectedSave": {
+        "saved": {
+          "status": "failed",
+          "message": "injected-0"
+        },
+        "calls": [
+          "1:flush",
+          "0:flush",
+          "1:capture",
+          "0:capture"
+        ],
+        "liveUnchanged": true,
+        "persistCalls": 0,
+        "adaptersAndLeasesCurrent": true
+      },
+      "retry": {
+        "ok": true,
+        "calls": [
+          "1:flush",
+          "0:flush",
+          "1:capture",
+          "0:capture"
+        ],
+        "liveUnchanged": true,
+        "adaptersAndLeasesCurrent": true
+      },
+      "raw": [
+        "71",
+        "82"
+      ],
+      "pass": true
+    },
+    {
+      "id": "H01",
+      "layout": "grid",
+      "which": 0,
+      "position": 1,
+      "fault": "null",
+      "failed": {
+        "prepared": {
+          "ok": false,
+          "code": "capture-failed",
+          "message": "编辑器尚未就绪或无法收集"
+        },
+        "calls": [
+          "1:flush",
+          "0:flush",
+          "1:capture",
+          "0:capture"
+        ],
+        "liveUnchanged": true,
+        "persistCalls": 0,
+        "adaptersAndLeasesCurrent": true
+      },
+      "rejectedSave": {
+        "saved": {
+          "status": "failed",
+          "message": "编辑器尚未就绪或无法收集"
+        },
+        "calls": [
+          "1:flush",
+          "0:flush",
+          "1:capture",
+          "0:capture"
+        ],
+        "liveUnchanged": true,
+        "persistCalls": 0,
+        "adaptersAndLeasesCurrent": true
+      },
+      "retry": {
+        "ok": true,
+        "calls": [
+          "1:flush",
+          "0:flush",
+          "1:capture",
+          "0:capture"
+        ],
+        "liveUnchanged": true,
+        "adaptersAndLeasesCurrent": true
+      },
+      "raw": [
+        "71",
+        "82"
+      ],
+      "pass": true
+    },
+    {
+      "id": "H01",
+      "layout": "grid",
+      "which": 0,
+      "position": 1,
+      "fault": "json",
+      "failed": {
+        "prepared": {
+          "ok": false,
+          "code": "invalid-input",
+          "message": "表单 rules 不是合法 JSON：Unexpected end of JSON input",
+          "target": {
+            "ref": {
+              "controllerId": "P1-2",
+              "documentEpoch": 1,
+              "kind": "form",
+              "id": "form_1",
+              "lifetime": 7
+            },
+            "facet": "form-content"
+          }
+        },
+        "calls": [
+          "1:flush",
+          "0:flush",
+          "1:capture",
+          "0:capture"
+        ],
+        "liveUnchanged": true,
+        "persistCalls": 0,
+        "adaptersAndLeasesCurrent": true
+      },
+      "rejectedSave": {
+        "saved": {
+          "status": "failed",
+          "message": "表单 rules 不是合法 JSON：Unexpected end of JSON input"
+        },
+        "calls": [
+          "1:flush",
+          "0:flush",
+          "1:capture",
+          "0:capture"
+        ],
+        "liveUnchanged": true,
+        "persistCalls": 0,
+        "adaptersAndLeasesCurrent": true
+      },
+      "retry": {
+        "ok": true,
+        "calls": [
+          "1:flush",
+          "0:flush",
+          "1:capture",
+          "0:capture"
+        ],
+        "liveUnchanged": true,
+        "adaptersAndLeasesCurrent": true
+      },
+      "raw": [
+        "71",
+        "82"
+      ],
+      "pass": true
+    },
+    {
+      "id": "H01",
+      "layout": "grid",
+      "which": 0,
+      "position": 1,
+      "fault": "kind",
+      "failed": {
+        "prepared": {
+          "ok": false,
+          "code": "capture-failed",
+          "message": "编辑目标与输入类型不匹配"
+        },
+        "calls": [
+          "1:flush",
+          "0:flush",
+          "1:capture",
+          "0:capture"
+        ],
+        "liveUnchanged": true,
+        "persistCalls": 0,
+        "adaptersAndLeasesCurrent": true
+      },
+      "rejectedSave": {
+        "saved": {
+          "status": "failed",
+          "message": "编辑目标与输入类型不匹配"
+        },
+        "calls": [
+          "1:flush",
+          "0:flush",
+          "1:capture",
+          "0:capture"
+        ],
+        "liveUnchanged": true,
+        "persistCalls": 0,
+        "adaptersAndLeasesCurrent": true
+      },
+      "retry": {
+        "ok": true,
+        "calls": [
+          "1:flush",
+          "0:flush",
+          "1:capture",
+          "0:capture"
+        ],
+        "liveUnchanged": true,
+        "adaptersAndLeasesCurrent": true
+      },
+      "raw": [
+        "71",
+        "82"
+      ],
+      "pass": true
+    },
+    {
+      "id": "H01",
+      "layout": "grid",
+      "which": 0,
+      "position": 1,
+      "fault": "schema",
+      "failed": {
+        "prepared": {
+          "ok": false,
+          "code": "invalid-input",
+          "message": "表单字段「（bad）」的类型是 upload，本版本支持的组件：文本 / 多行文本 / 数字 / 单选 / 多选 / 下拉单选 / 日期 / 开关 / 栅格布局，拒绝导入",
+          "target": {
+            "ref": {
+              "controllerId": "P1-2",
+              "documentEpoch": 1,
+              "kind": "form",
+              "id": "form_1",
+              "lifetime": 7
+            },
+            "facet": "form-content"
+          }
+        },
+        "calls": [
+          "1:flush",
+          "0:flush",
+          "1:capture",
+          "0:capture"
+        ],
+        "liveUnchanged": true,
+        "persistCalls": 0,
+        "adaptersAndLeasesCurrent": true
+      },
+      "rejectedSave": {
+        "saved": {
+          "status": "failed",
+          "message": "表单字段「（bad）」的类型是 upload，本版本支持的组件：文本 / 多行文本 / 数字 / 单选 / 多选 / 下拉单选 / 日期 / 开关 / 栅格布局，拒绝导入"
+        },
+        "calls": [
+          "1:flush",
+          "0:flush",
+          "1:capture",
+          "0:capture"
+        ],
+        "liveUnchanged": true,
+        "persistCalls": 0,
+        "adaptersAndLeasesCurrent": true
+      },
+      "retry": {
+        "ok": true,
+        "calls": [
+          "1:flush",
+          "0:flush",
+          "1:capture",
+          "0:capture"
+        ],
+        "liveUnchanged": true,
+        "adaptersAndLeasesCurrent": true
+      },
+      "raw": [
+        "71",
+        "82"
+      ],
+      "pass": true
+    },
+    {
+      "id": "H01",
+      "layout": "grid",
+      "which": 1,
+      "position": 0,
+      "fault": "throw",
+      "failed": {
+        "prepared": {
+          "ok": false,
+          "code": "capture-failed",
+          "message": "injected-1"
+        },
+        "calls": [
+          "1:flush",
+          "0:flush",
+          "1:capture"
+        ],
+        "liveUnchanged": true,
+        "persistCalls": 0,
+        "adaptersAndLeasesCurrent": true
+      },
+      "rejectedSave": {
+        "saved": {
+          "status": "failed",
+          "message": "injected-1"
+        },
+        "calls": [
+          "1:flush",
+          "0:flush",
+          "1:capture"
+        ],
+        "liveUnchanged": true,
+        "persistCalls": 0,
+        "adaptersAndLeasesCurrent": true
+      },
+      "retry": {
+        "ok": true,
+        "calls": [
+          "1:flush",
+          "0:flush",
+          "1:capture",
+          "0:capture"
+        ],
+        "liveUnchanged": true,
+        "adaptersAndLeasesCurrent": true
+      },
+      "raw": [
+        "71",
+        "82"
+      ],
+      "pass": true
+    },
+    {
+      "id": "H01",
+      "layout": "grid",
+      "which": 1,
+      "position": 0,
+      "fault": "null",
+      "failed": {
+        "prepared": {
+          "ok": false,
+          "code": "capture-failed",
+          "message": "编辑器尚未就绪或无法收集"
+        },
+        "calls": [
+          "1:flush",
+          "0:flush",
+          "1:capture"
+        ],
+        "liveUnchanged": true,
+        "persistCalls": 0,
+        "adaptersAndLeasesCurrent": true
+      },
+      "rejectedSave": {
+        "saved": {
+          "status": "failed",
+          "message": "编辑器尚未就绪或无法收集"
+        },
+        "calls": [
+          "1:flush",
+          "0:flush",
+          "1:capture"
+        ],
+        "liveUnchanged": true,
+        "persistCalls": 0,
+        "adaptersAndLeasesCurrent": true
+      },
+      "retry": {
+        "ok": true,
+        "calls": [
+          "1:flush",
+          "0:flush",
+          "1:capture",
+          "0:capture"
+        ],
+        "liveUnchanged": true,
+        "adaptersAndLeasesCurrent": true
+      },
+      "raw": [
+        "71",
+        "82"
+      ],
+      "pass": true
+    },
+    {
+      "id": "H01",
+      "layout": "grid",
+      "which": 1,
+      "position": 0,
+      "fault": "json",
+      "failed": {
+        "prepared": {
+          "ok": false,
+          "code": "invalid-input",
+          "message": "表单 rules 不是合法 JSON：Unexpected end of JSON input",
+          "target": {
+            "ref": {
+              "controllerId": "P1-2",
+              "documentEpoch": 1,
+              "kind": "form",
+              "id": "form_2",
+              "lifetime": 8
+            },
+            "facet": "form-content"
+          }
+        },
+        "calls": [
+          "1:flush",
+          "0:flush",
+          "1:capture",
+          "0:capture"
+        ],
+        "liveUnchanged": true,
+        "persistCalls": 0,
+        "adaptersAndLeasesCurrent": true
+      },
+      "rejectedSave": {
+        "saved": {
+          "status": "failed",
+          "message": "表单 rules 不是合法 JSON：Unexpected end of JSON input"
+        },
+        "calls": [
+          "1:flush",
+          "0:flush",
+          "1:capture",
+          "0:capture"
+        ],
+        "liveUnchanged": true,
+        "persistCalls": 0,
+        "adaptersAndLeasesCurrent": true
+      },
+      "retry": {
+        "ok": true,
+        "calls": [
+          "1:flush",
+          "0:flush",
+          "1:capture",
+          "0:capture"
+        ],
+        "liveUnchanged": true,
+        "adaptersAndLeasesCurrent": true
+      },
+      "raw": [
+        "71",
+        "82"
+      ],
+      "pass": true
+    },
+    {
+      "id": "H01",
+      "layout": "grid",
+      "which": 1,
+      "position": 0,
+      "fault": "kind",
+      "failed": {
+        "prepared": {
+          "ok": false,
+          "code": "capture-failed",
+          "message": "编辑目标与输入类型不匹配"
+        },
+        "calls": [
+          "1:flush",
+          "0:flush",
+          "1:capture"
+        ],
+        "liveUnchanged": true,
+        "persistCalls": 0,
+        "adaptersAndLeasesCurrent": true
+      },
+      "rejectedSave": {
+        "saved": {
+          "status": "failed",
+          "message": "编辑目标与输入类型不匹配"
+        },
+        "calls": [
+          "1:flush",
+          "0:flush",
+          "1:capture"
+        ],
+        "liveUnchanged": true,
+        "persistCalls": 0,
+        "adaptersAndLeasesCurrent": true
+      },
+      "retry": {
+        "ok": true,
+        "calls": [
+          "1:flush",
+          "0:flush",
+          "1:capture",
+          "0:capture"
+        ],
+        "liveUnchanged": true,
+        "adaptersAndLeasesCurrent": true
+      },
+      "raw": [
+        "71",
+        "82"
+      ],
+      "pass": true
+    },
+    {
+      "id": "H01",
+      "layout": "grid",
+      "which": 1,
+      "position": 0,
+      "fault": "schema",
+      "failed": {
+        "prepared": {
+          "ok": false,
+          "code": "invalid-input",
+          "message": "表单字段「（bad）」的类型是 upload，本版本支持的组件：文本 / 多行文本 / 数字 / 单选 / 多选 / 下拉单选 / 日期 / 开关 / 栅格布局，拒绝导入",
+          "target": {
+            "ref": {
+              "controllerId": "P1-2",
+              "documentEpoch": 1,
+              "kind": "form",
+              "id": "form_2",
+              "lifetime": 8
+            },
+            "facet": "form-content"
+          }
+        },
+        "calls": [
+          "1:flush",
+          "0:flush",
+          "1:capture",
+          "0:capture"
+        ],
+        "liveUnchanged": true,
+        "persistCalls": 0,
+        "adaptersAndLeasesCurrent": true
+      },
+      "rejectedSave": {
+        "saved": {
+          "status": "failed",
+          "message": "表单字段「（bad）」的类型是 upload，本版本支持的组件：文本 / 多行文本 / 数字 / 单选 / 多选 / 下拉单选 / 日期 / 开关 / 栅格布局，拒绝导入"
+        },
+        "calls": [
+          "1:flush",
+          "0:flush",
+          "1:capture",
+          "0:capture"
+        ],
+        "liveUnchanged": true,
+        "persistCalls": 0,
+        "adaptersAndLeasesCurrent": true
+      },
+      "retry": {
+        "ok": true,
+        "calls": [
+          "1:flush",
+          "0:flush",
+          "1:capture",
+          "0:capture"
+        ],
+        "liveUnchanged": true,
+        "adaptersAndLeasesCurrent": true
+      },
+      "raw": [
+        "71",
+        "82"
+      ],
+      "pass": true
+    },
+    {
+      "id": "H03-positive-persist",
+      "positive": {
+        "saved": {
+          "status": "saved"
+        },
+        "calls": [
+          "1:flush",
+          "0:flush",
+          "1:capture",
+          "0:capture"
+        ],
+        "liveUnchanged": true,
+        "persistCalls": 1,
+        "adaptersAndLeasesCurrent": true
+      },
+      "pass": true
+    }
+  ]
+}

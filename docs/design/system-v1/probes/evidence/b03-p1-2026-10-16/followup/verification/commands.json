@@ -1,0 +1,27 @@
+{
+  "sourceCommit": "46f720bf4267b16971d700db690478067677f5f4",
+  "reviewedPatchSha256": "a488710c1360ceb1610bf726a85bb782be63e2314c8c2fe65ee3854c5370f4d9",
+  "fullTest": {
+    "command": "pnpm test",
+    "exitCode": 0,
+    "counts": {
+      "core": 148,
+      "designer": 184,
+      "form-create": 198,
+      "playground": 297
+    },
+    "total": 827
+  },
+  "checks": {
+    "build": 0,
+    "lint": 0,
+    "strict": 0,
+    "coreESM": 0
+  },
+  "browser": {
+    "dialogs": 21,
+    "dialog-boundaries": 9,
+    "note": "仅复验受影响子集，不是完整125再次重放；其余路径初轮23fb826证据保留。"
+  },
+  "APP-T": "默认5秒未改，未修改App与旧App测试；本轮未再现，不称根因已解决。"
+}

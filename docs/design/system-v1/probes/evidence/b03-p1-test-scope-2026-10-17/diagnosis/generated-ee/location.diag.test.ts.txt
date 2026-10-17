@@ -1,0 +1,241 @@
+import { vi as diagVi } from "vitest";
+import { AsyncLocalStorage } from 'node:async_hooks';
+import { appendFileSync, mkdirSync } from 'node:fs';
+const diagStore = new AsyncLocalStorage<any>();
+const diagOwners = new WeakMap<object, any>();
+let diagSeq = 0, diagActive: any, diagCleanup = false;
+const diagDir = process.env.DIAG_DIR!; mkdirSync(diagDir,{recursive:true});
+const diagWrite=(record:any)=>appendFileSync(diagDir+'/location.jsonl',JSON.stringify(record)+'\n');
+const diagInitialString = Object.getOwnPropertyDescriptor(Element.prototype,'toString');
+const diagOriginalString = Element.prototype.toString;
+function diagDom(selector:string) {
+ return [...document.querySelectorAll(selector)].slice(0,4).map((el:any)=>({value:el.value??null,connected:el.isConnected,title:el.closest('[role="dialog"]')?.getAttribute('aria-label'),hidden:el.closest('[role="dialog"]')?.getAttribute('aria-hidden')}));
+}
+function diagMark(label:string,extra:any={}) {
+ const owner=diagStore.getStore()??diagActive;if(!owner)return;
+ const entry={label,ms:performance.now()-owner.start,closed:!!owner.closed,active:diagActive?.id,...extra};
+ owner.marks.push(entry);
+ if(owner.closed&&!diagCleanup)diagWrite({kind:'late',owner:owner.id,name:owner.name,...entry});
+}
+function diagReadWrapper():any {
+ const owner=diagStore.getStore();
+ if(owner&&!diagCleanup){const actual=wrapper?diagOwners.get(wrapper):null;if(owner.closed||actual?.id!==owner.id)diagMark('wrapper-owner',{actual:actual?.id??null});}
+ return wrapper;
+}
+function diagQuery<T extends Element=Element>(selector:string):T|null {
+ const el=document.querySelector<T>(selector);
+ if(selector.includes('drawer-'))diagMark('query:'+selector,{nodes:diagDom(selector)});
+ return el;
+}
+const mount=((...args:any[])=>{
+ const start=performance.now();const result=(realMount as any)(...args);const owner=diagStore.getStore();if(owner)diagOwners.set(result,owner);diagMark('mount',{duration:performance.now()-start});return result;
+}) as typeof realMount;
+function diagWrapRegistration(real:any):any { return new Proxy(real,{
+ get(target,prop,receiver){if(prop==='each')return (...table:any[])=>diagWrapRegistration(Reflect.apply(Reflect.get(target,prop),target,table));return Reflect.get(target,prop,receiver);},
+ apply(target,thisArg,args){
+ const index=args.findIndex((arg:any,i:number)=>i>0&&typeof arg==='function');if(index<0)return Reflect.apply(target,thisArg,args);
+ const name=String(args[0]),fn=args[index];args[index]=(...params:any[])=>{
+ const owner={id:process.pid+':'+(++diagSeq),name,start:performance.now(),marks:[],strings:{calls:0,ms:0,chars:0,samples:[]},closed:false};diagActive=owner;
+ const original=diagOriginalString;
+ Object.defineProperty(Element.prototype,'toString',{configurable:true,writable:true,value:function(){
+  const now=performance.now();const value=process.env.DIAG_COMPAT==='1'?Object.prototype.toString.call(this):original.call(this);const duration=performance.now()-now;
+  const o=diagStore.getStore()??diagActive;if(o){o.strings.calls++;o.strings.ms+=duration;o.strings.chars+=value.length;if((duration>5||o.strings.samples.length<2)&&o.strings.samples.length<6)o.strings.samples.push({duration,chars:value.length,tag:this.tagName,stack:new Error().stack?.split('\n').slice(2,7)});}
+  return value;
+ }});
+ return diagStore.run(owner,()=>fn(...params));};
+ return Reflect.apply(target,thisArg,args);
+ }});}
+const it=diagWrapRegistration(realIt) as typeof realIt;
+const afterEach=((fn:any,...args:any[])=> (realAfterEach as any)((...params:any[])=>{
+ const owner=diagActive;diagCleanup=true;const start=performance.now();
+ try{return fn(...params);}finally{
+  if(owner){owner.closed=true;diagWrite({kind:'case',id:owner.id,name:owner.name,ms:performance.now()-owner.start,cleanupMs:performance.now()-start,mocks:{url:diagVi.isMockFunction(URL.createObjectURL),anchor:diagVi.isMockFunction(HTMLAnchorElement.prototype.click)},bodyChildren:document.body.childElementCount,strings:owner.strings,marks:owner.marks});}
+  if(diagInitialString)Object.defineProperty(Element.prototype,'toString',diagInitialString);else Reflect.deleteProperty(Element.prototype,'toString');diagCleanup=false;
+ }
+},...args)) as typeof realAfterEach;
+
+import { afterEach as realAfterEach, describe, expect, it as realIt } from "vitest";
+import { flushPromises, mount as realMount } from "@vue/test-utils";
+import type { ModdleElement } from "@flowduet/core";
+import NodeDrawer from "/tmp/b03-failures-diagnosis-2026-10-17/refs/ee0d126/packages/designer/src/components/NodeDrawer.vue";
+import { insertApprovalAfter, removeApprovalNode } from "/tmp/b03-failures-diagnosis-2026-10-17/refs/ee0d126/packages/designer/src/operations";
+import LocationProbe from "/tmp/b03-failures-diagnosis-2026-10-17/refs/ee0d126/apps/playground/probes/stage-zero/LocationProbe.vue";
+import type { ProbeDesignState } from "/tmp/b03-failures-diagnosis-2026-10-17/refs/ee0d126/apps/playground/probes/stage-zero/design-state";
+let wrapper: ReturnType<typeof mount> | undefined;
+afterEach(() => {
+    diagReadWrapper()?.unmount();
+    wrapper = undefined;
+    document.body.innerHTML = "";
+});
+async function setup(props: Record<string, unknown> = {}) {
+    wrapper = mount(LocationProbe, { props, attachTo: document.body });
+    diagMark("before:L20");
+    await flushPromises();
+    diagMark("after:L20");
+    diagMark("before:L21");
+    await flushPromises();
+    diagMark("after:L21");
+    return diagReadWrapper();
+}
+async function click(text: string) {
+    const button = diagReadWrapper()!.findAll("button").find((el) => el.text() === text);
+    expect(button, `缺少真实探针操作：${text}`).toBeDefined();
+    diagMark("before:L27");
+    await button!.trigger("click");
+    diagMark("after:L27");
+    diagMark("before:L28");
+    await flushPromises();
+    diagMark("after:L28");
+}
+function selected() {
+    return diagReadWrapper()!.findComponent(NodeDrawer).props("nodeId");
+}
+describe("真实视图定位确认", () => {
+    it("从BPMN切回后确认实际节点抽屉，而非仅派发事件", async () => {
+        diagMark("before:L36");
+        await setup();
+        diagMark("after:L36");
+        diagMark("before:L37");
+        await click("定位采购审批");
+        diagMark("after:L37");
+        expect(selected()).toBe("approval_1");
+        expect(diagReadWrapper()!.findComponent(NodeDrawer).props("modelValue")).toBe(true);
+        expect(diagReadWrapper()!.find('[data-test="location-result"]').text()).toContain("已确认");
+    });
+    it("单↔多转换后原分支诊断仍定位fa，条件与顺序保留", async () => {
+        diagMark("before:L43");
+        await setup();
+        diagMark("after:L43");
+        diagMark("before:L44");
+        await click("切为会签");
+        diagMark("after:L44");
+        diagMark("before:L45");
+        await click("切回单签");
+        diagMark("after:L45");
+        diagMark("before:L46");
+        await click("定位金额分支");
+        diagMark("after:L46");
+        expect(selected()).toBe("fa");
+        const model = diagReadWrapper()!.findComponent(NodeDrawer).props("model");
+        expect((model.elementOf("fa").get("conditionExpression") as ModdleElement).get("body")).toBe("${amount > 100}");
+        expect((model.elementOf("fork").get("outgoing") as ModdleElement[]).map((f) => f.get("id"))).toEqual(["fa", "fb"]);
+    });
+    it("删除首节点后fa改接tail仍可定位，旧节点诊断拒绝", async () => {
+        diagMark("before:L57");
+        await setup();
+        diagMark("after:L57");
+        diagMark("before:L58");
+        await click("删除首节点（保留支路）");
+        diagMark("after:L58");
+        diagMark("before:L59");
+        await click("定位金额分支");
+        diagMark("after:L59");
+        expect(selected()).toBe("fa");
+        const model = diagReadWrapper()!.findComponent(NodeDrawer).props("model");
+        expect(model.elementOf("fa").get("targetRef")).toBe(model.elementOf("tail"));
+        diagMark("before:L63");
+        await click("定位采购审批");
+        diagMark("after:L63");
+        expect(diagReadWrapper()!.find('[data-test="location-result"]').text()).toContain("失效");
+    });
+    it("外层头嵌套块删除后确认实际分支配置", async () => {
+        diagMark("before:L67");
+        await setup({ nested: true });
+        diagMark("after:L67");
+        diagMark("before:L68");
+        await click("删除嵌套块（保留外层支路）");
+        diagMark("after:L68");
+        diagMark("before:L69");
+        await click("定位金额分支");
+        diagMark("after:L69");
+        expect(selected()).toBe("fa");
+        const model = diagReadWrapper()!.findComponent(NodeDrawer).props("model");
+        expect(model.elementOf("fa").get("targetRef")).toBe(model.elementOf("tail"));
+        expect(() => model.elementOf("inner")).toThrow();
+    });
+    it("现有抽屉含非法输入时不宣称后续分支已选中，输入保留", async () => {
+        diagMark("before:L76");
+        await setup();
+        diagMark("after:L76");
+        diagMark("before:L77");
+        await click("定位采购审批");
+        diagMark("after:L77");
+        diagMark("before:L78");
+        await diagReadWrapper()!.find('[data-test="kind-all"]').trigger("click");
+        diagMark("after:L78");
+        const input = diagQuery<HTMLInputElement>('[data-test="drawer-assignee"]')!;
+        input.value = "bad,list";
+        input.dispatchEvent(new Event("input", { bubbles: true }));
+        diagMark("before:L82");
+        await flushPromises();
+        diagMark("after:L82");
+        diagMark("before:L83");
+        await click("定位金额分支");
+        diagMark("after:L83");
+        expect(selected()).toBe("approval_1");
+        expect(input.value).toBe("bad,list");
+        expect(diagReadWrapper()!.find('[data-test="location-result"]').text()).toContain("未确认");
+    });
+    it("异步切换期间删除再复用ID，旧请求拒绝而不选中新对象", async () => {
+        diagMark("before:L89");
+        await setup({
+            beforeLocate: async (p: ProbeDesignState) => {
+                p.mutateModel(() => {
+                    const m = p.session.current!.model;
+                    removeApprovalNode(m, "approval_1");
+                    insertApprovalAfter(m, "tail", { name: "新对象" });
+                });
+            },
+        });
+        diagMark("after:L89");
+        diagMark("before:L98");
+        await click("定位采购审批");
+        diagMark("after:L98");
+        expect(diagReadWrapper()!.find('[data-test="location-result"]').text()).toContain("失效");
+        expect(diagReadWrapper()!.findComponent(NodeDrawer).props("modelValue")).toBe(false);
+    });
+    it("异步期间文档替换使旧诊断失效，实际epoch递增", async () => {
+        diagMark("before:L103");
+        await setup({
+            beforeLocate: async (p: ProbeDesignState) => {
+                p.session.newDesign({ processId: "location_probe" });
+                p.reconcile();
+            },
+        });
+        diagMark("after:L103");
+        diagMark("before:L109");
+        await click("定位金额分支");
+        diagMark("after:L109");
+        expect(diagReadWrapper()!.find('[data-test="location-result"]').text()).toContain("失效");
+        expect(diagReadWrapper()!.find('[data-test="location-state"]').text()).toContain('"documentEpoch": 2');
+    });
+    it("异步定位请求失败不假报选中，保留当前模型与输入", async () => {
+        diagMark("before:L114");
+        await setup({
+            beforeLocate: async () => {
+                throw new Error("请求取消");
+            },
+        });
+        diagMark("after:L114");
+        diagMark("before:L119");
+        await click("定位采购审批");
+        diagMark("after:L119");
+        expect(diagReadWrapper()!.find('[data-test="location-result"]').text()).toContain("失败");
+        expect(diagReadWrapper()!.findComponent(NodeDrawer).props("modelValue")).toBe(false);
+        expect(diagReadWrapper()!.find('[data-test="location-state"]').text()).toContain("未应用节点名");
+    });
+    it("默认表单问题进入真实配置控件并写回同一模型", async () => {
+        diagMark("before:L125");
+        await setup();
+        diagMark("after:L125");
+        diagMark("before:L126");
+        await click("定位默认表单问题");
+        diagMark("after:L126");
+        const select = diagReadWrapper()!.find('[data-test="location-default-form"]');
+        expect(select.exists()).toBe(true);
+        diagMark("before:L129");
+        await select.setValue("form_2");
+        diagMark("after:L129");
+        expect(diagReadWrapper()!.find('[data-test="location-state"]').text()).toContain('"defaultFormKey": "form_2"');
+    });
+});

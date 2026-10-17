@@ -1,0 +1,17 @@
+{
+  "sourceCommit": "78a7a786e5657647104fb35144f44d65ec6759f3",
+  "sources": [
+    {
+      "path": "packages/form-create/src/components.test.ts",
+      "sha256": "32d2c2b210a1316651f281b59127a9fe38eee2e9c853131e35d5d2fed4fea023",
+      "bytes": 78801,
+      "gitBlob": "2b38e31e020d16beb2592b15fe6d604f0572e946"
+    },
+    {
+      "path": "packages/form-create/src/editor-input-state.test.ts",
+      "sha256": "736aaafe4ca14741a8e27dd70b2afa49b9c230d84ac5cdccee733a2e5fcb989d",
+      "bytes": 5649,
+      "gitBlob": "20dfe0131400d1d7bc4aaa1b7190aa240cbb800d"
+    }
+  ]
+}

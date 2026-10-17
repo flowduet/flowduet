@@ -1,0 +1,55 @@
+import { vi as diagVi } from "vitest";
+import { AsyncLocalStorage } from 'node:async_hooks';
+import { appendFileSync, mkdirSync } from 'node:fs';
+const diagStore = new AsyncLocalStorage<any>();
+const diagOwners = new WeakMap<object, any>();
+let diagSeq = 0, diagActive: any, diagCleanup = false;
+const diagDir = process.env.DIAG_DIR!; mkdirSync(diagDir,{recursive:true});
+const diagWrite=(record:any)=>appendFileSync(diagDir+'/__FILE__.jsonl',JSON.stringify(record)+'\n');
+const diagInitialString = Object.getOwnPropertyDescriptor(Element.prototype,'toString');
+const diagOriginalString = Element.prototype.toString;
+function diagDom(selector:string) {
+ return [...document.querySelectorAll(selector)].slice(0,4).map((el:any)=>({value:el.value??null,connected:el.isConnected,title:el.closest('[role="dialog"]')?.getAttribute('aria-label'),hidden:el.closest('[role="dialog"]')?.getAttribute('aria-hidden')}));
+}
+function diagMark(label:string,extra:any={}) {
+ const owner=diagStore.getStore()??diagActive;if(!owner)return;
+ const entry={label,ms:performance.now()-owner.start,closed:!!owner.closed,active:diagActive?.id,...extra};
+ owner.marks.push(entry);
+ if(owner.closed&&!diagCleanup)diagWrite({kind:'late',owner:owner.id,name:owner.name,...entry});
+}
+function diagReadWrapper():any {
+ const owner=diagStore.getStore();
+ if(owner&&!diagCleanup){const actual=wrapper?diagOwners.get(wrapper):null;if(owner.closed||actual?.id!==owner.id)diagMark('wrapper-owner',{actual:actual?.id??null});}
+ return wrapper;
+}
+function diagQuery<T extends Element=Element>(selector:string):T|null {
+ const el=document.querySelector<T>(selector);
+ if(selector.includes('drawer-'))diagMark('query:'+selector,{nodes:diagDom(selector)});
+ return el;
+}
+const mount=((...args:any[])=>{
+ const start=performance.now();const result=(realMount as any)(...args);const owner=diagStore.getStore();if(owner)diagOwners.set(result,owner);diagMark('mount',{duration:performance.now()-start});return result;
+}) as typeof realMount;
+function diagWrapRegistration(real:any):any { return new Proxy(real,{
+ get(target,prop,receiver){if(prop==='each')return (...table:any[])=>diagWrapRegistration(Reflect.apply(Reflect.get(target,prop),target,table));return Reflect.get(target,prop,receiver);},
+ apply(target,thisArg,args){
+ const index=args.findIndex((arg:any,i:number)=>i>0&&typeof arg==='function');if(index<0)return Reflect.apply(target,thisArg,args);
+ const name=String(args[0]),fn=args[index];args[index]=(...params:any[])=>{
+ const owner={id:process.pid+':'+(++diagSeq),name,start:performance.now(),marks:[],strings:{calls:0,ms:0,chars:0,samples:[]},closed:false};diagActive=owner;
+ const original=diagOriginalString;
+ Object.defineProperty(Element.prototype,'toString',{configurable:true,writable:true,value:function(){
+  const now=performance.now();const value=process.env.DIAG_COMPAT==='1'?Object.prototype.toString.call(this):original.call(this);const duration=performance.now()-now;
+  const o=diagStore.getStore()??diagActive;if(o){o.strings.calls++;o.strings.ms+=duration;o.strings.chars+=value.length;if((duration>5||o.strings.samples.length<2)&&o.strings.samples.length<6)o.strings.samples.push({duration,chars:value.length,tag:this.tagName,stack:new Error().stack?.split('\n').slice(2,7)});}
+  return value;
+ }});
+ return diagStore.run(owner,()=>fn(...params));};
+ return Reflect.apply(target,thisArg,args);
+ }});}
+const it=diagWrapRegistration(realIt) as typeof realIt;
+const afterEach=((fn:any,...args:any[])=> (realAfterEach as any)((...params:any[])=>{
+ const owner=diagActive;diagCleanup=true;const start=performance.now();
+ try{return fn(...params);}finally{
+  if(owner){owner.closed=true;diagWrite({kind:'case',id:owner.id,name:owner.name,ms:performance.now()-owner.start,cleanupMs:performance.now()-start,mocks:{url:diagVi.isMockFunction(URL.createObjectURL),anchor:diagVi.isMockFunction(HTMLAnchorElement.prototype.click)},bodyChildren:document.body.childElementCount,strings:owner.strings,marks:owner.marks});}
+  if(diagInitialString)Object.defineProperty(Element.prototype,'toString',diagInitialString);else Reflect.deleteProperty(Element.prototype,'toString');diagCleanup=false;
+ }
+},...args)) as typeof realAfterEach;

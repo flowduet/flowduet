@@ -1,0 +1,168 @@
+
+ RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground
+
+stderr | src/App.integration.test.ts > PR88 产品验收视图切换回归 > P24 切换只读视图前收集当前抽屉输入，保存恢复不丢失
+[Vue Flow]: The Vue Flow parent container needs a width and a height to render the graph
+[Vue Flow]: It seems that you haven't loaded the necessary styles. Please import '@vue-flow/core/dist/style.css' to ensure that the graph is rendered correctly
+
+ ❯ src/App.integration.test.ts (45 tests | 10 failed) 29948ms
+   ❯ Playground 抄送草稿保存（#76 AC9） (2)
+     × 存量占位收件人属业务草稿：可保存恢复并报告待修复，部署导出仍拦截 319ms
+     × 抽屉里空白收件人可保存为业务草稿，恢复后部署仍拦截 334ms
+   ❯ Playground 保存竞态（真实组件，#76 AC5） (1)
+     × 序列化期间改动默认表单绑定：完成后报告快照而非当前状态已保存 3219ms
+   ❯ PR88 保存与抽屉边界回归 (6)
+     × 旧保存晚到成功不覆盖较新本地草稿及反馈 388ms
+     × 旧保存晚到失败不覆盖较新本地草稿及反馈 331ms
+     × 切换抽屉目标前收集未提交名称，保存后不丢失 395ms
+     × 单签切多人未配置集合可保存恢复，部署仍拒绝 340ms
+   ❯ PR88 产品验收视图切换回归 (2)
+     × P24 切换只读视图前收集当前抽屉输入，保存恢复不丢失 591ms
+   ❯ E16 文件读取期间新编辑保护 (2)
+     × 新抽屉输入取消迟到打开，模型目录缓冲dirty保持，重试仍可打开 259ms
+     × 读取期间新打开表单编辑器也保持当前目录及编辑器 989ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 10 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/App.integration.test.ts > Playground 抄送草稿保存（#76 AC9） > 存量占位收件人属业务草稿：可保存恢复并报告待修复，部署导出仍拦截
+Error: Cannot call text on an empty DOMWrapper.
+ ❯ Object.get ../../node_modules/.pnpm/@vue+test-utils@2.5.1_@vue+compiler-dom@3.5.43_@vue+server-renderer@3.5.43_vue@3.5.43_typescript@5.9.3_/node_modules/@vue/test-utils/dist/vue-test-utils.cjs.js:1488:27
+ ❯ src/App.integration.test.ts:1729:51
+    1727|     await flushPromises();
+    1728|     assertActiveTarget(target);
+    1729|     expect(target.find('[data-test="doc-status"]').text()).toContain("…
+       |                                                   ^
+    1730|
+    1731|     target.unmount();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/10]⎯
+
+ FAIL  src/App.integration.test.ts > Playground 抄送草稿保存（#76 AC9） > 抽屉里空白收件人可保存为业务草稿，恢复后部署仍拦截
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ src/App.integration.test.ts:1771:61
+    1769|     await flushPromises();
+    1770|     assertActiveTarget(target);
+    1771|     expect(target.find('[data-test="doc-error"]').exists()).toBe(false…
+       |                                                             ^
+    1772|     expect(target.find('[data-test="doc-status"]').text()).toContain("…
+    1773|     expect(localStorage.getItem("flowduet.playground.design")).not.toB…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/10]⎯
+
+ FAIL  src/App.integration.test.ts > Playground 保存竞态（真实组件，#76 AC5） > 序列化期间改动默认表单绑定：完成后报告快照而非当前状态已保存
+Error: Cannot call text on an empty DOMWrapper.
+ ❯ Object.get ../../node_modules/.pnpm/@vue+test-utils@2.5.1_@vue+compiler-dom@3.5.43_@vue+server-renderer@3.5.43_vue@3.5.43_typescript@5.9.3_/node_modules/@vue/test-utils/dist/vue-test-utils.cjs.js:1488:27
+ ❯ vi.waitFor.timeout src/App.integration.test.ts:1801:56
+    1799|     await vi.waitFor(
+    1800|       () => {
+    1801|         expect(target!.find('[data-test="doc-status"]').text()).toCont…
+       |                                                        ^
+    1802|       },
+    1803|       { timeout: 3000 },
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/10]⎯
+
+ FAIL  src/App.integration.test.ts > PR88 保存与抽屉边界回归 > 旧保存晚到成功不覆盖较新本地草稿及反馈
+ FAIL  src/App.integration.test.ts > PR88 保存与抽屉边界回归 > 旧保存晚到失败不覆盖较新本地草稿及反馈
+TypeError: Cannot read properties of null (reading 'xml')
+ ❯ src/App.integration.test.ts:1848:77
+    1846|       await flushPromises();
+    1847|       assertActiveTarget(target);
+    1848|       expect(JSON.parse(localStorage.getItem("flowduet.playground.desi…
+       |                                                                             ^
+    1849|         'defaultFormKey="form_1"',
+    1850|       );
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/10]⎯
+
+ FAIL  src/App.integration.test.ts > PR88 保存与抽屉边界回归 > 切换抽屉目标前收集未提交名称，保存后不丢失
+TypeError: Cannot read properties of null (reading 'xml')
+ ❯ src/App.integration.test.ts:1917:75
+    1915|     await flushPromises();
+    1916|     assertActiveTarget(target);
+    1917|     expect(JSON.parse(localStorage.getItem("flowduet.playground.design…
+       |                                                                           ^
+    1918|       "未提交的新名称",
+    1919|     );
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/10]⎯
+
+ FAIL  src/App.integration.test.ts > PR88 保存与抽屉边界回归 > 单签切多人未配置集合可保存恢复，部署仍拒绝
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ src/App.integration.test.ts:1957:61
+    1955|     await flushPromises();
+    1956|     assertActiveTarget(target);
+    1957|     expect(target.find('[data-test="doc-error"]').exists()).toBe(false…
+       |                                                             ^
+    1958|     expect(target.find('[data-test="doc-status"]').text()).toContain("…
+    1959|     target.unmount();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/10]⎯
+
+ FAIL  src/App.integration.test.ts > PR88 产品验收视图切换回归 > P24 切换只读视图前收集当前抽屉输入，保存恢复不丢失
+TypeError: Cannot read properties of null (reading 'xml')
+ ❯ src/App.integration.test.ts:1994:75
+    1992|     await flushPromises();
+    1993|     assertActiveTarget(target);
+    1994|     expect(JSON.parse(localStorage.getItem("flowduet.playground.design…
+       |                                                                           ^
+    1995|       "切视图保留名称",
+    1996|     );
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/10]⎯
+
+ FAIL  src/App.integration.test.ts > E16 文件读取期间新编辑保护 > 新抽屉输入取消迟到打开，模型目录缓冲dirty保持，重试仍可打开
+AssertionError: expected '本地存储写入失败（可能被浏览器设置拒绝或容量已满）：quota excee…' to contain '新编辑'
+
+Expected: "新编辑"
+Received: "本地存储写入失败（可能被浏览器设置拒绝或容量已满）：quota exceeded"
+
+ ❯ src/App.integration.test.ts:2050:59
+    2048|     await flushPromises();
+    2049|     assertActiveTarget(target);
+    2050|     expect(target.find('[data-test="doc-error"]').text()).toContain("新…
+       |                                                           ^
+    2051|     expect(document.querySelector<HTMLInputElement>('[data-test="drawe…
+    2052|       "读取期间新输入76",
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/10]⎯
+
+ FAIL  src/App.integration.test.ts > E16 文件读取期间新编辑保护 > 读取期间新打开表单编辑器也保持当前目录及编辑器
+AssertionError: expected '本地存储写入失败（可能被浏览器设置拒绝或容量已满）：quota excee…' to contain '新编辑'
+
+Expected: "新编辑"
+Received: "本地存储写入失败（可能被浏览器设置拒绝或容量已满）：quota exceeded"
+
+ ❯ src/App.integration.test.ts:2090:59
+    2088|     await flushPromises();
+    2089|     assertActiveTarget(target);
+    2090|     expect(target.find('[data-test="doc-error"]').text()).toContain("新…
+       |                                                           ^
+    2091|     expect(target.find('[data-test="form-designer-name"]').text()).toC…
+    2092|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/10]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  10 failed | 35 passed (45)
+   Start at  11:54:01
+   Duration  34.66s (tests 87%, import 6%, transform 4%, environment 2%)
+
+undefined
+/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run src/App.integration.test.ts

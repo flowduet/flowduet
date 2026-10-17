@@ -1,0 +1,20 @@
+[
+  {
+    "ref": "ee0d126",
+    "commit": "ee0d126d7a1bc70dbd95a130ec06cdd2f3aeadb9",
+    "appTestBlob": "c4f476627840838bc1cc6f23d7ffc970a4abc1ab",
+    "locationTestBlob": "d833bc18aaeb9234ddcef36a02ef67606d21e0e5"
+  },
+  {
+    "ref": "bec34c2",
+    "commit": "bec34c2e833d53d46bb82c1361b987e7fd23373f",
+    "appTestBlob": "c4f476627840838bc1cc6f23d7ffc970a4abc1ab",
+    "locationTestBlob": "d833bc18aaeb9234ddcef36a02ef67606d21e0e5"
+  },
+  {
+    "ref": "56d9e07",
+    "commit": "56d9e07841f11b50aef4f0fcccc3c6c3b9ce132f",
+    "appTestBlob": "c4f476627840838bc1cc6f23d7ffc970a4abc1ab",
+    "locationTestBlob": "d833bc18aaeb9234ddcef36a02ef67606d21e0e5"
+  }
+]

@@ -1,0 +1,46 @@
+import ts from '/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/typescript/lib/typescript.js';
+import fs from 'node:fs';import path from 'node:path';import {execFileSync} from 'node:child_process';
+const root=process.argv[2]||'/Users/l/.codex/worktrees/design-system-stage-zero/flowduet';
+const out=process.argv[3]||'/tmp/b03-failures-diagnosis-2026-10-17/harness';fs.mkdirSync(out,{recursive:true});
+const prefix=fs.readFileSync(process.env.DIAG_PREFIX||'/tmp/b03-failures-diagnosis-2026-10-17/probe-prefix.txt','utf8');
+for(const [rel,name] of [['apps/playground/src/App.integration.test.ts','app'],['apps/playground/probes/stage-zero/location.test.ts','location']]){
+ const input=path.join(root,rel),src=process.env.DIAG_READ_REF?execFileSync('git',['show',process.env.DIAG_READ_REF+':'+rel],{cwd:'/Users/l/.codex/worktrees/design-system-stage-zero/flowduet',encoding:'utf8'}):fs.readFileSync(input,'utf8');const sf=ts.createSourceFile(input,src,ts.ScriptTarget.Latest,true);
+ const transform=context=>{
+ const f=context.factory;
+ const label=n=>'L'+(sf.getLineAndCharacterOfPosition(n.getStart(sf)).line+1);
+ const call=(name,args)=>f.createCallExpression(f.createIdentifier(name),undefined,args);
+ const mark=(tag,n)=>f.createExpressionStatement(call('diagMark',[f.createStringLiteral(tag+label(n))]));
+ function ownsAwait(n){if(ts.isAwaitExpression(n))return true;if(ts.isFunctionLike(n))return false;return !!ts.forEachChild(n,c=>ownsAwait(c)?true:undefined);}
+ function visit(n){
+  if(ts.isImportDeclaration(n)){
+   let text=n.moduleSpecifier.text;
+   if(text.startsWith('.'))text=path.resolve(path.dirname(input),text);
+   let clause=n.importClause;
+   if(clause?.namedBindings&&ts.isNamedImports(clause.namedBindings)){
+    const els=clause.namedBindings.elements.map(e=>{
+     const imported=e.propertyName?.text??e.name.text;
+     const rename=(text==='@vue/test-utils'&&imported==='mount')?'realMount':(text==='vitest'&&imported==='it')?'realIt':(text==='vitest'&&imported==='afterEach')?'realAfterEach':null;
+     return rename?f.updateImportSpecifier(e,e.isTypeOnly,f.createIdentifier(imported),f.createIdentifier(rename)):e;
+    });
+    clause=f.updateImportClause(clause,clause.isTypeOnly,clause.name,f.updateNamedImports(clause.namedBindings,els));
+   }
+   return f.updateImportDeclaration(n,n.modifiers,clause,f.createStringLiteral(text),n.attributes);
+  }
+  if(ts.isBlock(n)){
+   const statements=[];
+   for(const s of n.statements){if(process.env.DIAG_PREFIX&&label(s)==='L104'&&rel.includes('App.integration'))statements.push(f.createIfStatement(f.createIdentifier('diagPollutionEnabled'),f.createExpressionStatement(f.createAwaitExpression(call('diagPollutionGate',[])))));const measured=ownsAwait(s);if(measured)statements.push(mark('before:',s));statements.push(ts.visitNode(s,visit));if(measured)statements.push(mark('after:',s));}
+   return f.updateBlock(n,statements);
+  }
+  if(ts.isCallExpression(n)&&ts.isPropertyAccessExpression(n.expression)&&n.expression.expression.getText(sf)==='document'&&n.expression.name.text==='querySelector')return f.createCallExpression(f.createIdentifier('diagQuery'),n.typeArguments,n.arguments.map(x=>ts.visitNode(x,visit)));
+  if(ts.isIdentifier(n)&&n.text==='wrapper'){
+   const p=n.parent;
+   if((ts.isVariableDeclaration(p)&&p.name===n)||(ts.isBinaryExpression(p)&&p.left===n&&p.operatorToken.kind===ts.SyntaxKind.EqualsToken)||(ts.isPropertyAccessExpression(p)&&p.name===n))return n;
+   return call('diagReadWrapper',[]);
+  }
+  return ts.visitEachChild(n,visit,context);
+ }
+ return n=>ts.visitNode(n,visit);
+ };
+ const result=ts.transform(sf,[transform]);const printed=ts.createPrinter().printFile(result.transformed[0]);result.dispose();
+ fs.writeFileSync(path.join(out,name+'.diag.test.ts'),prefix.replaceAll('__FILE__',name).replaceAll('__ROOT__',root)+'\n'+printed);
+}

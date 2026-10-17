@@ -1,0 +1,47 @@
+
+> flowduet-monorepo@0.0.0 test /Users/l/.codex/worktrees/design-system-stage-zero/flowduet
+> pnpm -r test
+
+Scope: 4 of 5 workspace projects
+packages/core test$ vitest run
+packages/core test:  RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/core
+packages/core test:  Test Files  14 passed (14)
+packages/core test:       Tests  148 passed (148)
+packages/core test:    Start at  01:38:05
+packages/core test:    Duration  1.52s (transform 54%, tests 32%, import 13%, worker 2%)
+packages/core test:   Transform  transforming modules took 4.05s · 54% of tracked time, re-done on every run
+packages/core test:              persist transforms across runs with fsModuleCache: true
+packages/core test:              learn more: https://vitest.dev/guide/improving-performance#caching-between-reruns
+packages/core test: Done
+packages/designer test$ vitest run
+packages/designer test:  RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/designer
+packages/designer test:  Test Files  14 passed (14)
+packages/designer test:       Tests  184 passed (184)
+packages/designer test:    Start at  01:38:07
+packages/designer test:    Duration  21.47s (tests 57%, import 16%, environment 13%, transform 13%, worker 1%)
+packages/designer test: Done
+packages/form-create test$ vitest run
+packages/form-create test:  RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/form-create
+packages/form-create test:  ❯ src/components.test.ts (90 tests | 1 failed) 134799ms
+packages/form-create test:    ❯ retained 多实例与捕获版本 (2)
+packages/form-create test:      × 同ID两个真实FormManager，busy保护不拦另一实例的Enter或输入 3444ms
+packages/form-create test: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+packages/form-create test:  FAIL  src/components.test.ts > retained 多实例与捕获版本 > 同ID两个真实FormManager，busy保护不拦另一实例的Enter或输入
+packages/form-create test: Error: Timed out in waitFor!
+packages/form-create test:  ❯ src/components.test.ts:1373:14
+packages/form-create test:     1371|     await flushPromises();
+packages/form-create test:     1372|     const first = managers[0]!;
+packages/form-create test:     1373|     await vi.waitFor(async () => {
+packages/form-create test:        |              ^
+packages/form-create test:     1374|       first.findComponent(FcDesigner).vm.triggerActive("amount");
+packages/form-create test:     1375|       await flushPromises();
+packages/form-create test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+packages/form-create test:  Test Files  1 failed | 9 passed (10)
+packages/form-create test:       Tests  1 failed | 215 passed (216)
+packages/form-create test:    Start at  01:38:30
+packages/form-create test:    Duration  141.36s (tests 75%, import 11%, environment 8%, transform 6%)
+packages/form-create test: Failed
+/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/form-create:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @flowduet/form-create@0.1.0 test: `vitest run`
+Exit status 1
+ ELIFECYCLE  Test failed. See above for more details.

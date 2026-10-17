@@ -1,0 +1,454 @@
+{
+  "rows": [
+    {
+      "pass": true,
+      "case": "restored-without-change",
+      "layout": "top",
+      "round": 1,
+      "initial": "甲数字",
+      "events": [
+        {
+          "type": "input",
+          "value": "甲数字x"
+        },
+        {
+          "type": "input",
+          "value": "甲数字"
+        },
+        {
+          "type": "blur",
+          "value": "甲数字"
+        }
+      ],
+      "pending": {
+        "mode": "retained",
+        "revision": 5,
+        "canSuspend": false,
+        "canCapture": false,
+        "blockers": [
+          {
+            "code": "pending-update",
+            "message": "请先在原属性控件中确认当前输入"
+          }
+        ]
+      },
+      "restored": {
+        "mode": "retained",
+        "revision": 7,
+        "canSuspend": true,
+        "canCapture": true,
+        "blockers": []
+      },
+      "title": "甲数字",
+      "liveUnchanged": true,
+      "persistCalls": 0
+    },
+    {
+      "pass": true,
+      "case": "badinput-is-not-empty-restore",
+      "layout": "top",
+      "round": 1,
+      "native": {
+        "value": "",
+        "badInput": true
+      },
+      "invalid": {
+        "mode": "retained",
+        "revision": 10,
+        "canSuspend": false,
+        "canCapture": false,
+        "blockers": [
+          {
+            "code": "pending-update",
+            "message": "请先在原属性控件中确认当前输入"
+          }
+        ]
+      },
+      "corrected": {
+        "mode": "retained",
+        "revision": 12,
+        "canSuspend": true,
+        "canCapture": true,
+        "blockers": []
+      },
+      "liveUnchanged": true,
+      "persistCalls": 0
+    },
+    {
+      "pass": true,
+      "case": "restored-without-change",
+      "layout": "top",
+      "round": 2,
+      "initial": "甲数字",
+      "events": [
+        {
+          "type": "input",
+          "value": "甲数字x"
+        },
+        {
+          "type": "input",
+          "value": "甲数字"
+        },
+        {
+          "type": "blur",
+          "value": "甲数字"
+        }
+      ],
+      "pending": {
+        "mode": "retained",
+        "revision": 17,
+        "canSuspend": false,
+        "canCapture": false,
+        "blockers": [
+          {
+            "code": "pending-update",
+            "message": "请先在原属性控件中确认当前输入"
+          }
+        ]
+      },
+      "restored": {
+        "mode": "retained",
+        "revision": 19,
+        "canSuspend": true,
+        "canCapture": true,
+        "blockers": []
+      },
+      "title": "甲数字",
+      "liveUnchanged": true,
+      "persistCalls": 0
+    },
+    {
+      "pass": true,
+      "case": "badinput-is-not-empty-restore",
+      "layout": "top",
+      "round": 2,
+      "native": {
+        "value": "",
+        "badInput": true
+      },
+      "invalid": {
+        "mode": "retained",
+        "revision": 22,
+        "canSuspend": false,
+        "canCapture": false,
+        "blockers": [
+          {
+            "code": "pending-update",
+            "message": "请先在原属性控件中确认当前输入"
+          }
+        ]
+      },
+      "corrected": {
+        "mode": "retained",
+        "revision": 24,
+        "canSuspend": true,
+        "canCapture": true,
+        "blockers": []
+      },
+      "liveUnchanged": true,
+      "persistCalls": 0
+    },
+    {
+      "pass": true,
+      "case": "restored-without-change",
+      "layout": "top",
+      "round": 3,
+      "initial": "甲数字",
+      "events": [
+        {
+          "type": "input",
+          "value": "甲数字x"
+        },
+        {
+          "type": "input",
+          "value": "甲数字"
+        },
+        {
+          "type": "blur",
+          "value": "甲数字"
+        }
+      ],
+      "pending": {
+        "mode": "retained",
+        "revision": 29,
+        "canSuspend": false,
+        "canCapture": false,
+        "blockers": [
+          {
+            "code": "pending-update",
+            "message": "请先在原属性控件中确认当前输入"
+          }
+        ]
+      },
+      "restored": {
+        "mode": "retained",
+        "revision": 31,
+        "canSuspend": true,
+        "canCapture": true,
+        "blockers": []
+      },
+      "title": "甲数字",
+      "liveUnchanged": true,
+      "persistCalls": 0
+    },
+    {
+      "pass": true,
+      "case": "badinput-is-not-empty-restore",
+      "layout": "top",
+      "round": 3,
+      "native": {
+        "value": "",
+        "badInput": true
+      },
+      "invalid": {
+        "mode": "retained",
+        "revision": 34,
+        "canSuspend": false,
+        "canCapture": false,
+        "blockers": [
+          {
+            "code": "pending-update",
+            "message": "请先在原属性控件中确认当前输入"
+          }
+        ]
+      },
+      "corrected": {
+        "mode": "retained",
+        "revision": 36,
+        "canSuspend": true,
+        "canCapture": true,
+        "blockers": []
+      },
+      "liveUnchanged": true,
+      "persistCalls": 0
+    },
+    {
+      "pass": true,
+      "case": "restored-without-change",
+      "layout": "grid",
+      "round": 1,
+      "initial": "甲数字",
+      "events": [
+        {
+          "type": "input",
+          "value": "甲数字x"
+        },
+        {
+          "type": "input",
+          "value": "甲数字"
+        },
+        {
+          "type": "blur",
+          "value": "甲数字"
+        }
+      ],
+      "pending": {
+        "mode": "retained",
+        "revision": 5,
+        "canSuspend": false,
+        "canCapture": false,
+        "blockers": [
+          {
+            "code": "pending-update",
+            "message": "请先在原属性控件中确认当前输入"
+          }
+        ]
+      },
+      "restored": {
+        "mode": "retained",
+        "revision": 7,
+        "canSuspend": true,
+        "canCapture": true,
+        "blockers": []
+      },
+      "title": "甲数字",
+      "liveUnchanged": true,
+      "persistCalls": 0
+    },
+    {
+      "pass": true,
+      "case": "badinput-is-not-empty-restore",
+      "layout": "grid",
+      "round": 1,
+      "native": {
+        "value": "",
+        "badInput": true
+      },
+      "invalid": {
+        "mode": "retained",
+        "revision": 10,
+        "canSuspend": false,
+        "canCapture": false,
+        "blockers": [
+          {
+            "code": "pending-update",
+            "message": "请先在原属性控件中确认当前输入"
+          }
+        ]
+      },
+      "corrected": {
+        "mode": "retained",
+        "revision": 12,
+        "canSuspend": true,
+        "canCapture": true,
+        "blockers": []
+      },
+      "liveUnchanged": true,
+      "persistCalls": 0
+    },
+    {
+      "pass": true,
+      "case": "restored-without-change",
+      "layout": "grid",
+      "round": 2,
+      "initial": "甲数字",
+      "events": [
+        {
+          "type": "input",
+          "value": "甲数字x"
+        },
+        {
+          "type": "input",
+          "value": "甲数字"
+        },
+        {
+          "type": "blur",
+          "value": "甲数字"
+        }
+      ],
+      "pending": {
+        "mode": "retained",
+        "revision": 17,
+        "canSuspend": false,
+        "canCapture": false,
+        "blockers": [
+          {
+            "code": "pending-update",
+            "message": "请先在原属性控件中确认当前输入"
+          }
+        ]
+      },
+      "restored": {
+        "mode": "retained",
+        "revision": 19,
+        "canSuspend": true,
+        "canCapture": true,
+        "blockers": []
+      },
+      "title": "甲数字",
+      "liveUnchanged": true,
+      "persistCalls": 0
+    },
+    {
+      "pass": true,
+      "case": "badinput-is-not-empty-restore",
+      "layout": "grid",
+      "round": 2,
+      "native": {
+        "value": "",
+        "badInput": true
+      },
+      "invalid": {
+        "mode": "retained",
+        "revision": 22,
+        "canSuspend": false,
+        "canCapture": false,
+        "blockers": [
+          {
+            "code": "pending-update",
+            "message": "请先在原属性控件中确认当前输入"
+          }
+        ]
+      },
+      "corrected": {
+        "mode": "retained",
+        "revision": 24,
+        "canSuspend": true,
+        "canCapture": true,
+        "blockers": []
+      },
+      "liveUnchanged": true,
+      "persistCalls": 0
+    },
+    {
+      "pass": true,
+      "case": "restored-without-change",
+      "layout": "grid",
+      "round": 3,
+      "initial": "甲数字",
+      "events": [
+        {
+          "type": "input",
+          "value": "甲数字x"
+        },
+        {
+          "type": "input",
+          "value": "甲数字"
+        },
+        {
+          "type": "blur",
+          "value": "甲数字"
+        }
+      ],
+      "pending": {
+        "mode": "retained",
+        "revision": 29,
+        "canSuspend": false,
+        "canCapture": false,
+        "blockers": [
+          {
+            "code": "pending-update",
+            "message": "请先在原属性控件中确认当前输入"
+          }
+        ]
+      },
+      "restored": {
+        "mode": "retained",
+        "revision": 31,
+        "canSuspend": true,
+        "canCapture": true,
+        "blockers": []
+      },
+      "title": "甲数字",
+      "liveUnchanged": true,
+      "persistCalls": 0
+    },
+    {
+      "pass": true,
+      "case": "badinput-is-not-empty-restore",
+      "layout": "grid",
+      "round": 3,
+      "native": {
+        "value": "",
+        "badInput": true
+      },
+      "invalid": {
+        "mode": "retained",
+        "revision": 34,
+        "canSuspend": false,
+        "canCapture": false,
+        "blockers": [
+          {
+            "code": "pending-update",
+            "message": "请先在原属性控件中确认当前输入"
+          }
+        ]
+      },
+      "corrected": {
+        "mode": "retained",
+        "revision": 36,
+        "canSuspend": true,
+        "canCapture": true,
+        "blockers": []
+      },
+      "liveUnchanged": true,
+      "persistCalls": 0
+    }
+  ],
+  "environment": {
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36",
+    "width": 1440,
+    "height": 1000,
+    "dpr": 1
+  }
+}

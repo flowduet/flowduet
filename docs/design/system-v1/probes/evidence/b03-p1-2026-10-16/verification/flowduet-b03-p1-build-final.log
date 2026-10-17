@@ -1,0 +1,45 @@
+
+> flowduet-monorepo@0.0.0 build /Users/l/.codex/worktrees/design-system-stage-zero/flowduet
+> pnpm -r build
+
+Scope: 4 of 5 workspace projects
+packages/core build$ tsc -p tsconfig.build.json && node scripts/pack-declarations.mjs
+packages/core build: ✓ ambient 声明已打包：bpmn-moddle.d.ts
+packages/core build: Done
+packages/designer build$ vite build && vue-tsc -p tsconfig.build.json
+packages/designer build: vite v8.3.0 building client environment for production...
+packages/designer build: transforming...
+packages/designer build: ✓ 33 modules transformed.
+packages/designer build: rendering chunks...
+packages/designer build: computing gzip size...
+packages/designer build: dist/designer.css  10.14 kB │ gzip:  2.25 kB
+packages/designer build: dist/index.js      54.67 kB │ gzip: 15.94 kB
+packages/designer build: ✓ built in 354ms
+packages/designer build: Done
+packages/form-create build$ vite build && vue-tsc -p tsconfig.build.json && node scripts/strip-css-imports.mjs
+packages/form-create build: vite v8.3.0 building client environment for production...
+packages/form-create build: transforming...
+packages/form-create build: ✓ 27 modules transformed.
+packages/form-create build: rendering chunks...
+packages/form-create build: computing gzip size...
+packages/form-create build: dist/form-create.css  13.28 kB │ gzip:  3.35 kB
+packages/form-create build: dist/index.js         50.48 kB │ gzip: 15.11 kB
+packages/form-create build: ✓ built in 278ms
+packages/form-create build: ✓ 已剥离 1 行 CSS 副作用 import
+packages/form-create build: Done
+apps/playground build$ vite build
+apps/playground build: vite v8.3.0 building client environment for production...
+apps/playground build: transforming...
+apps/playground build: ✓ 1606 modules transformed.
+apps/playground build: rendering chunks...
+apps/playground build: computing gzip size...
+apps/playground build: dist/index.html                     0.40 kB │ gzip:   0.27 kB
+apps/playground build: dist/assets/index-BzRdPbVi.css    388.39 kB │ gzip:  53.56 kB
+apps/playground build: dist/assets/index-BUznaTXE.js   2,574.99 kB │ gzip: 807.80 kB
+apps/playground build: ✓ built in 1.16s
+apps/playground build: [plugin builtin:vite-reporter] 
+apps/playground build: (!) Some chunks are larger than 500 kB after minification. Consider:
+apps/playground build: - Using dynamic import() to code-split the application
+apps/playground build: - Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+apps/playground build: - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+apps/playground build: Done

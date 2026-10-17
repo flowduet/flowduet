@@ -5,6 +5,7 @@ import ThemeIsolationProbe from "./ThemeIsolationProbe.vue";
 import HostProtocolProbe from "./HostProtocolProbe.vue";
 import ContractProbe from "./ContractProbe.vue";
 import FormStateProbe from "./FormStateProbe.vue";
+import FormRepairProbe from "./form-repair/FormRepairProbe.vue";
 import DefaultEditorSeamProbe from "./form-repair/DefaultEditorSeamProbe.vue";
 import { entries } from "./probe-log";
 const selected = ref("contract");
@@ -19,6 +20,7 @@ const selected = ref("contract");
     <nav>
       <button @click="selected = 'contract'">编辑合同 A/B</button>
       <button @click="selected = 'form-state'">表单状态 C</button>
+      <button @click="selected = 'b03-p1'">B03 P1 修复</button>
       <button @click="selected = 'b03-p0'">B03 P0 接缝</button>
       <button @click="selected = 'editor'">编辑保留</button
       ><button @click="selected = 'theme'">主题隔离</button
@@ -26,6 +28,7 @@ const selected = ref("contract");
     </nav>
     <ContractProbe v-if="selected === 'contract'" />
     <FormStateProbe v-if="selected === 'form-state'" />
+    <FormRepairProbe v-if="selected === 'b03-p1'" />
     <DefaultEditorSeamProbe v-if="selected === 'b03-p0'" />
     <EditorRetentionProbe v-if="selected === 'editor'" /><ThemeIsolationProbe
       v-if="selected === 'theme'"

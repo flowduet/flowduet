@@ -1,0 +1,32 @@
+../../../../../../../../tmp/b03-scope-lifetime-fix-2026-10-17/type-baseline/apps/playground/src/App.integration.test.ts(220,27): error TS2345: Argument of type '(blob: Blob) => string' is not assignable to parameter of type '(obj: Blob | MediaSource) => string'.
+  Types of parameters 'blob' and 'obj' are incompatible.
+    Type 'Blob | MediaSource' is not assignable to type 'Blob'.
+      Type 'MediaSource' is missing the following properties from type 'Blob': size, type, arrayBuffer, bytes, and 3 more.
+../../../../../../../../tmp/b03-scope-lifetime-fix-2026-10-17/type-baseline/apps/playground/src/App.integration.test.ts(373,27): error TS2345: Argument of type '(blob: Blob) => string' is not assignable to parameter of type '(obj: Blob | MediaSource) => string'.
+  Types of parameters 'blob' and 'obj' are incompatible.
+    Type 'Blob | MediaSource' is not assignable to type 'Blob'.
+      Type 'MediaSource' is missing the following properties from type 'Blob': size, type, arrayBuffer, bytes, and 3 more.
+../../../../../../../../tmp/b03-scope-lifetime-fix-2026-10-17/type-baseline/apps/playground/src/App.integration.test.ts(657,27): error TS2345: Argument of type '(blob: Blob) => string' is not assignable to parameter of type '(obj: Blob | MediaSource) => string'.
+  Types of parameters 'blob' and 'obj' are incompatible.
+    Type 'Blob | MediaSource' is not assignable to type 'Blob'.
+      Type 'MediaSource' is missing the following properties from type 'Blob': size, type, arrayBuffer, bytes, and 3 more.
+../../../../../../../../tmp/b03-scope-lifetime-fix-2026-10-17/type-baseline/apps/playground/src/App.integration.test.ts(869,29): error TS2345: Argument of type '(blob: Blob) => string' is not assignable to parameter of type '(obj: Blob | MediaSource) => string'.
+  Types of parameters 'blob' and 'obj' are incompatible.
+    Type 'Blob | MediaSource' is not assignable to type 'Blob'.
+      Type 'MediaSource' is missing the following properties from type 'Blob': size, type, arrayBuffer, bytes, and 3 more.
+../../../../../../../../tmp/b03-scope-lifetime-fix-2026-10-17/type-baseline/apps/playground/src/App.integration.test.ts(1822,42): error TS2683: 'this' implicitly has type 'any' because it does not have a type annotation.
+../../../../../../../../tmp/b03-scope-lifetime-fix-2026-10-17/type-baseline/apps/playground/src/App.integration.test.ts(1874,42): error TS2683: 'this' implicitly has type 'any' because it does not have a type annotation.
+../../../../../../../../tmp/b03-scope-lifetime-fix-2026-10-17/type-baseline/apps/playground/src/App.integration.test.ts(2015,69): error TS2339: Property 'checked' does not exist on type 'VueNode<Element>'.
+../../../../../../../../tmp/b03-scope-lifetime-fix-2026-10-17/type-baseline/apps/playground/src/App.test.ts(152,16): error TS18048: 'wrapper' is possibly 'undefined'.
+../../../../../../../../tmp/b03-scope-lifetime-fix-2026-10-17/type-baseline/apps/playground/src/App.test.ts(172,27): error TS2345: Argument of type '(blob: Blob) => string' is not assignable to parameter of type '(obj: Blob | MediaSource) => string'.
+  Types of parameters 'blob' and 'obj' are incompatible.
+    Type 'Blob | MediaSource' is not assignable to type 'Blob'.
+      Type 'MediaSource' is missing the following properties from type 'Blob': size, type, arrayBuffer, bytes, and 3 more.
+../../../../../../../../tmp/b03-scope-lifetime-fix-2026-10-17/type-baseline/apps/playground/src/App.vue(723,8): error TS2379: Argument of type '{ key: string | undefined; form: FormDefinition; }' is not assignable to parameter of type '{ readonly form: FormDefinition; } & VNodeProps & AllowedComponentProps & ComponentCustomProps & Record<...>' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.
+  Type '{ key: string | undefined; form: FormDefinition; }' is not assignable to type 'VNodeProps' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.
+    Types of property 'key' are incompatible.
+      Type 'string | undefined' is not assignable to type 'PropertyKey'.
+        Type 'undefined' is not assignable to type 'PropertyKey'.
+undefined
+/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/form-create:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 2: vue-tsc -p /tmp/b03-scope-lifetime-fix-2026-10-17/type-baseline/apps/playground/tsconfig.json --noEmit

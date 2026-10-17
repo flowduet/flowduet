@@ -1,0 +1,35 @@
+
+ RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/form-create
+
+ ❯ src/editor-input-state.test.ts (0 test)
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/editor-input-state.test.ts [ src/editor-input-state.test.ts ]
+Error: Failed to resolve import "./components/editor-input-state.js" from "src/editor-input-state.test.ts". Does the file exist?
+  Plugin: vite:import-analysis
+  File: /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/form-create/src/editor-input-state.test.ts:2:39
+  1  |  import { describe, expect, it } from "vitest";
+  2  |  import { createEditorInputState } from "./components/editor-input-state.js";
+     |                                          ^
+  3  |  describe("retained 默认值缓冲", () => {
+  4  |  	it.each([
+ ❯ TransformPluginContext._formatLog ../../node_modules/.pnpm/vite@8.3.0_@types+node@22.20.4_yaml@2.9.1/node_modules/vite/dist/node/chunks/node.js:8393:39
+ ❯ TransformPluginContext.error ../../node_modules/.pnpm/vite@8.3.0_@types+node@22.20.4_yaml@2.9.1/node_modules/vite/dist/node/chunks/node.js:8390:14
+ ❯ normalizeUrl ../../node_modules/.pnpm/vite@8.3.0_@types+node@22.20.4_yaml@2.9.1/node_modules/vite/dist/node/chunks/node.js:26058:18
+ ❯ ../../node_modules/.pnpm/vite@8.3.0_@types+node@22.20.4_yaml@2.9.1/node_modules/vite/dist/node/chunks/node.js:26128:30
+ ❯ TransformPluginContext.transform ../../node_modules/.pnpm/vite@8.3.0_@types+node@22.20.4_yaml@2.9.1/node_modules/vite/dist/node/chunks/node.js:26094:4
+ ❯ EnvironmentPluginContainer.transform ../../node_modules/.pnpm/vite@8.3.0_@types+node@22.20.4_yaml@2.9.1/node_modules/vite/dist/node/chunks/node.js:8172:14
+ ❯ loadAndTransform ../../node_modules/.pnpm/vite@8.3.0_@types+node@22.20.4_yaml@2.9.1/node_modules/vite/dist/node/chunks/node.js:19634:26
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  no tests
+   Start at  18:14:14
+   Duration  587ms (environment 98%, worker 2%)
+
+undefined
+/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/form-create:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run src/editor-input-state.test.ts

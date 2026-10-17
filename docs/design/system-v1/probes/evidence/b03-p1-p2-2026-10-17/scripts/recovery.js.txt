@@ -1,0 +1,46 @@
+async page => {
+ await page.getByRole('button',{name:'B03 P1 修复'}).click();
+ const rows=[];
+ const root=page.locator('[data-repair-instance="0"]');
+ const observe=async()=>{
+  const output=page.locator('[data-test="repair-result"]');
+  const old=await output.getAttribute('data-sequence');
+  await page.locator('[data-test="repair-observe"]').click();
+  await page.waitForFunction(old=>document.querySelector('[data-test="repair-result"]').getAttribute('data-sequence')!==old,old);
+  const result=JSON.parse(await output.textContent());
+  return {state:result.states[0],capture:result.captures[0],liveUnchanged:result.liveUnchanged,persistCalls:result.persistCalls};
+ };
+ const find=(rules,field)=>{for(const r of rules){if(r.field===field)return r;const child=find(r.children||[],field);if(child)return child;}};
+ const assert=(pass,detail)=>{if(!pass)throw Error(JSON.stringify(detail));};
+ for(const layout of ['top','grid']) {
+  await page.locator('[data-test="repair-layout"]').selectOption(layout);
+  await page.locator('[data-test="repair-reload"]').click();
+  for(let round=1;round<=3;round++) {
+   await root.locator('._fc-m-drag ._fd-drag-mask').nth(2).click();
+   const title=root.locator('._fc-r-config .el-form-item').filter({hasText:'字段名称'}).locator('input');
+   await page.waitForFunction(()=>[...document.querySelectorAll('[data-repair-instance="0"] ._fc-r-config .el-form-item')].some(row=>row.textContent.includes('字段名称')&&row.querySelector('input')?.value==='甲数字'));const initial=await title.inputValue();
+   await title.evaluate(el=>{window.b03RecoveryDispose?.();window.b03RecoveryEvents=[];const handlers=['input','change','blur'].map(type=>{const handler=e=>window.b03RecoveryEvents.push({type:e.type,value:el.value});el.addEventListener(type,handler);return [type,handler];});window.b03RecoveryDispose=()=>handlers.forEach(([type,handler])=>el.removeEventListener(type,handler));});
+   await title.click();await title.press('End');await title.press('x');
+   const pending=await observe();
+   assert(pending.capture.status==='blocked',{layout,round,pending});
+   await title.press('Backspace');
+   await root.getByRole('button',{name:'保存表单内容',exact:true}).click();
+   const restored=await observe();
+   const events=await page.evaluate(()=>window.b03RecoveryEvents);
+   assert(restored.state.canSuspend&&restored.capture.status==='captured'&&await title.inputValue()===initial&&!events.some(e=>e.type==='change'),{layout,round,initial,current:await title.inputValue(),restored,events});
+   const field=find(JSON.parse(restored.capture.content.rules),'a_amount');
+   assert(field.title==='甲数字',{field});
+   rows.push({pass:true,case:'restored-without-change',layout,round,initial,events,pending:pending.state,restored:restored.state,title:field.title,liveUnchanged:restored.liveUnchanged,persistCalls:restored.persistCalls});
+   const min=root.locator('._fc-r-config .el-form-item').filter({hasText:'设置计数器允许的最小值'}).locator('input[type=number]');
+   await min.click();await min.press('-');
+   const invalid=await observe();
+   const native=await min.evaluate(el=>({value:el.value,badInput:el.validity.badInput}));
+   assert(native.badInput&&native.value===''&&invalid.capture.status==='blocked',{native,invalid});
+   await min.press('Backspace');
+   const corrected=await observe();
+   assert(corrected.capture.status==='captured',{corrected});
+   rows.push({pass:true,case:'badinput-is-not-empty-restore',layout,round,native,invalid:invalid.state,corrected:corrected.state,liveUnchanged:corrected.liveUnchanged,persistCalls:corrected.persistCalls});
+  }
+ }
+ return {rows,environment:await page.evaluate(()=>({userAgent:navigator.userAgent,width:innerWidth,height:innerHeight,dpr:devicePixelRatio}))};
+}

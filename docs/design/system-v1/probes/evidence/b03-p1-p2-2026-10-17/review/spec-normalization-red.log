@@ -1,0 +1,54 @@
+
+ RUN  v5.0.1 /private/var/folders/47/jtpz279529q04_3hhr6t7ptr0000gn/T/flowduet-spec-p2-khda6hmv
+
+stdout | probe.test.ts > SPEC normalized native number change is confirmed
+SPEC normal 1 {
+  mode: 'retained',
+  revision: 2,
+  canSuspend: false,
+  canCapture: false,
+  blockers: [ { code: 'pending-update', message: '请先在原属性控件中确认当前输入' } ]
+} {
+  status: 'blocked',
+  blockers: [ { code: 'pending-update', message: '请先在原属性控件中确认当前输入' } ]
+} [{"type":"inputNumber","field":"amount","title":"金额","value":0,"_fc_id":"id_Fyt4mvb82yrtabc","name":"ref_Fe9mmvb82yrtacc","display":true,"hidden":false,"_fc_drag_tag":"inputNumber","props":{"min":1}},{"type":"datePicker","field":"date","title":"日期","value":"2024-02-29","props":{"type":"date","valueFormat":"YYYY-MM-DD"},"_fc_id":"id_F11cmvb82yrtadc","name":"ref_F972mvb82yrtaec","display":true,"hidden":false,"_fc_drag_tag":"datePicker"}]
+
+stdout | probe.test.ts > SPEC normalized native number change is confirmed
+SPEC unchanged blur {
+  mode: 'retained',
+  revision: 2,
+  canSuspend: false,
+  canCapture: false,
+  blockers: [ { code: 'pending-update', message: '请先在原属性控件中确认当前输入' } ]
+}
+
+ ❯ probe.test.ts (90 tests | 1 failed | 89 skipped) 3508ms
+   × SPEC normalized native number change is confirmed 3505ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  probe.test.ts > SPEC normalized native number change is confirmed
+AssertionError: expected 'blocked' to be 'captured' // Object.is equality
+
+Expected: "captured"
+Received: "blocked"
+
+ ❯ probe.test.ts:1920:37
+    1918|  input.element.focus(); input.element.blur(); await flushPromises();
+    1919|  console.log("SPEC unchanged blur", vm.readEditingState());
+    1920|  expect(vm.captureContent().status).toBe("captured");
+       |                                     ^
+    1921| });
+    1922|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 89 skipped (90)
+   Start at  01:09:20
+   Duration  8.06s (tests 45%, import 37%, transform 12%, environment 6%)
+
+undefined
+/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/form-create:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run --root /var/folders/47/jtpz279529q04_3hhr6t7ptr0000gn/T/flowduet-spec-p2-khda6hmv --config /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/form-create/vitest.config.ts probe.test.ts -t SPEC normalized

@@ -1,0 +1,32 @@
+
+ RUN  v5.0.1 /private/tmp/b03-failures-diagnosis-2026-10-17/pollution-harness
+
+ ❯ app.diag.test.ts (45 tests | 1 failed | 43 skipped) 6045ms
+   ❯ Playground 与 designer 的导出链路 (1)
+     × 插入抄送草稿后自动与手动导出均报错，配置收件人后自动恢复 XML 5029ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  app.diag.test.ts > Playground 与 designer 的导出链路 > 插入抄送草稿后自动与手动导出均报错，配置收件人后自动恢复 XML
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ Object.apply app.diag.test.ts:55:17
+     53|  }});
+     54|  return diagStore.run(owner,()=>fn(...params));};
+     55|  return Reflect.apply(target,thisArg,args);
+       |                 ^
+     56|  }});}
+     57| const it=diagWrapRegistration(realIt) as typeof realIt;
+ ❯ app.diag.test.ts:133:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 1 passed | 43 skipped (45)
+   Start at  08:55:38
+   Duration  9.56s (tests 65%, import 19%, transform 12%, environment 4%)
+
+undefined
+/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run --config /tmp/b03-failures-diagnosis-2026-10-17/pollution-harness/vitest.config.mts app.diag.test.ts -t 插入抄送草稿后自动与手动导出|新建草稿可保存并报告待修复项

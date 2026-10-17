@@ -1,0 +1,36 @@
+
+ RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/form-create
+
+ ❯ src/components.test.ts (74 tests | 1 failed | 72 skipped) 3999ms
+   × 当前Dialog modelValue=false只请求关闭，未经明确放弃不销毁 1234ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/components.test.ts > 当前Dialog modelValue=false只请求关闭，未经明确放弃不销毁
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ src/components.test.ts:1636:32
+    1634|     wrapper!.findComponent(ElDialog).vm.$emit("update:modelValue", fal…
+    1635|     await flushPromises();
+    1636|     expect(vm.hasOpenEditor()).toBe(true);
+       |                                ^
+    1637|     expect(input.element.isConnected).toBe(true);
+    1638|     expect(input.element.value).toBe("-");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 1 passed | 72 skipped (74)
+   Start at  19:20:09
+   Duration  6.34s (tests 65%, import 22%, transform 9%, environment 5%)
+
+undefined
+/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/form-create:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run src/components.test.ts -t 迟到modelValue|modelValue=false只请求

@@ -1,0 +1,10 @@
+async page => {
+ await page.locator('[data-test="repair-reload"]').click();
+ const root=page.locator('[data-repair-instance="0"]');
+ await root.locator('._fc-m-drag ._fd-drag-mask').nth(2).click();
+ const min=root.locator('._fc-r-config .el-form-item').filter({hasText:'设置计数器允许的最小值'}).locator('input[type=number]');
+ await min.click();await min.fill('01');await min.press('Tab');
+ await page.locator('[data-test="repair-observe"]').click();
+ const result=JSON.parse(await page.locator('[data-test="repair-result"]').textContent());
+ return {value:await min.inputValue(),state:result.states[0],capture:result.captures[0].status};
+}

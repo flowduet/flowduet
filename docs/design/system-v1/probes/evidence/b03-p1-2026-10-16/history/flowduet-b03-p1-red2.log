@@ -1,0 +1,1301 @@
+
+ RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/form-create
+
+ ❯ src/components.test.ts (47 tests | 8 failed | 34 skipped) 9825ms
+   ❯ retained 真实数值日期回归 (6)
+     × partial_date_does_not_normalize_on_blur 2769ms
+     × 删除公开source立即撤销旧缓冲，同名field不复用 1113ms
+   ❯ retained FormManager状态与关闭 (6)
+     × manager_retained_query_and_forward 9ms
+     × manager_suspend_is_not_discard，取消确认保留实例和raw 6ms
+     × manager_dismiss_requires_discard，明确放弃后重开不复活raw 5ms
+     × manager_late_discard_rejected，确认期间新输入使旧肯定答复过期 5ms
+     × manager_ime_escape_keeps_editor，组合中的关闭手势不先blur 5ms
+     × manager_old_editor_state_dropped，保存/取消/旧状态不可影响重开 5ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 8 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/components.test.ts > retained 真实数值日期回归 > partial_date_does_not_normalize_on_blur
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ src/components.test.ts:1005:46
+    1003|     await selectRetained("amount");
+    1004|     expect((await selectRetained("date")).element.value).toBe("2026-");
+    1005|     expect(vm.readEditingState().canSuspend).toBe(true);
+       |                                              ^
+    1006|     expect(vm.captureContent().status).toBe("blocked");
+    1007|     expect(wrapper!.emitted("save")).toBeUndefined();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/8]⎯
+
+ FAIL  src/components.test.ts > retained 真实数值日期回归 > 删除公开source立即撤销旧缓冲，同名field不复用
+Error: Unable to get ._fc-tools .fc-icon-delete within: <section data-v-4b56a487="" class="el-container _fc-designer" style="height: 460px; flex-grow: 1; flex-shrink: 1; flex-basis: 0px;">
+  <main class="el-main">
+    <section class="el-container" style="height: 100%;">
+      <aside class="el-aside _fc-l-menu" style="--el-aside-width: 40px;">
+        <div class="_fc-l-menu-item active el-tooltip__trigger el-tooltip__trigger"><i class="fc-icon icon-menu"></i></div>
+        <!--teleport start-->
+        <!--teleport end-->
+        <!---->
+        <div class="_fc-l-menu-item el-tooltip__trigger el-tooltip__trigger"><i class="fc-icon icon-script"></i></div>
+        <!--teleport start-->
+        <!--teleport end-->
+        <!---->
+      </aside>
+      <aside class="el-aside _fc-l" style="--el-aside-width: 266px;">
+        <div class="_fc-l-close"><i class="fc-icon icon-arrow"></i></div>
+        <div data-v-1fb2a737="" class="_fd-ai-panel" style="display: none;">
+          <div data-v-1fb2a737="" class="_fd-ai-header">
+            <div data-v-1fb2a737="" class="_fd-ai-title"><i data-v-1fb2a737="" class="fc-icon icon-ai bright"></i><span data-v-1fb2a737="" class="_fd-ai-name">智能助理</span></div>
+            <!---->
+          </div>
+          <div data-v-1fb2a737="" class="_fd-ai-content _fd-ai-content--centered">
+            <div data-v-1fb2a737="" class="_fd-ai-welcome">
+              <div data-v-1fb2a737="" class="_fd-ai-welcome-icon"></div>
+              <h3 data-v-1fb2a737="">欢迎使用 AI 助理</h3>
+              <p data-v-1fb2a737="">我可以帮助您快速生成和修改表单，帮助您轻松高效地完成表单设计。</p>
+              <div data-v-1fb2a737="" class="_fd-ai-welcome-suggestions">
+                <div data-v-1fb2a737="" class="_fd-ai-suggestions-header"><span data-v-1fb2a737="">试着问我</span>
+                  <div data-v-1fb2a737="" class="_fd-ai-refresh-btn"><i data-v-1fb2a737="" class="fc-icon icon-refresh2"></i> 换一换</div>
+                </div>
+                <div data-v-1fb2a737="" class="_fd-ai-suggestions-list">
+                  <div data-v-1fb2a737="" class="_fd-ai-suggestion-item">生成一个就诊满意度问卷表单</div>
+                  <div data-v-1fb2a737="" class="_fd-ai-suggestion-item">创建一个建议收集表单，包含联系人、联系邮箱、分类和建议内容</div>
+                  <div data-v-1fb2a737="" class="_fd-ai-suggestion-item">追加一个用户信息表单</div>
+                  <div data-v-1fb2a737="" class="_fd-ai-suggestion-item">添加一个标签组件，显示文本为 "Tag"</div>
+                </div>
+              </div>
+            </div>
+            <div data-v-1fb2a737="" class="_fd-ai-messages"></div>
+          </div>
+          <div data-v-1fb2a737="" class="_fd-ai-input">
+            <div data-v-1fb2a737="" class="_fd-ai-input-container"><textarea data-v-1fb2a737="" placeholder="请描述您的需求..." class="_fd-ai-input-field"></textarea>
+              <div data-v-1fb2a737="" class="_fd-ai-send-btn _fd-ai-send-btn--disabled">
+                <div data-v-1fb2a737="" class="fc-icon icon-send"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!---->
+        <!---->
+        <section class="el-container is-vertical" style="height: 100%;">
+          <header class="el-header _fc-l-tabs" style="--el-header-height: 40px;">
+            <div class="_fc-l-tab active">组件</div>
+            <div class="_fc-l-tab">大纲</div>
+          </header>
+          <main class="el-main">
+            <div class="_fc-l-group">
+              <h4 class="_fc-l-title">基础组件 <i class="fc-icon icon-arrow down"></i></h4>
+              <div class="_fc-l-list">
+                <div class="_fc-l-item" data-draggable="true">
+                  <div class="_fc-l-icon"><i class="fc-icon icon-input"></i></div><span class="_fc-l-name">输入框</span>
+                </div>
+                <div class="_fc-l-item" data-draggable="true">
+                  <div class="_fc-l-icon"><i class="fc-icon icon-textarea"></i></div><span class="_fc-l-name">多行输入框</span>
+                </div>
+                <div class="_fc-l-item" data-draggable="true">
+                  <div class="_fc-l-icon"><i class="fc-icon icon-number"></i></div><span class="_fc-l-name">计数器</span>
+                </div>
+                <div class="_fc-l-item" data-draggable="true">
+                  <div class="_fc-l-icon"><i class="fc-icon icon-radio"></i></div><span class="_fc-l-name">单选框</span>
+                </div>
+                <div class="_fc-l-item" data-draggable="true">
+                  <div class="_fc-l-icon"><i class="fc-icon icon-checkbox"></i></div><span class="_fc-l-name">多选框</span>
+                </div>
+                <div class="_fc-l-item" data-draggable="true">
+                  <div class="_fc-l-icon"><i class="fc-icon icon-select"></i></div><span class="_fc-l-name">选择器</span>
+                </div>
+                <div class="_fc-l-item" data-draggable="true">
+                  <div class="_fc-l-icon"><i class="fc-icon icon-date"></i></div><span class="_fc-l-name">日期</span>
+                </div>
+                <div class="_fc-l-item" data-draggable="true">
+                  <div class="_fc-l-icon"><i class="fc-icon icon-switch"></i></div><span class="_fc-l-name">开关</span>
+                </div>
+              </div>
+            </div>
+            <div class="_fc-l-group">
+              <h4 class="_fc-l-title">布局组件 <i class="fc-icon icon-arrow down"></i></h4>
+              <div class="_fc-l-list">
+                <div class="_fc-l-item" data-draggable="true">
+                  <div class="_fc-l-icon"><i class="fc-icon icon-row"></i></div><span class="_fc-l-name">栅格布局</span>
+                </div>
+              </div>
+            </div>
+          </main>
+          <!---->
+        </section>
+      </aside>
+      <section class="el-container is-vertical _fc-m">
+        <header class="el-header _fc-m-tools" style="--el-header-height: 45;">
+          <div class="_fc-m-tools-l">
+            <!---->
+            <div><i class="fc-icon icon-pre-step disabled"></i><i class="fc-icon icon-next-step disabled"></i></div>
+          </div>
+          <div class="_fc-m-tools-r">
+            <!----><button ariadisabled="false" autofocus="false" type="button" class="el-button el-button--primary el-button--small is-plain">
+              <!--v-if--><span class=""><i class="fc-icon icon-preview"></i> 预览</span>
+            </button><button ariadisabled="false" autofocus="false" type="button" class="el-button el-button--danger el-button--small is-plain el-tooltip__trigger">
+              <!--v-if--><span class=""><i class="fc-icon icon-delete"></i>清空</span>
+            </button>
+            <!--teleport start-->
+            <!--teleport end-->
+            <!---->
+            <!---->
+          </div>
+        </header>
+        <main class="el-main _fc-m-con"><a style="background-image: url(&quot;data:image/png;base64,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&quot;) !important; background-repeat: no-repeat !important; background-size: cover !important; background-position: center center !important; position: absolute !important; overflow: hidden !important; left: 50% !important; width: 160px !important; right: 0px !important; top: auto !important; bottom: 9px !important; display: block !important; height: 17px !important; text-align: center !important; opacity: 1 !important; visibility: visible !important; margin: 0px 0px 0px -80px !important; padding: 0px !important;" target="_blank" href="https://form-create.com/"></a>
+          <div class="_fc-m-drag pc" style="--fc-drag-empty: '拖拽左侧列表中的组件到此处'; --fc-child-empty: '点击右下角 \e789  按钮添加一列';">
+            <form class="el-form el-form--default el-form--label-right form-create">
+              <div class="el-row fc-form-row" show="true">
+                <!---->
+                <div class="el-col el-col-24 _fd-draggable-drag _fd-drag-box">
+                  <div class="_fc-draggable-item _fd-drag-item" data-draggable="true">
+                    <div class="_fd-drag-tool active">
+                      <div class="_fd-drag-mask"></div>
+                      <!---->
+                      <div class="_fd-drag-l">
+                        <div class="_fd-drag-btn" style="cursor: move;"><i class="fc-icon icon-move"></i></div>
+                      </div>
+                      <div class="_fd-drag-r">
+                        <!---->
+                        <div class="_fd-drag-btn"><i class="fc-icon icon-copy"></i></div>
+                        <!---->
+                        <div class="_fd-drag-btn _fd-drag-danger"><i class="fc-icon icon-delete"></i></div>
+                      </div>
+                      <div class="el-col el-col-24 fc-form-col">
+                        <div class="el-form-item el-form-item--default asterisk-left el-form-item--label-right fc-form-item" show="true"><label id="el-id-5769-1409" for="el-id-5769-1413" class="el-form-item__label" style="width: 125px;"><span class="fc-form-title">金额</span></label>
+                          <div class="el-form-item__content">
+                            <!---->
+                            <div class="el-input-number el-input-number--default is-center"><span role="button" aria-label="decrease number" class="el-input-number__decrease"><i class="el-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024"><path fill="currentColor" d="M128 544h768a32 32 0 1 0 0-64H128a32 32 0 0 0 0 64"></path></svg></i></span><span role="button" aria-label="increase number" class="el-input-number__increase"><i class="el-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024"><path fill="currentColor" d="M480 480V128a32 32 0 0 1 64 0v352h352a32 32 0 1 1 0 64H544v352a32 32 0 1 1-64 0V544H128a32 32 0 0 1 0-64z"></path></svg></i></span>
+                              <div class="el-input el-input--default">
+                                <!-- input -->
+                                <!-- prepend slot -->
+                                <!--v-if-->
+                                <div class="el-input__wrapper" tabindex="-1">
+                                  <!-- prefix slot -->
+                                  <!--v-if--><input class="el-input__inner" step="1" max="9007199254740991" min="-9007199254740991" type="number" autocomplete="off" tabindex="0" role="spinbutton" aria-valuemax="9007199254740991" aria-valuemin="-9007199254740991" aria-valuenow="0" aria-disabled="false" id="el-id-5769-1413"><!-- suffix slot -->
+                                  <!--v-if-->
+                                </div><!-- append slot -->
+                                <!--v-if-->
+                              </div>
+                            </div>
+                            <!---->
+                            <transition-group-stub name="el-zoom-in-top" appear="false" persisted="false" css="true">
+                              <!--v-if-->
+                            </transition-group-stub>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="_fc-draggable-item _fd-drag-item" data-draggable="true">
+                    <div class="_fd-drag-tool">
+                      <div class="_fd-drag-mask"></div>
+                      <!---->
+                      <div class="_fd-drag-l">
+                        <div class="_fd-drag-btn" style="cursor: move; display: none;"><i class="fc-icon icon-move"></i></div>
+                      </div>
+                      <div class="_fd-drag-r">
+                        <!---->
+                        <div class="_fd-drag-btn"><i class="fc-icon icon-copy"></i></div>
+                        <!---->
+                        <div class="_fd-drag-btn _fd-drag-danger"><i class="fc-icon icon-delete"></i></div>
+                      </div>
+                      <div class="el-col el-col-24 fc-form-col">
+                        <div class="el-form-item el-form-item--default asterisk-left el-form-item--label-right fc-form-item" show="true"><label id="el-id-5769-1410" for="el-id-5769-1414" class="el-form-item__label" style="width: 125px;"><span class="fc-form-title">日期</span></label>
+                          <div class="el-form-item__content">
+                            <!---->
+                            <div class="el-input el-input--default el-input--prefix el-input--suffix el-date-editor el-date-editor--date el-tooltip__trigger el-tooltip__trigger">
+                              <!-- input -->
+                              <!-- prepend slot -->
+                              <!--v-if-->
+                              <div class="el-input__wrapper" tabindex="-1">
+                                <!-- prefix slot --><span class="el-input__prefix"><span class="el-input__prefix-inner"><i class="el-icon el-input__icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024"><path fill="currentColor" d="M128 384v512h768V192H768v32a32 32 0 1 1-64 0v-32H320v32a32 32 0 0 1-64 0v-32H128v128h768v64zm192-256h384V96a32 32 0 1 1 64 0v32h160a32 32 0 0 1 32 32v768a32 32 0 0 1-32 32H96a32 32 0 0 1-32-32V160a32 32 0 0 1 32-32h160V96a32 32 0 0 1 64 0zm-32 384h64a32 32 0 0 1 0 64h-64a32 32 0 0 1 0-64m0 192h64a32 32 0 1 1 0 64h-64a32 32 0 1 1 0-64m192-192h64a32 32 0 0 1 0 64h-64a32 32 0 0 1 0-64m0 192h64a32 32 0 1 1 0 64h-64a32 32 0 1 1 0-64m192-192h64a32 32 0 1 1 0 64h-64a32 32 0 1 1 0-64m0 192h64a32 32 0 1 1 0 64h-64a32 32 0 1 1 0-64"></path></svg></i><!--v-if--></span></span><input class="el-input__inner" aria-controls="el-id-5769-1411" aria-expanded="false" aria-haspopup="dialog" type="text" autocomplete="off" tabindex="0" placeholder="" role="combobox" id="el-id-5769-1414"><!-- suffix slot --><span class="el-input__suffix"><span class="el-input__suffix-inner"><!--v-if--><!--v-if--><!--v-if--><!--v-if--><!--v-if--></span></span>
+                              </div><!-- append slot -->
+                              <!--v-if-->
+                            </div>
+                            <!--teleport start-->
+                            <!--teleport end-->
+                            <!---->
+                            <transition-group-stub name="el-zoom-in-top" appear="false" persisted="false" css="true">
+                              <!--v-if-->
+                            </transition-group-stub>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!---->
+                <!---->
+              </div>
+            </form>
+          </div>
+          <!---->
+        </main>
+      </section>
+      <aside class="el-aside _fc-r" style="--el-aside-width: 320px;">
+        <div class="_fc-r-close"><i class="fc-icon icon-arrow"></i></div>
+        <section class="el-container is-vertical" style="height: 100%;">
+          <header class="el-header _fc-r-tabs" style="--el-header-height: 40px;">
+            <div class="_fc-r-tab active">组件配置</div>
+            <div class="_fc-r-tab">表单配置</div>
+          </header>
+          <main class="el-main _fc-r-tab-form" style="display: none;">
+            <form class="el-form el-form--small el-form--label-top form-create">
+              <div class="el-row fc-form-row" show="true">
+                <div class="el-col el-col-24 fc-form-col">
+                  <div class="el-form-item el-form-item--small asterisk-left el-form-item--label-top fc-form-item" show="true"><label id="el-id-5769-1312" for="el-id-5769-1381" class="el-form-item__label"><span class="fc-form-title"><span>表单名称</span></span></label>
+                    <div class="el-form-item__content">
+                      <!---->
+                      <div class="el-input el-input--small">
+                        <!-- input -->
+                        <!-- prepend slot -->
+                        <!--v-if-->
+                        <div class="el-input__wrapper" tabindex="-1">
+                          <!-- prefix slot -->
+                          <!--v-if--><input class="el-input__inner" type="text" autocomplete="off" tabindex="0" id="el-id-5769-1381"><!-- suffix slot -->
+                          <!--v-if-->
+                        </div><!-- append slot -->
+                        <!--v-if-->
+                      </div>
+                      <!---->
+                      <transition-group-stub name="el-zoom-in-top" appear="false" persisted="false" css="true">
+                        <!--v-if-->
+                      </transition-group-stub>
+                    </div>
+                  </div>
+                </div>
+                <div class="el-col el-col-24 fc-form-col">
+                  <div class="el-form-item el-form-item--small asterisk-left el-form-item--label-top fc-form-item" show="true"><label id="el-id-5769-1313" for="el-id-5769-1382" class="el-form-item__label"><span class="fc-form-title"><span>Class</span></span></label>
+                    <div class="el-form-item__content">
+                      <!---->
+                      <div class="el-input el-input--small">
+                        <!-- input -->
+                        <!-- prepend slot -->
+                        <!--v-if-->
+                        <div class="el-input__wrapper" tabindex="-1">
+                          <!-- prefix slot -->
+                          <!--v-if--><input class="el-input__inner" type="text" autocomplete="off" tabindex="0" id="el-id-5769-1382"><!-- suffix slot -->
+                          <!--v-if-->
+                        </div><!-- append slot -->
+                        <!--v-if-->
+                      </div>
+                      <!---->
+                      <transition-group-stub name="el-zoom-in-top" appear="false" persisted="false" css="true">
+                        <!--v-if-->
+                      </transition-group-stub>
+                    </div>
+                  </div>
+                </div>
+                <div class="el-col el-col-24 fc-form-col">
+                  <div class="el-form-item el-form-item--small asterisk-left el-form-item--label-top fc-form-item" show="true"><label id="el-id-5769-1314" for="el-id-5769-1383" class="el-form-item__label"><span class="fc-form-title"><span>标签的位置</span></span></label>
+                    <div class="el-form-item__content">
+                      <!---->
+                      <div class="el-radio-group" role="radiogroup" aria-labelledby="el-id-5769-1314" id="el-id-5769-1383"><label class="el-radio el-radio--small"><span class="el-radio__input"><input class="el-radio__original" name="el-id-5769-1315" type="radio" value="left"><span class="el-radio__inner"></span></span><span class="el-radio__label">左对齐</span></label><label class="el-radio is-checked el-radio--small"><span class="el-radio__input is-checked"><input class="el-radio__original" name="el-id-5769-1315" checked="" type="radio" value="right"><span class="el-radio__inner"></span></span><span class="el-radio__label">右对齐</span></label><label class="el-radio el-radio--small"><span class="el-radio__input"><input class="el-radio__original" name="el-id-5769-1315" type="radio" value="top"><span class="el-radio__inner"></span></span><span class="el-radio__label">顶部</span></label>
+                        <!---->
+                        <!---->
+                      </div>
+                      <!---->
+                      <transition-group-stub name="el-zoom-in-top" appear="false" persisted="false" css="true">
+                        <!--v-if-->
+                      </transition-group-stub>
+                    </div>
+                  </div>
+                </div>
+                <div class="el-col el-col-24 fc-form-col">
+                  <div class="el-form-item el-form-item--small asterisk-left el-form-item--label-top fc-form-item" show="true"><label id="el-id-5769-1316" for="el-id-5769-1384" class="el-form-item__label"><span class="fc-form-title"><span>表单的尺寸</span></span></label>
+                    <div class="el-form-item__content">
+                      <!---->
+                      <div class="el-radio-group" role="radiogroup" aria-labelledby="el-id-5769-1316" id="el-id-5769-1384"><label class="el-radio el-radio--small"><span class="el-radio__input"><input class="el-radio__original" name="el-id-5769-1317" type="radio" value="large"><span class="el-radio__inner"></span></span><span class="el-radio__label">大</span></label><label class="el-radio is-checked el-radio--small"><span class="el-radio__input is-checked"><input class="el-radio__original" name="el-id-5769-1317" checked="" type="radio" value="default"><span class="el-radio__inner"></span></span><span class="el-radio__label">默认</span></label><label class="el-radio el-radio--small"><span class="el-radio__input"><input class="el-radio__original" name="el-id-5769-1317" type="radio" value="small"><span class="el-radio__inner"></span></span><span class="el-radio__label">小</span></label>
+                        <!---->
+                        <!---->
+                      </div>
+                      <!---->
+                      <transition-group-stub name="el-zoom-in-top" appear="false" persisted="false" css="true">
+                        <!--v-if-->
+                      </transition-group-stub>
+                    </div>
+                  </div>
+                </div>
+                <div class="el-col el-col-24 fc-form-col">
+                  <div class="el-form-item el-form-item--small asterisk-left el-form-item--label-top fc-form-item" show="true"><label id="el-id-5769-1318" for="el-id-5769-1385" class="el-form-item__label"><span class="fc-form-title"><span>标签的后缀</span></span></label>
+                    <div class="el-form-item__content">
+                      <!---->
+                      <div class="el-input el-input--small" style="width: 150px;">
+                        <!-- input -->
+                        <!-- prepend slot -->
+                        <!--v-if-->
+                        <div class="el-input__wrapper" tabindex="-1">
+                          <!-- prefix slot -->
+                          <!--v-if--><input class="el-input__inner" type="text" autocomplete="off" tabindex="0" id="el-id-5769-1385"><!-- suffix slot -->
+                          <!--v-if-->
+                        </div><!-- append slot -->
+                        <!--v-if-->
+                      </div>
+                      <!---->
+                      <transition-group-stub name="el-zoom-in-top" appear="false" persisted="false" css="true">
+                        <!--v-if-->
+                      </transition-group-stub>
+                    </div>
+                  </div>
+                </div>
+                <div class="el-col el-col-24 fc-form-col">
+                  <div class="el-form-item el-form-item--small asterisk-left el-form-item--label-top fc-form-item" show="true"><label id="el-id-5769-1319" for="el-id-5769-1386" class="el-form-item__label"><span class="fc-form-title"><span>标签的宽度</span></span></label>
+                    <div class="el-form-item__content">
+                      <!---->
+                      <div class="_fd-size-input">
+                        <div class="el-input-number el-input-number--small is-controls-right is-center"><span role="button" aria-label="decrease number" class="el-input-number__decrease"><i class="el-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024"><path fill="currentColor" d="M831.872 340.864 512 652.672 192.128 340.864a30.59 30.59 0 0 0-42.752 0 29.12 29.12 0 0 0 0 41.6L489.664 714.24a32 32 0 0 0 44.672 0l340.288-331.712a29.12 29.12 0 0 0 0-41.728 30.59 30.59 0 0 0-42.752 0z"></path></svg></i></span><span role="button" aria-label="increase number" class="el-input-number__increase"><i class="el-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024"><path fill="currentColor" d="m488.832 344.32-339.84 356.672a32 32 0 0 0 0 44.16l.384.384a29.44 29.44 0 0 0 42.688 0l320-335.872 319.872 335.872a29.44 29.44 0 0 0 42.688 0l.384-.384a32 32 0 0 0 0-44.16L535.168 344.32a32 32 0 0 0-46.336 0"></path></svg></i></span>
+                          <div class="el-input el-input--small">
+                            <!-- input -->
+                            <!-- prepend slot -->
+                            <!--v-if-->
+                            <div class="el-input__wrapper" tabindex="-1">
+                              <!-- prefix slot -->
+                              <!--v-if--><input class="el-input__inner" step="1" max="9007199254740991" min="-9007199254740991" type="number" autocomplete="off" tabindex="0" role="spinbutton" aria-valuemax="9007199254740991" aria-valuemin="-9007199254740991" aria-valuenow="125" aria-disabled="false" id="el-id-5769-1386"><!-- suffix slot -->
+                              <!--v-if-->
+                            </div><!-- append slot -->
+                            <!--v-if-->
+                          </div>
+                        </div>
+                        <div class="el-dropdown"><button ariadisabled="false" autofocus="false" type="button" class="el-button el-button--small el-tooltip__trigger" id="el-id-5769-1320" role="button" tabindex="0" aria-controls="el-id-5769-1321" aria-expanded="false" aria-haspopup="menu">
+                            <!--v-if--><span class="">px</span>
+                          </button>
+                          <!--teleport start-->
+                          <!--teleport end-->
+                          <!--v-if-->
+                        </div>
+                      </div>
+                      <!---->
+                      <transition-group-stub name="el-zoom-in-top" appear="false" persisted="false" css="true">
+                        <!--v-if-->
+                      </transition-group-stub>
+                    </div>
+                  </div>
+                </div>
+                <div class="el-col el-col-24 fc-form-col">
+                  <div class="el-form-item el-form-item--small asterisk-left el-form-item--label-top fc-form-item" show="true"><label id="el-id-5769-1329" for="el-id-5769-1387" class="el-form-item__label"><span class="fc-form-title"><span>隐藏必填字段的标签旁边的红色星号</span></span></label>
+                    <div class="el-form-item__content">
+                      <!---->
+                      <div class="el-switch el-switch--small"><input class="el-switch__input" type="checkbox" role="switch" aria-checked="false" aria-disabled="false" name="" true-value="true" false-value="false" id="el-id-5769-1387">
+                        <!--v-if--><span class="el-switch__core"><!--v-if--><div class="el-switch__action"><!--v-if--></div></span>
+                        <!--v-if-->
+                      </div>
+                      <!---->
+                      <transition-group-stub name="el-zoom-in-top" appear="false" persisted="false" css="true">
+                        <!--v-if-->
+                      </transition-group-stub>
+                    </div>
+                  </div>
+                </div>
+                <div class="el-col el-col-24 fc-form-col">
+                  <div class="el-form-item el-form-item--small asterisk-left el-form-item--label-top fc-form-item" show="true"><label id="el-id-5769-1330" for="el-id-5769-1388" class="el-form-item__label"><span class="fc-form-title"><span>显示校验错误信息</span></span></label>
+                    <div class="el-form-item__content">
+                      <!---->
+                      <div class="el-switch el-switch--small is-checked"><input class="el-switch__input" type="checkbox" role="switch" aria-checked="true" aria-disabled="false" name="" true-value="true" false-value="false" id="el-id-5769-1388">
+                        <!--v-if--><span class="el-switch__core"><!--v-if--><div class="el-switch__action"><!--v-if--></div></span>
+                        <!--v-if-->
+                      </div>
+                      <!---->
+                      <transition-group-stub name="el-zoom-in-top" appear="false" persisted="false" css="true">
+                        <!--v-if-->
+                      </transition-group-stub>
+                    </div>
+                  </div>
+                </div>
+                <div class="el-col el-col-24 fc-form-col">
+                  <div class="el-form-item el-form-item--small asterisk-left el-form-item--label-top fc-form-item" show="true"><label id="el-id-5769-1331" for="el-id-5769-1389" class="el-form-item__label"><span class="fc-form-title"><span>以行内形式展示校验信息</span></span></label>
+                    <div class="el-form-item__content">
+                      <!---->
+                      <div class="el-switch el-switch--small"><input class="el-switch__input" type="checkbox" role="switch" aria-checked="false" aria-disabled="false" name="" true-value="true" false-value="false" id="el-id-5769-1389">
+                        <!--v-if--><span class="el-switch__core"><!--v-if--><div class="el-switch__action"><!--v-if--></div></span>
+                        <!--v-if-->
+                      </div>
+                      <!---->
+                      <transition-group-stub name="el-zoom-in-top" appear="false" persisted="false" css="true">
+                        <!--v-if-->
+                      </transition-group-stub>
+                    </div>
+                  </div>
+                </div>
+                <div class="el-col el-col-24 fc-form-col">
+                  <div class="el-form-item el-form-item--small asterisk-left el-form-item--label-top fc-form-item" show="true"><label id="el-id-5769-1332" for="el-id-5769-1390" class="el-form-item__label"><span class="fc-form-title"><span>是否显示表单提交按钮</span></span></label>
+                    <div class="el-form-item__content">
+                      <!---->
+                      <div class="el-switch el-switch--small is-checked"><input class="el-switch__input" type="checkbox" role="switch" aria-checked="true" aria-disabled="false" name="" true-value="true" false-value="false" id="el-id-5769-1390">
+                        <!--v-if--><span class="el-switch__core"><!--v-if--><div class="el-switch__action"><!--v-if--></div></span>
+                        <!--v-if-->
+                      </div>
+                      <!---->
+                      <transition-group-stub name="el-zoom-in-top" appear="false" persisted="false" css="true">
+                        <!--v-if-->
+                      </transition-group-stub>
+                    </div>
+                  </div>
+                </div>
+                <div class="el-col el-col-24 fc-form-col">
+                  <div class="el-form-item el-form-item--small asterisk-left el-form-item--label-top fc-form-item" show="true"><label id="el-id-5769-1333" for="el-id-5769-1391" class="el-form-item__label"><span class="fc-form-title"><span>是否显示表单重置按钮</span></span></label>
+                    <div class="el-form-item__content">
+                      <!---->
+                      <div class="el-switch el-switch--small"><input class="el-switch__input" type="checkbox" role="switch" aria-checked="false" aria-disabled="false" name="" true-value="true" false-value="false" id="el-id-5769-1391">
+                        <!--v-if--><span class="el-switch__core"><!--v-if--><div class="el-switch__action"><!--v-if--></div></span>
+                        <!--v-if-->
+                      </div>
+                      <!---->
+                      <transition-group-stub name="el-zoom-in-top" appear="false" persisted="false" css="true">
+                        <!--v-if-->
+                      </transition-group-stub>
+                    </div>
+                  </div>
+                </div>
+                <!---->
+                <!---->
+              </div>
+            </form>
+          </main>
+          <main class="el-main _fc-r-tab-props">
+            <div class="_fc-r-tools-close"><i class="fc-icon icon-add2"></i></div>
+            <p class="_fc-r-title">组件类型</p>
+            <div class="el-dropdown _fd-type-select"><span class="el-tag el-tag--success el-tag--plain el-tooltip__trigger" id="el-id-5769-1415" role="button" tabindex="0" aria-controls="el-id-5769-1416" aria-expanded="false" aria-haspopup="menu"><span class="el-tag__content">计数器 <i class="fc-icon icon-down"></i></span>
+              <!--v-if--></span>
+              <!--teleport start-->
+              <!--teleport end-->
+              <!--v-if-->
+            </div>
+            <p class="_fc-r-title"><span class="_fd-warning-text el-tooltip__trigger el-tooltip__trigger">编号</span>
+              <!--teleport start-->
+              <!--teleport end-->
+            </p>
+            <div class="el-input el-input--small el-input-group el-input--suffix _fc-r-name-input el-input-group--append">
+              <!-- input -->
+              <!-- prepend slot -->
+              <!--v-if-->
+              <div class="el-input__wrapper" tabindex="-1">
+                <!-- prefix slot -->
+                <!--v-if--><input class="el-input__inner" type="text" readonly="" autocomplete="off" tabindex="0" id="el-id-5769-1501"><!-- suffix slot --><span class="el-input__suffix"><span class="el-input__suffix-inner"><!--v-if--><i class="fc-icon icon-group"></i><!--v-if--><!--v-if--><!--v-if--><!--v-if--></span></span>
+              </div><!-- append slot -->
+              <div class="el-input-group__append"><i class="fc-icon icon-auto"></i></div>
+            </div>
+            <div class="_fd-config-item">
+              <div class="_fd-ci-head">
+                <div class="_fd-ci-label"><span>隐藏</span>
+                  <!---->
+                </div>
+                <div class="_fd-ci-con">
+                  <div class="el-switch el-switch--small"><input class="el-switch__input" type="checkbox" role="switch" aria-checked="false" aria-disabled="false" name="" true-value="true" false-value="false" id="el-id-5769-1502">
+                    <!--v-if--><span class="el-switch__core"><!--v-if--><div class="el-switch__action"><!--v-if--></div></span>
+                    <!--v-if-->
+                  </div>
+                </div>
+              </div>
+              <!---->
+            </div>
+            <div class="_fc-r-config" style="grid-template-areas: &quot;base&quot; &quot;props&quot; &quot;style&quot; &quot;event&quot; &quot;validate&quot;;">
+              <div style="grid-area: base;">
+                <div class="el-divider el-divider--horizontal" style="--el-border-style: solid;" role="separator">
+                  <div class="el-divider__text is-center">基础配置</div>
+                </div>
+                <form class="el-form el-form--small el-form--label-top form-create">
+                  <div class="el-row fc-form-row" show="true">
+                    <div class="el-col el-col-24 fc-form-col">
+                      <div class="el-form-item el-form-item--small asterisk-left el-form-item--label-top fc-form-item" show="true"><label id="el-id-5769-1425" for="el-id-5769-1503" class="el-form-item__label"><span class="fc-form-title"><span class="_fd-warning-text el-tooltip__trigger el-tooltip__trigger">字段 ID</span>
+                          <!--teleport start-->
+                          <!--teleport end--></span>
+                        </label>
+                        <div class="el-form-item__content">
+                          <!---->
+                          <div class="_fd-field-input"><i class="fc-icon icon-group"></i>
+                            <div class="el-input el-input--small is-disabled">
+                              <!-- input -->
+                              <!-- prepend slot -->
+                              <!--v-if-->
+                              <div class="el-input__wrapper">
+                                <!-- prefix slot -->
+                                <!--v-if--><input class="el-input__inner" type="text" disabled="" readonly="" autocomplete="off" tabindex="0" id="el-id-5769-1503"><!-- suffix slot -->
+                                <!--v-if-->
+                              </div><!-- append slot -->
+                              <!--v-if-->
+                            </div>
+                          </div>
+                          <!---->
+                          <transition-group-stub name="el-zoom-in-top" appear="false" persisted="false" css="true">
+                            <!--v-if-->
+                          </transition-group-stub>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="el-col el-col-24 fc-form-col">
+                      <div class="el-form-item el-form-item--small asterisk-left el-form-item--label-top fc-form-item" show="true"><label id="el-id-5769-1427" for="el-id-5769-1504" class="el-form-item__label"><span class="fc-form-title">字段名称</span></label>
+                        <div class="el-form-item__content">
+                          <!---->
+                          <div class="el-input el-input--small _fd-language-input">
+                            <!-- input -->
+                            <!-- prepend slot -->
+                            <!--v-if-->
+                            <div class="el-input__wrapper" tabindex="-1">
+                              <!-- prefix slot -->
+                              <!--v-if--><input class="el-input__inner" type="text" autocomplete="off" tabindex="0" id="el-id-5769-1504"><!-- suffix slot -->
+                              <!--v-if-->
+                            </div><!-- append slot -->
+                            <!--v-if-->
+                          </div>
+                          <!---->
+                          <transition-group-stub name="el-zoom-in-top" appear="false" persisted="false" css="true">
+                            <!--v-if-->
+                          </transition-group-stub>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="el-col el-col-24 fc-form-col">
+                      <div class="el-form-item el-form-item--small asterisk-left el-form-item--label-top fc-form-item" show="true"><label id="el-id-5769-1428" for="el-id-5769-1505" class="el-form-item__label"><span class="fc-form-title">提示信息</span></label>
+                        <div class="el-form-item__content">
+                          <!---->
+                          <div class="el-input el-input--small _fd-language-input">
+                            <!-- input -->
+                            <!-- prepend slot -->
+                            <!--v-if-->
+                            <div class="el-input__wrapper" tabindex="-1">
+                              <!-- prefix slot -->
+                              <!--v-if--><input class="el-input__inner" type="text" autocomplete="off" tabindex="0" id="el-id-5769-1505"><!-- suffix slot -->
+                              <!--v-if-->
+                            </div><!-- append slot -->
+                            <!--v-if-->
+                          </div>
+                          <!---->
+                          <transition-group-stub name="el-zoom-in-top" appear="false" persisted="false" css="true">
+                            <!--v-if-->
+                          </transition-group-stub>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="el-col el-col-24 fc-form-col">
+                      <div class="el-form-item el-form-item--small asterisk-left el-form-item--label-top fc-form-item" show="true"><label id="el-id-5769-1429" for="el-id-5769-1506" class="el-form-item__label"><span class="fc-form-title">标签的宽度</span></label>
+                        <div class="el-form-item__content">
+                          <!---->
+                          <div class="_fd-size-input" disabled="false">
+                            <div class="el-input-number el-input-number--small is-controls-right is-center"><span role="button" aria-label="decrease number" class="el-input-number__decrease"><i class="el-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024"><path fill="currentColor" d="M831.872 340.864 512 652.672 192.128 340.864a30.59 30.59 0 0 0-42.752 0 29.12 29.12 0 0 0 0 41.6L489.664 714.24a32 32 0 0 0 44.672 0l340.288-331.712a29.12 29.12 0 0 0 0-41.728 30.59 30.59 0 0 0-42.752 0z"></path></svg></i></span><span role="button" aria-label="increase number" class="el-input-number__increase"><i class="el-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024"><path fill="currentColor" d="m488.832 344.32-339.84 356.672a32 32 0 0 0 0 44.16l.384.384a29.44 29.44 0 0 0 42.688 0l320-335.872 319.872 335.872a29.44 29.44 0 0 0 42.688 0l.384-.384a32 32 0 0 0 0-44.16L535.168 344.32a32 32 0 0 0-46.336 0"></path></svg></i></span>
+                              <div class="el-input el-input--small">
+                                <!-- input -->
+                                <!-- prepend slot -->
+                                <!--v-if-->
+                                <div class="el-input__wrapper" tabindex="-1">
+                                  <!-- prefix slot -->
+                                  <!--v-if--><input class="el-input__inner" step="1" max="9007199254740991" min="-9007199254740991" type="number" autocomplete="off" tabindex="0" role="spinbutton" aria-valuemax="9007199254740991" aria-valuemin="-9007199254740991" aria-valuenow="" aria-disabled="false" id="el-id-5769-1506"><!-- suffix slot -->
+                                  <!--v-if-->
+                                </div><!-- append slot -->
+                                <!--v-if-->
+                              </div>
+                            </div>
+                            <div class="el-dropdown"><button ariadisabled="false" autofocus="false" type="button" class="el-button el-button--small el-tooltip__trigger" id="el-id-5769-1430" role="button" tabindex="0" aria-controls="el-id-5769-1431" aria-expanded="false" aria-haspopup="menu">
+                                <!--v-if--><span class="">px</span>
+                              </button>
+                              <!--teleport start-->
+                              <!--teleport end-->
+                              <!--v-if-->
+                            </div>
+                          </div>
+                          <!---->
+                          <transition-group-stub name="el-zoom-in-top" appear="false" persisted="false" css="true">
+                            <!--v-if-->
+                          </transition-group-stub>
+                        </div>
+                      </div>
+                    </div>
+                    <!---->
+                  </div>
+                </form>
+              </div>
+              <div style="grid-area: props;">
+                <div class="el-divider el-divider--horizontal" style="--el-border-style: solid;" role="separator">
+                  <div class="el-divider__text is-center">属性配置
+                    <!---->
+                  </div>
+                </div>
+                <form class="el-form el-form--small el-form--label-top form-create">
+                  <div class="el-row fc-form-row" show="true">
+                    <div class="el-col el-col-24 fc-form-col">
+                      <div class="el-form-item el-form-item--small asterisk-left el-form-item--label-top fc-form-item" show="true"><label id="el-id-5769-1443" for="el-id-5769-1507" class="el-form-item__label"><span class="fc-form-title"><span>是否禁用计数器</span></span></label>
+                        <div class="el-form-item__content">
+                          <!---->
+                          <div class="el-switch el-switch--small"><input class="el-switch__input" type="checkbox" role="switch" aria-checked="false" aria-disabled="false" name="" true-value="true" false-value="false" id="el-id-5769-1507">
+                            <!--v-if--><span class="el-switch__core"><!--v-if--><div class="el-switch__action"><!--v-if--></div></span>
+                            <!--v-if-->
+                          </div>
+                          <!---->
+                          <transition-group-stub name="el-zoom-in-top" appear="false" persisted="false" css="true">
+                            <!--v-if-->
+                          </transition-group-stub>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="el-col el-col-24 fc-form-col">
+                      <div class="el-form-item el-form-item--small asterisk-left el-form-item--label-top fc-form-item" show="true"><label id="el-id-5769-1444" for="el-id-5769-1508" class="el-form-item__label"><span class="fc-form-title"><span>设置计数器允许的最小值</span></span></label>
+                        <div class="el-form-item__content">
+                          <!---->
+                          <div class="el-input-number el-input-number--small is-controls-right is-center"><span role="button" aria-label="decrease number" class="el-input-number__decrease"><i class="el-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024"><path fill="currentColor" d="M831.872 340.864 512 652.672 192.128 340.864a30.59 30.59 0 0 0-42.752 0 29.12 29.12 0 0 0 0 41.6L489.664 714.24a32 32 0 0 0 44.672 0l340.288-331.712a29.12 29.12 0 0 0 0-41.728 30.59 30.59 0 0 0-42.752 0z"></path></svg></i></span><span role="button" aria-label="increase number" class="el-input-number__increase"><i class="el-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024"><path fill="currentColor" d="m488.832 344.32-339.84 356.672a32 32 0 0 0 0 44.16l.384.384a29.44 29.44 0 0 0 42.688 0l320-335.872 319.872 335.872a29.44 29.44 0 0 0 42.688 0l.384-.384a32 32 0 0 0 0-44.16L535.168 344.32a32 32 0 0 0-46.336 0"></path></svg></i></span>
+                            <div class="el-input el-input--small">
+                              <!-- input -->
+                              <!-- prepend slot -->
+                              <!--v-if-->
+                              <div class="el-input__wrapper" tabindex="-1">
+                                <!-- prefix slot -->
+                                <!--v-if--><input class="el-input__inner" step="1" max="9007199254740991" min="-9007199254740991" type="number" autocomplete="off" tabindex="0" role="spinbutton" aria-valuemax="9007199254740991" aria-valuemin="-9007199254740991" aria-valuenow="" aria-disabled="false" id="el-id-5769-1508"><!-- suffix slot -->
+                                <!--v-if-->
+                              </div><!-- append slot -->
+                              <!--v-if-->
+                            </div>
+                          </div>
+                          <!---->
+                          <transition-group-stub name="el-zoom-in-top" appear="false" persisted="false" css="true">
+                            <!--v-if-->
+                          </transition-group-stub>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="el-col el-col-24 fc-form-col">
+                      <div class="el-form-item el-form-item--small asterisk-left el-form-item--label-top fc-form-item" show="true"><label id="el-id-5769-1445" for="el-id-5769-1509" class="el-form-item__label"><span class="fc-form-title"><span>设置计数器允许的最大值</span></span></label>
+                        <div class="el-form-item__content">
+                          <!---->
+                          <div class="el-input-number el-input-number--small is-controls-right is-center"><span role="button" aria-label="decrease number" class="el-input-number__decrease"><i class="el-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024"><path fill="currentColor" d="M831.872 340.864 512 652.672 192.128 340.864a30.59 30.59 0 0 0-42.752 0 29.12 29.12 0 0 0 0 41.6L489.664 714.24a32 32 0 0 0 44.672 0l340.288-331.712a29.12 29.12 0 0 0 0-41.728 30.59 30.59 0 0 0-42.752 0z"></path></svg></i></span><span role="button" aria-label="increase number" class="el-input-number__increase"><i class="el-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024"><path fill="currentColor" d="m488.832 344.32-339.84 356.672a32 32 0 0 0 0 44.16l.384.384a29.44 29.44 0 0 0 42.688 0l320-335.872 319.872 335.872a29.44 29.44 0 0 0 42.688 0l.384-.384a32 32 0 0 0 0-44.16L535.168 344.32a32 32 0 0 0-46.336 0"></path></svg></i></span>
+                            <div class="el-input el-input--small">
+                              <!-- input -->
+                              <!-- prepend slot -->
+                              <!--v-if-->
+                              <div class="el-input__wrapper" tabindex="-1">
+                                <!-- prefix slot -->
+                                <!--v-if--><input class="el-input__inner" step="1" max="9007199254740991" min="-9007199254740991" type="number" autocomplete="off" tabindex="0" role="spinbutton" aria-valuemax="9007199254740991" aria-valuemin="-9007199254740991" aria-valuenow="" aria-disabled="false" id="el-id-5769-1509"><!-- suffix slot -->
+                                <!--v-if-->
+                              </div><!-- append slot -->
+                              <!--v-if-->
+                            </div>
+                          </div>
+                          <!---->
+                          <transition-group-stub name="el-zoom-in-top" appear="false" persisted="false" css="true">
+                            <!--v-if-->
+                          </transition-group-stub>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="el-col el-col-24 fc-form-col">
+                      <div class="el-form-item el-form-item--small asterisk-left el-form-item--label-top fc-form-item" show="true"><label id="el-id-5769-1446" for="el-id-5769-1510" class="el-form-item__label"><span class="fc-form-title"><span>数值精度</span></span></label>
+                        <div class="el-form-item__content">
+                          <!---->
+                          <div class="el-input-number el-input-number--small is-controls-right is-center"><span role="button" aria-label="decrease number" class="el-input-number__decrease"><i class="el-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024"><path fill="currentColor" d="M831.872 340.864 512 652.672 192.128 340.864a30.59 30.59 0 0 0-42.752 0 29.12 29.12 0 0 0 0 41.6L489.664 714.24a32 32 0 0 0 44.672 0l340.288-331.712a29.12 29.12 0 0 0 0-41.728 30.59 30.59 0 0 0-42.752 0z"></path></svg></i></span><span role="button" aria-label="increase number" class="el-input-number__increase"><i class="el-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024"><path fill="currentColor" d="m488.832 344.32-339.84 356.672a32 32 0 0 0 0 44.16l.384.384a29.44 29.44 0 0 0 42.688 0l320-335.872 319.872 335.872a29.44 29.44 0 0 0 42.688 0l.384-.384a32 32 0 0 0 0-44.16L535.168 344.32a32 32 0 0 0-46.336 0"></path></svg></i></span>
+                            <div class="el-input el-input--small">
+                              <!-- input -->
+                              <!-- prepend slot -->
+                              <!--v-if-->
+                              <div class="el-input__wrapper" tabindex="-1">
+                                <!-- prefix slot -->
+                                <!--v-if--><input class="el-input__inner" step="1" max="9007199254740991" min="-9007199254740991" type="number" autocomplete="off" tabindex="0" role="spinbutton" aria-valuemax="9007199254740991" aria-valuemin="-9007199254740991" aria-valuenow="" aria-disabled="false" id="el-id-5769-1510"><!-- suffix slot -->
+                                <!--v-if-->
+                              </div><!-- append slot -->
+                              <!--v-if-->
+                            </div>
+                          </div>
+                          <!---->
+                          <transition-group-stub name="el-zoom-in-top" appear="false" persisted="false" css="true">
+                            <!--v-if-->
+                          </transition-group-stub>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="el-col el-col-24 fc-form-col">
+                      <div class="el-form-item el-form-item--small asterisk-left el-form-item--label-top fc-form-item" show="true"><label id="el-id-5769-1447" for="el-id-5769-1511" class="el-form-item__label"><span class="fc-form-title"><span>计数器步长</span></span></label>
+                        <div class="el-form-item__content">
+                          <!---->
+                          <div class="el-input-number el-input-number--small is-controls-right is-center"><span role="button" aria-label="decrease number" class="el-input-number__decrease"><i class="el-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024"><path fill="currentColor" d="M831.872 340.864 512 652.672 192.128 340.864a30.59 30.59 0 0 0-42.752 0 29.12 29.12 0 0 0 0 41.6L489.664 714.24a32 32 0 0 0 44.672 0l340.288-331.712a29.12 29.12 0 0 0 0-41.728 30.59 30.59 0 0 0-42.752 0z"></path></svg></i></span><span role="button" aria-label="increase number" class="el-input-number__increase"><i class="el-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024"><path fill="currentColor" d="m488.832 344.32-339.84 356.672a32 32 0 0 0 0 44.16l.384.384a29.44 29.44 0 0 0 42.688 0l320-335.872 319.872 335.872a29.44 29.44 0 0 0 42.688 0l.384-.384a32 32 0 0 0 0-44.16L535.168 344.32a32 32 0 0 0-46.336 0"></path></svg></i></span>
+                            <div class="el-input el-input--small">
+                              <!-- input -->
+                              <!-- prepend slot -->
+                              <!--v-if-->
+                              <div class="el-input__wrapper" tabindex="-1">
+                                <!-- prefix slot -->
+                                <!--v-if--><input class="el-input__inner" step="1" max="9007199254740991" min="0" type="number" autocomplete="off" tabindex="0" role="spinbutton" aria-valuemax="9007199254740991" aria-valuemin="0" aria-valuenow="" aria-disabled="false" id="el-id-5769-1511"><!-- suffix slot -->
+                                <!--v-if-->
+                              </div><!-- append slot -->
+                              <!--v-if-->
+                            </div>
+                          </div>
+                          <!---->
+                          <transition-group-stub name="el-zoom-in-top" appear="false" persisted="false" css="true">
+                            <!--v-if-->
+                          </transition-group-stub>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="el-col el-col-24 fc-form-col">
+                      <div class="el-form-item el-form-item--small asterisk-left el-form-item--label-top fc-form-item" show="true"><label id="el-id-5769-1448" for="el-id-5769-1512" class="el-form-item__label"><span class="fc-form-title"><span>是否只能输入 step 的倍数</span></span></label>
+                        <div class="el-form-item__content">
+                          <!---->
+                          <div class="el-switch el-switch--small"><input class="el-switch__input" type="checkbox" role="switch" aria-checked="false" aria-disabled="false" name="" true-value="true" false-value="false" id="el-id-5769-1512">
+                            <!--v-if--><span class="el-switch__core"><!--v-if--><div class="el-switch__action"><!--v-if--></div></span>
+                            <!--v-if-->
+                          </div>
+                          <!---->
+                          <transition-group-stub name="el-zoom-in-top" appear="false" persisted="false" css="true">
+                            <!--v-if-->
+                          </transition-group-stub>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="el-col el-col-24 fc-form-col">
+                      <div class="el-form-item el-form-item--small asterisk-left el-form-item--label-top fc-form-item" show="true"><label id="el-id-5769-1449" for="el-id-5769-1513" class="el-form-item__label"><span class="fc-form-title"><span>是否使用控制按钮</span></span></label>
+                        <div class="el-form-item__content">
+                          <!---->
+                          <div class="el-switch el-switch--small is-checked"><input class="el-switch__input" type="checkbox" role="switch" aria-checked="true" aria-disabled="false" name="" true-value="true" false-value="false" id="el-id-5769-1513">
+                            <!--v-if--><span class="el-switch__core"><!--v-if--><div class="el-switch__action"><!--v-if--></div></span>
+                            <!--v-if-->
+                          </div>
+                          <!---->
+                          <transition-group-stub name="el-zoom-in-top" appear="false" persisted="false" css="true">
+                            <!--v-if-->
+                          </transition-group-stub>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="el-col el-col-24 fc-form-col">
+                      <div class="el-form-item el-form-item--small asterisk-left el-form-item--label-top fc-form-item" show="true"><label id="el-id-5769-1450" for="el-id-5769-1514" class="el-form-item__label"><span class="fc-form-title"><span>控制按钮位置</span></span></label>
+                        <div class="el-form-item__content">
+                          <!---->
+                          <div class="el-select el-select--small">
+                            <div class="el-select__wrapper el-tooltip__trigger el-tooltip__trigger" tabindex="-1">
+                              <!--v-if-->
+                              <div class="el-select__selection">
+                                <!--v-if-->
+                                <div class="el-select__selected-item el-select__input-wrapper is-hidden"><input type="text" class="el-select__input is-small" autocomplete="off" style="min-width: 11px;" tabindex="0" role="combobox" readonly="" spellcheck="false" aria-activedescendant="" aria-controls="el-id-5769-1451" aria-expanded="false" aria-autocomplete="none" aria-haspopup="listbox" value="" id="el-id-5769-1514">
+                                  <!--v-if-->
+                                </div>
+                                <div class="el-select__selected-item el-select__placeholder is-transparent"><span>Select</span></div>
+                              </div>
+                              <div class="el-select__suffix"><i class="el-icon el-select__caret el-select__icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+                                    <path fill="currentColor" d="M831.872 340.864 512 652.672 192.128 340.864a30.59 30.59 0 0 0-42.752 0 29.12 29.12 0 0 0 0 41.6L489.664 714.24a32 32 0 0 0 44.672 0l340.288-331.712a29.12 29.12 0 0 0 0-41.728 30.59 30.59 0 0 0-42.752 0z"></path>
+                                  </svg></i>
+                                <!--v-if-->
+                                <!--v-if-->
+                              </div>
+                            </div>
+                            <!--teleport start-->
+                            <!--teleport end-->
+                          </div>
+                          <!---->
+                          <transition-group-stub name="el-zoom-in-top" appear="false" persisted="false" css="true">
+                            <!--v-if-->
+                          </transition-group-stub>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="el-col el-col-24 fc-form-col">
+                      <div class="el-form-item el-form-item--small asterisk-left el-form-item--label-top fc-form-item" show="true"><label id="el-id-5769-1455" for="el-id-5769-1515" class="el-form-item__label"><span class="fc-form-title"><span>输入框占位文本</span></span></label>
+                        <div class="el-form-item__content">
+                          <!---->
+                          <div class="el-input el-input--small">
+                            <!-- input -->
+                            <!-- prepend slot -->
+                            <!--v-if-->
+                            <div class="el-input__wrapper" tabindex="-1">
+                              <!-- prefix slot -->
+                              <!--v-if--><input class="el-input__inner" type="text" autocomplete="off" tabindex="0" id="el-id-5769-1515"><!-- suffix slot -->
+                              <!--v-if-->
+                            </div><!-- append slot -->
+                            <!--v-if-->
+                          </div>
+                          <!---->
+                          <transition-group-stub name="el-zoom-in-top" appear="false" persisted="false" css="true">
+                            <!--v-if-->
+                          </transition-group-stub>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="el-col el-col-24 fc-form-col">
+                      <div class="el-form-item el-form-item--small asterisk-left el-form-item--label-top fc-form-item" role="group" aria-labelledby="el-id-5769-1456" show="true">
+                        <div id="el-id-5769-1456" class="el-form-item__label"><span class="fc-form-title"><span>默认值</span></span></div>
+                        <div class="el-form-item__content">
+                          <!----><input type="text" inputmode="decimal" data-retained-input="number" data-field="amount" aria-label="数值默认值原文" owner="flowduet-calendar-c8cf9a96-1522-4419-bbc2-8fa9b2e0e96f" value="-">
+                          <!---->
+                          <transition-group-stub name="el-zoom-in-top" appear="false" persisted="false" css="true">
+                            <!--v-if-->
+                          </transition-group-stub>
+                        </div>
+                      </div>
+                    </div>
+                    <!---->
+                  </div>
+                </form>
+                <!---->
+                <!---->
+              </div>
+              <div style="grid-area: style;">
+                <div class="el-divider el-divider--horizontal" style="--el-border-style: solid;" role="separator" id="_fd-config-style">
+                  <div class="el-divider__text is-center">组件样式配置</div>
+                </div>
+                <form class="el-form el-form--small el-form--label-left form-create">
+                  <div class="el-row fc-form-row" show="true">
+                    <div class="el-col el-col-24 fc-form-col">
+                      <div class="el-form-item el-form-item--small asterisk-left el-form-item--label-left fc-form-item" show="true"><label id="el-id-5769-1457" for="el-id-5769-1516" class="el-form-item__label" style="width: 45px;"><span class="fc-form-title">ID</span></label>
+                        <div class="el-form-item__content">
+                          <!---->
+                          <div class="el-input el-input--small">
+                            <!-- input -->
+                            <!-- prepend slot -->
+                            <!--v-if-->
+                            <div class="el-input__wrapper" tabindex="-1">
+                              <!-- prefix slot -->
+                              <!--v-if--><input class="el-input__inner" type="text" autocomplete="off" tabindex="0" id="el-id-5769-1516"><!-- suffix slot -->
+                              <!--v-if-->
+                            </div><!-- append slot -->
+                            <!--v-if-->
+                          </div>
+                          <!---->
+                          <transition-group-stub name="el-zoom-in-top" appear="false" persisted="false" css="true">
+                            <!--v-if-->
+                          </transition-group-stub>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="el-col el-col-24 fc-form-col">
+                      <div class="el-form-item el-form-item--small asterisk-left el-form-item--label-left fc-form-item" show="true"><label id="el-id-5769-1458" for="el-id-5769-1517" class="el-form-item__label" style="width: 45px;"><span class="fc-form-title">Class</span></label>
+                        <div class="el-form-item__content">
+                          <!---->
+                          <div class="el-input el-input--small">
+                            <!-- input -->
+                            <!-- prepend slot -->
+                            <!--v-if-->
+                            <div class="el-input__wrapper" tabindex="-1">
+                              <!-- prefix slot -->
+                              <!--v-if--><input class="el-input__inner" type="text" autocomplete="off" tabindex="0" id="el-id-5769-1517"><!-- suffix slot -->
+                              <!--v-if-->
+                            </div><!-- append slot -->
+                            <!--v-if-->
+                          </div>
+                          <!---->
+                          <transition-group-stub name="el-zoom-in-top" appear="false" persisted="false" css="true">
+                            <!--v-if-->
+                          </transition-group-stub>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="el-col el-col-24 fc-form-col">
+                      <div class="el-form-item el-form-item--small asterisk-left el-form-item--label-left fc-form-item" show="true">
+                        <!--v-if-->
+                        <div class="el-form-item__content" style="margin-left: 0px;">
+                          <!---->
+                          <div class="_fd-style-config">
+                            <div class="_fd-box-space-input" style="margin-bottom: 10px;">
+                              <div class="_padding"><span class="_padding-title">外边距</span><input class="_fd-input _fd-top" placeholder="        " type="text" value=""><input class="_fd-input _fd-right" placeholder="        " type="text" value=""><input class="_fd-input _fd-bottom" placeholder="        " type="text" value=""><input class="_fd-input _fd-left" placeholder="        " type="text" value="">
+                                <div class="_fd-help"><i class="fc-icon icon-link2" title="lock"></i><i class="fc-icon icon-delete-circle" title="clear"></i></div>
+                                <div class="_margin"><span class="_margin-title">内边距</span>
+                                  <div class="_fd-help"><i class="fc-icon icon-link2" title="lock"></i><i class="fc-icon icon-delete-circle" title="clear"></i></div><input class="_fd-input _fd-top" placeholder="        " type="text" value=""><input class="_fd-input _fd-right" placeholder="        " type="text" value=""><input class="_fd-input _fd-bottom" placeholder="        " type="text" value=""><input class="_fd-input _fd-left" placeholder="        " type="text" value="">
+                                  <div class="_box"></div>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="_fd-box-size-input">
+                              <div class="_fd-config-item">
+                                <div class="_fd-ci-head">
+                                  <div class="_fd-ci-label is-arrow"><span>尺寸</span><i class="fc-icon icon-down"></i></div>
+                                  <!---->
+                                </div>
+                                <!---->
+                              </div>
+                            </div>
+                            <div class="_fd-config-item">
+                              <div class="_fd-ci-head">
+                                <div class="_fd-ci-label"><span>颜色</span>
+                                  <!---->
+                                </div>
+                                <div class="_fd-ci-con">
+                                  <div class="_fd-color-input">
+                                    <div class="el-input el-input--small el-input-group el-input--suffix el-input-group--append">
+                                      <!-- input -->
+                                      <!-- prepend slot -->
+                                      <!--v-if-->
+                                      <div class="el-input__wrapper" tabindex="-1">
+                                        <!-- prefix slot -->
+                                        <!--v-if--><input class="el-input__inner" type="text" autocomplete="off" tabindex="0" id="el-id-5769-1520"><!-- suffix slot --><span class="el-input__suffix"><span class="el-input__suffix-inner"><i class="el-icon el-input__icon el-input__clear" style="visibility: hidden;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024"><path fill="currentColor" d="m466.752 512-90.496-90.496a32 32 0 0 1 45.248-45.248L512 466.752l90.496-90.496a32 32 0 1 1 45.248 45.248L557.248 512l90.496 90.496a32 32 0 1 1-45.248 45.248L512 557.248l-90.496 90.496a32 32 0 0 1-45.248-45.248z"></path><path fill="currentColor" d="M512 896a384 384 0 1 0 0-768 384 384 0 0 0 0 768m0 64a448 448 0 1 1 0-896 448 448 0 0 1 0 896"></path></svg></i><!--v-if--><!--v-if--><!--v-if--><!--v-if--></span></span>
+                                      </div><!-- append slot -->
+                                      <div class="el-input-group__append">
+                                        <div class="el-color-picker el-color-picker--small el-tooltip__trigger el-tooltip__trigger" role="button" aria-description="current color is . press enter to select a new color." aria-disabled="false" tabindex="0" aria-controls="el-id-5769-1460" aria-expanded="false" aria-haspopup="dialog" id="el-id-5769-1519" aria-label="color picker">
+                                          <div class="el-color-picker__trigger"><span class="el-color-picker__color is-alpha"><span class="el-color-picker__color-inner" style="background-color: transparent;"><i class="el-icon el-color-picker__icon is-icon-arrow-down" style="display: none;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024"><path fill="currentColor" d="M831.872 340.864 512 652.672 192.128 340.864a30.59 30.59 0 0 0-42.752 0 29.12 29.12 0 0 0 0 41.6L489.664 714.24a32 32 0 0 0 44.672 0l340.288-331.712a29.12 29.12 0 0 0 0-41.728 30.59 30.59 0 0 0-42.752 0z"></path></svg></i><i class="el-icon el-color-picker__empty is-icon-close"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024"><path fill="currentColor" d="M764.288 214.592 512 466.88 259.712 214.592a31.936 31.936 0 0 0-45.12 45.12L466.752 512 214.528 764.224a31.936 31.936 0 1 0 45.12 45.184L512 557.184l252.288 252.288a31.936 31.936 0 0 0 45.12-45.12L557.12 512.064l252.288-252.352a31.936 31.936 0 1 0-45.12-45.184z"></path></svg></i></span></span></div>
+                                        </div>
+                                        <!--teleport start-->
+                                        <!--teleport end-->
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                              <!---->
+                            </div>
+                            <div class="_fd-config-item">
+                              <div class="_fd-ci-head">
+                                <div class="_fd-ci-label is-arrow"><span>背景</span><i class="fc-icon icon-down"></i></div>
+                                <div class="_fd-ci-con">
+                                  <div class="_fd-color-input">
+                                    <div class="el-input el-input--small el-input-group el-input--suffix el-input-group--append">
+                                      <!-- input -->
+                                      <!-- prepend slot -->
+                                      <!--v-if-->
+                                      <div class="el-input__wrapper" tabindex="-1">
+                                        <!-- prefix slot -->
+                                        <!--v-if--><input class="el-input__inner" type="text" autocomplete="off" tabindex="0" id="el-id-5769-1523"><!-- suffix slot --><span class="el-input__suffix"><span class="el-input__suffix-inner"><i class="el-icon el-input__icon el-input__clear" style="visibility: hidden;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024"><path fill="currentColor" d="m466.752 512-90.496-90.496a32 32 0 0 1 45.248-45.248L512 466.752l90.496-90.496a32 32 0 1 1 45.248 45.248L557.248 512l90.496 90.496a32 32 0 1 1-45.248 45.248L512 557.248l-90.496 90.496a32 32 0 0 1-45.248-45.248z"></path><path fill="currentColor" d="M512 896a384 384 0 1 0 0-768 384 384 0 0 0 0 768m0 64a448 448 0 1 1 0-896 448 448 0 0 1 0 896"></path></svg></i><!--v-if--><!--v-if--><!--v-if--><!--v-if--></span></span>
+                                      </div><!-- append slot -->
+                                      <div class="el-input-group__append">
+                                        <div class="el-color-picker el-color-picker--small el-tooltip__trigger el-tooltip__trigger" role="button" aria-description="current color is . press enter to select a new color." aria-disabled="false" tabindex="0" aria-controls="el-id-5769-1461" aria-expanded="false" aria-haspopup="dialog" id="el-id-5769-1522" aria-label="color picker">
+                                          <div class="el-color-picker__trigger"><span class="el-color-picker__color is-alpha"><span class="el-color-picker__color-inner" style="background-color: transparent;"><i class="el-icon el-color-picker__icon is-icon-arrow-down" style="display: none;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024"><path fill="currentColor" d="M831.872 340.864 512 652.672 192.128 340.864a30.59 30.59 0 0 0-42.752 0 29.12 29.12 0 0 0 0 41.6L489.664 714.24a32 32 0 0 0 44.672 0l340.288-331.712a29.12 29.12 0 0 0 0-41.728 30.59 30.59 0 0 0-42.752 0z"></path></svg></i><i class="el-icon el-color-picker__empty is-icon-close"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024"><path fill="currentColor" d="M764.288 214.592 512 466.88 259.712 214.592a31.936 31.936 0 0 0-45.12 45.12L466.752 512 214.528 764.224a31.936 31.936 0 1 0 45.12 45.184L512 557.184l252.288 252.288a31.936 31.936 0 0 0 45.12-45.12L557.12 512.064l252.288-252.352a31.936 31.936 0 1 0-45.12-45.184z"></path></svg></i></span></span></div>
+                                        </div>
+                                        <!--teleport start-->
+                                        <!--teleport end-->
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                              <!---->
+                            </div>
+                            <div class="_fd-config-item">
+                              <div class="_fd-ci-head">
+                                <div class="_fd-ci-label is-arrow"><span>边框</span><i class="fc-icon icon-down"></i></div>
+                                <div class="_fd-ci-con">
+                                  <div class="line-box" style="">
+                                    <div class="line-box-con"></div>
+                                  </div>
+                                </div>
+                              </div>
+                              <!---->
+                            </div>
+                            <div class="_fd-radius-input">
+                              <div class="_fd-config-item">
+                                <div class="_fd-ci-head">
+                                  <div class="_fd-ci-label is-arrow"><span>圆角</span><i class="fc-icon icon-down"></i></div>
+                                  <div class="_fd-ci-con">
+                                    <div class="_fd-size-input">
+                                      <div class="el-input-number el-input-number--small is-controls-right is-center"><span role="button" aria-label="decrease number" class="el-input-number__decrease"><i class="el-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024"><path fill="currentColor" d="M831.872 340.864 512 652.672 192.128 340.864a30.59 30.59 0 0 0-42.752 0 29.12 29.12 0 0 0 0 41.6L489.664 714.24a32 32 0 0 0 44.672 0l340.288-331.712a29.12 29.12 0 0 0 0-41.728 30.59 30.59 0 0 0-42.752 0z"></path></svg></i></span><span role="button" aria-label="increase number" class="el-input-number__increase"><i class="el-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024"><path fill="currentColor" d="m488.832 344.32-339.84 356.672a32 32 0 0 0 0 44.16l.384.384a29.44 29.44 0 0 0 42.688 0l320-335.872 319.872 335.872a29.44 29.44 0 0 0 42.688 0l.384-.384a32 32 0 0 0 0-44.16L535.168 344.32a32 32 0 0 0-46.336 0"></path></svg></i></span>
+                                        <div class="el-input el-input--small">
+                                          <!-- input -->
+                                          <!-- prepend slot -->
+                                          <!--v-if-->
+                                          <div class="el-input__wrapper" tabindex="-1">
+                                            <!-- prefix slot -->
+                                            <!--v-if--><input class="el-input__inner" step="1" max="9007199254740991" min="-9007199254740991" type="number" autocomplete="off" tabindex="0" role="spinbutton" aria-valuemax="9007199254740991" aria-valuemin="-9007199254740991" aria-valuenow="" aria-disabled="false" id="el-id-5769-1524"><!-- suffix slot -->
+                                            <!--v-if-->
+                                          </div><!-- append slot -->
+                                          <!--v-if-->
+                                        </div>
+                                      </div>
+                                      <div class="el-dropdown"><button ariadisabled="false" autofocus="false" type="button" class="el-button el-button--small el-tooltip__trigger" id="el-id-5769-1462" role="button" tabindex="0" aria-controls="el-id-5769-1463" aria-expanded="false" aria-haspopup="menu">
+                                          <!--v-if--><span class="">px</span>
+                                        </button>
+                                        <!--teleport start-->
+                                        <!--teleport end-->
+                                        <!--v-if-->
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                                <!---->
+                              </div>
+                            </div>
+                            <div class="_fd-config-item">
+                              <div class="_fd-ci-head">
+                                <div class="_fd-ci-label is-arrow"><span>文字</span><i class="fc-icon icon-down"></i></div>
+                                <div class="_fd-ci-con">
+                                  <div class="_fd-fi-box">样式预览</div>
+                                </div>
+                              </div>
+                              <!---->
+                            </div>
+                            <div class="_fd-shadow-input">
+                              <div class="_fd-config-item">
+                                <div class="_fd-ci-head">
+                                  <div class="_fd-ci-label is-arrow"><span>阴影</span><i class="fc-icon icon-down"></i></div>
+                                  <div class="_fd-ci-con">
+                                    <div class="el-input el-input--small el-input-group el-input--suffix _fd-si-input el-input-group--append">
+                                      <!-- input -->
+                                      <!-- prepend slot -->
+                                      <!--v-if-->
+                                      <div class="el-input__wrapper" tabindex="-1">
+                                        <!-- prefix slot -->
+                                        <!--v-if--><input class="el-input__inner" type="text" autocomplete="off" tabindex="0" id="el-id-5769-1525"><!-- suffix slot --><span class="el-input__suffix"><span class="el-input__suffix-inner"><i class="el-icon el-input__icon el-input__clear" style="visibility: hidden;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024"><path fill="currentColor" d="m466.752 512-90.496-90.496a32 32 0 0 1 45.248-45.248L512 466.752l90.496-90.496a32 32 0 1 1 45.248 45.248L557.248 512l90.496 90.496a32 32 0 1 1-45.248 45.248L512 557.248l-90.496 90.496a32 32 0 0 1-45.248-45.248z"></path><path fill="currentColor" d="M512 896a384 384 0 1 0 0-768 384 384 0 0 0 0 768m0 64a448 448 0 1 1 0-896 448 448 0 0 1 0 896"></path></svg></i><!--v-if--><!--v-if--><!--v-if--><!--v-if--></span></span>
+                                      </div><!-- append slot -->
+                                      <div class="el-input-group__append">
+                                        <div class="el-dropdown"><i class="fc-icon icon-setting el-tooltip__trigger el-tooltip__trigger" id="el-id-5769-1466" role="button" tabindex="0" aria-controls="el-id-5769-1467" aria-expanded="false" aria-haspopup="menu"></i>
+                                          <!--teleport start-->
+                                          <!--teleport end-->
+                                          <!--v-if-->
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                                <!---->
+                              </div>
+                            </div>
+                            <div class="_fd-pos-input">
+                              <div class="_fd-config-item">
+                                <div class="_fd-ci-head">
+                                  <div class="_fd-ci-label is-arrow"><span>位置</span><i class="fc-icon icon-down"></i></div>
+                                  <div class="_fd-ci-con">
+                                    <div class="el-select el-select--small">
+                                      <div class="el-select__wrapper el-tooltip__trigger el-tooltip__trigger" tabindex="-1">
+                                        <!--v-if-->
+                                        <div class="el-select__selection">
+                                          <!--v-if-->
+                                          <div class="el-select__selected-item el-select__input-wrapper is-hidden"><input type="text" class="el-select__input is-small" autocomplete="off" style="min-width: 11px;" tabindex="0" role="combobox" readonly="" spellcheck="false" aria-activedescendant="" aria-controls="el-id-5769-1471" aria-expanded="false" aria-autocomplete="none" aria-haspopup="listbox" value="" id="el-id-5769-1526">
+                                            <!--v-if-->
+                                          </div>
+                                          <div class="el-select__selected-item el-select__placeholder is-transparent"><span>Select</span></div>
+                                        </div>
+                                        <div class="el-select__suffix"><i class="el-icon el-select__caret el-select__icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+                                              <path fill="currentColor" d="M831.872 340.864 512 652.672 192.128 340.864a30.59 30.59 0 0 0-42.752 0 29.12 29.12 0 0 0 0 41.6L489.664 714.24a32 32 0 0 0 44.672 0l340.288-331.712a29.12 29.12 0 0 0 0-41.728 30.59 30.59 0 0 0-42.752 0z"></path>
+                                            </svg></i>
+                                          <!--v-if-->
+                                          <!--v-if-->
+                                        </div>
+                                      </div>
+                                      <!--teleport start-->
+                                      <!--teleport end-->
+                                    </div>
+                                  </div>
+                                </div>
+                                <!---->
+                              </div>
+                            </div>
+                            <div class="_fd-config-item _fd-opacity-input">
+                              <div class="_fd-ci-head">
+                                <div class="_fd-ci-label"><span>透明度</span>
+                                  <!---->
+                                </div>
+                                <div class="_fd-ci-con">
+                                  <div class="el-slider el-slider--small">
+                                    <div class="el-slider__runway">
+                                      <div class="el-slider__bar" style="width: 100%; left: 0%;"></div>
+                                      <div class="el-slider__button-wrapper" style="left: 100%;" tabindex="0" role="slider" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100" aria-valuetext="100" aria-orientation="horizontal" aria-disabled="false" id="el-id-5769-1527" aria-label="slider between 0 and 100">
+                                        <div class="el-slider__button el-tooltip__trigger el-tooltip__trigger"></div>
+                                        <!--teleport start-->
+                                        <!--teleport end-->
+                                      </div>
+                                      <!--v-if-->
+                                      <!--v-if-->
+                                      <!--v-if-->
+                                    </div>
+                                    <!--v-if-->
+                                  </div><span>100%</span>
+                                </div>
+                              </div>
+                              <!---->
+                            </div>
+                            <div class="_fd-config-item _fd-opacity-input">
+                              <div class="_fd-ci-head">
+                                <div class="_fd-ci-label"><span>缩放</span>
+                                  <!---->
+                                </div>
+                                <div class="_fd-ci-con">
+                                  <div class="el-slider el-slider--small">
+                                    <div class="el-slider__runway">
+                                      <div class="el-slider__bar" style="width: 50%; left: 0%;"></div>
+                                      <div class="el-slider__button-wrapper" style="left: 50%;" tabindex="0" role="slider" aria-valuemin="80" aria-valuemax="120" aria-valuenow="100" aria-valuetext="100" aria-orientation="horizontal" aria-disabled="false" id="el-id-5769-1528" aria-label="slider between 80 and 120">
+                                        <div class="el-slider__button el-tooltip__trigger el-tooltip__trigger"></div>
+                                        <!--teleport start-->
+                                        <!--teleport end-->
+                                      </div>
+                                      <!--v-if-->
+                                      <!--v-if-->
+                                      <!--v-if-->
+                                    </div>
+                                    <!--v-if-->
+                                  </div><span>100%</span>
+                                </div>
+                              </div>
+                              <!---->
+                            </div>
+                            <div class="_fd-config-item">
+                              <div class="_fd-ci-head">
+                                <div class="_fd-ci-label is-arrow"><span>自定义</span><i class="fc-icon icon-down"></i></div>
+                                <!---->
+                              </div>
+                              <!---->
+                            </div>
+                          </div>
+                          <!---->
+                          <transition-group-stub name="el-zoom-in-top" appear="false" persisted="false" css="true">
+                            <!--v-if-->
+                          </transition-group-stub>
+                        </div>
+                      </div>
+                    </div>
+                    <!---->
+                  </div>
+                </form>
+              </div>
+              <div style="grid-area: event;">
+                <!---->
+                <!---->
+              </div>
+              <div style="grid-area: validate;">
+                <div class="el-divider el-divider--horizontal" style="--el-border-style: solid;" role="separator">
+                  <div class="el-divider__text is-center">验证配置</div>
+                </div>
+                <form class="el-form el-form--small el-form--label-top form-create">
+                  <div class="el-row fc-form-row" show="true">
+                    <div class="el-col el-col-24 fc-form-col">
+                      <div class="el-form-item el-form-item--small asterisk-left el-form-item--label-top fc-form-item" show="true"><label id="el-id-5769-1480" for="el-id-5769-1529" class="el-form-item__label"><span class="fc-form-title">是否必填</span></label>
+                        <div class="el-form-item__content">
+                          <!---->
+                          <div class="_fd-required">
+                            <div class="el-switch el-switch--small"><input class="el-switch__input" type="checkbox" role="switch" aria-checked="false" aria-disabled="false" name="" true-value="true" false-value="false" id="el-id-5769-1529">
+                              <!--v-if--><span class="el-switch__core"><!--v-if--><div class="el-switch__action"><!--v-if--></div></span>
+                              <!--v-if-->
+                            </div>
+                            <!---->
+                          </div>
+                          <!---->
+                          <transition-group-stub name="el-zoom-in-top" appear="false" persisted="false" css="true">
+                            <!--v-if-->
+                          </transition-group-stub>
+                        </div>
+                      </div>
+                    </div>
+                    <!---->
+                  </div>
+                </form>
+              </div>
+            </div>
+          </main>
+        </section>
+      </aside>
+      <!---->
+      <!---->
+      <!--teleport start-->
+      <!--teleport end-->
+    </section>
+  </main>
+</section>
+ ❯ VueWrapper.get ../../node_modules/.pnpm/@vue+test-utils@2.5.1_@vue+compiler-dom@3.5.43_@vue+server-renderer@3.5.43_vue@3.5.43_typescript@5.9.3_/node_modules/@vue/test-utils/dist/vue-test-utils.cjs.js:7333:15
+ ❯ src/components.test.ts:1050:14
+    1048|     await (await selectRetained("amount")).setValue("-");
+    1049|     const fc = wrapper!.findComponent(FcDesigner);
+    1050|     await fc.get("._fc-tools .fc-icon-delete").trigger("click");
+       |              ^
+    1051|     await flushPromises();
+    1052|     expect(vm.captureContent().status).toBe("captured");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/8]⎯
+
+ FAIL  src/components.test.ts > retained FormManager状态与关闭 > manager_retained_query_and_forward
+AssertionError: expected 'undefined' to be 'function' // Object.is equality
+
+Expected: "function"
+Received: "undefined"
+
+ ❯ retainedManager src/components.test.ts:1069:38
+    1067|   wrapper = mount(FormManager, { props: { forms: [{ ...APPLY_FORM, rul…
+    1068|   const vm = wrapper.vm as unknown as ManagerVm;
+    1069|   expect(typeof vm.readEditingState).toBe("function");
+       |                                      ^
+    1070|   expect(vm.readEditingState()).toBeNull();
+    1071|   await wrapper.get('[data-test="form-edit-btn-form_apply"]').trigger(…
+ ❯ src/components.test.ts:1085:22
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/8]⎯
+
+ FAIL  src/components.test.ts > retained FormManager状态与关闭 > manager_suspend_is_not_discard，取消确认保留实例和raw
+AssertionError: expected 'undefined' to be 'function' // Object.is equality
+
+Expected: "function"
+Received: "undefined"
+
+ ❯ retainedManager src/components.test.ts:1069:38
+    1067|   wrapper = mount(FormManager, { props: { forms: [{ ...APPLY_FORM, rul…
+    1068|   const vm = wrapper.vm as unknown as ManagerVm;
+    1069|   expect(typeof vm.readEditingState).toBe("function");
+       |                                      ^
+    1070|   expect(vm.readEditingState()).toBeNull();
+    1071|   await wrapper.get('[data-test="form-edit-btn-form_apply"]').trigger(…
+ ❯ src/components.test.ts:1096:22
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/8]⎯
+
+ FAIL  src/components.test.ts > retained FormManager状态与关闭 > manager_dismiss_requires_discard，明确放弃后重开不复活raw
+AssertionError: expected 'undefined' to be 'function' // Object.is equality
+
+Expected: "function"
+Received: "undefined"
+
+ ❯ retainedManager src/components.test.ts:1069:38
+    1067|   wrapper = mount(FormManager, { props: { forms: [{ ...APPLY_FORM, rul…
+    1068|   const vm = wrapper.vm as unknown as ManagerVm;
+    1069|   expect(typeof vm.readEditingState).toBe("function");
+       |                                      ^
+    1070|   expect(vm.readEditingState()).toBeNull();
+    1071|   await wrapper.get('[data-test="form-edit-btn-form_apply"]').trigger(…
+ ❯ src/components.test.ts:1104:22
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/8]⎯
+
+ FAIL  src/components.test.ts > retained FormManager状态与关闭 > manager_late_discard_rejected，确认期间新输入使旧肯定答复过期
+AssertionError: expected 'undefined' to be 'function' // Object.is equality
+
+Expected: "function"
+Received: "undefined"
+
+ ❯ retainedManager src/components.test.ts:1069:38
+    1067|   wrapper = mount(FormManager, { props: { forms: [{ ...APPLY_FORM, rul…
+    1068|   const vm = wrapper.vm as unknown as ManagerVm;
+    1069|   expect(typeof vm.readEditingState).toBe("function");
+       |                                      ^
+    1070|   expect(vm.readEditingState()).toBeNull();
+    1071|   await wrapper.get('[data-test="form-edit-btn-form_apply"]').trigger(…
+ ❯ src/components.test.ts:1113:22
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/8]⎯
+
+ FAIL  src/components.test.ts > retained FormManager状态与关闭 > manager_ime_escape_keeps_editor，组合中的关闭手势不先blur
+AssertionError: expected 'undefined' to be 'function' // Object.is equality
+
+Expected: "function"
+Received: "undefined"
+
+ ❯ retainedManager src/components.test.ts:1069:38
+    1067|   wrapper = mount(FormManager, { props: { forms: [{ ...APPLY_FORM, rul…
+    1068|   const vm = wrapper.vm as unknown as ManagerVm;
+    1069|   expect(typeof vm.readEditingState).toBe("function");
+       |                                      ^
+    1070|   expect(vm.readEditingState()).toBeNull();
+    1071|   await wrapper.get('[data-test="form-edit-btn-form_apply"]').trigger(…
+ ❯ src/components.test.ts:1121:22
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/8]⎯
+
+ FAIL  src/components.test.ts > retained FormManager状态与关闭 > manager_old_editor_state_dropped，保存/取消/旧状态不可影响重开
+AssertionError: expected 'undefined' to be 'function' // Object.is equality
+
+Expected: "function"
+Received: "undefined"
+
+ ❯ retainedManager src/components.test.ts:1069:38
+    1067|   wrapper = mount(FormManager, { props: { forms: [{ ...APPLY_FORM, rul…
+    1068|   const vm = wrapper.vm as unknown as ManagerVm;
+    1069|   expect(typeof vm.readEditingState).toBe("function");
+       |                                      ^
+    1070|   expect(vm.readEditingState()).toBeNull();
+    1071|   await wrapper.get('[data-test="form-edit-btn-form_apply"]').trigger(…
+ ❯ src/components.test.ts:1133:22
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/8]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  8 failed | 5 passed | 34 skipped (47)
+   Start at  18:16:48
+   Duration  12.27s (tests 81%, import 11%, transform 4%, environment 3%)
+
+undefined
+/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/form-create:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run src/components.test.ts -t retained

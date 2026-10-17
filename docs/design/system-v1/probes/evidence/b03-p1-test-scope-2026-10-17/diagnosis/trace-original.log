@@ -1,0 +1,41 @@
+
+ RUN  v5.0.1 /private/tmp/b03-failures-diagnosis-2026-10-17/harness
+
+ ❯ app.diag.test.ts (0 test)
+stderr | location.diag.test.ts > 真实视图定位确认 > 单↔多转换后原分支诊断仍定位fa，条件与顺序保留
+[Vue Flow]: The Vue Flow parent container needs a width and a height to render the graph
+[Vue Flow]: It seems that you haven't loaded the necessary styles. Please import '@vue-flow/core/dist/style.css' to ensure that the graph is rendered correctly
+
+ ❯ location.diag.test.ts (9 tests | 1 failed | 8 skipped) 2093ms
+   ❯ 真实视图定位确认 (9)
+     × 单↔多转换后原分支诊断仍定位fa，条件与顺序保留 2090ms
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  app.diag.test.ts [ app.diag.test.ts ]
+TypeError: Cannot use two functions as arguments. Please use the second argument for options.
+ ❯ it app.diag.test.ts:32:49
+
+ ❯ app.diag.test.ts:835:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  location.diag.test.ts > 真实视图定位确认 > 单↔多转换后原分支诊断仍定位fa，条件与顺序保留
+ReferenceError: vi is not defined
+ ❯ location.diag.test.ts:45:160
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  1 failed | 8 skipped (9)
+   Start at  08:43:12
+   Duration  6.22s (import 36%, tests 32%, transform 17%, environment 13%)
+
+undefined
+/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run --config /tmp/b03-failures-diagnosis-2026-10-17/harness/vitest.config.mts -t 插入抄送草稿后自动与手动导出|新建草稿可保存并报告待修复项|读取期间新打开表单编辑器|单↔多转换后原分支诊断

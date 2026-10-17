@@ -1,0 +1,48 @@
+
+> flowduet-monorepo@0.0.0 test /Users/l/.codex/worktrees/design-system-stage-zero/flowduet
+> pnpm -r test
+
+Scope: 4 of 5 workspace projects
+packages/core test$ vitest run
+packages/core test:  RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/core
+packages/core test:  Test Files  14 passed (14)
+packages/core test:       Tests  148 passed (148)
+packages/core test:    Start at  01:20:01
+packages/core test:    Duration  2.09s (transform 57%, tests 30%, import 11%, worker 1%)
+packages/core test:   Transform  transforming modules took 6.70s · 57% of tracked time, re-done on every run
+packages/core test:              persist transforms across runs with fsModuleCache: true
+packages/core test:              learn more: https://vitest.dev/guide/improving-performance#caching-between-reruns
+packages/core test: Done
+packages/designer test$ vitest run
+packages/designer test:  RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/designer
+packages/designer test:  Test Files  14 passed (14)
+packages/designer test:       Tests  184 passed (184)
+packages/designer test:    Start at  01:20:04
+packages/designer test:    Duration  13.92s (tests 46%, import 21%, environment 17%, transform 16%)
+packages/designer test: Done
+packages/form-create test$ vitest run
+packages/form-create test:  RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/form-create
+packages/form-create test:  ❯ src/components.test.ts (90 tests | 1 failed) 139468ms
+packages/form-create test:    ❯ P1复审P2：属性控件确认与删除生命期 (4)
+packages/form-create test:      × delete撤销已移除控件的等待，不要求change 5542ms
+packages/form-create test: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+packages/form-create test:  FAIL  src/components.test.ts > P1复审P2：属性控件确认与删除生命期 > delete撤销已移除控件的等待，不要求change
+packages/form-create test: Error: Test timed out in 5000ms.
+packages/form-create test: If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+packages/form-create test:  ❯ src/components.test.ts:1738:40
+packages/form-create test:     1736|       expect(JSON.parse(captured.content.rules)[0].title).toBe("金额");
+packages/form-create test:     1737|   });
+packages/form-create test:     1738|   it.each(["delete", "clear"] as const)(
+packages/form-create test:        |                                        ^
+packages/form-create test:     1739|     "%s撤销已移除控件的等待，不要求change",
+packages/form-create test:     1740|     async (operation) => {
+packages/form-create test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+packages/form-create test:  Test Files  1 failed | 9 passed (10)
+packages/form-create test:       Tests  1 failed | 215 passed (216)
+packages/form-create test:    Start at  01:20:19
+packages/form-create test:    Duration  145.51s (tests 78%, import 10%, environment 7%, transform 5%)
+packages/form-create test: Failed
+/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/form-create:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @flowduet/form-create@0.1.0 test: `vitest run`
+Exit status 1
+ ELIFECYCLE  Test failed. See above for more details.

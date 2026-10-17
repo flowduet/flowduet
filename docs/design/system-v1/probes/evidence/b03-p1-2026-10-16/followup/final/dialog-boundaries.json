@@ -1,0 +1,124 @@
+{
+  "rows": [
+    {
+      "id": "N07/M03",
+      "round": 1,
+      "source": "protocol double-open/composition + native peer Enter",
+      "peerConfirmationOpened": true,
+      "pass": true
+    },
+    {
+      "id": "M03",
+      "round": 1,
+      "source": "composition protocol + native pointer/Tab",
+      "focusKept": true,
+      "pass": true
+    },
+    {
+      "id": "N07/M03",
+      "round": 2,
+      "source": "protocol double-open/composition + native peer Enter",
+      "peerConfirmationOpened": true,
+      "pass": true
+    },
+    {
+      "id": "M03",
+      "round": 2,
+      "source": "composition protocol + native pointer/Tab",
+      "focusKept": true,
+      "pass": true
+    },
+    {
+      "id": "N07/M03",
+      "round": 3,
+      "source": "protocol double-open/composition + native peer Enter",
+      "peerConfirmationOpened": true,
+      "pass": true
+    },
+    {
+      "id": "M03",
+      "round": 3,
+      "source": "composition protocol + native pointer/Tab",
+      "focusKept": true,
+      "pass": true
+    },
+    {
+      "id": "M05-P1",
+      "round": 1,
+      "source": "native drag/Escape",
+      "during": {
+        "mode": "retained",
+        "revision": 4,
+        "canSuspend": false,
+        "canCapture": false,
+        "blockers": [
+          {
+            "code": "pending-input",
+            "field": "a_amount",
+            "message": "默认值尚未完成，请补全数值或有效日期"
+          },
+          {
+            "code": "dragging",
+            "message": "拖动尚未确认结束，P3取消能力尚未提供"
+          }
+        ]
+      },
+      "outerKept": true,
+      "raw": "-",
+      "cancellationNotClaimed": true,
+      "pass": true
+    },
+    {
+      "id": "M05-P1",
+      "round": 2,
+      "source": "native drag/Escape",
+      "during": {
+        "mode": "retained",
+        "revision": 4,
+        "canSuspend": false,
+        "canCapture": false,
+        "blockers": [
+          {
+            "code": "pending-input",
+            "field": "a_amount",
+            "message": "默认值尚未完成，请补全数值或有效日期"
+          },
+          {
+            "code": "dragging",
+            "message": "拖动尚未确认结束，P3取消能力尚未提供"
+          }
+        ]
+      },
+      "outerKept": true,
+      "raw": "-",
+      "cancellationNotClaimed": true,
+      "pass": true
+    },
+    {
+      "id": "M05-P1",
+      "round": 3,
+      "source": "native drag/Escape",
+      "during": {
+        "mode": "retained",
+        "revision": 4,
+        "canSuspend": false,
+        "canCapture": false,
+        "blockers": [
+          {
+            "code": "pending-input",
+            "field": "a_amount",
+            "message": "默认值尚未完成，请补全数值或有效日期"
+          },
+          {
+            "code": "dragging",
+            "message": "拖动尚未确认结束，P3取消能力尚未提供"
+          }
+        ]
+      },
+      "outerKept": true,
+      "raw": "-",
+      "cancellationNotClaimed": true,
+      "pass": true
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+import subprocess,json,time,pathlib
+out=pathlib.Path('/tmp/b03-scope-lifetime-fix-2026-10-17')
+base=['pnpm','--filter','@flowduet/playground','exec','vitest','run']
+helper='src/test-utils/browser-test-scope.test.ts'
+new='用例结束后旧finally|用例关闭'
+old='插入抄送草稿后自动与手动导出|新建草稿可保存并报告待修复项|读取期间新打开表单编辑器|单↔多转换后原分支诊断'
+commands=[]
+for i in range(1,4):
+ commands += [(f'new-target-{i}',base+[helper,'-t',new]),(f'old-target-{i}',base+['src/App.integration.test.ts','probes/stage-zero/location.test.ts','-t',old])]
+commands += [('helper-file',base+[helper]),('app-file',base+['src/App.integration.test.ts']),('location-file',base+['probes/stage-zero/location.test.ts']),('full-default',['pnpm','test']),('lint',['pnpm','lint']),('build',['pnpm','build']),('strict',['pnpm','--filter','@flowduet/form-create','exec','vue-tsc','-p','../../apps/playground/probes/stage-zero/tsconfig.json','--noEmit']),('esm',['node','--input-type=module','-e','import { CORE_VERSION } from "./packages/core/dist/index.js"; console.log("dist import OK", CORE_VERSION)'])]
+records=[]
+for name,cmd in commands:
+ start=time.time(); print('START',name,flush=True)
+ with (out/(name+'.log')).open('w') as log:r=subprocess.run(cmd,stdout=log,stderr=subprocess.STDOUT)
+ records.append(dict(name=name,command=cmd,exitCode=r.returncode,seconds=round(time.time()-start,2),log=name+'.log'))
+ (out/'commands.json').write_text(json.dumps(records,ensure_ascii=False,indent=2)+'\n')
+ print('END',name,r.returncode,records[-1]['seconds'],flush=True)
+ if r.returncode:break

@@ -1,0 +1,32 @@
+async page => {
+ await page.getByRole('button',{name:'B03 P1 修复'}).click();
+ const rows=[];const root=i=>page.locator(`[data-repair-instance="${i}"]`);
+ const input=async(i,text)=>{await page.locator(`[data-test="repair-nav-${i}"]`).click();await root(i).locator('._fc-m-drag ._fd-drag-mask').nth(2).click();await root(i).locator('[data-retained-input="number"]').fill(text);};
+ const act=async(name)=>{const out=page.locator('[data-test="repair-result"]');const before=await out.getAttribute('data-sequence');await page.locator(`[data-test="repair-${name}"]`).click();await page.waitForFunction(old=>document.querySelector('[data-test="repair-result"]').getAttribute('data-sequence')!==old,before);return JSON.parse(await out.textContent());};
+ const assert=(ok,x)=>{if(!ok)throw Error(JSON.stringify(x));};
+ for(const layout of ['top','grid']) {
+  await page.locator('[data-test="repair-layout"]').selectOption(layout);await page.locator('[data-test="repair-reload"]').click();
+  await input(0,'71');await input(1,'82');
+  for(const which of [0,1])for(const fault of ['throw','null','json','kind','schema']){
+   await page.locator(`[data-test="repair-fault-${which}"]`).selectOption(fault);
+   const failed=await act('capture');
+   assert(failed.prepared.ok===false&&failed.calls.includes(`${which}:capture`)&&failed.liveUnchanged&&failed.persistCalls===0&&failed.adaptersAndLeasesCurrent,failed);
+   const order=failed.calls.filter(v=>v.endsWith(':flush')).map(v=>Number(v[0]));
+   assert(order.length===2&&new Set(order).size===2,failed);
+   const position=order.indexOf(which);
+   assert(failed.calls.slice(2,3+position).join('|')===order.slice(0,position+1).map(i=>`${i}:capture`).join('|'),failed);
+   assert(failed.calls.filter(v=>v===`${which}:capture`).length===1,failed);
+   const rejectedSave=await act('save');assert(rejectedSave.saved.status==='failed'&&rejectedSave.persistCalls===0&&rejectedSave.adaptersAndLeasesCurrent,rejectedSave);
+   await page.locator(`[data-test="repair-fault-${which}"]`).selectOption('none');
+   const retry=await act('capture');assert(retry.prepared.ok===true&&retry.liveUnchanged&&retry.persistCalls===0&&retry.adaptersAndLeasesCurrent,retry);
+   const saved=JSON.parse(retry.prepared.value.json);const strings=JSON.stringify(saved);
+   assert(strings.includes('71')&&strings.includes('82'),retry);
+   await page.locator('[data-test="repair-nav-0"]').click();const a=await root(0).locator('[data-retained-input="number"]').inputValue();
+   await page.locator('[data-test="repair-nav-1"]').click();const b=await root(1).locator('[data-retained-input="number"]').inputValue();
+   assert(a==='71'&&b==='82',{a,b});
+   rows.push({id:'H01',layout,which,position,fault,failed,rejectedSave,retry:{ok:retry.prepared.ok,calls:retry.calls,liveUnchanged:retry.liveUnchanged,adaptersAndLeasesCurrent:retry.adaptersAndLeasesCurrent},raw:[a,b],pass:true});
+  }
+ }
+ const positive=await act('save');assert(positive.saved.status==='saved'&&positive.persistCalls===1,positive);rows.push({id:'H03-positive-persist',positive,pass:true});
+ return {source:'real retained FormDesigner + protocol-injected capture faults; not natural third-party failure',rows};
+}

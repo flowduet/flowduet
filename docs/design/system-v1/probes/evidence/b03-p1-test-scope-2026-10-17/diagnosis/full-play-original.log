@@ -1,0 +1,79 @@
+
+ RUN  v5.0.1 /private/tmp/b03-failures-diagnosis-2026-10-17/refs/bec34c2/apps/playground
+
+ ❯ probes/stage-zero/contracts/candidate.test.ts (0 test)
+ ❯ probes/stage-zero/contracts/draft-store.test.ts (0 test)
+ ❯ probes/stage-zero/design-state.test.ts (0 test)
+ ❯ probes/stage-zero/contract-location.test.ts (0 test)
+ ❯ probes/stage-zero/location.test.ts (0 test)
+ ❯ probes/stage-zero/contracts/validation.test.ts (0 test)
+ ❯ probes/stage-zero/contracts/controller.test.ts (0 test)
+ ❯ probes/stage-zero/contracts/host.test.ts (0 test)
+ ❯ probes/stage-zero/contracts/error-boundary.test.ts (0 test)
+ ❯ probes/stage-zero/host-protocol.test.ts (0 test)
+ ❯ probes/stage-zero/contracts/entity-store.test.ts (0 test)
+ ❯ probes/stage-zero/probe-log.test.ts (0 test)
+ ❯ probes/stage-zero/contracts/transaction.test.ts (0 test)
+ ❯ probes/stage-zero/contracts/versions.test.ts (0 test)
+stderr | src/App.integration.test.ts
+[BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+
+ ❯ src/App.integration.test.ts (45 tests | 1 failed) 53244ms
+   ❯ E16 文件读取期间新编辑保护 (2)
+     × 读取期间新打开表单编辑器也保持当前目录及编辑器 5738ms
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 14 ⎯⎯⎯⎯⎯⎯
+
+ FAIL  probes/stage-zero/contract-location.test.ts [ probes/stage-zero/contract-location.test.ts ]
+ FAIL  probes/stage-zero/design-state.test.ts [ probes/stage-zero/design-state.test.ts ]
+ FAIL  probes/stage-zero/host-protocol.test.ts [ probes/stage-zero/host-protocol.test.ts ]
+ FAIL  probes/stage-zero/location.test.ts [ probes/stage-zero/location.test.ts ]
+ FAIL  probes/stage-zero/probe-log.test.ts [ probes/stage-zero/probe-log.test.ts ]
+ FAIL  probes/stage-zero/contracts/candidate.test.ts [ probes/stage-zero/contracts/candidate.test.ts ]
+ FAIL  probes/stage-zero/contracts/controller.test.ts [ probes/stage-zero/contracts/controller.test.ts ]
+ FAIL  probes/stage-zero/contracts/draft-store.test.ts [ probes/stage-zero/contracts/draft-store.test.ts ]
+ FAIL  probes/stage-zero/contracts/entity-store.test.ts [ probes/stage-zero/contracts/entity-store.test.ts ]
+ FAIL  probes/stage-zero/contracts/error-boundary.test.ts [ probes/stage-zero/contracts/error-boundary.test.ts ]
+ FAIL  probes/stage-zero/contracts/host.test.ts [ probes/stage-zero/contracts/host.test.ts ]
+ FAIL  probes/stage-zero/contracts/transaction.test.ts [ probes/stage-zero/contracts/transaction.test.ts ]
+ FAIL  probes/stage-zero/contracts/validation.test.ts [ probes/stage-zero/contracts/validation.test.ts ]
+ FAIL  probes/stage-zero/contracts/versions.test.ts [ probes/stage-zero/contracts/versions.test.ts ]
+Error: Transform failed with 1 error:
+
+[31m[TSCONFIG_ERROR] [0mFailed to load tsconfig '../../../../../../../../private/tmp/b03-failures-diagnosis-2026-10-17/refs/bec34c2/apps/playground/tsconfig.json': Tsconfig not found
+
+  Plugin: vite:oxc
+  File: /private/tmp/b03-failures-diagnosis-2026-10-17/refs/bec34c2/apps/playground/probes/stage-zero/contract-location.test.ts
+ ❯ transformWithOxc ../../../../../../../Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/vite@8.3.0_@types+node@22.20.4_yaml@2.9.1/node_modules/vite/dist/node/chunks/node.js:7208:19
+ ❯ TransformPluginContext.transform ../../../../../../../Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/vite@8.3.0_@types+node@22.20.4_yaml@2.9.1/node_modules/vite/dist/node/chunks/node.js:7280:26
+ ❯ EnvironmentPluginContainer.transform ../../../../../../../Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/vite@8.3.0_@types+node@22.20.4_yaml@2.9.1/node_modules/vite/dist/node/chunks/node.js:8172:51
+ ❯ loadAndTransform ../../../../../../../Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/vite@8.3.0_@types+node@22.20.4_yaml@2.9.1/node_modules/vite/dist/node/chunks/node.js:19634:26
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/15]⎯
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/App.integration.test.ts > E16 文件读取期间新编辑保护 > 读取期间新打开表单编辑器也保持当前目录及编辑器
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ Object.apply src/App.integration.test.ts:46:17
+     44|  }});
+     45|  return diagStore.run(owner,()=>fn(...params));};
+     46|  return Reflect.apply(target,thisArg,args);
+       |                 ^
+     47|  }});}
+     48| const it=diagWrapRegistration(realIt) as typeof realIt;
+ ❯ src/App.integration.test.ts:2140:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/15]⎯
+
+
+ Test Files  15 failed | 1 passed (16)
+      Tests  1 failed | 54 passed (55)
+   Start at  08:48:03
+   Duration  59.61s (tests 66%, environment 23%, transform 6%, import 5%)
+
+undefined
+/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run --config /tmp/b03-failures-diagnosis-2026-10-17/refs/bec34c2/diag.vitest.mts
