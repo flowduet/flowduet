@@ -1,0 +1,9 @@
+
+ RUN  v5.0.1 /private/tmp/b03-failures-diagnosis-2026-10-17/refs/bec34c2/apps/playground
+
+
+ Test Files  16 passed (16)
+      Tests  297 passed (297)
+   Start at  08:52:50
+   Duration  65.42s (tests 49%, import 32%, environment 10%, transform 9%)
+

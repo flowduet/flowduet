@@ -1,0 +1,6 @@
+### Result
+{"browser":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36","body":["[object HTMLBodyElement]","[object HTMLBodyElement]"],"div":["[object HTMLDivElement]","[object HTMLDivElement]"],"svg":["[object SVGSVGElement]","[object SVGSVGElement]"],"window":"[object Window]","outerHTML":"<div><b>fixture</b></div>"}
+### Ran Playwright code
+```js
+await (async page => await page.evaluate(() => { const div=document.createElement("div");div.innerHTML="<b>fixture</b>";const svg=document.createElementNS("http://www.w3.org/2000/svg","svg");return {browser:navigator.userAgent,body:[document.body.toString(),Object.prototype.toString.call(document.body)],div:[div.toString(),Object.prototype.toString.call(div)],svg:[svg.toString(),Object.prototype.toString.call(svg)],window:window.toString(),outerHTML:div.outerHTML};}))(page);
+```

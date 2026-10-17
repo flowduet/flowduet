@@ -1,0 +1,22 @@
+[
+  {
+    "file": "apps/playground/src/App.integration.test.ts",
+    "unchanged": true,
+    "counts": {
+      "assertions": 227,
+      "inputs": 20,
+      "titles": 55,
+      "timeouts": 14
+    }
+  },
+  {
+    "file": "apps/playground/probes/stage-zero/location.test.ts",
+    "unchanged": true,
+    "counts": {
+      "assertions": 25,
+      "inputs": 1,
+      "titles": 10,
+      "timeouts": 0
+    }
+  }
+]

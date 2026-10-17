@@ -1,0 +1,44 @@
+
+ RUN  v5.0.1 /private/tmp/b03-failures-diagnosis-2026-10-17/pollution-harness
+
+ ❯ app.diag.test.ts (45 tests | 2 failed | 43 skipped) 1299ms
+   ❯ Playground 与 designer 的导出链路 (1)
+     × 插入抄送草稿后自动与手动导出均报错，配置收件人后自动恢复 XML 797ms
+   ❯ Playground 设计文档闭环（#71：保存 → 打开 → 继续编辑） (3)
+     × 新建草稿可保存并报告待修复项；配齐后下载文档，从文件打开继续编辑，双视图同一新模型 490ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  app.diag.test.ts > Playground 与 designer 的导出链路 > 插入抄送草稿后自动与手动导出均报错，配置收件人后自动恢复 XML
+AssertionError: expected null not to be null
+ ❯ app.diag.test.ts:149:32
+    147|         diagMark("after:L75");
+    148|         const ccMenuItem = diagQuery<HTMLElement>('[data-test="insert-…
+    149|         expect(ccMenuItem).not.toBeNull();
+       |                                ^
+    150|         ccMenuItem!.click();
+    151|         diagMark("before:L79");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  app.diag.test.ts > Playground 设计文档闭环（#71：保存 → 打开 → 继续编辑） > 新建草稿可保存并报告待修复项；配齐后下载文档，从文件打开继续编辑，双视图同一新模型
+TypeError: Cannot read properties of null (reading 'click')
+ ❯ app.diag.test.ts:278:63
+    276|         await flushPromises();
+    277|         diagMark("after:L182");
+    278|         diagQuery<HTMLElement>('[data-test="insert-kind-cc"]')!.click(…
+       |                                                               ^
+    279|         diagMark("before:L184");
+    280|         await flushPromises();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 43 skipped (45)
+   Start at  08:56:22
+   Duration  4.88s (import 38%, tests 28%, transform 25%, environment 9%)
+
+undefined
+/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run --config /tmp/b03-failures-diagnosis-2026-10-17/pollution-harness/vitest.config.mts app.diag.test.ts -t 插入抄送草稿后自动与手动导出|新建草稿可保存并报告待修复项
