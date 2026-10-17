@@ -1,0 +1,23 @@
+import ts from '/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/typescript/lib/typescript.js';
+import fs from 'node:fs';import {execFileSync} from 'node:child_process';
+const file='apps/playground/src/test-utils/browser-test-scope.test.ts';
+function audit(s) {
+ const sf=ts.createSourceFile(file,s,ts.ScriptTarget.Latest,true);const assertions=[],titles=[],timeouts=[];
+ function visit(n){
+  if(ts.isCallExpression(n)){
+   let b=n;while(ts.isCallExpression(b)||ts.isPropertyAccessExpression(b)||ts.isNonNullExpression(b))b=b.expression;
+   if(b.getText(sf)==='expect'&&!(ts.isPropertyAccessExpression(n.parent)||ts.isCallExpression(n.parent))) assertions.push(n.getText(sf).replace(/\s+/g,''));
+   if(n.arguments[0]&&ts.isStringLiteral(n.arguments[0])&&/^it/.test(n.expression.getText(sf))) titles.push(n.arguments[0].text);
+  }
+  if(ts.isPropertyAssignment(n)&&n.name.getText(sf)==='timeout')timeouts.push(n.initializer.getText(sf));
+  ts.forEachChild(n,visit);
+ }
+ visit(sf);return{assertions,titles,timeouts};
+}
+const before=audit(execFileSync('git',['show','3333e00:'+file],{encoding:'utf8'})),after=audit(fs.readFileSync(file,'utf8'));
+if(JSON.stringify(before.assertions)!==JSON.stringify(after.assertions.slice(0,before.assertions.length)))throw new Error('original assertions changed');
+if(JSON.stringify(before.timeouts)!==JSON.stringify(after.timeouts))throw new Error('timeouts changed');
+for(const f of ['apps/playground/src/App.integration.test.ts','apps/playground/probes/stage-zero/location.test.ts'])if(!fs.readFileSync(f).equals(execFileSync('git',['show','3333e00:'+f])))throw new Error('original target file changed');
+const helper='apps/playground/src/test-utils/browser-test-scope.ts';
+if(execFileSync('git',['show','3333e00:'+helper],{encoding:'utf8'}).trim()!==fs.readFileSync(helper,'utf8').split('/** 用例结束是同步失效点')[0].trim())throw new Error('original scope helper changed');
+console.log(JSON.stringify({base:'3333e00',originalHelperAssertionsPreserved:before.assertions.length,currentAssertions:after.assertions.length,originalTitlesPreserved:JSON.stringify(before.titles)===JSON.stringify(after.titles.slice(0,before.titles.length)),timeouts:after.timeouts,appAndLocationBytesUnchanged:true,originalScopeHelperUnchanged:true},null,2));

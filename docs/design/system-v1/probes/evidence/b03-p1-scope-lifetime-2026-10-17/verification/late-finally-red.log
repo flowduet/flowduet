@@ -1,0 +1,39 @@
+
+ RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground
+
+ ❯ src/test-utils/browser-test-scope.test.ts (7 tests | 1 failed | 6 skipped) 998ms
+   ❯ 浏览器测试作用域 (7)
+     × 用例结束后旧finally与新scope请求均不能污染后例 996ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/test-utils/browser-test-scope.test.ts > 浏览器测试作用域 > 用例结束后旧finally与新scope请求均不能污染后例
+AssertionError: expected undefined to deeply equal Error: 测试用例已结束，拒绝迟到续体
+
+- Expected:
+Error {
+  "message": "测试用例已结束，拒绝迟到续体",
+}
+
++ Received:
+undefined
+
+ ❯ src/test-utils/browser-test-scope.test.ts:241:26
+    239|       localStorage.setItem("B-lifetime", "保留B");
+    240|       release();
+    241|       expect(await late).toEqual(new Error("测试用例已结束，拒绝迟到续体"));
+       |                          ^
+    242|       await flushPromises();
+    243|       expect(b.element.isConnected).toBe(true);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 6 skipped (7)
+   Start at  12:16:58
+   Duration  5.35s (import 48%, transform 23%, tests 19%, environment 9%)
+
+undefined
+/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run src/test-utils/browser-test-scope.test.ts -t 用例结束后旧finally

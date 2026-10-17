@@ -1,0 +1,90 @@
+{
+  "base": "3333e00",
+  "baselineCount": 10,
+  "currentCount": 10,
+  "newErrors": [],
+  "baseline": [
+    [
+      "src/App.integration.test.ts",
+      "TS2345: Argument of type '(blob: Blob) => string' is not assignable to parameter of type '(obj: Blob | MediaSource) => string'."
+    ],
+    [
+      "src/App.integration.test.ts",
+      "TS2345: Argument of type '(blob: Blob) => string' is not assignable to parameter of type '(obj: Blob | MediaSource) => string'."
+    ],
+    [
+      "src/App.integration.test.ts",
+      "TS2345: Argument of type '(blob: Blob) => string' is not assignable to parameter of type '(obj: Blob | MediaSource) => string'."
+    ],
+    [
+      "src/App.integration.test.ts",
+      "TS2345: Argument of type '(blob: Blob) => string' is not assignable to parameter of type '(obj: Blob | MediaSource) => string'."
+    ],
+    [
+      "src/App.integration.test.ts",
+      "TS2683: 'this' implicitly has type 'any' because it does not have a type annotation."
+    ],
+    [
+      "src/App.integration.test.ts",
+      "TS2683: 'this' implicitly has type 'any' because it does not have a type annotation."
+    ],
+    [
+      "src/App.integration.test.ts",
+      "TS2339: Property 'checked' does not exist on type 'VueNode<Element>'."
+    ],
+    [
+      "src/App.test.ts",
+      "TS18048: 'wrapper' is possibly 'undefined'."
+    ],
+    [
+      "src/App.test.ts",
+      "TS2345: Argument of type '(blob: Blob) => string' is not assignable to parameter of type '(obj: Blob | MediaSource) => string'."
+    ],
+    [
+      "src/App.vue",
+      "TS2379: Argument of type '{ key: string | undefined; form: FormDefinition; }' is not assignable to parameter of type '{ readonly form: FormDefinition; } & VNodeProps & AllowedComponentProps & ComponentCustomProps & Record<...>' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties."
+    ]
+  ],
+  "current": [
+    [
+      "src/App.integration.test.ts",
+      "TS2345: Argument of type '(blob: Blob) => string' is not assignable to parameter of type '(obj: Blob | MediaSource) => string'."
+    ],
+    [
+      "src/App.integration.test.ts",
+      "TS2345: Argument of type '(blob: Blob) => string' is not assignable to parameter of type '(obj: Blob | MediaSource) => string'."
+    ],
+    [
+      "src/App.integration.test.ts",
+      "TS2345: Argument of type '(blob: Blob) => string' is not assignable to parameter of type '(obj: Blob | MediaSource) => string'."
+    ],
+    [
+      "src/App.integration.test.ts",
+      "TS2345: Argument of type '(blob: Blob) => string' is not assignable to parameter of type '(obj: Blob | MediaSource) => string'."
+    ],
+    [
+      "src/App.integration.test.ts",
+      "TS2683: 'this' implicitly has type 'any' because it does not have a type annotation."
+    ],
+    [
+      "src/App.integration.test.ts",
+      "TS2683: 'this' implicitly has type 'any' because it does not have a type annotation."
+    ],
+    [
+      "src/App.integration.test.ts",
+      "TS2339: Property 'checked' does not exist on type 'VueNode<Element>'."
+    ],
+    [
+      "src/App.test.ts",
+      "TS18048: 'wrapper' is possibly 'undefined'."
+    ],
+    [
+      "src/App.test.ts",
+      "TS2345: Argument of type '(blob: Blob) => string' is not assignable to parameter of type '(obj: Blob | MediaSource) => string'."
+    ],
+    [
+      "src/App.vue",
+      "TS2379: Argument of type '{ key: string | undefined; form: FormDefinition; }' is not assignable to parameter of type '{ readonly form: FormDefinition; } & VNodeProps & AllowedComponentProps & ComponentCustomProps & Record<...>' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties."
+    ]
+  ]
+}

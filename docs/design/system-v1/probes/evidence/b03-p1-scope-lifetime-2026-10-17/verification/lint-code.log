@@ -1,0 +1,8 @@
+
+/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground/src/test-utils/browser-test-scope.test.ts
+  273:9  error  'a' is never reassigned. Use 'const' instead  prefer-const
+  373:9  error  'a' is never reassigned. Use 'const' instead  prefer-const
+  374:9  error  'b' is never reassigned. Use 'const' instead  prefer-const
+
+✖ 3 problems (3 errors, 0 warnings)
+

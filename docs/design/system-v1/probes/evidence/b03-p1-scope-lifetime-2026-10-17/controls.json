@@ -1,0 +1,54 @@
+[
+  {
+    "name": "late-finally-red",
+    "command": [
+      "pnpm",
+      "--filter",
+      "@flowduet/playground",
+      "exec",
+      "vitest",
+      "run",
+      "src/test-utils/browser-test-scope.test.ts",
+      "-t",
+      "用例结束后旧finally"
+    ],
+    "exitCode": 1,
+    "result": "1 failed/6 filtered skip; temporary empty case lifecycle implementation; not final source",
+    "log": "verification/late-finally-red.log"
+  },
+  {
+    "name": "close-all-red",
+    "command": [
+      "pnpm",
+      "--filter",
+      "@flowduet/playground",
+      "exec",
+      "vitest",
+      "run",
+      "src/test-utils/browser-test-scope.test.ts",
+      "-t",
+      "用例关闭"
+    ],
+    "exitCode": 1,
+    "result": "1 failed/1 passed/7 filtered skip; temporary removal of per-scope catch; restored immediately",
+    "log": "verification/close-all-red.log"
+  },
+  {
+    "name": "real-timeout-control",
+    "command": [
+      "pnpm",
+      "--filter",
+      "@flowduet/playground",
+      "exec",
+      "vitest",
+      "run",
+      "--config",
+      "/tmp/b03-scope-lifetime-fix-2026-10-17/timeout-control/vitest.config.mts",
+      "-t",
+      "仍恢复真实组件"
+    ],
+    "exitCode": 1,
+    "result": "A expected default5000ms timeout; B passed; 6 filtered skip; controlled trace B connected/spy true throughout, not a green process",
+    "log": "real-timeout-control/result.log"
+  }
+]
