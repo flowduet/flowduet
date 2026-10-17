@@ -56,3 +56,37 @@ export function assertActiveTarget(target: MountedTarget): void {
   if (!guard) throw new Error("测试实例未登记");
   guard();
 }
+
+/** 用例结束是同步失效点，runner无需等待测试体的finally。 */
+export function createBrowserTestCase() {
+  let active = true;
+  const closers: (() => void)[] = [];
+  function assertActive(): void {
+    if (!active) throw new Error("测试用例已结束，拒绝迟到续体");
+  }
+  return {
+    assertActive,
+    openScope(unmount: () => void, cleanup: () => void) {
+      assertActive();
+      const scope = createBrowserTestScope();
+      closers.push(() => scope.close(unmount, cleanup));
+      return scope;
+    },
+    close(): void {
+      if (!active) return;
+      active = false;
+      const errors: unknown[] = [];
+      // 按安装的逆序恢复全局描述符；一个卸载失败也要关闭其余scope。
+      for (const close of closers.reverse()) {
+        try {
+          close();
+        } catch (error) {
+          errors.push(error);
+        }
+      }
+      closers.length = 0;
+      if (errors.length === 1) throw errors[0];
+      if (errors.length > 1) throw new AggregateError(errors, "测试用例清理失败");
+    },
+  };
+}
