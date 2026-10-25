@@ -26,6 +26,8 @@ import type {
 import { createEditorInputState, createEditorInstanceKey } from "./editor-input-state.js";
 import NumberDefaultEditor from "./NumberDefaultEditor.vue";
 import DateDefaultEditor from "./DateDefaultEditor.vue";
+import TextDefaultEditor from "./TextDefaultEditor.vue";
+import { prepareTextDefaults, restoreTextDefaults } from "./text-defaults.js";
 
 const props = defineProps<{
   /** 表单名（展示用） */
@@ -286,6 +288,7 @@ function notifyDraftChange(): void {
 onBeforeMount(() => {
   ensureFormCreateInstalled();
   if (mode === "retained") {
+    FcDesigner.component("flowduetTextDefault", TextDefaultEditor);
     FcDesigner.component("flowduetNumberDefault", NumberDefaultEditor);
     FcDesigner.component("flowduetDateDefault", DateDefaultEditor);
   }
@@ -294,7 +297,9 @@ onBeforeMount(() => {
 onMounted(() => {
   const designer = designerRef.value;
   if (designer === null) return;
-  designer.setRule(prepareCheckboxDefaults(props.rules) as never);
+  const rules = prepareCheckboxDefaults(props.rules);
+  if (mode === "retained") prepareTextDefaults(rules);
+  designer.setRule(rules as never);
   designer.setOption(parseFormOptions(props.options) as never);
   void nextTick(() => {
     ready = true;
@@ -333,6 +338,7 @@ function captureContent(): FormDesignerCaptureResult {
     return { status: "blocked", blockers: [{ code: "not-ready", message: "编辑器尚未准备好" }] };
   try {
     const rules = restoreCheckboxDefaults(designer.getJson());
+    restoreTextDefaults(rules);
     const content = {
       rules: FcDesigner.designerForm.toJson(rules),
       options: designer.getOptionsJson(),

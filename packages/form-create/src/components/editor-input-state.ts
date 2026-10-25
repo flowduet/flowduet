@@ -1,4 +1,5 @@
 import { shallowReactive, watch } from "vue";
+import { TEXT_DEFAULT_STATE } from "./text-defaults.js";
 import type { FormDesignerBlocker } from "../editor-state.js";
 
 type Source = {
@@ -11,7 +12,11 @@ type Source = {
 type Publish = (value: unknown) => void;
 export type DefaultInputBinding = ReturnType<typeof createBinding>;
 
-function parseRaw(raw: string, kind: "number" | "date"): { valid: boolean; value?: unknown } {
+function parseRaw(
+  raw: string,
+  kind: "number" | "date" | "text",
+): { valid: boolean; value?: unknown } {
+  if (kind === "text") return { valid: true, value: raw };
   if (raw === "") return { valid: true, value: undefined };
   if (kind === "number") {
     if (!/^[+-]?(?:\d+|\d+\.\d+|\.\d+)(?:[eE][+-]?\d+)?$/.test(raw)) return { valid: false };
@@ -34,9 +39,9 @@ function equivalent(a: unknown, b: unknown): boolean {
   return Object.is(a, b) || (a === undefined && (b === "" || b === null));
 }
 function createBinding(source: Source, notify: (edited: boolean) => void) {
-  const kind = source.type === "inputNumber" ? "number" : "date";
+  const kind = source.type === "input" ? "text" : source.type === "inputNumber" ? "number" : "date";
   const supportsInput = () =>
-    kind === "number" ||
+    kind !== "date" ||
     ((!source.props?.type || source.props.type === "date") &&
       (!source.props?.valueFormat || source.props.valueFormat === "YYYY-MM-DD"));
   let committed = source.value,
@@ -46,11 +51,37 @@ function createBinding(source: Source, notify: (edited: boolean) => void) {
     dirty = false,
     conflict = false;
   let inputVersion = 0;
+  const matches = (a: unknown, b: unknown) =>
+    kind === "text" && a !== undefined
+      ? Object.is(a, b) ||
+        (a === "" && b === undefined && source.props?.[TEXT_DEFAULT_STATE] === true)
+      : equivalent(a, b);
   const state = shallowReactive({
     get field() {
       return String(source.field ?? "");
     },
     kind,
+    enabled:
+      kind !== "text" ||
+      (source.props && Object.hasOwn(source.props, TEXT_DEFAULT_STATE)
+        ? source.props[TEXT_DEFAULT_STATE] === true
+        : Object.hasOwn(source, "value") && source.value !== undefined),
+    setEnabled(enabled: boolean, publish: Publish) {
+      if (!alive || kind !== "text") return;
+      const version = ++inputVersion;
+      state.enabled = enabled;
+      state.raw = "";
+      dirty = true;
+      waiting = true;
+      expected = enabled ? "" : undefined;
+      notify(true);
+      if (!alive || version !== inputVersion) return;
+      source.props ??= {};
+      source.props[TEXT_DEFAULT_STATE] = enabled;
+      if (enabled) source.value = "";
+      else delete source.value;
+      publish(expected);
+    },
     get supported() {
       return supportsInput();
     },
@@ -63,7 +94,7 @@ function createBinding(source: Source, notify: (edited: boolean) => void) {
       notify(false);
     },
     input(raw: string, publish: Publish) {
-      if (!alive) return;
+      if (!alive || (kind === "text" && !state.enabled)) return;
       const version = ++inputVersion;
       state.raw = raw;
       dirty = true;
@@ -72,15 +103,21 @@ function createBinding(source: Source, notify: (edited: boolean) => void) {
       if (waiting) expected = parsed.value;
       // draftChange订阅者可同步捕获；包括业务值相等的输入，也须先关闭回显前的捕获窗口。
       notify(true);
-      if (alive && version === inputVersion && waiting) publish(parsed.value);
+      if (alive && version === inputVersion && waiting) {
+        if (kind === "text") {
+          source.props ??= {};
+          source.props[TEXT_DEFAULT_STATE] = state.enabled;
+        }
+        publish(parsed.value);
+      }
     },
     echo(value: unknown) {
       if (!alive) return;
-      if (waiting && equivalent(expected, value)) {
+      if (waiting && matches(expected, value)) {
         committed = expected;
         waiting = false;
         notify(false);
-      } else if (!equivalent(committed, value) && !Object.is(committed, value)) {
+      } else if (!matches(committed, value) && !Object.is(committed, value)) {
         if (dirty) conflict = true;
         else {
           committed = value;
@@ -119,7 +156,10 @@ function createBinding(source: Source, notify: (edited: boolean) => void) {
         dirty &&
         state.supported &&
         parseRaw(state.raw, kind).valid &&
-        !equivalent(parseRaw(state.raw, kind).value, source.value)
+        !matches(
+          kind === "text" && !state.enabled ? undefined : parseRaw(state.raw, kind).value,
+          source.value,
+        )
       )
         return {
           code: "pending-update",

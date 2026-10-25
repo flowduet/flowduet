@@ -145,7 +145,7 @@ export const DESIGNER_CONFIG: Config = {
   checkDrag: ({ menu }) => menu.name !== "fcRow",
 };
 
-/** 每实例扩展仅替换数值/日期默认值；其余八类与布局配置沿用legacy。 */
+/** 每实例扩展替换数值/日期与文字默认值；其余字段与布局配置沿用legacy。 */
 export function retainedDesignerConfig(
   bind: (
     source: Parameters<NonNullable<NonNullable<Config["componentRule"]>["default"]>>[0],
@@ -156,6 +156,15 @@ export function retainedDesignerConfig(
     ...DESIGNER_CONFIG,
     componentRule: {
       default: (rule, arg) => {
+        if (rule.type === "input")
+          return [
+            {
+              type: "flowduetTextDefault",
+              field: "formCreateValue",
+              title: "默认值",
+              props: { binding: bind(rule), multiline: rule.props?.type === "textarea" },
+            },
+          ];
         if (rule.type === "inputNumber" || rule.type === "datePicker")
           return [
             {

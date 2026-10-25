@@ -10,6 +10,8 @@ import { formStateFixture } from "../form-state/fixtures";
 import { runLocalShortcut } from "../form-state/input-boundary";
 import { stateSignature } from "../contracts/candidate";
 import type { DraftValue, EditorAdapter } from "../contracts/types";
+const textFixture = ref(false);
+const savedJson = ref("");
 const layout = ref<"top" | "grid">("top"),
   generation = ref(0),
   active = ref(0),
@@ -18,6 +20,33 @@ const instance = shallowRef(make());
 function make() {
   const fixture = formStateFixture(`P1-${generation.value}`, { layout: layout.value });
   const c = fixture.controller;
+  if (textFixture.value) {
+    for (const target of fixture.forms) {
+      const form = c.session.current!.forms.find((form) => form.id === target.ref.id)!;
+      const rules = JSON.parse(form.rules);
+      const fields = layout.value === "grid" ? rules[0].children[0].children : rules;
+      fields.push(
+        {
+          type: "input",
+          field: `${target.ref.id}_unset`,
+          title: "未设置文字",
+          props: { __flowduetTextDefault: true },
+        },
+        {
+          type: "input",
+          field: `${target.ref.id}_empty`,
+          title: "装载显式空串",
+          value: "",
+          props: { __flowduetTextDefault: false, type: "textarea" },
+        },
+      );
+      c.session.updateFormContent(form.id, JSON.stringify(rules), form.options);
+    }
+  }
+  fixture.context.sync();
+  fixture.forms = fixture.forms.map((target) =>
+    fixture.context.target(target.ref.id, "form", "form-content"),
+  );
   const contents = fixture.forms.map((target) => {
     const result = c.openEditor(target);
     if (!result.ok || result.value.kind !== "form-content") throw new Error("无法打开夹具");
@@ -99,11 +128,56 @@ function integrity() {
 async function requestSave() {
   await nextTick();
   calls.value = [];
-  const saved = await instance.value.controller.save(async () => {
+  const saved = await instance.value.controller.save(async (snapshot) => {
+    savedJson.value = snapshot.json;
     persistCalls.value++;
   });
   result.value = { saved, ...integrity() };
   resultSequence.value++;
+}
+let reopenRequest = 0;
+async function reopenSaved() {
+  if (!savedJson.value) return;
+  const previous = instance.value,
+    request = ++reopenRequest;
+  const next = formStateFixture(`P2-reopen-${generation.value}`);
+  try {
+    await next.controller.session.open(savedJson.value);
+    next.context.sync();
+    const forms = next.controller.session.current!.forms.map((form) =>
+      next.context.target(form.id, "form", "form-content"),
+    );
+    const contents = forms.map((target) => {
+      const opened = next.controller.openEditor(target);
+      if (!opened.ok || opened.value.kind !== "form-content") throw new Error("重开失败");
+      return opened.value;
+    });
+    if (request !== reopenRequest || instance.value !== previous) {
+      next.controller.dispose();
+      return;
+    }
+    // 公开打开成功后显式替换实验实例；不把销毁称作K隐藏或R保真策略。
+    previous.controller.dispose();
+    liveBindings.length = 0;
+    delete vms[0];
+    delete vms[1];
+    states.value = [null, null];
+    generation.value++;
+    instance.value = {
+      ...next,
+      forms,
+      contents,
+      signature: stateSignature(next.controller.session),
+    };
+  } catch (error) {
+    next.controller.dispose();
+    if (request === reopenRequest && instance.value === previous)
+      result.value = { action: "reopen-failed", message: String(error) };
+    return;
+  }
+  active.value = 0;
+  phase.value = true;
+  result.value = { action: "reopened-saved-document" };
 }
 function observe() {
   result.value = {
@@ -114,6 +188,7 @@ function observe() {
   resultSequence.value++;
 }
 function reload() {
+  reopenRequest++;
   instance.value.controller.dispose();
   liveBindings.length = 0;
   delete vms[0];
@@ -125,18 +200,29 @@ function reload() {
   phase.value = true;
   result.value = null;
 }
-onBeforeUnmount(() => instance.value.controller.dispose());
+onBeforeUnmount(() => {
+  reopenRequest++;
+  instance.value.controller.dispose();
+});
 </script>
 <template>
   <section
     data-test="form-repair-probe"
     @keydown.capture="runLocalShortcut($event, { observe, collect })"
   >
-    <h2>B03 P1 · retained 数值/日期真实组件（K保持挂载）</h2>
+    <h2>B03 P1/P2 · retained 数值/日期/文字真实组件（K保持挂载）</h2>
     <select v-model="layout" data-test="repair-layout">
       <option>top</option>
       <option>grid</option>
     </select>
+    <label
+      ><input
+        v-model="textFixture"
+        type="checkbox"
+        data-test="repair-text-fixture"
+      />文字存在性夹具（重装生效）</label
+    >
+    <button data-test="repair-reopen" @click="reopenSaved">显式重开已保存文档</button>
     <button data-test="repair-reload" @click="reload">明确放弃并重装夹具</button>
     <button
       v-for="i in [0, 1]"
