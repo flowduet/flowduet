@@ -62,6 +62,8 @@
 
 ## 审阅与后续
 
-独立静态审阅将在固定整合提交上执行，其结果另行附录。当前本地 tarball 位于工作区 `output/p2-integration/`，按[包哈希](system-v1/probes/evidence/p2-integration-2026-10-25/packages.json)定位；原消费源码包中 file 依赖为本机验收路径，复现时须改为实际 tarball 绝对路径，不能当作可直接复制的安装说明。
+独立静态审阅已覆盖 `9a0d6bd..bfd7c13`，Standards / Spec 均无确定新增问题，未亲跑测试。[审查记录与主执行方裁定](system-v1/probes/evidence/p2-integration-2026-10-25/review.md)保留范围和未裁定事项；其后的补充只涉及来源证明与收尾文档，不改变工程文件。当前本地 tarball 位于工作区 `output/p2-integration/`，按[包哈希](system-v1/probes/evidence/p2-integration-2026-10-25/packages.json)定位；原消费源码包中 file 依赖为本机验收路径，复现时须改为实际 tarball 绝对路径，不能当作可直接复制的安装说明。
 
 后续由维护者决定是否推送并开 PR；准确 PR head 的 Node 22/24 CI 全绿并审阅后，才由维护者 squash 合入 develop。推送、发布与联系试用者均未授权，没有后台自动推进。
+
+本地 PR 正文已准备为[审阅草稿](2026-10-25-stage-zero-p2-pr-draft.md)，没有创建远端 PR。三包安装路径均在独立消费目录内，实际 dist 与 tarball 和构建输出逐字一致，详见[来源读回](system-v1/probes/evidence/p2-integration-2026-10-25/consumer-provenance.json)。本轮浏览器已关闭、5427 服务停止；保留本地分支与工作区，没有后台实验或自动跟进任务。
