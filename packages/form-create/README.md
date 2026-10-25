@@ -144,7 +144,7 @@ const xml = await exportDeployXml(session.current!.model, session.current!.forms
 
 Apache-2.0（见 [LICENSE](./LICENSE)）
 
-### 显式保留数值/日期输入（retained）
+### 显式保留文字、数值与日期输入（retained）
 
 `FormDesigner`、`FormManager` 可传 `editingMode="retained"`；缺省和显式 `legacy` 保持原有导出、保存、取消与 Dialog 行为。模式在挂载时固定，活动期间修改会报告 `unsupported-mode`；更换模式或文档前须由宿主确认放弃/替换，再创建新实例。相同字符串内容的文档替换也须由宿主管理生命期，组件不能仅凭两个 JSON 字符串识别文档身份。
 
@@ -160,4 +160,11 @@ retained 的 `exportContent()`、工具栏保存和 `FormManager#commitPendingEd
 
 `FormManager#readEditingState()` 查询/`editing-state-change` 转发当前子状态；活动未就绪或关闭收尾时为不可捕获的 `not-ready` 快照，完全没有编辑器才为 null。未知的同 ID 表单定义替换会保留当前输入并阻断提交，由宿主确认处理后重开。每次打开使用独立会话 key，旧状态、保存、取消、确认和关闭动画回调不能影响同 ID 重开的实例。查询不改编辑版本、不发 `draft-change`。
 
-此能力仅覆盖本轮数值/日期及对应关闭保护。文字显式空串、非重建拖拽取消、OS 输入法与其他未验证项仍需后续验收，B03 整体尚未通过；默认 legacy 不获得 retained 保真承诺。
+本地整合候选增加文字默认值的存在性区分：开启“设置默认值”后清空文字保留 `value: ""`，关闭时移除 `value`；单行、多行与字段生命期沿用同步捕获保护，编辑标记不写入交付文档。缺省 legacy 行为不变。此段描述本分支源码能力，不代表已发布 npm 版本。
+
+非重建拖拽取消、完整 OS 输入法及天然异常矩阵仍未完成，B03 整体未通过；默认 legacy 不获得 retained 保真承诺。供应商实验已冻结，限定交付范围与当前结果见[本地整合报告](../../docs/design/2026-10-25-stage-zero-p2-integration-result.md)。当前 Playground 的 FormManager 未显式启用 retained，因此不能直接用默认 Playground 宣称展示了这项输入保留修复。
+
+
+### 当前宿主集成限制
+
+本地固定组合的包消费核对确认：当前上游设计器挂载会替换宿主的 `window.onbeforeunload` 与 `document.body.ondrop`，卸载后未恢复。P2 文字修复未改变此行为；存在这些处理器的宿主不能将本候选视为已完成安全嵌入验收。当前结果及后续处置见[本地整合报告](../../docs/design/2026-10-25-stage-zero-p2-integration-result.md)。

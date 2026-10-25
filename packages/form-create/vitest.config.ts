@@ -9,7 +9,8 @@ import { fileURLToPath } from "node:url";
  */
 export default defineConfig({
   plugins: [vue()],
-  test: { environment: "happy-dom" },
+  // 重组件测试按文件串行执行，不改变原文件隔离与用例时限。
+  test: { environment: "happy-dom", fileParallelism: false },
   resolve: {
     alias: {
       "@flowduet/core": fileURLToPath(new URL("../core/src/index.ts", import.meta.url)),

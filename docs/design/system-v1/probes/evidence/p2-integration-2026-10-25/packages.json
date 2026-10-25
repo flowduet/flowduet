@@ -1,0 +1,20 @@
+[
+  {
+    "name": "@flowduet/core",
+    "version": "0.3.0",
+    "file": "flowduet-core-0.3.0.tgz",
+    "sha256": "c2fcc9b7769682328c67cef4c6e0211ebb55dd75683e526bcb946581d7cefad2"
+  },
+  {
+    "name": "@flowduet/designer",
+    "version": "0.1.0",
+    "file": "flowduet-designer-0.1.0.tgz",
+    "sha256": "2e1108ac5ff885155a3f535df6fcdfb0c99c8bb417351f9b8544f70d4ad39d31"
+  },
+  {
+    "name": "@flowduet/form-create",
+    "version": "0.1.0",
+    "file": "flowduet-form-create-0.1.0.tgz",
+    "sha256": "2f539c69c2aee8c4cb0bf21a610af4a5449c7bdfb38a14549f8fe04664103c2b"
+  }
+]
