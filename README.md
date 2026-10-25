@@ -9,6 +9,10 @@
 
 🚧 **预发布阶段。** `@flowduet/core`、`@flowduet/designer` 已发布 0.x 版本；`@flowduet/form-create`（表单集成）随迭代三交付首个公开版本。当前进展与计划见 [ROADMAP](docs/ROADMAP.md)，发版流程见 [贡献指南](CONTRIBUTING.md)。
 
+## 本地候选与当前交付范围
+
+阶段零已停止追加供应商实验，完整工作台和设计系统暂缓。当前优先整理已有修复，沿用现有组件与 Playground 获取真实使用反馈。P2 文字默认值修复位于本地整合候选，尚未推送或发布；具体来源、验证及剩余风险见[本地整合报告](docs/design/2026-10-25-stage-zero-p2-integration-result.md)。默认 Playground 仍使用 legacy 表单编辑模式，不代表 retained 保真能力已经启用。
+
 ## 核心理念
 
 - **一棵模型树，两种视图**：BPMN XML（moddle 模型树）是唯一事实源。钉钉式纵向审批视图与 Vue-Flow 画布只是它的两种投影，任何一种视图导出的都是合法可执行的 BPMN 2.0 XML。
