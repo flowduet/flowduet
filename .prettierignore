@@ -32,3 +32,6 @@ docs/design/reviews/evidence/2026-10-14-branch-structure-repair/
 
 # 阶段零原始截图、浏览器快照与测量证据保留字节。
 docs/design/system-v1/probes/evidence/
+
+# vendored 第三方技能（上游 vuejs-ai/skills）保持与上游逐字节一致，便于升级时逐行比对，不参与仓库格式化。
+.agents/
