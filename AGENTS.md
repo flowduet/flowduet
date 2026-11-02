@@ -85,6 +85,8 @@ npm 发版的 git tag 统一使用 changesets 原生格式 `<包名>@<版本>`(�
 
 本项目按 Matt 的工作流分流和交付：[工作流](docs/agents/workflow.md)。调用技能或插件前核对[技能允许范围与冲突处理](docs/agents/skill-policy.md)；专业技能在已选阶段内提供方法，其他流程技能不得自行替换阶段、重复访谈或扩大授权。Superpowers 的本机处置、技能清单检查及剩余验收见[隔离验证记录](docs/agents/workflow-isolation.md)。
 
+范围扩大或追加投入时，按[可视化决策约定](docs/agents/workflow.md#范围与投入决策)展示取舍并取得批准；已授权范围内的常规执行持续推进，不重复确认。
+
 ### Issue tracker
 
 issue 统一记录在 GitHub Issues（flowduet/flowduet），通过 `gh` CLI 读写。`/implement` 相关的两条硬规则（详版 `docs/agents/issue-tracker.md`）：
