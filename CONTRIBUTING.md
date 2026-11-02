@@ -2,7 +2,7 @@
 
 ## Agent 开发流程
 
-使用 Agent 开发时，按 [项目工作流](docs/agents/workflow.md) 选择入口和完成门槛，并遵守 [技能允许范围与冲突处理](docs/agents/skill-policy.md)。本项目由 Matt 的流程组织开发，专业技能提供对应阶段的方法；项目配置仅禁用 FlowDuet 的 Superpowers，配置实测与桌面新聊天验收边界见 [隔离验证记录](docs/agents/workflow-isolation.md)。现有分支、PR、CI 和维护者审阅要求继续适用。
+使用 Agent 开发时，按 [项目工作流](docs/agents/workflow.md) 选择入口和完成门槛，并遵守 [技能允许范围与冲突处理](docs/agents/skill-policy.md)。本项目由 Matt 的流程组织开发，专业技能提供对应阶段的方法；项目不再以配置文件禁用竞争流程，Superpowers 的处置与桌面新聊天验收边界见 [隔离验证记录](docs/agents/workflow-isolation.md)。现有分支、PR、CI 和维护者审阅要求继续适用。
 
 ## 分支与提交
 
