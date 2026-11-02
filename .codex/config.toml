@@ -1,3 +1,0 @@
-# 仅在 FlowDuet 禁用竞争开发流程；其他项目沿用各自配置。
-[plugins."superpowers@openai-curated"]
-enabled = false
