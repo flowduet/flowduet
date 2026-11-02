@@ -2,7 +2,7 @@
 
 - 状态：**成稿**（2026-09-20；prototype 结论 + grilling R1/R5 折入，拆票依据）
 - 原型依据：分支 `prototype/iter2-vertical-layout-mi`（primary source，含反例全集与运行时探针）
-- 域术语：CONTEXT.md「审批节点」「会签」「或签」「依次审批」
+- 域术语：GLOSSARY.md「审批节点」「会签」「或签」「依次审批」
 
 ## Problem Statement
 

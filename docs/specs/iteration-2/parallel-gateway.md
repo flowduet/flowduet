@@ -2,7 +2,7 @@
 
 - 状态：**成稿**（2026-09-20；grilling R2 + prototype 良构检查结论折入，拆票依据）
 - 原型依据：分支 `prototype/iter2-vertical-layout-mi`（deriveBlockTree 良构检查已验证）
-- 域术语：CONTEXT.md「并行分支」「条件分支」
+- 域术语：GLOSSARY.md「并行分支」「条件分支」
 
 ## Problem Statement
 

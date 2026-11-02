@@ -5,7 +5,7 @@
 1. **语言：** 使用中文回复。
 2. **注释：** 代码注释使用中文。注释应聚焦于解释逻辑意图、业务背景及复杂原因，避免对显而易见的代码进行冗余注释。
 3. **风格：** 解释简洁直接，结论先行，减少无意义的客套铺垫。
-4. **提问方式：** 使用 grill-me / grill-with-docs / grilling 等质询类技能时，采用逐个提问的方式——每次只抛出一个问题，并附 2~4 个候选方向供我选择，不要一次性罗列大量问题。
+4. **提问方式：** 使用 grill-me / grill-with-docs / grilling 等质询类技能时，优先用内置问题卡片，每次一个问题、2~4 个选项并允许自由回答。异步卡片发出后等待回答或明确取消；工具单次等待结束不代表用户已作答，不自动选择或结束质询。工具不可用时再用普通文字提问。
 
 ## 协助方式
 
@@ -39,7 +39,7 @@
 
 ## Git 分支施工规范
 
-实施任何 issue：开工第一步从最新 `develop` 切出白名单分支（`feat/<issue 号>-<短横线摘要>` / `fix/<issue 号>-<摘要>`；非票变更用 `docs/` `chore/` `refactor/<摘要>`），实现提交**全部落在该分支，不直接提交到 `develop` 或 `main`**。完成后推送分支并按 PR 模板开 PR（squash 合入 `develop`），CI（Node 22/24 双矩阵）绿后才可合并，合并由维护者审阅执行。分支命名白名单与规则集见 `CONTRIBUTING.md`「分支体系与命名」；本地 pre-commit（husky）会在 `develop`/`main` 上直接提交时拦截。
+实施任何 issue：开工第一步从最新 `develop` 切出白名单分支（`feat/<issue 号>-<短横线摘要>` / `fix/<issue 号>-<摘要>`；非票变更用 `docs/` `chore/` `refactor/<摘要>`），实现提交**全部落在该分支，不直接提交到 `develop` 或 `main`**。完成后由用户决定是否推送和开 PR，逐项取得授权后按 PR 模板提交（squash 合入 `develop`）；CI（Node 22/24 双矩阵）绿后，合并由维护者审阅执行。分支命名白名单与规则集见 `CONTRIBUTING.md`「分支体系与命名」；本地 pre-commit（husky）会在 `develop`/`main` 上直接提交时拦截。
 
 ## Git 提交规范
 
@@ -79,13 +79,17 @@ npm 发版的 git tag 统一使用 changesets 原生格式 `<包名>@<版本>`(�
 
 ## Agent skills
 
-**开工前置阅读（硬规则，不可跳过）**：实施任何工作前先读 `docs/agents/` 全部文档、根目录 `CONTEXT.md` 与领域相关的 `docs/adr/*`。下面的摘要不替代详版文档。
+**开工前置阅读（硬规则，不可跳过）**：实施任何工作前先读 `docs/agents/` 全部文档、根目录 `GLOSSARY.md` 与领域相关的 `docs/adr/*`。下面的摘要不替代详版文档。
+
+### Development workflow
+
+本项目按 Matt 的工作流分流和交付：[工作流](docs/agents/workflow.md)。调用技能或插件前核对[技能允许范围与冲突处理](docs/agents/skill-policy.md)；专业技能在已选阶段内提供方法，其他流程技能不得自行替换阶段、重复访谈或扩大授权。Superpowers 的本机处置、技能清单检查及剩余验收见[隔离验证记录](docs/agents/workflow-isolation.md)。
 
 ### Issue tracker
 
 issue 统一记录在 GitHub Issues（flowduet/flowduet），通过 `gh` CLI 读写。`/implement` 相关的两条硬规则（详版 `docs/agents/issue-tracker.md`）：
 
-- **开工第一步**：从最新 `develop` 切 `feat/<issue 号>-<kebab 摘要>` 独立分支，实现提交全部落在该分支，绝不直接提交 `develop`；
+- **开工第一步**：从最新 `develop` 按变更类型切白名单独立分支，命名见 `CONTRIBUTING.md`，实现提交全部落在该分支，绝不直接提交 `develop`；
 - **收工（wrap-up）**：在对应 issue 留实施评论——本地提交哈希、构建内容、验证证据、边界说明；**不关票**（关票属于合并流程）；**不推送分支**——推送、开 PR、合并由用户决定，逐项先问。
 
 ### Triage labels
@@ -94,7 +98,7 @@ Triage 标签沿用五个规范角色名（needs-triage / needs-info / ready-for
 
 ### Domain docs
 
-单上下文布局：根目录 `CONTEXT.md` + `docs/adr/` 决策记录。详见 `docs/agents/domain.md`。
+单上下文布局：根目录 `GLOSSARY.md` + `docs/adr/` 决策记录。详见 `docs/agents/domain.md`。
 
 ### Code review
 

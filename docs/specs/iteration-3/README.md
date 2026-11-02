@@ -4,7 +4,7 @@
 - 日期：2026-09-24。
 - 时间盒：实施开始起两周，以相对周安排；本规格不指定日历开工日。
 - 依据：[ROADMAP](../../ROADMAP.md)、[ADR-0002](../../adr/0002-bpmn-xml-source-of-truth.md)、[ADR-0006](../../adr/0006-formcreate-integration.md)、[ADR-0009](../../adr/0009-design-document-and-form-binding.md)。
-- 术语：[CONTEXT.md](../../../CONTEXT.md)；可核验出口：[ACCEPTANCE.md](./ACCEPTANCE.md)。
+- 术语：[GLOSSARY.md](../../../GLOSSARY.md)；可核验出口：[ACCEPTANCE.md](./ACCEPTANCE.md)。
 
 ## 目标与成功标准
 

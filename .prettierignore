@@ -1,7 +1,7 @@
 pnpm-lock.yaml
 README.md
 AGENTS.md
-CONTEXT.md
+GLOSSARY.md
 **/dist/
 **/coverage/
 **/node_modules/
