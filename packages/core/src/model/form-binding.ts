@@ -2,7 +2,7 @@ import type { ModdleElement } from "bpmn-moddle";
 import type { BpmnModel } from "./bpmn-model.js";
 
 /**
- * 有效表单解析（ADR-0009 决策 4，CONTEXT.md 术语「有效表单」）：
+ * 有效表单解析（ADR-0009 决策 4，GLOSSARY.md 术语「有效表单」）：
  * 节点表单覆盖优先，否则使用流程默认表单；两者均未指定为合法无表单状态。
  * 已指定的 key 是否真的有定义，由持有表单目录的调用方（designer 展示 /
  * form-create 引用诊断）核对——内核只依据 XML 事实源回答「谁生效」。
@@ -15,7 +15,7 @@ export interface EffectiveFormRef {
 }
 
 /**
- * 审批节点判定（CONTEXT.md 术语「审批节点」）：单签与三种多人形态统一落在
+ * 审批节点判定（GLOSSARY.md 术语「审批节点」）：单签与三种多人形态统一落在
  * bpmn:UserTask（多人经多实例特征区分，表单语义同构）。网关、抄送、起止
  * 事件都不是审批节点——不参与默认继承，也不提供表单配置入口。
  * 默认继承、目录诊断、宿主遍历共用本谓词，口径单点维护。

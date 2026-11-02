@@ -62,7 +62,7 @@ export interface CcTaskSpec extends NodeSpec {
 /** addTask 的建模参数（用户任务与抄送任务的并集） */
 export type TaskSpec = UserTaskSpec | CcTaskSpec;
 
-/** 多实例审批的完成方式三档（CONTEXT.md：会签 / 或签 / 依次审批） */
+/** 多实例审批的完成方式三档（GLOSSARY.md：会签 / 或签 / 依次审批） */
 export type ApprovalMode = "all" | "any" | "sequential";
 
 /** 完成方式三档全集（测试与工具枚举用） */
@@ -350,7 +350,7 @@ export class BpmnModel {
   }
 
   /**
-   * 多实例审批任务（会签/或签/依次，CONTEXT.md 三档术语）。
+   * 多实例审批任务（会签/或签/依次，GLOSSARY.md 三档术语）。
    * 三档完成条件内核固化（依次档语义上无完成条件）；per-instance 指派用
    * ${元素变量} 表达式，集合用裸变量名在运行时注入。
    * XML 形态经 Flowable 6.8 部署 + 启动 + 逐人 assignee 实测

@@ -2,7 +2,7 @@
 
 - 状态：**成稿**（2026-09-20；prototype 结论 A + grilling R4/R5 折入，拆票依据）
 - 原型依据：分支 `prototype/iter2-vertical-layout-mi`（deriveBlockTree / verticalDiLayout / demo 观感验收）
-- 域术语：CONTEXT.md「钉钉式视图」「投影」「审批节点」节全部术语
+- 域术语：GLOSSARY.md「钉钉式视图」「投影」「审批节点」节全部术语
 - 上游约束：ADR-0003（双视图架构）、ADR-0004（钉钉式边界）
 
 ## Problem Statement
