@@ -95,3 +95,7 @@ Triage 标签沿用五个规范角色名（needs-triage / needs-info / ready-for
 ### Domain docs
 
 单上下文布局：根目录 `CONTEXT.md` + `docs/adr/` 决策记录。详见 `docs/agents/domain.md`。
+
+### Code review
+
+审查应将人的注意力留给风险和判断，同时避免把审阅时间转移为后续返工。实施收尾、发起审查或交付证据前，阅读 [代码审查约定](docs/agents/code-review.md)；委派审查时须在提示中注明先读该文件。本约定不替代既有的 CI、PR、维护者审阅和授权要求。
