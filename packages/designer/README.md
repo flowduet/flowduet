@@ -102,6 +102,8 @@ function useLegacyAppearance(): void {
 
 跟随宿主只读取宿主当前 EP 主色、中性色、字体与圆角，为抽屉自有卡片和原生选择器派生 `--fd-*` 角色，**不写入任何 `--el-*` 变量（含实例范围）**。品牌预设只在所选抽屉内写入局部 EP 变量，不影响画布、节点卡片、流程默认表单条、其他实例或无关宿主控件。抽屉的非模态、覆盖层、节点切换与提交行为保持既有合同。
 
+宿主颜色支持浏览器可解析的 CSS 颜色格式，包括短十六进制、命名色、HSL 与 OKLCH；透明角色按所属表面合成后计算派生颜色，非法颜色仍使用既有默认值。
+
 运行中修改配色、主题、密度以及启用／停用都保留未提交输入、焦点和输入法组合，不自动确定／取消，也不修改模型或 BPMN XML。更新时请替换整个 `appearance` 对象引用，不依赖对原对象字段的深度变更侦测。JavaScript 传入非法对象或枚举时会整份拒绝：已有合法配置则保持上次有效呈现，首次非法则保持旧路径，并通过 `console.warn` 报告具体字段和原因。合法停用与非法回退是两条不同路径。
 
 `@flowduet/designer` 包根同时导出 `ComponentAppearance`、`ResolvedComponentAppearance` 及其枚举类型，以及供其他 FlowDuet 组件复用的 `resolveComponentAppearance(value, previous?)`。后者补全合法配置；`previous` 传入当前有效结果时用于非法回退，合法省略返回 `undefined`，调用方应在合法停用后清空自己的 `previous`，避免后续非法输入复活旧主题。

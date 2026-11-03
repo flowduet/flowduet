@@ -38,7 +38,7 @@
 
 [矩阵脚本只读副本](evidence/103-property-drawer/matrix.mjs.txt)与[行为脚本只读副本](evidence/103-property-drawer/behavior.mjs.txt)记录实际操作和断言。副本用 `.txt` 保存，不是新增仓库测试框架或内部产品 API；复测时按本机驱动与 Chromium 路径调整参数。
 
-## 工程检查
+## 原实施时的工程检查（e43f64f）
 
 - `pnpm lint`：通过（ESLint 与 Prettier）。
 - 标准 `pnpm test`：最终通过，core 148、designer 199、form-create 312、Playground 306，共 62 个文件／965 条测试。一次并发运行曾使既有 `retained-manager.test.ts` 的 6 条用例触发 5 秒超时；未修改超时或产品代码，单 worker 312 条全过后，标准命令在空闲环境重跑也全过。
@@ -63,3 +63,41 @@
 - 原生 `select` 的系统选项弹层由浏览器／操作系统绘制，只能有限控制；未替换成 `ElSelect`，未宣称像素级主题一致。
 - Firefox、Safari／WebKit、移动端与完整可访问性认证未验证；Chromium 通过不等于其他环境已兼容。
 - 本票未执行 #108 的完整三包 tarball 浏览器矩阵；上述 core＋designer 入口消费不替代该后续验收。
+
+## 2026-11-03 补充审查：宿主颜色修复
+
+对 `cd39258` → `e43f64f` 的补充审查确认一项 P2：跟随宿主只解析六位 hex 和部分 rgb，导致等价的 `#f00`、HSL、OKLCH 被误读为默认蓝。发现及用户授权的修复安排已[回复 #103](https://github.com/flowduet/flowduet/issues/103#issuecomment-6600452845)。此前 965 条通过属于原实施时的结果，不能覆盖本节之后的测试状态。
+
+修复保留已有六位 hex／rgb 路径，补短 hex，并用离屏 Canvas 将其他浏览器合法颜色规范化为 sRGB。透明角色在对应表面合成，`currentColor` 读取宿主实际文字色；非法色或无法使用浏览器解析时保留原有默认回退。Canvas 不挂载到文档，没有新增监听、依赖、公开 API 或宿主变量写入。
+
+- 公开 `DingtalkDesigner` 的短 hex 回归先失败：期望 `#FF0000`，实际 `#409EFF`；修复后通过。见[失败日志](evidence/103-property-drawer/color-unit-red.txt)、[通过日志](evidence/103-property-drawer/color-unit-green.txt)。完整 `appearance.test.ts` 的 16 条随后全部通过。
+- [Chromium 12 组结果](evidence/103-property-drawer/host-colors.json)均通过：六位／短 hex、八位 opaque hex、命名色、百分比 RGB、HSL、OKLCH、P3、两类透明色、`currentColor` 与非法值。每组同时读取 HSL 中性色，并确认同一输入节点、草稿、焦点、模型 change=0、无 EP 回写或遗留解析节点。
+- [浏览器回归脚本](evidence/103-property-drawer/host-colors.mjs.txt)沿用原验收驱动与公开场景。复测先将 `.mjs.txt` 复制为临时 `.mjs`，依次传入 playwright-core 入口、Playground URL、输出目录；必要时通过 `FLOWDUET_CHROMIUM_PATH` 指定浏览器。未以 happy-dom 的颜色支持替代真实浏览器证据。
+- 双轴独立复审审查完整 `cd39258` 基线补丁及含新增文件的快照，SHA-256 为 `fe3e30da90a83f93167e02b3b5745882d666ac6c09470af63ae82a4900a73b8f`：Standards 重要 0／细节 0／既有 0；Spec 重要 0／细节 0／既有 0，原 P2 已关闭。角色映射重复的 smell 保持“不值得改”，没有为此扩大补丁。快照后仅追加结果说明、接入文案及 changeset，产品和回归代码保持相同。
+
+## form-create 测试失败诊断
+
+本轮标准 `pnpm test` 的[完整错误摘要](evidence/103-property-drawer/form-create-default-timeouts.txt)已完成：core 148、designer 200 条通过；form-create 为 309 条通过、3 条失败，均为 `Test timed out in 5000ms`，没有业务断言失败或未处理异常。递归任务据此退出，未继续执行 Playground，不能宣称默认全量门槛通过。
+
+三条超时分别为 `retained-inputs.test.ts` 的未完成日期原文、删除后同名字段复用，以及 `retained-manager.test.ts` 的旧页头关闭按钮迟到点击；耗时为 6150、5459、8325ms。与上一轮被中止的 7 条失败用例不完全相同，不能把上一轮未取得的错误堆栈补写为已验证事实。
+
+[诊断汇总](evidence/103-property-drawer/test-diagnosis.json)与对照结果：
+
+| 对照                                               | 结果                                                                                                   | 能支持的结论                                                                              |
+| -------------------------------------------------- | ------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------- |
+| 颜色修复前，分支单独运行 `retained-inputs.test.ts` | 40 条通过，55.38 秒                                                                                    | 原先 7 项失败不是在该分支上持续复现的业务断言失败                                         |
+| 固定基线 `cd39258` 单独运行同文件                  | 40 条通过，55.16 秒                                                                                    | 未观察到 #103 使该文件整体明显变慢                                                        |
+| 基线运行相同两组重组件文件                         | [109 条通过，198.45 秒](evidence/103-property-drawer/form-create-baseline-pair.txt)                    | 基线本身也有秒级重组件用例；同一日期用例约 3.3 秒、旧页头关闭约 3.8 秒，距离 5 秒上限较近 |
+| 修复分支隔离复测本次 3 个超时用例                  | [3 条断言通过](evidence/103-property-drawer/form-create-isolated-diagnostic.txt)，命令临时设 15 秒时限 | 用于观察完整断言，不作为标准门槛通过；仓库 5 秒时限未改                                   |
+
+已确认失败机制是重组件测试的执行耗时波动越过默认 5 秒上限；没有颜色解析进入这些失败路径或新业务断言回归的证据。form-create 的产品和测试代码相对基线没有改动，既有 `fileParallelism: false` 已使有效 worker 数为 1，因此不能将再次指定单 worker 记为修复。并发、系统调度和 GC 可能放大耗时，但本轮未定位到具体一次停顿；Node worker 采样尝试未产出 profile，不作热点归因依据。不能断言历史失败都来自同一种机器负载。
+
+本轮没有抬高仓库测试时限、删减测试、改业务代码或关闭该失败信号。默认全量门槛仍未通过；后续应单独优化并验证这些重组件测试的稳定性，不能仅凭隔离复测通过就推送或宣称 CI 已绿。
+
+## 本轮最终工程结果与交付边界
+
+- `pnpm lint`：通过；`pnpm build`：四包通过，保留原有 Playground 大 chunk 提示。
+- `pnpm test`：core 148、designer 200 条通过，form-create 309 条通过／3 条默认 5 秒超时，命令失败；随后单独运行 `pnpm --filter @flowduet/playground test`，306 条全部通过。没有把不同命令的结果拼成一次标准全量通过。
+- 颜色修复及回归代码与独立复审快照的哈希逐文件一致；之后只补充文档、changeset 和诊断证据。已有 designer minor changeset 覆盖本次修复，无新增依赖或公开入口。
+- 未重跑本次修复后的完整三包 tarball 浏览器矩阵、Node 22、Firefox、WebKit 或真实操作系统输入法；原有限制继续有效。不推送、不关票、不开 PR、不合并、不发布。
+- 修复不涉及数据迁移，可通过撤回本次修复提交恢复到 `e43f64f`；未执行回退实测。form-create 默认门槛未过的事实另行保留，不以回退颜色补丁冒充测试稳定性修复。

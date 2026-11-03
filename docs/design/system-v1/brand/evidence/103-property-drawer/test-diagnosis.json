@@ -1,0 +1,41 @@
+{
+  "node": "24.18.0",
+  "base": "cd39258b3ab4d3b77f20994e85b58a4519746b4e",
+  "original_head": "e43f64fa01d2e1347c75a11b9b93f35805d11422",
+  "form_create_product_diff_from_base": false,
+  "fileParallelism": false,
+  "effective_maxWorkers": 1,
+  "default_testTimeout_ms": 5000,
+  "single_retained_inputs_before_color_fix": {
+    "branch": {
+      "passed": 40,
+      "duration_seconds": 55.38
+    },
+    "base": {
+      "passed": 40,
+      "duration_seconds": 55.16
+    }
+  },
+  "default_root_run": {
+    "core_passed": 148,
+    "designer_passed": 200,
+    "form_create_passed": 309,
+    "form_create_failed": 3,
+    "failure_kind": "Test timed out in 5000ms",
+    "playground": "not run (recursive bail)"
+  },
+  "base_same_two_files": {
+    "passed": 109,
+    "failed": 0,
+    "duration_seconds": 198.45
+  },
+  "isolated_failed_cases_diagnostic": {
+    "passed": 3,
+    "failed": 0,
+    "testTimeout_ms": 15000,
+    "duration_seconds": 18.03,
+    "standard_gate": false
+  },
+  "conclusion": "已确认失败机制为默认5秒时限触发，重组件测试存在耗时波动；本轮没有业务断言失败证据，也没有颜色解析参与失败路径的证据。基线对照不能证明历史失败都由同一种系统负载导致，未定位到某次具体调度或GC停顿。默认全量测试仍未通过。",
+  "cpu_profile": "尝试Node worker CPU采样未产出profile文件，不作热点或GC归因依据；未为此修改仓库配置或新增工具。"
+}

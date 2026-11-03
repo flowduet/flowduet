@@ -1,0 +1,34 @@
+
+ RUN  v5.0.1 /Users/l/Documents/projects/flowduet-103-property-appearance/packages/designer
+
+ ❯ src/appearance.test.ts (16 tests | 1 failed | 15 skipped) 223ms
+   ❯ 公开实例外观配置（#103） (16)
+     × 宿主短十六进制颜色与等价六位颜色产生相同的自有角色 222ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/appearance.test.ts > 公开实例外观配置（#103） > 宿主短十六进制颜色与等价六位颜色产生相同的自有角色
+AssertionError: expected '#409EFF' to be '#FF0000' // Object.is equality
+
+Expected: "#FF0000"
+Received: "#409EFF"
+
+ ❯ src/appearance.test.ts:174:59
+    172|
+    173|     const drawer = document.querySelector<HTMLElement>('[data-test="no…
+    174|     expect(drawer.style.getPropertyValue("--fd-primary")).toBe("#FF000…
+       |                                                           ^
+    175|     const shortStyle = drawer.getAttribute("style");
+    176|     (wrapper.element as HTMLElement).style.setProperty("--el-color-pri…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 15 skipped (16)
+   Start at  17:53:21
+   Duration  2.86s (import 47%, transform 24%, environment 20%, tests 8%)
+
+undefined
+/Users/l/Documents/projects/flowduet-103-property-appearance/packages/designer:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run src/appearance.test.ts -t 短十六进制

@@ -164,6 +164,21 @@ describe("公开实例外观配置（#103）", () => {
     expect(drawer.style.getPropertyValue("--fd-primary-ink")).toBe("#0F6B65");
   });
 
+  it("宿主短十六进制颜色与等价六位颜色产生相同的自有角色", async () => {
+    const wrapper = mountDesigner(buildModel());
+    (wrapper.element as HTMLElement).style.setProperty("--el-color-primary", "#f00");
+    await wrapper.setProps({ appearance: { mode: "light" } });
+    await openApproval(wrapper);
+
+    const drawer = document.querySelector<HTMLElement>('[data-test="node-drawer"]')!;
+    expect(drawer.style.getPropertyValue("--fd-primary")).toBe("#FF0000");
+    const shortStyle = drawer.getAttribute("style");
+    (wrapper.element as HTMLElement).style.setProperty("--el-color-primary", "#ff0000");
+    await wrapper.setProps({ appearance: { mode: "light" } });
+    expect(drawer.getAttribute("style")).toBe(shortStyle);
+    expect(drawer.getAttribute("style")).not.toContain("--el-");
+  });
+
   it("完成方式在新外观下同时用文字和边框表达选中，不只换颜色", async () => {
     const wrapper = mountDesigner(buildModel(), { mode: "light" });
     await openApproval(wrapper);

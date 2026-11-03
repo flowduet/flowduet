@@ -385,7 +385,12 @@ export function createAppearanceVariables(
 }
 
 function cssColorToRgb(value: string): Rgb {
-  if (value.startsWith("#")) return hexToRgb(value);
+  if (value.startsWith("#"))
+    return hexToRgb(
+      /^#[\da-f]{3}$/i.test(value)
+        ? "#" + [...value.slice(1)].map((channel) => channel + channel).join("")
+        : value,
+    );
   const match = value.match(
     /^rgba?\(\s*([\d.]+)(?:\s*,\s*|\s+)([\d.]+)(?:\s*,\s*|\s+)([\d.]+)(?:\s*(?:,|\/)\s*(?:1|1\.0|100%))?\s*\)$/,
   );
@@ -397,13 +402,46 @@ function cssColorToRgb(value: string): Rgb {
   throw new Error(`无法读取颜色：${value}`);
 }
 
-function readColor(styles: CSSStyleDeclaration, name: string, fallback: string): string {
+function readBrowserColor(value: string, element: HTMLElement, background: string): string {
+  const canvas = element.ownerDocument.createElement("canvas");
+  canvas.width = canvas.height = 1;
+  const context = canvas.getContext("2d");
+  if (context === null) throw new Error("当前环境不支持浏览器颜色解析");
+  const currentColor = element.ownerDocument.defaultView?.getComputedStyle(element).color;
+  const color = value.replace(/\bcurrentcolor\b/gi, currentColor || "black");
+  // 非法 fillStyle 会保留旧值；两个不同哨兵可区分非法值与恰好等于哨兵的合法色。
+  context.fillStyle = "#010203";
+  context.fillStyle = color;
+  const first = context.fillStyle;
+  context.fillStyle = "#040506";
+  context.fillStyle = color;
+  if (context.fillStyle !== first) throw new Error(`无法读取颜色：${value}`);
+  // CSS Color 4 由浏览器转为 sRGB；透明角色在其实际表面上合成后再用于对比度派生。
+  context.fillStyle = background;
+  context.fillRect(0, 0, 1, 1);
+  context.fillStyle = color;
+  context.fillRect(0, 0, 1, 1);
+  const [r, g, b] = context.getImageData(0, 0, 1, 1).data;
+  return rgbToHex([r! / 255, g! / 255, b! / 255]);
+}
+
+function readColor(
+  styles: CSSStyleDeclaration,
+  name: string,
+  fallback: string,
+  element: HTMLElement | undefined,
+  background: string,
+): string {
   const value = styles.getPropertyValue(name).trim();
   if (value === "") return fallback;
   try {
     return rgbToHex(cssColorToRgb(value));
   } catch {
-    return fallback;
+    try {
+      return element === undefined ? fallback : readBrowserColor(value, element, background);
+    } catch {
+      return fallback;
+    }
   }
 }
 
@@ -415,21 +453,24 @@ export function readHostAppearance(
   const fallback = HOST_DEFAULTS[mode];
   const styles = element?.ownerDocument.defaultView?.getComputedStyle(element);
   if (styles === undefined) return { ...fallback };
-  const color = (name: string, key: keyof HostAppearanceContext) =>
-    readColor(styles, name, fallback[key]);
+  const color = (name: string, key: keyof HostAppearanceContext, background: string) =>
+    readColor(styles, name, fallback[key], element, background);
+  const canvas = color("--el-bg-color-page", "canvas", fallback.canvas);
+  const surface = color("--el-bg-color", "surface", canvas);
+  const primary = color("--el-color-primary", "primary", surface);
   return {
-    canvas: color("--el-bg-color-page", "canvas"),
-    surface: color("--el-bg-color", "surface"),
-    inset: color("--el-fill-color-light", "inset"),
-    text: color("--el-text-color-primary", "text"),
-    secondary: color("--el-text-color-regular", "secondary"),
-    border: color("--el-border-color-light", "border"),
-    disabledText: color("--el-disabled-text-color", "disabledText"),
-    disabledSurface: color("--el-disabled-bg-color", "disabledSurface"),
-    primary: color("--el-color-primary", "primary"),
-    primaryHover: color("--el-color-primary-light-3", "primaryHover"),
-    primaryPressed: color("--el-color-primary-dark-2", "primaryPressed"),
-    onPrimary: color("--el-color-white", "onPrimary"),
+    canvas,
+    surface,
+    inset: color("--el-fill-color-light", "inset", surface),
+    text: color("--el-text-color-primary", "text", surface),
+    secondary: color("--el-text-color-regular", "secondary", surface),
+    border: color("--el-border-color-light", "border", surface),
+    disabledText: color("--el-disabled-text-color", "disabledText", surface),
+    disabledSurface: color("--el-disabled-bg-color", "disabledSurface", surface),
+    primary,
+    primaryHover: color("--el-color-primary-light-3", "primaryHover", surface),
+    primaryPressed: color("--el-color-primary-dark-2", "primaryPressed", surface),
+    onPrimary: color("--el-color-white", "onPrimary", primary),
     fontFamily: styles.getPropertyValue("--el-font-family").trim() || fallback.fontFamily,
     fontSizeBase: styles.getPropertyValue("--el-font-size-base").trim() || fallback.fontSizeBase,
     radius: styles.getPropertyValue("--el-border-radius-base").trim() || fallback.radius,
