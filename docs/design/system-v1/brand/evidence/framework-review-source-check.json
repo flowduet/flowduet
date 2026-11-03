@@ -1,0 +1,543 @@
+{
+  "date": "2026-11-02",
+  "revision": "draft-01-doc-r1-reviewed",
+  "method": "审查后静态核对，原R1证据不覆盖重写",
+  "originalEvidence": "framework-source-check.json",
+  "sourceFiles": [
+    {
+      "path": "packages/designer/package.json",
+      "sha256": "b079c71e9141d3a5f0dc5174fb3c1b7daeb007fb1c11f1ef33060197104c6e09"
+    },
+    {
+      "path": "packages/form-create/package.json",
+      "sha256": "1efe676ae065a86b4e40cb739b5558149c4e3072a8c41423c5436c96dfc059a3"
+    },
+    {
+      "path": "packages/designer/node_modules/element-plus/package.json",
+      "sha256": "c94a2148c5046a148edd703c4e02e483896be54604b928a1b370c3674d6f2778"
+    },
+    {
+      "path": "packages/designer/node_modules/element-plus/theme-chalk/src/common/var.scss",
+      "sha256": "b11244e5dff3d11462a6b0c66c4cb0d530b37c28746dd05f2bbfceb8fba39ca0"
+    },
+    {
+      "path": "packages/designer/node_modules/element-plus/theme-chalk/src/button.scss",
+      "sha256": "874a6bcf6365c48beb8e9c6b73c975f391c05749565b0d29857391add57a9ae1"
+    },
+    {
+      "path": "packages/designer/node_modules/element-plus/theme-chalk/src/input.scss",
+      "sha256": "f4b77f50dca7d7d227dab5c664e74dd38b59b1e2694b96274cb3d733f1d032a5"
+    },
+    {
+      "path": "packages/designer/node_modules/element-plus/theme-chalk/src/form-item.scss",
+      "sha256": "8d40f713da782bdcb730d4e252436378cac96d68228f1906d41518e5799cc500"
+    },
+    {
+      "path": "packages/designer/node_modules/element-plus/theme-chalk/src/mixins/_button.scss",
+      "sha256": "87a3597aa13670c0d6e0bfa1487d32ee7199891f77904d684fb798b13c6a4201"
+    },
+    {
+      "path": "packages/form-create/node_modules/@form-create/designer/package.json",
+      "sha256": "583ad0a9476b7a7852137ea63c170c78cbb2f1b0adf72411e883edc1dde17c23"
+    },
+    {
+      "path": "packages/form-create/node_modules/@form-create/designer/src/style/index.css",
+      "sha256": "6f9349da1af0d9a1efa8742fe5058b9db841d0e75684e0b7c770845f64928f56"
+    },
+    {
+      "path": "packages/form-create/node_modules/@form-create/designer/types/index.d.ts",
+      "sha256": "a0b2336f99d6cebd9129b5878bb571dc70b5b134fb4fe9349780be3ff37d09e1"
+    },
+    {
+      "path": "packages/form-create/node_modules/@form-create/element-ui/package.json",
+      "sha256": "93875122ee161855d029d535fb20115a243738a2a15172a18463e5c542e5647d"
+    },
+    {
+      "path": "packages/form-create/node_modules/@form-create/element-ui/src/core/alias.js",
+      "sha256": "b3c3a1b3ad7244b9a27f11eb878635093357d1fe40a7ba25c59e0258222a310a"
+    },
+    {
+      "path": "packages/form-create/node_modules/@form-create/element-ui/src/components/index.js",
+      "sha256": "1fc6e4f25a46bafc515034bca8488bd01ed2caacba8cf6a7cd00f9879c71de90"
+    },
+    {
+      "path": "packages/form-create/src/components/designer-config.ts",
+      "sha256": "d58dd02d36ba48f0ef360e87f134c35a31ef0a5b85f7ebf8da8d0bfac75253ff"
+    },
+    {
+      "path": "packages/form-create/src/form-create-setup.ts",
+      "sha256": "bbb46ff77e305d0550169851055bd3e77ca7bcec579a5a7d3ad8d1a8626de0d4"
+    },
+    {
+      "path": "packages/form-create/src/components/FormDesigner.vue",
+      "sha256": "09e683cab21c7c366acb0cd18e375048701d1e9f070a6440d10e34c3e89c42e5"
+    },
+    {
+      "path": "packages/form-create/src/components/FormPreview.vue",
+      "sha256": "8461af1619b255d1bf45f37722ac75a39eb594bf52ae0a80bcf10a26b494faa7"
+    },
+    {
+      "path": "packages/form-create/src/components/FormManager.vue",
+      "sha256": "718b89dededc20c526e008f6217d8052b84052132311abdebb0d8977bcc549b7"
+    },
+    {
+      "path": "packages/designer/src/components/NodeDrawer.vue",
+      "sha256": "e78b7c4f63feafce9e287d5ff0eab2891486da152bbef072510b622917710b3e"
+    },
+    {
+      "path": "packages/designer/src/components/NodePropertyFields.vue",
+      "sha256": "ce58ec7b70978d1be81fed03c745cee28cf21414de9a6069e3bebe8a75784e2f"
+    },
+    {
+      "path": "packages/form-create/src/form-schema.ts",
+      "sha256": "85f008f8f43a4087bae1995a3275152391dd9ba7c194ebb07f4815a36ddc7f53"
+    },
+    {
+      "path": "node_modules/.pnpm/@form-create+component-elm-radio@3.3.0_vue@3.5.43_typescript@5.9.3_/node_modules/@form-create/component-elm-radio/src/component.jsx",
+      "sha256": "2ae50d60d8da90b48d3721dd71ab9f8c217407c46b42bbcfabe90cff896273a8"
+    },
+    {
+      "path": "node_modules/.pnpm/@form-create+component-elm-checkbox@3.3.0_vue@3.5.43_typescript@5.9.3_/node_modules/@form-create/component-elm-checkbox/src/component.jsx",
+      "sha256": "b6b6e9122a8f2e91d3151a0ec79a4b94a7ae2d7f94a49e78bab134e4e1e48c00"
+    },
+    {
+      "path": "node_modules/.pnpm/@form-create+component-elm-select@3.3.0_vue@3.5.43_typescript@5.9.3_/node_modules/@form-create/component-elm-select/src/component.vue",
+      "sha256": "da54f36e80721648b8d3470b2f91ffd25a1823e46c84e9c6c05a206308566f8d"
+    },
+    {
+      "path": "packages/designer/node_modules/element-plus/theme-chalk/src/checkbox.scss",
+      "sha256": "15c42661fa70e6efb8831dd915c337745bd20f7577e1a1f7ab7060ecdf578bca"
+    },
+    {
+      "path": "packages/designer/node_modules/element-plus/theme-chalk/src/radio.scss",
+      "sha256": "b19c16a3c7fe1da69c6ea3178b33420de12ac93e4c96fd9a88abe21fdee98014"
+    },
+    {
+      "path": "packages/designer/node_modules/element-plus/theme-chalk/src/switch.scss",
+      "sha256": "4b542bacb786e55a7372030af8e29b1c482c93fb90d63ab98d31942808dee313"
+    },
+    {
+      "path": "packages/designer/node_modules/element-plus/theme-chalk/src/input-number.scss",
+      "sha256": "1d0524f67464dac2aa8337782acd814f81b300f5ce3a2a210b4abff7131e93ba"
+    },
+    {
+      "path": "packages/designer/node_modules/element-plus/theme-chalk/src/select.scss",
+      "sha256": "80c2d82a1192905101f983857906bea6e7fb933e7cdaac9f9ed1b022f90f11f0"
+    },
+    {
+      "path": "packages/designer/node_modules/element-plus/theme-chalk/src/select-dropdown.scss",
+      "sha256": "0d0670c7900e57fce390ef539b22ec3326abd534643984c93fdaaedc196f4835"
+    },
+    {
+      "path": "packages/designer/node_modules/element-plus/theme-chalk/src/date-picker/date-table.scss",
+      "sha256": "c48b0f41365cbfdf93e0948302e838e6003f3d568a86933b22b8683d4bce7b97"
+    },
+    {
+      "path": "packages/designer/node_modules/element-plus/theme-chalk/src/date-picker/month-table.scss",
+      "sha256": "d56fef080b9bda0669259204cdccb4be4a48d7150920d83316c48e71dd28b697"
+    },
+    {
+      "path": "packages/designer/node_modules/element-plus/theme-chalk/src/date-picker/year-table.scss",
+      "sha256": "9b6d18b8f4175c6211dcebb8b87051ed90a628ca39754ebd2c4886af11ddd340"
+    },
+    {
+      "path": "packages/designer/node_modules/element-plus/theme-chalk/src/dark/css-vars.scss",
+      "sha256": "ba21e84e5ab4f5fb25d145797eadb32fec82d91cf7dd888df3aa5dc048474f70"
+    },
+    {
+      "path": "packages/form-create/node_modules/@form-create/element-ui/src/core/config.js",
+      "sha256": "475de5fb7986c30895c1a77013d5dab6c90655e8e97cb92c27a2a11f92c6a2dc"
+    },
+    {
+      "path": "packages/form-create/node_modules/@form-create/element-ui/src/core/manager.js",
+      "sha256": "1b5ff966c08baf8fd0b66be160c1c11c4caf9230fffaaaed2e900788a1366464"
+    },
+    {
+      "path": "packages/form-create/node_modules/@form-create/element-ui/src/style/index.css",
+      "sha256": "d22d9691e33ed21e94b8fa2000f672155538ebc8f1ac96dd6a89a613ea90c00b"
+    },
+    {
+      "path": "packages/form-create/node_modules/@form-create/element-ui/src/parsers/input.js",
+      "sha256": "c304c67c4ab9a7448adc19a621c276e6936bd372b6fea2012b47f700e68af968"
+    }
+  ],
+  "elementPlusVariableNames": [
+    {
+      "variable": "--el-color-primary",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-button-bg-color",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-button-border-color",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-button-text-color",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-button-hover-bg-color",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-button-hover-border-color",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-button-hover-text-color",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-button-active-bg-color",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-button-active-border-color",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-button-active-text-color",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-text-color-primary",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-text-color-regular",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-text-color-secondary",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-text-color-placeholder",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-bg-color-page",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-bg-color",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-bg-color-overlay",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-fill-color-blank",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-fill-color-light",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-border-color",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-border-color-hover",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-border-color-light",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-border-color-lighter",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-input-text-color",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-input-bg-color",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-input-border-color",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-input-placeholder-color",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-input-focus-border-color",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-input-hover-border-color",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-disabled-text-color",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-disabled-bg-color",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-disabled-border-color",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-button-disabled-text-color",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-button-disabled-bg-color",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-button-disabled-border-color",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-color-danger",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-color-warning",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-color-success",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-font-family",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-font-size-base",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-form-label-font-size",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-border-radius-base",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-input-height",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-button-size",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-form-item-margin-bottom",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-button-outline-color",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-checkbox-checked-bg-color",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-checkbox-checked-icon-color",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-checkbox-checked-input-border-color",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-checkbox-checked-text-color",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-checkbox-bg-color",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-checkbox-input-border",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-checkbox-font-size",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-checkbox-height",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-checkbox-disabled-input-fill",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-checkbox-disabled-checked-icon-color",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-radio-text-color",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-radio-input-bg-color",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-radio-input-border",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-radio-input-border-color-hover",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-radio-font-size",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-switch-on-color",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-switch-off-color",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-switch-border-color",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-select-input-color",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-select-input-focus-border-color",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-select-disabled-color",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-select-disabled-border",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-select-font-size",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-select-input-font-size",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-input-number-controls-height",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-datepicker-bg-color",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-datepicker-text-color",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-datepicker-off-text-color",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-datepicker-header-text-color",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-datepicker-icon-color",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-datepicker-active-color",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-datepicker-border-color",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-datepicker-inner-border-color",
+      "presentInInstalledCss": true
+    }
+  ],
+  "epMappingGroups": 19,
+  "selectionContrastExamples": [
+    {
+      "host": "flowduet",
+      "theme": "light",
+      "background": "#2D3E97",
+      "defaultWhiteMarker": "#FFFFFF",
+      "defaultWhiteContrast": 9.343712853704474,
+      "candidateMarker": "#FFFFFF",
+      "candidateContrast": 9.343712853704474,
+      "scope": "静态配色反例及候选配对，未运行真实控件"
+    },
+    {
+      "host": "flowduet",
+      "theme": "dark",
+      "background": "#AFBAFF",
+      "defaultWhiteMarker": "#FFFFFF",
+      "defaultWhiteContrast": 1.8599947863676594,
+      "candidateMarker": "#19204B",
+      "candidateContrast": 8.366080151570081,
+      "scope": "静态配色反例及候选配对，未运行真实控件"
+    },
+    {
+      "host": "host",
+      "theme": "light",
+      "background": "#0F6B65",
+      "defaultWhiteMarker": "#FFFFFF",
+      "defaultWhiteContrast": 6.341907262583329,
+      "candidateMarker": "#FFFFFF",
+      "candidateContrast": 6.341907262583329,
+      "scope": "静态配色反例及候选配对，未运行真实控件"
+    },
+    {
+      "host": "host",
+      "theme": "dark",
+      "background": "#80D4C8",
+      "defaultWhiteMarker": "#FFFFFF",
+      "defaultWhiteContrast": 1.7256598002122885,
+      "candidateMarker": "#102F2D",
+      "candidateContrast": 8.297993705167015,
+      "scope": "静态配色反例及候选配对，未运行真实控件"
+    }
+  ],
+  "runtimeThemeValidation": "not-executed",
+  "frozenExperimentsRestarted": false,
+  "documentIntegrityCheck": {
+    "adapters": 10,
+    "epMappingGroups": 19,
+    "tokenReferences": 100,
+    "sourceHashes": 39,
+    "cssVariables": 79,
+    "localMarkdownLinks": 49,
+    "preservedExistingArtifacts": 12,
+    "runtimeDiffEmpty": true,
+    "ruleShapeAndMappingRefs": "passed",
+    "formatCheck": "passed",
+    "reviewRound": 2,
+    "standardsOpenFindings": 0,
+    "specOpenFindings": 0,
+    "runtimeThemeValidation": "not-executed"
+  }
+}

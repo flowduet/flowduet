@@ -1,0 +1,854 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-11-02",
+  "revision": "draft-01-doc-r2",
+  "status": "design-candidates-only",
+  "usage": "设计调查资料，不是公开 API、运行时适配协议或支持声明；所有真实主题适配均未验证",
+  "tokenSource": "tokens.json",
+  "chapter": "baseline.md#7-框架适配约束与映射",
+  "adapters": [
+    {
+      "id": "element-plus",
+      "label": "Element Plus",
+      "packages": [
+        {
+          "name": "element-plus",
+          "declaredByDesigner": "^2.14.6",
+          "declaredByFormCreatePeer": "^2.11.1",
+          "observedInstalled": "2.14.6"
+        }
+      ],
+      "provider": null,
+      "integrationStatus": "existing",
+      "evidenceLevel": "source-reviewed",
+      "themeEntryPoints": [
+        "实例范围 CSS 自定义属性",
+        "目标组件本体的局部变量",
+        "ConfigProvider 上下文候选，非隔离证明"
+      ],
+      "tokenMappings": [
+        {
+          "id": "primary",
+          "tokens": ["themes.*.primary", "presets.*.epScale"],
+          "cssVariables": ["--el-color-primary"],
+          "status": "source-reviewed-runtime-unverified",
+          "constraint": "衍生色阶按 EP 混色规则由 derive-palette.mjs 生成候选（presets.*.epScale），仍需逐用途配对与对比度验证；followHost 不写入"
+        },
+        {
+          "id": "primary-button",
+          "tokens": [
+            "themes.*.primary",
+            "themes.*.onPrimary",
+            "themes.*.primaryHover",
+            "themes.*.primaryPressed"
+          ],
+          "cssVariables": [
+            "--el-button-bg-color",
+            "--el-button-border-color",
+            "--el-button-text-color",
+            "--el-button-hover-bg-color",
+            "--el-button-hover-border-color",
+            "--el-button-hover-text-color",
+            "--el-button-active-bg-color",
+            "--el-button-active-border-color",
+            "--el-button-active-text-color"
+          ],
+          "status": "source-reviewed-runtime-unverified",
+          "constraint": "目标为主按钮本体，覆盖本体重声明；禁止全局改 --el-color-white"
+        },
+        {
+          "id": "text",
+          "tokens": ["themes.*.text", "themes.*.secondary", "themes.*.muted"],
+          "cssVariables": [
+            "--el-text-color-primary",
+            "--el-text-color-regular",
+            "--el-text-color-secondary",
+            "--el-text-color-placeholder"
+          ],
+          "status": "source-reviewed-runtime-unverified",
+          "constraint": "正文→primary/regular；说明→secondary；占位→placeholder；禁用另映射"
+        },
+        {
+          "id": "surfaces",
+          "tokens": ["themes.*.canvas", "themes.*.surface", "themes.*.inset"],
+          "cssVariables": [
+            "--el-bg-color-page",
+            "--el-bg-color",
+            "--el-bg-color-overlay",
+            "--el-fill-color-blank",
+            "--el-fill-color-light"
+          ],
+          "status": "source-reviewed-runtime-unverified",
+          "constraint": "依次候选为 canvas、surface、surface、surface、inset；含实际弹层检查"
+        },
+        {
+          "id": "borders",
+          "tokens": ["themes.*.controlBorder", "themes.*.border"],
+          "cssVariables": [
+            "--el-border-color",
+            "--el-border-color-hover",
+            "--el-border-color-light",
+            "--el-border-color-lighter"
+          ],
+          "status": "source-reviewed-runtime-unverified",
+          "constraint": "交互边界用 controlBorder；分组线用 border，不能全部弱化"
+        },
+        {
+          "id": "input",
+          "tokens": [
+            "themes.*.text",
+            "themes.*.surface",
+            "themes.*.controlBorder",
+            "themes.*.muted",
+            "themes.*.focus"
+          ],
+          "cssVariables": [
+            "--el-input-text-color",
+            "--el-input-bg-color",
+            "--el-input-border-color",
+            "--el-input-placeholder-color",
+            "--el-input-focus-border-color",
+            "--el-input-hover-border-color"
+          ],
+          "status": "source-reviewed-runtime-unverified",
+          "constraint": "候选依次为 text、surface、controlBorder、muted、focus、controlBorder；核对 readonly/textarea/clear/count"
+        },
+        {
+          "id": "disabled",
+          "tokens": ["themes.*.disabledText", "themes.*.disabledSurface", "themes.*.border"],
+          "cssVariables": [
+            "--el-disabled-text-color",
+            "--el-disabled-bg-color",
+            "--el-disabled-border-color",
+            "--el-button-disabled-text-color",
+            "--el-button-disabled-bg-color",
+            "--el-button-disabled-border-color"
+          ],
+          "status": "source-reviewed-runtime-unverified",
+          "constraint": "全局角色与组件本体重声明分别核对；不改业务可用条件"
+        },
+        {
+          "id": "feedback",
+          "tokens": ["themes.*.danger", "themes.*.warning", "themes.*.success"],
+          "cssVariables": ["--el-color-danger", "--el-color-warning", "--el-color-success"],
+          "status": "source-reviewed-runtime-unverified",
+          "constraint": "保留状态语义；衍生色及错误多行仍待实测"
+        },
+        {
+          "id": "typography-radius",
+          "tokens": [
+            "foundation.fontFamily",
+            "foundation.baseFont",
+            "foundation.labelFont",
+            "foundation.radius"
+          ],
+          "cssVariables": [
+            "--el-font-family",
+            "--el-font-size-base",
+            "--el-form-label-font-size",
+            "--el-border-radius-base"
+          ],
+          "status": "source-reviewed-runtime-unverified",
+          "constraint": "表单与 small 控件局部样式需校准，不只改祖先变量"
+        },
+        {
+          "id": "density-height",
+          "tokens": ["densities.*.controlHeight", "densities.*.epSize"],
+          "cssVariables": ["--el-input-height", "--el-button-size"],
+          "status": "source-reviewed-runtime-unverified",
+          "constraint": "R2 起两档与 EP default/small 32/24px 一致，优先用 size 上下文；既有显式 size=\"small\" 不被外层默认覆盖，切换到舒适默认属于产品可见变化，需单独确认",
+          "themeEntry": "实例范围 ConfigProvider size：comfortable→default，compact→small"
+        },
+        {
+          "id": "density-form",
+          "tokens": ["densities.*.fieldGap", "foundation.labelFont"],
+          "cssVariables": ["--el-form-item-margin-bottom", "--el-form-label-font-size"],
+          "status": "source-reviewed-runtime-unverified",
+          "constraint": "标签行高、错误预留与多栏布局一并校准"
+        },
+        {
+          "id": "focus",
+          "tokens": ["themes.*.focus", "foundation.focusWidth", "foundation.focusOffset"],
+          "cssVariables": ["--el-button-outline-color", "--el-input-focus-border-color"],
+          "status": "source-reviewed-runtime-unverified",
+          "constraint": "仍需目标 focus-visible 规则实现 2px/3px；不能只换输入边界或只覆盖 outline-color"
+        },
+        {
+          "id": "secondary-button",
+          "tokens": [
+            "themes.*.text",
+            "themes.*.surface",
+            "themes.*.inset",
+            "themes.*.controlBorder",
+            "themes.*.disabledText",
+            "themes.*.disabledSurface"
+          ],
+          "cssVariables": [
+            "--el-button-text-color",
+            "--el-button-bg-color",
+            "--el-button-border-color",
+            "--el-button-hover-text-color",
+            "--el-button-hover-bg-color",
+            "--el-button-hover-border-color",
+            "--el-button-active-text-color",
+            "--el-button-active-bg-color",
+            "--el-button-active-border-color"
+          ],
+          "targets": ["次操作按钮本体正常/悬停/按下/禁用"],
+          "status": "source-reviewed-runtime-unverified",
+          "constraint": "正常 text/surface/controlBorder，悬停与按下 text/inset/controlBorder；区分 primary 与 loading，字号、密度与焦点须另验"
+        },
+        {
+          "id": "checkbox",
+          "tokens": [
+            "themes.*.primary",
+            "themes.*.onPrimary",
+            "themes.*.primaryInk",
+            "themes.*.surface",
+            "themes.*.controlBorder",
+            "themes.*.disabledText",
+            "themes.*.disabledSurface",
+            "themes.*.focus",
+            "foundation.baseFont",
+            "densities.*.controlHeight"
+          ],
+          "cssVariables": [
+            "--el-checkbox-checked-bg-color",
+            "--el-checkbox-checked-icon-color",
+            "--el-checkbox-checked-input-border-color",
+            "--el-checkbox-checked-text-color",
+            "--el-checkbox-bg-color",
+            "--el-checkbox-input-border",
+            "--el-checkbox-font-size",
+            "--el-checkbox-height",
+            "--el-checkbox-disabled-input-fill",
+            "--el-checkbox-disabled-checked-icon-color"
+          ],
+          "targets": ["选中/半选标记", "未选中边界", "禁用组合", "键盘焦点与标签命中区"],
+          "status": "source-reviewed-runtime-unverified",
+          "constraint": "选中底/边 primary，标记 onPrimary，标签 primaryInk；input-border 需要完整 border 值，不能只写颜色；不把勾选框几何缩放为32/24px"
+        },
+        {
+          "id": "radio",
+          "tokens": [
+            "themes.*.text",
+            "themes.*.surface",
+            "themes.*.controlBorder",
+            "themes.*.primary",
+            "themes.*.onPrimary",
+            "themes.*.focus",
+            "foundation.baseFont",
+            "densities.*.controlHeight"
+          ],
+          "cssVariables": [
+            "--el-radio-text-color",
+            "--el-radio-input-bg-color",
+            "--el-radio-input-border",
+            "--el-radio-input-border-color-hover",
+            "--el-radio-font-size"
+          ],
+          "targets": ["选中圆点伪元素", "单选组/标签高度", "未选中/禁用/键盘焦点"],
+          "status": "source-reviewed-runtime-unverified",
+          "constraint": "选中圆点源码直接用color-white，候选局部状态样式改用onPrimary；不改全局white。input-border须完整border值，small高度/字号含编译规则"
+        },
+        {
+          "id": "switch",
+          "tokens": [
+            "themes.*.primary",
+            "themes.*.onPrimary",
+            "themes.*.surface",
+            "themes.*.controlBorder",
+            "themes.*.secondary",
+            "themes.*.focus",
+            "densities.*.controlHeight"
+          ],
+          "cssVariables": [
+            "--el-switch-on-color",
+            "--el-switch-off-color",
+            "--el-switch-border-color"
+          ],
+          "targets": [
+            "开启/关闭轨道",
+            "action滑块与内部文字",
+            "core/action几何",
+            "禁用透明度与键盘焦点"
+          ],
+          "status": "source-reviewed-runtime-unverified",
+          "constraint": "开启 primary/onPrimary，关闭 controlBorder/surface 为候选配对；内部文字/图标及用户显式自定义色另验，不能只换轨道色或统一高度"
+        },
+        {
+          "id": "select",
+          "tokens": [
+            "themes.*.text",
+            "themes.*.muted",
+            "themes.*.surface",
+            "themes.*.inset",
+            "themes.*.primaryInk",
+            "themes.*.primarySoft",
+            "themes.*.disabledText",
+            "themes.*.border",
+            "themes.*.focus",
+            "foundation.baseFont",
+            "densities.*.controlHeight"
+          ],
+          "cssVariables": [
+            "--el-select-input-color",
+            "--el-select-input-focus-border-color",
+            "--el-select-disabled-color",
+            "--el-select-disabled-border",
+            "--el-select-font-size",
+            "--el-select-input-font-size",
+            "--el-bg-color-overlay",
+            "--el-fill-color-light"
+          ],
+          "targets": [
+            "选框/占位/清除/禁用",
+            "下拉普通/选中/键盘高亮/空选项",
+            "单独的选项行高与弹层主题"
+          ],
+          "status": "source-reviewed-runtime-unverified",
+          "constraint": "候选选中 primaryInk/primarySoft，悬停 inset；没有完整 --el-select-option-* 变量组，局部状态样式另验。只覆盖静态单选，不增加multiple/remote"
+        },
+        {
+          "id": "input-number",
+          "tokens": [
+            "themes.*.text",
+            "themes.*.secondary",
+            "themes.*.inset",
+            "themes.*.controlBorder",
+            "themes.*.primaryInk",
+            "themes.*.focus",
+            "densities.*.controlHeight"
+          ],
+          "cssVariables": [
+            "--el-input-number-controls-height",
+            "--el-input-text-color",
+            "--el-input-focus-border-color"
+          ],
+          "targets": ["输入与增减按钮", "左右/右侧控制布局", "禁用/悬停/键盘焦点"],
+          "status": "source-reviewed-runtime-unverified",
+          "constraint": "输入继承input映射，按钮候选secondary/inset/controlBorder；数值/清空/min/max合同保持，按钮几何与输入高度分别验证"
+        },
+        {
+          "id": "date-picker",
+          "tokens": [
+            "themes.*.surface",
+            "themes.*.text",
+            "themes.*.muted",
+            "themes.*.primary",
+            "themes.*.onPrimary",
+            "themes.*.controlBorder",
+            "themes.*.focus",
+            "densities.*.controlHeight"
+          ],
+          "cssVariables": [
+            "--el-datepicker-bg-color",
+            "--el-datepicker-text-color",
+            "--el-datepicker-off-text-color",
+            "--el-datepicker-header-text-color",
+            "--el-datepicker-icon-color",
+            "--el-datepicker-active-color",
+            "--el-datepicker-border-color",
+            "--el-datepicker-inner-border-color"
+          ],
+          "targets": [
+            "单值日期/月/年选中文本",
+            "当前支持的week/datetime与真实时间子面板",
+            "输入/日历/时间列表的独立尺寸与焦点"
+          ],
+          "status": "source-reviewed-runtime-unverified",
+          "constraint": "选中候选primary/onPrimary；部分SCSS文字是编译白色，需局部状态样式而非改全局white。仅当前单值形态，不覆盖dates/range"
+        }
+      ],
+      "componentCoverage": [
+        {
+          "role": "ElButton",
+          "targetComponents": ["ElButton"],
+          "status": "source-reviewed-runtime-unverified"
+        },
+        {
+          "role": "ElInput",
+          "targetComponents": ["ElInput"],
+          "status": "source-reviewed-runtime-unverified"
+        },
+        {
+          "role": "ElForm",
+          "targetComponents": ["ElForm"],
+          "status": "source-reviewed-runtime-unverified"
+        },
+        {
+          "role": "ElFormItem",
+          "targetComponents": ["ElFormItem"],
+          "status": "source-reviewed-runtime-unverified"
+        },
+        {
+          "role": "ElSelect",
+          "targetComponents": ["ElSelect"],
+          "status": "source-reviewed-runtime-unverified"
+        },
+        {
+          "role": "ElDatePicker",
+          "targetComponents": ["ElDatePicker"],
+          "status": "source-reviewed-runtime-unverified"
+        },
+        {
+          "role": "ElDialog",
+          "targetComponents": ["ElDialog"],
+          "status": "source-reviewed-runtime-unverified"
+        },
+        {
+          "role": "ElDrawer",
+          "targetComponents": ["ElDrawer"],
+          "status": "source-reviewed-runtime-unverified"
+        },
+        {
+          "role": "ElMessageBox",
+          "targetComponents": ["ElMessageBox"],
+          "status": "source-reviewed-runtime-unverified"
+        },
+        {
+          "role": "ElCheckbox",
+          "targetComponents": ["ElCheckbox"],
+          "status": "source-reviewed-runtime-unverified"
+        },
+        {
+          "role": "ElCheckboxGroup",
+          "targetComponents": ["ElCheckboxGroup"],
+          "status": "source-reviewed-runtime-unverified"
+        },
+        {
+          "role": "ElRadio",
+          "targetComponents": ["ElRadio"],
+          "status": "source-reviewed-runtime-unverified"
+        },
+        {
+          "role": "ElRadioGroup",
+          "targetComponents": ["ElRadioGroup"],
+          "status": "source-reviewed-runtime-unverified"
+        },
+        {
+          "role": "ElSwitch",
+          "targetComponents": ["ElSwitch"],
+          "status": "source-reviewed-runtime-unverified"
+        },
+        {
+          "role": "ElInputNumber",
+          "targetComponents": ["ElInputNumber"],
+          "status": "source-reviewed-runtime-unverified"
+        },
+        {
+          "role": "ElOption",
+          "targetComponents": ["ElOption"],
+          "status": "source-reviewed-runtime-unverified"
+        }
+      ],
+      "overlayPolicy": {
+        "status": "candidate-unverified",
+        "requirements": [
+          "按组件核对挂载参数与透传",
+          "所属弹层携带实例主题，不改宿主 body/:root",
+          "验证层级、定位、滚动锁、焦点与卸载清理"
+        ],
+        "serviceCalls": ["FormManager 的 ElMessageBox.confirm 尚未传实例挂载参数"]
+      },
+      "constraints": [
+        "不得推断 peer 最低版本全兼容",
+        "衍生色与实际密度需补验",
+        "现有 size=small 不能被默认 size 假定覆盖",
+        "不得以 namespace 替换视为已实现隔离",
+        "官方 dark CSS 的 html.dark 及 dark 组件祖先选择器不能直接当局部实例入口，不切换宿主 html/body",
+        "componentMappings 是主要语义索引，不是所有状态的完整消费清单",
+        "只读文本与无原生readonly的选择类控件分别设计，禁止静默改业务可用条件"
+      ],
+      "unverified": [
+        "真实 CSS 适配",
+        "默认/宿主×双主题×双密度",
+        "同页双实例与宿主控件",
+        "真实弹层",
+        "键盘、缩放、长中文、错误换行",
+        "兼容版本与保真回归",
+        "选择类控件标记/滑块/选中文字与底色配对，含禁用和半选",
+        "默认/业务显式size及style的冲突策略",
+        "dark CSS局部实例生效方式"
+      ]
+    },
+    {
+      "id": "form-create-element-plus",
+      "label": "FormCreate / Element Plus",
+      "packages": [
+        {
+          "name": "@form-create/designer",
+          "observedInstalled": "3.5.0"
+        },
+        {
+          "name": "@form-create/element-ui",
+          "observedInstalled": "3.3.4"
+        }
+      ],
+      "provider": "form-create/element-plus",
+      "integrationStatus": "existing",
+      "evidenceLevel": "source-reviewed",
+      "themeEntryPoints": [
+        "EP 语义映射",
+        "设计器根 --fc-tool-border-color",
+        "版本绑定的私有类候选覆盖",
+        "自有 wrapper 的 scoped 样式"
+      ],
+      "tokenMappings": [
+        {
+          "id": "designer-shell",
+          "tokens": [
+            "themes.*.surface",
+            "themes.*.border",
+            "themes.*.primary",
+            "themes.*.primarySoft"
+          ],
+          "targets": [
+            "._fc-designer 背景",
+            "菜单与工具区边界",
+            "激活状态",
+            "--fc-tool-border-color"
+          ],
+          "status": "source-reviewed-runtime-unverified",
+          "constraint": "设计器有硬编码颜色；局部单变量不能代表完整主题适配"
+        },
+        {
+          "id": "wrapper-feedback",
+          "tokens": [
+            "themes.*.danger",
+            "themes.*.success",
+            "themes.*.secondary",
+            "themes.*.inset",
+            "themes.*.border"
+          ],
+          "targets": ["FormPreview 错误/成功/说明/pre/分隔线"],
+          "status": "source-reviewed-runtime-unverified",
+          "constraint": "当前 scoped 样式有硬编码值，EP 变量不能自动覆盖"
+        }
+      ],
+      "componentCoverage": [
+        {
+          "label": "文本",
+          "rendererAlias": "el-input",
+          "targetComponents": ["ElInput"],
+          "status": "source-reviewed-runtime-unverified",
+          "menuName": "input",
+          "ruleType": "input",
+          "ruleProps": {},
+          "epMappingIds": ["input", "density-height", "focus"],
+          "unverified": ["当前项目实际可达形态与属性透传", "真实主题/密度/焦点/错误/禁用组合"],
+          "ruleShapeNote": "缺省/空/type=text 均为文本；ruleProps只是形态识别，不是生成模板或完整白名单"
+        },
+        {
+          "label": "多行文本",
+          "rendererAlias": "el-input",
+          "targetComponents": ["ElInput"],
+          "status": "source-reviewed-runtime-unverified",
+          "menuName": "textarea",
+          "ruleType": "input",
+          "ruleProps": {
+            "type": "textarea"
+          },
+          "epMappingIds": ["input", "density-height", "focus"],
+          "unverified": ["当前项目实际可达形态与属性透传", "真实主题/密度/焦点/错误/禁用组合"]
+        },
+        {
+          "label": "数字",
+          "rendererAlias": "el-input-number",
+          "targetComponents": ["ElInputNumber"],
+          "status": "source-reviewed-runtime-unverified",
+          "menuName": "inputNumber",
+          "ruleType": "inputNumber",
+          "ruleProps": {},
+          "epMappingIds": ["input-number", "input", "focus"],
+          "unverified": ["当前项目实际可达形态与属性透传", "真实主题/密度/焦点/错误/禁用组合"]
+        },
+        {
+          "label": "单选",
+          "rendererAlias": "fc-radio",
+          "targetComponents": ["ElRadioGroup", "ElRadio"],
+          "status": "source-reviewed-runtime-unverified",
+          "menuName": "radio",
+          "ruleType": "radio",
+          "ruleProps": {},
+          "epMappingIds": ["radio", "focus"],
+          "sourceOnlyComponents": ["ElRadioButton", "ElInput"],
+          "unverified": ["当前项目实际可达形态与属性透传", "真实主题/密度/焦点/错误/禁用组合"]
+        },
+        {
+          "label": "多选",
+          "rendererAlias": "fc-checkbox",
+          "targetComponents": ["ElCheckboxGroup", "ElCheckbox"],
+          "status": "source-reviewed-runtime-unverified",
+          "menuName": "checkbox",
+          "ruleType": "checkbox",
+          "ruleProps": {},
+          "epMappingIds": ["checkbox", "focus"],
+          "sourceOnlyComponents": ["ElCheckboxButton", "ElInput"],
+          "unverified": ["当前项目实际可达形态与属性透传", "真实主题/密度/焦点/错误/禁用组合"]
+        },
+        {
+          "label": "下拉单选",
+          "rendererAlias": "fc-select",
+          "targetComponents": ["ElSelect", "ElOption"],
+          "status": "source-reviewed-runtime-unverified",
+          "menuName": "select",
+          "ruleType": "select",
+          "ruleProps": {},
+          "epMappingIds": ["select", "focus"],
+          "sourceOnlyComponents": ["ElOptionGroup"],
+          "unverified": ["当前项目实际可达形态与属性透传", "真实主题/密度/焦点/错误/禁用组合"]
+        },
+        {
+          "label": "日期",
+          "rendererAlias": "el-date-picker",
+          "targetComponents": ["ElDatePicker"],
+          "status": "source-reviewed-runtime-unverified",
+          "menuName": "datePicker",
+          "ruleType": "datePicker",
+          "ruleProps": {},
+          "epMappingIds": ["date-picker", "input", "focus"],
+          "unverified": ["当前项目实际可达形态与属性透传", "真实主题/密度/焦点/错误/禁用组合"]
+        },
+        {
+          "label": "开关",
+          "rendererAlias": "el-switch",
+          "targetComponents": ["ElSwitch"],
+          "status": "source-reviewed-runtime-unverified",
+          "menuName": "switch",
+          "ruleType": "switch",
+          "ruleProps": {},
+          "epMappingIds": ["switch", "focus"],
+          "unverified": ["当前项目实际可达形态与属性透传", "真实主题/密度/焦点/错误/禁用组合"]
+        }
+      ],
+      "layoutCoverage": ["fcRow 与列布局", "ElForm/ElFormItem 标签与错误"],
+      "overlayPolicy": null,
+      "constraints": [
+        "config.formOptions 不是完整设计器主题 API",
+        "fc-radio/fc-checkbox/fc-select 包装组件需核对属性透传",
+        "保留八类字段与基础栅格，不增加功能入口",
+        "皮肤不写入 rules/options、不改 provider 或文档格式",
+        "保留 legacy/retained 输入、捕获、关闭与保存语义",
+        "app 级注册与全局 CSS 导入分别记录，不认作实例隔离",
+        "menuName 与 ruleType/ruleProps 分开，多行文本不是独立 textarea 规则",
+        "sourceOnlyComponents 仅表示第三方源码分支，不代表项目已开放或已验证"
+      ],
+      "unverified": [
+        "设计器外壳与字段的真实主题",
+        "右侧配置与预览一致性",
+        "包装组件的挂载参数透传",
+        "内部真实可达弹层",
+        "字段值、中文输入与保真回归",
+        "保留已有显式size/标签/inline style与新默认的冲突策略"
+      ],
+      "configurationPrecedence": {
+        "status": "requires-product-decision",
+        "observedDefaults": {
+          "labelPosition": "right",
+          "labelWidth": "125px"
+        },
+        "preserve": [
+          "options.form.size",
+          "options.form.labelPosition",
+          "options.form.labelWidth",
+          "options.form.inline",
+          "options.form.style",
+          "显式字段props/style与栅格配置"
+        ],
+        "policy": "保留已有配置并往返；样稿不是迁移指令，主题仅提供候选默认；冲突的最终优先级与处理须另行确认和验证，不重写/忽略文档，不以!important强压布局",
+        "unverified": [
+          "显式配置与密度默认的冲突",
+          "嵌套表单及顶置标签CSS的固定间距",
+          "不同配置组合的错误换行与容器测量"
+        ]
+      }
+    },
+    {
+      "id": "vue-flow",
+      "label": "Vue Flow 与自有流程组件",
+      "packages": [
+        {
+          "name": "@vue-flow/core",
+          "declaredByDesigner": "^1.48.2",
+          "observedInstalled": null
+        }
+      ],
+      "provider": null,
+      "integrationStatus": "existing",
+      "evidenceLevel": "not-investigated-in-this-revision",
+      "themeEntryPoints": null,
+      "tokenMappings": [],
+      "componentCoverage": [],
+      "overlayPolicy": null,
+      "constraints": ["本轮仅补充 EP/FormCreate，保留既有语义候选", "BPMN 只读投影边界不变"],
+      "unverified": ["第三方画布的具体主题入口", "实际节点、连线及控件映射", "真实浏览器适配"]
+    },
+    {
+      "id": "ant-design-vue",
+      "label": "AntDesignVue",
+      "packages": [],
+      "provider": null,
+      "integrationStatus": "not-integrated",
+      "evidenceLevel": "not-investigated",
+      "themeEntryPoints": null,
+      "tokenMappings": [],
+      "componentCoverage": [],
+      "overlayPolicy": null,
+      "constraints": ["不继承 Element Plus CSS 变量或 schema 兼容结论"],
+      "unverified": [
+        "依赖版本与授权",
+        "设计器外壳来源",
+        "主题入口与状态映射",
+        "字段、props 与值语义",
+        "provider 与文档兼容",
+        "弹层归属与双实例隔离",
+        "真实浏览器验收"
+      ]
+    },
+    {
+      "id": "antdv-next",
+      "label": "AntdvNext",
+      "packages": [],
+      "provider": null,
+      "integrationStatus": "not-integrated",
+      "evidenceLevel": "not-investigated",
+      "themeEntryPoints": null,
+      "tokenMappings": [],
+      "componentCoverage": [],
+      "overlayPolicy": null,
+      "constraints": ["不继承 Element Plus CSS 变量或 schema 兼容结论"],
+      "unverified": [
+        "依赖版本与授权",
+        "设计器外壳来源",
+        "主题入口与状态映射",
+        "字段、props 与值语义",
+        "provider 与文档兼容",
+        "弹层归属与双实例隔离",
+        "真实浏览器验收"
+      ]
+    },
+    {
+      "id": "tiny-vue",
+      "label": "TinyVue",
+      "packages": [],
+      "provider": null,
+      "integrationStatus": "not-integrated",
+      "evidenceLevel": "not-investigated",
+      "themeEntryPoints": null,
+      "tokenMappings": [],
+      "componentCoverage": [],
+      "overlayPolicy": null,
+      "constraints": ["不继承 Element Plus CSS 变量或 schema 兼容结论"],
+      "unverified": [
+        "依赖版本与授权",
+        "设计器外壳来源",
+        "主题入口与状态映射",
+        "字段、props 与值语义",
+        "provider 与文档兼容",
+        "弹层归属与双实例隔离",
+        "真实浏览器验收"
+      ]
+    },
+    {
+      "id": "naive-ui",
+      "label": "NaiveUI",
+      "packages": [],
+      "provider": null,
+      "integrationStatus": "not-integrated",
+      "evidenceLevel": "not-investigated",
+      "themeEntryPoints": null,
+      "tokenMappings": [],
+      "componentCoverage": [],
+      "overlayPolicy": null,
+      "constraints": ["不继承 Element Plus CSS 变量或 schema 兼容结论"],
+      "unverified": [
+        "依赖版本与授权",
+        "设计器外壳来源",
+        "主题入口与状态映射",
+        "字段、props 与值语义",
+        "provider 与文档兼容",
+        "弹层归属与双实例隔离",
+        "真实浏览器验收"
+      ]
+    },
+    {
+      "id": "arco-design",
+      "label": "ArcoDesign",
+      "packages": [],
+      "provider": null,
+      "integrationStatus": "not-integrated",
+      "evidenceLevel": "not-investigated",
+      "themeEntryPoints": null,
+      "tokenMappings": [],
+      "componentCoverage": [],
+      "overlayPolicy": null,
+      "constraints": ["不继承 Element Plus CSS 变量或 schema 兼容结论"],
+      "unverified": [
+        "依赖版本与授权",
+        "设计器外壳来源",
+        "主题入口与状态映射",
+        "字段、props 与值语义",
+        "provider 与文档兼容",
+        "弹层归属与双实例隔离",
+        "真实浏览器验收"
+      ]
+    },
+    {
+      "id": "tdesign",
+      "label": "TDesign",
+      "packages": [],
+      "provider": null,
+      "integrationStatus": "not-integrated",
+      "evidenceLevel": "not-investigated",
+      "themeEntryPoints": null,
+      "tokenMappings": [],
+      "componentCoverage": [],
+      "overlayPolicy": null,
+      "constraints": ["不继承 Element Plus CSS 变量或 schema 兼容结论"],
+      "unverified": [
+        "依赖版本与授权",
+        "设计器外壳来源",
+        "主题入口与状态映射",
+        "字段、props 与值语义",
+        "provider 与文档兼容",
+        "弹层归属与双实例隔离",
+        "真实浏览器验收"
+      ]
+    },
+    {
+      "id": "vant",
+      "label": "Vant",
+      "packages": [],
+      "provider": null,
+      "integrationStatus": "not-integrated",
+      "evidenceLevel": "not-investigated",
+      "themeEntryPoints": null,
+      "tokenMappings": [],
+      "componentCoverage": [],
+      "overlayPolicy": null,
+      "constraints": ["移动端另行决定任务、触控尺度与响应规则，不继承桌面完整编辑承诺"],
+      "unverified": [
+        "依赖版本与授权",
+        "设计器外壳来源",
+        "主题入口与状态映射",
+        "字段、props 与值语义",
+        "provider 与文档兼容",
+        "弹层归属与双实例隔离",
+        "真实浏览器验收"
+      ]
+    }
+  ],
+  "sources": {
+    "elementPlusTheming": "https://element-plus.org/en-US/guide/theming.html",
+    "elementPlusConfig": "https://element-plus.org/en-US/component/config-provider.html",
+    "select": "https://element-plus.org/en-US/component/select.html",
+    "dialog": "https://element-plus.org/en-US/component/dialog.html",
+    "messageBox": "https://element-plus.org/en-US/component/message-box.html",
+    "formCreatePackages": "https://www.form-create.com/v3/guide/packages",
+    "localEvidence": "evidence/framework-source-check.json",
+    "elementPlusDark": "https://element-plus.org/en-US/guide/dark-mode.html",
+    "formCreateFormConfig": "https://www.form-create.com/v3/element-ui/global.html"
+  },
+  "colorSourceScope": "tokenMappings 中写入 --el-* 的条目只适用于 flowduet 品牌预设与宿主种子定制；组件默认 followHost 不写 --el-*，只读取宿主值并派生 FlowDuet 自有 --fd-* 角色（见 baseline.md §6 与 tokens.json presets）"
+}
