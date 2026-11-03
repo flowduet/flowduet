@@ -3,11 +3,15 @@ import { computed, shallowRef, watch, ref, nextTick } from "vue";
 import { ElForm, ElFormItem, ElInput } from "element-plus";
 import { labelFormOptions, type DesignerFormOption } from "../form-options.js";
 import { KIND_OPTIONS, switchApprovalKind, type FlowPropertyDraft } from "../property-editing.js";
-const props = defineProps<{
-  draft: FlowPropertyDraft;
-  formOptions?: readonly DesignerFormOption[] | undefined;
-  defaultFormKey?: string | undefined;
-}>();
+const props = withDefaults(
+  defineProps<{
+    draft: FlowPropertyDraft;
+    formOptions?: readonly DesignerFormOption[] | undefined;
+    defaultFormKey?: string | undefined;
+    size?: "" | "default" | "small" | undefined;
+  }>(),
+  { size: "" },
+);
 const formRef = ref<InstanceType<typeof ElForm>>();
 const draft = shallowRef(props.draft);
 watch(
@@ -84,6 +88,7 @@ defineExpose({ flush, capture });
     @compositionstart.capture="compositionStart"
     @compositionend.capture="compositionEnd"
     ref="formRef"
+    :size="size"
     label-position="top"
     data-test="node-property-fields"
   >
@@ -116,11 +121,15 @@ defineExpose({ flush, capture });
             class="kind-card"
             :class="{ 'kind-card--on': draft.approvalKind === option.key }"
             :data-test="`kind-${option.key}`"
+            :aria-pressed="draft.approvalKind === option.key"
             type="button"
             @click="selectKind(option.key)"
           >
             <span class="kind-card-label">{{ option.label }}</span
-            ><span class="kind-card-hint">{{ option.hint }}</span>
+            ><span class="kind-card-hint">{{ option.hint }}</span
+            ><span v-if="size" class="kind-card-state">{{
+              draft.approvalKind === option.key ? "已选中" : ""
+            }}</span>
           </button>
         </div></ElFormItem
       >
@@ -221,5 +230,105 @@ defineExpose({ flush, capture });
   background: #fff;
   color: #303133;
   font-size: 13px;
+}
+
+/* 新适配只覆盖自有卡片与原生选择器；旧路径继续使用上方的原始值。 */
+:global(.flowduet-appearance .el-form-item) {
+  margin-bottom: var(--fd-field-gap);
+}
+
+:global(.flowduet-appearance .el-form-item__label) {
+  color: var(--fd-secondary);
+  font-family: var(--fd-font-family);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+:global(.flowduet-appearance .el-form-item__error) {
+  position: static;
+  padding-top: 4px;
+  line-height: 1.6;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.flowduet-appearance .kind-cards {
+  gap: var(--fd-row-gap);
+}
+
+.flowduet-appearance .kind-card {
+  min-width: 0;
+  gap: 2px;
+  padding: 8px 4px;
+  border: 2px solid var(--fd-control-border);
+  border-radius: var(--fd-radius);
+  background: var(--fd-surface);
+  color: var(--fd-text);
+  font-family: var(--fd-font-family);
+  transition:
+    border-color 120ms,
+    background-color 120ms;
+}
+
+.flowduet-appearance--compact .kind-card {
+  padding: 4px 2px;
+}
+
+.flowduet-appearance .kind-card--on {
+  border-color: var(--fd-primary-ink);
+  background: var(--fd-primary-soft);
+  outline: none;
+}
+
+.flowduet-appearance .kind-card:focus-visible {
+  outline: 2px solid var(--fd-focus);
+  outline-offset: 3px;
+}
+
+.flowduet-appearance .kind-card-label {
+  color: var(--fd-text);
+  font-size: 13px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.flowduet-appearance .kind-card-hint {
+  color: var(--fd-muted);
+  font-size: 12px;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.kind-card-state {
+  min-height: 16px;
+  color: var(--fd-primary-ink);
+  font-size: 10px;
+  line-height: 16px;
+}
+
+.flowduet-appearance .drawer-form-select {
+  height: var(--fd-control-height);
+  border-color: var(--fd-control-border);
+  border-radius: var(--fd-radius);
+  background: var(--fd-surface);
+  color: var(--fd-text);
+  font-family: var(--fd-font-family);
+  font-size: var(--fd-control-font-size);
+}
+
+.flowduet-appearance .drawer-form-select:focus-visible {
+  outline: 2px solid var(--fd-focus);
+  outline-offset: 3px;
+}
+
+.flowduet-appearance .drawer-form-select option {
+  background: var(--fd-surface);
+  color: var(--fd-text);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flowduet-appearance .kind-card {
+    transition: none;
+  }
 }
 </style>

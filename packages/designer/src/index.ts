@@ -1,5 +1,13 @@
 export { default as DingtalkDesigner } from "./components/DingtalkDesigner.vue";
 export { default as BpmnCanvas } from "./components/BpmnCanvas.vue";
+export { resolveComponentAppearance } from "./appearance.js";
+export type {
+  AppearanceColorSource,
+  AppearanceDensity,
+  AppearanceMode,
+  ComponentAppearance,
+  ResolvedComponentAppearance,
+} from "./appearance.js";
 /**
  * 草稿待修复项收集器与抄送形态判定（#71 起公开）：与 exportXml 共用同一
  * 扫描口径，设计文档保存侧据此「保存成功 + 报告待修复项」、打开侧据此做

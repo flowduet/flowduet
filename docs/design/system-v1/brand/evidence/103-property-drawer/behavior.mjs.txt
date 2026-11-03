@@ -1,0 +1,240 @@
+import { mkdir, writeFile } from 'node:fs/promises';
+import { resolve } from 'node:path';
+import { pathToFileURL } from 'node:url';
+
+const [driverPath, baseUrl, outputDir] = process.argv.slice(2);
+if (!driverPath || !baseUrl || !outputDir) throw new Error('需要驱动、URL 和输出目录参数');
+const { chromium } = await import(pathToFileURL(resolve(driverPath)).href);
+await mkdir(outputDir, { recursive: true });
+const browser = await chromium.launch({
+  headless: true,
+  executablePath: '/Users/l/Library/Caches/ms-playwright/chromium-1248/chrome-mac-x64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing',
+});
+const page = await browser.newPage({ viewport: { width: 1440, height: 1100 }, deviceScaleFactor: 1 });
+const errors = [];
+const warnings = [];
+const failures = [];
+const results = {};
+page.on('pageerror', (error) => errors.push(`pageerror: ${error.message}`));
+page.on('console', (message) => {
+  if (message.type() === 'error') errors.push(`console: ${message.text()}`);
+  if (message.type() === 'warning') warnings.push(message.text());
+});
+page.on('response', (response) => {
+  if (response.status() >= 400) errors.push(`${response.status()} ${response.url()}`);
+});
+const check = (condition, message) => {
+  if (!condition) failures.push(message);
+};
+const drawer = () => page.locator('[data-test="node-drawer"]:visible');
+const designer = (id) => page.locator(`[data-test="${id}"]`);
+const openEntity = async (id, entity) => {
+  await designer(id).locator(`[data-entity-id="${entity}"]`).click();
+  await designer(id).locator('[data-test="node-drawer"]').waitFor({ state: 'visible' });
+  await page.waitForTimeout(350);
+};
+const save = async () => {
+  await drawer().locator('[data-test="drawer-save"]').click();
+  await drawer().waitFor({ state: 'hidden' });
+};
+const cancel = async () => {
+  await drawer().locator('[data-test="drawer-cancel"]').click();
+  await drawer().waitFor({ state: 'hidden' });
+};
+const setSelect = async (test, value) => {
+  await page.evaluate(({ test, value }) => {
+    const select = document.querySelector(`[data-test="${test}"]`);
+    select.value = value;
+    select.dispatchEvent(new Event('change', { bubbles: true }));
+  }, { test, value });
+};
+const changeCount = async () => Number((await page.locator('[data-test="appearance-first-change-count"]').textContent()).replace('change ', ''));
+try {
+  await page.goto(baseUrl, { waitUntil: 'networkidle' });
+  await page.locator('[data-test="appearance-scene-btn"]').click();
+
+  await openEntity('appearance-first-designer', 'approval');
+  await drawer().locator('[data-test="drawer-form-select"]').selectOption('form_review');
+  await drawer().locator('[data-test="drawer-name"]').fill('总监审批（已确认）');
+  await save();
+  check((await changeCount()) === 1, '原生目录选择器确定后 change 不是 1');
+  check((await designer('appearance-first-designer').locator('[data-entity-id="approval"]').textContent()).includes('复核单'), '确定后节点表单未写模型');
+  check((await designer('appearance-first-designer').locator('[data-entity-id="approval"]').textContent()).includes('总监审批（已确认）'), '确定后节点名称未写模型');
+  await openEntity('appearance-first-designer', 'approval');
+  await drawer().locator('[data-test="drawer-name"]').fill('取消的名字');
+  await drawer().locator('[data-test="drawer-form-select"]').selectOption('');
+  await cancel();
+  check((await changeCount()) === 1, '取消修改触发模型 change');
+  await openEntity('appearance-first-designer', 'approval');
+  check((await drawer().locator('[data-test="drawer-name"]').inputValue()) === '总监审批（已确认）', '取消后名称缓冲未还原');
+  check((await drawer().locator('[data-test="drawer-form-select"]').inputValue()) === 'form_review', '取消后表单选择未还原');
+  await cancel();
+  results.formSelectAndCommit = '通过';
+
+  for (const kind of ['any', 'sequential', 'all', 'single']) {
+    await openEntity('appearance-first-designer', 'countersign');
+    await drawer().locator(`[data-test="kind-${kind}"]`).click();
+    check((await drawer().locator(`[data-test="kind-${kind}"]`).getAttribute('aria-pressed')) === 'true', `${kind}: 未选中`);
+    await save();
+  }
+  check((await changeCount()) === 5, '四种完成方式保存次数不正确');
+  results.approvalKinds = '单签、会签、或签、依次审批均通过公开点击与确定';
+
+  await openEntity('appearance-first-designer', 'cc');
+  await drawer().locator('[data-test="drawer-recipients"]').fill('王五,赵六');
+  await save();
+  check((await designer('appearance-first-designer').locator('[data-entity-id="cc"]').textContent()).includes('王五,赵六'), '抄送收件人未写模型');
+  await designer('appearance-first-designer').locator('[data-test="branch-head-fork-1"]').click();
+  await drawer().waitFor({ state: 'visible' });
+  await drawer().locator('[data-test="drawer-condition"]').fill('${amount > 2000}');
+  await save();
+  check((await designer('appearance-first-designer').locator('[data-test="branch-head-fork-1"]').textContent()).includes('${amount > 2000}'), '条件表达式未写模型');
+  results.ccAndBranch = '通过';
+
+  for (const entity of ['start', 'end']) {
+    await openEntity('appearance-first-designer', entity);
+    check((await drawer().locator('.el-drawer__title').textContent()) === '节点属性', `${entity}: 空状态标题错误`);
+    check((await drawer().locator('.drawer-empty').textContent()) === '该元素无可配置字段', `${entity}: 空状态正文错误`);
+    await cancel();
+  }
+  results.emptyStates = '通过';
+
+  await openEntity('appearance-second-designer', 'approval');
+  check((await drawer().locator('[data-test="drawer-form-select"]').count()) === 0, '纯流程实例不应出现目录选择器');
+  await drawer().locator('[data-test="drawer-formkey"]').fill('handwritten_form_v1');
+  await save();
+  await openEntity('appearance-second-designer', 'approval');
+  check((await drawer().locator('[data-test="drawer-formkey"]').inputValue()) === 'handwritten_form_v1', '手写 formKey 未写模型');
+  await cancel();
+  results.handwrittenFormKey = '通过';
+
+  await openEntity('appearance-first-designer', 'approval');
+  const runtimeInput = await drawer().locator('[data-test="drawer-name"]').elementHandle();
+  await runtimeInput.fill('浏览器未提交');
+  await runtimeInput.focus();
+  const beforeRuntimeChanges = await changeCount();
+  await setSelect('appearance-first-source', 'brand');
+  await setSelect('appearance-first-mode', 'dark');
+  await setSelect('appearance-first-density', 'compact');
+  check((await runtimeInput.inputValue()) === '浏览器未提交', '运行中切换丢失输入');
+  check(await runtimeInput.evaluate((input) => document.activeElement === input && input.isConnected), '运行中切换丢失焦点或 DOM');
+  const validStyle = await drawer().getAttribute('style');
+  await page.locator('[data-test="appearance-first-invalid"]').focus();
+  await page.keyboard.press('Enter');
+  check((await drawer().getAttribute('style')) === validStyle, '非法密度改变上次有效呈现');
+  check((await runtimeInput.inputValue()) === '浏览器未提交', '非法密度丢失输入');
+  check(warnings.some((warning) => warning.includes('appearance.density')), '非法密度缺少字段级告警');
+  await page.locator('[data-test="appearance-first-enabled"]').focus();
+  await page.keyboard.press('Space');
+  check(!(await drawer().getAttribute('class')).includes('flowduet-appearance'), '合法停用未回旧路径');
+  check((await runtimeInput.inputValue()) === '浏览器未提交', '合法停用丢失输入');
+  await page.locator('[data-test="appearance-first-enabled"]').focus();
+  await page.keyboard.press('Space');
+  await setSelect('appearance-first-density', 'comfortable');
+  check((await drawer().getAttribute('class')).includes('flowduet-appearance--comfortable'), '重新启用有效配置失败');
+  check((await changeCount()) === beforeRuntimeChanges, '外观与非法配置触发模型 change');
+  results.runtimeAndInvalid = '通过';
+
+  await runtimeInput.evaluate((input) => {
+    input.focus();
+    input.dispatchEvent(new CompositionEvent('compositionstart', { bubbles: true }));
+    input.value = '浏览器组合中文';
+    input.dispatchEvent(new InputEvent('input', { bubbles: true, isComposing: true }));
+  });
+  await setSelect('appearance-first-density', 'compact');
+  check((await runtimeInput.inputValue()) === '浏览器组合中文', '组合期间切换丢字');
+  check((await changeCount()) === beforeRuntimeChanges, '组合期间切换自动提交');
+  await drawer().locator('[data-test="drawer-save"]').click();
+  check((await designer('appearance-first-designer').locator('[data-test="action-error"]').textContent()).includes('输入法尚未完成'), '组合期间确定未被保护');
+  await runtimeInput.evaluate((input) => input.dispatchEvent(new CompositionEvent('compositionend', { bubbles: true })));
+  await page.waitForTimeout(80);
+  await save();
+  results.syntheticComposition = '通过（不冒充真实 OS IME）';
+
+  await openEntity('appearance-first-designer', 'approval');
+  await designer('appearance-second-designer').locator('[data-entity-id="approval"]').evaluate((element) => {
+    element.focus();
+    element.click();
+  });
+  await designer('appearance-second-designer').locator('[data-test="node-drawer"]').waitFor({ state: 'visible' });
+  await page.waitForTimeout(350);
+  check((await drawer().count()) === 2, '同 app 双抽屉未同时打开');
+  await page.locator('[data-test="appearance-host-dark"]').focus();
+  await page.keyboard.press('Space');
+  const dual = await page.evaluate(() => {
+    const visible = [...document.querySelectorAll('[data-test="node-drawer"]')].filter((element) => element.getBoundingClientRect().width > 0);
+    const light = visible.find((element) => element.classList.contains('flowduet-appearance--light'));
+    const host = document.querySelector('[data-test="appearance-host-input"]')?.closest('.el-input')?.querySelector('.el-input__wrapper');
+    return {
+      lightBackground: light ? getComputedStyle(light).backgroundColor : null,
+      lightInline: light?.getAttribute('style'),
+      hostBorder: host ? getComputedStyle(host).boxShadow : null,
+      htmlClass: document.documentElement.className,
+    };
+  });
+  check(dual.htmlClass.includes('dark'), '双实例宿主深色未启用');
+  check(dual.lightBackground === 'rgb(255, 255, 255)', `宿主深色污染品牌浅色抽屉：${dual.lightBackground}`);
+  check(dual.lightInline.includes('#2D3E97'), '另一品牌实例局部变量被改写');
+  await page.locator('[data-test="appearance-first-mounted"]').focus();
+  await page.keyboard.press('Space');
+  check((await drawer().count()) === 1, '卸载一个实例未清理所属抽屉');
+  check((await page.locator('[data-test="appearance-host-dark"]').isChecked()), '卸载实例改写宿主深色');
+  results.dualInstance = '通过';
+
+  await drawer().locator('[data-test="drawer-name"]').focus();
+  await page.keyboard.press('Escape');
+  await drawer().waitFor({ state: 'hidden' });
+  const restoredEntity = await page.evaluate(() => document.activeElement?.getAttribute('data-entity-id'));
+  check(restoredEntity === 'approval', `Escape 后焦点未恢复到节点卡片：${restoredEntity}`);
+  const branchButton = designer('appearance-second-designer').locator('[data-test="branch-head-fork-1"]');
+  await branchButton.focus();
+  await page.keyboard.press('Enter');
+  await drawer().waitFor({ state: 'visible' });
+  await page.keyboard.press('Escape');
+  await drawer().waitFor({ state: 'hidden' });
+  check(await branchButton.evaluate((button) => document.activeElement === button), '分支键盘打开并关闭后焦点未恢复');
+  results.keyboard = '通过';
+
+  await page.locator('[data-test="appearance-first-mounted"]').focus();
+  await page.keyboard.press('Space');
+  await openEntity('appearance-first-designer', 'countersign');
+  await drawer().locator('[data-test="kind-all"]').click();
+  await drawer().locator('[data-test="drawer-assignee"]').fill('${this_is_a_very_long_invalid_collection_expression_for_multiline_error}');
+  await drawer().locator('[data-test="drawer-save"]').click();
+  const error = designer('appearance-first-designer').locator('[data-test="action-error"]');
+  check((await error.textContent()).includes('集合变量名'), '长非法集合未触发既有错误');
+  const errorLayout = await error.evaluate((element) => ({ height: element.getBoundingClientRect().height, scrollWidth: element.scrollWidth, clientWidth: element.clientWidth }));
+  check(errorLayout.height > 20 && errorLayout.scrollWidth <= errorLayout.clientWidth + 1, `多行错误布局异常：${JSON.stringify(errorLayout)}`);
+  await page.setViewportSize({ width: 1024, height: 900 });
+  await page.evaluate(() => { document.body.style.zoom = '200%'; });
+  await page.waitForTimeout(200);
+  const zoomLayout = await drawer().evaluate((element) => {
+    const rect = element.getBoundingClientRect();
+    const save = element.querySelector('[data-test="drawer-save"]').getBoundingClientRect();
+    return { x: rect.x, right: rect.right, saveBottom: save.bottom, viewport: innerHeight };
+  });
+  check(zoomLayout.x >= 0 && zoomLayout.right <= 1025 && zoomLayout.saveBottom <= 901, `200% 缩放抽屉不可达：${JSON.stringify(zoomLayout)}`);
+  await page.screenshot({ path: resolve(outputDir, 'long-error-zoom-200.png') });
+  await page.evaluate(() => { document.body.style.zoom = ''; });
+  results.longErrorAndZoom = { errorLayout, zoomLayout };
+
+  const summary = {
+    browser: await page.evaluate(() => navigator.userAgent),
+    viewport: '1440×1100；缩放段改为 1024×900 + CSS zoom 200%',
+    results,
+    errors,
+    warnings,
+    failures,
+    limitations: [
+      '组合输入使用合成 CompositionEvent/InputEvent，未执行真实 macOS 中文输入法。',
+      '缩放使用 CSS zoom 200% 验证布局，不冒充操作系统或浏览器原生缩放全套测试。',
+      '原生 select 系统选项弹层的外观只能有限控制，未记录为像素级一致。',
+      'Firefox、Safari/WebKit、移动端与完整可访问性认证未验证。',
+    ],
+  };
+  await writeFile(resolve(outputDir, 'behavior.json'), JSON.stringify(summary, null, 2));
+  console.log(JSON.stringify({ results, errors, warnings, failures }, null, 2));
+  if (failures.length > 0) process.exitCode = 1;
+} finally {
+  await browser.close();
+}

@@ -66,6 +66,50 @@ async function doExport(): Promise<string> {
 - 表单集成接缝（#72）：`DingtalkDesigner` 接收中立的 `formOptions`（`{ id, name }[]`，不依赖任何表单实现）——传入即展示「流程默认表单」选择条与审批节点的有效表单摘要（继承默认 / 节点指定 / 引用失效），不传则纯流程形态完全不变；`isCcServiceTask(element)` 公开抄送形态判定。默认引用经 `BpmnModel.setDefaultFormKey()` 读写（`flowduet:defaultFormKey`，由 core 统一注册）。
 - 未提交内容收集（#76）：抽屉里的字段缓冲点「确定」才写模型。宿主在保存设计前可调用组件方法 `DingtalkDesigner#commitPendingChanges(options?)`——抽屉打开时执行与「确定」同一套守卫并把当前输入写入模型（成功后关闭抽屉、触发 `change`），守卫拦截（如多人集合变量格式非法）返回 `false` 且抽屉保持打开，宿主应中止保存而不是绕过守卫；抽屉未打开时为无操作。抽屉字段被编辑时组件上抛 `draft-change` 事件，未提交输入同样计入宿主的「未保存修改」判定（如替换当前设计前的确认提示）。宿主保存业务草稿时可显式传入 `{ allowIncomplete: true }`，允许空集合变量、空抄送收件人及插入占位收件人落盘，由草稿诊断报告待修复项；非空非法集合格式仍拒绝。默认调用与普通「确定」保持严格。抽屉为非模态展示：切换目标前提交当前缓冲，格式校验失败则停留原节点；提供 `formOptions` 的集成宿主按草稿路径收集，纯流程宿主保持严格校验。
 
+## 节点属性抽屉的实例外观（#103）
+
+省略 `appearance` 时保持原有抽屉外观和行为。传入合法对象才显式启用新适配：
+
+```vue
+<script setup lang="ts">
+import { ref } from "vue";
+import { DingtalkDesigner, type ComponentAppearance } from "@flowduet/designer";
+import "@flowduet/designer/style.css";
+import "element-plus/dist/index.css";
+
+// 跟随宿主时必须声明宿主当前的 EP 主题；本组件不会切换宿主 html/body 深色类。
+const appearance = ref<ComponentAppearance | undefined>({ mode: "light" });
+
+function useCompactBrand(): void {
+  appearance.value = { colorSource: "brand", mode: "dark", density: "compact" };
+}
+
+function useLegacyAppearance(): void {
+  appearance.value = undefined;
+}
+</script>
+
+<template>
+  <DingtalkDesigner :model="model" :appearance="appearance" />
+</template>
+```
+
+| 配置项        | 取值                         | 默认值        | 说明                                                                 |
+| ------------- | ---------------------------- | ------------- | -------------------------------------------------------------------- |
+| `colorSource` | `host` / `brand`             | `host`        | 跟随宿主或 FlowDuet 品牌预设；首批不开放任意种子或 token 覆盖 API    |
+| `mode`        | `light` / `dark`             | 必填          | `host` 时须与宿主当前 EP 主题一致；`brand` 可按实例独立于宿主主题    |
+| `density`     | `comfortable` / `compact`    | `comfortable` | 分别对应 EP `default` / `small`，实测控件高度为 32px / 24px          |
+
+跟随宿主只读取宿主当前 EP 主色、中性色、字体与圆角，为抽屉自有卡片和原生选择器派生 `--fd-*` 角色，**不写入任何 `--el-*` 变量（含实例范围）**。品牌预设只在所选抽屉内写入局部 EP 变量，不影响画布、节点卡片、流程默认表单条、其他实例或无关宿主控件。抽屉的非模态、覆盖层、节点切换与提交行为保持既有合同。
+
+运行中修改配色、主题、密度以及启用／停用都保留未提交输入、焦点和输入法组合，不自动确定／取消，也不修改模型或 BPMN XML。更新时请替换整个 `appearance` 对象引用，不依赖对原对象字段的深度变更侦测。JavaScript 传入非法对象或枚举时会整份拒绝：已有合法配置则保持上次有效呈现，首次非法则保持旧路径，并通过 `console.warn` 报告具体字段和原因。合法停用与非法回退是两条不同路径。
+
+`@flowduet/designer` 包根同时导出 `ComponentAppearance`、`ResolvedComponentAppearance` 及其枚举类型，以及供其他 FlowDuet 组件复用的 `resolveComponentAppearance(value, previous?)`。后者补全合法配置；`previous` 传入当前有效结果时用于非法回退，合法省略返回 `undefined`，调用方应在合法停用后清空自己的 `previous`，避免后续非法输入复活旧主题。
+
+当前仅 **DingtalkDesigner 的节点属性抽屉**完成本适配；`FormPreview` 由后续切片交付。`propertyEditing="external"` 不渲染抽屉，合法 `appearance` 没有可见效果，也不影响宿主自有属性面板。原生 `select` 的系统选项弹层外观受浏览器和操作系统限制，不为像素一致替换成 `ElSelect`。
+
+首批验证环境为单份 Element Plus 2.14.6 与桌面 Chromium；其他 EP 版本、Firefox、Safari／WebKit、移动端、真实操作系统中文输入法及完整可访问性认证尚未验证。
+
 ## License
 
 Apache-2.0（见 [LICENSE](./LICENSE)）

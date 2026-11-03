@@ -1,0 +1,23 @@
+import {
+  DingtalkDesigner,
+  resolveComponentAppearance,
+  type ComponentAppearance,
+  type ResolvedComponentAppearance,
+} from "@flowduet/designer";
+
+const appearance: ComponentAppearance = { mode: "light" };
+const resolved: ResolvedComponentAppearance | undefined = resolveComponentAppearance(appearance);
+if (resolved) {
+  const source: "host" | "brand" = resolved.colorSource;
+  const density: "comfortable" | "compact" = resolved.density;
+  void source;
+  void density;
+}
+
+// @ts-expect-error mode 仅允许 light / dark
+const invalidMode: ComponentAppearance = { mode: "sepia" };
+// @ts-expect-error 启用新适配时 mode 必填
+const missingMode: ComponentAppearance = { density: "compact" };
+void invalidMode;
+void missingMode;
+void DingtalkDesigner;
