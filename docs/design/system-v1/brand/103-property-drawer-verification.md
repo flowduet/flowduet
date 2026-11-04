@@ -118,3 +118,11 @@
 - 既有浏览器套件与包消费回归重跑全绿：[host-colors.json](evidence/103-property-drawer/host-colors.json)（12 组）、[matrix.json](evidence/103-property-drawer/matrix.json)（8 组）、[behavior.json](evidence/103-property-drawer/behavior.json)、临时隔离目录 core＋designer tarball 安装与严格 TS 校验（[consumer-output.json](evidence/103-property-drawer/consumer-output.json)、[npm-ls.txt](evidence/103-property-drawer/npm-ls.txt)）。
 - 标准工程门禁全绿：`pnpm lint` 通过，`pnpm build` 四包通过；空闲环境下标准 `pnpm test` 一次全过（61 个测试文件／968 条测试：core 148、designer 202、form-create 312、Playground 306，未修改 5 秒超时配置；此前并发负载下 `form-create` 重组件测试靠近 5 秒上限的波动事实仍保留备查）。
 - 双轴独立复审（代码与新增证据快照 SHA-256 `9ad5f196e998da21f0ae3854ecc1149fd2dcb2265ce0b7e1d5d4969b555840a1`）：Standards 重要 0／细节 1／既有 1（细节为提醒提交时显式纳入两份新增证据文件，已纳入）；Spec 重要 0／细节 1／既有 1（细节为区分 `light-dark()` 与系统色关键字在离屏画布中的求值行为文案，已修正；既有为 `form-create` 高负载耗时波动）。快照后产品与测试源码零改动，两轴均无未关闭缺陷。
+
+## 2026-11-04 原始证据恢复与复算
+
+本次已从原 Antigravity 实施会话的本机任务存档恢复 lint／test／build 原始输出及两份完整子代理复审报告，归档入口为 [round2-archive/README.md](evidence/103-property-drawer/round2-archive/README.md)。原日志保留首次 lint 格式失败及后续成功，不以补跑或重写摘要代替历史输出；标准 `pnpm test` 原始任务退出码为 0，四包共 61 文件／968 条通过。
+
+原复审组合哈希 `9ad5f196e998da21f0ae3854ecc1149fd2dcb2265ce0b7e1d5d4969b555840a1` 已精确重建；收尾文案修正后的组合哈希为 `499a53fddaf6337384790003912bfa4b2c38d8fffff17b4a8ff3ca58715f0720`，两者仅有 README 文案及对应 diff blob 头差异。两份组合的范围均为 `packages/`、`apps/` 差异及两份新增 `round2-fixes` 证据，不应称为完整工作树哈希。
+
+另从固定提交 `7ca2331dfa203dbaec163a2480f9717a7ccb33af` 补建完整二进制补丁及全部 2824 个受跟踪文件的逐文件清单。执行归档中的 `verify.py` 可核对全部字节、恢复两个历史组合哈希，并在独立临时索引中由基线完整补丁生成同一目标 tree。原通道分离、精确进程结束时刻、当时整个未提交工作树和完整环境快照没有单独保存，已明确列为无法恢复或从未单独保存；不将本次补建内容伪称原物。
