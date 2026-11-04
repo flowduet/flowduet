@@ -1,0 +1,2330 @@
+diff --git a/apps/playground/src/App.vue b/apps/playground/src/App.vue
+index 3919177..b0e7ff7 100644
+--- a/apps/playground/src/App.vue
++++ b/apps/playground/src/App.vue
+@@ -17,6 +17,7 @@ import {
+   FormPreview,
+ } from "@flowduet/form-create";
+ import type { FormDefinition, SaveDesignDocumentResult } from "@flowduet/form-create";
++import NodeAppearanceScene from "./NodeAppearanceScene.vue";
+ 
+ /**
+  * Playground 编辑区（#23）：挂 designer 组件的最小验收宿主。
+@@ -93,6 +94,7 @@ const session = new FlowDesignSession(demoModel);
+ const model = shallowRef<BpmnModel>(demoModel);
+ 
+ const view = ref<"dingtalk" | "bpmn">("dingtalk");
++const appearanceSceneVisible = ref(false);
+ const viewSwitchKey = ref(0);
+ const xml = ref("");
+ const error = ref("");
+@@ -605,6 +607,12 @@ onUnmounted(() => {
+         />
+         <ElButton data-test="form-manager-btn" @click="openFormManager">表单管理</ElButton>
+         <ElButton data-test="form-preview-btn" @click="previewVisible = true">预览表单</ElButton>
++        <ElButton
++          data-test="appearance-scene-btn"
++          @click="appearanceSceneVisible = !appearanceSceneVisible"
++        >
++          外观验收
++        </ElButton>
+         <ElButton plain type="primary" data-test="save-local-btn" @click="onSaveLocalDraft">
+           保存草稿
+         </ElButton>
+@@ -649,6 +657,8 @@ onUnmounted(() => {
+       </section>
+     </main>
+ 
++    <NodeAppearanceScene v-if="appearanceSceneVisible" />
++
+     <ElDialog
+       v-model="discardVisible"
+       title="放弃未保存的修改？"
+diff --git a/apps/playground/src/NodeAppearanceScene.vue b/apps/playground/src/NodeAppearanceScene.vue
+new file mode 100644
+index 0000000..8c9584d
+--- /dev/null
++++ b/apps/playground/src/NodeAppearanceScene.vue
+@@ -0,0 +1,395 @@
++<script setup lang="ts">
++import { computed, onBeforeUnmount, reactive, ref } from "vue";
++import { ElButton, ElInput } from "element-plus";
++import { BpmnModel, flowableAdapter } from "@flowduet/core";
++import {
++  DingtalkDesigner,
++  type AppearanceColorSource,
++  type AppearanceDensity,
++  type AppearanceMode,
++  type ComponentAppearance,
++  type DesignerFormOption,
++} from "@flowduet/designer";
++
++interface InstanceControls {
++  enabled: boolean;
++  mounted: boolean;
++  colorSource: AppearanceColorSource;
++  mode: AppearanceMode;
++  density: AppearanceDensity;
++}
++
++const FORM_OPTIONS: readonly DesignerFormOption[] = [
++  { id: "form_apply", name: "申请单" },
++  { id: "form_review", name: "复核单" },
++];
++
++function buildModel(processId: string, longName = false): BpmnModel {
++  const model = BpmnModel.create({ processId, adapter: flowableAdapter })
++    .addStartEvent({ id: "start", name: "发起" })
++    .addUserTask({
++      id: "approval",
++      name: longName ? "经理审批：用于核对较长中文节点名称与属性输入" : "经理审批",
++      assignee: "${manager}",
++    })
++    .addApprovalTask({ id: "countersign", name: "合同会签", collection: "approvers", mode: "all" })
++    .addTask("cc", { id: "cc", name: "抄送法务备案", recipients: "张三,李四" })
++    .addExclusiveGateway({ id: "fork", name: "金额判断" })
++    .addUserTask({ id: "regular", name: "总监审批", assignee: "${director}" })
++    .addUserTask({ id: "large", name: "财务复核", assignee: "${finance}" })
++    .addExclusiveGateway({ id: "join", name: "汇聚" })
++    .addEndEvent({ id: "end", name: "结束" })
++    .addSequenceFlow({ id: "f_start", sourceRef: "start", targetRef: "approval" })
++    .addSequenceFlow({ id: "f_approval", sourceRef: "approval", targetRef: "countersign" })
++    .addSequenceFlow({ id: "f_cc", sourceRef: "countersign", targetRef: "cc" })
++    .addSequenceFlow({ id: "f_fork", sourceRef: "cc", targetRef: "fork" })
++    .addSequenceFlow({
++      id: "fa",
++      name: "常规审批",
++      sourceRef: "fork",
++      targetRef: "regular",
++      default: true,
++    })
++    .addSequenceFlow({
++      id: "fb",
++      name: "大额复核",
++      sourceRef: "fork",
++      targetRef: "large",
++      condition: "${amount > 1000}",
++    })
++    .addSequenceFlow({ id: "fa_join", sourceRef: "regular", targetRef: "join" })
++    .addSequenceFlow({ id: "fb_join", sourceRef: "large", targetRef: "join" })
++    .addSequenceFlow({ id: "f_end", sourceRef: "join", targetRef: "end" });
++  model.setDefaultFormKey("form_apply");
++  return model;
++}
++
++const firstModel = buildModel("appearance_first", true);
++const secondModel = buildModel("appearance_second");
++const first = reactive<InstanceControls>({
++  enabled: true,
++  mounted: true,
++  colorSource: "host",
++  mode: "light",
++  density: "comfortable",
++});
++const second = reactive<InstanceControls>({
++  enabled: true,
++  mounted: true,
++  colorSource: "brand",
++  mode: "light",
++  density: "compact",
++});
++const firstInvalid = ref(false);
++const hostDark = ref(document.documentElement.classList.contains("dark"));
++const declarativeScopedDark = ref(false);
++const originallyDark = hostDark.value;
++const firstChanges = ref(0);
++const firstDraftChanges = ref(0);
++
++function toAppearance(controls: InstanceControls): ComponentAppearance | undefined {
++  if (!controls.enabled) return undefined;
++  return {
++    colorSource: controls.colorSource,
++    mode: controls.mode,
++    density: controls.density,
++  };
++}
++
++const firstAppearance = computed<ComponentAppearance | undefined>(() => {
++  if (firstInvalid.value && first.enabled)
++    return { mode: first.mode, density: "invalid-density" } as unknown as ComponentAppearance;
++  return toAppearance(first);
++});
++const secondAppearance = computed(() => toAppearance(second));
++
++function syncFirstHostMode(): void {
++  if (first.colorSource === "host")
++    first.mode = hostDark.value || declarativeScopedDark.value ? "dark" : "light";
++}
++
++function onFirstValidChange(): void {
++  firstInvalid.value = false;
++}
++
++function onFirstSourceChange(): void {
++  onFirstValidChange();
++  syncFirstHostMode();
++}
++
++function onDeclarativeDarkChange(): void {
++  onFirstValidChange();
++  syncFirstHostMode();
++}
++
++function onHostThemeChange(event: Event): void {
++  const dark = (event.target as HTMLInputElement).checked;
++  hostDark.value = dark;
++  // 这是宿主主动切换自己的 EP 深色环境，不是组件 appearance 的副作用。
++  document.documentElement.classList.toggle("dark", dark);
++  syncFirstHostMode();
++}
++
++onBeforeUnmount(() => {
++  document.documentElement.classList.toggle("dark", originallyDark);
++});
++</script>
++
++<template>
++  <section class="appearance-scene" data-test="appearance-scene">
++    <header class="appearance-scene-header">
++      <div>
++        <h2>节点属性抽屉外观验收</h2>
++        <p>两个公开 DingtalkDesigner 实例共享同一 Vue app，模型与编辑缓冲各自独立。</p>
++      </div>
++      <div class="appearance-controls">
++        <label>
++          <input
++            type="checkbox"
++            :checked="hostDark"
++            data-test="appearance-host-dark"
++            @change="onHostThemeChange"
++          />
++          宿主启用 EP 深色
++        </label>
++        <label>
++          <input
++            v-model="declarativeScopedDark"
++            type="checkbox"
++            data-test="appearance-declarative-dark"
++            @change="onDeclarativeDarkChange"
++          />
++          声明式局部深色宿主
++        </label>
++      </div>
++    </header>
++
++    <div class="appearance-host-control" data-test="appearance-host-control">
++      <span>无关宿主控件</span>
++      <ElInput data-test="appearance-host-input" model-value="宿主原值" />
++      <ElButton type="primary" data-test="appearance-host-button">宿主主按钮</ElButton>
++    </div>
++
++    <div class="appearance-instance-grid">
++      <section class="appearance-instance" data-test="appearance-first-instance">
++        <h3>实例一：目录选择器路径</h3>
++        <div class="appearance-controls">
++          <label
++            ><input
++              v-model="first.enabled"
++              type="checkbox"
++              data-test="appearance-first-enabled"
++            />启用适配</label
++          >
++          <label
++            ><input
++              v-model="first.mounted"
++              type="checkbox"
++              data-test="appearance-first-mounted"
++            />挂载实例</label
++          >
++          <label
++            >配色
++            <select
++              v-model="first.colorSource"
++              data-test="appearance-first-source"
++              @change="onFirstSourceChange"
++            >
++              <option value="host">跟随宿主</option>
++              <option value="brand">品牌预设</option>
++            </select>
++          </label>
++          <label
++            >主题
++            <select
++              v-model="first.mode"
++              data-test="appearance-first-mode"
++              :disabled="first.colorSource === 'host'"
++              @change="onFirstValidChange"
++            >
++              <option value="light">浅色</option>
++              <option value="dark">深色</option>
++            </select>
++          </label>
++          <label
++            >密度
++            <select
++              v-model="first.density"
++              data-test="appearance-first-density"
++              @change="onFirstValidChange"
++            >
++              <option value="comfortable">舒适</option>
++              <option value="compact">紧凑</option>
++            </select>
++          </label>
++          <button type="button" data-test="appearance-first-invalid" @click="firstInvalid = true">
++            发送非法密度
++          </button>
++          <span data-test="appearance-first-change-count">change {{ firstChanges }}</span>
++          <span data-test="appearance-first-draft-count">draft {{ firstDraftChanges }}</span>
++        </div>
++        <div
++          class="appearance-designer-viewport"
++          :class="{ 'appearance-scoped-dark': declarativeScopedDark }"
++        >
++          <DingtalkDesigner
++            v-if="first.mounted"
++            data-test="appearance-first-designer"
++            :model="firstModel"
++            :form-options="FORM_OPTIONS"
++            :appearance="firstAppearance"
++            @change="firstChanges += 1"
++            @draft-change="firstDraftChanges += 1"
++          />
++        </div>
++      </section>
++
++      <section class="appearance-instance" data-test="appearance-second-instance">
++        <h3>实例二：手写 formKey 路径</h3>
++        <div class="appearance-controls">
++          <label
++            ><input
++              v-model="second.enabled"
++              type="checkbox"
++              data-test="appearance-second-enabled"
++            />启用适配</label
++          >
++          <label
++            ><input
++              v-model="second.mounted"
++              type="checkbox"
++              data-test="appearance-second-mounted"
++            />挂载实例</label
++          >
++          <label
++            >配色
++            <select v-model="second.colorSource" data-test="appearance-second-source">
++              <option value="host">跟随宿主</option>
++              <option value="brand">品牌预设</option>
++            </select>
++          </label>
++          <label
++            >主题
++            <select
++              v-model="second.mode"
++              data-test="appearance-second-mode"
++              :disabled="second.colorSource === 'host'"
++            >
++              <option value="light">浅色</option>
++              <option value="dark">深色</option>
++            </select>
++          </label>
++          <label
++            >密度
++            <select v-model="second.density" data-test="appearance-second-density">
++              <option value="comfortable">舒适</option>
++              <option value="compact">紧凑</option>
++            </select>
++          </label>
++        </div>
++        <div class="appearance-designer-viewport">
++          <DingtalkDesigner
++            v-if="second.mounted"
++            data-test="appearance-second-designer"
++            :model="secondModel"
++            :appearance="secondAppearance"
++          />
++        </div>
++      </section>
++    </div>
++  </section>
++</template>
++
++<style scoped>
++.appearance-scene {
++  padding: 24px;
++  border-top: 1px solid var(--el-border-color-light);
++  background: var(--el-bg-color-page);
++  color: var(--el-text-color-primary);
++}
++
++.appearance-scene-header,
++.appearance-host-control,
++.appearance-controls {
++  display: flex;
++  align-items: center;
++  gap: 12px;
++  flex-wrap: wrap;
++}
++
++.appearance-scene-header {
++  justify-content: space-between;
++  margin-bottom: 16px;
++}
++
++.appearance-scene-header h2,
++.appearance-instance h3 {
++  margin: 0 0 4px;
++}
++
++.appearance-scene-header p {
++  margin: 0;
++  color: var(--el-text-color-regular);
++}
++
++.appearance-host-control {
++  margin-bottom: 16px;
++  padding: 12px;
++  border: 1px solid var(--el-border-color);
++  border-radius: 8px;
++  background: var(--el-bg-color);
++}
++
++.appearance-host-control .el-input {
++  width: 180px;
++}
++
++.appearance-instance-grid {
++  display: grid;
++  grid-template-columns: repeat(2, minmax(0, 1fr));
++  gap: 16px;
++}
++
++.appearance-instance {
++  min-width: 0;
++}
++
++.appearance-controls {
++  margin-bottom: 12px;
++  font-size: 13px;
++}
++
++.appearance-controls label {
++  display: inline-flex;
++  align-items: center;
++  gap: 4px;
++}
++
++.appearance-designer-viewport {
++  max-height: 760px;
++  overflow: auto;
++  border: 1px solid var(--el-border-color-light);
++  border-radius: 8px;
++}
++
++.appearance-scoped-dark {
++  --el-bg-color-page: #101817;
++  --el-bg-color: #162220;
++  --el-fill-color-light: #1f302d;
++  --el-text-color-primary: #e6f2f0;
++  --el-text-color-regular: #b8ceca;
++  --el-border-color-light: #2d4440;
++  --el-disabled-text-color: #7d9692;
++  --el-disabled-bg-color: #1f302d;
++  --el-color-primary: #7fcfc7;
++  --el-color-primary-light-3: #99dad3;
++  --el-color-primary-dark-2: #5fb3aa;
++  --el-color-white: #0c1f1d;
++}
++
++@media (max-width: 1100px) {
++  .appearance-instance-grid {
++    grid-template-columns: minmax(0, 1fr);
++  }
++}
++</style>
+diff --git a/apps/playground/src/main.ts b/apps/playground/src/main.ts
+index 6e7c057..d2fd393 100644
+--- a/apps/playground/src/main.ts
++++ b/apps/playground/src/main.ts
+@@ -1,6 +1,7 @@
+ import { createApp } from "vue";
+ import App from "./App.vue";
+ import "element-plus/dist/index.css";
++import "element-plus/theme-chalk/dark/css-vars.css";
+ // vite 库模式不自动注入样式：宿主经 style.css 子路径显式引入 designer 与
+ // form-create 的 CSS（后者内联了 FormCreate 设计器样式）
+ import "@flowduet/designer/style.css";
+diff --git a/packages/designer/README.md b/packages/designer/README.md
+index 666eb7f..c9b72f9 100644
+--- a/packages/designer/README.md
++++ b/packages/designer/README.md
+@@ -13,8 +13,8 @@ pnpm add @flowduet/designer @flowduet/core element-plus vue
+ 样式（vite 库模式不自动注入，宿主须显式引入）：
+ 
+ ```ts
+-import "@flowduet/designer/style.css";
+ import "element-plus/dist/index.css";
++import "@flowduet/designer/style.css";
+ ```
+ 
+ 若使用 `BpmnCanvas`，宿主还需显式安装 Vue Flow 的样式提供包，并引入其基础样式；`@flowduet/designer/style.css` 提供本包样式，不代替 Vue Flow 基础样式。只使用 `DingtalkDesigner` 时不需要这一步。
+@@ -66,6 +66,52 @@ async function doExport(): Promise<string> {
+ - 表单集成接缝（#72）：`DingtalkDesigner` 接收中立的 `formOptions`（`{ id, name }[]`，不依赖任何表单实现）——传入即展示「流程默认表单」选择条与审批节点的有效表单摘要（继承默认 / 节点指定 / 引用失效），不传则纯流程形态完全不变；`isCcServiceTask(element)` 公开抄送形态判定。默认引用经 `BpmnModel.setDefaultFormKey()` 读写（`flowduet:defaultFormKey`，由 core 统一注册）。
+ - 未提交内容收集（#76）：抽屉里的字段缓冲点「确定」才写模型。宿主在保存设计前可调用组件方法 `DingtalkDesigner#commitPendingChanges(options?)`——抽屉打开时执行与「确定」同一套守卫并把当前输入写入模型（成功后关闭抽屉、触发 `change`），守卫拦截（如多人集合变量格式非法）返回 `false` 且抽屉保持打开，宿主应中止保存而不是绕过守卫；抽屉未打开时为无操作。抽屉字段被编辑时组件上抛 `draft-change` 事件，未提交输入同样计入宿主的「未保存修改」判定（如替换当前设计前的确认提示）。宿主保存业务草稿时可显式传入 `{ allowIncomplete: true }`，允许空集合变量、空抄送收件人及插入占位收件人落盘，由草稿诊断报告待修复项；非空非法集合格式仍拒绝。默认调用与普通「确定」保持严格。抽屉为非模态展示：切换目标前提交当前缓冲，格式校验失败则停留原节点；提供 `formOptions` 的集成宿主按草稿路径收集，纯流程宿主保持严格校验。
+ 
++## 节点属性抽屉的实例外观（#103）
++
++省略 `appearance` 时保持原有抽屉外观和行为。传入合法对象才显式启用新适配：
++
++```vue
++<script setup lang="ts">
++import { ref } from "vue";
++import { DingtalkDesigner, type ComponentAppearance } from "@flowduet/designer";
++import "element-plus/dist/index.css";
++import "@flowduet/designer/style.css";
++
++// 跟随宿主时必须声明宿主当前的 EP 主题；本组件不会切换宿主 html/body 深色类。
++const appearance = ref<ComponentAppearance | undefined>({ mode: "light" });
++
++function useCompactBrand(): void {
++  appearance.value = { colorSource: "brand", mode: "dark", density: "compact" };
++}
++
++function useLegacyAppearance(): void {
++  appearance.value = undefined;
++}
++</script>
++
++<template>
++  <DingtalkDesigner :model="model" :appearance="appearance" />
++</template>
++```
++
++| 配置项        | 取值                         | 默认值        | 说明                                                                 |
++| ------------- | ---------------------------- | ------------- | -------------------------------------------------------------------- |
++| `colorSource` | `host` / `brand`             | `host`        | 跟随宿主或 FlowDuet 品牌预设；首批不开放任意种子或 token 覆盖 API    |
++| `mode`        | `light` / `dark`             | 必填          | `host` 时须与宿主当前 EP 主题一致；`brand` 可按实例独立于宿主主题    |
++| `density`     | `comfortable` / `compact`    | `comfortable` | 分别对应 EP `default` / `small`，实测控件高度为 32px / 24px          |
++
++跟随宿主只读取宿主当前 EP 主色、中性色、字体与圆角，为抽屉自有卡片和原生选择器派生 `--fd-*` 角色，**不写入任何 `--el-*` 变量（含实例范围）**。品牌预设只在所选抽屉内写入局部 EP 变量，不影响画布、节点卡片、流程默认表单条、其他实例或无关宿主控件。抽屉的非模态、覆盖层、节点切换与提交行为保持既有合同。
++
++宿主颜色支持与配色方案无关的常规 CSS 颜色格式，包括短十六进制、RGB、命名色、HSL、OKLCH 与 `currentColor`；透明角色按所属表面合成后计算派生颜色，依赖宿主 `color-scheme` 的 `light-dark()`／系统色关键字及非法颜色仍使用既有默认值。
++
++运行中修改配色、主题、密度以及启用／停用都保留未提交输入、焦点和输入法组合，不自动确定／取消，也不修改模型或 BPMN XML。更新时请替换整个 `appearance` 对象引用，不依赖对原对象字段的深度变更侦测。JavaScript 传入非法对象或枚举时会整份拒绝：已有合法配置则保持上次有效呈现，首次非法则保持旧路径，并通过 `console.warn` 报告具体字段和原因。合法停用与非法回退是两条不同路径。
++
++`@flowduet/designer` 包根同时导出 `ComponentAppearance`、`ResolvedComponentAppearance` 及其枚举类型，以及供其他 FlowDuet 组件复用的 `resolveComponentAppearance(value, previous?)`。后者补全合法配置；`previous` 传入当前有效结果时用于非法回退，合法省略返回 `undefined`，调用方应在合法停用后清空自己的 `previous`，避免后续非法输入复活旧主题。
++
++当前仅 **DingtalkDesigner 的节点属性抽屉**完成本适配；`FormPreview` 由后续切片交付。`propertyEditing="external"` 不渲染抽屉，合法 `appearance` 没有可见效果，也不影响宿主自有属性面板。原生 `select` 的系统选项弹层外观受浏览器和操作系统限制，不为像素一致替换成 `ElSelect`。
++
++首批验证环境为单份 Element Plus 2.14.6 与桌面 Chromium；其他 EP 版本、Firefox、Safari／WebKit、移动端、真实操作系统中文输入法及完整可访问性认证尚未验证。
++
+ ## License
+ 
+ Apache-2.0（见 [LICENSE](./LICENSE)）
+diff --git a/packages/designer/src/appearance-style.ts b/packages/designer/src/appearance-style.ts
+new file mode 100644
+index 0000000..d391454
+--- /dev/null
++++ b/packages/designer/src/appearance-style.ts
+@@ -0,0 +1,488 @@
++import type { AppearanceMode, ResolvedComponentAppearance } from "./appearance.js";
++
++type Rgb = [number, number, number];
++
++export interface HostAppearanceContext {
++  canvas: string;
++  surface: string;
++  inset: string;
++  text: string;
++  secondary: string;
++  border: string;
++  disabledText: string;
++  disabledSurface: string;
++  primary: string;
++  primaryHover: string;
++  primaryPressed: string;
++  onPrimary: string;
++  fontFamily: string;
++  fontSizeBase: string;
++  radius: string;
++}
++
++const HOST_DEFAULTS: Record<AppearanceMode, HostAppearanceContext> = {
++  light: {
++    canvas: "#F2F3F5",
++    surface: "#FFFFFF",
++    inset: "#F5F7FA",
++    text: "#303133",
++    secondary: "#606266",
++    border: "#E4E7ED",
++    disabledText: "#A8ABB2",
++    disabledSurface: "#F5F7FA",
++    primary: "#409EFF",
++    primaryHover: "#79BBFF",
++    primaryPressed: "#337ECC",
++    onPrimary: "#FFFFFF",
++    fontFamily:
++      '"Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif',
++    fontSizeBase: "14px",
++    radius: "4px",
++  },
++  dark: {
++    canvas: "#0A0A0A",
++    surface: "#141414",
++    inset: "#262727",
++    text: "#E5EAF3",
++    secondary: "#CFD3DC",
++    border: "#414243",
++    disabledText: "#8D9095",
++    disabledSurface: "#262727",
++    primary: "#409EFF",
++    primaryHover: "#3375B9",
++    primaryPressed: "#66B1FF",
++    onPrimary: "#FFFFFF",
++    fontFamily:
++      '"Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif',
++    fontSizeBase: "14px",
++    radius: "4px",
++  },
++};
++
++const BRAND_ROLES = {
++  light: {
++    canvas: "#F5F6FA",
++    surface: "#FFFFFF",
++    inset: "#F0F2F8",
++    text: "#20263D",
++    secondary: "#565F76",
++    muted: "#626D86",
++    border: "#CDD2E0",
++    controlBorder: "#7A859E",
++    primary: "#2D3E97",
++    primaryHover: "#222F87",
++    primaryPressed: "#181F77",
++    onPrimary: "#FFFFFF",
++    primarySoft: "#EAF0FF",
++    primaryInk: "#2D3E97",
++    focus: "#2D3E97",
++    disabledText: "#8B92A4",
++    disabledSurface: "#EDF0F5",
++  },
++  dark: {
++    canvas: "#141925",
++    surface: "#1D2435",
++    inset: "#252E43",
++    text: "#E9EDF7",
++    secondary: "#B7C0D5",
++    muted: "#A3AFC9",
++    border: "#3C4864",
++    controlBorder: "#75839F",
++    primary: "#A5BBFF",
++    primaryHover: "#BBCCFF",
++    primaryPressed: "#93A8EB",
++    onPrimary: "#171F3E",
++    primarySoft: "#2A3354",
++    primaryInk: "#A5BBFF",
++    focus: "#A5BBFF",
++    disabledText: "#7F8AA2",
++    disabledSurface: "#252D40",
++  },
++} as const;
++
++const BRAND_EP_SCALE = {
++  light: {
++    "light-3": "#6C78B6",
++    "light-5": "#969FCB",
++    "light-7": "#C0C5E0",
++    "light-8": "#D5D8EA",
++    "light-9": "#EAECF5",
++    "dark-2": "#243279",
++  },
++  dark: {
++    "light-3": "#7C8EC2",
++    "light-5": "#61709A",
++    "light-7": "#465172",
++    "light-8": "#38425D",
++    "light-9": "#2B3349",
++    "dark-2": "#B7C9FF",
++  },
++} as const;
++
++const STATUS_ROLES = {
++  light: {
++    danger: "#B4233A",
++    dangerSoft: "#FFF0F2",
++    success: "#23714D",
++    warning: "#8C5C12",
++    approvalSoft: "#ECF1F5",
++  },
++  dark: {
++    danger: "#FF9DAE",
++    dangerSoft: "#422835",
++    success: "#81D5A6",
++    warning: "#F0C46B",
++    approvalSoft: "#282F35",
++  },
++} as const;
++
++const toLinear = (channel: number) =>
++  channel <= 0.04045 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4;
++const fromLinear = (channel: number) =>
++  channel <= 0.0031308 ? 12.92 * channel : 1.055 * channel ** (1 / 2.4) - 0.055;
++
++function hexToRgb(hex: string): Rgb {
++  const value = hex.replace("#", "");
++  if (!/^[\da-fA-F]{6}$/.test(value)) throw new Error(`无法读取颜色：${hex}`);
++  return [0, 2, 4].map((index) => parseInt(value.slice(index, index + 2), 16) / 255) as Rgb;
++}
++
++function rgbToHex(rgb: Rgb): string {
++  return (
++    "#" +
++    rgb
++      .map((channel) =>
++        Math.round(Math.min(1, Math.max(0, channel)) * 255)
++          .toString(16)
++          .padStart(2, "0"),
++      )
++      .join("")
++      .toUpperCase()
++  );
++}
++
++function linearToOklab([r, g, b]: Rgb): Rgb {
++  const l = Math.cbrt(0.4122214708 * r + 0.5363325363 * g + 0.0514459929 * b);
++  const m = Math.cbrt(0.2119034982 * r + 0.6806995451 * g + 0.1073969566 * b);
++  const s = Math.cbrt(0.0883024619 * r + 0.2817188376 * g + 0.6299787005 * b);
++  return [
++    0.2104542553 * l + 0.793617785 * m - 0.0040720468 * s,
++    1.9779984951 * l - 2.428592205 * m + 0.4505937099 * s,
++    0.0259040371 * l + 0.7827717662 * m - 0.808675766 * s,
++  ];
++}
++
++function oklabToLinear([L, a, b]: Rgb): Rgb {
++  const l = (L + 0.3963377774 * a + 0.2158037573 * b) ** 3;
++  const m = (L - 0.1055613458 * a - 0.0638541728 * b) ** 3;
++  const s = (L - 0.0894841775 * a - 1.291485548 * b) ** 3;
++  return [
++    4.0767416621 * l - 3.3077115913 * m + 0.2309699292 * s,
++    -1.2684380046 * l + 2.6097574011 * m - 0.3413193965 * s,
++    -0.0041960863 * l - 0.7034186147 * m + 1.707614701 * s,
++  ];
++}
++
++function hexToOklch(hex: string) {
++  const [L, a, b] = linearToOklab(hexToRgb(hex).map(toLinear) as Rgb);
++  return { L, C: Math.hypot(a, b), h: (Math.atan2(b, a) * 180) / Math.PI };
++}
++
++// 与已批准的 R2 派生脚本一致：超出色域时保持明度和色相，二分降低彩度。
++function oklchToHex(L: number, C: number, h: number): string {
++  const clampedL = Math.min(1, Math.max(0, L));
++  const radians = (h * Math.PI) / 180;
++  const inGamut = (chroma: number) =>
++    oklabToLinear([clampedL, chroma * Math.cos(radians), chroma * Math.sin(radians)]).every(
++      (channel) => channel >= -1e-6 && channel <= 1 + 1e-6,
++    );
++  let chroma = Math.max(0, C);
++  if (!inGamut(chroma)) {
++    let low = 0;
++    let high = chroma;
++    for (let index = 0; index < 30; index += 1) {
++      const middle = (low + high) / 2;
++      if (inGamut(middle)) low = middle;
++      else high = middle;
++    }
++    chroma = low;
++  }
++  const linear = oklabToLinear([clampedL, chroma * Math.cos(radians), chroma * Math.sin(radians)]);
++  return rgbToHex(linear.map((channel) => fromLinear(Math.min(1, Math.max(0, channel)))) as Rgb);
++}
++
++function luminance(hex: string): number {
++  const [r, g, b] = hexToRgb(hex).map(toLinear) as Rgb;
++  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
++}
++
++function contrast(a: string, b: string): number {
++  const high = Math.max(luminance(a), luminance(b));
++  const low = Math.min(luminance(a), luminance(b));
++  return (high + 0.05) / (low + 0.05);
++}
++
++function mix(a: string, b: string, weight: number): string {
++  const left = hexToRgb(a);
++  const right = hexToRgb(b);
++  return rgbToHex(
++    left.map((channel, index) => channel * weight + right[index]! * (1 - weight)) as Rgb,
++  );
++}
++
++function neutralToward(text: string, surface: string, backgrounds: string[], target: number) {
++  for (let weight = 0; weight <= 1.0001; weight += 0.01) {
++    const color = mix(text, surface, weight);
++    if (backgrounds.every((background) => contrast(color, background) >= target)) return color;
++  }
++  return text;
++}
++
++function searchPrimaryInk(primary: string, backgrounds: string[], mode: AppearanceMode) {
++  const seed = hexToOklch(primary);
++  const step = mode === "light" ? -0.005 : 0.005;
++  for (let L = seed.L; L >= 0 && L <= 1; L += step) {
++    const color = oklchToHex(L, seed.C, seed.h);
++    if (backgrounds.every((background) => contrast(color, background) >= 4.5)) return color;
++  }
++  // 极端宿主色无法达标时不改宿主 EP；自有角色至少保持宿主正文可读性。
++  return null;
++}
++
++function densityVariables(density: "comfortable" | "compact"): Record<string, string> {
++  const compact = density === "compact";
++  return {
++    "--fd-control-height": compact ? "24px" : "32px",
++    "--fd-control-font-size": compact ? "12px" : "14px",
++    "--fd-field-gap": compact ? "12px" : "16px",
++    "--fd-panel-padding": compact ? "16px" : "24px",
++    "--fd-node-padding": compact ? "12px" : "16px",
++    "--fd-row-gap": compact ? "8px" : "12px",
++  };
++}
++
++function hostVariables(
++  appearance: ResolvedComponentAppearance,
++  context: HostAppearanceContext,
++): Record<string, string> {
++  const { mode } = appearance;
++  const status = STATUS_ROLES[mode];
++  const backgrounds = [context.surface, context.inset, context.canvas];
++  const muted = neutralToward(context.text, context.surface, backgrounds, 4.5);
++  const controlBorder = neutralToward(context.text, context.surface, backgrounds, 3);
++  const seed = hexToOklch(context.primary);
++  const primarySoft = oklchToHex(
++    mode === "light" ? 0.955 : 0.33,
++    Math.min(seed.C * (mode === "light" ? 0.3 : 0.5), mode === "light" ? 0.035 : 0.06),
++    seed.h,
++  );
++  const primaryInk =
++    searchPrimaryInk(context.primary, [...backgrounds, primarySoft, status.approvalSoft], mode) ??
++    context.text;
++  // 与 R2 派生口径一致：跨明度宿主背景使 3:1 搜索落空时回退 primaryInk，避免省略 --fd-focus 使焦点环失效。
++  const focus =
++    [context.primary, primaryInk].find((color) =>
++      backgrounds.every((background) => contrast(color, background) >= 3),
++    ) ?? primaryInk;
++  return {
++    ...densityVariables(appearance.density),
++    "--fd-canvas": context.canvas,
++    "--fd-surface": context.surface,
++    "--fd-inset": context.inset,
++    "--fd-text": context.text,
++    "--fd-secondary": context.secondary,
++    "--fd-muted": muted,
++    "--fd-border": context.border,
++    "--fd-control-border": controlBorder,
++    "--fd-primary": context.primary,
++    "--fd-primary-hover": context.primaryHover,
++    "--fd-primary-pressed": context.primaryPressed,
++    "--fd-on-primary": context.onPrimary,
++    "--fd-primary-soft": primarySoft,
++    "--fd-primary-ink": primaryInk,
++    "--fd-focus": focus,
++    "--fd-danger": status.danger,
++    "--fd-danger-soft": status.dangerSoft,
++    "--fd-success": status.success,
++    "--fd-warning": status.warning,
++    "--fd-disabled-text": context.disabledText,
++    "--fd-disabled-surface": context.disabledSurface,
++    "--fd-font-family": context.fontFamily,
++    "--fd-font-size-base": context.fontSizeBase,
++    "--fd-radius": context.radius,
++  };
++}
++
++function brandVariables(appearance: ResolvedComponentAppearance): Record<string, string> {
++  const roles = BRAND_ROLES[appearance.mode];
++  const status = STATUS_ROLES[appearance.mode];
++  const scale = BRAND_EP_SCALE[appearance.mode];
++  return {
++    ...densityVariables(appearance.density),
++    "--fd-canvas": roles.canvas,
++    "--fd-surface": roles.surface,
++    "--fd-inset": roles.inset,
++    "--fd-text": roles.text,
++    "--fd-secondary": roles.secondary,
++    "--fd-muted": roles.muted,
++    "--fd-border": roles.border,
++    "--fd-control-border": roles.controlBorder,
++    "--fd-primary": roles.primary,
++    "--fd-primary-hover": roles.primaryHover,
++    "--fd-primary-pressed": roles.primaryPressed,
++    "--fd-on-primary": roles.onPrimary,
++    "--fd-primary-soft": roles.primarySoft,
++    "--fd-primary-ink": roles.primaryInk,
++    "--fd-focus": roles.focus,
++    "--fd-danger": status.danger,
++    "--fd-danger-soft": status.dangerSoft,
++    "--fd-success": status.success,
++    "--fd-warning": status.warning,
++    "--fd-disabled-text": roles.disabledText,
++    "--fd-disabled-surface": roles.disabledSurface,
++    "--fd-font-family": 'system-ui, -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif',
++    "--fd-font-size-base": "14px",
++    "--fd-radius": "8px",
++    "--el-color-primary": roles.primary,
++    "--el-color-primary-light-3": scale["light-3"],
++    "--el-color-primary-light-5": scale["light-5"],
++    "--el-color-primary-light-7": scale["light-7"],
++    "--el-color-primary-light-8": scale["light-8"],
++    "--el-color-primary-light-9": scale["light-9"],
++    "--el-color-primary-dark-2": scale["dark-2"],
++    "--el-bg-color-page": roles.canvas,
++    "--el-bg-color": roles.surface,
++    "--el-bg-color-overlay": roles.surface,
++    "--el-fill-color-blank": roles.surface,
++    "--el-fill-color-light": roles.inset,
++    "--el-text-color-primary": roles.text,
++    "--el-text-color-regular": roles.secondary,
++    "--el-text-color-secondary": roles.muted,
++    "--el-text-color-placeholder": roles.muted,
++    "--el-border-color": roles.controlBorder,
++    "--el-border-color-hover": roles.controlBorder,
++    "--el-border-color-light": roles.border,
++    "--el-border-color-lighter": roles.border,
++    "--el-disabled-text-color": roles.disabledText,
++    "--el-disabled-bg-color": roles.disabledSurface,
++    "--el-disabled-border-color": roles.border,
++    "--el-color-danger": status.danger,
++    "--el-color-success": status.success,
++    "--el-color-warning": status.warning,
++    "--el-font-family": 'system-ui, -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif',
++    "--el-font-size-base": "14px",
++    "--el-form-label-font-size": "13px",
++    "--el-border-radius-base": "8px",
++  };
++}
++
++export function createAppearanceVariables(
++  appearance: ResolvedComponentAppearance | undefined,
++  host: HostAppearanceContext | undefined,
++): Record<string, string> | undefined {
++  if (appearance === undefined) return undefined;
++  if (appearance.colorSource === "host")
++    return hostVariables(appearance, host ?? HOST_DEFAULTS[appearance.mode]);
++  return brandVariables(appearance);
++}
++
++const RGB_CHANNEL = String.raw`(\d+(?:\.\d+)?|\.\d+)`;
++const COMMA_RGB_RE = new RegExp(
++  String.raw`^rgba?\(\s*${RGB_CHANNEL}\s*,\s*${RGB_CHANNEL}\s*,\s*${RGB_CHANNEL}(?:\s*,\s*(?:1(?:\.0+)?|100%))?\s*\)$`,
++  "i",
++);
++const SPACE_RGB_RE = new RegExp(
++  String.raw`^rgba?\(\s*${RGB_CHANNEL}\s+${RGB_CHANNEL}\s+${RGB_CHANNEL}(?:\s*\/\s*(?:1(?:\.0+)?|100%))?\s*\)$`,
++  "i",
++);
++
++function cssColorToRgb(value: string): Rgb {
++  if (value.startsWith("#"))
++    return hexToRgb(
++      /^#[\da-f]{3}$/i.test(value)
++        ? "#" + [...value.slice(1)].map((channel) => channel + channel).join("")
++        : value,
++    );
++  const match = value.match(COMMA_RGB_RE) ?? value.match(SPACE_RGB_RE);
++  if (match !== null) {
++    const channels = match.slice(1, 4).map(Number);
++    if (channels.every((channel) => channel >= 0 && channel <= 255))
++      return channels.map((channel) => channel / 255) as Rgb;
++  }
++  throw new Error(`无法读取颜色：${value}`);
++}
++
++function readBrowserColor(value: string, element: HTMLElement, background: string): string {
++  const canvas = element.ownerDocument.createElement("canvas");
++  canvas.width = canvas.height = 1;
++  const context = canvas.getContext("2d");
++  if (context === null) throw new Error("当前环境不支持浏览器颜色解析");
++  const currentColor = element.ownerDocument.defaultView?.getComputedStyle(element).color;
++  const color = value.replace(/\bcurrentcolor\b/gi, currentColor || "black");
++  // 非法 fillStyle 会保留旧值；两个不同哨兵可区分非法值与恰好等于哨兵的合法色。
++  context.fillStyle = "#010203";
++  context.fillStyle = color;
++  const first = context.fillStyle;
++  context.fillStyle = "#040506";
++  context.fillStyle = color;
++  if (context.fillStyle !== first) throw new Error(`无法读取颜色：${value}`);
++  // CSS Color 4 由浏览器转为 sRGB；透明角色在其实际表面上合成后再用于对比度派生。
++  context.fillStyle = background;
++  context.fillRect(0, 0, 1, 1);
++  context.fillStyle = color;
++  context.fillRect(0, 0, 1, 1);
++  const [r, g, b] = context.getImageData(0, 0, 1, 1).data;
++  return rgbToHex([r! / 255, g! / 255, b! / 255]);
++}
++
++function readColor(
++  styles: CSSStyleDeclaration,
++  name: string,
++  fallback: string,
++  element: HTMLElement | undefined,
++  background: string,
++): string {
++  const value = styles.getPropertyValue(name).trim();
++  if (value === "") return fallback;
++  try {
++    return rgbToHex(cssColorToRgb(value));
++  } catch {
++    try {
++      return element === undefined ? fallback : readBrowserColor(value, element, background);
++    } catch {
++      return fallback;
++    }
++  }
++}
++
++/** 抽屉 Teleport 前读取宿主上下文；不做通用 CSSOM 侦测，也不回写宿主变量。 */
++export function readHostAppearance(
++  element: HTMLElement | undefined,
++  mode: AppearanceMode,
++): HostAppearanceContext {
++  const fallback = HOST_DEFAULTS[mode];
++  const styles = element?.ownerDocument.defaultView?.getComputedStyle(element);
++  if (styles === undefined) return { ...fallback };
++  const color = (name: string, key: keyof HostAppearanceContext, background: string) =>
++    readColor(styles, name, fallback[key], element, background);
++  const canvas = color("--el-bg-color-page", "canvas", fallback.canvas);
++  const surface = color("--el-bg-color", "surface", canvas);
++  const primary = color("--el-color-primary", "primary", surface);
++  return {
++    canvas,
++    surface,
++    inset: color("--el-fill-color-light", "inset", surface),
++    text: color("--el-text-color-primary", "text", surface),
++    secondary: color("--el-text-color-regular", "secondary", surface),
++    border: color("--el-border-color-light", "border", surface),
++    disabledText: color("--el-disabled-text-color", "disabledText", surface),
++    disabledSurface: color("--el-disabled-bg-color", "disabledSurface", surface),
++    primary,
++    primaryHover: color("--el-color-primary-light-3", "primaryHover", surface),
++    primaryPressed: color("--el-color-primary-dark-2", "primaryPressed", surface),
++    onPrimary: color("--el-color-white", "onPrimary", primary),
++    fontFamily: styles.getPropertyValue("--el-font-family").trim() || fallback.fontFamily,
++    fontSizeBase: styles.getPropertyValue("--el-font-size-base").trim() || fallback.fontSizeBase,
++    radius: styles.getPropertyValue("--el-border-radius-base").trim() || fallback.radius,
++  };
++}
+diff --git a/packages/designer/src/appearance.test.ts b/packages/designer/src/appearance.test.ts
+new file mode 100644
+index 0000000..4bb8083
+--- /dev/null
++++ b/packages/designer/src/appearance.test.ts
+@@ -0,0 +1,514 @@
++// @vitest-environment happy-dom
++import { afterEach, describe, expect, it, vi } from "vitest";
++import { flushPromises, mount } from "@vue/test-utils";
++import { defineComponent, reactive } from "vue";
++import { ElButton } from "element-plus";
++import { BpmnModel, flowableAdapter } from "@flowduet/core";
++import { DingtalkDesigner, resolveComponentAppearance, type ComponentAppearance } from "./index.js";
++
++const wrappers: { unmount(): void }[] = [];
++
++afterEach(() => {
++  vi.restoreAllMocks();
++  wrappers.splice(0).forEach((wrapper) => wrapper.unmount());
++  document.body.innerHTML = "";
++});
++
++function buildModel(): BpmnModel {
++  return BpmnModel.create({ processId: "appearance_flow", adapter: flowableAdapter })
++    .addStartEvent({ id: "start", name: "开始" })
++    .addUserTask({ id: "approval", name: "经理审批", assignee: "${manager}" })
++    .addEndEvent({ id: "end", name: "结束" })
++    .addSequenceFlow({ id: "f1", sourceRef: "start", targetRef: "approval" })
++    .addSequenceFlow({ id: "f2", sourceRef: "approval", targetRef: "end" });
++}
++
++function mountDesigner(model: BpmnModel, appearance?: unknown) {
++  const wrapper = mount(DingtalkDesigner, {
++    props: { model, appearance: appearance as ComponentAppearance },
++    attachTo: document.body,
++  });
++  wrappers.push(wrapper);
++  return wrapper;
++}
++
++async function openApproval(wrapper: ReturnType<typeof mount>): Promise<void> {
++  await wrapper.findAll('[data-test="node-card"]')[1]!.trigger("click");
++  await flushPromises();
++}
++
++describe("公开实例外观配置（#103）", () => {
++  it("合法对象省略配色与密度时补为跟随宿主和舒适档", () => {
++    expect(resolveComponentAppearance({ mode: "light" })).toEqual({
++      colorSource: "host",
++      mode: "light",
++      density: "comfortable",
++    });
++  });
++
++  it("非法配置整份拒绝并保留上次有效值，同时报告字段原因", () => {
++    const previous = {
++      colorSource: "brand",
++      mode: "dark",
++      density: "compact",
++    } as const;
++    const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
++
++    expect(
++      resolveComponentAppearance(
++        { colorSource: "host", mode: "light", density: "large" },
++        previous,
++      ),
++    ).toBe(previous);
++    expect(warn).toHaveBeenCalledWith(expect.stringContaining("appearance.density"));
++    expect(warn).toHaveBeenCalledWith(expect.stringContaining("comfortable"));
++  });
++
++  it("null 不是省略配置，任一字段为 null 都整份拒绝", () => {
++    const previous = resolveComponentAppearance({ colorSource: "brand", mode: "dark" });
++    const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
++
++    expect(resolveComponentAppearance({ colorSource: null, mode: "light" }, previous)).toBe(
++      previous,
++    );
++    expect(resolveComponentAppearance({ mode: "light", density: null }, previous)).toBe(previous);
++    expect(warn).toHaveBeenCalledWith(expect.stringContaining("appearance.colorSource"));
++    expect(warn).toHaveBeenCalledWith(expect.stringContaining("appearance.density"));
++  });
++
++  it("配置属性 getter 抛错时整份拒绝并告警，不向集成方逸出异常", () => {
++    const previous = resolveComponentAppearance({ colorSource: "brand", mode: "dark" });
++    const invalid = Object.defineProperty({}, "mode", {
++      get() {
++        throw new Error("getter exploded");
++      },
++    });
++    const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
++
++    expect(() => resolveComponentAppearance(invalid, previous)).not.toThrow();
++    expect(resolveComponentAppearance(invalid, previous)).toBe(previous);
++    expect(warn).toHaveBeenCalledWith(expect.stringContaining("appearance"));
++    expect(warn).toHaveBeenCalledWith(expect.stringContaining("getter exploded"));
++  });
++
++  it("公开组件传合法紧凑配置后，抽屉与真实 EP 控件使用 small", async () => {
++    const wrapper = mountDesigner(buildModel(), {
++      colorSource: "brand",
++      mode: "dark",
++      density: "compact",
++    });
++    await openApproval(wrapper);
++
++    const drawer = document.querySelector<HTMLElement>('[data-test="node-drawer"]');
++    expect(drawer?.classList.contains("flowduet-appearance")).toBe(true);
++    expect(drawer?.classList.contains("flowduet-appearance--brand")).toBe(true);
++    expect(drawer?.style.getPropertyValue("--fd-control-height")).toBe("24px");
++    expect(drawer?.style.getPropertyValue("--el-color-primary")).toBe("#A5BBFF");
++    expect(drawer?.style.getPropertyValue("--fd-on-primary")).toBe("#171F3E");
++    expect(drawer?.style.getPropertyValue("--fd-surface")).toBe("#1D2435");
++    expect(drawer?.style.getPropertyValue("--fd-primary-soft")).toBe("#2A3354");
++    expect(drawer?.style.getPropertyValue("--fd-radius")).toBe("8px");
++    expect(
++      document
++        .querySelector('[data-test="drawer-name"]')
++        ?.closest(".el-input")
++        ?.classList.contains("el-input--small"),
++    ).toBe(true);
++    expect(document.querySelector('[data-test="drawer-save"]')?.classList).toContain(
++      "el-button--small",
++    );
++  });
++
++  it("跟随宿主时读取当前 EP 角色派生自有变量，实例范围不写任何 EP 变量", async () => {
++    const wrapper = mountDesigner(buildModel());
++    const host = wrapper.element as HTMLElement;
++    const hostValues: Record<string, string> = {
++      "--el-color-primary": "#409EFF",
++      "--el-color-primary-light-3": "#79BBFF",
++      "--el-color-primary-dark-2": "#337ECC",
++      "--el-color-white": "#FFFFFF",
++      "--el-bg-color-page": "#F2F3F5",
++      "--el-bg-color": "#FFFFFF",
++      "--el-fill-color-light": "#F5F7FA",
++      "--el-text-color-primary": "#303133",
++      "--el-text-color-regular": "#606266",
++      "--el-border-color-light": "#E4E7ED",
++      "--el-disabled-text-color": "#A8ABB2",
++      "--el-disabled-bg-color": "#F5F7FA",
++      "--el-font-family": "Host Sans, sans-serif",
++      "--el-font-size-base": "14px",
++      "--el-border-radius-base": "4px",
++    };
++    for (const [name, value] of Object.entries(hostValues)) host.style.setProperty(name, value);
++    await wrapper.setProps({ appearance: { mode: "light" } });
++    await openApproval(wrapper);
++
++    const drawer = document.querySelector<HTMLElement>('[data-test="node-drawer"]')!;
++    expect(drawer.style.getPropertyValue("--fd-primary-ink")).toBe("#006EC6");
++    expect(drawer.style.getPropertyValue("--fd-primary-soft")).toBe("#E6F2FF");
++    expect(drawer.style.getPropertyValue("--fd-muted")).toBe("#6E6F70");
++    expect(drawer.style.getPropertyValue("--fd-control-border")).toBe("#8B8C8D");
++    expect(drawer.style.getPropertyValue("--fd-font-family")).toBe("Host Sans, sans-serif");
++    expect(drawer.getAttribute("style")).not.toContain("--el-");
++  });
++
++  it("声明式模板同一响应式周期切换宿主主题与 appearance 时消费更新后的宿主样式", async () => {
++    const lightHostStyle = {
++      "--el-bg-color-page": "#F2F7F6",
++      "--el-bg-color": "#FAFCFC",
++      "--el-fill-color-light": "#EEF5F4",
++      "--el-text-color-primary": "#182625",
++      "--el-text-color-regular": "#4A5A58",
++      "--el-color-primary": "#0F6B65",
++    };
++    const darkHostStyle = {
++      "--el-bg-color-page": "#101817",
++      "--el-bg-color": "#162220",
++      "--el-fill-color-light": "#1F302D",
++      "--el-text-color-primary": "#E6F2F0",
++      "--el-text-color-regular": "#B8CECA",
++      "--el-color-primary": "#7FCFC7",
++    };
++    const state = reactive({ isDark: false });
++    const model = buildModel();
++    const DeclarativeHost = defineComponent({
++      components: { DingtalkDesigner },
++      setup() {
++        return { state, model, lightHostStyle, darkHostStyle };
++      },
++      template: `
++        <div>
++          <button type="button" data-test="toggle-host-theme" @click="state.isDark = !state.isDark">切换主题</button>
++          <DingtalkDesigner
++            :model="model"
++            :style="state.isDark ? darkHostStyle : lightHostStyle"
++            :appearance="{ colorSource: 'host', mode: state.isDark ? 'dark' : 'light' }"
++          />
++        </div>
++      `,
++    });
++    const wrapper = mount(DeclarativeHost, { attachTo: document.body });
++    wrappers.push(wrapper);
++    await openApproval(wrapper);
++
++    const drawer = document.querySelector<HTMLElement>('[data-test="node-drawer"]')!;
++    const input = document.querySelector<HTMLInputElement>('[data-test="drawer-name"]')!;
++    input.value = "声明式换肤保留的草稿";
++    input.dispatchEvent(new Event("input", { bubbles: true }));
++    input.focus();
++    expect(drawer.style.getPropertyValue("--fd-surface")).toBe("#FAFCFC");
++    expect(drawer.style.getPropertyValue("--fd-primary")).toBe("#0F6B65");
++
++    await wrapper.find('[data-test="toggle-host-theme"]').trigger("click");
++
++    expect(drawer.style.getPropertyValue("--fd-surface")).toBe("#162220");
++    expect(drawer.style.getPropertyValue("--fd-secondary")).toBe("#B8CECA");
++    expect(drawer.style.getPropertyValue("--fd-primary")).toBe("#7FCFC7");
++    expect(drawer.getAttribute("style")).not.toContain("--el-");
++    expect(document.querySelector('[data-test="drawer-name"]')).toBe(input);
++    expect(input.value).toBe("声明式换肤保留的草稿");
++    expect(document.activeElement).toBe(input);
++  });
++
++  it("宿主以 rgb() 声明主色时按同一 R2 规则派生，混用分隔符的非法 rgb() 回退默认值", async () => {
++    const wrapper = mountDesigner(buildModel());
++    const host = wrapper.element as HTMLElement;
++    host.style.setProperty("--el-color-primary", "rgb(15, 107, 101)");
++    await wrapper.setProps({ appearance: { mode: "light" } });
++    await openApproval(wrapper);
++
++    const drawer = document.querySelector<HTMLElement>('[data-test="node-drawer"]')!;
++    expect(drawer.style.getPropertyValue("--fd-primary")).toBe("#0F6B65");
++    expect(drawer.style.getPropertyValue("--fd-primary-soft")).toBe("#DFF6F3");
++    expect(drawer.style.getPropertyValue("--fd-primary-ink")).toBe("#0F6B65");
++
++    host.style.setProperty("--el-color-primary", "rgb(15 107 101 / 100%)");
++    await wrapper.setProps({ appearance: { mode: "light" } });
++    expect(drawer.style.getPropertyValue("--fd-primary")).toBe("#0F6B65");
++
++    host.style.setProperty("--el-color-primary", "rgb(255, 0 0)");
++    await wrapper.setProps({ appearance: { mode: "light" } });
++    expect(drawer.style.getPropertyValue("--fd-primary")).toBe("#409EFF");
++  });
++
++  it("宿主画布与抽屉表面跨明度时 --fd-focus 回退 primaryInk，不输出空值", async () => {
++    const wrapper = mountDesigner(buildModel());
++    const host = wrapper.element as HTMLElement;
++    host.style.setProperty("--el-bg-color-page", "#141414");
++    host.style.setProperty("--el-bg-color", "#FFFFFF");
++    host.style.setProperty("--el-fill-color-light", "#F5F7FA");
++    host.style.setProperty("--el-text-color-primary", "#303133");
++    host.style.setProperty("--el-color-primary", "#2D3E97");
++    await wrapper.setProps({ appearance: { mode: "light" } });
++    await openApproval(wrapper);
++
++    const drawer = document.querySelector<HTMLElement>('[data-test="node-drawer"]')!;
++    expect(drawer.style.getPropertyValue("--fd-primary-ink")).toBe("#303133");
++    expect(drawer.style.getPropertyValue("--fd-focus")).toBe("#303133");
++    expect(drawer.getAttribute("style")).not.toContain("--el-");
++  });
++
++  it("宿主短十六进制颜色与等价六位颜色产生相同的自有角色", async () => {
++    const wrapper = mountDesigner(buildModel());
++    (wrapper.element as HTMLElement).style.setProperty("--el-color-primary", "#f00");
++    await wrapper.setProps({ appearance: { mode: "light" } });
++    await openApproval(wrapper);
++
++    const drawer = document.querySelector<HTMLElement>('[data-test="node-drawer"]')!;
++    expect(drawer.style.getPropertyValue("--fd-primary")).toBe("#FF0000");
++    const shortStyle = drawer.getAttribute("style");
++    (wrapper.element as HTMLElement).style.setProperty("--el-color-primary", "#ff0000");
++    await wrapper.setProps({ appearance: { mode: "light" } });
++    expect(drawer.getAttribute("style")).toBe(shortStyle);
++    expect(drawer.getAttribute("style")).not.toContain("--el-");
++  });
++
++  it("完成方式在新外观下同时用文字和边框表达选中，不只换颜色", async () => {
++    const wrapper = mountDesigner(buildModel(), { mode: "light" });
++    await openApproval(wrapper);
++    const countersign = document.querySelector<HTMLButtonElement>('[data-test="kind-all"]')!;
++    countersign.click();
++    await flushPromises();
++
++    expect(countersign.getAttribute("aria-pressed")).toBe("true");
++    expect(countersign.textContent).toContain("已选中");
++    const single = document.querySelector<HTMLButtonElement>('[data-test="kind-single"]')!;
++    expect(single.getAttribute("aria-pressed")).toBe("false");
++    expect(single.textContent).not.toContain("已选中");
++  });
++
++  it("运行中切换外观和启停适配保留输入 DOM、焦点与草稿，不改 BPMN XML", async () => {
++    const model = buildModel();
++    const beforeXml = (await model.toXML()).xml;
++    const wrapper = mountDesigner(model, { mode: "light" });
++    await openApproval(wrapper);
++    const input = document.querySelector<HTMLInputElement>('[data-test="drawer-name"]')!;
++    input.value = "尚未提交的中文名称";
++    input.dispatchEvent(new Event("input", { bubbles: true }));
++    input.focus();
++    await flushPromises();
++
++    await wrapper.setProps({
++      appearance: { colorSource: "brand", mode: "dark", density: "compact" },
++    });
++    expect(document.querySelector('[data-test="drawer-name"]')).toBe(input);
++    expect(input.value).toBe("尚未提交的中文名称");
++    expect(document.activeElement).toBe(input);
++    expect(document.querySelector('[data-test="node-drawer"]')?.classList).toContain(
++      "flowduet-appearance--dark",
++    );
++
++    await wrapper.setProps({ appearance: undefined });
++    expect(document.querySelector('[data-test="node-drawer"]')?.classList).not.toContain(
++      "flowduet-appearance",
++    );
++    expect(document.querySelector('[data-test="drawer-name"]')).toBe(input);
++    expect(input.value).toBe("尚未提交的中文名称");
++    expect(document.activeElement).toBe(input);
++
++    await wrapper.setProps({ appearance: { mode: "light" } });
++    expect(document.querySelector('[data-test="node-drawer"]')?.classList).toContain(
++      "flowduet-appearance",
++    );
++    expect(document.querySelector('[data-test="drawer-name"]')).toBe(input);
++    expect(input.value).toBe("尚未提交的中文名称");
++    expect(document.activeElement).toBe(input);
++    expect((await model.toXML()).xml).toBe(beforeXml);
++    expect(wrapper.emitted("change")).toBeUndefined();
++  });
++
++  it("非法配置保留上次有效呈现；合法停用后的非法输入不会复活旧主题", async () => {
++    const model = buildModel();
++    const beforeXml = (await model.toXML()).xml;
++    const wrapper = mountDesigner(model, { mode: "light" });
++    await openApproval(wrapper);
++    const input = document.querySelector<HTMLInputElement>('[data-test="drawer-name"]')!;
++    input.value = "保留这份草稿";
++    input.dispatchEvent(new Event("input", { bubbles: true }));
++    input.focus();
++    const drawer = document.querySelector<HTMLElement>('[data-test="node-drawer"]')!;
++    const originalPrimary = drawer.style.getPropertyValue("--fd-primary");
++    const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
++
++    (wrapper.element as HTMLElement).style.setProperty("--el-color-primary", "#000000");
++    await wrapper.setProps({
++      appearance: { mode: "dark", density: "large" } as unknown as ComponentAppearance,
++    });
++    expect(warn).toHaveBeenCalledWith(expect.stringContaining("appearance.density"));
++    expect(drawer.style.getPropertyValue("--fd-primary")).toBe(originalPrimary);
++    expect(drawer.classList).toContain("flowduet-appearance--light");
++    expect(document.querySelector('[data-test="drawer-name"]')).toBe(input);
++    expect(input.value).toBe("保留这份草稿");
++    expect(document.activeElement).toBe(input);
++
++    await wrapper.setProps({ appearance: undefined });
++    expect(drawer.classList).not.toContain("flowduet-appearance");
++    await wrapper.setProps({ appearance: { mode: "not-theme" } as unknown as ComponentAppearance });
++    expect(warn).toHaveBeenCalledWith(expect.stringContaining("appearance.mode"));
++    expect(drawer.classList).not.toContain("flowduet-appearance");
++    expect(input.value).toBe("保留这份草稿");
++    expect((await model.toXML()).xml).toBe(beforeXml);
++  });
++
++  it("公开组件消费 getter 异常配置时不炸渲染，并保留有效呈现与草稿", async () => {
++    const errors: unknown[] = [];
++    const wrapper = mount(DingtalkDesigner, {
++      props: { model: buildModel(), appearance: { colorSource: "brand", mode: "dark" } },
++      global: { config: { errorHandler: (error) => errors.push(error) } },
++      attachTo: document.body,
++    });
++    wrappers.push(wrapper);
++    await openApproval(wrapper);
++    const input = document.querySelector<HTMLInputElement>('[data-test="drawer-name"]')!;
++    input.value = "getter 前的草稿";
++    input.dispatchEvent(new Event("input", { bubbles: true }));
++    const invalid = reactive(
++      Object.defineProperty({}, "mode", {
++        enumerable: true,
++        get() {
++          throw new Error("component getter exploded");
++        },
++      }),
++    );
++    const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
++
++    await wrapper.setProps({ appearance: invalid as ComponentAppearance });
++    expect(errors).toEqual([]);
++    expect(warn).toHaveBeenCalledWith(expect.stringContaining("component getter exploded"));
++    expect(document.querySelector('[data-test="node-drawer"]')?.classList).toContain(
++      "flowduet-appearance--dark",
++    );
++    expect(input.value).toBe("getter 前的草稿");
++  });
++
++  it("输入法组合期间切换外观不丢字、不自动提交，显式确定仍受既有保护", async () => {
++    const model = buildModel();
++    const beforeXml = (await model.toXML()).xml;
++    const wrapper = mountDesigner(model, { colorSource: "brand", mode: "light" });
++    await openApproval(wrapper);
++    const input = document.querySelector<HTMLInputElement>('[data-test="drawer-name"]')!;
++    input.focus();
++    input.dispatchEvent(new CompositionEvent("compositionstart", { bubbles: true }));
++    input.value = "组合中的中文";
++    input.dispatchEvent(new InputEvent("input", { bubbles: true, isComposing: true }));
++    await flushPromises();
++
++    await wrapper.setProps({
++      appearance: { colorSource: "brand", mode: "dark", density: "compact" },
++    });
++    expect(document.querySelector('[data-test="drawer-name"]')).toBe(input);
++    expect(input.value).toBe("组合中的中文");
++    expect(document.activeElement).toBe(input);
++    expect((await model.toXML()).xml).toBe(beforeXml);
++    expect(wrapper.emitted("change")).toBeUndefined();
++
++    (document.querySelector('[data-test="drawer-save"]') as HTMLElement).click();
++    await flushPromises();
++    expect(wrapper.find('[data-test="action-error"]').text()).toContain("输入法尚未完成");
++    expect(input.value).toBe("组合中的中文");
++    expect((await model.toXML()).xml).toBe(beforeXml);
++  });
++
++  it("同一 Vue app 双实例独立切换和卸载，不污染另一实例或无关宿主控件", async () => {
++    const firstModel = buildModel();
++    const secondModel = buildModel();
++    const Host = defineComponent({
++      components: { DingtalkDesigner, ElButton },
++      data() {
++        return {
++          firstModel,
++          secondModel,
++          showFirst: true,
++          firstAppearance: { mode: "light" } as ComponentAppearance | undefined,
++          secondAppearance: {
++            colorSource: "brand",
++            mode: "dark",
++            density: "compact",
++          } as ComponentAppearance,
++        };
++      },
++      template: `
++        <div>
++          <ElButton data-test="host-control">无关宿主控件</ElButton>
++          <button data-test="switch-first" @click="firstAppearance = { colorSource: 'brand', mode: 'light', density: 'compact' }">切换第一个</button>
++          <button data-test="unmount-first" @click="showFirst = false">卸载第一个</button>
++          <DingtalkDesigner v-if="showFirst" data-test="first-designer" :model="firstModel" :appearance="firstAppearance" />
++          <DingtalkDesigner data-test="second-designer" :model="secondModel" :appearance="secondAppearance" />
++        </div>
++      `,
++    });
++    const wrapper = mount(Host, { attachTo: document.body });
++    wrappers.push(wrapper);
++    const htmlClass = document.documentElement.className;
++    const open = async (id: string) => {
++      const cards = document.querySelectorAll(`[data-test="${id}"] [data-test="node-card"]`);
++      (cards[1] as HTMLElement).click();
++      await flushPromises();
++    };
++    await open("first-designer");
++    await open("second-designer");
++
++    const firstDrawer = document.querySelector<HTMLElement>(".flowduet-appearance--host")!;
++    const secondDrawer = document.querySelector<HTMLElement>(".flowduet-appearance--brand")!;
++    expect(firstDrawer.getAttribute("style")).not.toContain("--el-");
++    expect(secondDrawer.style.getPropertyValue("--el-color-primary")).toBe("#A5BBFF");
++    const secondStyle = secondDrawer.getAttribute("style");
++    const hostControl = document.querySelector<HTMLElement>('[data-test="host-control"]')!;
++    const hostControlStyle = hostControl.getAttribute("style");
++
++    (document.querySelector('[data-test="switch-first"]') as HTMLElement).click();
++    await flushPromises();
++    expect(firstDrawer.classList).toContain("flowduet-appearance--light");
++    expect(firstDrawer.style.getPropertyValue("--el-color-primary")).toBe("#2D3E97");
++    expect(secondDrawer.getAttribute("style")).toBe(secondStyle);
++    expect(hostControl.getAttribute("style")).toBe(hostControlStyle);
++    expect(hostControl.classList).not.toContain("flowduet-appearance");
++    expect(document.documentElement.className).toBe(htmlClass);
++
++    (document.querySelector('[data-test="unmount-first"]') as HTMLElement).click();
++    await flushPromises();
++    expect(firstDrawer.isConnected).toBe(false);
++    expect(secondDrawer.isConnected).toBe(true);
++    expect(secondDrawer.getAttribute("style")).toBe(secondStyle);
++    expect(hostControl.getAttribute("style")).toBe(hostControlStyle);
++  });
++
++  it("外置属性编辑接受合法外观配置但不渲染抽屉，首次非法配置保持旧路径", async () => {
++    const model = buildModel();
++    const external = mount(DingtalkDesigner, {
++      props: {
++        model,
++        propertyEditing: "external",
++        appearance: { colorSource: "brand", mode: "dark" },
++      },
++      attachTo: document.body,
++    });
++    wrappers.push(external);
++    await external.findAll('[data-test="node-card"]')[1]!.trigger("click");
++    await flushPromises();
++    expect(external.emitted("selection-request")).toBeTruthy();
++    expect(document.querySelector('[data-test="node-drawer"]')).toBeNull();
++    expect(document.querySelector(".flowduet-appearance")).toBeNull();
++    external.unmount();
++
++    const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
++    const invalid = mountDesigner(buildModel(), { density: "compact" });
++    await openApproval(invalid);
++    expect(warn).toHaveBeenCalledWith(expect.stringContaining("appearance.mode"));
++    const drawer = document.querySelector<HTMLElement>('[data-test="node-drawer"]')!;
++    expect(drawer.classList).not.toContain("flowduet-appearance");
++    expect(drawer.getAttribute("style")).not.toContain("--fd-");
++  });
++
++  it("发起与结束节点的新外观空状态使用中性标题，并可取消关闭", async () => {
++    const wrapper = mountDesigner(buildModel(), { mode: "light" });
++    for (const index of [0, 2]) {
++      await wrapper.findAll('[data-test="node-card"]')[index]!.trigger("click");
++      await flushPromises();
++      expect(document.querySelector(".el-drawer__title")?.textContent).toBe("节点属性");
++      expect(document.querySelector(".drawer-empty")?.textContent).toBe("该元素无可配置字段");
++      (document.querySelector('[data-test="drawer-cancel"]') as HTMLElement).click();
++      await flushPromises();
++    }
++  });
++});
+diff --git a/packages/designer/src/appearance.ts b/packages/designer/src/appearance.ts
+new file mode 100644
+index 0000000..81fd5a2
+--- /dev/null
++++ b/packages/designer/src/appearance.ts
+@@ -0,0 +1,55 @@
++export type AppearanceColorSource = "host" | "brand";
++export type AppearanceMode = "light" | "dark";
++export type AppearanceDensity = "comfortable" | "compact";
++
++/** 组件实例的显式外观配置；省略整个对象才表示沿用旧路径。 */
++export interface ComponentAppearance {
++  colorSource?: AppearanceColorSource;
++  mode: AppearanceMode;
++  density?: AppearanceDensity;
++}
++
++/** 补齐默认值后的有效外观配置，可安全传给具体组件消费。 */
++export interface ResolvedComponentAppearance {
++  colorSource: AppearanceColorSource;
++  mode: AppearanceMode;
++  density: AppearanceDensity;
++}
++
++function reject(
++  field: string,
++  reason: string,
++  previous?: ResolvedComponentAppearance,
++): ResolvedComponentAppearance | undefined {
++  console.warn(`[FlowDuet] ${field} ${reason}；已整份拒绝本次 appearance 配置。`);
++  return previous;
++}
++
++/** 归一化公开配置；后续表单预览复用同一合同，不另建一套默认值。 */
++export function resolveComponentAppearance(
++  value: unknown,
++  previous?: ResolvedComponentAppearance,
++): ResolvedComponentAppearance | undefined {
++  if (value === undefined) return undefined;
++  if (typeof value !== "object" || value === null)
++    return reject("appearance", "必须是一个配置对象", previous);
++
++  try {
++    if (Array.isArray(value)) return reject("appearance", "必须是一个配置对象", previous);
++    const appearance = value as Record<string, unknown>;
++    const colorSource = appearance.colorSource === undefined ? "host" : appearance.colorSource;
++    const mode = appearance.mode;
++    const density = appearance.density === undefined ? "comfortable" : appearance.density;
++    if (colorSource !== "host" && colorSource !== "brand")
++      return reject("appearance.colorSource", '只支持 "host" 或 "brand"', previous);
++    if (mode !== "light" && mode !== "dark")
++      return reject("appearance.mode", '必填，且只支持 "light" 或 "dark"', previous);
++    if (density !== "comfortable" && density !== "compact")
++      return reject("appearance.density", '只支持 "comfortable" 或 "compact"', previous);
++
++    return { colorSource, mode, density };
++  } catch (error) {
++    const reason = error instanceof Error ? error.message : String(error);
++    return reject("appearance", `无法读取配置属性（${reason}）`, previous);
++  }
++}
+diff --git a/packages/designer/src/components/DingtalkDesigner.vue b/packages/designer/src/components/DingtalkDesigner.vue
+index ff76b6b..394a5bc 100644
+--- a/packages/designer/src/components/DingtalkDesigner.vue
++++ b/packages/designer/src/components/DingtalkDesigner.vue
+@@ -1,7 +1,17 @@
+ <script setup lang="ts">
+-import { computed, ref, toRaw, watch, nextTick, onBeforeUnmount } from "vue";
++import { computed, ref, shallowRef, toRaw, watch, nextTick, onBeforeUnmount, onMounted } from "vue";
+ import type { ApprovalDraftOptions, BpmnModel, BlockTreeNode } from "@flowduet/core";
+ import { deriveBlockTree, resolveEffectiveForm } from "@flowduet/core";
++import {
++  resolveComponentAppearance,
++  type ComponentAppearance,
++  type ResolvedComponentAppearance,
++} from "../appearance.js";
++import {
++  createAppearanceVariables,
++  readHostAppearance,
++  type HostAppearanceContext,
++} from "../appearance-style.js";
+ import BlockNodeList from "./BlockNodeList.vue";
+ import NodeDrawer from "./NodeDrawer.vue";
+ import type {
+@@ -47,6 +57,8 @@ const props = withDefaults(
+      */
+     formOptions?: readonly DesignerFormOption[];
+     propertyEditing?: "drawer" | "external";
++    /** 显式启用的实例外观；省略时保持既有抽屉路径。 */
++    appearance?: ComponentAppearance | undefined;
+     selectedId?: string | undefined;
+     showDefaultForm?: boolean;
+     /** 外置控制器提交版本，驱动同一模型引用的重投影及请求核对。 */
+@@ -74,6 +86,34 @@ onBeforeUnmount(() => {
+ });
+ const drawerRef = ref<InstanceType<typeof NodeDrawer> | null>(null);
+ 
++// 解析结果同时就是“上次有效值”：合法停用会清空它，之后的非法输入不会复活旧主题。
++const drawerAppearance = shallowRef<ResolvedComponentAppearance>();
++const hostAppearance = shallowRef<HostAppearanceContext>();
++function refreshHostAppearance(): void {
++  if (disposed) return;
++  hostAppearance.value =
++    drawerAppearance.value?.colorSource === "host"
++      ? readHostAppearance(hostRef.value, drawerAppearance.value.mode)
++      : undefined;
++}
++watch(
++  () => props.appearance,
++  (value) => {
++    if (disposed) return;
++    const previous = drawerAppearance.value;
++    const resolved = resolveComponentAppearance(value, previous);
++    drawerAppearance.value = resolved;
++    // 非法输入返回同一个上次有效对象；此时连宿主快照也保持，避免“拒绝配置却换色”。
++    if (resolved !== previous) refreshHostAppearance();
++  },
++  // 后置冲刷确保宿主在同一响应式周期切换主题类或样式后，DOM 已完成补丁再读取计算样式。
++  { immediate: true, flush: "post" },
++);
++onMounted(refreshHostAppearance);
++const drawerStyle = computed(() =>
++  createAppearanceVariables(drawerAppearance.value, hostAppearance.value),
++);
++
+ const version = ref(0);
+ const activeId = ref<string>();
+ const drawerVisible = ref(false);
+@@ -435,6 +475,8 @@ defineExpose({
+       :model="model"
+       :node-id="activeId"
+       :form-options="formOptions"
++      :appearance="drawerAppearance"
++      :appearance-style="drawerStyle"
+       @saved="onDrawerSaved"
+       @error="onDrawerError"
+       @draft-modified="onDrawerDraftModified"
+diff --git a/packages/designer/src/components/NodeDrawer.vue b/packages/designer/src/components/NodeDrawer.vue
+index 0032cd0..19634f8 100644
+--- a/packages/designer/src/components/NodeDrawer.vue
++++ b/packages/designer/src/components/NodeDrawer.vue
+@@ -3,6 +3,7 @@ import { computed, ref, toRaw, watch } from "vue";
+ import { ElButton, ElDrawer } from "element-plus";
+ import type { ApprovalDraftOptions, BpmnModel } from "@flowduet/core";
+ import type { DesignerFormOption } from "../form-options.js";
++import type { ResolvedComponentAppearance } from "../appearance.js";
+ import {
+   readPropertyDraft,
+   applyPropertyDraft,
+@@ -13,11 +14,34 @@ const props = defineProps<{
+   model: BpmnModel;
+   nodeId?: string | undefined;
+   formOptions?: readonly DesignerFormOption[] | undefined;
++  appearance?: ResolvedComponentAppearance | undefined;
++  appearanceStyle?: Record<string, string> | undefined;
+ }>();
+ const emit = defineEmits<{ saved: []; error: [message: string]; draftModified: [] }>();
+ const visible = defineModel<boolean>({ default: false });
+ const model = computed(() => toRaw(props.model));
++const epSize = computed(() => {
++  if (props.appearance === undefined) return "";
++  return props.appearance.density === "compact" ? "small" : "default";
++});
++const drawerClass = computed(() => {
++  const appearance = props.appearance;
++  if (appearance === undefined) return "flowduet-node-drawer";
++  return [
++    "flowduet-node-drawer",
++    "flowduet-appearance",
++    `flowduet-appearance--${appearance.colorSource}`,
++    `flowduet-appearance--${appearance.mode}`,
++    `flowduet-appearance--${appearance.density}`,
++  ];
++});
+ const draft = ref<FlowPropertyDraft>();
++const drawerTitle = computed(() => {
++  if (draft.value?.kind === "branch") return "分支条件";
++  if (draft.value?.kind === "cc") return "抄送节点";
++  if (draft.value === undefined && props.appearance !== undefined) return "节点属性";
++  return "审批节点";
++});
+ const fieldsRef = ref<InstanceType<typeof NodePropertyFields>>();
+ watch(
+   () => [props.nodeId, visible.value, props.model] as const,
+@@ -86,10 +110,12 @@ defineExpose({ commit });
+ <template>
+   <ElDrawer
+     v-model="visible"
+-    :title="draft?.kind === 'branch' ? '分支条件' : draft?.kind === 'cc' ? '抄送节点' : '审批节点'"
++    :title="drawerTitle"
+     size="360px"
+     data-test="node-drawer"
+     :modal="false"
++    :class="drawerClass"
++    :style="appearanceStyle"
+   >
+     <NodePropertyFields
+       ref="fieldsRef"
+@@ -97,20 +123,125 @@ defineExpose({ commit });
+       :draft="draft"
+       :form-options="formOptions"
+       :default-form-key="model.defaultFormKey"
++      :size="epSize"
+       @update:draft="update"
+       @unserialized-input="emit('draftModified')"
+     />
+     <div v-else class="drawer-empty">该元素无可配置字段</div>
+     <template #footer
+-      ><ElButton data-test="drawer-cancel" @click="visible = false">取消</ElButton
+-      ><ElButton type="primary" data-test="drawer-save" @click="commit()">确定</ElButton></template
++      ><ElButton :size="epSize" data-test="drawer-cancel" @click="visible = false">取消</ElButton
++      ><ElButton :size="epSize" type="primary" data-test="drawer-save" @click="commit()"
++        >确定</ElButton
++      ></template
+     >
+   </ElDrawer>
+ </template>
+-<style scoped>
+-.drawer-empty {
++<style>
++.flowduet-node-drawer .drawer-empty {
+   color: #909399;
+   font-size: 13px;
+   padding: 12px 0;
+ }
++
++.flowduet-node-drawer.flowduet-appearance {
++  font-family: var(--fd-font-family);
++}
++
++.flowduet-node-drawer.flowduet-appearance .el-drawer__header {
++  margin-bottom: 0;
++  padding: var(--fd-panel-padding);
++}
++
++.flowduet-node-drawer.flowduet-appearance .el-drawer__title {
++  font-size: 20px;
++  line-height: 1.6;
++  overflow-wrap: anywhere;
++}
++
++.flowduet-node-drawer.flowduet-appearance .el-drawer__body {
++  padding: var(--fd-panel-padding);
++}
++
++.flowduet-node-drawer.flowduet-appearance .el-drawer__footer {
++  padding: var(--fd-panel-padding);
++  padding-top: 0;
++}
++
++.flowduet-node-drawer.flowduet-appearance .drawer-empty {
++  color: var(--fd-muted);
++  line-height: 1.6;
++}
++
++/* 品牌预设只改当前抽屉的 EP 本体变量，复合抽屉类使权重高于宿主 html.dark 派生规则；跟随宿主不命中。 */
++.flowduet-node-drawer.flowduet-appearance--brand {
++  background: var(--fd-surface);
++  color: var(--fd-text);
++}
++
++.flowduet-node-drawer.flowduet-appearance--brand .el-drawer__header {
++  border-bottom: 1px solid var(--fd-border);
++  color: var(--fd-text);
++}
++
++.flowduet-node-drawer.flowduet-appearance--brand .el-drawer__close-btn {
++  color: var(--fd-secondary);
++}
++
++.flowduet-node-drawer.flowduet-appearance--brand .el-drawer__close-btn:focus-visible {
++  outline: 2px solid var(--fd-focus);
++  outline-offset: 3px;
++}
++
++.flowduet-node-drawer.flowduet-appearance--brand .el-drawer__footer {
++  border-top: 1px solid var(--fd-border);
++  padding-top: var(--fd-panel-padding);
++}
++
++.flowduet-node-drawer.flowduet-appearance--brand .el-input {
++  --el-input-text-color: var(--fd-text);
++  --el-input-bg-color: var(--fd-surface);
++  --el-input-border-color: var(--fd-control-border);
++  --el-input-placeholder-color: var(--fd-muted);
++  --el-input-focus-border-color: var(--fd-focus);
++  --el-input-hover-border-color: var(--fd-control-border);
++  --el-input-border-radius: var(--fd-radius);
++}
++
++.flowduet-node-drawer.flowduet-appearance--brand .el-input__wrapper:focus-within {
++  outline: 2px solid var(--fd-focus);
++  outline-offset: 3px;
++}
++
++.flowduet-node-drawer.flowduet-appearance--brand .el-button {
++  --el-button-text-color: var(--fd-text);
++  --el-button-bg-color: var(--fd-surface);
++  --el-button-border-color: var(--fd-control-border);
++  --el-button-hover-text-color: var(--fd-text);
++  --el-button-hover-bg-color: var(--fd-inset);
++  --el-button-hover-border-color: var(--fd-control-border);
++  --el-button-active-text-color: var(--fd-text);
++  --el-button-active-bg-color: var(--fd-inset);
++  --el-button-active-border-color: var(--fd-control-border);
++  --el-button-disabled-text-color: var(--fd-disabled-text);
++  --el-button-disabled-bg-color: var(--fd-disabled-surface);
++  --el-button-disabled-border-color: var(--fd-border);
++  --el-button-outline-color: var(--fd-focus);
++}
++
++.flowduet-node-drawer.flowduet-appearance--brand .el-button--primary {
++  --el-button-text-color: var(--fd-on-primary);
++  --el-button-bg-color: var(--fd-primary);
++  --el-button-border-color: var(--fd-primary);
++  --el-button-hover-text-color: var(--fd-on-primary);
++  --el-button-hover-bg-color: var(--fd-primary-hover);
++  --el-button-hover-border-color: var(--fd-primary-hover);
++  --el-button-active-text-color: var(--fd-on-primary);
++  --el-button-active-bg-color: var(--fd-primary-pressed);
++  --el-button-active-border-color: var(--fd-primary-pressed);
++}
++
++.flowduet-node-drawer.flowduet-appearance--brand .el-button:focus-visible {
++  outline: 2px solid var(--fd-focus);
++  outline-offset: 3px;
++}
+ </style>
+diff --git a/packages/designer/src/components/NodePropertyFields.vue b/packages/designer/src/components/NodePropertyFields.vue
+index 64a33e6..8639ad6 100644
+--- a/packages/designer/src/components/NodePropertyFields.vue
++++ b/packages/designer/src/components/NodePropertyFields.vue
+@@ -3,11 +3,15 @@ import { computed, shallowRef, watch, ref, nextTick } from "vue";
+ import { ElForm, ElFormItem, ElInput } from "element-plus";
+ import { labelFormOptions, type DesignerFormOption } from "../form-options.js";
+ import { KIND_OPTIONS, switchApprovalKind, type FlowPropertyDraft } from "../property-editing.js";
+-const props = defineProps<{
+-  draft: FlowPropertyDraft;
+-  formOptions?: readonly DesignerFormOption[] | undefined;
+-  defaultFormKey?: string | undefined;
+-}>();
++const props = withDefaults(
++  defineProps<{
++    draft: FlowPropertyDraft;
++    formOptions?: readonly DesignerFormOption[] | undefined;
++    defaultFormKey?: string | undefined;
++    size?: "" | "default" | "small" | undefined;
++  }>(),
++  { size: "" },
++);
+ const formRef = ref<InstanceType<typeof ElForm>>();
+ const draft = shallowRef(props.draft);
+ watch(
+@@ -84,6 +88,7 @@ defineExpose({ flush, capture });
+     @compositionstart.capture="compositionStart"
+     @compositionend.capture="compositionEnd"
+     ref="formRef"
++    :size="size"
+     label-position="top"
+     data-test="node-property-fields"
+   >
+@@ -116,11 +121,15 @@ defineExpose({ flush, capture });
+             class="kind-card"
+             :class="{ 'kind-card--on': draft.approvalKind === option.key }"
+             :data-test="`kind-${option.key}`"
++            :aria-pressed="draft.approvalKind === option.key"
+             type="button"
+             @click="selectKind(option.key)"
+           >
+             <span class="kind-card-label">{{ option.label }}</span
+-            ><span class="kind-card-hint">{{ option.hint }}</span>
++            ><span class="kind-card-hint">{{ option.hint }}</span
++            ><span v-if="size" class="kind-card-state">{{
++              draft.approvalKind === option.key ? "已选中" : ""
++            }}</span>
+           </button>
+         </div></ElFormItem
+       >
+@@ -222,4 +231,104 @@ defineExpose({ flush, capture });
+   color: #303133;
+   font-size: 13px;
+ }
++
++/* 新适配只覆盖当前属性抽屉内的排版与自有控件，复合抽屉类使权重不依赖宿主引入 EP 样式的先后顺序。 */
++:global(.flowduet-node-drawer.flowduet-appearance .el-form-item) {
++  margin-bottom: var(--fd-field-gap);
++}
++
++:global(.flowduet-node-drawer.flowduet-appearance .el-form-item__label) {
++  color: var(--fd-secondary);
++  font-family: var(--fd-font-family);
++  font-size: 13px;
++  line-height: 1.6;
++}
++
++:global(.flowduet-node-drawer.flowduet-appearance .el-form-item__error) {
++  position: static;
++  padding-top: 4px;
++  line-height: 1.6;
++  white-space: normal;
++  overflow-wrap: anywhere;
++}
++
++.flowduet-appearance .kind-cards {
++  gap: var(--fd-row-gap);
++}
++
++.flowduet-appearance .kind-card {
++  min-width: 0;
++  gap: 2px;
++  padding: 8px 4px;
++  border: 2px solid var(--fd-control-border);
++  border-radius: var(--fd-radius);
++  background: var(--fd-surface);
++  color: var(--fd-text);
++  font-family: var(--fd-font-family);
++  transition:
++    border-color 120ms,
++    background-color 120ms;
++}
++
++.flowduet-appearance--compact .kind-card {
++  padding: 4px 2px;
++}
++
++.flowduet-appearance .kind-card--on {
++  border-color: var(--fd-primary-ink);
++  background: var(--fd-primary-soft);
++  outline: none;
++}
++
++.flowduet-appearance .kind-card:focus-visible {
++  outline: 2px solid var(--fd-focus);
++  outline-offset: 3px;
++}
++
++.flowduet-appearance .kind-card-label {
++  color: var(--fd-text);
++  font-size: 13px;
++  line-height: 1.6;
++  overflow-wrap: anywhere;
++}
++
++.flowduet-appearance .kind-card-hint {
++  color: var(--fd-muted);
++  font-size: 12px;
++  line-height: 1.4;
++  overflow-wrap: anywhere;
++}
++
++.kind-card-state {
++  min-height: 16px;
++  color: var(--fd-primary-ink);
++  font-size: 10px;
++  line-height: 16px;
++}
++
++.flowduet-appearance .drawer-form-select {
++  height: var(--fd-control-height);
++  border-color: var(--fd-control-border);
++  border-radius: var(--fd-radius);
++  background: var(--fd-surface);
++  color: var(--fd-text);
++  font-family: var(--fd-font-family);
++  font-size: var(--fd-control-font-size);
++}
++
++.flowduet-appearance .drawer-form-select:focus-visible {
++  outline: 2px solid var(--fd-focus);
++  outline-offset: 3px;
++}
++
++.flowduet-appearance .drawer-form-select option {
++  background: var(--fd-surface);
++  color: var(--fd-text);
++}
++
++@media (prefers-reduced-motion: reduce) {
++  .flowduet-appearance .kind-card {
++    transition: none;
++  }
++}
+ </style>
+diff --git a/packages/designer/src/index.ts b/packages/designer/src/index.ts
+index a312953..cc2b115 100644
+--- a/packages/designer/src/index.ts
++++ b/packages/designer/src/index.ts
+@@ -1,5 +1,13 @@
+ export { default as DingtalkDesigner } from "./components/DingtalkDesigner.vue";
+ export { default as BpmnCanvas } from "./components/BpmnCanvas.vue";
++export { resolveComponentAppearance } from "./appearance.js";
++export type {
++  AppearanceColorSource,
++  AppearanceDensity,
++  AppearanceMode,
++  ComponentAppearance,
++  ResolvedComponentAppearance,
++} from "./appearance.js";
+ /**
+  * 草稿待修复项收集器与抄送形态判定（#71 起公开）：与 exportXml 共用同一
+  * 扫描口径，设计文档保存侧据此「保存成功 + 报告待修复项」、打开侧据此做
+diff --git a/Users/l/Documents/projects/flowduet-103-property-appearance/docs/design/system-v1/brand/evidence/103-property-drawer/round2-fixes.json b/Users/l/Documents/projects/flowduet-103-property-appearance/docs/design/system-v1/brand/evidence/103-property-drawer/round2-fixes.json
+new file mode 100644
+index 0000000..e7a0ff7
+--- /dev/null
++++ b/Users/l/Documents/projects/flowduet-103-property-appearance/docs/design/system-v1/brand/evidence/103-property-drawer/round2-fixes.json
+@@ -0,0 +1,46 @@
++{
++  "browser": "156.0.8078.4",
++  "declarativeDark": {
++    "surfaceVar": "#162220",
++    "secondaryVar": "#B8CECA",
++    "primaryVar": "#7FCFC7",
++    "hasEpWrites": false,
++    "cardBg": "rgb(26, 60, 57)",
++    "cardLabelColor": "rgb(230, 242, 240)",
++    "inputValue": "声明式换肤保留的草稿",
++    "inputFocused": true,
++    "changeCount": "change 0",
++    "selectedCardContrast": 10.47
++  },
++  "declarativeLightBack": {
++    "surfaceVar": "#FFFFFF",
++    "primaryVar": "#409EFF"
++  },
++  "focusRingCard": {
++    "focusVar": "#303133",
++    "primaryInkVar": "#303133",
++    "activeTestId": "kind-single",
++    "focusVisible": true,
++    "outlineStyle": "solid",
++    "outlineWidth": "2px",
++    "outlineColor": "rgb(48, 49, 51)",
++    "drawerSurfaceColor": "rgb(251, 251, 251)",
++    "outlineContrastOnSurface": 12.58
++  },
++  "rgbParsing": {
++    "spaceRgbPrimary": "#0F6B65",
++    "mixedInvalidRgbPrimary": "#409EFF"
++  },
++  "darkHostBrandLightButton": {
++    "htmlDark": true,
++    "disabledVar": "#8B92A4",
++    "disabledComputedColor": "rgb(139, 146, 164)"
++  },
++  "lateEpOrder": {
++    "labelLineHeight": "20.8px",
++    "errorPaddingTop": "4px",
++    "errorPosition": "static"
++  },
++  "errors": [],
++  "failures": []
++}
+diff --git a/Users/l/Documents/projects/flowduet-103-property-appearance/docs/design/system-v1/brand/evidence/103-property-drawer/round2-fixes.mjs.txt b/Users/l/Documents/projects/flowduet-103-property-appearance/docs/design/system-v1/brand/evidence/103-property-drawer/round2-fixes.mjs.txt
+new file mode 100644
+index 0000000..f35ad9b
+--- /dev/null
++++ b/Users/l/Documents/projects/flowduet-103-property-appearance/docs/design/system-v1/brand/evidence/103-property-drawer/round2-fixes.mjs.txt
+@@ -0,0 +1,235 @@
++import { mkdir, readFile, writeFile } from "node:fs/promises";
++import { createRequire } from "node:module";
++import { resolve } from "node:path";
++import { pathToFileURL } from "node:url";
++
++const [driverPath, baseUrl, outputDir, epCssPkgJsonPath] = process.argv.slice(2);
++if (!driverPath || !baseUrl || !outputDir || !epCssPkgJsonPath) {
++  throw new Error("需要驱动、URL、输出目录和 playground package.json 路径参数");
++}
++const { chromium } = await import(pathToFileURL(resolve(driverPath)).href);
++const req = createRequire(resolve(epCssPkgJsonPath));
++const epIndexCss = await readFile(req.resolve("element-plus/dist/index.css"), "utf8");
++
++await mkdir(outputDir, { recursive: true });
++const browser = await chromium.launch({
++  headless: true,
++  executablePath:
++    process.env.FLOWDUET_CHROMIUM_PATH ||
++    "/Users/l/Library/Caches/ms-playwright/chromium-1248/chrome-mac-x64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing",
++});
++const page = await browser.newPage({ viewport: { width: 1440, height: 1100 }, deviceScaleFactor: 1 });
++const errors = [];
++const failures = [];
++page.on("pageerror", (error) => errors.push(`pageerror: ${error.message}`));
++const check = (condition, message) => {
++  if (!condition) failures.push(message);
++};
++
++function parseRgb(rgbText) {
++  const match = rgbText.match(/rgba?\(\s*([\d.]+)\s*,\s*([\d.]+)\s*,\s*([\d.]+)/);
++  if (!match) throw new Error(`无法解析计算颜色: ${rgbText}`);
++  return [Number(match[1]) / 255, Number(match[2]) / 255, Number(match[3]) / 255];
++}
++function luminance([r, g, b]) {
++  const lin = (c) => (c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4);
++  return 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b);
++}
++function contrastRgb(a, b) {
++  const la = luminance(parseRgb(a));
++  const lb = luminance(parseRgb(b));
++  return (Math.max(la, lb) + 0.05) / (Math.min(la, lb) + 0.05);
++}
++
++try {
++  await page.goto(baseUrl, { waitUntil: "networkidle" });
++  await page.locator('[data-test="appearance-scene-btn"]').click();
++  await page.locator('[data-test="appearance-first-designer"] [data-entity-id="approval"]').click();
++  const firstDrawer = page.locator('[data-test="node-drawer"]:visible').first();
++  await firstDrawer.waitFor({ state: "visible" });
++  await page.waitForTimeout(300);
++
++  // 1. 声明式宿主同一响应式周期切换主题类与 appearance.mode
++  const inputHandle = await firstDrawer.locator('[data-test="drawer-name"]').elementHandle();
++  await inputHandle.fill("声明式换肤保留的草稿");
++  await inputHandle.focus();
++  await page.locator('[data-test="appearance-declarative-dark"]').evaluate((el) => el.click());
++  await page.waitForTimeout(200);
++  const declarativeDark = await firstDrawer.evaluate((drawer) => {
++    const input = drawer.querySelector('[data-test="drawer-name"]');
++    const selectedCard = drawer.querySelector(".kind-card--on");
++    const selectedLabel = selectedCard.querySelector(".kind-card-label");
++    return {
++      surfaceVar: drawer.style.getPropertyValue("--fd-surface"),
++      secondaryVar: drawer.style.getPropertyValue("--fd-secondary"),
++      primaryVar: drawer.style.getPropertyValue("--fd-primary"),
++      hasEpWrites: drawer.getAttribute("style").includes("--el-"),
++      cardBg: getComputedStyle(selectedCard).backgroundColor,
++      cardLabelColor: getComputedStyle(selectedLabel).color,
++      inputValue: input.value,
++      inputFocused: document.activeElement === input,
++      changeCount: document.querySelector('[data-test="appearance-first-change-count"]').textContent.trim(),
++    };
++  });
++  declarativeDark.selectedCardContrast = Number(
++    contrastRgb(declarativeDark.cardLabelColor, declarativeDark.cardBg).toFixed(2),
++  );
++  check(declarativeDark.surfaceVar === "#162220", `声明式深色 --fd-surface 错误: ${declarativeDark.surfaceVar}`);
++  check(declarativeDark.secondaryVar === "#B8CECA", `声明式深色 --fd-secondary 错误: ${declarativeDark.secondaryVar}`);
++  check(declarativeDark.primaryVar === "#7FCFC7", `声明式深色 --fd-primary 错误: ${declarativeDark.primaryVar}`);
++  check(!declarativeDark.hasEpWrites, "声明式深色向实例写了 EP 变量");
++  check(declarativeDark.selectedCardContrast >= 4.5, `声明式深色选中卡文字对比度不足: ${declarativeDark.selectedCardContrast}`);
++  check(
++    declarativeDark.inputValue === "声明式换肤保留的草稿" && declarativeDark.inputFocused,
++    "声明式换肤丢失草稿或焦点",
++  );
++  check(declarativeDark.changeCount === "change 0", "声明式换肤触发模型 change");
++
++  // 切回声明式浅色，确认反向同一周期也消费更新后的浅色宿主样式
++  await page.locator('[data-test="appearance-declarative-dark"]').evaluate((el) => el.click());
++  await page.waitForTimeout(200);
++  const declarativeLightBack = await firstDrawer.evaluate((drawer) => ({
++    surfaceVar: drawer.style.getPropertyValue("--fd-surface"),
++    primaryVar: drawer.style.getPropertyValue("--fd-primary"),
++  }));
++  check(
++    declarativeLightBack.surfaceVar === "#FFFFFF" && declarativeLightBack.primaryVar === "#409EFF",
++    `声明式切回浅色异常: ${JSON.stringify(declarativeLightBack)}`,
++  );
++
++  // 2. 跨明度宿主背景（深色页底 + 浅色抽屉表面）下 --fd-focus 回退与真实键盘 :focus-visible 轮廓
++  await page.evaluate(() => {
++    const host = document.querySelector('[data-test="appearance-first-designer"]');
++    host.style.setProperty("--el-bg-color-page", "#141414");
++    host.style.setProperty("--el-bg-color", "#FFFFFF");
++    host.style.setProperty("--el-fill-color-light", "#F5F7FA");
++    host.style.setProperty("--el-text-color-primary", "#303133");
++    host.style.setProperty("--el-color-primary", "#2D3E97");
++  });
++  await page.selectOption('[data-test="appearance-first-density"]', "compact");
++  await page.selectOption('[data-test="appearance-first-density"]', "comfortable");
++  await firstDrawer.locator('[data-test="drawer-assignee"]').focus();
++  await page.keyboard.press("Tab");
++  const focusRingCard = await firstDrawer.evaluate((drawer) => {
++    const active = document.activeElement;
++    const style = getComputedStyle(active);
++    return {
++      focusVar: drawer.style.getPropertyValue("--fd-focus"),
++      primaryInkVar: drawer.style.getPropertyValue("--fd-primary-ink"),
++      activeTestId: active?.getAttribute("data-test"),
++      focusVisible: active?.matches(":focus-visible") ?? false,
++      outlineStyle: style.outlineStyle,
++      outlineWidth: style.outlineWidth,
++      outlineColor: style.outlineColor,
++      drawerSurfaceColor: getComputedStyle(drawer).backgroundColor,
++    };
++  });
++  focusRingCard.outlineContrastOnSurface = Number(
++    contrastRgb(focusRingCard.outlineColor, focusRingCard.drawerSurfaceColor).toFixed(2),
++  );
++  check(focusRingCard.focusVar === "#303133", `跨明度 --fd-focus 未回退 primaryInk: ${focusRingCard.focusVar}`);
++  check(focusRingCard.activeTestId === "kind-single" && focusRingCard.focusVisible, `Tab 未命中 kind-single :focus-visible`);
++  check(
++    focusRingCard.outlineStyle === "solid" && focusRingCard.outlineWidth === "2px",
++    `跨明度焦点环失效: ${focusRingCard.outlineStyle} ${focusRingCard.outlineWidth}`,
++  );
++  check(focusRingCard.outlineContrastOnSurface >= 3, `跨明度焦点环在白色抽屉上对比度不足: ${focusRingCard.outlineContrastOnSurface}`);
++
++  // 3. rgb() 现代空格语法与非法混用分隔符在真实浏览器中的行为
++  await page.evaluate(() => {
++    const host = document.querySelector('[data-test="appearance-first-designer"]');
++    host.style.removeProperty("--el-bg-color-page");
++    host.style.setProperty("--el-color-primary", "rgb(15 107 101 / 100%)");
++  });
++  await page.selectOption('[data-test="appearance-first-density"]', "compact");
++  const spaceRgbPrimary = await firstDrawer.evaluate((d) => d.style.getPropertyValue("--fd-primary"));
++  await page.evaluate(() => {
++    const host = document.querySelector('[data-test="appearance-first-designer"]');
++    host.style.setProperty("--el-color-primary", "rgb(255, 0 0)");
++  });
++  await page.selectOption('[data-test="appearance-first-density"]', "comfortable");
++  const mixedInvalidRgbPrimary = await firstDrawer.evaluate((d) => d.style.getPropertyValue("--fd-primary"));
++  check(spaceRgbPrimary === "#0F6B65", `现代空格 rgb() 解析异常: ${spaceRgbPrimary}`);
++  check(mixedInvalidRgbPrimary === "#409EFF", `混用分隔符非法 rgb() 未回退默认蓝: ${mixedInvalidRgbPrimary}`);
++
++  // 4. 宿主启用 html.dark 时，品牌浅色实例内按钮的 --el-button-disabled-text-color 不被 html.dark .el-button 覆盖
++  await page.locator('[data-test="appearance-second-designer"] [data-entity-id="approval"]').evaluate((el) => el.click());
++  await page.waitForTimeout(300);
++  await page.locator('[data-test="appearance-host-dark"]').evaluate((el) => el.click());
++  await page.waitForTimeout(150);
++  const darkHostBrandLightButton = await page.evaluate(() => {
++    const drawers = [...document.querySelectorAll('[data-test="node-drawer"]')].filter(
++      (el) => el.getBoundingClientRect().width > 0,
++    );
++    const brandLightDrawer = drawers.find(
++      (el) =>
++        el.classList.contains("flowduet-appearance--brand") &&
++        el.classList.contains("flowduet-appearance--light"),
++    );
++    const cancelBtn = brandLightDrawer.querySelector('[data-test="drawer-cancel"]');
++    const disabledVar = getComputedStyle(cancelBtn).getPropertyValue("--el-button-disabled-text-color").trim();
++    cancelBtn.style.transition = "none";
++    cancelBtn.classList.add("is-disabled");
++    const disabledComputedColor = getComputedStyle(cancelBtn).color;
++    cancelBtn.classList.remove("is-disabled");
++    cancelBtn.style.removeProperty("transition");
++    return {
++      htmlDark: document.documentElement.classList.contains("dark"),
++      disabledVar,
++      disabledComputedColor,
++    };
++  });
++  check(darkHostBrandLightButton.htmlDark, "html.dark 未启用");
++  check(
++    darkHostBrandLightButton.disabledComputedColor === "rgb(139, 146, 164)",
++    `品牌浅色按钮禁用文字被宿主 html.dark 污染: ${darkHostBrandLightButton.disabledComputedColor} (var=${darkHostBrandLightButton.disabledVar})`,
++  );
++
++  // 5. 模拟宿主先引 @flowduet/designer/style.css、后引 element-plus/dist/index.css（将完整 EP index.css 追加到 head 末尾）
++  const lateEpOrder = await page.evaluate((epCss) => {
++    const lateStyle = document.createElement("style");
++    lateStyle.setAttribute("data-test", "late-ep-index-css");
++    lateStyle.textContent = epCss;
++    document.head.appendChild(lateStyle);
++    try {
++      const drawers = [...document.querySelectorAll('[data-test="node-drawer"]')].filter(
++        (el) => el.getBoundingClientRect().width > 0,
++      );
++      const drawer = drawers[0];
++      const label = drawer.querySelector(".el-form-item__label");
++      const formItem = drawer.querySelector(".el-form-item");
++      const probeError = document.createElement("div");
++      probeError.className = "el-form-item__error";
++      probeError.textContent = "测试校验提示";
++      formItem.querySelector(".el-form-item__content").appendChild(probeError);
++      const labelLineHeight = getComputedStyle(label).lineHeight;
++      const errorPaddingTop = getComputedStyle(probeError).paddingTop;
++      const errorPosition = getComputedStyle(probeError).position;
++      probeError.remove();
++      return { labelLineHeight, errorPaddingTop, errorPosition };
++    } finally {
++      lateStyle.remove();
++    }
++  }, epIndexCss);
++  check(lateEpOrder.labelLineHeight === "20.8px", `后置 EP 样式覆盖了标签行高: ${lateEpOrder.labelLineHeight}`);
++  check(lateEpOrder.errorPaddingTop === "4px", `后置 EP 样式覆盖了错误上内边距: ${lateEpOrder.errorPaddingTop}`);
++  check(lateEpOrder.errorPosition === "static", `后置 EP 样式覆盖了错误定位: ${lateEpOrder.errorPosition}`);
++  check(errors.length === 0, `页面报错: ${errors.join("; ")}`);
++
++  const summary = {
++    browser: await browser.version(),
++    declarativeDark,
++    declarativeLightBack,
++    focusRingCard,
++    rgbParsing: { spaceRgbPrimary, mixedInvalidRgbPrimary },
++    darkHostBrandLightButton,
++    lateEpOrder,
++    errors,
++    failures,
++  };
++  await writeFile(resolve(outputDir, "round2-fixes.json"), JSON.stringify(summary, null, 2) + "\n");
++  console.log(JSON.stringify({ errors, failures, summary }, null, 2));
++  if (failures.length > 0) process.exitCode = 1;
++} finally {
++  await browser.close();
++}

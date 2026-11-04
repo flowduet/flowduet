@@ -1,0 +1,66 @@
+# `#103` 第二轮集中收口修复：Spec & High-Risk 独立复审报告
+
+**结论先行**：上一轮 **2 项重要缺陷已全部真实关闭且无新增回归**；跨包／模型／依赖／宿主隔离无任何越界改动；`pnpm --filter @flowduet/designer test`（15 文件／202 条）与 `pnpm lint` 独立复核全绿。仅在公开 `README.md` 与验收记录对“CSS 系统色关键字回退行为”的边缘表述上存在 **1 项文案细节偏差**（见下），无阻塞性重要问题。
+
+- **审查对象**：工作树 `/Users/l/Documents/projects/flowduet-103-property-appearance`（基线 `cd39258`，增量基线 `79bbea9`，已核对工作树文本变更与 `diff-from-79bbea9.patch` 逐字节一致，并包含未跟踪新证据 `round2-fixes.json`、`round2-fixes.mjs.txt`）。
+- **发现统计（Spec & High-Risk 轴）**：`重要` **0**、`细节` **1**、`既有问题` **1**。
+
+---
+
+## 分级发现清单
+
+### `重要`（0 项）
+
+- 无。
+
+### `细节`（1 项）
+
+1. **[细节] 公开文档与验收记录将“系统色关键字”归入“仍使用既有默认值”，与离屏 `<canvas>` 实际求值行为不符**
+   - **位置**：
+     - `packages/designer/README.md:105`
+     - `docs/design/system-v1/brand/103-property-drawer-verification.md:110`（增量补丁末节第 4 条）
+   - **触发条件**：宿主在自定义 `--el-*` 变量中使用 CSS 系统色关键字（如 `CanvasText`、`ButtonFace`），尤其在 `mode: "dark"`（即使 `document.documentElement.style.colorScheme = "dark"`）下启用 `colorSource: "host"`。
+   - **代码与实测证据**：`packages/designer/src/appearance-style.ts:415-436` 的 `readBrowserColor` 使用未挂入文档树的离屏 `<canvas>` 2D 上下文解析颜色。以本机同一 Headless Chromium 156 实测：
+     - `light-dark(#112233, #ddeeff)` 与非法颜色确实被 `context.fillStyle` 拒绝（双哨兵比对抛错），回退到 `HOST_DEFAULTS[mode]`（既有默认值）；
+     - 但 `CanvasText`、`ButtonFace` 等合法系统色关键字**不会被 `context.fillStyle` 拒绝**，而是按未挂树画布固定的浅色 `color-scheme` 直接求值为 `#000000`、`#EFEFEF`（即使根元素已设 `color-scheme: dark`），**不会进入 `catch` 回退 `HOST_DEFAULTS`**。
+   - **处置建议**：无需扩大产品代码范围，仅将 `README.md:105` 与 `103-property-drawer-verification.md:110` 文案拆清即可（例如改为：“不支持依赖宿主 `color-scheme` 的 `light-dark()` 与系统色关键字；非法颜色仍使用既有默认值”）。
+
+### `既有问题`（1 项）
+
+1. **[既有] `@flowduet/form-create` 重组件测试在并发负载下偶发逼近默认 `5000ms` 超时上限**
+   - **位置**：`packages/form-create/src/components/retained-inputs.test.ts`、`retained-manager.test.ts`（记录于 `103-property-drawer-verification.md:77-94, 119`）。
+   - **说明**：本分支相对 `cd39258` 对 `packages/form-create` 零修改；空闲环境下标准 `pnpm test` 61 文件／968 条一次全过，高负载波动事实已在验收文档中诚实保留，不归咎于 `#103` 且不阻塞本票收口。
+
+---
+
+## 上一轮 4 项发现关闭核验结论
+
+1. **声明式宿主同一响应式周期切换主题类／内联变量与 `appearance.mode`（原 Spec 重要）→ 已真实关闭，无回归**
+   - **机制核验**：核对安装的 `vue@3.5.43`（`@vue/runtime-core` `doWatch` 源码）与 `DingtalkDesigner.vue:99-112`：
+     - **首次挂载**：`{ immediate: true, flush: "post" }` 在 `setup` 阶段同步执行首次回调，首次非法配置仍立即触发字段级 `console.warn` 并保持旧路径；挂载完成后 `onMounted(refreshHostAppearance)` 在父子 DOM 全部挂入文档后采样真实宿主样式。
+     - **运行中声明式切换**：父组件先完成容器 `class`／`style` DOM 补丁，`flush: "post"` 回调随后才调用 `readHostAppearance(hostRef.value, mode)`，彻底消除旧浅色快照与 `mode: "dark"` 混搭问题。
+     - **回退、草稿与卸载**：`resolved !== previous` 守卫保持“非法配置整份拒绝且不重采宿主快照”；切换全程不销毁 `NodeDrawer`／`NodePropertyFields`，输入 DOM、草稿值、焦点与 IME `composing` 保护保持；`disposed` 守卫（第 93、102 行）确保卸载后不残留执行。
+2. **`--fd-focus` 回退 `?? primaryInk`（原 Standards 重要）→ 已真实关闭，与 R2 基线完全一致**
+   - **代码核验**：`appearance-style.ts:283-286` 的 `[context.primary, primaryInk].find(...) ?? primaryInk` 在候选顺序、三项承载背景（`surface`、`inset`、`canvas`）、`3:1` 阈值及回退值上与 `derive-palette.mjs:189-191` 完全一致，移除了非空断言 `!`，跨明度宿主下不再产出 `undefined` 触发 CSS IACVT。
+3. **抽屉选择器权重 `(0, 3, 0)` 与全范围样式隔离（原 Spec 细节）→ 已真实关闭，100% 隔离**
+   - **全表扫描核验**：扫描 `element-plus@2.14.6` 的 `dist/index.css` 与 `theme-chalk/dark/css-vars.css` 全部选择器，并核对构建产物 `packages/designer/dist/designer.css`：
+     - `NodeDrawer.vue:146-246` 与 `NodePropertyFields.vue:236-253` 的全部全局覆盖规则均复合 `.flowduet-node-drawer.flowduet-appearance*`，权重达 `(0, 3, 0)`（伪类态 `(0, 4, 0)`），严格高于 `html.dark .el-button` `(0, 2, 1)` 以及 EP 的 `.el-form-item--label-top .el-form-item__label`、`.el-form-item--default/--small .el-form-item__error` `(0, 2, 0)`，不再受宿主引入 CSS 先后顺序影响。
+     - 省略 `appearance` 的旧路径仅挂 `.flowduet-node-drawer`（且 `:size="''"` 在 EP `useFormSize` 中为 falsy，不阻断宿主外层 `ElConfigProvider`），不命中任何新规则；画布、节点卡片、默认表单条、无关宿主控件、同页其他抽屉实例及未来复用 `.flowduet-appearance` 的 `FormPreview` 均因缺少 `.flowduet-node-drawer`（或 `[data-v-*]`）而 100% 隔离。
+     - `packages/designer/README.md:16-17, 77-78` 示例已统一为先引 `element-plus/dist/index.css` 再引 `@flowduet/designer/style.css`。
+4. **`cssColorToRgb` 严格分隔符与颜色边界说明（原 Spec 细节）→ 代码部分已关闭，文档余 1 项细节**
+   - `appearance-style.ts:389-406` 已拆分为 `COMMA_RGB_RE` 与 `SPACE_RGB_RE`，合法逗号／现代空格 `/` 语法通过快路径解析，`rgb(255, 0 0)` 等混用分隔符在单测与 Chromium 中均被拒绝并回退默认值；仅 `README.md:105` 对系统色关键字的回退描述余上述 `细节` 1 项。
+
+---
+
+## 证据真实性与高风险边界核验结论
+
+1. **证据真实性**：
+   - 核对测试文件总数确为 `61` 个、`appearance.test.ts` 确为 `18` 条、`designer` 包确为 `202` 条（实跑验证一致）。
+   - `round2-fixes.json` 与 `round2-fixes.mjs.txt` 实测断言完整覆盖声明式往返切换（对比度 `10.47:1`、草稿与焦点保持、`change 0`）、跨明度真实 `Tab` `:focus-visible` `2px solid` 轮廓（`12.58:1`）、`html.dark` 下品牌浅色禁用按钮文字 `rgb(139, 146, 164)`、后置注入完整 `element-plus/dist/index.css` 保持行高 `20.8px` 与错误内边距 `4px`，且 `failures: []`。
+   - 重截的 `host-light-comfortable.png` 与 `long-error-zoom-200.png` 视觉呈现正常；`consumer-output.json` 与 `npm-ls.txt` 已在隔离目录重跑确认单份 `element-plus@2.14.6`。
+   - 除上述 `细节 1`（系统色关键字文案表述）外，`103-property-drawer-verification.md` 无夸大或失真声明，未测边界（OS 真中文输入法、非 Chromium 浏览器、Node 22、#108 全三包浏览器矩阵）均诚实保留。
+   - *注*：`round2-fixes.json` 与 `round2-fixes.mjs.txt` 当前为工作树未跟踪文件（`??`），后续本地提交或打补丁快照时请注意一并纳入。
+2. **越界检查**：
+   - `packages/core`、`packages/form-create`、所有 `package.json` 与 `pnpm-lock.yaml` 均为 **0 改动**；
+   - BPMN 模型、XML 导出、草稿扫描与外置属性编辑合同未改；
+   - 组件实现不写宿主 `html.dark`／`body`／`:root`；`colorSource: "host"` 下不向实例或全局写入任何 `--el-*` 变量；公开入口未泄漏内部组件或专用测试 API。

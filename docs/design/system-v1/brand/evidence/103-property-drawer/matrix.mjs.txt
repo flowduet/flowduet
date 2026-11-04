@@ -1,0 +1,176 @@
+import { mkdir, writeFile } from 'node:fs/promises';
+import { resolve } from 'node:path';
+import { pathToFileURL } from 'node:url';
+
+const [driverPath, baseUrl, outputDir] = process.argv.slice(2);
+if (!driverPath || !baseUrl || !outputDir) throw new Error('需要驱动、URL 和输出目录参数');
+const { chromium } = await import(pathToFileURL(resolve(driverPath)).href);
+await mkdir(outputDir, { recursive: true });
+const browser = await chromium.launch({
+  headless: true,
+  executablePath: '/Users/l/Library/Caches/ms-playwright/chromium-1248/chrome-mac-x64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing',
+});
+const page = await browser.newPage({ viewport: { width: 1440, height: 1100 }, deviceScaleFactor: 1 });
+const errors = [];
+const warnings = [];
+const failures = [];
+page.on('pageerror', (error) => errors.push(`pageerror: ${error.message}`));
+page.on('console', (message) => {
+  if (message.type() === 'error') errors.push(`console: ${message.text()}`);
+  if (message.type() === 'warning') warnings.push(message.text());
+});
+page.on('response', (response) => {
+  if (response.status() >= 400) errors.push(`${response.status()} ${response.url()}`);
+});
+const check = (condition, message) => {
+  if (!condition) failures.push(message);
+};
+const setSelect = async (test, value) => {
+  await page.evaluate(({ test, value }) => {
+    const select = document.querySelector(`[data-test="${test}"]`);
+    select.value = value;
+    select.dispatchEvent(new Event('change', { bubbles: true }));
+  }, { test, value });
+};
+const setHostDark = async (dark) => {
+  await page.evaluate((dark) => {
+    const input = document.querySelector('[data-test="appearance-host-dark"]');
+    if (input.checked !== dark) {
+      input.checked = dark;
+      input.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+  }, dark);
+};
+const activeDrawer = () => page.locator('[data-test="node-drawer"]:visible');
+const combinations = [
+  { colorSource: 'host', mode: 'light', density: 'comfortable', primaryInk: 'rgb(0, 110, 198)', primarySoft: 'rgb(230, 242, 255)', surface: 'rgb(255, 255, 255)', primary: 'rgb(64, 158, 255)', onPrimary: 'rgb(255, 255, 255)' },
+  { colorSource: 'host', mode: 'light', density: 'compact', primaryInk: 'rgb(0, 110, 198)', primarySoft: 'rgb(230, 242, 255)', surface: 'rgb(255, 255, 255)', primary: 'rgb(64, 158, 255)', onPrimary: 'rgb(255, 255, 255)' },
+  { colorSource: 'host', mode: 'dark', density: 'comfortable', primaryInk: 'rgb(72, 161, 255)', primarySoft: 'rgb(29, 55, 83)', surface: 'rgb(20, 20, 20)', primary: 'rgb(64, 158, 255)', onPrimary: 'rgb(255, 255, 255)' },
+  { colorSource: 'host', mode: 'dark', density: 'compact', primaryInk: 'rgb(72, 161, 255)', primarySoft: 'rgb(29, 55, 83)', surface: 'rgb(20, 20, 20)', primary: 'rgb(64, 158, 255)', onPrimary: 'rgb(255, 255, 255)' },
+  { colorSource: 'brand', mode: 'light', density: 'comfortable', primaryInk: 'rgb(45, 62, 151)', primarySoft: 'rgb(234, 240, 255)', surface: 'rgb(255, 255, 255)', primary: 'rgb(45, 62, 151)', onPrimary: 'rgb(255, 255, 255)' },
+  { colorSource: 'brand', mode: 'light', density: 'compact', primaryInk: 'rgb(45, 62, 151)', primarySoft: 'rgb(234, 240, 255)', surface: 'rgb(255, 255, 255)', primary: 'rgb(45, 62, 151)', onPrimary: 'rgb(255, 255, 255)' },
+  { colorSource: 'brand', mode: 'dark', density: 'comfortable', primaryInk: 'rgb(165, 187, 255)', primarySoft: 'rgb(42, 51, 84)', surface: 'rgb(29, 36, 53)', primary: 'rgb(165, 187, 255)', onPrimary: 'rgb(23, 31, 62)' },
+  { colorSource: 'brand', mode: 'dark', density: 'compact', primaryInk: 'rgb(165, 187, 255)', primarySoft: 'rgb(42, 51, 84)', surface: 'rgb(29, 36, 53)', primary: 'rgb(165, 187, 255)', onPrimary: 'rgb(23, 31, 62)' },
+];
+const expectedSecondary = {
+  'host-light': 'rgb(96, 98, 102)',
+  'host-dark': 'rgb(207, 211, 220)',
+  'brand-light': 'rgb(86, 95, 118)',
+  'brand-dark': 'rgb(183, 192, 213)',
+};
+const results = [];
+try {
+  await page.goto(baseUrl, { waitUntil: 'networkidle' });
+  await page.locator('[data-test="appearance-scene-btn"]').click();
+  await page.locator('[data-test="appearance-first-designer"] [data-entity-id="approval"]').click();
+  await activeDrawer().waitFor({ state: 'visible' });
+  await page.waitForTimeout(400);
+  const inputHandle = await activeDrawer().locator('[data-test="drawer-name"]').elementHandle();
+  await inputHandle.fill('未提交：八组外观矩阵');
+  await inputHandle.focus();
+
+  for (const combination of combinations) {
+    const { colorSource, mode, density } = combination;
+    await setHostDark(colorSource === 'host' && mode === 'dark');
+    await setSelect('appearance-first-source', colorSource);
+    if (colorSource === 'brand') await setSelect('appearance-first-mode', mode);
+    await setSelect('appearance-first-density', density);
+    await inputHandle.focus();
+    await page.waitForTimeout(350);
+    const id = `${colorSource}-${mode}-${density}`;
+    const actual = await activeDrawer().evaluate((drawer) => {
+      const input = drawer.querySelector('[data-test="drawer-name"]');
+      const save = drawer.querySelector('[data-test="drawer-save"]');
+      const card = drawer.querySelector('[data-test="kind-single"]');
+      const select = drawer.querySelector('[data-test="drawer-form-select"]');
+      const body = drawer.querySelector('.el-drawer__body');
+      const formItem = drawer.querySelector('.el-form-item');
+      const label = drawer.querySelector('.el-form-item__label');
+      const hostInput = document.querySelector('[data-test="appearance-host-input"]');
+      const hostWrapper = hostInput?.closest('.el-input')?.querySelector('.el-input__wrapper');
+      const box = (element) => {
+        const rect = element.getBoundingClientRect();
+        return { x: rect.x, right: rect.right, width: rect.width, height: rect.height };
+      };
+      return {
+        className: drawer.className,
+        inlineStyle: drawer.getAttribute('style'),
+        drawer: box(drawer),
+        inputHeight: box(input.closest('.el-input')).height,
+        inputFontSize: getComputedStyle(input).fontSize,
+        saveHeight: box(save).height,
+        saveFontSize: getComputedStyle(save).fontSize,
+        saveColor: getComputedStyle(save).color,
+        saveBackground: getComputedStyle(save).backgroundColor,
+        cardBorderColor: getComputedStyle(card).borderTopColor,
+        cardBorderWidth: getComputedStyle(card).borderTopWidth,
+        cardBackground: getComputedStyle(card).backgroundColor,
+        cardText: card.textContent,
+        selectHeight: box(select).height,
+        selectBackground: getComputedStyle(select).backgroundColor,
+        bodyPadding: getComputedStyle(body).padding,
+        fieldMarginBottom: getComputedStyle(formItem).marginBottom,
+        labelFontSize: getComputedStyle(label).fontSize,
+        labelColor: getComputedStyle(label).color,
+        titleFontSize: getComputedStyle(drawer.querySelector('.el-drawer__title')).fontSize,
+        hostInputBorder: hostWrapper ? getComputedStyle(hostWrapper).boxShadow : null,
+        activeValue: input.value,
+        activeFocused: document.activeElement === input,
+        inputConnected: input.isConnected,
+        changeCount: document.querySelector('[data-test="appearance-first-change-count"]').textContent,
+        htmlClass: document.documentElement.className,
+      };
+    });
+    check(actual.className.includes(`flowduet-appearance--${colorSource}`), `${id}: 配色 class 错误`);
+    check(actual.className.includes(`flowduet-appearance--${mode}`), `${id}: 主题 class 错误`);
+    check(actual.className.includes(`flowduet-appearance--${density}`), `${id}: 密度 class 错误`);
+    const expectedHeight = density === 'compact' ? 24 : 32;
+    const expectedFont = density === 'compact' ? '12px' : '14px';
+    const expectedPadding = density === 'compact' ? '16px' : '24px';
+    check(actual.inputHeight === expectedHeight, `${id}: 输入高度 ${actual.inputHeight}`);
+    check(actual.saveHeight === expectedHeight, `${id}: 确定按钮高度 ${actual.saveHeight}`);
+    check(actual.selectHeight === expectedHeight, `${id}: 原生选择器高度 ${actual.selectHeight}`);
+    check(actual.inputFontSize === expectedFont, `${id}: 输入字号 ${actual.inputFontSize}`);
+    check(actual.saveFontSize === expectedFont, `${id}: 按钮字号 ${actual.saveFontSize}`);
+    check(actual.bodyPadding === expectedPadding, `${id}: 面板内边距 ${actual.bodyPadding}`);
+    check(actual.fieldMarginBottom === (density === 'compact' ? '12px' : '16px'), `${id}: 字段间距 ${actual.fieldMarginBottom}`);
+    check(actual.labelFontSize === '13px', `${id}: 字段标签字号 ${actual.labelFontSize}`);
+    check(actual.labelColor === expectedSecondary[`${colorSource}-${mode}`], `${id}: 字段标签颜色 ${actual.labelColor}`);
+    check(actual.cardBorderWidth === '2px', `${id}: 选中卡边框 ${actual.cardBorderWidth}`);
+    check(actual.cardText.includes('已选中'), `${id}: 缺少已选中文字`);
+    check(actual.cardBorderColor === combination.primaryInk, `${id}: 选中边框 ${actual.cardBorderColor}`);
+    check(actual.cardBackground === combination.primarySoft, `${id}: 选中底 ${actual.cardBackground}`);
+    check(actual.saveBackground === combination.primary, `${id}: 主按钮底 ${actual.saveBackground}`);
+    check(actual.saveColor === combination.onPrimary, `${id}: 主按钮前景 ${actual.saveColor}`);
+    check(actual.selectBackground === combination.surface, `${id}: 原生选择器表面 ${actual.selectBackground}`);
+    check(actual.titleFontSize === '20px', `${id}: 标题字号 ${actual.titleFontSize}`);
+    check(actual.drawer.x >= 0 && actual.drawer.right <= 1441, `${id}: 抽屉超出视口 ${JSON.stringify(actual.drawer)}`);
+    check(actual.activeValue === '未提交：八组外观矩阵', `${id}: 未提交输入丢失`);
+    check(actual.activeFocused && actual.inputConnected, `${id}: 输入焦点或 DOM 未保留`);
+    check(actual.changeCount === 'change 0', `${id}: 外观切换触发模型 change`);
+    if (colorSource === 'host') check(!actual.inlineStyle.includes('--el-'), `${id}: host 写入 EP 变量`);
+    else check(actual.inlineStyle.includes('--el-color-primary'), `${id}: brand 缺少局部 EP 主色`);
+    if (colorSource === 'host' && mode === 'dark') check(actual.htmlClass.includes('dark'), `${id}: 宿主深色环境未启用`);
+    if (colorSource === 'brand') check(!actual.htmlClass.includes('dark'), `${id}: 品牌实例错误切换宿主深色`);
+    await activeDrawer().screenshot({ path: resolve(outputDir, `${id}.png`) });
+    results.push({ id, ...actual });
+  }
+  const summary = {
+    browser: await page.evaluate(() => navigator.userAgent),
+    viewport: { width: 1440, height: 1100, deviceScaleFactor: 1 },
+    results,
+    errors,
+    warnings,
+    failures,
+    limitations: [
+      '合成 DOM 事件用于外观配置切换；未冒充真实 OS 中文输入法验收。',
+      '原生 select 的系统选项弹层由 macOS/Chromium 绘制，只能记录有限 CSS 控制，不能承诺像素级主题一致。',
+      '本轮仅桌面 Chromium；Firefox、Safari/WebKit、移动端与完整可访问性认证未验证。',
+    ],
+  };
+  await writeFile(resolve(outputDir, 'matrix.json'), JSON.stringify(summary, null, 2));
+  console.log(JSON.stringify({ combinations: results.length, errors, warnings, failures }, null, 2));
+  if (failures.length > 0) process.exitCode = 1;
+} finally {
+  await browser.close();
+}

@@ -1,0 +1,71 @@
+# `#103` 第二轮集中收口修复 — Standards（工程规范与代码质量）独立复审报告
+
+**总体结论（Standards 轴）**：**重要 0 / 细节 1 / 既有问题 1**。产品与测试源码无阻塞项，上一轮 Standards 重要缺陷已彻底关闭；仅补丁快照归档缺少两个未跟踪证据文件（工作树原件本身已核验通过），收尾提交时一并纳入即可。
+
+**独立核验范围与实测**：
+- 已完成前置阅读：`docs/agents/code-review.md`、`AGENTS.md`（含 `docs/agents/*`）、`GLOSSARY.md`、`ADR-0011`、`ADR-0012`。
+- 核对对象：工作树 `/Users/l/Documents/projects/flowduet-103-property-appearance`、增量补丁 `diff-from-79bbea9.patch`、完整基线补丁 `diff-from-cd39258.patch` 及工作树新增未跟踪证据文件。
+- 只读运行验证：`pnpm lint` 通过；`pnpm --filter @flowduet/designer test`（15 文件 / 202 条测试）全绿；`pnpm --filter @flowduet/designer exec vue-tsc -p tsconfig.build.json --noEmit` 通过。
+
+---
+
+## 一、发现分级汇总
+
+### 重要（0）
+无。
+
+### 细节（1）
+1. **补丁快照未包含新增未跟踪证据文件（提交前需显式纳入，避免悬空链接与快照缺漏）**
+   - **位置**：`docs/design/system-v1/brand/103-property-drawer-verification.md:115` 引用了 `evidence/103-property-drawer/round2-fixes.json` 与 `evidence/103-property-drawer/round2-fixes.mjs.txt`；工作树中这两个文件当前为 `??`（未跟踪），`scratch/diff-from-79bbea9.patch` 与 `scratch/diff-from-cd39258.patch` 均未包含二者（`grep -c "diff --git.*round2-fixes"` 为 `0`）。
+   - **触发条件与依据**：`docs/agents/code-review.md:15` 规定未提交改动的补丁快照须“包含暂存、未暂存和相关未跟踪文件（不为取快照修改暂存区）”；同时若后续收尾提交误用 `git commit -a` 而未显式 `git add` 这两个新文件，会导致验收记录第 115 行出现两处死链。
+   - **处置建议**：两份证据原件已在工作树直接审阅，内容真实合规；重新固定可复核快照（如追加 `git diff --no-index /dev/null <file>`）及本地提交时显式纳入这两个文件即可，无须改动产品或测试代码。
+
+### 既有问题（1）
+1. **`NodePropertyFields.vue` 残留基线前的无害死样式 `.drawer-empty`**
+   - **位置**：`packages/designer/src/components/NodePropertyFields.vue:218-222`。
+   - **说明**：`<style scoped>` 中保留了 `cd39258` 之前拆分组件时遗留的 `.drawer-empty` 规则，而实际 `.drawer-empty` DOM 仅存在于父组件 `NodeDrawer.vue:130`（由 `NodeDrawer.vue:140,170` 样式覆盖）。该规则带 `data-v-*` 作用域，不污染任何元素、不影响安全交付，**不值得在本票顺手清理**以免扩大补丁范围。
+
+---
+
+## 二、上一轮缺陷关闭核验结论
+
+- **结论：已彻底关闭，无同类残留隐患。**
+- **核验依据**：
+  1. `packages/designer/src/appearance-style.ts:283-286` 已移除 `[context.primary, primaryInk].find(...)!` 的不安全非空断言 `!`，改为 `find(...) ?? primaryInk`，与 R2 设计基线 `derive-palette.mjs:189-191` 完全对齐；由于第 279-281 行 `primaryInk` 类型恒为合法六位 `#RRGGBB` `string`（`searchPrimaryInk(...) ?? context.text`），`focus` 在跨明度背景下不可能再产出 `undefined`。
+  2. 全量排查本次变更的所有 `!` 与 `as` 断言：
+     - `appearance-style.ts:229` `right[index]!`（`left`/`right` 均为 `hexToRgb` 返回的定长 3 元组 `Rgb`，`index` 仅取 `0..2`，受 `noUncheckedIndexedAccess` 约束，运行时必有值）；
+     - `appearance-style.ts:434-435` `[r, g, b] = context.getImageData(0, 0, 1, 1).data`（1×1 Canvas 像素恒为 4 字节 `Uint8ClampedArray`）；
+     - `appearance.ts:29-55` 对非对象、`null`、数组（含撤销的 `Proxy` 触发 `Array.isArray` 抛错，位于第 38 行 `try` 块内）及属性 getter 抛错全部在 `try/catch` 内安全拦截，且每个字段只读取一次存入局部变量，杜绝多次求值的 TOCTOU 类型欺骗；
+     - `readColor` 双层 `try/catch` 兜底保证任何异常或环境缺失（如 `happy-dom` 无 2D Canvas、`defaultView === null`）均回退到合法 `#RRGGBB` 常量，无未捕获异常或 `NaN` 通道泄漏。
+  3. 回归覆盖：`packages/designer/src/appearance.test.ts:234-249` 通过公开组件复现 `#141414` 深色页底 + `#FFFFFF` 浅色抽屉的跨明度反例并锁定 `--fd-focus === "#303133"`；`round2-fixes.mjs.txt:100-136` 在真实 Chromium 中以 `Tab` 键触发 `:focus-visible` 验证了 `2px solid rgb(48, 49, 51)` 轮廓。
+
+---
+
+## 三、其余重点核查项结论
+
+1. **`DingtalkDesigner.vue`（`{ immediate: true, flush: "post" }` + `disposed` 守卫）生命周期与响应式时序（`DingtalkDesigner.vue:92-112`）**：
+   - **首次挂载**：结合 Vue `3.5.43` `@vue/runtime-core` `doWatch` 与 `@vue/reactivity` `watch` 机制核实——带回调的 `watch(source, cb, { immediate: true, flush: "post" })` 在 `setup()` 阶段同步执行首次 `job(true)`（此时 `drawerAppearance` 立即就绪、首次非法配置立即同步 `console.warn` 且不闪旧样式，`hostRef.value` 为 `undefined` 时 `readHostAppearance` 安全返回 `HOST_DEFAULTS[mode]`），随后首次 DOM 挂载完成触发第 112 行 `onMounted(refreshHostAppearance)` 采样真实 `hostRef.value` 计算样式；`immediate: true` 与 `onMounted` 职责互补、缺一不可。
+   - **运行中同周期换肤**：后续响应式更新走 `queuePostRenderEffect`，保证父组件同一周期切换宿主 `:class` / `:style` 完成 DOM 补丁后再采样 `getComputedStyle(hostRef.value)`，消除旧值滞后。
+   - **快速卸载**：父组件同周期卸载子组件时，`onBeforeUnmount`（第 83-86 行）先置 `disposed = true` 且 Vue `effect.stop()` 清除 active 标志；回调第 102 行与 `refreshHostAppearance` 第 93 行的 `if (disposed) return;` 构成双保险，无卸载后访问脱离 DOM 或多余告警。
+   - **getter 抛错 / 非法配置回退 / 合法停用**：`watch` 源为 `() => props.appearance`（非 `deep`），`effect.run()` 不触碰内部异常 getter；异常在回调内由 `resolveComponentAppearance` 捕获并返回同一 `previous` 引用，命中 `resolved === previous` 跳过重采样（避免“拒绝配置却换色”）；合法停用（`undefined`）将 `drawerAppearance` 与 `hostAppearance` 双双清空，后续非法输入不会复活旧主题。
+2. **`cssColorToRgb` 正则拆分、Vue SFC 样式／注释与测试真实性**：
+   - **正则拆分（`appearance-style.ts:389-413`）**：`COMMA_RGB_RE` 与 `SPACE_RGB_RE` 严格分离传统逗号语法与 CSS Color 4 空格 `/` 语法，拒绝 `rgb(255, 0 0)`、`rgb(255, 0, 0 / 1)`、`rgb(1., 0, 0)` 等非法输入；分支互斥无嵌套量词，零 ReDoS 风险；半透明值不走快路径而交由 Canvas 在实际表面合成，逻辑严密。
+   - **Vue SFC 样式与注释**：所有 SFC 严格遵循 `<script setup lang="ts">` → `<template>` → `<style>` 顺序；`NodeDrawer.vue` 非 scoped 样式与 `NodePropertyFields.vue` `:global(...)` 规则 100% 限定在 `.flowduet-node-drawer` 命名空间下，复合选择器权重 `(0, 3, 0)` 压过 Element Plus `html.dark .el-button` `(0, 2, 1)` 与 `.el-form-item--label-top .el-form-item__label` `(0, 2, 0)`，构建产物 `dist/designer.css` 无 `:deep` 残留且无全局泄漏；所有新增注释均为中文，仅解释非显而易见的因果机制与业务边界，符合 `AGENTS.md`。
+   - **测试真实性（`appearance.test.ts`）**：仅从 `./index.js` 导入公开入口，未直接导入内部 `appearance-style.ts`；新增的声明式同周期换肤、跨明度 `--fd-focus` 回退、非法混用分隔符 `rgb()` 回退三条单测均具备明确的失败反例（回退修复代码即红灯），无恒真断言。`NodeAppearanceScene.vue:157-160` 中 `v-model="declarativeScopedDark"` 先更新状态再触发 `@change="onDeclarativeDarkChange"` 同步 `first.mode`，同周期时序正确。
+
+---
+
+## 四、Code Smell 判断
+
+1. **`appearance-style.ts` 中 `hostVariables`（第 288-313 行）与 `brandVariables`（第 321-345 行）平行列出 24 个 `--fd-*` 变量键**
+   - **判断**：**不值得改**。
+   - **理由**：两条路径契约边界截然不同（`hostVariables` 严禁输出任何 `--el-*` 且混合实时派生值与宿主读取值，`brandVariables` 取静态品牌表并紧接 31 个局部 `--el-*` 变量）。保留扁平字面量能一眼审计“跟随宿主零 `--el-*` 写入”及两侧角色完整性，抽中间映射函数只会增加搬运样板代码。
+2. **`appearance-style.ts`（第 139-250 行）与 `docs/design/system-v1/brand/derive-palette.mjs` 的 OKLab/OKLCH 换算逻辑重复**
+   - **判断**：**不值得改（有意为之的包边界隔离）**。
+   - **理由**：`derive-palette.mjs` 明确声明为离线设计工具而非运行时模块（`ADR-0012`）；`@flowduet/designer` 作为独立发布 npm 包不能运行时反向依赖 `docs/`，也不应为此增加新共享包。约百行纯数学函数无外部依赖且有单测与 R2 基准交叉锁定。
+3. **`appearance.test.ts` 内联测试宿主组件写法不一（第 174 行 `DeclarativeHost` 用 `setup()`，第 415 行 `Host` 用 `data()`）**
+   - **判断**：**不值得改**。
+   - **理由**：仅限单测文件内的短小挂载夹具，所有 `.vue` 产品与验收场景源码均统一使用 `<script setup lang="ts">` Composition API；为统一测试夹具风格改写既有通过用例无实际收益。
+4. **`NodePropertyFields.vue:130` 使用 `v-if="size"` 兼作新外观“已选中”状态标签显隐判断**
+   - **判断**：**不值得改**。
+   - **理由**：`NodePropertyFields` 为包内私有子组件，当前唯一外观调用方 `NodeDrawer.vue:23-26` 中 `epSize !== ""` 与 `appearance !== undefined` 严格等价；在尚无第二个容器需要解耦二者前，新增冗余布尔 prop 属于过度设计。

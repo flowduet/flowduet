@@ -1,7 +1,17 @@
 <script setup lang="ts">
-import { computed, ref, toRaw, watch, nextTick, onBeforeUnmount } from "vue";
+import { computed, ref, shallowRef, toRaw, watch, nextTick, onBeforeUnmount, onMounted } from "vue";
 import type { ApprovalDraftOptions, BpmnModel, BlockTreeNode } from "@flowduet/core";
 import { deriveBlockTree, resolveEffectiveForm } from "@flowduet/core";
+import {
+  resolveComponentAppearance,
+  type ComponentAppearance,
+  type ResolvedComponentAppearance,
+} from "../appearance.js";
+import {
+  createAppearanceVariables,
+  readHostAppearance,
+  type HostAppearanceContext,
+} from "../appearance-style.js";
 import BlockNodeList from "./BlockNodeList.vue";
 import NodeDrawer from "./NodeDrawer.vue";
 import type {
@@ -47,6 +57,8 @@ const props = withDefaults(
      */
     formOptions?: readonly DesignerFormOption[];
     propertyEditing?: "drawer" | "external";
+    /** 显式启用的实例外观；省略时保持既有抽屉路径。 */
+    appearance?: ComponentAppearance | undefined;
     selectedId?: string | undefined;
     showDefaultForm?: boolean;
     /** 外置控制器提交版本，驱动同一模型引用的重投影及请求核对。 */
@@ -73,6 +85,34 @@ onBeforeUnmount(() => {
   focusTicket++;
 });
 const drawerRef = ref<InstanceType<typeof NodeDrawer> | null>(null);
+
+// 解析结果同时就是“上次有效值”：合法停用会清空它，之后的非法输入不会复活旧主题。
+const drawerAppearance = shallowRef<ResolvedComponentAppearance>();
+const hostAppearance = shallowRef<HostAppearanceContext>();
+function refreshHostAppearance(): void {
+  if (disposed) return;
+  hostAppearance.value =
+    drawerAppearance.value?.colorSource === "host"
+      ? readHostAppearance(hostRef.value, drawerAppearance.value.mode)
+      : undefined;
+}
+watch(
+  () => props.appearance,
+  (value) => {
+    if (disposed) return;
+    const previous = drawerAppearance.value;
+    const resolved = resolveComponentAppearance(value, previous);
+    drawerAppearance.value = resolved;
+    // 非法输入返回同一个上次有效对象；此时连宿主快照也保持，避免“拒绝配置却换色”。
+    if (resolved !== previous) refreshHostAppearance();
+  },
+  // 后置冲刷确保宿主在同一响应式周期切换主题类或样式后，DOM 已完成补丁再读取计算样式。
+  { immediate: true, flush: "post" },
+);
+onMounted(refreshHostAppearance);
+const drawerStyle = computed(() =>
+  createAppearanceVariables(drawerAppearance.value, hostAppearance.value),
+);
 
 const version = ref(0);
 const activeId = ref<string>();
@@ -435,6 +475,8 @@ defineExpose({
       :model="model"
       :node-id="activeId"
       :form-options="formOptions"
+      :appearance="drawerAppearance"
+      :appearance-style="drawerStyle"
       @saved="onDrawerSaved"
       @error="onDrawerError"
       @draft-modified="onDrawerDraftModified"

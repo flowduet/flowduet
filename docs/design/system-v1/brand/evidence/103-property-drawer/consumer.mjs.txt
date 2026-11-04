@@ -1,0 +1,52 @@
+import { readFile } from 'node:fs/promises';
+import { fileURLToPath } from 'node:url';
+import { BpmnModel, flowableAdapter } from '@flowduet/core';
+import {
+  DingtalkDesigner,
+  resolveComponentAppearance,
+} from '@flowduet/designer';
+
+const assert = (condition, message) => {
+  if (!condition) throw new Error(message);
+};
+assert(typeof BpmnModel === 'function' && typeof flowableAdapter === 'object', 'core 公开导出缺失');
+assert(typeof DingtalkDesigner === 'object', 'DingtalkDesigner 公开导出缺失');
+assert(typeof resolveComponentAppearance === 'function', '外观解析公开导出缺失');
+const resolved = resolveComponentAppearance({ mode: 'light' });
+assert(JSON.stringify(resolved) === JSON.stringify({ colorSource: 'host', mode: 'light', density: 'comfortable' }), '默认外观归一化错误');
+const previous = { colorSource: 'brand', mode: 'dark', density: 'compact' };
+const warnings = [];
+const originalWarn = console.warn;
+console.warn = (message) => warnings.push(message);
+try {
+  assert(resolveComponentAppearance({ mode: 'light', density: 'invalid' }, previous) === previous, '非法配置未保留上次有效对象');
+  assert(resolveComponentAppearance({ density: 'compact' }) === undefined, '首次非法配置未保持旧路径');
+  assert(resolveComponentAppearance(undefined, previous) === undefined, '合法停用未返回 undefined');
+} finally {
+  console.warn = originalWarn;
+}
+assert(warnings.length === 2 && warnings.every((message) => message.includes('appearance.')), '非法配置告警不可定位');
+
+const packageUrl = import.meta.resolve('@flowduet/designer/package.json');
+const packagePath = fileURLToPath(packageUrl);
+const packageJson = JSON.parse(await readFile(packagePath, 'utf8'));
+const cssPath = fileURLToPath(import.meta.resolve('@flowduet/designer/style.css'));
+const css = await readFile(cssPath, 'utf8');
+assert(css.includes('.flowduet-appearance--brand'), 'CSS 缺少品牌作用域');
+assert(css.includes('.flowduet-appearance .kind-card'), 'CSS 缺少自有卡片适配');
+assert(!css.includes(':deep('), 'CSS 残留未编译 deep 选择器');
+const declarationsPath = fileURLToPath(new URL(packageJson.types, packageUrl));
+const declarations = await readFile(declarationsPath, 'utf8');
+assert(declarations.includes('ComponentAppearance'), '包根声明缺少 ComponentAppearance');
+assert(declarations.includes('resolveComponentAppearance'), '包根声明缺少 resolveComponentAppearance');
+const model = BpmnModel.create({ processId: 'tarball_consumer', adapter: flowableAdapter });
+assert(model.process.get('id') === 'tarball_consumer', 'core 模型无法通过公开包创建');
+console.log(JSON.stringify({
+  designer: packageJson.version,
+  elementPlus: JSON.parse(await readFile(fileURLToPath(import.meta.resolve('element-plus/package.json')), 'utf8')).version,
+  module: fileURLToPath(import.meta.resolve('@flowduet/designer')),
+  declarations: declarationsPath,
+  css: cssPath,
+  warnings,
+  result: 'JS / declaration / CSS / model 均通过',
+}, null, 2));
