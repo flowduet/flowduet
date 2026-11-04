@@ -279,9 +279,11 @@ function hostVariables(
   const primaryInk =
     searchPrimaryInk(context.primary, [...backgrounds, primarySoft, status.approvalSoft], mode) ??
     context.text;
-  const focus = [context.primary, primaryInk].find((color) =>
-    backgrounds.every((background) => contrast(color, background) >= 3),
-  )!;
+  // 与 R2 派生口径一致：跨明度宿主背景使 3:1 搜索落空时回退 primaryInk，避免省略 --fd-focus 使焦点环失效。
+  const focus =
+    [context.primary, primaryInk].find((color) =>
+      backgrounds.every((background) => contrast(color, background) >= 3),
+    ) ?? primaryInk;
   return {
     ...densityVariables(appearance.density),
     "--fd-canvas": context.canvas,
@@ -384,6 +386,16 @@ export function createAppearanceVariables(
   return brandVariables(appearance);
 }
 
+const RGB_CHANNEL = String.raw`(\d+(?:\.\d+)?|\.\d+)`;
+const COMMA_RGB_RE = new RegExp(
+  String.raw`^rgba?\(\s*${RGB_CHANNEL}\s*,\s*${RGB_CHANNEL}\s*,\s*${RGB_CHANNEL}(?:\s*,\s*(?:1(?:\.0+)?|100%))?\s*\)$`,
+  "i",
+);
+const SPACE_RGB_RE = new RegExp(
+  String.raw`^rgba?\(\s*${RGB_CHANNEL}\s+${RGB_CHANNEL}\s+${RGB_CHANNEL}(?:\s*\/\s*(?:1(?:\.0+)?|100%))?\s*\)$`,
+  "i",
+);
+
 function cssColorToRgb(value: string): Rgb {
   if (value.startsWith("#"))
     return hexToRgb(
@@ -391,9 +403,7 @@ function cssColorToRgb(value: string): Rgb {
         ? "#" + [...value.slice(1)].map((channel) => channel + channel).join("")
         : value,
     );
-  const match = value.match(
-    /^rgba?\(\s*([\d.]+)(?:\s*,\s*|\s+)([\d.]+)(?:\s*,\s*|\s+)([\d.]+)(?:\s*(?:,|\/)\s*(?:1|1\.0|100%))?\s*\)$/,
-  );
+  const match = value.match(COMMA_RGB_RE) ?? value.match(SPACE_RGB_RE);
   if (match !== null) {
     const channels = match.slice(1, 4).map(Number);
     if (channels.every((channel) => channel >= 0 && channel <= 255))

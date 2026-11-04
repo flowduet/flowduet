@@ -1,11 +1,13 @@
-flowduet-103-consumer@1.0.0 /private/tmp/flowduet-103-consumer-clean.Q3kjJw
-├── @flowduet/core@0.3.0
-├── @flowduet/designer@0.1.0
-├── element-plus@2.14.6
-├── typescript@5.9.3
-└── vue@3.5.43
+flowduet-103-consumer@1.0.0 /private/tmp/flowduet-103-consumer-r2.38uSuj
++-- @flowduet/core@0.3.0
++-- @flowduet/designer@0.1.0
++-- element-plus@2.14.6
++-- typescript@5.9.3
+`-- vue@3.5.43
 
-flowduet-103-consumer@1.0.0 /private/tmp/flowduet-103-consumer-clean.Q3kjJw
-├─┬ @flowduet/designer@0.1.0
-│ └── element-plus@2.14.6 deduped
-└── element-plus@2.14.6
+
+flowduet-103-consumer@1.0.0 /private/tmp/flowduet-103-consumer-r2.38uSuj
++-- @flowduet/designer@0.1.0
+| `-- element-plus@2.14.6 deduped
+`-- element-plus@2.14.6
+

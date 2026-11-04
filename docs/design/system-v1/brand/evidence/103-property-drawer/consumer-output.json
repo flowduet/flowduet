@@ -1,9 +1,9 @@
 {
   "designer": "0.1.0",
   "elementPlus": "2.14.6",
-  "module": "/private/tmp/flowduet-103-consumer-clean.Q3kjJw/node_modules/@flowduet/designer/dist/index.js",
-  "declarations": "/private/tmp/flowduet-103-consumer-clean.Q3kjJw/node_modules/@flowduet/designer/dist/index.d.ts",
-  "css": "/private/tmp/flowduet-103-consumer-clean.Q3kjJw/node_modules/@flowduet/designer/dist/designer.css",
+  "module": "/private/tmp/flowduet-103-consumer-r2.38uSuj/node_modules/@flowduet/designer/dist/index.js",
+  "declarations": "/private/tmp/flowduet-103-consumer-r2.38uSuj/node_modules/@flowduet/designer/dist/index.d.ts",
+  "css": "/private/tmp/flowduet-103-consumer-r2.38uSuj/node_modules/@flowduet/designer/dist/designer.css",
   "warnings": [
     "[FlowDuet] appearance.density 只支持 \"comfortable\" 或 \"compact\"；已整份拒绝本次 appearance 配置。",
     "[FlowDuet] appearance.mode 必填，且只支持 \"light\" 或 \"dark\"；已整份拒绝本次 appearance 配置。"

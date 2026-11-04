@@ -232,19 +232,19 @@ defineExpose({ flush, capture });
   font-size: 13px;
 }
 
-/* 新适配只覆盖自有卡片与原生选择器；旧路径继续使用上方的原始值。 */
-:global(.flowduet-appearance .el-form-item) {
+/* 新适配只覆盖当前属性抽屉内的排版与自有控件，复合抽屉类使权重不依赖宿主引入 EP 样式的先后顺序。 */
+:global(.flowduet-node-drawer.flowduet-appearance .el-form-item) {
   margin-bottom: var(--fd-field-gap);
 }
 
-:global(.flowduet-appearance .el-form-item__label) {
+:global(.flowduet-node-drawer.flowduet-appearance .el-form-item__label) {
   color: var(--fd-secondary);
   font-family: var(--fd-font-family);
   font-size: 13px;
   line-height: 1.6;
 }
 
-:global(.flowduet-appearance .el-form-item__error) {
+:global(.flowduet-node-drawer.flowduet-appearance .el-form-item__error) {
   position: static;
   padding-top: 4px;
   line-height: 1.6;

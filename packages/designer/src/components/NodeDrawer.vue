@@ -143,61 +143,61 @@ defineExpose({ commit });
   padding: 12px 0;
 }
 
-.flowduet-appearance {
+.flowduet-node-drawer.flowduet-appearance {
   font-family: var(--fd-font-family);
 }
 
-.flowduet-appearance .el-drawer__header {
+.flowduet-node-drawer.flowduet-appearance .el-drawer__header {
   margin-bottom: 0;
   padding: var(--fd-panel-padding);
 }
 
-.flowduet-appearance .el-drawer__title {
+.flowduet-node-drawer.flowduet-appearance .el-drawer__title {
   font-size: 20px;
   line-height: 1.6;
   overflow-wrap: anywhere;
 }
 
-.flowduet-appearance .el-drawer__body {
+.flowduet-node-drawer.flowduet-appearance .el-drawer__body {
   padding: var(--fd-panel-padding);
 }
 
-.flowduet-appearance .el-drawer__footer {
+.flowduet-node-drawer.flowduet-appearance .el-drawer__footer {
   padding: var(--fd-panel-padding);
   padding-top: 0;
 }
 
-.flowduet-appearance .drawer-empty {
+.flowduet-node-drawer.flowduet-appearance .drawer-empty {
   color: var(--fd-muted);
   line-height: 1.6;
 }
 
-/* 品牌预设只改当前抽屉的 EP 本体变量；跟随宿主路径不命中这些规则。 */
-.flowduet-appearance--brand {
+/* 品牌预设只改当前抽屉的 EP 本体变量，复合抽屉类使权重高于宿主 html.dark 派生规则；跟随宿主不命中。 */
+.flowduet-node-drawer.flowduet-appearance--brand {
   background: var(--fd-surface);
   color: var(--fd-text);
 }
 
-.flowduet-appearance--brand .el-drawer__header {
+.flowduet-node-drawer.flowduet-appearance--brand .el-drawer__header {
   border-bottom: 1px solid var(--fd-border);
   color: var(--fd-text);
 }
 
-.flowduet-appearance--brand .el-drawer__close-btn {
+.flowduet-node-drawer.flowduet-appearance--brand .el-drawer__close-btn {
   color: var(--fd-secondary);
 }
 
-.flowduet-appearance--brand .el-drawer__close-btn:focus-visible {
+.flowduet-node-drawer.flowduet-appearance--brand .el-drawer__close-btn:focus-visible {
   outline: 2px solid var(--fd-focus);
   outline-offset: 3px;
 }
 
-.flowduet-appearance--brand .el-drawer__footer {
+.flowduet-node-drawer.flowduet-appearance--brand .el-drawer__footer {
   border-top: 1px solid var(--fd-border);
   padding-top: var(--fd-panel-padding);
 }
 
-.flowduet-appearance--brand .el-input {
+.flowduet-node-drawer.flowduet-appearance--brand .el-input {
   --el-input-text-color: var(--fd-text);
   --el-input-bg-color: var(--fd-surface);
   --el-input-border-color: var(--fd-control-border);
@@ -207,12 +207,12 @@ defineExpose({ commit });
   --el-input-border-radius: var(--fd-radius);
 }
 
-.flowduet-appearance--brand .el-input__wrapper:focus-within {
+.flowduet-node-drawer.flowduet-appearance--brand .el-input__wrapper:focus-within {
   outline: 2px solid var(--fd-focus);
   outline-offset: 3px;
 }
 
-.flowduet-appearance--brand .el-button {
+.flowduet-node-drawer.flowduet-appearance--brand .el-button {
   --el-button-text-color: var(--fd-text);
   --el-button-bg-color: var(--fd-surface);
   --el-button-border-color: var(--fd-control-border);
@@ -228,7 +228,7 @@ defineExpose({ commit });
   --el-button-outline-color: var(--fd-focus);
 }
 
-.flowduet-appearance--brand .el-button--primary {
+.flowduet-node-drawer.flowduet-appearance--brand .el-button--primary {
   --el-button-text-color: var(--fd-on-primary);
   --el-button-bg-color: var(--fd-primary);
   --el-button-border-color: var(--fd-primary);
@@ -240,7 +240,7 @@ defineExpose({ commit });
   --el-button-active-border-color: var(--fd-primary-pressed);
 }
 
-.flowduet-appearance--brand .el-button:focus-visible {
+.flowduet-node-drawer.flowduet-appearance--brand .el-button:focus-visible {
   outline: 2px solid var(--fd-focus);
   outline-offset: 3px;
 }

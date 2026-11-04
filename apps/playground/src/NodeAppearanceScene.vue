@@ -82,6 +82,7 @@ const second = reactive<InstanceControls>({
 });
 const firstInvalid = ref(false);
 const hostDark = ref(document.documentElement.classList.contains("dark"));
+const declarativeScopedDark = ref(false);
 const originallyDark = hostDark.value;
 const firstChanges = ref(0);
 const firstDraftChanges = ref(0);
@@ -102,13 +103,23 @@ const firstAppearance = computed<ComponentAppearance | undefined>(() => {
 });
 const secondAppearance = computed(() => toAppearance(second));
 
+function syncFirstHostMode(): void {
+  if (first.colorSource === "host")
+    first.mode = hostDark.value || declarativeScopedDark.value ? "dark" : "light";
+}
+
 function onFirstValidChange(): void {
   firstInvalid.value = false;
 }
 
 function onFirstSourceChange(): void {
   onFirstValidChange();
-  if (first.colorSource === "host") first.mode = hostDark.value ? "dark" : "light";
+  syncFirstHostMode();
+}
+
+function onDeclarativeDarkChange(): void {
+  onFirstValidChange();
+  syncFirstHostMode();
 }
 
 function onHostThemeChange(event: Event): void {
@@ -116,7 +127,7 @@ function onHostThemeChange(event: Event): void {
   hostDark.value = dark;
   // 这是宿主主动切换自己的 EP 深色环境，不是组件 appearance 的副作用。
   document.documentElement.classList.toggle("dark", dark);
-  if (first.colorSource === "host") first.mode = dark ? "dark" : "light";
+  syncFirstHostMode();
 }
 
 onBeforeUnmount(() => {
@@ -131,15 +142,26 @@ onBeforeUnmount(() => {
         <h2>节点属性抽屉外观验收</h2>
         <p>两个公开 DingtalkDesigner 实例共享同一 Vue app，模型与编辑缓冲各自独立。</p>
       </div>
-      <label>
-        <input
-          type="checkbox"
-          :checked="hostDark"
-          data-test="appearance-host-dark"
-          @change="onHostThemeChange"
-        />
-        宿主启用 EP 深色
-      </label>
+      <div class="appearance-controls">
+        <label>
+          <input
+            type="checkbox"
+            :checked="hostDark"
+            data-test="appearance-host-dark"
+            @change="onHostThemeChange"
+          />
+          宿主启用 EP 深色
+        </label>
+        <label>
+          <input
+            v-model="declarativeScopedDark"
+            type="checkbox"
+            data-test="appearance-declarative-dark"
+            @change="onDeclarativeDarkChange"
+          />
+          声明式局部深色宿主
+        </label>
+      </div>
     </header>
 
     <div class="appearance-host-control" data-test="appearance-host-control">
@@ -206,7 +228,10 @@ onBeforeUnmount(() => {
           <span data-test="appearance-first-change-count">change {{ firstChanges }}</span>
           <span data-test="appearance-first-draft-count">draft {{ firstDraftChanges }}</span>
         </div>
-        <div class="appearance-designer-viewport">
+        <div
+          class="appearance-designer-viewport"
+          :class="{ 'appearance-scoped-dark': declarativeScopedDark }"
+        >
           <DingtalkDesigner
             v-if="first.mounted"
             data-test="appearance-first-designer"
@@ -345,6 +370,21 @@ onBeforeUnmount(() => {
   overflow: auto;
   border: 1px solid var(--el-border-color-light);
   border-radius: 8px;
+}
+
+.appearance-scoped-dark {
+  --el-bg-color-page: #101817;
+  --el-bg-color: #162220;
+  --el-fill-color-light: #1f302d;
+  --el-text-color-primary: #e6f2f0;
+  --el-text-color-regular: #b8ceca;
+  --el-border-color-light: #2d4440;
+  --el-disabled-text-color: #7d9692;
+  --el-disabled-bg-color: #1f302d;
+  --el-color-primary: #7fcfc7;
+  --el-color-primary-light-3: #99dad3;
+  --el-color-primary-dark-2: #5fb3aa;
+  --el-color-white: #0c1f1d;
 }
 
 @media (max-width: 1100px) {

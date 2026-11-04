@@ -90,6 +90,7 @@ const drawerRef = ref<InstanceType<typeof NodeDrawer> | null>(null);
 const drawerAppearance = shallowRef<ResolvedComponentAppearance>();
 const hostAppearance = shallowRef<HostAppearanceContext>();
 function refreshHostAppearance(): void {
+  if (disposed) return;
   hostAppearance.value =
     drawerAppearance.value?.colorSource === "host"
       ? readHostAppearance(hostRef.value, drawerAppearance.value.mode)
@@ -98,13 +99,15 @@ function refreshHostAppearance(): void {
 watch(
   () => props.appearance,
   (value) => {
+    if (disposed) return;
     const previous = drawerAppearance.value;
     const resolved = resolveComponentAppearance(value, previous);
     drawerAppearance.value = resolved;
     // 非法输入返回同一个上次有效对象；此时连宿主快照也保持，避免“拒绝配置却换色”。
     if (resolved !== previous) refreshHostAppearance();
   },
-  { immediate: true },
+  // 后置冲刷确保宿主在同一响应式周期切换主题类或样式后，DOM 已完成补丁再读取计算样式。
+  { immediate: true, flush: "post" },
 );
 onMounted(refreshHostAppearance);
 const drawerStyle = computed(() =>

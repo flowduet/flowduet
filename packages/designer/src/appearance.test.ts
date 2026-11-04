@@ -152,9 +152,68 @@ describe("公开实例外观配置（#103）", () => {
     expect(drawer.getAttribute("style")).not.toContain("--el-");
   });
 
-  it("宿主以 rgb() 声明主色时按同一 R2 规则派生，不回退默认蓝", async () => {
+  it("声明式模板同一响应式周期切换宿主主题与 appearance 时消费更新后的宿主样式", async () => {
+    const lightHostStyle = {
+      "--el-bg-color-page": "#F2F7F6",
+      "--el-bg-color": "#FAFCFC",
+      "--el-fill-color-light": "#EEF5F4",
+      "--el-text-color-primary": "#182625",
+      "--el-text-color-regular": "#4A5A58",
+      "--el-color-primary": "#0F6B65",
+    };
+    const darkHostStyle = {
+      "--el-bg-color-page": "#101817",
+      "--el-bg-color": "#162220",
+      "--el-fill-color-light": "#1F302D",
+      "--el-text-color-primary": "#E6F2F0",
+      "--el-text-color-regular": "#B8CECA",
+      "--el-color-primary": "#7FCFC7",
+    };
+    const state = reactive({ isDark: false });
+    const model = buildModel();
+    const DeclarativeHost = defineComponent({
+      components: { DingtalkDesigner },
+      setup() {
+        return { state, model, lightHostStyle, darkHostStyle };
+      },
+      template: `
+        <div>
+          <button type="button" data-test="toggle-host-theme" @click="state.isDark = !state.isDark">切换主题</button>
+          <DingtalkDesigner
+            :model="model"
+            :style="state.isDark ? darkHostStyle : lightHostStyle"
+            :appearance="{ colorSource: 'host', mode: state.isDark ? 'dark' : 'light' }"
+          />
+        </div>
+      `,
+    });
+    const wrapper = mount(DeclarativeHost, { attachTo: document.body });
+    wrappers.push(wrapper);
+    await openApproval(wrapper);
+
+    const drawer = document.querySelector<HTMLElement>('[data-test="node-drawer"]')!;
+    const input = document.querySelector<HTMLInputElement>('[data-test="drawer-name"]')!;
+    input.value = "声明式换肤保留的草稿";
+    input.dispatchEvent(new Event("input", { bubbles: true }));
+    input.focus();
+    expect(drawer.style.getPropertyValue("--fd-surface")).toBe("#FAFCFC");
+    expect(drawer.style.getPropertyValue("--fd-primary")).toBe("#0F6B65");
+
+    await wrapper.find('[data-test="toggle-host-theme"]').trigger("click");
+
+    expect(drawer.style.getPropertyValue("--fd-surface")).toBe("#162220");
+    expect(drawer.style.getPropertyValue("--fd-secondary")).toBe("#B8CECA");
+    expect(drawer.style.getPropertyValue("--fd-primary")).toBe("#7FCFC7");
+    expect(drawer.getAttribute("style")).not.toContain("--el-");
+    expect(document.querySelector('[data-test="drawer-name"]')).toBe(input);
+    expect(input.value).toBe("声明式换肤保留的草稿");
+    expect(document.activeElement).toBe(input);
+  });
+
+  it("宿主以 rgb() 声明主色时按同一 R2 规则派生，混用分隔符的非法 rgb() 回退默认值", async () => {
     const wrapper = mountDesigner(buildModel());
-    (wrapper.element as HTMLElement).style.setProperty("--el-color-primary", "rgb(15, 107, 101)");
+    const host = wrapper.element as HTMLElement;
+    host.style.setProperty("--el-color-primary", "rgb(15, 107, 101)");
     await wrapper.setProps({ appearance: { mode: "light" } });
     await openApproval(wrapper);
 
@@ -162,6 +221,31 @@ describe("公开实例外观配置（#103）", () => {
     expect(drawer.style.getPropertyValue("--fd-primary")).toBe("#0F6B65");
     expect(drawer.style.getPropertyValue("--fd-primary-soft")).toBe("#DFF6F3");
     expect(drawer.style.getPropertyValue("--fd-primary-ink")).toBe("#0F6B65");
+
+    host.style.setProperty("--el-color-primary", "rgb(15 107 101 / 100%)");
+    await wrapper.setProps({ appearance: { mode: "light" } });
+    expect(drawer.style.getPropertyValue("--fd-primary")).toBe("#0F6B65");
+
+    host.style.setProperty("--el-color-primary", "rgb(255, 0 0)");
+    await wrapper.setProps({ appearance: { mode: "light" } });
+    expect(drawer.style.getPropertyValue("--fd-primary")).toBe("#409EFF");
+  });
+
+  it("宿主画布与抽屉表面跨明度时 --fd-focus 回退 primaryInk，不输出空值", async () => {
+    const wrapper = mountDesigner(buildModel());
+    const host = wrapper.element as HTMLElement;
+    host.style.setProperty("--el-bg-color-page", "#141414");
+    host.style.setProperty("--el-bg-color", "#FFFFFF");
+    host.style.setProperty("--el-fill-color-light", "#F5F7FA");
+    host.style.setProperty("--el-text-color-primary", "#303133");
+    host.style.setProperty("--el-color-primary", "#2D3E97");
+    await wrapper.setProps({ appearance: { mode: "light" } });
+    await openApproval(wrapper);
+
+    const drawer = document.querySelector<HTMLElement>('[data-test="node-drawer"]')!;
+    expect(drawer.style.getPropertyValue("--fd-primary-ink")).toBe("#303133");
+    expect(drawer.style.getPropertyValue("--fd-focus")).toBe("#303133");
+    expect(drawer.getAttribute("style")).not.toContain("--el-");
   });
 
   it("宿主短十六进制颜色与等价六位颜色产生相同的自有角色", async () => {

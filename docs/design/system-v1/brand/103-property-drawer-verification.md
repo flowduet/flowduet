@@ -101,3 +101,20 @@
 - 颜色修复及回归代码与独立复审快照的哈希逐文件一致；之后只补充文档、changeset 和诊断证据。已有 designer minor changeset 覆盖本次修复，无新增依赖或公开入口。
 - 未重跑本次修复后的完整三包 tarball 浏览器矩阵、Node 22、Firefox、WebKit 或真实操作系统输入法；原有限制继续有效。不推送、不关票、不开 PR、不合并、不发布。
 - 修复不涉及数据迁移，可通过撤回本次修复提交恢复到 `e43f64f`；未执行回退实测。form-create 默认门槛未过的事实另行保留，不以回退颜色补丁冒充测试稳定性修复。
+
+## 2026-11-04 第二轮复审与集中收口
+
+对 `cd39258` → `79bbea9` 的复审确认两项重要缺陷与两项细节问题（已[回复 #103](https://github.com/flowduet/flowduet/issues/103#issuecomment-6620383681) 并获批按选项 A 集中收口）：
+
+1. **声明式宿主同周期换肤采样时机（Spec 重要）**：`DingtalkDesigner` 将 `appearance` 监听调整为 `{ immediate: true, flush: "post" }` 并加上卸载守卫，确保父模板同一响应式周期切换主题类／样式后才采样宿主计算样式，保留首次非法告警与“非法回退不重新采样”行为。
+2. **`--fd-focus` 跨明度回退（Standards 重要）**：`hostVariables` 对齐 R2 `derive-palette.mjs:189-191` 补回 `?? primaryInk`，消除非空断言 `!`，避免深底画布＋浅色抽屉等跨明度宿主下省略 `--fd-focus` 导致 `:focus-visible` 焦点轮廓失效。
+3. **抽屉样式选择器权重与接入顺序（Spec 细节）**：`NodeDrawer.vue` 与 `NodePropertyFields.vue` 覆盖 EP 抽屉、表单项、输入框与按钮的选择器复合 `.flowduet-node-drawer`，使权重提升至 `(0, 3, 0)`，既高于宿主 `html.dark .el-button` `(0, 2, 1)`，也不依赖宿主引入 `@flowduet/designer/style.css` 与 `element-plus/dist/index.css` 的先后顺序；同时将 `packages/designer/README.md` 示例统一为先引 EP 样式。
+4. **颜色快路径分隔符与文档口径（Spec 细节）**：`cssColorToRgb` 拆分为严格的逗号语法与现代空格 `/` 语法，拒绝 `rgb(255, 0 0)` 等混用分隔符输入；`README.md` 明确收窄不支持依赖宿主 `color-scheme` 的 `light-dark()` 与系统色关键字（离屏画布拒绝前者回退默认值，后者按固定浅色方案求值），非法颜色回退默认值。
+
+验证证据：
+
+- 公开组件单测 TDD 先红后绿（`packages/designer/src/appearance.test.ts` 共 18 条通过，designer 包共 202 条通过）：覆盖声明式宿主同一响应式周期切换深浅色、跨明度宿主 `--fd-focus` 回退、空格 `rgb()` 与非法混用分隔符回退。
+- Headless Chromium 端到端新增验证（[结果](evidence/103-property-drawer/round2-fixes.json)、[脚本副本](evidence/103-property-drawer/round2-fixes.mjs.txt)）全部 `failures: []`：声明式局部深色宿主往返切换（选中卡文字对比度 `10.47:1`，保留草稿与焦点，`change 0`）、跨明度宿主真实键盘 `Tab` 触发 `:focus-visible` `2px solid` 轮廓（对比度 `12.58:1`）、`html.dark` 宿主下品牌浅色抽屉禁用按钮文字保持 `#8B92A4`（`rgb(139, 146, 164)`）、将完整 `element-plus/dist/index.css` 追加到 `<head>` 末尾仍保持标签行高 `20.8px` 与错误上内边距 `4px`。
+- 既有浏览器套件与包消费回归重跑全绿：[host-colors.json](evidence/103-property-drawer/host-colors.json)（12 组）、[matrix.json](evidence/103-property-drawer/matrix.json)（8 组）、[behavior.json](evidence/103-property-drawer/behavior.json)、临时隔离目录 core＋designer tarball 安装与严格 TS 校验（[consumer-output.json](evidence/103-property-drawer/consumer-output.json)、[npm-ls.txt](evidence/103-property-drawer/npm-ls.txt)）。
+- 标准工程门禁全绿：`pnpm lint` 通过，`pnpm build` 四包通过；空闲环境下标准 `pnpm test` 一次全过（61 个测试文件／968 条测试：core 148、designer 202、form-create 312、Playground 306，未修改 5 秒超时配置；此前并发负载下 `form-create` 重组件测试靠近 5 秒上限的波动事实仍保留备查）。
+- 双轴独立复审（代码与新增证据快照 SHA-256 `9ad5f196e998da21f0ae3854ecc1149fd2dcb2265ce0b7e1d5d4969b555840a1`）：Standards 重要 0／细节 1／既有 1（细节为提醒提交时显式纳入两份新增证据文件，已纳入）；Spec 重要 0／细节 1／既有 1（细节为区分 `light-dark()` 与系统色关键字在离屏画布中的求值行为文案，已修正；既有为 `form-create` 高负载耗时波动）。快照后产品与测试源码零改动，两轴均无未关闭缺陷。

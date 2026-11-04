@@ -1,0 +1,235 @@
+import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { createRequire } from "node:module";
+import { resolve } from "node:path";
+import { pathToFileURL } from "node:url";
+
+const [driverPath, baseUrl, outputDir, epCssPkgJsonPath] = process.argv.slice(2);
+if (!driverPath || !baseUrl || !outputDir || !epCssPkgJsonPath) {
+  throw new Error("需要驱动、URL、输出目录和 playground package.json 路径参数");
+}
+const { chromium } = await import(pathToFileURL(resolve(driverPath)).href);
+const req = createRequire(resolve(epCssPkgJsonPath));
+const epIndexCss = await readFile(req.resolve("element-plus/dist/index.css"), "utf8");
+
+await mkdir(outputDir, { recursive: true });
+const browser = await chromium.launch({
+  headless: true,
+  executablePath:
+    process.env.FLOWDUET_CHROMIUM_PATH ||
+    "/Users/l/Library/Caches/ms-playwright/chromium-1248/chrome-mac-x64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing",
+});
+const page = await browser.newPage({ viewport: { width: 1440, height: 1100 }, deviceScaleFactor: 1 });
+const errors = [];
+const failures = [];
+page.on("pageerror", (error) => errors.push(`pageerror: ${error.message}`));
+const check = (condition, message) => {
+  if (!condition) failures.push(message);
+};
+
+function parseRgb(rgbText) {
+  const match = rgbText.match(/rgba?\(\s*([\d.]+)\s*,\s*([\d.]+)\s*,\s*([\d.]+)/);
+  if (!match) throw new Error(`无法解析计算颜色: ${rgbText}`);
+  return [Number(match[1]) / 255, Number(match[2]) / 255, Number(match[3]) / 255];
+}
+function luminance([r, g, b]) {
+  const lin = (c) => (c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4);
+  return 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b);
+}
+function contrastRgb(a, b) {
+  const la = luminance(parseRgb(a));
+  const lb = luminance(parseRgb(b));
+  return (Math.max(la, lb) + 0.05) / (Math.min(la, lb) + 0.05);
+}
+
+try {
+  await page.goto(baseUrl, { waitUntil: "networkidle" });
+  await page.locator('[data-test="appearance-scene-btn"]').click();
+  await page.locator('[data-test="appearance-first-designer"] [data-entity-id="approval"]').click();
+  const firstDrawer = page.locator('[data-test="node-drawer"]:visible').first();
+  await firstDrawer.waitFor({ state: "visible" });
+  await page.waitForTimeout(300);
+
+  // 1. 声明式宿主同一响应式周期切换主题类与 appearance.mode
+  const inputHandle = await firstDrawer.locator('[data-test="drawer-name"]').elementHandle();
+  await inputHandle.fill("声明式换肤保留的草稿");
+  await inputHandle.focus();
+  await page.locator('[data-test="appearance-declarative-dark"]').evaluate((el) => el.click());
+  await page.waitForTimeout(200);
+  const declarativeDark = await firstDrawer.evaluate((drawer) => {
+    const input = drawer.querySelector('[data-test="drawer-name"]');
+    const selectedCard = drawer.querySelector(".kind-card--on");
+    const selectedLabel = selectedCard.querySelector(".kind-card-label");
+    return {
+      surfaceVar: drawer.style.getPropertyValue("--fd-surface"),
+      secondaryVar: drawer.style.getPropertyValue("--fd-secondary"),
+      primaryVar: drawer.style.getPropertyValue("--fd-primary"),
+      hasEpWrites: drawer.getAttribute("style").includes("--el-"),
+      cardBg: getComputedStyle(selectedCard).backgroundColor,
+      cardLabelColor: getComputedStyle(selectedLabel).color,
+      inputValue: input.value,
+      inputFocused: document.activeElement === input,
+      changeCount: document.querySelector('[data-test="appearance-first-change-count"]').textContent.trim(),
+    };
+  });
+  declarativeDark.selectedCardContrast = Number(
+    contrastRgb(declarativeDark.cardLabelColor, declarativeDark.cardBg).toFixed(2),
+  );
+  check(declarativeDark.surfaceVar === "#162220", `声明式深色 --fd-surface 错误: ${declarativeDark.surfaceVar}`);
+  check(declarativeDark.secondaryVar === "#B8CECA", `声明式深色 --fd-secondary 错误: ${declarativeDark.secondaryVar}`);
+  check(declarativeDark.primaryVar === "#7FCFC7", `声明式深色 --fd-primary 错误: ${declarativeDark.primaryVar}`);
+  check(!declarativeDark.hasEpWrites, "声明式深色向实例写了 EP 变量");
+  check(declarativeDark.selectedCardContrast >= 4.5, `声明式深色选中卡文字对比度不足: ${declarativeDark.selectedCardContrast}`);
+  check(
+    declarativeDark.inputValue === "声明式换肤保留的草稿" && declarativeDark.inputFocused,
+    "声明式换肤丢失草稿或焦点",
+  );
+  check(declarativeDark.changeCount === "change 0", "声明式换肤触发模型 change");
+
+  // 切回声明式浅色，确认反向同一周期也消费更新后的浅色宿主样式
+  await page.locator('[data-test="appearance-declarative-dark"]').evaluate((el) => el.click());
+  await page.waitForTimeout(200);
+  const declarativeLightBack = await firstDrawer.evaluate((drawer) => ({
+    surfaceVar: drawer.style.getPropertyValue("--fd-surface"),
+    primaryVar: drawer.style.getPropertyValue("--fd-primary"),
+  }));
+  check(
+    declarativeLightBack.surfaceVar === "#FFFFFF" && declarativeLightBack.primaryVar === "#409EFF",
+    `声明式切回浅色异常: ${JSON.stringify(declarativeLightBack)}`,
+  );
+
+  // 2. 跨明度宿主背景（深色页底 + 浅色抽屉表面）下 --fd-focus 回退与真实键盘 :focus-visible 轮廓
+  await page.evaluate(() => {
+    const host = document.querySelector('[data-test="appearance-first-designer"]');
+    host.style.setProperty("--el-bg-color-page", "#141414");
+    host.style.setProperty("--el-bg-color", "#FFFFFF");
+    host.style.setProperty("--el-fill-color-light", "#F5F7FA");
+    host.style.setProperty("--el-text-color-primary", "#303133");
+    host.style.setProperty("--el-color-primary", "#2D3E97");
+  });
+  await page.selectOption('[data-test="appearance-first-density"]', "compact");
+  await page.selectOption('[data-test="appearance-first-density"]', "comfortable");
+  await firstDrawer.locator('[data-test="drawer-assignee"]').focus();
+  await page.keyboard.press("Tab");
+  const focusRingCard = await firstDrawer.evaluate((drawer) => {
+    const active = document.activeElement;
+    const style = getComputedStyle(active);
+    return {
+      focusVar: drawer.style.getPropertyValue("--fd-focus"),
+      primaryInkVar: drawer.style.getPropertyValue("--fd-primary-ink"),
+      activeTestId: active?.getAttribute("data-test"),
+      focusVisible: active?.matches(":focus-visible") ?? false,
+      outlineStyle: style.outlineStyle,
+      outlineWidth: style.outlineWidth,
+      outlineColor: style.outlineColor,
+      drawerSurfaceColor: getComputedStyle(drawer).backgroundColor,
+    };
+  });
+  focusRingCard.outlineContrastOnSurface = Number(
+    contrastRgb(focusRingCard.outlineColor, focusRingCard.drawerSurfaceColor).toFixed(2),
+  );
+  check(focusRingCard.focusVar === "#303133", `跨明度 --fd-focus 未回退 primaryInk: ${focusRingCard.focusVar}`);
+  check(focusRingCard.activeTestId === "kind-single" && focusRingCard.focusVisible, `Tab 未命中 kind-single :focus-visible`);
+  check(
+    focusRingCard.outlineStyle === "solid" && focusRingCard.outlineWidth === "2px",
+    `跨明度焦点环失效: ${focusRingCard.outlineStyle} ${focusRingCard.outlineWidth}`,
+  );
+  check(focusRingCard.outlineContrastOnSurface >= 3, `跨明度焦点环在白色抽屉上对比度不足: ${focusRingCard.outlineContrastOnSurface}`);
+
+  // 3. rgb() 现代空格语法与非法混用分隔符在真实浏览器中的行为
+  await page.evaluate(() => {
+    const host = document.querySelector('[data-test="appearance-first-designer"]');
+    host.style.removeProperty("--el-bg-color-page");
+    host.style.setProperty("--el-color-primary", "rgb(15 107 101 / 100%)");
+  });
+  await page.selectOption('[data-test="appearance-first-density"]', "compact");
+  const spaceRgbPrimary = await firstDrawer.evaluate((d) => d.style.getPropertyValue("--fd-primary"));
+  await page.evaluate(() => {
+    const host = document.querySelector('[data-test="appearance-first-designer"]');
+    host.style.setProperty("--el-color-primary", "rgb(255, 0 0)");
+  });
+  await page.selectOption('[data-test="appearance-first-density"]', "comfortable");
+  const mixedInvalidRgbPrimary = await firstDrawer.evaluate((d) => d.style.getPropertyValue("--fd-primary"));
+  check(spaceRgbPrimary === "#0F6B65", `现代空格 rgb() 解析异常: ${spaceRgbPrimary}`);
+  check(mixedInvalidRgbPrimary === "#409EFF", `混用分隔符非法 rgb() 未回退默认蓝: ${mixedInvalidRgbPrimary}`);
+
+  // 4. 宿主启用 html.dark 时，品牌浅色实例内按钮的 --el-button-disabled-text-color 不被 html.dark .el-button 覆盖
+  await page.locator('[data-test="appearance-second-designer"] [data-entity-id="approval"]').evaluate((el) => el.click());
+  await page.waitForTimeout(300);
+  await page.locator('[data-test="appearance-host-dark"]').evaluate((el) => el.click());
+  await page.waitForTimeout(150);
+  const darkHostBrandLightButton = await page.evaluate(() => {
+    const drawers = [...document.querySelectorAll('[data-test="node-drawer"]')].filter(
+      (el) => el.getBoundingClientRect().width > 0,
+    );
+    const brandLightDrawer = drawers.find(
+      (el) =>
+        el.classList.contains("flowduet-appearance--brand") &&
+        el.classList.contains("flowduet-appearance--light"),
+    );
+    const cancelBtn = brandLightDrawer.querySelector('[data-test="drawer-cancel"]');
+    const disabledVar = getComputedStyle(cancelBtn).getPropertyValue("--el-button-disabled-text-color").trim();
+    cancelBtn.style.transition = "none";
+    cancelBtn.classList.add("is-disabled");
+    const disabledComputedColor = getComputedStyle(cancelBtn).color;
+    cancelBtn.classList.remove("is-disabled");
+    cancelBtn.style.removeProperty("transition");
+    return {
+      htmlDark: document.documentElement.classList.contains("dark"),
+      disabledVar,
+      disabledComputedColor,
+    };
+  });
+  check(darkHostBrandLightButton.htmlDark, "html.dark 未启用");
+  check(
+    darkHostBrandLightButton.disabledComputedColor === "rgb(139, 146, 164)",
+    `品牌浅色按钮禁用文字被宿主 html.dark 污染: ${darkHostBrandLightButton.disabledComputedColor} (var=${darkHostBrandLightButton.disabledVar})`,
+  );
+
+  // 5. 模拟宿主先引 @flowduet/designer/style.css、后引 element-plus/dist/index.css（将完整 EP index.css 追加到 head 末尾）
+  const lateEpOrder = await page.evaluate((epCss) => {
+    const lateStyle = document.createElement("style");
+    lateStyle.setAttribute("data-test", "late-ep-index-css");
+    lateStyle.textContent = epCss;
+    document.head.appendChild(lateStyle);
+    try {
+      const drawers = [...document.querySelectorAll('[data-test="node-drawer"]')].filter(
+        (el) => el.getBoundingClientRect().width > 0,
+      );
+      const drawer = drawers[0];
+      const label = drawer.querySelector(".el-form-item__label");
+      const formItem = drawer.querySelector(".el-form-item");
+      const probeError = document.createElement("div");
+      probeError.className = "el-form-item__error";
+      probeError.textContent = "测试校验提示";
+      formItem.querySelector(".el-form-item__content").appendChild(probeError);
+      const labelLineHeight = getComputedStyle(label).lineHeight;
+      const errorPaddingTop = getComputedStyle(probeError).paddingTop;
+      const errorPosition = getComputedStyle(probeError).position;
+      probeError.remove();
+      return { labelLineHeight, errorPaddingTop, errorPosition };
+    } finally {
+      lateStyle.remove();
+    }
+  }, epIndexCss);
+  check(lateEpOrder.labelLineHeight === "20.8px", `后置 EP 样式覆盖了标签行高: ${lateEpOrder.labelLineHeight}`);
+  check(lateEpOrder.errorPaddingTop === "4px", `后置 EP 样式覆盖了错误上内边距: ${lateEpOrder.errorPaddingTop}`);
+  check(lateEpOrder.errorPosition === "static", `后置 EP 样式覆盖了错误定位: ${lateEpOrder.errorPosition}`);
+  check(errors.length === 0, `页面报错: ${errors.join("; ")}`);
+
+  const summary = {
+    browser: await browser.version(),
+    declarativeDark,
+    declarativeLightBack,
+    focusRingCard,
+    rgbParsing: { spaceRgbPrimary, mixedInvalidRgbPrimary },
+    darkHostBrandLightButton,
+    lateEpOrder,
+    errors,
+    failures,
+  };
+  await writeFile(resolve(outputDir, "round2-fixes.json"), JSON.stringify(summary, null, 2) + "\n");
+  console.log(JSON.stringify({ errors, failures, summary }, null, 2));
+  if (failures.length > 0) process.exitCode = 1;
+} finally {
+  await browser.close();
+}
