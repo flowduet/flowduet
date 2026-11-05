@@ -1,0 +1,520 @@
+{
+  "browser": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+  "viewport": {
+    "initial": {
+      "width": 1440,
+      "height": 1800
+    },
+    "zoom": {
+      "width": 1024,
+      "height": 900,
+      "cssZoom": "200%",
+      "containerWidth": "360px"
+    }
+  },
+  "results": {
+    "legacyToggle": {
+      "legacy": {
+        "className": "form-preview",
+        "formClass": "el-form el-form--default el-form--label-right form-create",
+        "buttonHeight": 24,
+        "value": "1",
+        "focused": true
+      },
+      "values": {
+        "reason": "默认事由",
+        "detail": "默认说明",
+        "amount": 2,
+        "disabledAmount": 2,
+        "decision": "yes",
+        "disabledDecision": "disabled",
+        "styledDecision": "yes",
+        "tags": ["alpha", "disabledChecked", "beta"],
+        "styledTags": ["a"],
+        "notify": true,
+        "disabledNotify": true
+      }
+    },
+    "number": "键盘与按钮增减、min/max、清空 null、禁用均保持",
+    "selection": "单选、多选、真实初始半选、开关与各项禁用操作保持",
+    "runtimeAndInvalid": "来源／主题／密度、启停与非法回退保留四类值、DOM、焦点和反馈",
+    "definitionLifecycle": "同 ID 定义换代恢复数字、单选、多选和开关默认值并清除反馈",
+    "keyboard": "数字 ArrowUp、单选 Space、多选 Space、开关 Enter 及四类 2px/3px 焦点环通过",
+    "explicitConfiguration": {
+      "formClass": "el-form el-form--large el-form--label-right form-create",
+      "formPadding": "7px",
+      "inputHeight": 40,
+      "numberClass": "el-input-number el-input-number--large is-controls-right is-center",
+      "numberHeight": 40,
+      "radioHeight": 20,
+      "radioBackground": "rgb(18, 52, 86)",
+      "radioBorder": "rgb(18, 52, 86)",
+      "radioDot": "rgb(1, 2, 3)",
+      "radioLabelColor": "rgb(18, 52, 86)",
+      "checkboxHeight": 20,
+      "checkboxLabelColor": "rgb(18, 52, 86)",
+      "checkboxMarkColor": "rgb(1, 2, 3)",
+      "switchClass": "el-switch el-switch--large is-checked",
+      "switchWidth": 56,
+      "switchHeight": 24,
+      "switchActionWidth": 20,
+      "switchTrack": "rgb(18, 52, 86)",
+      "switchActionBackground": "rgb(1, 2, 3)",
+      "buttonHeight": 24
+    },
+    "instanceIsolation": "双实例异色异密度、显式控件、卸载／重挂、宿主控件与处理器均保持",
+    "requiredFailure": {
+      "errorText": "请填写申请事由；这项长中文必填错误用于确认多行反馈不会覆盖后续字段或操作按钮。",
+      "errorPosition": "static",
+      "feedbackText": "校验未通过：请按字段提示补填（见上方错误信息）",
+      "feedbackColor": "rgb(180, 35, 58)"
+    },
+    "longOptionsAndErrorZoom": [
+      {
+        "id": "host-light-comfortable",
+        "rootWidth": 360,
+        "rootScrollWidth": 360,
+        "radio": {
+          "controlWidth": 264,
+          "controlHeight": 198.375,
+          "controlBottom": 1703.09375,
+          "controlScrollWidth": 264,
+          "labelHeight": 179.1875,
+          "labelBottom": 1693.5,
+          "labelLineHeight": 22.4,
+          "labelWhiteSpace": "normal"
+        },
+        "checkbox": {
+          "controlWidth": 264,
+          "controlHeight": 153.578125,
+          "controlBottom": 2608.578125,
+          "controlScrollWidth": 264,
+          "labelHeight": 134.390625,
+          "labelBottom": 2598.984375,
+          "labelLineHeight": 22.4,
+          "labelWhiteSpace": "normal"
+        },
+        "styledRadio": {
+          "controlWidth": 264,
+          "controlHeight": 243.171875,
+          "controlBottom": 2365.40625,
+          "controlScrollWidth": 264,
+          "labelHeight": 223.984375,
+          "labelBottom": 2355.8125,
+          "labelLineHeight": 22.4,
+          "labelWhiteSpace": "normal"
+        },
+        "styledCheckbox": {
+          "controlWidth": 264,
+          "controlHeight": 243.171875,
+          "controlBottom": 3293.28125,
+          "controlScrollWidth": 264,
+          "labelHeight": 223.984375,
+          "labelBottom": 3283.6875,
+          "labelLineHeight": 22.4,
+          "labelWhiteSpace": "normal"
+        },
+        "errorHeight": 161.5625,
+        "errorLineHeight": 19.2,
+        "errorText": "请填写申请事由；这项长中文必填错误用于确认多行反馈不会覆盖后续字段或操作按钮。",
+        "buttonLeft": 80,
+        "buttonRight": 256,
+        "rootLeft": 32,
+        "rootRight": 392,
+        "documentScrollWidth": 1024,
+        "viewportWidth": 1024
+      },
+      {
+        "id": "host-light-compact",
+        "rootWidth": 360,
+        "rootScrollWidth": 360,
+        "radio": {
+          "controlWidth": 296,
+          "controlHeight": 124.765625,
+          "controlBottom": 1509.484375,
+          "controlScrollWidth": 296,
+          "labelHeight": 115.171875,
+          "labelBottom": 1504.6875,
+          "labelLineHeight": 19.2,
+          "labelWhiteSpace": "normal"
+        },
+        "checkbox": {
+          "controlWidth": 296,
+          "controlHeight": 86.375,
+          "controlBottom": 2115.765625,
+          "controlScrollWidth": 296,
+          "labelHeight": 76.78125,
+          "labelBottom": 2110.96875,
+          "labelLineHeight": 19.2,
+          "labelWhiteSpace": "normal"
+        },
+        "styledRadio": {
+          "controlWidth": 296,
+          "controlHeight": 163.15625,
+          "controlBottom": 1947.796875,
+          "controlScrollWidth": 296,
+          "labelHeight": 153.5625,
+          "labelBottom": 1943,
+          "labelLineHeight": 19.2,
+          "labelWhiteSpace": "normal"
+        },
+        "styledCheckbox": {
+          "controlWidth": 296,
+          "controlHeight": 163.15625,
+          "controlBottom": 2488.484375,
+          "controlScrollWidth": 296,
+          "labelHeight": 153.5625,
+          "labelBottom": 2483.6875,
+          "labelLineHeight": 19.2,
+          "labelWhiteSpace": "normal"
+        },
+        "errorHeight": 161.5625,
+        "errorLineHeight": 19.2,
+        "errorText": "请填写申请事由；这项长中文必填错误用于确认多行反馈不会覆盖后续字段或操作按钮。",
+        "buttonLeft": 64,
+        "buttonRight": 208,
+        "rootLeft": 32,
+        "rootRight": 392,
+        "documentScrollWidth": 1024,
+        "viewportWidth": 1024
+      },
+      {
+        "id": "host-dark-comfortable",
+        "rootWidth": 360,
+        "rootScrollWidth": 360,
+        "radio": {
+          "controlWidth": 264,
+          "controlHeight": 198.375,
+          "controlBottom": 1703.09375,
+          "controlScrollWidth": 264,
+          "labelHeight": 179.1875,
+          "labelBottom": 1693.5,
+          "labelLineHeight": 22.4,
+          "labelWhiteSpace": "normal"
+        },
+        "checkbox": {
+          "controlWidth": 264,
+          "controlHeight": 153.578125,
+          "controlBottom": 2608.578125,
+          "controlScrollWidth": 264,
+          "labelHeight": 134.390625,
+          "labelBottom": 2598.984375,
+          "labelLineHeight": 22.4,
+          "labelWhiteSpace": "normal"
+        },
+        "styledRadio": {
+          "controlWidth": 264,
+          "controlHeight": 243.171875,
+          "controlBottom": 2365.40625,
+          "controlScrollWidth": 264,
+          "labelHeight": 223.984375,
+          "labelBottom": 2355.8125,
+          "labelLineHeight": 22.4,
+          "labelWhiteSpace": "normal"
+        },
+        "styledCheckbox": {
+          "controlWidth": 264,
+          "controlHeight": 243.171875,
+          "controlBottom": 3293.28125,
+          "controlScrollWidth": 264,
+          "labelHeight": 223.984375,
+          "labelBottom": 3283.6875,
+          "labelLineHeight": 22.4,
+          "labelWhiteSpace": "normal"
+        },
+        "errorHeight": 161.5625,
+        "errorLineHeight": 19.2,
+        "errorText": "请填写申请事由；这项长中文必填错误用于确认多行反馈不会覆盖后续字段或操作按钮。",
+        "buttonLeft": 80,
+        "buttonRight": 256,
+        "rootLeft": 32,
+        "rootRight": 392,
+        "documentScrollWidth": 1024,
+        "viewportWidth": 1024
+      },
+      {
+        "id": "host-dark-compact",
+        "rootWidth": 360,
+        "rootScrollWidth": 360,
+        "radio": {
+          "controlWidth": 296,
+          "controlHeight": 124.765625,
+          "controlBottom": 1509.484375,
+          "controlScrollWidth": 296,
+          "labelHeight": 115.171875,
+          "labelBottom": 1504.6875,
+          "labelLineHeight": 19.2,
+          "labelWhiteSpace": "normal"
+        },
+        "checkbox": {
+          "controlWidth": 296,
+          "controlHeight": 86.375,
+          "controlBottom": 2115.765625,
+          "controlScrollWidth": 296,
+          "labelHeight": 76.78125,
+          "labelBottom": 2110.96875,
+          "labelLineHeight": 19.2,
+          "labelWhiteSpace": "normal"
+        },
+        "styledRadio": {
+          "controlWidth": 296,
+          "controlHeight": 163.15625,
+          "controlBottom": 1947.796875,
+          "controlScrollWidth": 296,
+          "labelHeight": 153.5625,
+          "labelBottom": 1943,
+          "labelLineHeight": 19.2,
+          "labelWhiteSpace": "normal"
+        },
+        "styledCheckbox": {
+          "controlWidth": 296,
+          "controlHeight": 163.15625,
+          "controlBottom": 2488.484375,
+          "controlScrollWidth": 296,
+          "labelHeight": 153.5625,
+          "labelBottom": 2483.6875,
+          "labelLineHeight": 19.2,
+          "labelWhiteSpace": "normal"
+        },
+        "errorHeight": 161.5625,
+        "errorLineHeight": 19.2,
+        "errorText": "请填写申请事由；这项长中文必填错误用于确认多行反馈不会覆盖后续字段或操作按钮。",
+        "buttonLeft": 64,
+        "buttonRight": 208,
+        "rootLeft": 32,
+        "rootRight": 392,
+        "documentScrollWidth": 1024,
+        "viewportWidth": 1024
+      },
+      {
+        "id": "brand-light-comfortable",
+        "rootWidth": 360,
+        "rootScrollWidth": 360,
+        "radio": {
+          "controlWidth": 264,
+          "controlHeight": 198.375,
+          "controlBottom": 1703.09375,
+          "controlScrollWidth": 264,
+          "labelHeight": 179.1875,
+          "labelBottom": 1693.5,
+          "labelLineHeight": 22.4,
+          "labelWhiteSpace": "normal"
+        },
+        "checkbox": {
+          "controlWidth": 264,
+          "controlHeight": 153.578125,
+          "controlBottom": 2608.578125,
+          "controlScrollWidth": 264,
+          "labelHeight": 134.390625,
+          "labelBottom": 2598.984375,
+          "labelLineHeight": 22.4,
+          "labelWhiteSpace": "normal"
+        },
+        "styledRadio": {
+          "controlWidth": 264,
+          "controlHeight": 243.171875,
+          "controlBottom": 2365.40625,
+          "controlScrollWidth": 264,
+          "labelHeight": 223.984375,
+          "labelBottom": 2355.8125,
+          "labelLineHeight": 22.4,
+          "labelWhiteSpace": "normal"
+        },
+        "styledCheckbox": {
+          "controlWidth": 264,
+          "controlHeight": 243.171875,
+          "controlBottom": 3293.28125,
+          "controlScrollWidth": 264,
+          "labelHeight": 223.984375,
+          "labelBottom": 3283.6875,
+          "labelLineHeight": 22.4,
+          "labelWhiteSpace": "normal"
+        },
+        "errorHeight": 161.5625,
+        "errorLineHeight": 19.2,
+        "errorText": "请填写申请事由；这项长中文必填错误用于确认多行反馈不会覆盖后续字段或操作按钮。",
+        "buttonLeft": 80,
+        "buttonRight": 256,
+        "rootLeft": 32,
+        "rootRight": 392,
+        "documentScrollWidth": 1024,
+        "viewportWidth": 1024
+      },
+      {
+        "id": "brand-light-compact",
+        "rootWidth": 360,
+        "rootScrollWidth": 360,
+        "radio": {
+          "controlWidth": 296,
+          "controlHeight": 124.765625,
+          "controlBottom": 1093.484375,
+          "controlScrollWidth": 296,
+          "labelHeight": 115.171875,
+          "labelBottom": 1088.6875,
+          "labelLineHeight": 19.2,
+          "labelWhiteSpace": "normal"
+        },
+        "checkbox": {
+          "controlWidth": 296,
+          "controlHeight": 86.375,
+          "controlBottom": 1699.765625,
+          "controlScrollWidth": 296,
+          "labelHeight": 76.78125,
+          "labelBottom": 1694.96875,
+          "labelLineHeight": 19.2,
+          "labelWhiteSpace": "normal"
+        },
+        "styledRadio": {
+          "controlWidth": 296,
+          "controlHeight": 163.15625,
+          "controlBottom": 1531.796875,
+          "controlScrollWidth": 296,
+          "labelHeight": 153.5625,
+          "labelBottom": 1527,
+          "labelLineHeight": 19.2,
+          "labelWhiteSpace": "normal"
+        },
+        "styledCheckbox": {
+          "controlWidth": 296,
+          "controlHeight": 163.15625,
+          "controlBottom": 2072.484375,
+          "controlScrollWidth": 296,
+          "labelHeight": 153.5625,
+          "labelBottom": 2067.6875,
+          "labelLineHeight": 19.2,
+          "labelWhiteSpace": "normal"
+        },
+        "errorHeight": 161.5625,
+        "errorLineHeight": 19.2,
+        "errorText": "请填写申请事由；这项长中文必填错误用于确认多行反馈不会覆盖后续字段或操作按钮。",
+        "buttonLeft": 64,
+        "buttonRight": 208,
+        "rootLeft": 32,
+        "rootRight": 392,
+        "documentScrollWidth": 1024,
+        "viewportWidth": 1024
+      },
+      {
+        "id": "brand-dark-comfortable",
+        "rootWidth": 360,
+        "rootScrollWidth": 360,
+        "radio": {
+          "controlWidth": 264,
+          "controlHeight": 198.375,
+          "controlBottom": 1287.09375,
+          "controlScrollWidth": 264,
+          "labelHeight": 179.1875,
+          "labelBottom": 1277.5,
+          "labelLineHeight": 22.4,
+          "labelWhiteSpace": "normal"
+        },
+        "checkbox": {
+          "controlWidth": 264,
+          "controlHeight": 153.578125,
+          "controlBottom": 2192.578125,
+          "controlScrollWidth": 264,
+          "labelHeight": 134.390625,
+          "labelBottom": 2182.984375,
+          "labelLineHeight": 22.4,
+          "labelWhiteSpace": "normal"
+        },
+        "styledRadio": {
+          "controlWidth": 264,
+          "controlHeight": 243.171875,
+          "controlBottom": 1949.40625,
+          "controlScrollWidth": 264,
+          "labelHeight": 223.984375,
+          "labelBottom": 1939.8125,
+          "labelLineHeight": 22.4,
+          "labelWhiteSpace": "normal"
+        },
+        "styledCheckbox": {
+          "controlWidth": 264,
+          "controlHeight": 243.171875,
+          "controlBottom": 2877.28125,
+          "controlScrollWidth": 264,
+          "labelHeight": 223.984375,
+          "labelBottom": 2867.6875,
+          "labelLineHeight": 22.4,
+          "labelWhiteSpace": "normal"
+        },
+        "errorHeight": 161.5625,
+        "errorLineHeight": 19.2,
+        "errorText": "请填写申请事由；这项长中文必填错误用于确认多行反馈不会覆盖后续字段或操作按钮。",
+        "buttonLeft": 80,
+        "buttonRight": 256,
+        "rootLeft": 32,
+        "rootRight": 392,
+        "documentScrollWidth": 1024,
+        "viewportWidth": 1024
+      },
+      {
+        "id": "brand-dark-compact",
+        "rootWidth": 360,
+        "rootScrollWidth": 360,
+        "radio": {
+          "controlWidth": 296,
+          "controlHeight": 124.765625,
+          "controlBottom": 1093.484375,
+          "controlScrollWidth": 296,
+          "labelHeight": 115.171875,
+          "labelBottom": 1088.6875,
+          "labelLineHeight": 19.2,
+          "labelWhiteSpace": "normal"
+        },
+        "checkbox": {
+          "controlWidth": 296,
+          "controlHeight": 86.375,
+          "controlBottom": 1699.765625,
+          "controlScrollWidth": 296,
+          "labelHeight": 76.78125,
+          "labelBottom": 1694.96875,
+          "labelLineHeight": 19.2,
+          "labelWhiteSpace": "normal"
+        },
+        "styledRadio": {
+          "controlWidth": 296,
+          "controlHeight": 163.15625,
+          "controlBottom": 1531.796875,
+          "controlScrollWidth": 296,
+          "labelHeight": 153.5625,
+          "labelBottom": 1527,
+          "labelLineHeight": 19.2,
+          "labelWhiteSpace": "normal"
+        },
+        "styledCheckbox": {
+          "controlWidth": 296,
+          "controlHeight": 163.15625,
+          "controlBottom": 2072.484375,
+          "controlScrollWidth": 296,
+          "labelHeight": 153.5625,
+          "labelBottom": 2067.6875,
+          "labelLineHeight": 19.2,
+          "labelWhiteSpace": "normal"
+        },
+        "errorHeight": 161.5625,
+        "errorLineHeight": 19.2,
+        "errorText": "请填写申请事由；这项长中文必填错误用于确认多行反馈不会覆盖后续字段或操作按钮。",
+        "buttonLeft": 64,
+        "buttonRight": 208,
+        "rootLeft": 32,
+        "rootRight": 392,
+        "documentScrollWidth": 1024,
+        "viewportWidth": 1024
+      }
+    ]
+  },
+  "errors": [],
+  "resourceErrors": [],
+  "warnings": [
+    "[FlowDuet] appearance.density 只支持 \"comfortable\" 或 \"compact\"；已整份拒绝本次 appearance 配置。",
+    "[FlowDuet] appearance.density 只支持 \"comfortable\" 或 \"compact\"；已整份拒绝本次 appearance 配置。"
+  ],
+  "unhandledRejections": [],
+  "failures": [],
+  "limitations": [
+    "半选按 EP 既有语义验证初始真实状态与点击后的值变化，不把半选改为持久状态。",
+    "缩放证据使用 CSS zoom 200%，不冒充浏览器或操作系统完整缩放矩阵。",
+    "本轮仅桌面 Chromium；Firefox、Safari/WebKit、移动端与完整可访问性认证未验证。"
+  ]
+}

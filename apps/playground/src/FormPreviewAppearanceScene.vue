@@ -46,6 +46,110 @@ const TEXT_FORM: FormDefinition = {
   options: "{}",
 };
 
+const CONTROL_FORM: FormDefinition = {
+  id: "form_preview_controls",
+  name: "数字与选择控件试填",
+  provider: "form-create/element-plus",
+  rules: JSON.stringify([
+    ...JSON.parse(TEXT_FORM.rules),
+    {
+      type: "inputNumber",
+      field: "amount",
+      title: "申请数量",
+      value: 1,
+      props: { min: 0, max: 3, step: 1 },
+    },
+    {
+      type: "inputNumber",
+      field: "disabledAmount",
+      title: "禁用数字",
+      value: 2,
+      props: { min: 0, max: 3, disabled: true },
+    },
+    {
+      type: "radio",
+      field: "decision",
+      title: "审批选择",
+      value: "no",
+      options: [
+        {
+          label: "同意（这是一项用于核对换行与缩放的长中文单选选项）",
+          value: "yes",
+        },
+        { label: "拒绝", value: "no" },
+        { label: "禁用选项", value: "disabled", disabled: true },
+      ],
+    },
+    {
+      type: "radio",
+      field: "disabledDecision",
+      title: "禁用已选单选",
+      value: "disabled",
+      options: [{ label: "禁用已选", value: "disabled", disabled: true }],
+    },
+    {
+      type: "radio",
+      field: "styledDecision",
+      title: "仅 inline 颜色长单选",
+      value: "yes",
+      options: [
+        {
+          label: "仅设置颜色而没有显式高度的长中文选项，用于核对标签不会覆盖下一项",
+          value: "yes",
+          style: "--el-color-primary: rgb(18, 52, 86); --el-color-white: rgb(1, 2, 3)",
+        },
+      ],
+    },
+    {
+      type: "checkbox",
+      field: "tags",
+      title: "通知范围",
+      value: ["alpha", "disabledChecked"],
+      options: [
+        { label: "甲：用于核对长中文多选选项换行的通知范围", value: "alpha" },
+        { label: "乙", value: "beta" },
+        { label: "真实可达半选", value: "mixed", indeterminate: true },
+        { label: "禁用未选", value: "disabled", disabled: true },
+        { label: "禁用已选", value: "disabledChecked", disabled: true },
+      ],
+    },
+    {
+      type: "checkbox",
+      field: "styledTags",
+      title: "仅 inline 颜色长多选",
+      value: ["a"],
+      options: [
+        {
+          label: "仅设置勾选和文字颜色而没有显式高度的长中文多选选项，用于核对布局",
+          value: "a",
+          style:
+            "--el-checkbox-checked-text-color: rgb(18, 52, 86); --el-checkbox-checked-icon-color: rgb(1, 2, 3)",
+        },
+      ],
+    },
+    {
+      type: "switch",
+      field: "notify",
+      title: "状态通知",
+      value: false,
+      props: {
+        activeValue: true,
+        inactiveValue: false,
+        activeText: "开启通知",
+        inactiveText: "关闭通知",
+      },
+    },
+    {
+      type: "switch",
+      field: "disabledNotify",
+      title: "禁用开关",
+      value: true,
+      props: { activeValue: true, inactiveValue: false, disabled: true },
+    },
+  ]),
+  options: "{}",
+};
+
 const OTHER_FORM: FormDefinition = {
   id: "form_preview_other",
   name: "另一份文本表单",
@@ -82,6 +186,49 @@ const EXPLICIT_FORM: FormDefinition = {
       title: "显式多行说明",
       value: "显式 rows=4",
       props: { type: "textarea", rows: 4 },
+    },
+    {
+      type: "inputNumber",
+      field: "explicitAmount",
+      title: "显式右侧数字按钮",
+      value: 2,
+      props: { min: 0, max: 5, controlsPosition: "right" },
+    },
+    {
+      type: "radio",
+      field: "explicitDecision",
+      title: "显式单选尺寸",
+      value: "yes",
+      options: [
+        {
+          label: "保持显式高度与颜色",
+          value: "yes",
+          style:
+            "height: 20px; --el-color-primary: rgb(18, 52, 86); --el-color-white: rgb(1, 2, 3)",
+        },
+      ],
+    },
+    {
+      type: "checkbox",
+      field: "explicitTags",
+      title: "显式多选样式",
+      value: ["a"],
+      options: [
+        {
+          label: "保留选项 inline color",
+          value: "a",
+          style:
+            "height: 20px; --el-checkbox-checked-text-color: rgb(18, 52, 86); --el-checkbox-checked-icon-color: rgb(1, 2, 3)",
+        },
+      ],
+    },
+    {
+      type: "switch",
+      field: "explicitNotify",
+      title: "显式开关宽度",
+      value: true,
+      style: "--el-switch-on-color: rgb(18, 52, 86); --el-color-white: rgb(1, 2, 3)",
+      props: { width: 56, activeText: "接收", inactiveText: "停用" },
     },
   ]),
   options: JSON.stringify({
@@ -204,7 +351,7 @@ onBeforeUnmount(() => {
   >
     <header class="form-appearance-header">
       <div>
-        <h2>FormPreview 文本与多行文本外观验收</h2>
+        <h2>FormPreview 文本与四类控件外观验收</h2>
         <p>两个公开预览实例共享同一 Vue app；试填、校验反馈与设计定义各自独立。</p>
       </div>
       <div class="form-appearance-controls">
@@ -300,6 +447,20 @@ onBeforeUnmount(() => {
             @click="onFirstSamplingRace"
           >
             同周期切深并发送非法密度
+          </button>
+          <button
+            type="button"
+            data-test="form-appearance-first-controls"
+            @click="firstForm = CONTROL_FORM"
+          >
+            四类控件样例
+          </button>
+          <button
+            type="button"
+            data-test="form-appearance-first-reopen-controls"
+            @click="firstForm = { ...CONTROL_FORM }"
+          >
+            四类控件同 ID 重开
           </button>
           <button
             type="button"

@@ -1,0 +1,55 @@
+import { mkdir, writeFile } from "node:fs/promises";
+import { resolve } from "node:path";
+import { pathToFileURL } from "node:url";
+const [driverPath, baseUrl, outputDir] = process.argv.slice(2);
+const { chromium } = await import(pathToFileURL(resolve(driverPath)).href);
+await mkdir(outputDir, { recursive: true });
+const browser = await chromium.launch({ headless: true, executablePath: process.env.FLOWDUET_CHROMIUM_PATH || "/Users/l/Library/Caches/ms-playwright/chromium-1248/chrome-mac-x64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing" });
+const page = await browser.newPage({ viewport: { width: 1024, height: 900 } });
+const failures = [];
+const check = (condition, message) => { if (!condition) failures.push(message); };
+try {
+  await page.goto(baseUrl, { waitUntil: "networkidle" });
+  await page.locator('[data-test="form-appearance-scene-btn"]').click();
+  await page.locator('[data-test="form-appearance-first-controls"]').click();
+  for (const [test, value] of [["form-appearance-first-source", "brand"], ["form-appearance-first-mode", "dark"], ["form-appearance-first-density", "compact"]]) {
+    await page.evaluate(({ test, value }) => { const select = document.querySelector(`[data-test="${test}"]`); select.value = value; select.dispatchEvent(new Event("change", { bubbles: true })); }, { test, value });
+  }
+  const instance = page.locator('[data-test="form-appearance-first-instance"]');
+  const root = instance.locator('[data-test="form-preview"]');
+  await instance.evaluate((element) => { element.style.width = "360px"; });
+  await root.evaluate((element) => { element.style.zoom = "200%"; });
+  await page.waitForTimeout(400);
+  const actual = await root.evaluate((element) => {
+    const read = (selector) => {
+      const controls = element.querySelectorAll(selector);
+      const control = controls[controls.length - 1];
+      const label = control.querySelector(".el-radio__label, .el-checkbox__label");
+      const controlRect = control.getBoundingClientRect();
+      const labelRect = label.getBoundingClientRect();
+      return {
+        style: control.getAttribute("style"),
+        controlHeight: controlRect.height,
+        controlTop: controlRect.top,
+        controlBottom: controlRect.bottom,
+        labelHeight: labelRect.height,
+        labelTop: labelRect.top,
+        labelBottom: labelRect.bottom,
+        labelWhiteSpace: getComputedStyle(label).whiteSpace,
+      };
+    };
+    return { radio: read(".el-radio"), checkbox: read(".el-checkbox") };
+  });
+  for (const [name, option] of [["单选", actual.radio], ["多选", actual.checkbox]]) {
+    check(option.labelWhiteSpace === "normal", `${name}: inline 颜色选项未换行`);
+    check(option.controlHeight >= option.labelHeight, `${name}: 控件高度 ${option.controlHeight} 小于标签 ${option.labelHeight}，发生重叠`);
+    check(option.labelBottom <= option.controlBottom + 1, `${name}: 标签越出控件下边界 ${option.labelBottom}/${option.controlBottom}`);
+  }
+  await root.screenshot({ path: resolve(outputDir, "inline-color-long-options.png") });
+  const summary = { actual, failures };
+  await writeFile(resolve(outputDir, "inline-layout.json"), JSON.stringify(summary, null, 2));
+  console.log(JSON.stringify(summary, null, 2));
+  if (failures.length > 0) process.exitCode = 1;
+} finally {
+  await browser.close();
+}

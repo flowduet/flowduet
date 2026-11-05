@@ -1,0 +1,87 @@
+{
+  "note": "按实际红色运行结果整理；不是将最终绿色结果反向伪造为基线。",
+  "driver": "Playwright chromium / HeadlessChrome 156.0.0.0",
+  "cases": [
+    {
+      "id": "number-border",
+      "command": "node control-red.mjs <driver> number",
+      "before": { "controlBorder": "rgb(220, 223, 230)" },
+      "expected": "rgb(117, 131, 159)",
+      "fix": "品牌预览根局部重建 --el-border 简写"
+    },
+    {
+      "id": "radio-markers",
+      "command": "node control-red.mjs <driver> radio",
+      "before": {
+        "dot": "rgb(255, 255, 255)",
+        "focusOffset": "1px",
+        "disabledColor": "rgb(163, 175, 201)"
+      },
+      "expected": {
+        "dot": "rgb(23, 31, 62)",
+        "focusOffset": "3px",
+        "disabledColor": "rgb(127, 138, 162)"
+      }
+    },
+    {
+      "id": "checkbox-markers",
+      "command": "node control-red.mjs <driver> checkbox",
+      "before": {
+        "check": "rgb(255, 255, 255)",
+        "mixedBar": "rgb(255, 255, 255)",
+        "disabledCheckedBackground": "rgb(242, 246, 252)",
+        "focusOffset": "1px"
+      },
+      "expected": {
+        "check": "rgb(23, 31, 62)",
+        "mixedBar": "rgb(23, 31, 62)",
+        "disabledCheckedBackground": "rgb(37, 45, 64)",
+        "focusOffset": "3px"
+      }
+    },
+    {
+      "id": "switch-action",
+      "command": "node control-red.mjs <driver> switch",
+      "before": {
+        "offAction": "rgb(255, 255, 255)",
+        "onAction": "rgb(255, 255, 255)",
+        "focusOffset": "1px"
+      },
+      "expected": {
+        "offAction": "rgb(29, 36, 53)",
+        "onAction": "rgb(23, 31, 62)",
+        "focusOffset": "3px"
+      }
+    },
+    {
+      "id": "long-options-zoom",
+      "command": "node layout-red.mjs <driver>",
+      "before": {
+        "rootScrollWidth": 852,
+        "rootWidth": 360,
+        "radioWhiteSpace": "nowrap",
+        "checkboxWhiteSpace": "nowrap"
+      },
+      "expected": "八组外观均无横向溢出，长中文选项正常换行"
+    },
+    {
+      "id": "radio-disabled-checked",
+      "command": "node control-red.mjs <driver> radio",
+      "before": {
+        "background": "rgb(165, 187, 255)",
+        "border": "rgb(165, 187, 255)",
+        "dot": "rgb(127, 138, 162)"
+      },
+      "expected": {
+        "background": "rgb(37, 45, 64)",
+        "border": "rgb(60, 72, 100)",
+        "dot": "rgb(127, 138, 162)"
+      }
+    }
+  ],
+  "testExpectationCorrections": [
+    "EP 2.14.6 的 radio/checkbox group 不生成尺寸 class；断言落实到实际选项尺寸，不改产品代码。",
+    "原生点击会清除 indeterminate DOM 状态；只验既有初始半选与值变化，不新增持久半选要求。",
+    "禁用 radio/checkbox 由 Playwright 判定不可点击；开关 core 可接收指针事件但值不得改变，二者不作相同事件假设。"
+  ]
+}

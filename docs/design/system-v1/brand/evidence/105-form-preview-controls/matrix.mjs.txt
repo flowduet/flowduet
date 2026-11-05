@@ -1,0 +1,351 @@
+import { mkdir, writeFile } from "node:fs/promises";
+import { resolve } from "node:path";
+import { pathToFileURL } from "node:url";
+
+const [driverPath, baseUrl, outputDir] = process.argv.slice(2);
+if (!driverPath || !baseUrl || !outputDir) throw new Error("需要驱动、URL 和输出目录参数");
+const { chromium } = await import(pathToFileURL(resolve(driverPath)).href);
+await mkdir(outputDir, { recursive: true });
+const browser = await chromium.launch({
+  headless: true,
+  executablePath:
+    process.env.FLOWDUET_CHROMIUM_PATH ||
+    "/Users/l/Library/Caches/ms-playwright/chromium-1248/chrome-mac-x64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing",
+});
+const page = await browser.newPage({
+  viewport: { width: 1440, height: 2200 },
+  deviceScaleFactor: 1,
+});
+const errors = [];
+const resourceErrors = [];
+const warnings = [];
+const failures = [];
+page.on("pageerror", (error) => errors.push(`pageerror: ${error.message}`));
+page.on("console", (message) => {
+  if (message.type() === "error") errors.push(`console: ${message.text()}`);
+  if (message.type() === "warning") warnings.push(message.text());
+});
+page.on("response", (response) => {
+  if (response.status() >= 400) resourceErrors.push(`${response.status()} ${response.url()}`);
+});
+const check = (condition, message) => {
+  if (!condition) failures.push(message);
+};
+const setSelect = async (test, value) => {
+  await page.evaluate(
+    ({ test, value }) => {
+      const select = document.querySelector(`[data-test="${test}"]`);
+      select.value = value;
+      select.dispatchEvent(new Event("change", { bubbles: true }));
+    },
+    { test, value },
+  );
+};
+const setHostDark = async (dark) => {
+  await page.evaluate((dark) => {
+    const input = document.querySelector('[data-test="form-appearance-host-dark"]');
+    if (input.checked !== dark) {
+      input.checked = dark;
+      input.dispatchEvent(new Event("change", { bubbles: true }));
+    }
+  }, dark);
+};
+const firstInstance = () => page.locator('[data-test="form-appearance-first-instance"]');
+const preview = () => firstInstance().locator('[data-test="form-preview"]');
+const readKeyboardFocus = async (input, target, label) => {
+  await input.focus();
+  await page.keyboard.press("Tab");
+  await page.keyboard.press("Shift+Tab");
+  await page.waitForTimeout(350);
+  check(await input.evaluate((element) => document.activeElement === element), `${label}: 键盘焦点未落在目标输入`);
+  return target.evaluate((element) => ({
+    width: getComputedStyle(element).outlineWidth,
+    style: getComputedStyle(element).outlineStyle,
+    color: getComputedStyle(element).outlineColor,
+    offset: getComputedStyle(element).outlineOffset,
+  }));
+};
+const combinations = [
+  { colorSource: "host", mode: "light", density: "comfortable" },
+  { colorSource: "host", mode: "light", density: "compact" },
+  { colorSource: "host", mode: "dark", density: "comfortable" },
+  { colorSource: "host", mode: "dark", density: "compact" },
+  { colorSource: "brand", mode: "light", density: "comfortable" },
+  { colorSource: "brand", mode: "light", density: "compact" },
+  { colorSource: "brand", mode: "dark", density: "comfortable" },
+  { colorSource: "brand", mode: "dark", density: "compact" },
+];
+const expected = {
+  "host-light": {
+    surface: "rgb(255, 255, 255)",
+    text: "rgb(48, 49, 51)",
+    secondary: "rgb(96, 98, 102)",
+    inset: "rgb(245, 247, 250)",
+    success: "rgb(35, 113, 77)",
+  },
+  "host-dark": {
+    surface: "rgb(20, 20, 20)",
+    text: "rgb(229, 234, 243)",
+    secondary: "rgb(207, 211, 220)",
+    inset: "rgb(38, 39, 39)",
+    success: "rgb(129, 213, 166)",
+  },
+  "brand-light": {
+    surface: "rgb(255, 255, 255)",
+    text: "rgb(32, 38, 61)",
+    secondary: "rgb(86, 95, 118)",
+    inset: "rgb(240, 242, 248)",
+    success: "rgb(35, 113, 77)",
+    controlBorder: "rgb(122, 133, 158)",
+    border: "rgb(205, 210, 224)",
+    primary: "rgb(45, 62, 151)",
+    onPrimary: "rgb(255, 255, 255)",
+    disabledText: "rgb(139, 146, 164)",
+    disabledSurface: "rgb(237, 240, 245)",
+  },
+  "brand-dark": {
+    surface: "rgb(29, 36, 53)",
+    text: "rgb(233, 237, 247)",
+    secondary: "rgb(183, 192, 213)",
+    inset: "rgb(37, 46, 67)",
+    success: "rgb(129, 213, 166)",
+    controlBorder: "rgb(117, 131, 159)",
+    border: "rgb(60, 72, 100)",
+    primary: "rgb(165, 187, 255)",
+    onPrimary: "rgb(23, 31, 62)",
+    disabledText: "rgb(127, 138, 162)",
+    disabledSurface: "rgb(37, 45, 64)",
+  },
+};
+const results = [];
+try {
+  await page.goto(baseUrl, { waitUntil: "networkidle" });
+  await page.locator('[data-test="form-appearance-scene-btn"]').click();
+  await page.locator('[data-test="form-appearance-first-controls"]').click();
+  await preview().waitFor({ state: "visible" });
+  await preview().locator("input").first().fill("四类控件八组外观：中文事由");
+  await preview().locator("textarea").fill("四类控件八组外观：多行说明");
+  await preview().locator('[data-test="form-preview-validate"]').click();
+  await preview()
+    .locator('[data-test="form-preview-validation"]')
+    .filter({ hasText: "校验通过" })
+    .waitFor();
+  await preview().locator(".el-input-number").first().locator(".el-input-number__increase").click();
+  await preview().locator(".el-radio").nth(0).locator(".el-radio__inner").click();
+  await preview().locator(".el-checkbox").nth(1).locator(".el-checkbox__inner").click();
+  await preview().locator(".el-switch").nth(0).locator(".el-switch__core").click();
+  await page.waitForTimeout(350);
+
+  for (const combination of combinations) {
+    const { colorSource, mode, density } = combination;
+    await setHostDark(colorSource === "host" && mode === "dark");
+    await setSelect("form-appearance-first-source", colorSource);
+    if (colorSource === "brand") await setSelect("form-appearance-first-mode", mode);
+    await setSelect("form-appearance-first-density", density);
+    await page.mouse.move(0, 0);
+    const switchCore = preview().locator(".el-switch").nth(0).locator(".el-switch__core");
+    if (await preview().locator(".el-switch").nth(0).locator("input").isChecked()) {
+      await switchCore.click();
+    }
+    await page.waitForTimeout(350);
+    const offSwitch = await preview().locator(".el-switch").nth(0).evaluate((element) => {
+      const core = element.querySelector(".el-switch__core");
+      const action = element.querySelector(".el-switch__action");
+      return {
+        track: getComputedStyle(core).backgroundColor,
+        actionBackground: getComputedStyle(action).backgroundColor,
+        actionColor: getComputedStyle(action).color,
+      };
+    });
+    await switchCore.click();
+    await page.waitForTimeout(350);
+    const numberInput = preview().locator(".el-input-number").first().locator("input");
+    await numberInput.focus();
+    const id = `${colorSource}-${mode}-${density}`;
+    const actual = await preview().evaluate((root) => {
+      const rect = (element) => {
+        const box = element.getBoundingClientRect();
+        return { width: box.width, height: box.height };
+      };
+      const number = root.querySelectorAll(".el-input-number")[0];
+      const numberInput = number.querySelector("input");
+      const numberWrapper = number.querySelector(".el-input__wrapper");
+      const decrease = number.querySelector(".el-input-number__decrease");
+      const radios = root.querySelectorAll(".el-radio");
+      const selectedRadio = radios[0];
+      const radioInner = selectedRadio.querySelector(".el-radio__inner");
+      const disabledSelectedRadioInner = radios[3].querySelector(".el-radio__inner");
+      const boxes = root.querySelectorAll(".el-checkbox");
+      const selectedBox = boxes[0];
+      const boxInner = selectedBox.querySelector(".el-checkbox__inner");
+      const mixedInner = boxes[2].querySelector(".el-checkbox__inner");
+      const disabledBoxInner = boxes[3].querySelector(".el-checkbox__inner");
+      const disabledCheckedInner = boxes[4].querySelector(".el-checkbox__inner");
+      const switches = root.querySelectorAll(".el-switch");
+      const onSwitch = switches[0];
+      const onCore = onSwitch.querySelector(".el-switch__core");
+      const onAction = onSwitch.querySelector(".el-switch__action");
+      const disabledSwitch = switches[1];
+      const disabledCore = disabledSwitch.querySelector(".el-switch__core");
+      const disabledAction = disabledSwitch.querySelector(".el-switch__action");
+      const validation = root.querySelector('[data-test="form-preview-validation"]');
+      const hostInput = document.querySelector('[data-test="form-appearance-host-input"]');
+      return {
+        className: root.className,
+        inlineStyle: root.getAttribute("style"),
+        rootBackground: getComputedStyle(root).backgroundColor,
+        rootColor: getComputedStyle(root).color,
+        rootPadding: getComputedStyle(root).padding,
+        textValue: root.querySelector("input").value,
+        textareaValue: root.querySelector("textarea").value,
+        validationText: validation.textContent,
+        validationColor: getComputedStyle(validation).color,
+        numberHeight: rect(number).height,
+        numberValue: numberInput.value,
+        numberFocused: document.activeElement === numberInput,
+        numberColor: getComputedStyle(numberInput).color,
+        numberBackground: getComputedStyle(numberWrapper).backgroundColor,
+        numberFocusWidth: getComputedStyle(numberWrapper).outlineWidth,
+        numberFocusColor: getComputedStyle(numberWrapper).outlineColor,
+        numberFocusOffset: getComputedStyle(numberWrapper).outlineOffset,
+        numberControlColor: getComputedStyle(decrease).color,
+        numberControlBackground: getComputedStyle(decrease).backgroundColor,
+        numberControlBorder: getComputedStyle(decrease).borderRightColor,
+        radioHeight: rect(selectedRadio).height,
+        radioMarker: rect(radioInner),
+        radioBackground: getComputedStyle(radioInner).backgroundColor,
+        radioBorder: getComputedStyle(radioInner).borderTopColor,
+        radioDot: getComputedStyle(radioInner, "::after").backgroundColor,
+        radioLabel: getComputedStyle(selectedRadio.querySelector(".el-radio__label")).color,
+        radioDisabledLabel: getComputedStyle(radios[2].querySelector(".el-radio__label")).color,
+        radioDisabledSelectedBackground: getComputedStyle(disabledSelectedRadioInner).backgroundColor,
+        radioDisabledSelectedBorder: getComputedStyle(disabledSelectedRadioInner).borderTopColor,
+        radioDisabledSelectedDot: getComputedStyle(disabledSelectedRadioInner, "::after").backgroundColor,
+        radioChecked: selectedRadio.querySelector("input").checked,
+        checkboxHeight: rect(selectedBox).height,
+        checkboxMarker: rect(boxInner),
+        checkboxBackground: getComputedStyle(boxInner).backgroundColor,
+        checkboxBorder: getComputedStyle(boxInner).borderTopColor,
+        checkboxCheck: getComputedStyle(boxInner, "::after").borderRightColor,
+        checkboxLabel: getComputedStyle(selectedBox.querySelector(".el-checkbox__label")).color,
+        mixedIndeterminate: boxes[2].querySelector("input").indeterminate,
+        mixedBackground: getComputedStyle(mixedInner).backgroundColor,
+        mixedBar: getComputedStyle(mixedInner, "::before").backgroundColor,
+        disabledBoxBackground: getComputedStyle(disabledBoxInner).backgroundColor,
+        disabledBoxLabel: getComputedStyle(boxes[3].querySelector(".el-checkbox__label")).color,
+        disabledCheckedBackground: getComputedStyle(disabledCheckedInner).backgroundColor,
+        disabledCheckedMark: getComputedStyle(disabledCheckedInner, "::after").borderRightColor,
+        checkboxValues: Array.from(boxes).map((box) => box.querySelector("input").checked),
+        switchHeight: rect(onSwitch).height,
+        switchCore: rect(onCore),
+        switchAction: rect(onAction),
+        switchTrack: getComputedStyle(onCore).backgroundColor,
+        switchActionBackground: getComputedStyle(onAction).backgroundColor,
+        switchActionColor: getComputedStyle(onAction).color,
+        switchChecked: onSwitch.querySelector("input").checked,
+        disabledSwitchTrack: getComputedStyle(disabledCore).backgroundColor,
+        disabledSwitchAction: getComputedStyle(disabledAction).backgroundColor,
+        disabledSwitchOpacity: getComputedStyle(disabledSwitch).opacity,
+        hostInputStyle: hostInput?.getAttribute("style"),
+        htmlClass: document.documentElement.className,
+      };
+    });
+    actual.offSwitch = offSwitch;
+    actual.focus = {
+      radio: await readKeyboardFocus(
+        preview().locator(".el-radio").nth(0).locator("input"),
+        preview().locator(".el-radio").nth(0).locator(".el-radio__inner"),
+        `${id}: 单选`,
+      ),
+      checkbox: await readKeyboardFocus(
+        preview().locator(".el-checkbox").nth(0).locator("input"),
+        preview().locator(".el-checkbox").nth(0).locator(".el-checkbox__inner"),
+        `${id}: 多选`,
+      ),
+      switch: await readKeyboardFocus(
+        preview().locator(".el-switch").nth(0).locator("input"),
+        preview().locator(".el-switch").nth(0).locator(".el-switch__core"),
+        `${id}: 开关`,
+      ),
+    };
+    await numberInput.focus();
+    const roles = expected[`${colorSource}-${mode}`];
+    const expectedHeight = density === "compact" ? 24 : 32;
+    const expectedMarker = density === "compact" ? 12 : 14;
+    const expectedSwitch = density === "compact"
+      ? { coreWidth: 30, coreHeight: 16, action: 12 }
+      : { coreWidth: 40, coreHeight: 20, action: 16 };
+    const expectedPadding = density === "compact" ? "16px" : "24px";
+    check(actual.className.includes(`flowduet-appearance--${colorSource}`), `${id}: 配色 class 错误`);
+    check(actual.className.includes(`flowduet-appearance--${mode}`), `${id}: 主题 class 错误`);
+    check(actual.className.includes(`flowduet-appearance--${density}`), `${id}: 密度 class 错误`);
+    check(actual.rootBackground === roles.surface, `${id}: 预览表面 ${actual.rootBackground}`);
+    check(actual.rootColor === roles.text, `${id}: 预览正文 ${actual.rootColor}`);
+    check(actual.rootPadding === expectedPadding, `${id}: 面板内边距 ${actual.rootPadding}`);
+    check(actual.textValue === "四类控件八组外观：中文事由", `${id}: 文本回归值丢失`);
+    check(actual.textareaValue === "四类控件八组外观：多行说明", `${id}: 多行回归值丢失`);
+    check(actual.validationText.includes("校验通过") && actual.validationColor === roles.success, `${id}: 文本成功反馈回归`);
+    check(actual.numberHeight === expectedHeight, `${id}: 数字高度 ${actual.numberHeight}`);
+    check(actual.numberValue === "2" && actual.numberFocused, `${id}: 数字值或焦点丢失`);
+    check(Math.abs(actual.radioHeight - expectedHeight) <= 0.1, `${id}: 单选外层高度 ${actual.radioHeight}`);
+    check(actual.radioMarker.width === expectedMarker && actual.radioMarker.height === expectedMarker, `${id}: 单选内部几何 ${JSON.stringify(actual.radioMarker)}`);
+    check(actual.radioChecked, `${id}: 单选值丢失`);
+    check(Math.abs(actual.checkboxHeight - expectedHeight) <= 0.1, `${id}: 多选外层高度 ${actual.checkboxHeight}`);
+    check(actual.checkboxMarker.width === expectedMarker && actual.checkboxMarker.height === expectedMarker, `${id}: 多选内部几何 ${JSON.stringify(actual.checkboxMarker)}`);
+    check(JSON.stringify(actual.checkboxValues) === JSON.stringify([true, true, false, false, true, true]), `${id}: 多选值变化 ${actual.checkboxValues}`);
+    check(actual.mixedIndeterminate, `${id}: 半选状态丢失`);
+    check(actual.switchHeight === expectedHeight, `${id}: 开关外层高度 ${actual.switchHeight}`);
+    check(actual.switchCore.width === expectedSwitch.coreWidth && actual.switchCore.height === expectedSwitch.coreHeight, `${id}: 开关轨道几何 ${JSON.stringify(actual.switchCore)}`);
+    check(actual.switchAction.width === expectedSwitch.action && actual.switchAction.height === expectedSwitch.action, `${id}: 开关滑块几何 ${JSON.stringify(actual.switchAction)}`);
+    check(actual.switchChecked, `${id}: 开关值丢失`);
+    check(actual.disabledSwitchOpacity === "0.6", `${id}: 禁用开关语义改变`);
+    for (const [field, focus] of Object.entries(actual.focus)) {
+      check(focus.width === "2px" && focus.style === "solid" && focus.color !== "rgba(0, 0, 0, 0)", `${id}: ${field} 焦点环不可见 ${JSON.stringify(focus)}`);
+    }
+    if (colorSource === "host") {
+      check(!actual.inlineStyle.includes("--el-"), `${id}: host 写入 EP 变量`);
+      if (mode === "dark") check(actual.htmlClass.includes("dark"), `${id}: 宿主深色未启用`);
+    } else {
+      check(actual.inlineStyle.includes("--el-color-primary"), `${id}: brand 缺少局部 EP 主色`);
+      check(!actual.htmlClass.includes("dark"), `${id}: 品牌实例错误切换宿主深色`);
+      check(actual.numberColor === roles.text && actual.numberBackground === roles.surface, `${id}: 数字输入配色`);
+      check(actual.numberControlColor === roles.secondary && actual.numberControlBackground === roles.inset && actual.numberControlBorder === roles.controlBorder, `${id}: 数字增减按钮配色`);
+      check(actual.numberFocusWidth === "2px" && actual.numberFocusColor === roles.primary && actual.numberFocusOffset === "3px", `${id}: 数字焦点环`);
+      for (const [field, focus] of Object.entries(actual.focus)) {
+        check(focus.color === roles.primary && focus.offset === "3px", `${id}: ${field} 品牌焦点角色 ${JSON.stringify(focus)}`);
+      }
+      check(actual.radioBackground === roles.primary && actual.radioBorder === roles.primary && actual.radioDot === roles.onPrimary && actual.radioLabel === roles.primary, `${id}: 单选选中配对`);
+      check(actual.radioDisabledLabel === roles.disabledText, `${id}: 单选禁用文字 ${actual.radioDisabledLabel}`);
+      check(actual.radioDisabledSelectedBackground === roles.disabledSurface && actual.radioDisabledSelectedBorder === roles.border && actual.radioDisabledSelectedDot === roles.disabledText, `${id}: 单选禁用已选配对`);
+      check(actual.checkboxBackground === roles.primary && actual.checkboxBorder === roles.primary && actual.checkboxCheck === roles.onPrimary && actual.checkboxLabel === roles.primary, `${id}: 多选选中配对`);
+      check(actual.mixedBackground === roles.primary && actual.mixedBar === roles.onPrimary, `${id}: 多选半选配对`);
+      check(actual.disabledBoxBackground === roles.disabledSurface && actual.disabledBoxLabel === roles.disabledText, `${id}: 多选禁用未选配对`);
+      check(actual.disabledCheckedBackground === roles.disabledSurface && actual.disabledCheckedMark === roles.disabledText, `${id}: 多选禁用已选配对`);
+      check(actual.offSwitch.track === roles.controlBorder && actual.offSwitch.actionBackground === roles.surface && actual.offSwitch.actionColor === roles.controlBorder, `${id}: 开关关闭配对 ${JSON.stringify(actual.offSwitch)}`);
+      check(actual.switchTrack === roles.primary && actual.switchActionBackground === roles.onPrimary && actual.switchActionColor === roles.primary, `${id}: 开关开启配对`);
+      check(actual.disabledSwitchTrack === roles.primary && actual.disabledSwitchAction === roles.onPrimary, `${id}: 禁用开关配对`);
+    }
+    await preview().screenshot({ path: resolve(outputDir, `${id}.png`) });
+    results.push({ id, ...actual });
+  }
+  check(!errors.some((error) => error.startsWith("pageerror:")), `页面错误：${errors.join("；")}`);
+  const summary = {
+    browser: await page.evaluate(() => navigator.userAgent),
+    viewport: { width: 1440, height: 2200, deviceScaleFactor: 1 },
+    results,
+    errors,
+    resourceErrors,
+    warnings,
+    failures,
+    limitations: [
+      "外观控件经 DOM 事件切换；未冒充真实 OS 中文输入法验收。",
+      "本轮仅桌面 Chromium；Firefox、Safari/WebKit、移动端与完整可访问性认证未验证。",
+      "跟随宿主的 EP 控件原值仅记录，不计为 FlowDuet 自有角色对比度通过。",
+    ],
+  };
+  await writeFile(resolve(outputDir, "matrix.json"), JSON.stringify(summary, null, 2));
+  console.log(JSON.stringify({ combinations: results.length, errors, resourceErrors, warnings, failures }, null, 2));
+  if (failures.length > 0) process.exitCode = 1;
+} finally {
+  await browser.close();
+}
