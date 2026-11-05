@@ -1,0 +1,103 @@
+import { writeFile } from "node:fs/promises";
+import { resolve } from "node:path";
+import { pathToFileURL } from "node:url";
+
+const [driverPath, baseUrl, outputFile] = process.argv.slice(2);
+if (!driverPath || !baseUrl || !outputFile) throw new Error("需要驱动、URL 和输出文件参数");
+const { chromium } = await import(pathToFileURL(resolve(driverPath)).href);
+const browser = await chromium.launch({
+  headless: true,
+  executablePath:
+    process.env.FLOWDUET_CHROMIUM_PATH ||
+    "/Users/l/Library/Caches/ms-playwright/chromium-1248/chrome-mac-x64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing",
+});
+const page = await browser.newPage({ viewport: { width: 1100, height: 1200 } });
+const errors = [];
+const failures = [];
+page.on("pageerror", (error) => errors.push(error.stack || error.message));
+page.on("console", (message) => {
+  if (message.type() === "error") errors.push(message.text());
+});
+const check = (condition, message) => {
+  if (!condition) failures.push(message);
+};
+try {
+  await page.goto(baseUrl, { waitUntil: "networkidle" });
+  const preview = page.locator('[data-test="form-preview"]');
+  const select = preview.locator(".el-select").nth(0);
+  const input = select.locator(".el-select__input");
+  const panel = page.locator(".el-select__popper.tarball-select-panel");
+  await preview.waitFor({ state: "visible" });
+  await input.focus();
+  await input.press("ArrowDown");
+  await panel.waitFor({ state: "visible" });
+  await input.press("ArrowUp");
+  await page.waitForTimeout(350);
+  const actual = await preview.evaluate((root) => {
+    const select = root.querySelectorAll(".el-select")[0];
+    const wrapper = select.querySelector(".el-select__wrapper");
+    const panel = document.querySelector(".el-select__popper.tarball-select-panel");
+    const items = [...panel.querySelectorAll(".el-select-dropdown__item")];
+    const selected = items.find((item) => item.textContent === "拒绝");
+    const hovering = items.find((item) => item.textContent === "同意");
+    const long = items.find((item) => item.textContent.startsWith("安装包长中文"));
+    const rect = (element) => {
+      const box = element.getBoundingClientRect();
+      return { width: box.width, height: box.height, left: box.left, right: box.right, top: box.top, bottom: box.bottom };
+    };
+    const read = (element) => {
+      const style = getComputedStyle(element);
+      return { color: style.color, background: style.backgroundColor, outlineWidth: style.outlineWidth, outlineOffset: style.outlineOffset, whiteSpace: style.whiteSpace };
+    };
+    const owner = [...panel.classList].find((name) => name.startsWith("flowduet-form-preview-select-"));
+    return {
+      rootClass: root.className,
+      trigger: { ...rect(wrapper), ...read(wrapper) },
+      caret: read(select.querySelector(".el-select__caret")),
+      panel: { ...rect(panel), ...read(panel) },
+      selected: { ...rect(selected), ...read(selected) },
+      hovering: { ...rect(hovering), ...read(hovering) },
+      long: { ...rect(long), ...read(long) },
+      owner,
+      instanceStyles: [...document.head.querySelectorAll("style")].filter((style) => style.textContent.includes(`.${owner}`)).length,
+      focused: document.activeElement === select.querySelector("input"),
+    };
+  });
+  check(actual.rootClass.includes("flowduet-appearance--brand"), "公开 appearance 未生效");
+  check(Math.abs(actual.trigger.height - 24) <= 0.1 && Math.abs(actual.selected.height - 24) <= 0.1, "公开紧凑密度未作用于选择框与选项");
+  check(actual.caret.color === "rgb(233, 237, 247)", `公开 caret 前景错误 ${actual.caret.color}`);
+  check(actual.trigger.outlineWidth === "2px" && actual.trigger.outlineOffset === "3px" && actual.focused, "公开焦点几何或焦点缺失");
+  check(actual.panel.background === "rgb(29, 36, 53)", `公开面板表面错误 ${actual.panel.background}`);
+  check(actual.selected.color === "rgb(165, 187, 255)" && actual.selected.background === "rgb(42, 51, 84)", "公开选中前景／背景错误");
+  check(actual.hovering.background === "rgb(37, 46, 67)", "公开键盘高亮背景错误");
+  check(actual.long.whiteSpace === "normal" && actual.long.right <= actual.panel.right + 1, "公开长选项溢出面板");
+  check(actual.owner && actual.instanceStyles === 1, "公开实例标识或局部样式资源缺失");
+  await page.screenshot({ path: resolve(outputFile, "..", "consumer.png") });
+  await input.press("Enter");
+  await panel.waitFor({ state: "hidden" });
+  let values = JSON.parse(await preview.locator('[data-test="form-preview-values"]').textContent());
+  check(values.decision === "yes" && (await input.evaluate((element) => document.activeElement === element)), "公开键盘选择或焦点恢复失败");
+  await select.hover();
+  await select.locator(".el-select__clear").click();
+  await preview.locator('[data-test="form-preview-validate"]').click();
+  await preview.locator('[data-test="form-preview-validation"]').filter({ hasText: "校验未通过" }).waitFor();
+  await preview.locator(".el-form-item__error").filter({ hasText: "请选择安装包审批结果" }).waitFor({ state: "visible" });
+  await input.focus();
+  await input.press("ArrowDown");
+  await panel.waitFor({ state: "visible" });
+  await page.waitForTimeout(350);
+  await panel.getByRole("option", { name: "拒绝", exact: true }).click();
+  await preview.locator('[data-test="form-preview-validate"]').click();
+  await preview.locator('[data-test="form-preview-validation"]').filter({ hasText: "校验通过" }).waitFor();
+  values = JSON.parse(await preview.locator('[data-test="form-preview-values"]').textContent());
+  check(values.decision === "no" && values.reason === "tarball 文本", `公开试填值错误 ${JSON.stringify(values)}`);
+  const resources = await page.evaluate(() => performance.getEntriesByType("resource").map((entry) => entry.name));
+  check(!resources.some((url) => url.includes("/Users/l/Documents/projects/flowduet/packages/")), "消费工程使用源码 alias");
+  check(errors.length === 0, `浏览器错误：${errors.join("；")}`);
+  const summary = { browser: await browser.version(), actual, values, resources, errors, failures, result: failures.length === 0 ? "公开 JS / 严格 TS / CSS / 下拉真实浏览器行为通过" : "失败" };
+  await writeFile(outputFile, JSON.stringify(summary, null, 2));
+  console.log(JSON.stringify({ browser: summary.browser, errors, failures, values }, null, 2));
+  if (failures.length > 0) process.exitCode = 1;
+} finally {
+  await browser.close();
+}

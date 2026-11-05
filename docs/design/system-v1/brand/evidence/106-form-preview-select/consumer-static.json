@@ -1,0 +1,19 @@
+{
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./style.css": "./dist/form-create.css",
+    "./package.json": "./package.json"
+  },
+  "peerDependencies": {
+    "vue": "^3.5.0",
+    "element-plus": "^2.11.1"
+  },
+  "cssSelectVariables": true,
+  "cssNoDeep": true,
+  "jsInstanceMarker": true,
+  "publicFormPreviewType": true,
+  "singleElementPlus2146": true
+}

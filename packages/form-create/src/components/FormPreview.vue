@@ -6,6 +6,7 @@ import {
   onBeforeMount,
   onBeforeUnmount,
   onMounted,
+  reactive,
   ref,
   shallowRef,
   watch,
@@ -22,8 +23,9 @@ import {
   type ResolvedComponentAppearance,
 } from "@flowduet/designer";
 import type { FormDefinition } from "../document.js";
-import { parseFormOptions, parseFormRules } from "../form-schema.js";
+import { parseFormOptions, parseFormRules, type FieldRule } from "../form-schema.js";
 import { ensureFormCreateInstalled } from "../form-create-setup.js";
+import { nextFormPreviewInstanceId } from "./form-preview-instance.js";
 
 /**
  * 表单预览（#72）：真实 FormCreate 渲染器（@form-create/element-ui 3.3.4）试填。
@@ -54,12 +56,18 @@ const fApi = ref<{ validate?: (cb: (result: unknown) => void) => unknown } | nul
 const validation = ref<{ ok: boolean; message: string } | null>(null);
 
 const hostRef = ref<HTMLElement>();
+const selectPopperClass = `flowduet-form-preview-select-${nextFormPreviewInstanceId()}`;
+const selectPopperClasses = reactive<Record<string, boolean>>({
+  [selectPopperClass]: false,
+});
+let selectPopperStyleElement: HTMLStyleElement | undefined;
 const previewAppearance = shallowRef<ResolvedComponentAppearance>();
 const hostAppearance = shallowRef<HostAppearanceContext>();
 let disposed = false;
 let sampleTicket = 0;
 onBeforeUnmount(() => {
   disposed = true;
+  removeSelectPopperStyle();
 });
 function refreshHostAppearance(): void {
   if (disposed) return;
@@ -86,7 +94,10 @@ watch(
   // 后置冲刷先完成宿主同周期主题类／变量补丁，再安排实例变量更新。
   { immediate: true, flush: "post" },
 );
-onMounted(refreshHostAppearance);
+onMounted(() => {
+  refreshHostAppearance();
+  syncSelectPopperStyle();
+});
 const previewClass = computed(() => {
   const appearance = previewAppearance.value;
   if (appearance === undefined) return "form-preview";
@@ -133,8 +144,88 @@ const contentError = computed<string | null>(() => {
   }
 });
 
-const rule = computed(() => (contentError.value === null ? parseFormRules(props.form.rules) : []));
 const appearanceEnabled = computed(() => previewAppearance.value !== undefined);
+
+// 仅修改解析后的临时规则树：实例标识稳定，规则身份只随定义换代。
+function adaptSelectRules(rules: FieldRule[]): FieldRule[] {
+  return rules.map((item) => {
+    const children = Array.isArray(item.children)
+      ? adaptSelectRules(item.children as FieldRule[])
+      : item.children;
+    if (item.type !== "select") return children === item.children ? item : { ...item, children };
+    if (
+      item.props !== undefined &&
+      (typeof item.props !== "object" || item.props === null || Array.isArray(item.props))
+    )
+      return item;
+    const fieldProps = (item.props ?? {}) as Record<string, unknown>;
+    const popperClass =
+      fieldProps.popperClass === undefined
+        ? selectPopperClasses
+        : [fieldProps.popperClass, selectPopperClasses];
+    return {
+      ...item,
+      ...(children === item.children ? {} : { children }),
+      props: { ...fieldProps, popperClass },
+    };
+  });
+}
+
+const rule = computed(() =>
+  contentError.value === null ? adaptSelectRules(parseFormRules(props.form.rules)) : [],
+);
+
+function containsSelect(rules: FieldRule[]): boolean {
+  return rules.some(
+    (item) =>
+      item.type === "select" ||
+      (Array.isArray(item.children) && containsSelect(item.children as FieldRule[])),
+  );
+}
+const hasSelectRule = computed(() => containsSelect(rule.value));
+
+function removeSelectPopperStyle(): void {
+  selectPopperStyleElement?.remove();
+  selectPopperStyleElement = undefined;
+}
+
+// Teleport 后面板不继承预览根；用唯一类承载实例变量，业务 inline popperStyle 仍自然优先。
+function syncSelectPopperStyle(): void {
+  const appearance = previewAppearance.value;
+  const host = hostRef.value;
+  selectPopperClasses[selectPopperClass] = appearance !== undefined;
+  if (disposed || appearance === undefined || !hasSelectRule.value || host === undefined) {
+    removeSelectPopperStyle();
+    return;
+  }
+  const owner = `.el-select__popper.${selectPopperClass}`;
+  const variables = Object.entries(previewStyle.value ?? {})
+    .map(([name, value]) => `${name}:${value}`)
+    .join(";");
+  const brand = appearance.colorSource === "brand";
+  const css = `
+${owner}{${variables}}
+${owner} .el-select-dropdown__item{display:flex;align-items:center;box-sizing:border-box;min-height:var(--fd-control-height);height:auto;font-size:var(--fd-control-font-size);line-height:1.6;white-space:normal;overflow-wrap:anywhere}
+${owner} .el-select-dropdown__item>span{min-width:0;white-space:normal;overflow-wrap:anywhere}
+${owner} .el-select-dropdown__empty{font-size:var(--fd-control-font-size)}
+${
+  brand
+    ? `${owner} .el-select-dropdown__item.is-hovering{background-color:var(--fd-inset)}
+${owner} .el-select-dropdown__item.is-selected{color:var(--fd-primary-ink);background-color:var(--fd-primary-soft)}
+${owner} .el-select-dropdown__item.is-disabled{color:var(--fd-disabled-text)}`
+    : ""
+}`;
+  if (selectPopperStyleElement === undefined) {
+    selectPopperStyleElement = host.ownerDocument.createElement("style");
+    host.ownerDocument.head.append(selectPopperStyleElement);
+  }
+  selectPopperStyleElement.textContent = css;
+}
+watch([previewAppearance, previewStyle, hasSelectRule], syncSelectPopperStyle, {
+  immediate: true,
+  flush: "post",
+});
+
 const option = computed(() => {
   if (contentError.value !== null) return {};
   const parsed = parseFormOptions(props.form.options);
@@ -376,7 +467,8 @@ function validate(): void {
   --el-input-border-radius: var(--fd-radius);
 }
 
-:global(.form-preview.flowduet-appearance--brand .el-input__wrapper:focus-within) {
+:global(.form-preview.flowduet-appearance--brand .el-input__wrapper:focus-within),
+:global(.form-preview.flowduet-appearance--brand .el-select__wrapper:focus-within) {
   outline: 2px solid var(--fd-focus);
   outline-offset: 3px;
 }
@@ -396,6 +488,15 @@ function validate(): void {
 /* 在表单边界补标记前景，字段和选项可继续用原有 EP 变量覆盖；不在子选项重设通用主色。 */
 :global(.form-preview.flowduet-appearance--brand .el-form) {
   --el-color-white: var(--fd-on-primary);
+}
+
+/* EP 在 .el-select 本体初始化这些变量，需在同一层补默认；用户 inline 样式仍优先。 */
+:global(.form-preview.flowduet-appearance--brand .el-select) {
+  --el-select-input-color: var(--fd-text);
+  --el-select-input-focus-border-color: var(--fd-focus);
+  --el-select-disabled-color: var(--fd-disabled-text);
+  --el-select-disabled-border: var(--fd-border);
+  --el-select-close-hover-color: var(--fd-secondary);
 }
 
 :global(.form-preview.flowduet-appearance--brand .el-checkbox) {

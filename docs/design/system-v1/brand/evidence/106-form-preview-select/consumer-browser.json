@@ -1,0 +1,94 @@
+{
+  "browser": "156.0.8078.4",
+  "actual": {
+    "rootClass": "form-preview flowduet-appearance flowduet-appearance--brand flowduet-appearance--dark flowduet-appearance--compact",
+    "trigger": {
+      "width": 1052,
+      "height": 24,
+      "left": 24,
+      "right": 1076,
+      "top": 117.59375,
+      "bottom": 141.59375,
+      "color": "rgb(233, 237, 247)",
+      "background": "rgb(29, 36, 53)",
+      "outlineWidth": "2px",
+      "outlineOffset": "3px",
+      "whiteSpace": "normal"
+    },
+    "caret": {
+      "color": "rgb(233, 237, 247)",
+      "background": "rgba(0, 0, 0, 0)",
+      "outlineWidth": "3px",
+      "outlineOffset": "0px",
+      "whiteSpace": "normal"
+    },
+    "panel": {
+      "width": 1052,
+      "height": 110,
+      "left": 24,
+      "right": 1076,
+      "top": 154,
+      "bottom": 264,
+      "color": "rgb(0, 0, 0)",
+      "background": "rgb(29, 36, 53)",
+      "outlineWidth": "3px",
+      "outlineOffset": "0px",
+      "whiteSpace": "normal"
+    },
+    "selected": {
+      "width": 1050,
+      "height": 24,
+      "left": 25,
+      "right": 1075,
+      "top": 185,
+      "bottom": 209,
+      "color": "rgb(165, 187, 255)",
+      "background": "rgb(42, 51, 84)",
+      "outlineWidth": "3px",
+      "outlineOffset": "0px",
+      "whiteSpace": "normal"
+    },
+    "hovering": {
+      "width": 1050,
+      "height": 24,
+      "left": 25,
+      "right": 1075,
+      "top": 161,
+      "bottom": 185,
+      "color": "rgb(183, 192, 213)",
+      "background": "rgb(37, 46, 67)",
+      "outlineWidth": "3px",
+      "outlineOffset": "0px",
+      "whiteSpace": "normal"
+    },
+    "long": {
+      "width": 1050,
+      "height": 24,
+      "left": 25,
+      "right": 1075,
+      "top": 209,
+      "bottom": 233,
+      "color": "rgb(183, 192, 213)",
+      "background": "rgba(0, 0, 0, 0)",
+      "outlineWidth": "3px",
+      "outlineOffset": "0px",
+      "whiteSpace": "normal"
+    },
+    "owner": "flowduet-form-preview-select-1",
+    "instanceStyles": 1,
+    "focused": true
+  },
+  "values": {
+    "reason": "tarball 文本",
+    "decision": "no",
+    "disabled": "no"
+  },
+  "resources": [
+    "http://127.0.0.1:4180/assets/consumer-DU1Jx09T.js",
+    "http://127.0.0.1:4180/assets/form-create-Cu7C853S.js",
+    "http://127.0.0.1:4180/assets/form-create-BvKMFYHf.css"
+  ],
+  "errors": [],
+  "failures": [],
+  "result": "公开 JS / 严格 TS / CSS / 下拉真实浏览器行为通过"
+}

@@ -84,7 +84,7 @@ const xml = await exportDeployXml(session.current!.model, session.current!.forms
 
 组件层：`FormManager`（目录管理面板，内嵌 `FormDesigner` 真实设计器——菜单收口为八类常用字段与栅格布局，远程数据源 / 事件脚本 / 联动等范围外配置无 UI 入口）、`FormPreview`（真实渲染器试填、必填校验、查看值；试填值与设计定义隔离，切换目标即重置）。
 
-### FormPreview 文本与四类控件的实例外观（#104 / #105）
+### FormPreview 文本、选择控件与下拉的实例外观（#104 / #105 / #106）
 
 省略 `appearance` 时保持原预览路径。传入合法对象才显式启用新适配；类型与规则直接复用 `@flowduet/designer`，本包根也重导出同一 `ComponentAppearance` 及三类枚举类型，没有第二套配置合同：
 
@@ -108,7 +108,7 @@ function useCompactBrand(): void {
 </template>
 ```
 
-`colorSource` 为 `host` / `brand`，默认 `host`；`mode` 为 `light` / `dark`，启用时必填；`density` 为 `comfortable` / `compact`，默认舒适。两档经 **form-create 自己解析到的 EP ConfigProvider** 补 `default` / `small`，自有校验按钮及数字、单选、多选、开关的外层控件实测为 32 / 24px；旧路径按钮仍固定 `small`，外层宿主 size 继承不变。多行文本继续使用 `input + props.type=textarea`，不机械压成单行高度；勾选框、单选圆点、开关轨道与滑块保留 EP 的内部几何，不机械拉成外层控件高度。
+`colorSource` 为 `host` / `brand`，默认 `host`；`mode` 为 `light` / `dark`，启用时必填；`density` 为 `comfortable` / `compact`，默认舒适。两档经 **form-create 自己解析到的 EP ConfigProvider** 补 `default` / `small`，自有校验按钮及数字、单选、多选、开关、下拉选择框与下拉选项的外层控件实测为 32 / 24px；旧路径按钮仍固定 `small`，外层宿主 size 继承不变。多行文本继续使用 `input + props.type=textarea`，不机械压成单行高度；勾选框、单选圆点、开关轨道与滑块保留 EP 的内部几何，不机械拉成外层控件高度。
 
 跟随宿主只读取 EP 主色、中性色、字体与圆角并派生 `--fd-*`，实例范围不写 `--el-*`；品牌预设仅在所属预览实例写入局部 EP 变量。缺省标签位置补为顶置，既有表单／字段／栅格的显式 `size`、`labelPosition`、`labelWidth`、`inline`、`style` 等值优先，原 `rules` / `options` 字符串不被改写。显式配置造成的视觉偏差属于配置影响，不记为主题目标通过。
 
@@ -116,7 +116,9 @@ function useCompactBrand(): void {
 
 品牌预设还成套映射数字增减按钮、单选圆点、多选勾选／真实可达半选、开关轨道与滑块的背景和前景，禁用状态使用独立角色；长中文单选／多选选项可换行。显式字段尺寸、字段及选项 inline CSS 变量与开关宽度保持优先，多选继续消费既有 `--el-checkbox-height`；选项变量可覆盖字段继承值。由此产生的对比或布局偏差属于配置影响。
 
-当前仅 **FormPreview 的文本、多行文本、数字、单选、多选、开关及预览自有表面／反馈／操作区**完成本适配；下拉、日期与其弹层由后续切片交付。`FormManager`／`FormDesigner` 工具条及其弹层不在本切片。首批证据使用单份 EP 2.14.6、FormCreate renderer 3.3.4 与桌面 Chromium；其他 EP 解析组合、Firefox、Safari／WebKit、移动端、真实操作系统中文输入法及完整可访问性认证尚未验证。
+下拉单选使用真实 `fc-select`／`ElSelect` 及其选项面板。渲染派生规则会追加每实例 `popperClass`，并与业务已有类名合并；缺省 `teleported` / `appendTo` 不变，显式 `popperStyle` 作为 inline 样式优先。实例变量经唯一面板选择器下发，跟随宿主时不写 EP 变量，品牌面板分别映射表面、悬停、选中前景／背景、禁用和焦点。长中文选项可换行，打开或关闭时换肤不重建选择框或丢失试填。若显式 `appendTo` 指向自定义选择器，目标须在 Vue 挂载前已存在；外部挂载造成的主题／归属偏差按配置影响处理。
+
+当前仅 **FormPreview 的文本、多行文本、数字、单选、多选、下拉单选、开关、下拉真实弹层及预览自有表面／反馈／操作区**完成本适配；日期与其弹层由后续切片交付。`FormManager`／`FormDesigner` 工具条及其弹层不在本切片。首批证据使用单份 EP 2.14.6、FormCreate renderer 3.3.4 与桌面 Chromium；其他 EP 解析组合、Firefox、Safari／WebKit、移动端、真实操作系统中文输入法及完整可访问性认证尚未验证。
 
 
 宿主只做文件 I/O 与展示（下载 Blob、读 File、把模型接进 `DingtalkDesigner` / `BpmnCanvas`），文档算法不复制到宿主。纯函数形式同样可用：`saveDesignDocument(model, forms?)` / `openDesignDocument(text)` / `exportDeployXml(model, forms)` / `collectReferenceIssues(model, forms)`。

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, defineComponent, onBeforeUnmount, reactive, ref, watch } from "vue";
-import { ElButton, ElInput } from "element-plus";
+import { ElButton, ElInput, ElOption, ElSelect } from "element-plus";
 import {
   type AppearanceColorSource,
   type AppearanceDensity,
@@ -146,6 +146,44 @@ const CONTROL_FORM: FormDefinition = {
       value: true,
       props: { activeValue: true, inactiveValue: false, disabled: true },
     },
+    {
+      type: "select",
+      field: "dropdownDecision",
+      title: "下拉单选（真实弹层）",
+      value: "no",
+      validate: [{ required: true, message: "请选择下拉审批结果", trigger: "change" }],
+      props: {
+        clearable: true,
+        valueOnClear: "",
+        placeholder: "请选择审批结果",
+        popperClass: "preview-select-panel",
+      },
+      options: [
+        { label: "同意", value: "yes" },
+        { label: "拒绝", value: "no" },
+        {
+          label:
+            "长中文选项：用于核对下拉面板在窄容器和缩放时的换行、选中与键盘高亮；继续补充一段审批说明，确保在窄屏与缩放后仍需要两行以上展示；另外保留用于校验反馈和焦点恢复的说明文字，让整项内容超过紧凑面板的单行可用宽度。",
+          value: "long",
+        },
+        { label: "禁用选项", value: "disabled", disabled: true },
+      ],
+    },
+    {
+      type: "select",
+      field: "emptyDropdown",
+      title: "空选项下拉",
+      props: { placeholder: "暂无可选项" },
+      options: [],
+    },
+    {
+      type: "select",
+      field: "disabledDropdown",
+      title: "禁用下拉",
+      value: "disabled",
+      props: { disabled: true },
+      options: [{ label: "禁用已选", value: "disabled", disabled: true }],
+    },
   ]),
   options: "{}",
 };
@@ -263,6 +301,38 @@ const EXPLICIT_FORM: FormDefinition = {
         },
       ],
     },
+    {
+      type: "select",
+      field: "explicitDropdown",
+      title: "显式外部挂载下拉",
+      value: "no",
+      props: {
+        size: "large",
+        appendTo: "#form-appearance-explicit-popper-target",
+        popperClass: ["explicit-select-panel", "explicit-select-panel-secondary"],
+        popperStyle: {
+          "--fd-primary": "rgb(191, 0, 31)",
+          "--fd-primary-ink": "rgb(18, 52, 86)",
+          "--fd-primary-soft": "rgb(230, 232, 240)",
+          "--el-select-input-color": "rgb(18, 52, 86)",
+        },
+      },
+      options: [
+        { label: "显式同意", value: "yes" },
+        { label: "显式拒绝", value: "no" },
+      ],
+    },
+    {
+      type: "select",
+      field: "inlineDropdown",
+      title: "显式原位下拉",
+      value: "yes",
+      props: { teleported: false, popperClass: "inline-select-panel" },
+      options: [
+        { label: "原位同意", value: "yes" },
+        { label: "原位拒绝", value: "no" },
+      ],
+    },
   ]),
   options: JSON.stringify({
     form: {
@@ -295,6 +365,7 @@ const samplingRaceArmed = ref(false);
 const hostDark = ref(document.documentElement.classList.contains("dark"));
 const scopedDark = ref(false);
 const originallyDark = hostDark.value;
+const hostDecision = ref("hostA");
 
 function toAppearance(controls: InstanceControls): ComponentAppearance | undefined {
   if (!controls.enabled) return undefined;
@@ -384,7 +455,7 @@ onBeforeUnmount(() => {
   >
     <header class="form-appearance-header">
       <div>
-        <h2>FormPreview 文本与四类控件外观验收</h2>
+        <h2>FormPreview 字段与真实弹层外观验收</h2>
         <p>两个公开预览实例共享同一 Vue app；试填、校验反馈与设计定义各自独立。</p>
       </div>
       <div class="form-appearance-controls">
@@ -413,6 +484,10 @@ onBeforeUnmount(() => {
       <span>无关宿主控件</span>
       <ElInput data-test="form-appearance-host-input" model-value="宿主原值" />
       <ElButton type="primary" data-test="form-appearance-host-button">宿主主按钮</ElButton>
+      <ElSelect v-model="hostDecision" data-test="form-appearance-host-select">
+        <ElOption label="宿主甲" value="hostA" />
+        <ElOption label="宿主乙" value="hostB" />
+      </ElSelect>
     </div>
 
     <div class="form-appearance-grid">
@@ -486,14 +561,14 @@ onBeforeUnmount(() => {
             data-test="form-appearance-first-controls"
             @click="firstForm = CONTROL_FORM"
           >
-            四类控件样例
+            控件与下拉样例
           </button>
           <button
             type="button"
             data-test="form-appearance-first-reopen-controls"
             @click="firstForm = { ...CONTROL_FORM }"
           >
-            四类控件同 ID 重开
+            控件与下拉同 ID 重开
           </button>
           <button
             type="button"
@@ -615,7 +690,8 @@ onBeforeUnmount(() => {
   background: var(--el-bg-color);
 }
 
-.form-appearance-host-control .el-input {
+.form-appearance-host-control .el-input,
+.form-appearance-host-control .el-select {
   width: 180px;
 }
 

@@ -1,0 +1,82 @@
+{
+  "browser": "156.0.8078.4",
+  "actual": {
+    "trigger": {
+      "width": 632,
+      "height": 32,
+      "color": "rgb(32, 38, 61)",
+      "background": "rgb(255, 255, 255)",
+      "outlineWidth": "3px",
+      "outlineOffset": "0px",
+      "fontSize": "14px",
+      "lineHeight": "24px",
+      "whiteSpace": "normal",
+      "focused": true
+    },
+    "caret": {
+      "color": "rgb(98, 109, 134)",
+      "background": "rgba(0, 0, 0, 0)",
+      "outlineWidth": "3px",
+      "outlineOffset": "0px",
+      "fontSize": "14px",
+      "lineHeight": "14px",
+      "whiteSpace": "normal"
+    },
+    "panel": {
+      "color": "rgb(0, 0, 0)",
+      "background": "rgb(255, 255, 255)",
+      "outlineWidth": "3px",
+      "outlineOffset": "0px",
+      "fontSize": "12px",
+      "lineHeight": "20px",
+      "whiteSpace": "normal"
+    },
+    "selected": {
+      "width": 630,
+      "height": 34,
+      "color": "rgb(64, 158, 255)",
+      "background": "rgba(0, 0, 0, 0)",
+      "outlineWidth": "3px",
+      "outlineOffset": "0px",
+      "fontSize": "14px",
+      "lineHeight": "34px",
+      "whiteSpace": "nowrap"
+    },
+    "hovering": {
+      "width": 630,
+      "height": 34,
+      "color": "rgb(96, 98, 102)",
+      "background": "rgb(245, 247, 250)",
+      "outlineWidth": "3px",
+      "outlineOffset": "0px",
+      "fontSize": "14px",
+      "lineHeight": "34px",
+      "whiteSpace": "nowrap"
+    },
+    "disabled": {
+      "color": "rgb(168, 171, 178)",
+      "background": "rgba(0, 0, 0, 0)",
+      "outlineWidth": "3px",
+      "outlineOffset": "0px",
+      "fontSize": "14px",
+      "lineHeight": "34px",
+      "whiteSpace": "nowrap"
+    },
+    "ownerClasses": [],
+    "panelVariables": "z-index: 2017; position: absolute; inset: 1551px auto auto 56px;"
+  },
+  "errors": [
+    "console: Failed to load resource: the server responded with a status of 404 (Not Found)"
+  ],
+  "failures": [
+    "caret 未消费正文色：rgb(98, 109, 134)",
+    "焦点环宽度应为 2px，实际 3px",
+    "焦点环偏移应为 3px，实际 0px",
+    "选中前景错误：rgb(64, 158, 255)",
+    "选中背景错误：rgba(0, 0, 0, 0)",
+    "舒适选项行高应为 32，实际 34",
+    "键盘高亮背景错误：rgb(245, 247, 250)",
+    "禁用选项前景错误：rgb(168, 171, 178)",
+    "实例类与适配状态类不完整："
+  ]
+}

@@ -1,0 +1,797 @@
+{
+  "browser": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+  "viewport": {
+    "width": 1440,
+    "height": 2200,
+    "deviceScaleFactor": 1
+  },
+  "results": [
+    {
+      "id": "host-light-comfortable",
+      "className": "form-preview flowduet-appearance flowduet-appearance--host flowduet-appearance--light flowduet-appearance--comfortable",
+      "inlineStyle": "--fd-control-height: 32px; --fd-control-font-size: 14px; --fd-field-gap: 16px; --fd-panel-padding: 24px; --fd-node-padding: 16px; --fd-row-gap: 12px; --fd-canvas: #F2F3F5; --fd-surface: #FFFFFF; --fd-inset: #F5F7FA; --fd-text: #303133; --fd-secondary: #606266; --fd-muted: #6E6F70; --fd-border: #E4E7ED; --fd-control-border: #8B8C8D; --fd-primary: #409EFF; --fd-primary-hover: #79BBFF; --fd-primary-pressed: #337ECC; --fd-on-primary: #FFFFFF; --fd-primary-soft: #E6F2FF; --fd-primary-ink: #006EC6; --fd-focus: #006EC6; --fd-danger: #B4233A; --fd-danger-soft: #FFF0F2; --fd-success: #23714D; --fd-warning: #8C5C12; --fd-disabled-text: #A8ABB2; --fd-disabled-surface: #F5F7FA; --fd-font-family: \"Helvetica Neue\", Helvetica, \"PingFang SC\", \"Hiragino Sans GB\", \"Microsoft YaHei\", \"微软雅黑\", Arial, sans-serif; --fd-font-size-base: 14px; --fd-radius: 4px;",
+      "rootBackground": "rgb(255, 255, 255)",
+      "rootColor": "rgb(48, 49, 51)",
+      "rootPadding": "24px",
+      "textValue": "四类控件八组外观：中文事由",
+      "textareaValue": "四类控件八组外观：多行说明",
+      "validationText": "校验通过",
+      "validationColor": "rgb(35, 113, 77)",
+      "numberHeight": 32,
+      "numberValue": "2",
+      "numberFocused": true,
+      "numberColor": "rgb(96, 98, 102)",
+      "numberBackground": "rgb(255, 255, 255)",
+      "numberFocusWidth": "3px",
+      "numberFocusColor": "rgb(48, 49, 51)",
+      "numberFocusOffset": "0px",
+      "numberControlColor": "rgb(96, 98, 102)",
+      "numberControlBackground": "rgb(245, 247, 250)",
+      "numberControlBorder": "rgb(220, 223, 230)",
+      "radioHeight": 31.984375,
+      "radioMarker": {
+        "width": 14,
+        "height": 14
+      },
+      "radioBackground": "rgb(64, 158, 255)",
+      "radioBorder": "rgb(64, 158, 255)",
+      "radioDot": "rgb(255, 255, 255)",
+      "radioLabel": "rgb(64, 158, 255)",
+      "radioDisabledLabel": "rgb(168, 171, 178)",
+      "radioDisabledSelectedBackground": "rgb(245, 247, 250)",
+      "radioDisabledSelectedBorder": "rgb(228, 231, 237)",
+      "radioDisabledSelectedDot": "rgb(168, 171, 178)",
+      "radioChecked": true,
+      "checkboxHeight": 31.984375,
+      "checkboxMarker": {
+        "width": 14,
+        "height": 14
+      },
+      "checkboxBackground": "rgb(64, 158, 255)",
+      "checkboxBorder": "rgb(64, 158, 255)",
+      "checkboxCheck": "rgb(255, 255, 255)",
+      "checkboxLabel": "rgb(64, 158, 255)",
+      "mixedIndeterminate": true,
+      "mixedBackground": "rgb(64, 158, 255)",
+      "mixedBar": "rgb(255, 255, 255)",
+      "disabledBoxBackground": "rgb(245, 247, 250)",
+      "disabledBoxLabel": "rgb(168, 171, 178)",
+      "disabledCheckedBackground": "rgb(242, 246, 252)",
+      "disabledCheckedMark": "rgb(168, 171, 178)",
+      "checkboxValues": [true, true, false, false, true, true],
+      "switchHeight": 32,
+      "switchCore": {
+        "width": 40,
+        "height": 20
+      },
+      "switchAction": {
+        "width": 16,
+        "height": 16
+      },
+      "switchTrack": "rgb(64, 158, 255)",
+      "switchActionBackground": "rgb(255, 255, 255)",
+      "switchActionColor": "rgb(64, 158, 255)",
+      "switchChecked": true,
+      "disabledSwitchTrack": "rgb(64, 158, 255)",
+      "disabledSwitchAction": "rgb(255, 255, 255)",
+      "disabledSwitchOpacity": "0.6",
+      "hostInputStyle": null,
+      "htmlClass": "",
+      "offSwitch": {
+        "track": "rgb(220, 223, 230)",
+        "actionBackground": "rgb(255, 255, 255)",
+        "actionColor": "rgb(220, 223, 230)"
+      },
+      "focus": {
+        "radio": {
+          "width": "2px",
+          "style": "solid",
+          "color": "rgb(64, 158, 255)",
+          "offset": "1px"
+        },
+        "checkbox": {
+          "width": "2px",
+          "style": "solid",
+          "color": "rgb(64, 158, 255)",
+          "offset": "1px"
+        },
+        "switch": {
+          "width": "2px",
+          "style": "solid",
+          "color": "rgb(64, 158, 255)",
+          "offset": "1px"
+        }
+      }
+    },
+    {
+      "id": "host-light-compact",
+      "className": "form-preview flowduet-appearance flowduet-appearance--host flowduet-appearance--light flowduet-appearance--compact",
+      "inlineStyle": "--fd-control-height: 24px; --fd-control-font-size: 12px; --fd-field-gap: 12px; --fd-panel-padding: 16px; --fd-node-padding: 12px; --fd-row-gap: 8px; --fd-canvas: #F2F3F5; --fd-surface: #FFFFFF; --fd-inset: #F5F7FA; --fd-text: #303133; --fd-secondary: #606266; --fd-muted: #6E6F70; --fd-border: #E4E7ED; --fd-control-border: #8B8C8D; --fd-primary: #409EFF; --fd-primary-hover: #79BBFF; --fd-primary-pressed: #337ECC; --fd-on-primary: #FFFFFF; --fd-primary-soft: #E6F2FF; --fd-primary-ink: #006EC6; --fd-focus: #006EC6; --fd-danger: #B4233A; --fd-danger-soft: #FFF0F2; --fd-success: #23714D; --fd-warning: #8C5C12; --fd-disabled-text: #A8ABB2; --fd-disabled-surface: #F5F7FA; --fd-font-family: \"Helvetica Neue\", Helvetica, \"PingFang SC\", \"Hiragino Sans GB\", \"Microsoft YaHei\", \"微软雅黑\", Arial, sans-serif; --fd-font-size-base: 14px; --fd-radius: 4px;",
+      "rootBackground": "rgb(255, 255, 255)",
+      "rootColor": "rgb(48, 49, 51)",
+      "rootPadding": "16px",
+      "textValue": "四类控件八组外观：中文事由",
+      "textareaValue": "四类控件八组外观：多行说明",
+      "validationText": "校验通过",
+      "validationColor": "rgb(35, 113, 77)",
+      "numberHeight": 24,
+      "numberValue": "2",
+      "numberFocused": true,
+      "numberColor": "rgb(96, 98, 102)",
+      "numberBackground": "rgb(255, 255, 255)",
+      "numberFocusWidth": "3px",
+      "numberFocusColor": "rgb(48, 49, 51)",
+      "numberFocusOffset": "0px",
+      "numberControlColor": "rgb(96, 98, 102)",
+      "numberControlBackground": "rgb(245, 247, 250)",
+      "numberControlBorder": "rgb(220, 223, 230)",
+      "radioHeight": 23.96875,
+      "radioMarker": {
+        "width": 12,
+        "height": 12
+      },
+      "radioBackground": "rgb(64, 158, 255)",
+      "radioBorder": "rgb(64, 158, 255)",
+      "radioDot": "rgb(255, 255, 255)",
+      "radioLabel": "rgb(64, 158, 255)",
+      "radioDisabledLabel": "rgb(168, 171, 178)",
+      "radioDisabledSelectedBackground": "rgb(245, 247, 250)",
+      "radioDisabledSelectedBorder": "rgb(228, 231, 237)",
+      "radioDisabledSelectedDot": "rgb(168, 171, 178)",
+      "radioChecked": true,
+      "checkboxHeight": 23.96875,
+      "checkboxMarker": {
+        "width": 12,
+        "height": 12
+      },
+      "checkboxBackground": "rgb(64, 158, 255)",
+      "checkboxBorder": "rgb(64, 158, 255)",
+      "checkboxCheck": "rgb(255, 255, 255)",
+      "checkboxLabel": "rgb(64, 158, 255)",
+      "mixedIndeterminate": true,
+      "mixedBackground": "rgb(64, 158, 255)",
+      "mixedBar": "rgb(255, 255, 255)",
+      "disabledBoxBackground": "rgb(245, 247, 250)",
+      "disabledBoxLabel": "rgb(168, 171, 178)",
+      "disabledCheckedBackground": "rgb(242, 246, 252)",
+      "disabledCheckedMark": "rgb(168, 171, 178)",
+      "checkboxValues": [true, true, false, false, true, true],
+      "switchHeight": 24,
+      "switchCore": {
+        "width": 30,
+        "height": 16
+      },
+      "switchAction": {
+        "width": 12,
+        "height": 12
+      },
+      "switchTrack": "rgb(64, 158, 255)",
+      "switchActionBackground": "rgb(255, 255, 255)",
+      "switchActionColor": "rgb(64, 158, 255)",
+      "switchChecked": true,
+      "disabledSwitchTrack": "rgb(64, 158, 255)",
+      "disabledSwitchAction": "rgb(255, 255, 255)",
+      "disabledSwitchOpacity": "0.6",
+      "hostInputStyle": "",
+      "htmlClass": "",
+      "offSwitch": {
+        "track": "rgb(220, 223, 230)",
+        "actionBackground": "rgb(255, 255, 255)",
+        "actionColor": "rgb(220, 223, 230)"
+      },
+      "focus": {
+        "radio": {
+          "width": "2px",
+          "style": "solid",
+          "color": "rgb(64, 158, 255)",
+          "offset": "1px"
+        },
+        "checkbox": {
+          "width": "2px",
+          "style": "solid",
+          "color": "rgb(64, 158, 255)",
+          "offset": "1px"
+        },
+        "switch": {
+          "width": "2px",
+          "style": "solid",
+          "color": "rgb(64, 158, 255)",
+          "offset": "1px"
+        }
+      }
+    },
+    {
+      "id": "host-dark-comfortable",
+      "className": "form-preview flowduet-appearance flowduet-appearance--host flowduet-appearance--dark flowduet-appearance--comfortable",
+      "inlineStyle": "--fd-control-height: 32px; --fd-control-font-size: 14px; --fd-field-gap: 16px; --fd-panel-padding: 24px; --fd-node-padding: 16px; --fd-row-gap: 12px; --fd-canvas: #0A0A0A; --fd-surface: #141414; --fd-inset: #262727; --fd-text: #E5EAF3; --fd-secondary: #CFD3DC; --fd-muted: #8B8E93; --fd-border: #414243; --fd-control-border: #6E7074; --fd-primary: #409EFF; --fd-primary-hover: #3375B9; --fd-primary-pressed: #66B1FF; --fd-on-primary: #FFFFFF; --fd-primary-soft: #1D3753; --fd-primary-ink: #48A1FF; --fd-focus: #409EFF; --fd-danger: #FF9DAE; --fd-danger-soft: #422835; --fd-success: #81D5A6; --fd-warning: #F0C46B; --fd-disabled-text: #8D9095; --fd-disabled-surface: #262727; --fd-font-family: \"Helvetica Neue\", Helvetica, \"PingFang SC\", \"Hiragino Sans GB\", \"Microsoft YaHei\", \"微软雅黑\", Arial, sans-serif; --fd-font-size-base: 14px; --fd-radius: 4px;",
+      "rootBackground": "rgb(20, 20, 20)",
+      "rootColor": "rgb(229, 234, 243)",
+      "rootPadding": "24px",
+      "textValue": "四类控件八组外观：中文事由",
+      "textareaValue": "四类控件八组外观：多行说明",
+      "validationText": "校验通过",
+      "validationColor": "rgb(129, 213, 166)",
+      "numberHeight": 32,
+      "numberValue": "2",
+      "numberFocused": true,
+      "numberColor": "rgb(207, 211, 220)",
+      "numberBackground": "rgb(20, 20, 20)",
+      "numberFocusWidth": "3px",
+      "numberFocusColor": "rgb(229, 234, 243)",
+      "numberFocusOffset": "0px",
+      "numberControlColor": "rgb(207, 211, 220)",
+      "numberControlBackground": "rgb(38, 39, 39)",
+      "numberControlBorder": "rgb(76, 77, 79)",
+      "radioHeight": 31.984375,
+      "radioMarker": {
+        "width": 14,
+        "height": 14
+      },
+      "radioBackground": "rgb(64, 158, 255)",
+      "radioBorder": "rgb(64, 158, 255)",
+      "radioDot": "rgb(255, 255, 255)",
+      "radioLabel": "rgb(64, 158, 255)",
+      "radioDisabledLabel": "rgb(141, 144, 149)",
+      "radioDisabledSelectedBackground": "rgb(38, 39, 39)",
+      "radioDisabledSelectedBorder": "rgb(65, 66, 67)",
+      "radioDisabledSelectedDot": "rgb(141, 144, 149)",
+      "radioChecked": true,
+      "checkboxHeight": 31.984375,
+      "checkboxMarker": {
+        "width": 14,
+        "height": 14
+      },
+      "checkboxBackground": "rgb(64, 158, 255)",
+      "checkboxBorder": "rgb(64, 158, 255)",
+      "checkboxCheck": "rgb(255, 255, 255)",
+      "checkboxLabel": "rgb(64, 158, 255)",
+      "mixedIndeterminate": true,
+      "mixedBackground": "rgb(64, 158, 255)",
+      "mixedBar": "rgb(255, 255, 255)",
+      "disabledBoxBackground": "rgb(38, 39, 39)",
+      "disabledBoxLabel": "rgb(141, 144, 149)",
+      "disabledCheckedBackground": "rgb(43, 43, 44)",
+      "disabledCheckedMark": "rgb(141, 144, 149)",
+      "checkboxValues": [true, true, false, false, true, true],
+      "switchHeight": 32,
+      "switchCore": {
+        "width": 40,
+        "height": 20
+      },
+      "switchAction": {
+        "width": 16,
+        "height": 16
+      },
+      "switchTrack": "rgb(64, 158, 255)",
+      "switchActionBackground": "rgb(255, 255, 255)",
+      "switchActionColor": "rgb(64, 158, 255)",
+      "switchChecked": true,
+      "disabledSwitchTrack": "rgb(64, 158, 255)",
+      "disabledSwitchAction": "rgb(255, 255, 255)",
+      "disabledSwitchOpacity": "0.6",
+      "hostInputStyle": "",
+      "htmlClass": "dark",
+      "offSwitch": {
+        "track": "rgb(76, 77, 79)",
+        "actionBackground": "rgb(255, 255, 255)",
+        "actionColor": "rgb(76, 77, 79)"
+      },
+      "focus": {
+        "radio": {
+          "width": "2px",
+          "style": "solid",
+          "color": "rgb(64, 158, 255)",
+          "offset": "1px"
+        },
+        "checkbox": {
+          "width": "2px",
+          "style": "solid",
+          "color": "rgb(64, 158, 255)",
+          "offset": "1px"
+        },
+        "switch": {
+          "width": "2px",
+          "style": "solid",
+          "color": "rgb(64, 158, 255)",
+          "offset": "1px"
+        }
+      }
+    },
+    {
+      "id": "host-dark-compact",
+      "className": "form-preview flowduet-appearance flowduet-appearance--host flowduet-appearance--dark flowduet-appearance--compact",
+      "inlineStyle": "--fd-control-height: 24px; --fd-control-font-size: 12px; --fd-field-gap: 12px; --fd-panel-padding: 16px; --fd-node-padding: 12px; --fd-row-gap: 8px; --fd-canvas: #0A0A0A; --fd-surface: #141414; --fd-inset: #262727; --fd-text: #E5EAF3; --fd-secondary: #CFD3DC; --fd-muted: #8B8E93; --fd-border: #414243; --fd-control-border: #6E7074; --fd-primary: #409EFF; --fd-primary-hover: #3375B9; --fd-primary-pressed: #66B1FF; --fd-on-primary: #FFFFFF; --fd-primary-soft: #1D3753; --fd-primary-ink: #48A1FF; --fd-focus: #409EFF; --fd-danger: #FF9DAE; --fd-danger-soft: #422835; --fd-success: #81D5A6; --fd-warning: #F0C46B; --fd-disabled-text: #8D9095; --fd-disabled-surface: #262727; --fd-font-family: \"Helvetica Neue\", Helvetica, \"PingFang SC\", \"Hiragino Sans GB\", \"Microsoft YaHei\", \"微软雅黑\", Arial, sans-serif; --fd-font-size-base: 14px; --fd-radius: 4px;",
+      "rootBackground": "rgb(20, 20, 20)",
+      "rootColor": "rgb(229, 234, 243)",
+      "rootPadding": "16px",
+      "textValue": "四类控件八组外观：中文事由",
+      "textareaValue": "四类控件八组外观：多行说明",
+      "validationText": "校验通过",
+      "validationColor": "rgb(129, 213, 166)",
+      "numberHeight": 24,
+      "numberValue": "2",
+      "numberFocused": true,
+      "numberColor": "rgb(207, 211, 220)",
+      "numberBackground": "rgb(20, 20, 20)",
+      "numberFocusWidth": "3px",
+      "numberFocusColor": "rgb(229, 234, 243)",
+      "numberFocusOffset": "0px",
+      "numberControlColor": "rgb(207, 211, 220)",
+      "numberControlBackground": "rgb(38, 39, 39)",
+      "numberControlBorder": "rgb(76, 77, 79)",
+      "radioHeight": 23.96875,
+      "radioMarker": {
+        "width": 12,
+        "height": 12
+      },
+      "radioBackground": "rgb(64, 158, 255)",
+      "radioBorder": "rgb(64, 158, 255)",
+      "radioDot": "rgb(255, 255, 255)",
+      "radioLabel": "rgb(64, 158, 255)",
+      "radioDisabledLabel": "rgb(141, 144, 149)",
+      "radioDisabledSelectedBackground": "rgb(38, 39, 39)",
+      "radioDisabledSelectedBorder": "rgb(65, 66, 67)",
+      "radioDisabledSelectedDot": "rgb(141, 144, 149)",
+      "radioChecked": true,
+      "checkboxHeight": 23.96875,
+      "checkboxMarker": {
+        "width": 12,
+        "height": 12
+      },
+      "checkboxBackground": "rgb(64, 158, 255)",
+      "checkboxBorder": "rgb(64, 158, 255)",
+      "checkboxCheck": "rgb(255, 255, 255)",
+      "checkboxLabel": "rgb(64, 158, 255)",
+      "mixedIndeterminate": true,
+      "mixedBackground": "rgb(64, 158, 255)",
+      "mixedBar": "rgb(255, 255, 255)",
+      "disabledBoxBackground": "rgb(38, 39, 39)",
+      "disabledBoxLabel": "rgb(141, 144, 149)",
+      "disabledCheckedBackground": "rgb(43, 43, 44)",
+      "disabledCheckedMark": "rgb(141, 144, 149)",
+      "checkboxValues": [true, true, false, false, true, true],
+      "switchHeight": 24,
+      "switchCore": {
+        "width": 30,
+        "height": 16
+      },
+      "switchAction": {
+        "width": 12,
+        "height": 12
+      },
+      "switchTrack": "rgb(64, 158, 255)",
+      "switchActionBackground": "rgb(255, 255, 255)",
+      "switchActionColor": "rgb(64, 158, 255)",
+      "switchChecked": true,
+      "disabledSwitchTrack": "rgb(64, 158, 255)",
+      "disabledSwitchAction": "rgb(255, 255, 255)",
+      "disabledSwitchOpacity": "0.6",
+      "hostInputStyle": "",
+      "htmlClass": "dark",
+      "offSwitch": {
+        "track": "rgb(76, 77, 79)",
+        "actionBackground": "rgb(255, 255, 255)",
+        "actionColor": "rgb(76, 77, 79)"
+      },
+      "focus": {
+        "radio": {
+          "width": "2px",
+          "style": "solid",
+          "color": "rgb(64, 158, 255)",
+          "offset": "1px"
+        },
+        "checkbox": {
+          "width": "2px",
+          "style": "solid",
+          "color": "rgb(64, 158, 255)",
+          "offset": "1px"
+        },
+        "switch": {
+          "width": "2px",
+          "style": "solid",
+          "color": "rgb(64, 158, 255)",
+          "offset": "1px"
+        }
+      }
+    },
+    {
+      "id": "brand-light-comfortable",
+      "className": "form-preview flowduet-appearance flowduet-appearance--brand flowduet-appearance--light flowduet-appearance--comfortable",
+      "inlineStyle": "--fd-control-height: 32px; --fd-control-font-size: 14px; --fd-field-gap: 16px; --fd-panel-padding: 24px; --fd-node-padding: 16px; --fd-row-gap: 12px; --fd-canvas: #F5F6FA; --fd-surface: #FFFFFF; --fd-inset: #F0F2F8; --fd-text: #20263D; --fd-secondary: #565F76; --fd-muted: #626D86; --fd-border: #CDD2E0; --fd-control-border: #7A859E; --fd-primary: #2D3E97; --fd-primary-hover: #222F87; --fd-primary-pressed: #181F77; --fd-on-primary: #FFFFFF; --fd-primary-soft: #EAF0FF; --fd-primary-ink: #2D3E97; --fd-focus: #2D3E97; --fd-danger: #B4233A; --fd-danger-soft: #FFF0F2; --fd-success: #23714D; --fd-warning: #8C5C12; --fd-disabled-text: #8B92A4; --fd-disabled-surface: #EDF0F5; --fd-font-family: system-ui, -apple-system, \"PingFang SC\", \"Microsoft YaHei\", sans-serif; --fd-font-size-base: 14px; --fd-radius: 8px; --el-color-primary: #2D3E97; --el-color-primary-light-3: #6C78B6; --el-color-primary-light-5: #969FCB; --el-color-primary-light-7: #C0C5E0; --el-color-primary-light-8: #D5D8EA; --el-color-primary-light-9: #EAECF5; --el-color-primary-dark-2: #243279; --el-bg-color-page: #F5F6FA; --el-bg-color: #FFFFFF; --el-bg-color-overlay: #FFFFFF; --el-fill-color-blank: #FFFFFF; --el-fill-color-light: #F0F2F8; --el-text-color-primary: #20263D; --el-text-color-regular: #565F76; --el-text-color-secondary: #626D86; --el-text-color-placeholder: #626D86; --el-border-color: #7A859E; --el-border-color-hover: #7A859E; --el-border-color-light: #CDD2E0; --el-border-color-lighter: #CDD2E0; --el-disabled-text-color: #8B92A4; --el-disabled-bg-color: #EDF0F5; --el-disabled-border-color: #CDD2E0; --el-color-danger: #B4233A; --el-color-success: #23714D; --el-color-warning: #8C5C12; --el-font-family: system-ui, -apple-system, \"PingFang SC\", \"Microsoft YaHei\", sans-serif; --el-font-size-base: 14px; --el-form-label-font-size: 13px; --el-border-radius-base: 8px;",
+      "rootBackground": "rgb(255, 255, 255)",
+      "rootColor": "rgb(32, 38, 61)",
+      "rootPadding": "24px",
+      "textValue": "四类控件八组外观：中文事由",
+      "textareaValue": "四类控件八组外观：多行说明",
+      "validationText": "校验通过",
+      "validationColor": "rgb(35, 113, 77)",
+      "numberHeight": 32,
+      "numberValue": "2",
+      "numberFocused": true,
+      "numberColor": "rgb(32, 38, 61)",
+      "numberBackground": "rgb(255, 255, 255)",
+      "numberFocusWidth": "2px",
+      "numberFocusColor": "rgb(45, 62, 151)",
+      "numberFocusOffset": "3px",
+      "numberControlColor": "rgb(86, 95, 118)",
+      "numberControlBackground": "rgb(240, 242, 248)",
+      "numberControlBorder": "rgb(122, 133, 158)",
+      "radioHeight": 31.984375,
+      "radioMarker": {
+        "width": 14,
+        "height": 14
+      },
+      "radioBackground": "rgb(45, 62, 151)",
+      "radioBorder": "rgb(45, 62, 151)",
+      "radioDot": "rgb(255, 255, 255)",
+      "radioLabel": "rgb(45, 62, 151)",
+      "radioDisabledLabel": "rgb(139, 146, 164)",
+      "radioDisabledSelectedBackground": "rgb(237, 240, 245)",
+      "radioDisabledSelectedBorder": "rgb(205, 210, 224)",
+      "radioDisabledSelectedDot": "rgb(139, 146, 164)",
+      "radioChecked": true,
+      "checkboxHeight": 31.984375,
+      "checkboxMarker": {
+        "width": 14,
+        "height": 14
+      },
+      "checkboxBackground": "rgb(45, 62, 151)",
+      "checkboxBorder": "rgb(45, 62, 151)",
+      "checkboxCheck": "rgb(255, 255, 255)",
+      "checkboxLabel": "rgb(45, 62, 151)",
+      "mixedIndeterminate": true,
+      "mixedBackground": "rgb(45, 62, 151)",
+      "mixedBar": "rgb(255, 255, 255)",
+      "disabledBoxBackground": "rgb(237, 240, 245)",
+      "disabledBoxLabel": "rgb(139, 146, 164)",
+      "disabledCheckedBackground": "rgb(237, 240, 245)",
+      "disabledCheckedMark": "rgb(139, 146, 164)",
+      "checkboxValues": [true, true, false, false, true, true],
+      "switchHeight": 32,
+      "switchCore": {
+        "width": 40,
+        "height": 20
+      },
+      "switchAction": {
+        "width": 16,
+        "height": 16
+      },
+      "switchTrack": "rgb(45, 62, 151)",
+      "switchActionBackground": "rgb(255, 255, 255)",
+      "switchActionColor": "rgb(45, 62, 151)",
+      "switchChecked": true,
+      "disabledSwitchTrack": "rgb(45, 62, 151)",
+      "disabledSwitchAction": "rgb(255, 255, 255)",
+      "disabledSwitchOpacity": "0.6",
+      "hostInputStyle": "",
+      "htmlClass": "",
+      "offSwitch": {
+        "track": "rgb(122, 133, 158)",
+        "actionBackground": "rgb(255, 255, 255)",
+        "actionColor": "rgb(122, 133, 158)"
+      },
+      "focus": {
+        "radio": {
+          "width": "2px",
+          "style": "solid",
+          "color": "rgb(45, 62, 151)",
+          "offset": "3px"
+        },
+        "checkbox": {
+          "width": "2px",
+          "style": "solid",
+          "color": "rgb(45, 62, 151)",
+          "offset": "3px"
+        },
+        "switch": {
+          "width": "2px",
+          "style": "solid",
+          "color": "rgb(45, 62, 151)",
+          "offset": "3px"
+        }
+      }
+    },
+    {
+      "id": "brand-light-compact",
+      "className": "form-preview flowduet-appearance flowduet-appearance--brand flowduet-appearance--light flowduet-appearance--compact",
+      "inlineStyle": "--fd-control-height: 24px; --fd-control-font-size: 12px; --fd-field-gap: 12px; --fd-panel-padding: 16px; --fd-node-padding: 12px; --fd-row-gap: 8px; --fd-canvas: #F5F6FA; --fd-surface: #FFFFFF; --fd-inset: #F0F2F8; --fd-text: #20263D; --fd-secondary: #565F76; --fd-muted: #626D86; --fd-border: #CDD2E0; --fd-control-border: #7A859E; --fd-primary: #2D3E97; --fd-primary-hover: #222F87; --fd-primary-pressed: #181F77; --fd-on-primary: #FFFFFF; --fd-primary-soft: #EAF0FF; --fd-primary-ink: #2D3E97; --fd-focus: #2D3E97; --fd-danger: #B4233A; --fd-danger-soft: #FFF0F2; --fd-success: #23714D; --fd-warning: #8C5C12; --fd-disabled-text: #8B92A4; --fd-disabled-surface: #EDF0F5; --fd-font-family: system-ui, -apple-system, \"PingFang SC\", \"Microsoft YaHei\", sans-serif; --fd-font-size-base: 14px; --fd-radius: 8px; --el-color-primary: #2D3E97; --el-color-primary-light-3: #6C78B6; --el-color-primary-light-5: #969FCB; --el-color-primary-light-7: #C0C5E0; --el-color-primary-light-8: #D5D8EA; --el-color-primary-light-9: #EAECF5; --el-color-primary-dark-2: #243279; --el-bg-color-page: #F5F6FA; --el-bg-color: #FFFFFF; --el-bg-color-overlay: #FFFFFF; --el-fill-color-blank: #FFFFFF; --el-fill-color-light: #F0F2F8; --el-text-color-primary: #20263D; --el-text-color-regular: #565F76; --el-text-color-secondary: #626D86; --el-text-color-placeholder: #626D86; --el-border-color: #7A859E; --el-border-color-hover: #7A859E; --el-border-color-light: #CDD2E0; --el-border-color-lighter: #CDD2E0; --el-disabled-text-color: #8B92A4; --el-disabled-bg-color: #EDF0F5; --el-disabled-border-color: #CDD2E0; --el-color-danger: #B4233A; --el-color-success: #23714D; --el-color-warning: #8C5C12; --el-font-family: system-ui, -apple-system, \"PingFang SC\", \"Microsoft YaHei\", sans-serif; --el-font-size-base: 14px; --el-form-label-font-size: 13px; --el-border-radius-base: 8px;",
+      "rootBackground": "rgb(255, 255, 255)",
+      "rootColor": "rgb(32, 38, 61)",
+      "rootPadding": "16px",
+      "textValue": "四类控件八组外观：中文事由",
+      "textareaValue": "四类控件八组外观：多行说明",
+      "validationText": "校验通过",
+      "validationColor": "rgb(35, 113, 77)",
+      "numberHeight": 24,
+      "numberValue": "2",
+      "numberFocused": true,
+      "numberColor": "rgb(32, 38, 61)",
+      "numberBackground": "rgb(255, 255, 255)",
+      "numberFocusWidth": "2px",
+      "numberFocusColor": "rgb(45, 62, 151)",
+      "numberFocusOffset": "3px",
+      "numberControlColor": "rgb(86, 95, 118)",
+      "numberControlBackground": "rgb(240, 242, 248)",
+      "numberControlBorder": "rgb(122, 133, 158)",
+      "radioHeight": 23.96875,
+      "radioMarker": {
+        "width": 12,
+        "height": 12
+      },
+      "radioBackground": "rgb(45, 62, 151)",
+      "radioBorder": "rgb(45, 62, 151)",
+      "radioDot": "rgb(255, 255, 255)",
+      "radioLabel": "rgb(45, 62, 151)",
+      "radioDisabledLabel": "rgb(139, 146, 164)",
+      "radioDisabledSelectedBackground": "rgb(237, 240, 245)",
+      "radioDisabledSelectedBorder": "rgb(205, 210, 224)",
+      "radioDisabledSelectedDot": "rgb(139, 146, 164)",
+      "radioChecked": true,
+      "checkboxHeight": 23.96875,
+      "checkboxMarker": {
+        "width": 12,
+        "height": 12
+      },
+      "checkboxBackground": "rgb(45, 62, 151)",
+      "checkboxBorder": "rgb(45, 62, 151)",
+      "checkboxCheck": "rgb(255, 255, 255)",
+      "checkboxLabel": "rgb(45, 62, 151)",
+      "mixedIndeterminate": true,
+      "mixedBackground": "rgb(45, 62, 151)",
+      "mixedBar": "rgb(255, 255, 255)",
+      "disabledBoxBackground": "rgb(237, 240, 245)",
+      "disabledBoxLabel": "rgb(139, 146, 164)",
+      "disabledCheckedBackground": "rgb(237, 240, 245)",
+      "disabledCheckedMark": "rgb(139, 146, 164)",
+      "checkboxValues": [true, true, false, false, true, true],
+      "switchHeight": 24,
+      "switchCore": {
+        "width": 30,
+        "height": 16
+      },
+      "switchAction": {
+        "width": 12,
+        "height": 12
+      },
+      "switchTrack": "rgb(45, 62, 151)",
+      "switchActionBackground": "rgb(255, 255, 255)",
+      "switchActionColor": "rgb(45, 62, 151)",
+      "switchChecked": true,
+      "disabledSwitchTrack": "rgb(45, 62, 151)",
+      "disabledSwitchAction": "rgb(255, 255, 255)",
+      "disabledSwitchOpacity": "0.6",
+      "hostInputStyle": "",
+      "htmlClass": "",
+      "offSwitch": {
+        "track": "rgb(122, 133, 158)",
+        "actionBackground": "rgb(255, 255, 255)",
+        "actionColor": "rgb(122, 133, 158)"
+      },
+      "focus": {
+        "radio": {
+          "width": "2px",
+          "style": "solid",
+          "color": "rgb(45, 62, 151)",
+          "offset": "3px"
+        },
+        "checkbox": {
+          "width": "2px",
+          "style": "solid",
+          "color": "rgb(45, 62, 151)",
+          "offset": "3px"
+        },
+        "switch": {
+          "width": "2px",
+          "style": "solid",
+          "color": "rgb(45, 62, 151)",
+          "offset": "3px"
+        }
+      }
+    },
+    {
+      "id": "brand-dark-comfortable",
+      "className": "form-preview flowduet-appearance flowduet-appearance--brand flowduet-appearance--dark flowduet-appearance--comfortable",
+      "inlineStyle": "--fd-control-height: 32px; --fd-control-font-size: 14px; --fd-field-gap: 16px; --fd-panel-padding: 24px; --fd-node-padding: 16px; --fd-row-gap: 12px; --fd-canvas: #141925; --fd-surface: #1D2435; --fd-inset: #252E43; --fd-text: #E9EDF7; --fd-secondary: #B7C0D5; --fd-muted: #A3AFC9; --fd-border: #3C4864; --fd-control-border: #75839F; --fd-primary: #A5BBFF; --fd-primary-hover: #BBCCFF; --fd-primary-pressed: #93A8EB; --fd-on-primary: #171F3E; --fd-primary-soft: #2A3354; --fd-primary-ink: #A5BBFF; --fd-focus: #A5BBFF; --fd-danger: #FF9DAE; --fd-danger-soft: #422835; --fd-success: #81D5A6; --fd-warning: #F0C46B; --fd-disabled-text: #7F8AA2; --fd-disabled-surface: #252D40; --fd-font-family: system-ui, -apple-system, \"PingFang SC\", \"Microsoft YaHei\", sans-serif; --fd-font-size-base: 14px; --fd-radius: 8px; --el-color-primary: #A5BBFF; --el-color-primary-light-3: #7C8EC2; --el-color-primary-light-5: #61709A; --el-color-primary-light-7: #465172; --el-color-primary-light-8: #38425D; --el-color-primary-light-9: #2B3349; --el-color-primary-dark-2: #B7C9FF; --el-bg-color-page: #141925; --el-bg-color: #1D2435; --el-bg-color-overlay: #1D2435; --el-fill-color-blank: #1D2435; --el-fill-color-light: #252E43; --el-text-color-primary: #E9EDF7; --el-text-color-regular: #B7C0D5; --el-text-color-secondary: #A3AFC9; --el-text-color-placeholder: #A3AFC9; --el-border-color: #75839F; --el-border-color-hover: #75839F; --el-border-color-light: #3C4864; --el-border-color-lighter: #3C4864; --el-disabled-text-color: #7F8AA2; --el-disabled-bg-color: #252D40; --el-disabled-border-color: #3C4864; --el-color-danger: #FF9DAE; --el-color-success: #81D5A6; --el-color-warning: #F0C46B; --el-font-family: system-ui, -apple-system, \"PingFang SC\", \"Microsoft YaHei\", sans-serif; --el-font-size-base: 14px; --el-form-label-font-size: 13px; --el-border-radius-base: 8px;",
+      "rootBackground": "rgb(29, 36, 53)",
+      "rootColor": "rgb(233, 237, 247)",
+      "rootPadding": "24px",
+      "textValue": "四类控件八组外观：中文事由",
+      "textareaValue": "四类控件八组外观：多行说明",
+      "validationText": "校验通过",
+      "validationColor": "rgb(129, 213, 166)",
+      "numberHeight": 32,
+      "numberValue": "2",
+      "numberFocused": true,
+      "numberColor": "rgb(233, 237, 247)",
+      "numberBackground": "rgb(29, 36, 53)",
+      "numberFocusWidth": "2px",
+      "numberFocusColor": "rgb(165, 187, 255)",
+      "numberFocusOffset": "3px",
+      "numberControlColor": "rgb(183, 192, 213)",
+      "numberControlBackground": "rgb(37, 46, 67)",
+      "numberControlBorder": "rgb(117, 131, 159)",
+      "radioHeight": 31.984375,
+      "radioMarker": {
+        "width": 14,
+        "height": 14
+      },
+      "radioBackground": "rgb(165, 187, 255)",
+      "radioBorder": "rgb(165, 187, 255)",
+      "radioDot": "rgb(23, 31, 62)",
+      "radioLabel": "rgb(165, 187, 255)",
+      "radioDisabledLabel": "rgb(127, 138, 162)",
+      "radioDisabledSelectedBackground": "rgb(37, 45, 64)",
+      "radioDisabledSelectedBorder": "rgb(60, 72, 100)",
+      "radioDisabledSelectedDot": "rgb(127, 138, 162)",
+      "radioChecked": true,
+      "checkboxHeight": 31.984375,
+      "checkboxMarker": {
+        "width": 14,
+        "height": 14
+      },
+      "checkboxBackground": "rgb(165, 187, 255)",
+      "checkboxBorder": "rgb(165, 187, 255)",
+      "checkboxCheck": "rgb(23, 31, 62)",
+      "checkboxLabel": "rgb(165, 187, 255)",
+      "mixedIndeterminate": true,
+      "mixedBackground": "rgb(165, 187, 255)",
+      "mixedBar": "rgb(23, 31, 62)",
+      "disabledBoxBackground": "rgb(37, 45, 64)",
+      "disabledBoxLabel": "rgb(127, 138, 162)",
+      "disabledCheckedBackground": "rgb(37, 45, 64)",
+      "disabledCheckedMark": "rgb(127, 138, 162)",
+      "checkboxValues": [true, true, false, false, true, true],
+      "switchHeight": 32,
+      "switchCore": {
+        "width": 40,
+        "height": 20
+      },
+      "switchAction": {
+        "width": 16,
+        "height": 16
+      },
+      "switchTrack": "rgb(165, 187, 255)",
+      "switchActionBackground": "rgb(23, 31, 62)",
+      "switchActionColor": "rgb(165, 187, 255)",
+      "switchChecked": true,
+      "disabledSwitchTrack": "rgb(165, 187, 255)",
+      "disabledSwitchAction": "rgb(23, 31, 62)",
+      "disabledSwitchOpacity": "0.6",
+      "hostInputStyle": "",
+      "htmlClass": "",
+      "offSwitch": {
+        "track": "rgb(117, 131, 159)",
+        "actionBackground": "rgb(29, 36, 53)",
+        "actionColor": "rgb(117, 131, 159)"
+      },
+      "focus": {
+        "radio": {
+          "width": "2px",
+          "style": "solid",
+          "color": "rgb(165, 187, 255)",
+          "offset": "3px"
+        },
+        "checkbox": {
+          "width": "2px",
+          "style": "solid",
+          "color": "rgb(165, 187, 255)",
+          "offset": "3px"
+        },
+        "switch": {
+          "width": "2px",
+          "style": "solid",
+          "color": "rgb(165, 187, 255)",
+          "offset": "3px"
+        }
+      }
+    },
+    {
+      "id": "brand-dark-compact",
+      "className": "form-preview flowduet-appearance flowduet-appearance--brand flowduet-appearance--dark flowduet-appearance--compact",
+      "inlineStyle": "--fd-control-height: 24px; --fd-control-font-size: 12px; --fd-field-gap: 12px; --fd-panel-padding: 16px; --fd-node-padding: 12px; --fd-row-gap: 8px; --fd-canvas: #141925; --fd-surface: #1D2435; --fd-inset: #252E43; --fd-text: #E9EDF7; --fd-secondary: #B7C0D5; --fd-muted: #A3AFC9; --fd-border: #3C4864; --fd-control-border: #75839F; --fd-primary: #A5BBFF; --fd-primary-hover: #BBCCFF; --fd-primary-pressed: #93A8EB; --fd-on-primary: #171F3E; --fd-primary-soft: #2A3354; --fd-primary-ink: #A5BBFF; --fd-focus: #A5BBFF; --fd-danger: #FF9DAE; --fd-danger-soft: #422835; --fd-success: #81D5A6; --fd-warning: #F0C46B; --fd-disabled-text: #7F8AA2; --fd-disabled-surface: #252D40; --fd-font-family: system-ui, -apple-system, \"PingFang SC\", \"Microsoft YaHei\", sans-serif; --fd-font-size-base: 14px; --fd-radius: 8px; --el-color-primary: #A5BBFF; --el-color-primary-light-3: #7C8EC2; --el-color-primary-light-5: #61709A; --el-color-primary-light-7: #465172; --el-color-primary-light-8: #38425D; --el-color-primary-light-9: #2B3349; --el-color-primary-dark-2: #B7C9FF; --el-bg-color-page: #141925; --el-bg-color: #1D2435; --el-bg-color-overlay: #1D2435; --el-fill-color-blank: #1D2435; --el-fill-color-light: #252E43; --el-text-color-primary: #E9EDF7; --el-text-color-regular: #B7C0D5; --el-text-color-secondary: #A3AFC9; --el-text-color-placeholder: #A3AFC9; --el-border-color: #75839F; --el-border-color-hover: #75839F; --el-border-color-light: #3C4864; --el-border-color-lighter: #3C4864; --el-disabled-text-color: #7F8AA2; --el-disabled-bg-color: #252D40; --el-disabled-border-color: #3C4864; --el-color-danger: #FF9DAE; --el-color-success: #81D5A6; --el-color-warning: #F0C46B; --el-font-family: system-ui, -apple-system, \"PingFang SC\", \"Microsoft YaHei\", sans-serif; --el-font-size-base: 14px; --el-form-label-font-size: 13px; --el-border-radius-base: 8px;",
+      "rootBackground": "rgb(29, 36, 53)",
+      "rootColor": "rgb(233, 237, 247)",
+      "rootPadding": "16px",
+      "textValue": "四类控件八组外观：中文事由",
+      "textareaValue": "四类控件八组外观：多行说明",
+      "validationText": "校验通过",
+      "validationColor": "rgb(129, 213, 166)",
+      "numberHeight": 24,
+      "numberValue": "2",
+      "numberFocused": true,
+      "numberColor": "rgb(233, 237, 247)",
+      "numberBackground": "rgb(29, 36, 53)",
+      "numberFocusWidth": "2px",
+      "numberFocusColor": "rgb(165, 187, 255)",
+      "numberFocusOffset": "3px",
+      "numberControlColor": "rgb(183, 192, 213)",
+      "numberControlBackground": "rgb(37, 46, 67)",
+      "numberControlBorder": "rgb(117, 131, 159)",
+      "radioHeight": 23.96875,
+      "radioMarker": {
+        "width": 12,
+        "height": 12
+      },
+      "radioBackground": "rgb(165, 187, 255)",
+      "radioBorder": "rgb(165, 187, 255)",
+      "radioDot": "rgb(23, 31, 62)",
+      "radioLabel": "rgb(165, 187, 255)",
+      "radioDisabledLabel": "rgb(127, 138, 162)",
+      "radioDisabledSelectedBackground": "rgb(37, 45, 64)",
+      "radioDisabledSelectedBorder": "rgb(60, 72, 100)",
+      "radioDisabledSelectedDot": "rgb(127, 138, 162)",
+      "radioChecked": true,
+      "checkboxHeight": 23.96875,
+      "checkboxMarker": {
+        "width": 12,
+        "height": 12
+      },
+      "checkboxBackground": "rgb(165, 187, 255)",
+      "checkboxBorder": "rgb(165, 187, 255)",
+      "checkboxCheck": "rgb(23, 31, 62)",
+      "checkboxLabel": "rgb(165, 187, 255)",
+      "mixedIndeterminate": true,
+      "mixedBackground": "rgb(165, 187, 255)",
+      "mixedBar": "rgb(23, 31, 62)",
+      "disabledBoxBackground": "rgb(37, 45, 64)",
+      "disabledBoxLabel": "rgb(127, 138, 162)",
+      "disabledCheckedBackground": "rgb(37, 45, 64)",
+      "disabledCheckedMark": "rgb(127, 138, 162)",
+      "checkboxValues": [true, true, false, false, true, true],
+      "switchHeight": 24,
+      "switchCore": {
+        "width": 30,
+        "height": 16
+      },
+      "switchAction": {
+        "width": 12,
+        "height": 12
+      },
+      "switchTrack": "rgb(165, 187, 255)",
+      "switchActionBackground": "rgb(23, 31, 62)",
+      "switchActionColor": "rgb(165, 187, 255)",
+      "switchChecked": true,
+      "disabledSwitchTrack": "rgb(165, 187, 255)",
+      "disabledSwitchAction": "rgb(23, 31, 62)",
+      "disabledSwitchOpacity": "0.6",
+      "hostInputStyle": "",
+      "htmlClass": "",
+      "offSwitch": {
+        "track": "rgb(117, 131, 159)",
+        "actionBackground": "rgb(29, 36, 53)",
+        "actionColor": "rgb(117, 131, 159)"
+      },
+      "focus": {
+        "radio": {
+          "width": "2px",
+          "style": "solid",
+          "color": "rgb(165, 187, 255)",
+          "offset": "3px"
+        },
+        "checkbox": {
+          "width": "2px",
+          "style": "solid",
+          "color": "rgb(165, 187, 255)",
+          "offset": "3px"
+        },
+        "switch": {
+          "width": "2px",
+          "style": "solid",
+          "color": "rgb(165, 187, 255)",
+          "offset": "3px"
+        }
+      }
+    }
+  ],
+  "errors": [
+    "console: Failed to load resource: the server responded with a status of 404 (Not Found)"
+  ],
+  "resourceErrors": [],
+  "warnings": [],
+  "failures": [],
+  "limitations": [
+    "外观控件经 DOM 事件切换；未冒充真实 OS 中文输入法验收。",
+    "本轮仅桌面 Chromium；Firefox、Safari/WebKit、移动端与完整可访问性认证未验证。",
+    "跟随宿主的 EP 控件原值仅记录，不计为 FlowDuet 自有角色对比度通过。"
+  ]
+}
