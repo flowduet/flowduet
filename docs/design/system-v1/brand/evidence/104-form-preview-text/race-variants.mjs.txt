@@ -1,0 +1,226 @@
+import { pathToFileURL } from "node:url";
+
+const driverPath = "/private/tmp/flowduet-104-browser.JrW1iE/node_modules/playwright-core/index.mjs";
+const { chromium } = await import(pathToFileURL(driverPath).href);
+const browser = await chromium.launch({
+  headless: true,
+  executablePath:
+    process.env.FLOWDUET_CHROMIUM_PATH ||
+    "/Users/l/Library/Caches/ms-playwright/chromium-1248/chrome-mac-x64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing",
+});
+const page = await browser.newPage();
+const errors = [];
+page.on("pageerror", (error) => errors.push(error.message));
+
+try {
+  await page.goto("http://127.0.0.1:4174/scene.html", { waitUntil: "networkidle" });
+  const results = await page.evaluate(async () => {
+    const vuePath = "/node_modules/.vite/deps/vue.js?v=0d068d96";
+    const { createApp, defineComponent, h, reactive, watch } = await import(vuePath);
+    const { FormPreview } = await import("/node_modules/@flowduet/form-create/dist/index.js");
+    const form = {
+      id: "standards_race",
+      name: "Standards 竞态",
+      provider: "form-create/element-plus",
+      rules: JSON.stringify([{ type: "input", field: "reason", title: "事由", value: "默认值" }]),
+      options: "{}",
+    };
+    const lightHost = {
+      "--el-bg-color-page": "#F2F7F6",
+      "--el-bg-color": "#FAFCFC",
+      "--el-fill-color-light": "#EEF5F4",
+      "--el-text-color-primary": "#182625",
+      "--el-text-color-regular": "#4A5A58",
+      "--el-color-primary": "#0F6B65",
+    };
+    const darkHost = {
+      "--el-bg-color-page": "#101817",
+      "--el-bg-color": "#162220",
+      "--el-fill-color-light": "#1F302D",
+      "--el-text-color-primary": "#E6F2F0",
+      "--el-text-color-regular": "#B8CECA",
+      "--el-color-primary": "#7FCFC7",
+    };
+    const host = (mode = "dark", density = "comfortable") => ({ colorSource: "host", mode, density });
+    const brand = { colorSource: "brand", mode: "light", density: "comfortable" };
+    const invalid = { mode: "dark", density: "invalid-density" };
+    const scenarios = [
+      {
+        name: "合法→合法→非法",
+        initial: host("light"),
+        start: (state) => {
+          state.dark = true;
+          state.appearance = host("dark");
+          state.signalA += 1;
+        },
+        onA: (state) => {
+          state.appearance = host("dark", "compact");
+          state.signalB += 1;
+        },
+        onB: (state) => {
+          state.appearance = invalid;
+        },
+        expect: { enabled: true, mode: "dark", density: "compact", surface: "#162220", primary: "#7FCFC7" },
+      },
+      {
+        name: "采样中启用→停用",
+        initial: host("light"),
+        start: (state) => {
+          state.dark = true;
+          state.appearance = host("dark");
+          state.signalA += 1;
+        },
+        onA: (state) => {
+          state.appearance = undefined;
+        },
+        expect: { enabled: false },
+      },
+      {
+        name: "采样中启用→停用→启用",
+        initial: undefined,
+        start: (state) => {
+          state.dark = true;
+          state.appearance = host("dark", "compact");
+          state.signalA += 1;
+        },
+        onA: (state) => {
+          state.appearance = undefined;
+          state.signalB += 1;
+        },
+        onB: (state) => {
+          state.appearance = host("dark");
+        },
+        expect: { enabled: true, mode: "dark", density: "comfortable", surface: "#162220", primary: "#7FCFC7" },
+      },
+      {
+        name: "采样中卸载→重挂",
+        initial: host("light"),
+        start: (state) => {
+          state.dark = true;
+          state.appearance = host("dark");
+          state.signalA += 1;
+        },
+        onA: (state) => {
+          state.mounted = false;
+          state.signalB += 1;
+        },
+        onB: (state) => {
+          state.appearance = host("dark", "compact");
+          state.mounted = true;
+        },
+        expect: { enabled: true, mode: "dark", density: "compact", surface: "#162220", primary: "#7FCFC7", preserveInput: false },
+      },
+      {
+        name: "品牌→宿主后接非法",
+        initial: brand,
+        start: (state) => {
+          state.dark = true;
+          state.appearance = host("dark");
+          state.signalA += 1;
+        },
+        onA: (state) => {
+          state.appearance = invalid;
+        },
+        expect: { enabled: true, mode: "dark", density: "comfortable", surface: "#162220", primary: "#7FCFC7" },
+      },
+    ];
+
+    async function run(scenario) {
+      const container = document.createElement("div");
+      document.body.appendChild(container);
+      const state = reactive({
+        appearance: scenario.initial,
+        dark: false,
+        mounted: true,
+        signalA: 0,
+        signalB: 0,
+      });
+      const StageA = defineComponent({
+        props: { signal: { type: Number, required: true } },
+        setup(props) {
+          watch(() => props.signal, () => scenario.onA?.(state), { flush: "post" });
+          return () => null;
+        },
+      });
+      const StageB = defineComponent({
+        props: { signal: { type: Number, required: true } },
+        setup(props) {
+          watch(() => props.signal, () => scenario.onB?.(state), { flush: "post" });
+          return () => null;
+        },
+      });
+      const Root = defineComponent({
+        setup() {
+          return () => h("div", [
+            h("section", { id: "race-first", style: state.dark ? darkHost : lightHost }, [
+              state.mounted
+                ? h(FormPreview, { form, appearance: state.appearance })
+                : null,
+            ]),
+            h("section", { id: "race-second" }, [
+              h(FormPreview, {
+                form,
+                appearance: { colorSource: "brand", mode: "dark", density: "compact" },
+              }),
+            ]),
+            h(StageA, { signal: state.signalA }),
+            h(StageB, { signal: state.signalB }),
+          ]);
+        },
+      });
+      const app = createApp(Root);
+      app.mount(container);
+      await new Promise((resolve) => setTimeout(resolve, 60));
+      const first = () => document.querySelector("#race-first [data-test='form-preview']");
+      const second = document.querySelector("#race-second [data-test='form-preview']");
+      const input = first()?.querySelector("input");
+      if (input) {
+        input.value = "中文竞态试填";
+        input.dispatchEvent(new Event("input", { bubbles: true }));
+      }
+      await new Promise((resolve) => setTimeout(resolve, 30));
+      const secondBefore = second?.getAttribute("style");
+      scenario.start(state);
+      await new Promise((resolve) => setTimeout(resolve, 100));
+      const preview = first();
+      const actual = {
+        exists: Boolean(preview),
+        enabled: preview?.classList.contains("flowduet-appearance") ?? false,
+        mode: preview?.className.match(/flowduet-appearance--(light|dark)/)?.[1],
+        density: preview?.className.match(/flowduet-appearance--(comfortable|compact)/)?.[1],
+        surface: preview?.style.getPropertyValue("--fd-surface"),
+        primary: preview?.style.getPropertyValue("--fd-primary"),
+        writesEp: preview?.getAttribute("style")?.includes("--el-") ?? false,
+        inputValue: preview?.querySelector("input")?.value,
+        secondUnchanged: second?.getAttribute("style") === secondBefore,
+      };
+      const expected = scenario.expect;
+      const passed =
+        actual.exists &&
+        actual.enabled === expected.enabled &&
+        (!expected.enabled ||
+          (actual.mode === expected.mode &&
+            actual.density === expected.density &&
+            actual.surface === expected.surface &&
+            actual.primary === expected.primary &&
+            !actual.writesEp)) &&
+        (expected.preserveInput === false
+          ? actual.inputValue === "默认值"
+          : actual.inputValue === "中文竞态试填") &&
+        actual.secondUnchanged;
+      app.unmount();
+      container.remove();
+      return { name: scenario.name, passed, actual };
+    }
+
+    const output = [];
+    for (let round = 0; round < 3; round += 1) {
+      for (const scenario of scenarios) output.push({ round: round + 1, ...(await run(scenario)) });
+    }
+    return output;
+  });
+  console.log(JSON.stringify({ results, errors }, null, 2));
+  if (errors.length > 0 || results.some((result) => !result.passed)) process.exitCode = 1;
+} finally {
+  await browser.close();
+}

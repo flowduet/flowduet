@@ -1,6 +1,8 @@
 export { default as DingtalkDesigner } from "./components/DingtalkDesigner.vue";
 export { default as BpmnCanvas } from "./components/BpmnCanvas.vue";
 export { resolveComponentAppearance } from "./appearance.js";
+export { createAppearanceVariables, readHostAppearance } from "./appearance-style.js";
+export type { HostAppearanceContext } from "./appearance-style.js";
 export type {
   AppearanceColorSource,
   AppearanceDensity,

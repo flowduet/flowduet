@@ -1,7 +1,26 @@
 <script setup lang="ts">
-import { computed, markRaw, onBeforeMount, ref, watch } from "vue";
-import { ElButton } from "element-plus";
+import {
+  computed,
+  markRaw,
+  nextTick,
+  onBeforeMount,
+  onBeforeUnmount,
+  onMounted,
+  ref,
+  shallowRef,
+  watch,
+  type DefineComponent,
+} from "vue";
+import { ElButton, ElConfigProvider } from "element-plus";
 import formCreateFactory from "@form-create/element-ui";
+import {
+  createAppearanceVariables,
+  readHostAppearance,
+  resolveComponentAppearance,
+  type ComponentAppearance,
+  type HostAppearanceContext,
+  type ResolvedComponentAppearance,
+} from "@flowduet/designer";
 import type { FormDefinition } from "../document.js";
 import { parseFormOptions, parseFormRules } from "../form-schema.js";
 import { ensureFormCreateInstalled } from "../form-create-setup.js";
@@ -13,10 +32,17 @@ import { ensureFormCreateInstalled } from "../form-create-setup.js";
  */
 const props = defineProps<{
   form: FormDefinition;
+  /** 显式启用的实例外观；省略时保持既有预览路径。 */
+  appearance?: ComponentAppearance | undefined;
 }>();
 
 // markRaw：组件是工厂产物（含大量内部状态），避免被响应式代理拖累
 const FormCreateRenderer = markRaw(formCreateFactory.$form());
+// EP 2.14.6 声明在 exactOptionalPropertyTypes 下误把 ConfigProvider size 暴露为 prop 配置对象。
+// 仅校正其公开运行时输入；旧路径省略 size，避免内层空值覆盖宿主继承。
+const PreviewConfigProvider = ElConfigProvider as unknown as DefineComponent<{
+  size?: "default" | "small";
+}>;
 
 // 宿主未全局安装时补装（elm 组件映射注册进实例，否则字段渲染不出来）
 onBeforeMount(ensureFormCreateInstalled);
@@ -26,6 +52,65 @@ const rendererVersion = ref(0);
 /** fApi：渲染器挂载后经 update:api 事件交付（form-create v3 约定），用于触发校验 */
 const fApi = ref<{ validate?: (cb: (result: unknown) => void) => unknown } | null>(null);
 const validation = ref<{ ok: boolean; message: string } | null>(null);
+
+const hostRef = ref<HTMLElement>();
+const previewAppearance = shallowRef<ResolvedComponentAppearance>();
+const hostAppearance = shallowRef<HostAppearanceContext>();
+let disposed = false;
+let sampleTicket = 0;
+onBeforeUnmount(() => {
+  disposed = true;
+});
+function refreshHostAppearance(): void {
+  if (disposed) return;
+  hostAppearance.value =
+    previewAppearance.value?.colorSource === "host"
+      ? readHostAppearance(hostRef.value, previewAppearance.value.mode)
+      : undefined;
+}
+watch(
+  () => props.appearance,
+  async (value) => {
+    if (disposed) return;
+    const previous = previewAppearance.value;
+    const resolved = resolveComponentAppearance(value, previous);
+    previewAppearance.value = resolved;
+    // 非法配置保留上次有效结果及其宿主快照，合法启停才重新读取。
+    if (resolved === previous) return;
+    const ticket = ++sampleTicket;
+    // 票据只随合法变化推进：非法输入不得取消已排队的合法采样，合法连切只保留最后一次。
+    // 先移除本实例旧品牌 EP 变量再读宿主，避免迟到采样覆盖新状态。
+    await nextTick();
+    if (ticket === sampleTicket) refreshHostAppearance();
+  },
+  // 后置冲刷先完成宿主同周期主题类／变量补丁，再安排实例变量更新。
+  { immediate: true, flush: "post" },
+);
+onMounted(refreshHostAppearance);
+const previewClass = computed(() => {
+  const appearance = previewAppearance.value;
+  if (appearance === undefined) return "form-preview";
+  return [
+    "form-preview",
+    "flowduet-appearance",
+    `flowduet-appearance--${appearance.colorSource}`,
+    `flowduet-appearance--${appearance.mode}`,
+    `flowduet-appearance--${appearance.density}`,
+  ];
+});
+const previewStyle = computed(() =>
+  createAppearanceVariables(previewAppearance.value, hostAppearance.value),
+);
+const rendererConfig = computed<{ size?: "default" | "small" }>(() => {
+  const appearance = previewAppearance.value;
+  if (appearance === undefined) return {};
+  return { size: appearance.density === "compact" ? "small" : "default" };
+});
+const actionSize = computed(() => {
+  const appearance = previewAppearance.value;
+  if (appearance === undefined || appearance.density === "compact") return "small" as const;
+  return "default" as const;
+});
 
 // 定义换代时重建渲染器：相同默认值会被旧实例视为未变而省略更新通知。
 watch(
@@ -49,9 +134,17 @@ const contentError = computed<string | null>(() => {
 });
 
 const rule = computed(() => (contentError.value === null ? parseFormRules(props.form.rules) : []));
-const option = computed(() =>
-  contentError.value === null ? parseFormOptions(props.form.options) : {},
-);
+const appearanceEnabled = computed(() => previewAppearance.value !== undefined);
+const option = computed(() => {
+  if (contentError.value !== null) return {};
+  const parsed = parseFormOptions(props.form.options);
+  if (!appearanceEnabled.value) return parsed;
+  const form = parsed.form;
+  // 只给缺省标签位置补 R2 顶置；异常形态与所有显式值继续交给原渲染器处理。
+  if (form !== undefined && (typeof form !== "object" || form === null || Array.isArray(form)))
+    return parsed;
+  return { ...parsed, form: { labelPosition: "top", ...form } };
+});
 
 function onApi(api: unknown): void {
   fApi.value = api as { validate?: (cb: (result: unknown) => void) => unknown };
@@ -78,22 +171,24 @@ function validate(): void {
 </script>
 
 <template>
-  <div class="form-preview" data-test="form-preview">
+  <div ref="hostRef" :class="previewClass" :style="previewStyle" data-test="form-preview">
     <p v-if="contentError" class="form-preview-error" data-test="form-preview-error">
       表单内容无法解析：{{ contentError }}
     </p>
     <template v-else>
-      <component
-        :is="FormCreateRenderer"
-        :key="rendererVersion"
-        v-model="trialValue"
-        :rule="rule"
-        :option="option"
-        data-test="form-preview-render"
-        @update:api="onApi"
-      />
+      <PreviewConfigProvider v-bind="rendererConfig">
+        <component
+          :is="FormCreateRenderer"
+          :key="rendererVersion"
+          v-model="trialValue"
+          :rule="rule"
+          :option="option"
+          data-test="form-preview-render"
+          @update:api="onApi"
+        />
+      </PreviewConfigProvider>
       <div class="form-preview-actions">
-        <ElButton size="small" data-test="form-preview-validate" @click="validate">
+        <ElButton :size="actionSize" data-test="form-preview-validate" @click="validate">
           触发校验
         </ElButton>
         <span
@@ -159,5 +254,132 @@ function validate(): void {
   background: #f5f7fa;
   padding: 8px;
   border-radius: 4px;
+}
+
+/* 新适配只作用于公开 FormPreview 实例；旧路径继续消费上方原值。 */
+.form-preview.flowduet-appearance {
+  box-sizing: border-box;
+  padding: var(--fd-panel-padding);
+  border-radius: var(--fd-radius);
+  background: var(--fd-surface);
+  color: var(--fd-text);
+  font-family: var(--fd-font-family);
+}
+
+.form-preview.flowduet-appearance .form-preview-error,
+.form-preview.flowduet-appearance .form-preview-validation {
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.form-preview.flowduet-appearance .form-preview-error,
+.form-preview.flowduet-appearance .form-preview-validation:not(.form-preview-validation--ok) {
+  color: var(--fd-danger);
+}
+
+.form-preview.flowduet-appearance .form-preview-validation--ok {
+  color: var(--fd-success);
+}
+
+.form-preview.flowduet-appearance .form-preview-actions {
+  flex-wrap: wrap;
+  gap: var(--fd-row-gap);
+}
+
+.form-preview.flowduet-appearance .form-preview-values {
+  border-top-color: var(--fd-border);
+}
+
+.form-preview.flowduet-appearance .form-preview-values-label {
+  color: var(--fd-secondary);
+  line-height: 1.6;
+}
+
+.form-preview.flowduet-appearance .form-preview-values pre {
+  background: var(--fd-inset);
+  color: var(--fd-text);
+  border-radius: var(--fd-radius);
+}
+
+/* FormCreate 深层 EP 节点必须带预览根作用域，权重不依赖宿主样式导入顺序。 */
+:global(.form-preview.flowduet-appearance .el-form-item) {
+  margin-bottom: var(--fd-field-gap);
+}
+
+:global(.form-preview.flowduet-appearance .el-form-item__label) {
+  color: var(--fd-secondary);
+  font-family: var(--fd-font-family);
+  font-size: 13px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+:global(.form-preview.flowduet-appearance .el-form-item__error) {
+  position: static;
+  padding-top: 4px;
+  color: var(--fd-danger);
+  line-height: 1.6;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+:global(.form-preview.flowduet-appearance--brand :is(.el-input, .el-textarea)) {
+  --el-input-text-color: var(--fd-text);
+  --el-input-bg-color: var(--fd-surface);
+  --el-input-border-color: var(--fd-control-border);
+  --el-input-placeholder-color: var(--fd-muted);
+  --el-input-focus-border-color: var(--fd-focus);
+  --el-input-hover-border-color: var(--fd-control-border);
+  --el-input-border-radius: var(--fd-radius);
+}
+
+:global(.form-preview.flowduet-appearance--brand .el-input__wrapper:focus-within) {
+  outline: 2px solid var(--fd-focus);
+  outline-offset: 3px;
+}
+
+:global(.form-preview.flowduet-appearance--brand .el-textarea__inner:focus-visible) {
+  outline: 2px solid var(--fd-focus);
+  outline-offset: 3px;
+}
+
+:global(
+  .form-preview.flowduet-appearance--brand
+    :is(.el-input__clear, .el-textarea__icon, .el-input__count, .el-input__count-inner)
+) {
+  color: var(--fd-muted);
+}
+
+:global(.form-preview.flowduet-appearance--brand .el-button) {
+  --el-button-text-color: var(--fd-text);
+  --el-button-bg-color: var(--fd-surface);
+  --el-button-border-color: var(--fd-control-border);
+  --el-button-hover-text-color: var(--fd-text);
+  --el-button-hover-bg-color: var(--fd-inset);
+  --el-button-hover-border-color: var(--fd-control-border);
+  --el-button-active-text-color: var(--fd-text);
+  --el-button-active-bg-color: var(--fd-inset);
+  --el-button-active-border-color: var(--fd-control-border);
+  --el-button-disabled-text-color: var(--fd-disabled-text);
+  --el-button-disabled-bg-color: var(--fd-disabled-surface);
+  --el-button-disabled-border-color: var(--fd-border);
+  --el-button-outline-color: var(--fd-focus);
+}
+
+:global(.form-preview.flowduet-appearance--brand .el-button--primary) {
+  --el-button-text-color: var(--fd-on-primary);
+  --el-button-bg-color: var(--fd-primary);
+  --el-button-border-color: var(--fd-primary);
+  --el-button-hover-text-color: var(--fd-on-primary);
+  --el-button-hover-bg-color: var(--fd-primary-hover);
+  --el-button-hover-border-color: var(--fd-primary-hover);
+  --el-button-active-text-color: var(--fd-on-primary);
+  --el-button-active-bg-color: var(--fd-primary-pressed);
+  --el-button-active-border-color: var(--fd-primary-pressed);
+}
+
+:global(.form-preview.flowduet-appearance--brand .el-button:focus-visible) {
+  outline: 2px solid var(--fd-focus);
+  outline-offset: 3px;
 }
 </style>

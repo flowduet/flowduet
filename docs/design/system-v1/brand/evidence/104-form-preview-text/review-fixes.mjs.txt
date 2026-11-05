@@ -1,0 +1,122 @@
+import { writeFile } from "node:fs/promises";
+import { resolve } from "node:path";
+import { pathToFileURL } from "node:url";
+
+const [driverPath, baseUrl, outputFile] = process.argv.slice(2);
+if (!driverPath || !baseUrl || !outputFile) throw new Error("需要驱动、URL 和输出文件参数");
+const { chromium } = await import(pathToFileURL(resolve(driverPath)).href);
+const browser = await chromium.launch({
+  headless: true,
+  executablePath:
+    process.env.FLOWDUET_CHROMIUM_PATH ||
+    "/Users/l/Library/Caches/ms-playwright/chromium-1248/chrome-mac-x64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing",
+});
+const page = await browser.newPage({ viewport: { width: 1440, height: 1100 } });
+const errors = [];
+const warnings = [];
+const failures = [];
+page.on("pageerror", (error) => errors.push(error.message));
+page.on("console", (message) => {
+  if (message.type() === "warning") warnings.push(message.text());
+});
+const check = (condition, message) => {
+  if (!condition) failures.push(message);
+};
+try {
+  await page.goto(baseUrl, { waitUntil: "networkidle" });
+  await page.locator('[data-test="form-appearance-scene-btn"]').click();
+  const first = page.locator('[data-test="form-appearance-first-instance"] [data-test="form-preview"]');
+  await first.waitFor();
+  const input = await first.locator("input").first().elementHandle();
+  await input.fill("审查修复中文试填");
+  await input.focus();
+  await page.evaluate(() => {
+    const source = document.querySelector('[data-test="form-appearance-first-source"]');
+    source.value = "brand";
+    source.dispatchEvent(new Event("change", { bubbles: true }));
+  });
+  await page.waitForTimeout(150);
+  await page.evaluate(() => {
+    const dark = document.querySelector('[data-test="form-appearance-host-dark"]');
+    dark.checked = true;
+    dark.dispatchEvent(new Event("change", { bubbles: true }));
+    const source = document.querySelector('[data-test="form-appearance-first-source"]');
+    source.value = "host";
+    source.dispatchEvent(new Event("change", { bubbles: true }));
+  });
+  await page.waitForTimeout(250);
+  const hostSwitch = await first.evaluate((root) => ({
+    hostPrimary: getComputedStyle(root).getPropertyValue("--el-color-primary").trim(),
+    hostSurface: getComputedStyle(root).getPropertyValue("--el-bg-color").trim(),
+    derivedPrimary: root.style.getPropertyValue("--fd-primary"),
+    derivedSurface: root.style.getPropertyValue("--fd-surface"),
+    inlineStyle: root.getAttribute("style"),
+    inputValue: root.querySelector("input").value,
+    inputFocused: document.activeElement === root.querySelector("input"),
+  }));
+  check(hostSwitch.hostPrimary === "#409eff" && hostSwitch.hostSurface === "#141414", "测试前提不是默认深色宿主");
+  check(hostSwitch.derivedPrimary === "#409EFF", `品牌旧主色泄漏：${hostSwitch.derivedPrimary}`);
+  check(hostSwitch.derivedSurface === "#141414", `品牌旧表面泄漏：${hostSwitch.derivedSurface}`);
+  check(!hostSwitch.inlineStyle.includes("--el-"), "host 路径写入 EP 变量");
+  check(hostSwitch.inputValue === "审查修复中文试填" && hostSwitch.inputFocused, "修复丢失试填或焦点");
+
+  const second = page.locator('[data-test="form-appearance-second-instance"] [data-test="form-preview"]');
+  const primary = await second.locator(".el-button--primary").evaluate((button) => ({
+    text: button.textContent,
+    background: getComputedStyle(button).backgroundColor,
+    color: getComputedStyle(button).color,
+  }));
+  check(primary.text.includes("提交"), "主提交按钮缺失");
+  check(primary.background === "rgb(165, 187, 255)", `主按钮底色错误：${primary.background}`);
+  check(primary.color === "rgb(23, 31, 62)", `主按钮前景错误：${primary.color}`);
+
+  await page.evaluate(() => {
+    const dark = document.querySelector('[data-test="form-appearance-host-dark"]');
+    dark.checked = false;
+    dark.dispatchEvent(new Event("change", { bubbles: true }));
+    const source = document.querySelector('[data-test="form-appearance-first-source"]');
+    source.value = "host";
+    source.dispatchEvent(new Event("change", { bubbles: true }));
+  });
+  await page.waitForTimeout(250);
+  const beforeRace = await first.evaluate((root) => ({
+    surface: root.style.getPropertyValue("--fd-surface"),
+    primary: root.style.getPropertyValue("--fd-primary"),
+  }));
+  check(beforeRace.surface === "#FFFFFF" && beforeRace.primary === "#409EFF", "竞态前提不是浅色宿主快照");
+  const secondStyleBeforeRace = await second.getAttribute("style");
+  await page.locator('[data-test="form-appearance-first-sampling-race"]').click();
+  await page.waitForTimeout(250);
+  const samplingRace = await first.evaluate((root) => ({
+    className: root.className,
+    hostPrimary: getComputedStyle(root).getPropertyValue("--el-color-primary").trim(),
+    hostSurface: getComputedStyle(root).getPropertyValue("--el-bg-color").trim(),
+    derivedPrimary: root.style.getPropertyValue("--fd-primary"),
+    derivedSurface: root.style.getPropertyValue("--fd-surface"),
+    inputValue: root.querySelector("input").value,
+  }));
+  check(samplingRace.className.includes("flowduet-appearance--host") && samplingRace.className.includes("flowduet-appearance--dark"), `竞态后主题类错误：${samplingRace.className}`);
+  check(samplingRace.hostSurface.toUpperCase() === "#162220" && samplingRace.hostPrimary.toUpperCase() === "#7FCFC7", "竞态测试缺少局部深色宿主前提");
+  check(samplingRace.derivedSurface.toUpperCase() === samplingRace.hostSurface.toUpperCase(), `合法深色采样被非法配置取消：${samplingRace.derivedSurface}`);
+  check(samplingRace.derivedPrimary.toUpperCase() === samplingRace.hostPrimary.toUpperCase(), `合法深色主色被非法配置取消：${samplingRace.derivedPrimary}`);
+  check(samplingRace.inputValue === "审查修复中文试填", "竞态修复丢失中文试填");
+  check((await second.getAttribute("style")) === secondStyleBeforeRace, "第一实例竞态污染第二实例");
+  check(warnings.some((warning) => warning.includes("appearance.density")), "竞态中的非法密度缺少字段级告警");
+  check(errors.length === 0, `页面错误：${errors.join("；")}`);
+  const summary = {
+    browser: await page.evaluate(() => navigator.userAgent),
+    hostSwitch,
+    primary,
+    beforeRace,
+    samplingRace,
+    secondInstanceUnchanged: (await second.getAttribute("style")) === secondStyleBeforeRace,
+    errors,
+    warnings,
+    failures,
+  };
+  await writeFile(outputFile, JSON.stringify(summary, null, 2));
+  console.log(JSON.stringify(summary, null, 2));
+  if (failures.length > 0) process.exitCode = 1;
+} finally {
+  await browser.close();
+}

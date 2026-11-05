@@ -1,0 +1,355 @@
+import { mkdir, writeFile } from "node:fs/promises";
+import { resolve } from "node:path";
+import { pathToFileURL } from "node:url";
+
+const [driverPath, baseUrl, outputDir] = process.argv.slice(2);
+if (!driverPath || !baseUrl || !outputDir) throw new Error("需要驱动、URL 和输出目录参数");
+const { chromium } = await import(pathToFileURL(resolve(driverPath)).href);
+await mkdir(outputDir, { recursive: true });
+const browser = await chromium.launch({
+  headless: true,
+  executablePath:
+    process.env.FLOWDUET_CHROMIUM_PATH ||
+    "/Users/l/Library/Caches/ms-playwright/chromium-1248/chrome-mac-x64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing",
+});
+const page = await browser.newPage({ viewport: { width: 1440, height: 1100 }, deviceScaleFactor: 1 });
+const errors = [];
+const resourceErrors = [];
+const warnings = [];
+const failures = [];
+const results = {};
+page.on("pageerror", (error) => errors.push(`pageerror: ${error.message}`));
+page.on("console", (message) => {
+  if (message.type() === "error") errors.push(`console: ${message.text()}`);
+  if (message.type() === "warning") warnings.push(message.text());
+});
+page.on("response", (response) => {
+  if (response.status() >= 400) resourceErrors.push(`${response.status()} ${response.url()}`);
+});
+await page.addInitScript(() => {
+  window.__fdUnhandledRejections = [];
+  window.addEventListener("unhandledrejection", (event) => {
+    window.__fdUnhandledRejections.push(String(event.reason));
+  });
+});
+const check = (condition, message) => {
+  if (!condition) failures.push(message);
+};
+const firstInstance = () => page.locator('[data-test="form-appearance-first-instance"]');
+const secondInstance = () => page.locator('[data-test="form-appearance-second-instance"]');
+const first = () => firstInstance().locator('[data-test="form-preview"]');
+const second = () => secondInstance().locator('[data-test="form-preview"]');
+const firstInput = () => first().locator("input").first();
+const firstTextarea = () => first().locator("textarea");
+const validateFirst = () => first().locator('[data-test="form-preview-validate"]');
+const setSelect = async (test, value) => {
+  await page.evaluate(
+    ({ test, value }) => {
+      const select = document.querySelector(`[data-test="${test}"]`);
+      select.value = value;
+      select.dispatchEvent(new Event("change", { bubbles: true }));
+    },
+    { test, value },
+  );
+  await page.waitForTimeout(120);
+};
+const setCheckbox = async (test, checked) => {
+  await page.evaluate(
+    ({ test, checked }) => {
+      const input = document.querySelector(`[data-test="${test}"]`);
+      if (input.checked !== checked) {
+        input.checked = checked;
+        input.dispatchEvent(new Event("change", { bubbles: true }));
+      }
+    },
+    { test, checked },
+  );
+  await page.waitForTimeout(120);
+};
+const setHostDark = (dark) => setCheckbox("form-appearance-host-dark", dark);
+const unhandled = () => page.evaluate(() => window.__fdUnhandledRejections.slice());
+try {
+  await page.goto(baseUrl, { waitUntil: "networkidle" });
+  await page.evaluate(() => {
+    window.__fdHostBeforeUnload = () => "host";
+    window.__fdHostDrop = () => undefined;
+    window.onbeforeunload = window.__fdHostBeforeUnload;
+    document.body.ondrop = window.__fdHostDrop;
+  });
+  await page.locator('[data-test="form-appearance-scene-btn"]').click();
+  await first().waitFor({ state: "visible" });
+  await second().waitFor({ state: "visible" });
+
+  const legacyInput = await firstInput().elementHandle();
+  await legacyInput.fill("旧路径试填保留");
+  await legacyInput.focus();
+  await setCheckbox("form-appearance-first-enabled", false);
+  let legacy = await first().evaluate((root) => ({
+    className: root.className,
+    formClass: root.querySelector(".el-form").className,
+    buttonHeight: root.querySelector('[data-test="form-preview-validate"]').getBoundingClientRect().height,
+    value: root.querySelector("input").value,
+    focused: document.activeElement === root.querySelector("input"),
+  }));
+  check(!legacy.className.includes("flowduet-appearance"), "旧路径出现新外观 class");
+  check(legacy.formClass.includes("el-form--label-right"), "旧路径标签默认值改变");
+  check(legacy.buttonHeight === 24, `旧路径自有按钮不是 small：${legacy.buttonHeight}`);
+  check(legacy.value === "旧路径试填保留" && legacy.focused, "停用外观丢失旧路径输入或焦点");
+  await setCheckbox("form-appearance-first-enabled", true);
+  check((await validateFirst().boundingBox()).height === 32, "舒适档自有按钮不是 32px");
+  check((await legacyInput.inputValue()) === "旧路径试填保留", "重新启用丢失输入");
+  check(await legacyInput.evaluate((input) => document.activeElement === input), "重新启用丢失焦点");
+  results.legacyToggle = "旧路径 right/small 保持，启停保留输入与焦点";
+
+  await setHostDark(false);
+  await setSelect("form-appearance-first-source", "brand");
+  await setSelect("form-appearance-first-mode", "light");
+  await setSelect("form-appearance-first-density", "comfortable");
+  await firstInput().fill("");
+  await firstTextarea().fill("必填失败时保留多行说明");
+  await validateFirst().click();
+  await first().locator('[data-test="form-preview-validation"]').filter({ hasText: "校验未通过" }).waitFor();
+  await first().locator(".el-form-item__error").waitFor({ state: "visible" });
+  const failureState = await first().evaluate((root) => {
+    const error = root.querySelector(".el-form-item__error");
+    const feedback = root.querySelector('[data-test="form-preview-validation"]');
+    return {
+      errorText: error.textContent,
+      errorColor: getComputedStyle(error).color,
+      errorFontSize: getComputedStyle(error).fontSize,
+      errorLineHeight: getComputedStyle(error).lineHeight,
+      errorPosition: getComputedStyle(error).position,
+      feedbackText: feedback.textContent,
+      feedbackColor: getComputedStyle(feedback).color,
+      required: root.querySelector(".el-form-item").classList.contains("is-required"),
+    };
+  });
+  check(failureState.errorText.includes("请填写申请事由"), `真实必填错误缺失：${failureState.errorText}`);
+  check(failureState.errorColor === "rgb(180, 35, 58)", `字段错误色 ${failureState.errorColor}`);
+  check(failureState.errorFontSize === "12px" && failureState.errorLineHeight === "19.2px" && failureState.errorPosition === "static", "字段错误排版不符合 R2");
+  check(failureState.feedbackText.includes("校验未通过") && failureState.feedbackColor === "rgb(180, 35, 58)", "自有失败反馈错误");
+  check(failureState.required, "必填标记丢失");
+  results.requiredFailure = failureState;
+  check((await unhandled()).length === 0, `必填拒绝泄漏未处理异常：${await unhandled()}`);
+  await first().screenshot({ path: resolve(outputDir, "required-failure.png") });
+  await firstInput().fill("补填后校验通过");
+  await validateFirst().click();
+  await first().locator('[data-test="form-preview-validation"]').filter({ hasText: "校验通过" }).waitFor();
+  check((await unhandled()).length === 0, "成功路径产生未处理拒绝");
+  results.validation = "真实 FormCreate 必填失败→成功通过，拒绝无 unhandledrejection";
+
+  const runtimeInput = await firstInput().elementHandle();
+  const runtimeTextarea = await firstTextarea().elementHandle();
+  await runtimeInput.fill("运行时中文事由");
+  await runtimeTextarea.fill("运行时多行说明");
+  await validateFirst().click();
+  await first().locator('[data-test="form-preview-validation"]').filter({ hasText: "校验通过" }).waitFor();
+  await runtimeInput.focus();
+  for (const action of [
+    () => setSelect("form-appearance-first-density", "compact"),
+    () => setHostDark(true),
+    () => setSelect("form-appearance-first-source", "host"),
+    () => setSelect("form-appearance-first-source", "brand"),
+    () => setSelect("form-appearance-first-mode", "light"),
+    () => setSelect("form-appearance-first-density", "comfortable"),
+  ]) {
+    await action();
+    check((await runtimeInput.inputValue()) === "运行时中文事由", "换肤丢失文本试填");
+    check((await runtimeTextarea.inputValue()) === "运行时多行说明", "换肤丢失多行试填");
+    check(await runtimeInput.evaluate((input) => input.isConnected && document.activeElement === input), "换肤重建输入或丢失焦点");
+    check((await first().locator('[data-test="form-preview-validation"]').textContent()).includes("校验通过"), "换肤清除有效反馈");
+  }
+  const validStyle = await first().getAttribute("style");
+  await page.locator('[data-test="form-appearance-first-invalid"]').click();
+  check((await first().getAttribute("style")) === validStyle, "非法配置改变上次有效呈现");
+  check((await runtimeInput.inputValue()) === "运行时中文事由", "非法配置丢失输入");
+  check(warnings.some((warning) => warning.includes("appearance.density")), "非法配置缺少字段级告警");
+  await setSelect("form-appearance-first-density", "compact");
+  await runtimeInput.focus();
+  await setCheckbox("form-appearance-first-enabled", false);
+  check(!(await first().getAttribute("class")).includes("flowduet-appearance"), "合法停用未回旧路径");
+  check(await runtimeInput.evaluate((input) => document.activeElement === input), "合法停用丢失焦点");
+  await setCheckbox("form-appearance-first-enabled", true);
+  check((await runtimeInput.inputValue()) === "运行时中文事由", "合法启停丢失输入");
+  check(await runtimeInput.evaluate((input) => document.activeElement === input), "合法启用丢失焦点");
+  results.runtimeAndInvalid = "来源／主题／密度、启停与非法回退保留试填、DOM、焦点和反馈";
+
+  await runtimeTextarea.focus();
+  await runtimeTextarea.evaluate((textarea) => {
+    textarea.dispatchEvent(new CompositionEvent("compositionstart", { bubbles: true }));
+    textarea.value = "组合中的多行中文";
+    textarea.dispatchEvent(new InputEvent("input", { bubbles: true, isComposing: true }));
+  });
+  await setSelect("form-appearance-first-density", "comfortable");
+  check((await runtimeTextarea.inputValue()) === "组合中的多行中文", "组合期间换肤丢字");
+  check(await runtimeTextarea.evaluate((textarea) => document.activeElement === textarea), "组合期间换肤丢失焦点");
+  await runtimeTextarea.evaluate((textarea) => {
+    textarea.dispatchEvent(new CompositionEvent("compositionend", { bubbles: true }));
+    textarea.dispatchEvent(new InputEvent("input", { bubbles: true }));
+  });
+  await page.waitForTimeout(120);
+  check((await first().locator('[data-test="form-preview-values"]').textContent()).includes("组合中的多行中文"), "组合结束后试填值未更新");
+  results.composition = "合成中文组合期间换肤通过；未宣称真实 OS IME";
+
+  await page.locator('[data-test="form-appearance-first-reopen"]').click();
+  await page.waitForTimeout(200);
+  check((await firstInput().inputValue()) === "默认事由", "同 ID 重开未恢复默认文本");
+  check((await firstTextarea().inputValue()) === "默认说明", "同 ID 重开未恢复默认多行文本");
+  check((await first().locator('[data-test="form-preview-validation"]').count()) === 0, "同 ID 重开未清除反馈");
+  await firstInput().fill("不应进入另一张表单");
+  await page.locator('[data-test="form-appearance-first-other"]').click();
+  await page.waitForTimeout(200);
+  check((await firstInput().inputValue()) === "新表单默认值", "切换另一表单未重置");
+  check(!(await first().locator('[data-test="form-preview-values"]').textContent()).includes("不应进入另一张表单"), "另一表单混入旧试填");
+  check((await page.locator('[data-test="form-appearance-first-form-id"]').textContent()) === "form_preview_other", "另一表单标识错误");
+  await page.locator('[data-test="form-appearance-first-reopen"]').click();
+  await page.waitForTimeout(200);
+  results.definitionLifecycle = "同 ID 重开与另一表单替换均重置，外观变化不重置";
+
+  await page.mouse.move(0, 0);
+  const explicit = await second().evaluate((root) => {
+    const form = root.querySelector(".el-form");
+    const input = root.querySelector("input");
+    const label = root.querySelector(".el-form-item__label");
+    const button = root.querySelector('[data-test="form-preview-validate"]');
+    return {
+      formClass: form.className,
+      formPadding: getComputedStyle(form).padding,
+      inputHeight: input.closest(".el-input").getBoundingClientRect().height,
+      inputMaxWidth: getComputedStyle(input.closest(".el-input")).maxWidth,
+      textareaRows: root.querySelector("textarea").getAttribute("rows"),
+      labelWidth: getComputedStyle(label).width,
+      buttonHeight: button.getBoundingClientRect().height,
+    };
+  });
+  check(explicit.formClass.includes("el-form--label-right") && explicit.formClass.includes("el-form--large"), "显式表单标签／size 被覆盖");
+  check(explicit.formPadding === "7px" && explicit.inputMaxWidth === "320px", "显式 style 被覆盖");
+  check(explicit.inputHeight === 40 && explicit.buttonHeight === 24, `显式字段 large 与自有 compact 未分离：${explicit.inputHeight}/${explicit.buttonHeight}`);
+  check(explicit.textareaRows === "4" && explicit.labelWidth === "96px", "显式 rows／labelWidth 被覆盖");
+  results.explicitConfiguration = explicit;
+
+  await setSelect("form-appearance-second-mode", "light");
+  await page.mouse.move(0, 0);
+  const secondLight = await second().evaluate((root) => ({
+    style: root.getAttribute("style"),
+    background: getComputedStyle(root).backgroundColor,
+    buttonColor: getComputedStyle(root.querySelector('[data-test="form-preview-validate"]')).color,
+    buttonBackground: getComputedStyle(root.querySelector('[data-test="form-preview-validate"]')).backgroundColor,
+  }));
+  check((await page.locator("html").getAttribute("class")).includes("dark"), "双实例测试缺少深色宿主前提");
+  check(secondLight.background === "rgb(255, 255, 255)", `宿主深色污染品牌浅色表面：${secondLight.background}`);
+  check(secondLight.buttonColor === "rgb(32, 38, 61)" && secondLight.buttonBackground === "rgb(255, 255, 255)", "宿主深色污染品牌浅色按钮");
+  const hostBefore = await page.evaluate(() => ({
+    inputStyle: document.querySelector('[data-test="form-appearance-host-input"]').getAttribute("style"),
+    buttonStyle: document.querySelector('[data-test="form-appearance-host-button"]').getAttribute("style"),
+    htmlClass: document.documentElement.className,
+    styleCount: document.head.querySelectorAll("style").length,
+  }));
+  await setSelect("form-appearance-first-source", "host");
+  await setSelect("form-appearance-first-density", "comfortable");
+  check((await second().getAttribute("style")) === secondLight.style, "切换第一实例污染第二实例变量");
+  await setCheckbox("form-appearance-first-mounted", false);
+  check((await first().count()) === 0, "卸载第一实例后预览仍残留");
+  check((await second().getAttribute("style")) === secondLight.style, "卸载第一实例污染第二实例");
+  check(await page.evaluate(() => window.onbeforeunload === window.__fdHostBeforeUnload && document.body.ondrop === window.__fdHostDrop), "卸载覆盖宿主处理器");
+  await setCheckbox("form-appearance-first-mounted", true);
+  await first().waitFor({ state: "visible" });
+  const hostAfter = await page.evaluate(() => ({
+    inputStyle: document.querySelector('[data-test="form-appearance-host-input"]').getAttribute("style"),
+    buttonStyle: document.querySelector('[data-test="form-appearance-host-button"]').getAttribute("style"),
+    htmlClass: document.documentElement.className,
+    styleCount: document.head.querySelectorAll("style").length,
+  }));
+  check(JSON.stringify(hostAfter) === JSON.stringify(hostBefore), `卸载／重挂资源或宿主状态变化：${JSON.stringify(hostBefore)} → ${JSON.stringify(hostAfter)}`);
+  check((await second().getAttribute("style")) === secondLight.style, "重挂第一实例污染第二实例");
+  results.instanceIsolation = "双实例异主题、卸载／重挂、宿主控件与处理器均保持";
+
+  await setHostDark(false);
+  await setSelect("form-appearance-first-source", "brand");
+  await setSelect("form-appearance-first-mode", "light");
+  await setSelect("form-appearance-first-density", "comfortable");
+  await page.locator('[data-test="form-appearance-first-explicit"]').focus();
+  await page.keyboard.press("Tab");
+  check(await firstInput().evaluate((input) => document.activeElement === input), "键盘 Tab 未进入文本输入");
+  let focusStyle = await firstInput().evaluate((input) => {
+    const wrapper = input.closest(".el-input").querySelector(".el-input__wrapper");
+    const style = getComputedStyle(wrapper);
+    return { width: style.outlineWidth, style: style.outlineStyle, color: style.outlineColor };
+  });
+  check(focusStyle.width === "2px" && focusStyle.style === "solid" && focusStyle.color === "rgb(45, 62, 151)", `文本键盘焦点环 ${JSON.stringify(focusStyle)}`);
+  await page.keyboard.press("Tab");
+  check(await firstTextarea().evaluate((textarea) => document.activeElement === textarea), "键盘 Tab 未进入 textarea");
+  focusStyle = await firstTextarea().evaluate((textarea) => {
+    const style = getComputedStyle(textarea);
+    return { width: style.outlineWidth, style: style.outlineStyle, color: style.outlineColor };
+  });
+  check(focusStyle.width === "2px" && focusStyle.style === "solid" && focusStyle.color === "rgb(45, 62, 151)", `textarea 键盘焦点环 ${JSON.stringify(focusStyle)}`);
+  await page.keyboard.press("Tab");
+  await page.keyboard.press("Tab");
+  check(await validateFirst().evaluate((button) => document.activeElement === button), "键盘 Tab 未到达自有校验按钮");
+  focusStyle = await validateFirst().evaluate((button) => {
+    const style = getComputedStyle(button);
+    return { width: style.outlineWidth, style: style.outlineStyle, color: style.outlineColor };
+  });
+  check(focusStyle.width === "2px" && focusStyle.style === "solid" && focusStyle.color === "rgb(45, 62, 151)", `按钮键盘焦点环 ${JSON.stringify(focusStyle)}`);
+  results.keyboardFocus = "文本、textarea 与自有按钮均经真实 Tab 验证 2px 焦点环";
+
+  await page.setViewportSize({ width: 1024, height: 900 });
+  await firstInput().fill("");
+  await validateFirst().click();
+  await first().locator(".el-form-item__error").waitFor({ state: "visible" });
+  await firstInstance().evaluate((instance) => {
+    instance.style.width = "360px";
+  });
+  await first().evaluate((root) => {
+    root.style.zoom = "200%";
+  });
+  await page.waitForTimeout(250);
+  const zoom = await first().evaluate((root) => {
+    const error = root.querySelector(".el-form-item__error");
+    const button = root.querySelector('[data-test="form-preview-validate"]');
+    const rootRect = root.getBoundingClientRect();
+    const errorRect = error.getBoundingClientRect();
+    const buttonRect = button.getBoundingClientRect();
+    return {
+      root: { left: rootRect.left, right: rootRect.right, width: rootRect.width },
+      errorHeight: errorRect.height,
+      errorText: error.textContent,
+      errorWidth: errorRect.width,
+      errorScrollWidth: error.scrollWidth * 2,
+      button: { top: buttonRect.top, bottom: buttonRect.bottom, left: buttonRect.left, right: buttonRect.right },
+      documentScrollWidth: document.documentElement.scrollWidth,
+      viewportWidth: window.innerWidth,
+    };
+  });
+  check(zoom.root.left >= 0 && zoom.root.right <= 1025, `200% 缩放预览超出视口：${JSON.stringify(zoom.root)}`);
+  check(zoom.errorHeight > 41.6 && zoom.errorText.includes("长中文必填错误"), `长错误未多行：${zoom.errorHeight}`);
+  check(zoom.errorWidth >= zoom.errorScrollWidth - 1, `错误文本横向溢出：${zoom.errorWidth}/${zoom.errorScrollWidth}`);
+  check(zoom.button.left >= zoom.root.left && zoom.button.right <= zoom.root.right + 1, "缩放后自有按钮被裁切");
+  check(zoom.documentScrollWidth <= 1025, `缩放产生页面横向溢出：${zoom.documentScrollWidth}`);
+  await first().screenshot({ path: resolve(outputDir, "long-error-zoom-200.png") });
+  results.longErrorZoom = zoom;
+
+  check(!errors.some((error) => error.startsWith("pageerror:")), `页面错误：${errors.join("；")}`);
+  check((await unhandled()).length === 0, `最终仍有未处理拒绝：${await unhandled()}`);
+  const summary = {
+    browser: await page.evaluate(() => navigator.userAgent),
+    viewport: { initial: { width: 1440, height: 1100 }, zoom: { width: 1024, height: 900, cssZoom: "200%" } },
+    results,
+    errors,
+    resourceErrors,
+    warnings,
+    unhandledRejections: await unhandled(),
+    failures,
+    limitations: [
+      "组合输入使用合成 CompositionEvent/InputEvent，未执行真实 macOS 中文输入法。",
+      "缩放证据使用 CSS zoom 200%，不冒充浏览器或操作系统完整缩放矩阵。",
+      "本轮仅桌面 Chromium；Firefox、Safari/WebKit、移动端与完整可访问性认证未验证。",
+    ],
+  };
+  await writeFile(resolve(outputDir, "behavior.json"), JSON.stringify(summary, null, 2));
+  console.log(JSON.stringify({ results, errors, resourceErrors, warnings, failures }, null, 2));
+  if (failures.length > 0) process.exitCode = 1;
+} finally {
+  await browser.close();
+}

@@ -1,0 +1,239 @@
+{
+  "results": [
+    {
+      "round": 1,
+      "name": "合法→合法→非法",
+      "passed": true,
+      "actual": {
+        "exists": true,
+        "enabled": true,
+        "mode": "dark",
+        "density": "compact",
+        "surface": "#162220",
+        "primary": "#7FCFC7",
+        "writesEp": false,
+        "inputValue": "中文竞态试填",
+        "secondUnchanged": true
+      }
+    },
+    {
+      "round": 1,
+      "name": "采样中启用→停用",
+      "passed": true,
+      "actual": {
+        "exists": true,
+        "enabled": false,
+        "surface": "",
+        "primary": "",
+        "writesEp": false,
+        "inputValue": "中文竞态试填",
+        "secondUnchanged": true
+      }
+    },
+    {
+      "round": 1,
+      "name": "采样中启用→停用→启用",
+      "passed": true,
+      "actual": {
+        "exists": true,
+        "enabled": true,
+        "mode": "dark",
+        "density": "comfortable",
+        "surface": "#162220",
+        "primary": "#7FCFC7",
+        "writesEp": false,
+        "inputValue": "中文竞态试填",
+        "secondUnchanged": true
+      }
+    },
+    {
+      "round": 1,
+      "name": "采样中卸载→重挂",
+      "passed": true,
+      "actual": {
+        "exists": true,
+        "enabled": true,
+        "mode": "dark",
+        "density": "compact",
+        "surface": "#162220",
+        "primary": "#7FCFC7",
+        "writesEp": false,
+        "inputValue": "默认值",
+        "secondUnchanged": true
+      }
+    },
+    {
+      "round": 1,
+      "name": "品牌→宿主后接非法",
+      "passed": true,
+      "actual": {
+        "exists": true,
+        "enabled": true,
+        "mode": "dark",
+        "density": "comfortable",
+        "surface": "#162220",
+        "primary": "#7FCFC7",
+        "writesEp": false,
+        "inputValue": "中文竞态试填",
+        "secondUnchanged": true
+      }
+    },
+    {
+      "round": 2,
+      "name": "合法→合法→非法",
+      "passed": true,
+      "actual": {
+        "exists": true,
+        "enabled": true,
+        "mode": "dark",
+        "density": "compact",
+        "surface": "#162220",
+        "primary": "#7FCFC7",
+        "writesEp": false,
+        "inputValue": "中文竞态试填",
+        "secondUnchanged": true
+      }
+    },
+    {
+      "round": 2,
+      "name": "采样中启用→停用",
+      "passed": true,
+      "actual": {
+        "exists": true,
+        "enabled": false,
+        "surface": "",
+        "primary": "",
+        "writesEp": false,
+        "inputValue": "中文竞态试填",
+        "secondUnchanged": true
+      }
+    },
+    {
+      "round": 2,
+      "name": "采样中启用→停用→启用",
+      "passed": true,
+      "actual": {
+        "exists": true,
+        "enabled": true,
+        "mode": "dark",
+        "density": "comfortable",
+        "surface": "#162220",
+        "primary": "#7FCFC7",
+        "writesEp": false,
+        "inputValue": "中文竞态试填",
+        "secondUnchanged": true
+      }
+    },
+    {
+      "round": 2,
+      "name": "采样中卸载→重挂",
+      "passed": true,
+      "actual": {
+        "exists": true,
+        "enabled": true,
+        "mode": "dark",
+        "density": "compact",
+        "surface": "#162220",
+        "primary": "#7FCFC7",
+        "writesEp": false,
+        "inputValue": "默认值",
+        "secondUnchanged": true
+      }
+    },
+    {
+      "round": 2,
+      "name": "品牌→宿主后接非法",
+      "passed": true,
+      "actual": {
+        "exists": true,
+        "enabled": true,
+        "mode": "dark",
+        "density": "comfortable",
+        "surface": "#162220",
+        "primary": "#7FCFC7",
+        "writesEp": false,
+        "inputValue": "中文竞态试填",
+        "secondUnchanged": true
+      }
+    },
+    {
+      "round": 3,
+      "name": "合法→合法→非法",
+      "passed": true,
+      "actual": {
+        "exists": true,
+        "enabled": true,
+        "mode": "dark",
+        "density": "compact",
+        "surface": "#162220",
+        "primary": "#7FCFC7",
+        "writesEp": false,
+        "inputValue": "中文竞态试填",
+        "secondUnchanged": true
+      }
+    },
+    {
+      "round": 3,
+      "name": "采样中启用→停用",
+      "passed": true,
+      "actual": {
+        "exists": true,
+        "enabled": false,
+        "surface": "",
+        "primary": "",
+        "writesEp": false,
+        "inputValue": "中文竞态试填",
+        "secondUnchanged": true
+      }
+    },
+    {
+      "round": 3,
+      "name": "采样中启用→停用→启用",
+      "passed": true,
+      "actual": {
+        "exists": true,
+        "enabled": true,
+        "mode": "dark",
+        "density": "comfortable",
+        "surface": "#162220",
+        "primary": "#7FCFC7",
+        "writesEp": false,
+        "inputValue": "中文竞态试填",
+        "secondUnchanged": true
+      }
+    },
+    {
+      "round": 3,
+      "name": "采样中卸载→重挂",
+      "passed": true,
+      "actual": {
+        "exists": true,
+        "enabled": true,
+        "mode": "dark",
+        "density": "compact",
+        "surface": "#162220",
+        "primary": "#7FCFC7",
+        "writesEp": false,
+        "inputValue": "默认值",
+        "secondUnchanged": true
+      }
+    },
+    {
+      "round": 3,
+      "name": "品牌→宿主后接非法",
+      "passed": true,
+      "actual": {
+        "exists": true,
+        "enabled": true,
+        "mode": "dark",
+        "density": "comfortable",
+        "surface": "#162220",
+        "primary": "#7FCFC7",
+        "writesEp": false,
+        "inputValue": "中文竞态试填",
+        "secondUnchanged": true
+      }
+    }
+  ],
+  "errors": []
+}

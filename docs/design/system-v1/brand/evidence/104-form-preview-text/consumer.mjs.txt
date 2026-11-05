@@ -1,0 +1,64 @@
+import { writeFile } from "node:fs/promises";
+import { resolve } from "node:path";
+import { pathToFileURL } from "node:url";
+
+const [driverPath, baseUrl, outputFile] = process.argv.slice(2);
+if (!driverPath || !baseUrl || !outputFile) throw new Error("需要驱动、URL 和输出文件参数");
+const { chromium } = await import(pathToFileURL(resolve(driverPath)).href);
+const browser = await chromium.launch({
+  headless: true,
+  executablePath:
+    process.env.FLOWDUET_CHROMIUM_PATH ||
+    "/Users/l/Library/Caches/ms-playwright/chromium-1248/chrome-mac-x64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing",
+});
+const page = await browser.newPage({ viewport: { width: 960, height: 800 } });
+const errors = [];
+const failures = [];
+page.on("pageerror", (error) => errors.push(error.message));
+page.on("console", (message) => {
+  if (message.type() === "error") errors.push(message.text());
+});
+const check = (condition, message) => {
+  if (!condition) failures.push(message);
+};
+try {
+  await page.goto(baseUrl, { waitUntil: "networkidle" });
+  const preview = page.locator('[data-test="form-preview"]');
+  await preview.waitFor({ state: "visible" });
+  const input = preview.locator("input");
+  const textarea = preview.locator("textarea");
+  check((await input.inputValue()) === "tarball 默认文本", "公开 JS 未渲染文本默认值");
+  check((await textarea.inputValue()) === "tarball 多行文本", "公开 JS 未渲染 textarea 默认值");
+  const actual = await preview.evaluate((root) => ({
+    className: root.className,
+    primary: root.style.getPropertyValue("--el-color-primary"),
+    background: getComputedStyle(root).backgroundColor,
+    textareaBackground: getComputedStyle(root.querySelector("textarea")).backgroundColor,
+    buttonHeight: root.querySelector('[data-test="form-preview-validate"]').getBoundingClientRect().height,
+    primaryBackground: getComputedStyle(root.querySelector(".el-button--primary")).backgroundColor,
+    primaryColor: getComputedStyle(root.querySelector(".el-button--primary")).color,
+    formClass: root.querySelector(".el-form").className,
+  }));
+  check(actual.className.includes("flowduet-appearance--brand"), "公开 appearance 未生效");
+  check(actual.primary === "#A5BBFF", "公开共享品牌变量缺失");
+  check(actual.background === "rgb(29, 36, 53)", "公开 CSS 深色表面缺失");
+  check(actual.textareaBackground === "rgb(29, 36, 53)", "公开 CSS textarea 表面缺失");
+  check(actual.buttonHeight === 24, "公开密度上下文未生效");
+  check(actual.primaryBackground === "rgb(165, 187, 255)" && actual.primaryColor === "rgb(23, 31, 62)", "公开主按钮角色未生效");
+  check(actual.formClass.includes("el-form--label-top"), "公开缺省标签适配缺失");
+  await input.fill("实际安装包试填");
+  await textarea.fill("实际安装包多行试填");
+  await preview.locator('[data-test="form-preview-validate"]').click();
+  await preview.locator('[data-test="form-preview-validation"]').filter({ hasText: "校验通过" }).waitFor();
+  check((await preview.locator('[data-test="form-preview-values"]').textContent()).includes("实际安装包多行试填"), "安装包试填值未更新");
+  const resources = await page.evaluate(() => performance.getEntriesByType("resource").map((entry) => entry.name));
+  check(!resources.some((url) => url.includes("/Users/l/Documents/projects/flowduet/packages/")), "消费工程使用源码 alias");
+  check(errors.length === 0, `浏览器错误：${errors.join("；")}`);
+  await preview.screenshot({ path: resolve(outputFile, "..", "consumer.png") });
+  const summary = { actual, resources, errors, failures, result: failures.length === 0 ? "公开 JS / 严格 TS / CSS / 浏览器渲染通过" : "失败" };
+  await writeFile(outputFile, JSON.stringify(summary, null, 2));
+  console.log(JSON.stringify(summary, null, 2));
+  if (failures.length > 0) process.exitCode = 1;
+} finally {
+  await browser.close();
+}

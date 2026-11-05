@@ -1,0 +1,255 @@
+import { mkdir, writeFile } from "node:fs/promises";
+import { resolve } from "node:path";
+import { pathToFileURL } from "node:url";
+
+const [driverPath, baseUrl, outputDir] = process.argv.slice(2);
+if (!driverPath || !baseUrl || !outputDir) throw new Error("需要驱动、URL 和输出目录参数");
+const { chromium } = await import(pathToFileURL(resolve(driverPath)).href);
+await mkdir(outputDir, { recursive: true });
+const browser = await chromium.launch({
+  headless: true,
+  executablePath:
+    process.env.FLOWDUET_CHROMIUM_PATH ||
+    "/Users/l/Library/Caches/ms-playwright/chromium-1248/chrome-mac-x64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing",
+});
+const page = await browser.newPage({
+  viewport: { width: 1440, height: 1100 },
+  deviceScaleFactor: 1,
+});
+const errors = [];
+const resourceErrors = [];
+const warnings = [];
+const failures = [];
+page.on("pageerror", (error) => errors.push(`pageerror: ${error.message}`));
+page.on("console", (message) => {
+  if (message.type() === "error") errors.push(`console: ${message.text()}`);
+  if (message.type() === "warning") warnings.push(message.text());
+});
+page.on("response", (response) => {
+  if (response.status() >= 400) resourceErrors.push(`${response.status()} ${response.url()}`);
+});
+const check = (condition, message) => {
+  if (!condition) failures.push(message);
+};
+const setSelect = async (test, value) => {
+  await page.evaluate(
+    ({ test, value }) => {
+      const select = document.querySelector(`[data-test="${test}"]`);
+      select.value = value;
+      select.dispatchEvent(new Event("change", { bubbles: true }));
+    },
+    { test, value },
+  );
+};
+const setHostDark = async (dark) => {
+  await page.evaluate((dark) => {
+    const input = document.querySelector('[data-test="form-appearance-host-dark"]');
+    if (input.checked !== dark) {
+      input.checked = dark;
+      input.dispatchEvent(new Event("change", { bubbles: true }));
+    }
+  }, dark);
+};
+const firstInstance = () => page.locator('[data-test="form-appearance-first-instance"]');
+const preview = () => firstInstance().locator('[data-test="form-preview"]');
+const combinations = [
+  { colorSource: "host", mode: "light", density: "comfortable" },
+  { colorSource: "host", mode: "light", density: "compact" },
+  { colorSource: "host", mode: "dark", density: "comfortable" },
+  { colorSource: "host", mode: "dark", density: "compact" },
+  { colorSource: "brand", mode: "light", density: "comfortable" },
+  { colorSource: "brand", mode: "light", density: "compact" },
+  { colorSource: "brand", mode: "dark", density: "comfortable" },
+  { colorSource: "brand", mode: "dark", density: "compact" },
+];
+const expected = {
+  "host-light": {
+    surface: "rgb(255, 255, 255)",
+    text: "rgb(48, 49, 51)",
+    secondary: "rgb(96, 98, 102)",
+    inset: "rgb(245, 247, 250)",
+    success: "rgb(35, 113, 77)",
+  },
+  "host-dark": {
+    surface: "rgb(20, 20, 20)",
+    text: "rgb(229, 234, 243)",
+    secondary: "rgb(207, 211, 220)",
+    inset: "rgb(38, 39, 39)",
+    success: "rgb(129, 213, 166)",
+  },
+  "brand-light": {
+    surface: "rgb(255, 255, 255)",
+    text: "rgb(32, 38, 61)",
+    secondary: "rgb(86, 95, 118)",
+    inset: "rgb(240, 242, 248)",
+    success: "rgb(35, 113, 77)",
+    controlBorder: "rgb(122, 133, 158)",
+    primary: "rgb(45, 62, 151)",
+    onPrimary: "rgb(255, 255, 255)",
+  },
+  "brand-dark": {
+    surface: "rgb(29, 36, 53)",
+    text: "rgb(233, 237, 247)",
+    secondary: "rgb(183, 192, 213)",
+    inset: "rgb(37, 46, 67)",
+    success: "rgb(129, 213, 166)",
+    controlBorder: "rgb(117, 131, 159)",
+    primary: "rgb(165, 187, 255)",
+    onPrimary: "rgb(23, 31, 62)",
+  },
+};
+const results = [];
+try {
+  await page.goto(baseUrl, { waitUntil: "networkidle" });
+  await page.locator('[data-test="form-appearance-scene-btn"]').click();
+  await preview().waitFor({ state: "visible" });
+  const inputHandle = await preview().locator("input").first().elementHandle();
+  const textareaHandle = await preview().locator("textarea").elementHandle();
+  await inputHandle.fill("八组外观：中文试填事由");
+  await textareaHandle.fill("八组外观：多行中文试填说明");
+  await preview().locator('[data-test="form-preview-validate"]').click();
+  await preview().locator('[data-test="form-preview-validation"]').filter({ hasText: "校验通过" }).waitFor();
+
+  for (const combination of combinations) {
+    const { colorSource, mode, density } = combination;
+    await setHostDark(colorSource === "host" && mode === "dark");
+    await setSelect("form-appearance-first-source", colorSource);
+    if (colorSource === "brand") await setSelect("form-appearance-first-mode", mode);
+    await setSelect("form-appearance-first-density", density);
+    await inputHandle.focus();
+    await page.mouse.move(0, 0);
+    await page.waitForTimeout(300);
+    const id = `${colorSource}-${mode}-${density}`;
+    const actual = await preview().evaluate((root) => {
+      const input = root.querySelector("input");
+      const inputRoot = input.closest(".el-input");
+      const inputWrapper = inputRoot.querySelector(".el-input__wrapper");
+      const textarea = root.querySelector("textarea");
+      const button = root.querySelector('[data-test="form-preview-validate"]');
+      const primaryButton = root.querySelector(".el-button--primary");
+      const form = root.querySelector(".el-form");
+      const formItem = root.querySelector(".el-form-item");
+      const label = root.querySelector(".el-form-item__label");
+      const valuesLabel = root.querySelector(".form-preview-values-label");
+      const values = root.querySelector('[data-test="form-preview-values"]');
+      const validation = root.querySelector('[data-test="form-preview-validation"]');
+      const hostInput = document.querySelector('[data-test="form-appearance-host-input"]');
+      const hostWrapper = hostInput?.closest(".el-input")?.querySelector(".el-input__wrapper");
+      const box = (element) => {
+        const rect = element.getBoundingClientRect();
+        return { x: rect.x, right: rect.right, width: rect.width, height: rect.height };
+      };
+      return {
+        className: root.className,
+        inlineStyle: root.getAttribute("style"),
+        rootBackground: getComputedStyle(root).backgroundColor,
+        rootColor: getComputedStyle(root).color,
+        rootPadding: getComputedStyle(root).padding,
+        inputHeight: box(inputRoot).height,
+        inputFontSize: getComputedStyle(input).fontSize,
+        inputColor: getComputedStyle(input).color,
+        inputBackground: getComputedStyle(inputWrapper).backgroundColor,
+        inputShadow: getComputedStyle(inputWrapper).boxShadow,
+        textareaConnected: textarea.isConnected,
+        textareaRows: textarea.getAttribute("rows"),
+        textareaHeight: box(textarea).height,
+        textareaFontSize: getComputedStyle(textarea).fontSize,
+        textareaColor: getComputedStyle(textarea).color,
+        textareaBackground: getComputedStyle(textarea).backgroundColor,
+        textareaShadow: getComputedStyle(textarea).boxShadow,
+        buttonHeight: box(button).height,
+        buttonFontSize: getComputedStyle(button).fontSize,
+        buttonColor: getComputedStyle(button).color,
+        buttonBackground: getComputedStyle(button).backgroundColor,
+        primaryButtonText: primaryButton?.textContent,
+        primaryButtonColor: primaryButton ? getComputedStyle(primaryButton).color : null,
+        primaryButtonBackground: primaryButton ? getComputedStyle(primaryButton).backgroundColor : null,
+        formClass: form.className,
+        fieldMarginBottom: getComputedStyle(formItem).marginBottom,
+        labelFontSize: getComputedStyle(label).fontSize,
+        labelLineHeight: getComputedStyle(label).lineHeight,
+        labelColor: getComputedStyle(label).color,
+        valuesLabelColor: getComputedStyle(valuesLabel).color,
+        valuesColor: getComputedStyle(values).color,
+        valuesBackground: getComputedStyle(values).backgroundColor,
+        validationColor: getComputedStyle(validation).color,
+        validationText: validation.textContent,
+        inputValue: input.value,
+        textareaValue: textarea.value,
+        inputFocused: document.activeElement === input,
+        hostInputStyle: hostInput?.getAttribute("style"),
+        hostInputShadow: hostWrapper ? getComputedStyle(hostWrapper).boxShadow : null,
+        htmlClass: document.documentElement.className,
+      };
+    });
+    const roles = expected[`${colorSource}-${mode}`];
+    const expectedHeight = density === "compact" ? 24 : 32;
+    const expectedFont = density === "compact" ? "12px" : "14px";
+    const expectedPadding = density === "compact" ? "16px" : "24px";
+    check(actual.className.includes(`flowduet-appearance--${colorSource}`), `${id}: 配色 class 错误`);
+    check(actual.className.includes(`flowduet-appearance--${mode}`), `${id}: 主题 class 错误`);
+    check(actual.className.includes(`flowduet-appearance--${density}`), `${id}: 密度 class 错误`);
+    check(actual.rootBackground === roles.surface, `${id}: 预览表面 ${actual.rootBackground}`);
+    check(actual.rootColor === roles.text, `${id}: 预览正文 ${actual.rootColor}`);
+    check(actual.rootPadding === expectedPadding, `${id}: 面板内边距 ${actual.rootPadding}`);
+    check(actual.inputHeight === expectedHeight, `${id}: 输入高度 ${actual.inputHeight}`);
+    check(actual.buttonHeight === expectedHeight, `${id}: 自有按钮高度 ${actual.buttonHeight}`);
+    check(actual.inputFontSize === expectedFont, `${id}: 输入字号 ${actual.inputFontSize}`);
+    check(actual.textareaFontSize === expectedFont, `${id}: textarea 字号 ${actual.textareaFontSize}`);
+    check(actual.buttonFontSize === expectedFont, `${id}: 按钮字号 ${actual.buttonFontSize}`);
+    check(actual.textareaConnected && actual.textareaRows === "4", `${id}: textarea 形态改变`);
+    check(actual.textareaHeight > expectedHeight, `${id}: textarea 被机械压缩成单行高度`);
+    check(actual.formClass.includes("el-form--label-top"), `${id}: 缺省标签未顶置`);
+    check(actual.fieldMarginBottom === (density === "compact" ? "12px" : "16px"), `${id}: 字段间距 ${actual.fieldMarginBottom}`);
+    check(actual.labelFontSize === "13px", `${id}: 标签字号 ${actual.labelFontSize}`);
+    check(actual.labelLineHeight === "20.8px", `${id}: 标签行高 ${actual.labelLineHeight}`);
+    check(actual.labelColor === roles.secondary, `${id}: 标签颜色 ${actual.labelColor}`);
+    check(actual.valuesLabelColor === roles.secondary, `${id}: 值说明颜色 ${actual.valuesLabelColor}`);
+    check(actual.valuesColor === roles.text, `${id}: 试填值文字 ${actual.valuesColor}`);
+    check(actual.valuesBackground === roles.inset, `${id}: 试填值底 ${actual.valuesBackground}`);
+    check(actual.validationColor === roles.success && actual.validationText.includes("校验通过"), `${id}: 自有成功反馈错误`);
+    check(actual.inputValue === "八组外观：中文试填事由", `${id}: 文本试填丢失`);
+    check(actual.textareaValue === "八组外观：多行中文试填说明", `${id}: 多行试填丢失`);
+    check(actual.inputFocused, `${id}: 输入焦点未保留`);
+    if (colorSource === "host") {
+      check(!actual.inlineStyle.includes("--el-"), `${id}: host 写入 EP 变量`);
+      if (mode === "dark") check(actual.htmlClass.includes("dark"), `${id}: 宿主深色未启用`);
+    } else {
+      check(actual.inlineStyle.includes("--el-color-primary"), `${id}: brand 缺少局部 EP 主色`);
+      check(!actual.htmlClass.includes("dark"), `${id}: 品牌实例错误切换宿主深色`);
+      check(actual.inputColor === roles.text, `${id}: 品牌输入文字 ${actual.inputColor}`);
+      check(actual.inputBackground === roles.surface, `${id}: 品牌输入底 ${actual.inputBackground}`);
+      check(actual.inputShadow.includes(roles.primary), `${id}: 品牌输入焦点边界 ${actual.inputShadow}`);
+      check(actual.textareaColor === roles.text, `${id}: 品牌 textarea 文字 ${actual.textareaColor}`);
+      check(actual.textareaBackground === roles.surface, `${id}: 品牌 textarea 底 ${actual.textareaBackground}`);
+      check(actual.textareaShadow.includes(roles.controlBorder), `${id}: 品牌 textarea 边界 ${actual.textareaShadow}`);
+      check(actual.buttonColor === roles.text, `${id}: 品牌自有按钮文字 ${actual.buttonColor}`);
+      check(actual.buttonBackground === roles.surface, `${id}: 品牌自有按钮底 ${actual.buttonBackground}`);
+      check(actual.primaryButtonText?.includes("提交"), `${id}: 主提交按钮缺失`);
+      check(actual.primaryButtonBackground === roles.primary, `${id}: 主按钮底 ${actual.primaryButtonBackground}`);
+      check(actual.primaryButtonColor === roles.onPrimary, `${id}: 主按钮前景 ${actual.primaryButtonColor}`);
+    }
+    await preview().screenshot({ path: resolve(outputDir, `${id}.png`) });
+    results.push({ id, ...actual });
+  }
+  check(!errors.some((error) => error.startsWith("pageerror:")), `页面错误：${errors.join("；")}`);
+  const summary = {
+    browser: await page.evaluate(() => navigator.userAgent),
+    viewport: { width: 1440, height: 1100, deviceScaleFactor: 1 },
+    results,
+    errors,
+    resourceErrors,
+    warnings,
+    failures,
+    limitations: [
+      "外观控件经 DOM 事件切换；未冒充真实 OS 中文输入法验收。",
+      "本轮仅桌面 Chromium；Firefox、Safari/WebKit、移动端与完整可访问性认证未验证。",
+      "跟随宿主的 EP 输入原值仅记录，不计为 FlowDuet 自有角色对比度通过。",
+    ],
+  };
+  await writeFile(resolve(outputDir, "matrix.json"), JSON.stringify(summary, null, 2));
+  console.log(JSON.stringify({ combinations: results.length, errors, resourceErrors, warnings, failures }, null, 2));
+  if (failures.length > 0) process.exitCode = 1;
+} finally {
+  await browser.close();
+}

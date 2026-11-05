@@ -108,7 +108,9 @@ function useLegacyAppearance(): void {
 
 `@flowduet/designer` 包根同时导出 `ComponentAppearance`、`ResolvedComponentAppearance` 及其枚举类型，以及供其他 FlowDuet 组件复用的 `resolveComponentAppearance(value, previous?)`。后者补全合法配置；`previous` 传入当前有效结果时用于非法回退，合法省略返回 `undefined`，调用方应在合法停用后清空自己的 `previous`，避免后续非法输入复活旧主题。
 
-当前仅 **DingtalkDesigner 的节点属性抽屉**完成本适配；`FormPreview` 由后续切片交付。`propertyEditing="external"` 不渲染抽屉，合法 `appearance` 没有可见效果，也不影响宿主自有属性面板。原生 `select` 的系统选项弹层外观受浏览器和操作系统限制，不为像素一致替换成 `ElSelect`。
+共享色板与宿主读取经包根 `createAppearanceVariables`、`readHostAppearance` 及 `HostAppearanceContext` 类型提供，FormPreview 由此复用同一 R2 映射而不复制算法或深引源码。这些函数不负责 EP size 注入；各组件须使用自己解析到的 EP 副本提供密度上下文。
+
+当前 **DingtalkDesigner 的节点属性抽屉**，以及 **FormPreview 的文本、多行文本与预览自有表面／反馈／操作区**已分别完成对应切片；FormPreview 其余字段与弹层仍由后续切片交付。`propertyEditing="external"` 不渲染抽屉，合法 `appearance` 没有可见效果，也不影响宿主自有属性面板。原生 `select` 的系统选项弹层外观受浏览器和操作系统限制，不为像素一致替换成 `ElSelect`。
 
 首批验证环境为单份 Element Plus 2.14.6 与桌面 Chromium；其他 EP 版本、Firefox、Safari／WebKit、移动端、真实操作系统中文输入法及完整可访问性认证尚未验证。
 
