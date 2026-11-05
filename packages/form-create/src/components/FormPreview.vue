@@ -346,6 +346,11 @@ function validate(): void {
   white-space: normal;
 }
 
+/* EP 已开放的高度变量仍优先；未指定时才让长标签自然撑开。 */
+:global(.form-preview.flowduet-appearance .el-checkbox) {
+  height: var(--el-checkbox-height, auto);
+}
+
 :global(.form-preview.flowduet-appearance :is(.el-radio--small, .el-checkbox--small)) {
   padding-block: 2.4px;
 }
@@ -388,15 +393,20 @@ function validate(): void {
   color: var(--fd-muted);
 }
 
+/* 在表单边界补标记前景，字段和选项可继续用原有 EP 变量覆盖；不在子选项重设通用主色。 */
+:global(.form-preview.flowduet-appearance--brand .el-form) {
+  --el-color-white: var(--fd-on-primary);
+}
+
 :global(.form-preview.flowduet-appearance--brand .el-checkbox) {
   --el-checkbox-text-color: var(--fd-secondary);
   --el-checkbox-bg-color: var(--fd-surface);
   --el-checkbox-input-border: 1px solid var(--fd-control-border);
   --el-checkbox-input-border-color-hover: var(--fd-focus);
-  --el-checkbox-checked-text-color: var(--fd-primary-ink);
-  --el-checkbox-checked-input-border-color: var(--fd-primary);
-  --el-checkbox-checked-bg-color: var(--fd-primary);
-  --el-checkbox-checked-icon-color: var(--fd-on-primary);
+  --el-checkbox-checked-text-color: var(--el-color-primary);
+  --el-checkbox-checked-input-border-color: var(--el-color-primary);
+  --el-checkbox-checked-bg-color: var(--el-color-primary);
+  --el-checkbox-checked-icon-color: var(--el-color-white);
   --el-checkbox-disabled-border-color: var(--fd-border);
   --el-checkbox-disabled-input-fill: var(--fd-disabled-surface);
   --el-checkbox-disabled-icon-color: var(--fd-disabled-text);
@@ -406,10 +416,6 @@ function validate(): void {
 }
 
 :global(.form-preview.flowduet-appearance--brand .el-radio) {
-  --el-color-primary: var(--fd-primary);
-  --el-color-white: var(--fd-on-primary);
-  --el-disabled-bg-color: var(--fd-disabled-surface);
-  --el-disabled-border-color: var(--fd-border);
   --el-text-color-placeholder: var(--fd-disabled-text);
   --el-radio-text-color: var(--fd-secondary);
   --el-radio-input-bg-color: var(--fd-surface);

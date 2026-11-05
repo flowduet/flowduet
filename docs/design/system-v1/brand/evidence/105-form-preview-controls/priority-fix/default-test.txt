@@ -1,0 +1,97 @@
+
+> flowduet-monorepo@0.0.0 test /Users/l/Documents/projects/flowduet
+> pnpm -r test
+
+Scope: 4 of 5 workspace projects
+packages/core test$ vitest run
+packages/core test:  RUN  v5.0.1 /Users/l/Documents/projects/flowduet/packages/core
+packages/core test:  Test Files  14 passed (14)
+packages/core test:       Tests  148 passed (148)
+packages/core test:    Start at  14:55:26
+packages/core test:    Duration  1.42s (tests 53%, transform 33%, import 13%, worker 2%)
+packages/core test:   Transform  transforming modules took 2.53s · 33% of tracked time, re-done on every run
+packages/core test:              persist transforms across runs with fsModuleCache: true
+packages/core test:              learn more: https://vitest.dev/guide/improving-performance#caching-between-reruns
+packages/core test: Done
+packages/designer test$ vitest run
+packages/designer test:  RUN  v5.0.1 /Users/l/Documents/projects/flowduet/packages/designer
+packages/designer test:  Test Files  15 passed (15)
+packages/designer test:       Tests  202 passed (202)
+packages/designer test:    Start at  14:55:28
+packages/designer test:    Duration  11.21s (tests 45%, environment 22%, import 19%, transform 13%)
+packages/designer test: Done
+packages/form-create test$ vitest run
+packages/form-create test:  RUN  v5.0.1 /Users/l/Documents/projects/flowduet/packages/form-create
+packages/form-create test:  ❯ src/components/retained-manager.test.ts (69 tests | 5 failed) 108620ms
+packages/form-create test:    ❯ retained 关闭与旧回调补充边界 (8)
+packages/form-create test:      × retained序列化异常不关闭，修正后成功提交一次 5326ms
+packages/form-create test:    ❯ retained 多实例与捕获版本 (2)
+packages/form-create test:      × 捕获中同步新输入使候选失效，下一次仍可收集最新值 5393ms
+packages/form-create test:    × 同一表单对象被宿主原位改写也不覆盖当前输入 6124ms
+packages/form-create test:    × 旧Dialog迟到modelValue回调不能关闭同ID重开的编辑器 9153ms
+packages/form-create test:    × 同ID新会话尚未挂载时不读取或收集旧子ref 6287ms
+packages/form-create test: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+packages/form-create test:  FAIL  src/components/retained-manager.test.ts > retained 关闭与旧回调补充边界 > retained序列化异常不关闭，修正后成功提交一次
+packages/form-create test: Error: Test timed out in 5000ms.
+packages/form-create test: If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+packages/form-create test:  ❯ src/components/retained-manager.test.ts:249:3
+packages/form-create test:     247|     expect(vm.hasOpenEditor()).toBe(true);
+packages/form-create test:     248|   });
+packages/form-create test:     249|   it("retained序列化异常不关闭，修正后成功提交一次", async () => {
+packages/form-create test:        |   ^
+packages/form-create test:     250|     const manager = await retainedProtocolManager();
+packages/form-create test:     251|     const { vm, target: wrapper } = manager;
+packages/form-create test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/5]⎯
+packages/form-create test:  FAIL  src/components/retained-manager.test.ts > retained 多实例与捕获版本 > 捕获中同步新输入使候选失效，下一次仍可收集最新值
+packages/form-create test: Error: Test timed out in 5000ms.
+packages/form-create test: If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+packages/form-create test:  ❯ src/components/retained-manager.test.ts:349:3
+packages/form-create test:     347|     expect((managers[1]!.vm as unknown as ManagerVm).hasOpenEditor()).…
+packages/form-create test:     348|   });
+packages/form-create test:     349|   it("捕获中同步新输入使候选失效，下一次仍可收集最新值", async () => {
+packages/form-create test:        |   ^
+packages/form-create test:     350|     const { owner, target: wrapper, vm } = await retainedEditor();
+packages/form-create test:     351|     const input = await owner.step(() => selectRetained({ owner, targe…
+packages/form-create test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/5]⎯
+packages/form-create test:  FAIL  src/components/retained-manager.test.ts > 同一表单对象被宿主原位改写也不覆盖当前输入
+packages/form-create test: Error: Test timed out in 5000ms.
+packages/form-create test: If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+packages/form-create test:  ❯ src/components/retained-manager.test.ts:423:1
+packages/form-create test:     421| });
+packages/form-create test:     422|
+packages/form-create test:     423| it("同一表单对象被宿主原位改写也不覆盖当前输入", async () => {
+packages/form-create test:        | ^
+packages/form-create test:     424|   const manager = await retainedProtocolManager();
+packages/form-create test:     425|   const { vm, target: wrapper } = manager;
+packages/form-create test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/5]⎯
+packages/form-create test:  FAIL  src/components/retained-manager.test.ts > 旧Dialog迟到modelValue回调不能关闭同ID重开的编辑器
+packages/form-create test: Error: Test timed out in 5000ms.
+packages/form-create test: If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+packages/form-create test:  ❯ src/components/retained-manager.test.ts:435:1
+packages/form-create test:     433| });
+packages/form-create test:     434|
+packages/form-create test:     435| it("旧Dialog迟到modelValue回调不能关闭同ID重开的编辑器", async () => {
+packages/form-create test:        | ^
+packages/form-create test:     436|   const manager = await retainedProtocolManager();
+packages/form-create test:     437|   const { vm, target: wrapper } = manager;
+packages/form-create test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/5]⎯
+packages/form-create test:  FAIL  src/components/retained-manager.test.ts > 同ID新会话尚未挂载时不读取或收集旧子ref
+packages/form-create test: Error: Test timed out in 5000ms.
+packages/form-create test: If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+packages/form-create test:  ❯ src/components/retained-manager.test.ts:486:1
+packages/form-create test:     484| });
+packages/form-create test:     485|
+packages/form-create test:     486| it("同ID新会话尚未挂载时不读取或收集旧子ref", async () => {
+packages/form-create test:        | ^
+packages/form-create test:     487|   const manager = await retainedProtocolManager();
+packages/form-create test:     488|   const { vm, target: wrapper } = manager;
+packages/form-create test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/5]⎯
+packages/form-create test:  Test Files  1 failed | 16 passed (17)
+packages/form-create test:       Tests  5 failed | 325 passed (330)
+packages/form-create test:    Start at  14:55:40
+packages/form-create test:    Duration  232.95s (tests 87%, import 9%, environment 3%, transform 1%)
+packages/form-create test: Failed
+/Users/l/Documents/projects/flowduet/packages/form-create:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @flowduet/form-create@0.1.0 test: `vitest run`
+Exit status 1
+ ELIFECYCLE  Test failed. See above for more details.

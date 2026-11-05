@@ -230,6 +230,39 @@ const EXPLICIT_FORM: FormDefinition = {
       style: "--el-switch-on-color: rgb(18, 52, 86); --el-color-white: rgb(1, 2, 3)",
       props: { width: 56, activeText: "接收", inactiveText: "停用" },
     },
+    {
+      type: "radio",
+      field: "groupDecision",
+      title: "字段级单选颜色",
+      value: "yes",
+      style: "--el-color-primary: rgb(191, 0, 31); --el-color-white: rgb(10, 20, 30)",
+      options: [
+        { label: "继承字段颜色", value: "yes" },
+        {
+          label: "选项颜色优先",
+          value: "override",
+          style: "--el-color-primary: rgb(18, 52, 86); --el-color-white: rgb(1, 2, 3)",
+        },
+      ],
+    },
+    {
+      type: "checkbox",
+      field: "groupTags",
+      title: "字段级多选颜色",
+      value: ["a", "override"],
+      props: { size: "default" },
+      style:
+        "--el-color-primary: rgb(191, 0, 31); --el-color-white: rgb(10, 20, 30); --el-checkbox-height: 56px",
+      options: [
+        { label: "继承字段颜色", value: "a" },
+        {
+          label: "选项颜色优先",
+          value: "override",
+          style:
+            "--el-color-primary: rgb(18, 52, 86); --el-color-white: rgb(1, 2, 3); --el-checkbox-height: 72px",
+        },
+      ],
+    },
   ]),
   options: JSON.stringify({
     form: {

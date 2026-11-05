@@ -88,6 +88,8 @@ try {
   const legacyNumber = await firstNumberInput().elementHandle();
   await legacyNumber.focus();
   await setCheckbox("form-appearance-first-enabled", false);
+  // 启停会分批更新 EP 的尺寸 class；等待公开几何收敛，避免并行运行时读到中间帧。
+  await page.waitForFunction(() => document.querySelector('[data-test="form-appearance-first-instance"] [data-test="form-preview-validate"]').getBoundingClientRect().height === 24);
   let legacy = await first().evaluate((root) => ({
     className: root.className,
     formClass: root.querySelector(".el-form").className,
@@ -108,6 +110,7 @@ try {
   check(legacyValues.amount === 2 && legacyValues.decision === "yes" && legacyValues.tags.includes("beta") && legacyValues.notify === true, `旧路径四类试填异常 ${JSON.stringify(legacyValues)}`);
   await legacyNumber.focus();
   await setCheckbox("form-appearance-first-enabled", true);
+  await page.waitForFunction(() => document.querySelector('[data-test="form-appearance-first-instance"] [data-test="form-preview-validate"]').getBoundingClientRect().height === 32);
   check((await validateFirst().boundingBox()).height === 32, "舒适档自有按钮不是 32px");
   check((await legacyNumber.inputValue()) === "2", "重新启用丢失数字");
   check(await legacyNumber.evaluate((input) => document.activeElement === input), "重新启用丢失焦点");

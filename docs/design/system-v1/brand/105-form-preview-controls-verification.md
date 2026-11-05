@@ -117,3 +117,67 @@
 - Firefox、Safari／WebKit、移动端与完整可访问性认证未验证；Chromium 通过不推断其他环境兼容。
 - Playground 仍有既有 favicon 404 控制台日志；独立 tarball 消费页使用 data favicon，浏览器错误为空。
 - 未执行本地 Node 22 矩阵或远端 CI；Node 22／24 双矩阵与维护者审阅留待后续 PR。
+
+## 2026-11-05 完整补丁复审后的显式配置修复
+
+本次完整补丁复审固定对象为 `e1ec425...99a18d49`，在此前通过结论之外补出两项重要反例。用户明确要求先评论登记再修复；[登记评论](https://github.com/flowduet/flowduet/issues/105#issuecomment-6651539229)保留发现及授权范围。此前暂停、失败与修正记录仍是历史事实，本节不将其改写为历史通过。
+
+- F1／Standards／P2：字段 `rule.style` 落在 FormCreate group 上；原新增选项本体变量覆盖继承的 `--el-color-primary`／`--el-color-white`。本次将标记默认前景放到 `.el-form` 边界，让表单、字段和选项 inline 配置继续覆盖；多选消费继承的 EP 主色／白色，移除单选重复的通用主色、白色及禁用背景／边界变量。[颜色红色结果](evidence/105-form-preview-controls/explicit-color-red.json)记录品牌四组共 20 项失败；修复后关闭。
+- F2／Spec／P2：`height:auto` 忽略原有效的 `--el-checkbox-height`。本次多选使用 `var(--el-checkbox-height, auto)`，无显式变量时保持原长标签自然撑开。[高度红色结果](evidence/105-form-preview-controls/explicit-height-red.json)记录八组共 16 项失败；修复后字段 56px、选项 72px 均保持。该回归显式使用 EP default 尺寸，以核对旧路径原本有效的变量合同，不将 EP 原有 large 固定高度行为误报为本次缺陷。
+
+### 回归与真实产物证据
+
+测试接缝仍为公开 `FormPreview`＋真实 FormCreate 交互及浏览器计算结果，不新增内部测试 API。Playground 的显式配置实例新增字段级颜色和选项覆盖示例；[定向脚本](evidence/105-form-preview-controls/explicit-priority.mjs.txt)覆盖旧路径及全部八组，未放宽已有显式 20px 高度或长文本合同。漏检原因为既有证据只覆盖选项级颜色和直接 height，未覆盖字段继承及高度变量；本次补相应公开场景断言。
+
+更新包实际打包到 `/private/tmp/flowduet-105-priority-pack/flowduet-form-create-0.1.0.tgz`，使用 `npm install --offline --ignore-scripts --no-audit --no-fund <tarball>` 更新临时消费工程 `/private/tmp/flowduet-105-height-consumer.pRQBHh` 的真实安装包；其余两包及既有依赖不变，不使用源码 alias。`tsc --noEmit` 与两页 Vite 生产构建通过，生产场景 URL 为 `http://127.0.0.1:4176/scene.html`。工作区及安装包 CSS SHA-256 均为 `3e09f7dd8cd40410d3dab9f1edc3cae95ddf4ff0261c0fb65fd026f394141ec3`。依赖仍为单份 EP 2.14.6、renderer 3.3.4、Vue 3.5.44。
+
+最终实际 tarball 结果均为 `errors=[]`、`failures=[]`：
+
+- [显式配置九组](evidence/105-form-preview-controls/priority-fix/explicit-priority.json)：字段颜色 `rgb(191,0,31)` 与标记 `rgb(10,20,30)`、选项更高优先级的 `rgb(18,52,86)`／`rgb(1,2,3)`、56／72px 高度均通过。
+- [四类控件八组矩阵](evidence/105-form-preview-controls/priority-fix/matrix.json)与[完整行为](evidence/105-form-preview-controls/priority-fix/behavior.json)：显式 20px、默认尺寸、标记、禁用、键盘、试填与定义换代、隔离、原长选项和仅 inline 颜色长选项的 360px＋CSS zoom 200% 均保持。[显式配置截图](evidence/105-form-preview-controls/priority-fix/explicit-configuration.png)已目检，显式深色文字在深底上的低对比仍作为用户配置影响，不计为主题目标通过。
+- #104 [文本矩阵](evidence/105-form-preview-controls/priority-fix/104-matrix.json)与[行为回归](evidence/105-form-preview-controls/priority-fix/104-behavior.json)保持通过。
+- [独立公开消费页](evidence/105-form-preview-controls/priority-fix/consumer-browser.json)的四类控件、默认主题和交互通过。
+
+并行运行原 #105 behavior 脚本时，两处按钮尺寸在固定 140ms 后仍读到中间状态，[原失败结果](evidence/105-form-preview-controls/priority-fix/behavior-before-wait.json)保留。脚本现等待公开按钮几何达到原预期 24／32px，再执行原断言；预期值、焦点及试填检查不变，不能收敛时仍超时失败。补跑完整行为归零。
+
+### 独立复审
+
+修复增量基线为 `99a18d49`，最初完整增量快照 `/private/tmp/flowduet-105-priority-review.patch` SHA-256 为 `3f8b17c75ffa34488cb04ee2654a98575184a7d233d090606404cee1746f7d50`，包含产品、场景和红色回归证据。两名新上下文代理分别审查 Standards／Spec，随后追加审查 behavior 等待增量；生产代码未在该快照后变化。
+
+最终 Standards 重要 0／细节 0／既有 0；Spec 重要 0／细节 0／既有 0。F1、F2 均记为已修复。Spec 独立 Chromium 通过真实 tarball 复测全部九组显式颜色及高度、原显式 20px，以及八组长选项缩放；无新增重要发现。独立结论不替代工程门槛。
+
+本次仍只覆盖 #105 两项修复，无新依赖、公开接口、字段能力或业务数据变化，不恢复冻结实验；未提交本轮修改、未推送、未开 PR、未合并或发布。原有未测浏览器、真实 OS 输入法、Node 22／24 CI 和父规格范围边界保持。
+
+### 本轮工程门槛与交付状态
+
+- `pnpm lint`、`pnpm build` 通过；后续新增的工程记录另经 Prettier 检查。无依赖或锁文件变更。
+- 默认 `pnpm test` 未通过：首次 form-create 的 `retained-inputs.test.ts` 有 3 条 5 秒超时；该文件单跑又在另外 2 条用例超时。降低并行负载后重跑默认全量，`retained-manager.test.ts` 的另外 5 条用例超时，form-create 为 325 通过／5 失败，Playground 因前包失败未执行。上述用例与设计器逻辑本轮未改动，但不能仅据此宣称与补丁无关或默认门槛已通过。[最后一次默认失败日志](evidence/105-form-preview-controls/priority-fix/default-test.txt)。
+- 诊断运行 `pnpm --filter @flowduet/form-create exec vitest run src/components/retained-inputs.test.ts --testTimeout=15000` 为 40/40 通过；随后 `pnpm -r test --testTimeout=15000` 为 63 文件／986 条全过（148＋202＋330＋306），未观察到断言失败。[诊断全量日志](evidence/105-form-preview-controls/priority-fix/diagnostic-test.txt)与[工程摘要](evidence/105-form-preview-controls/priority-fix/engineering.json)。15 秒只用于命令行诊断，未修改仓库默认 5 秒配置；该结果不替代默认门槛。
+
+F1、F2 的本轮修复及独立复审已完成；#105 整票正式交付仍受默认测试超时阻塞。测试耗时根因尚未定位，不能将诊断通过写成整票验收通过。后续由维护者决定是否另行安排旧设计器用例超时排查，默认 `pnpm test` 通过后再推进正式交付；本轮不继续扩大到设计器业务逻辑或测试工程调整。未提交、未推送，Issue 保持开放。
+
+## 2026-11-05 默认时限测试耗时排查与门槛恢复
+
+用户明确追加授权：“继续排查这 5 条测试超时的原因，修复后按默认时限重跑全量测试。”本轮在同一独立分支继续，只改两处测试文件，保留此前外观修复与所有失败记录；此前“默认门槛阻塞”是当时实际状态，以本节新结果为当前状态。
+
+### 诊断与修复
+
+五条用例单独运行在默认时限下本就能通过，未修改的完整文件也有 69/69 通过的一次结果（75.01s）；原全量记录则明确为 5 条 5000ms 超时。因此不是稳定复现的业务断言错误，而是重组件测试的时限敏感问题，不能靠反复跑到绿色来证明已修复。
+
+CPU 采样中约三分之二时间落在真实设计器的 Vue 挂载／更新，计算样式约占 13%，未见长时间空等主导。一个只编辑金额、随后重开的场景仍携带无关日期控件；仅在控制实验移除日期，采样总时长由 2392.2ms 降为 1970.6ms。同步捕获用例还未使用项目已有的样式隔离，增加非视觉协议测试的计算负担。这些事实支持减少无关渲染工作量；宿主负载、JIT／缓存等因素未完全控制，不能将一次采样当作性能保证或宣称已确认所有系统负载的唯一来源。
+
+本轮修复：
+
+- 测试夹具允许传入规则，未传时仍使用原 `numericDateRules`。只为这 5 个金额／会话协议场景传入仅包含真实金额字段的最小规则；数值日期联合场景和夹具原默认合同继续测试。
+- 同步捕获场景复用已有 `isolateMainStyle:true`，仍由原 owner 在卸载后恢复样式。真实 FormManager、FormDesigner、FcDesigner、原故障注入、输入操作、断言及清理顺序保持。
+- 未新增超时、跳过用例、替换真实组件或改变产品代码、配置与测试脚本；临时 CPU 采样钩子已移除。
+
+同一五条选择命令的测试体耗时合计由 8035ms 降至 6021ms，修复后单条为 1011–1372ms；这是一组观测值，不承诺任意机器负载下都保持同样耗时。[修复前五条](evidence/105-form-preview-controls/timeout-fix/five-before.txt)、[修复前完整文件](evidence/105-form-preview-controls/timeout-fix/manager-before.txt)、[修复后五条](evidence/105-form-preview-controls/timeout-fix/five-after.txt)与[诊断摘要](evidence/105-form-preview-controls/timeout-fix/summary.json)保留实际结果。
+
+### 默认门槛与独立复审
+
+窄测试夹具类型检查 `pnpm --filter @flowduet/form-create exec vue-tsc --noEmit -p tsconfig.test-fixtures.json` 通过。随后原始默认命令 `pnpm test`（无 timeout 覆盖、无名称过滤）实际 **63 文件／986 条全部通过**，包括 form-create 330 条和 Playground 306 条。[默认全量原始日志](evidence/105-form-preview-controls/timeout-fix/default-full.txt)。本轮没有改动这 5 条用例的默认 5000ms 时限，也没有把上轮 15 秒诊断结果代作正式门槛。
+
+两名新上下文代理独立审查本轮两文件补丁，SHA-256 为 `980bc11d9f10a249aacbc05cde1128ee471e0092b295c4bf7aece86b5e0a3a8c`；Standards 与 Spec 均重要 0／细节 0／既有 0。审查确认没有不合理弱化必要覆盖，日期半输入、字段切换与日期导入往返仍有原真实组件回归；默认时限全量结果由主代理实际执行。
+
+收尾 `pnpm lint` 与 `pnpm build` 均通过（[lint 日志](evidence/105-form-preview-controls/timeout-fix/lint.txt)、[构建日志](evidence/105-form-preview-controls/timeout-fix/build.txt)），窄类型检查与 `git diff --check` 通过。至此本地默认工程门槛恢复，F1/F2 与这 5 条测试的本轮处置均完成；未提交、未推送、未开 PR 或发布，Node 22／24 CI 与维护者审阅仍留待后续授权交付流程。本轮只改测试夹具和场景输入，生产代码仍为上一轮已验证版本，不新增依赖。

@@ -1,0 +1,77 @@
+
+ RUN  v5.0.1 /Users/l/Documents/projects/flowduet/packages/form-create
+
+ ↓ src/components/retained-manager.test.ts > retained FormManager状态与关闭 > manager_retained_query_and_forward
+ ↓ src/components/retained-manager.test.ts > retained FormManager状态与关闭 > manager_suspend_is_not_discard，取消确认保留实例和raw
+ ↓ src/components/retained-manager.test.ts > retained FormManager状态与关闭 > manager_dismiss_requires_discard，明确放弃后重开不复活raw
+ ↓ src/components/retained-manager.test.ts > retained FormManager状态与关闭 > manager_late_discard_rejected，确认期间新输入使旧肯定答复过期
+ ↓ src/components/retained-manager.test.ts > retained FormManager状态与关闭 > manager_ime_escape_keeps_editor，组合中的关闭手势不先blur
+ ↓ src/components/retained-manager.test.ts > retained FormManager状态与关闭 > manager_old_editor_state_dropped，保存/取消/旧状态不可影响重开
+ ↓ src/components/retained-manager.test.ts > retained 关闭与旧回调补充边界 > 请求x并不授权销毁，确认拒绝/异常都保持raw
+ ↓ src/components/retained-manager.test.ts > retained 关闭与旧回调补充边界 > 请求mask并不授权销毁，确认拒绝/异常都保持raw
+ ↓ src/components/retained-manager.test.ts > retained 关闭与旧回调补充边界 > 请求cancel并不授权销毁，确认拒绝/异常都保持raw
+ ↓ src/components/retained-manager.test.ts > retained 关闭与旧回调补充边界 > manager_old_close_request_cannot_target_reopened_editor，旧closed不发新null
+ ↓ src/components/retained-manager.test.ts > retained 关闭与旧回调补充边界 > manager_busy_close_gesture_cannot_blur_then_close，正常输入不被拒绝手势吞掉
+ ✓ src/components/retained-manager.test.ts > retained 关闭与旧回调补充边界 > retained序列化异常不关闭，修正后成功提交一次 1316ms
+ ↓ src/components/retained-manager.test.ts > retained 关闭与旧回调补充边界 > legacy_dialog_dismiss_unchanged mode=undefined
+ ↓ src/components/retained-manager.test.ts > retained 关闭与旧回调补充边界 > legacy_dialog_dismiss_unchanged mode=legacy
+ ↓ src/components/retained-manager.test.ts > retained 多实例与捕获版本 > 同ID两个真实FormManager，busy保护不拦另一实例的Enter或输入
+ ✓ src/components/retained-manager.test.ts > retained 多实例与捕获版本 > 捕获中同步新输入使候选失效，下一次仍可收集最新值 1027ms
+ ↓ src/components/retained-manager.test.ts > 确认期间宿主替换同ID同内容表单，旧肯定答复与保存均拒绝且保留输入
+ ↓ src/components/retained-manager.test.ts > 授权关闭的真实Dialog closed事件完成收尾并转发null
+ ✓ src/components/retained-manager.test.ts > 同一表单对象被宿主原位改写也不覆盖当前输入 1011ms
+ ✓ src/components/retained-manager.test.ts > 旧Dialog迟到modelValue回调不能关闭同ID重开的编辑器 1372ms
+ ↓ src/components/retained-manager.test.ts > 当前Dialog modelValue=false只请求关闭，未经明确放弃不销毁
+ ✓ src/components/retained-manager.test.ts > 同ID新会话尚未挂载时不读取或收集旧子ref 1295ms
+ ↓ src/components/retained-manager.test.ts > 旧页头关闭按钮的迟到click不取得新会话的放弃授权
+ ↓ src/components/retained-manager.test.ts > P1复审P2：模式冲突后打开与重开 > legacy挂载后改变模式不切换子实现，也不经旧出口提交
+ ↓ src/components/retained-manager.test.ts > P1复审P2：模式冲突后打开与重开 > retained挂载后改变模式不切换子实现，也不经旧出口提交
+ ↓ src/components/retained-manager.test.ts > P1复审P2：模式冲突后打开与重开 > legacy成功关闭后改模式重开，拒绝新模式且旧内容不再提交
+ ↓ src/components/retained-manager.test.ts > P1复审P2：模式冲突后打开与重开 > retained成功关闭后改模式重开，拒绝新模式且旧内容不再提交
+ ↓ src/components/retained-manager.test.ts > Manager owner回归：结束后旧续体与finally不改写后例的值或spy
+ ↓ src/components/retained-manager.test.ts > Manager owner回归：登记后由真实afterEach关闭并恢复兼容描述符
+ ↓ src/components/retained-manager.test.ts > Manager owner回归：体异常=false仍关闭真实root且只恢复自有spy一次
+ ↓ src/components/retained-manager.test.ts > Manager owner回归：体异常=true仍关闭真实root且只恢复自有spy一次
+ ↓ src/components/retained-manager.test.ts > Manager owner回归：失效后拒绝迟到mount、spy、输入和清理登记
+ ↓ src/components/retained-manager.test.ts > Manager owner回归：等待中的旧轮询恢复后不执行迟到动作
+ ↓ src/components/retained-manager.test.ts > Manager owner回归：活动真实组件意外断开必须失败
+ ↓ src/components/retained-manager.test.ts > Manager owner回归：全部先失效并逆序清理，卸载后抛错仍关闭其余root
+ ↓ src/components/retained-manager.test.ts > Manager style回归：同一节点文本属性及顺序原样恢复，重复close幂等
+ ↓ src/components/retained-manager.test.ts > Manager style回归：体异常后真实root和样式均清理
+ ↓ src/components/retained-manager.test.ts > Manager style回归：卸载真实root后抛错仍恢复样式
+ ↓ src/components/retained-manager.test.ts > Manager style回归：真实afterEach关闭已登记scope并恢复兼容环境
+ ↓ src/components/retained-manager.test.ts > Manager style回归：A结束后旧续体及finally不恢复B临时移离的样式
+ ↓ src/components/retained-manager.test.ts > Manager style回归：missing识别失败不改变现有样式
+ ↓ src/components/retained-manager.test.ts > Manager style回归：duplicate识别失败不改变现有样式
+ ↓ src/components/retained-manager.test.ts > Manager style回归：移离动作完成后异常也有已登记恢复
+ ↓ src/components/retained-manager.test.ts > 文字style回归：真实afterEach先卸载目标再恢复样式和兼容环境
+ ↓ src/components/retained-manager.test.ts > 文字style回归：已关闭owner拒绝挂载且不覆盖后例wrapper
+ ↓ src/components/retained-manager.test.ts > 文字style回归：body异常仍卸载真实目标并恢复样式
+ ↓ src/components/retained-manager.test.ts > 文字style回归：unmount异常仍卸载真实目标并恢复样式
+ ↓ src/components/retained-manager.test.ts > 文字style回归：目标仍连接也不能用已关闭owner激活
+ ↓ src/components/retained-manager.test.ts > 文字style回归：选中等待结束后旧续体与finally不改B的样式输入和spy
+ ↓ src/components/retained-manager.test.ts > 文字style回归：装载前序列化异常不覆盖现有目标且仍恢复样式
+ ↓ src/components/retained-manager.test.ts > Manager旧状态style回归：显式选项在挂载前移离主样式且先卸载再恢复
+ ↓ src/components/retained-manager.test.ts > Manager旧状态style回归：未传选项保持主CSS在场并正常清理
+ ↓ src/components/retained-manager.test.ts > Manager旧状态style回归：body异常仍关闭真实编辑器并恢复样式
+ ↓ src/components/retained-manager.test.ts > Manager旧状态style回归：unmount异常仍关闭真实编辑器并恢复样式
+ ↓ src/components/retained-manager.test.ts > Manager旧状态style回归：结束后旧续体和finally不改B的样式输入或spy
+ ↓ src/components/retained-manager.test.ts > Manager协议夹具回归：挂载前移离并由原owner先卸载后恢复
+ ↓ src/components/retained-manager.test.ts > Manager协议夹具回归：body异常仍关闭真实组件并恢复自有样式和spy
+ ↓ src/components/retained-manager.test.ts > Manager协议夹具回归：unmount异常仍关闭真实组件并恢复自有样式和spy
+ ↓ src/components/retained-manager.test.ts > Manager协议夹具回归：旧续体及finally不触碰后例输入样式或spy
+ ↓ src/components/retained-manager.test.ts > 共享设计器生命周期回归：initial-flush/resolve结束后不查询后例或点击旧菜单
+ ↓ src/components/retained-manager.test.ts > 共享设计器生命周期回归：initial-flush/reject结束后不查询后例或点击旧菜单
+ ↓ src/components/retained-manager.test.ts > 共享设计器生命周期回归：field-switch/resolve结束后不查询后例或点击旧菜单
+ ↓ src/components/retained-manager.test.ts > 共享设计器生命周期回归：field-switch/reject结束后不查询后例或点击旧菜单
+ ↓ src/components/retained-manager.test.ts > 共享设计器生命周期回归：after-delete/resolve结束后不查询后例或点击旧菜单
+ ↓ src/components/retained-manager.test.ts > 共享设计器生命周期回归：after-delete/reject结束后不查询后例或点击旧菜单
+ ↓ src/components/retained-manager.test.ts > 共享设计器生命周期回归：真实afterEach关闭根与原owner，恢复样式和描述符
+ ↓ src/components/retained-manager.test.ts > 共享协议选项回归：isolateMainStyle=undefined在挂载前生效并恢复原节点
+ ↓ src/components/retained-manager.test.ts > 共享协议选项回归：isolateMainStyle=false在挂载前生效并恢复原节点
+ ↓ src/components/retained-manager.test.ts > 共享协议选项回归：isolateMainStyle=true在挂载前生效并恢复原节点
+
+ Test Files  1 passed (1)
+      Tests  5 passed | 64 skipped (69)
+   Start at  15:25:41
+   Duration  8.57s (tests 72%, import 17%, transform 6%, environment 4%)

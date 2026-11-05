@@ -1,0 +1,334 @@
+{
+  "browser": "156.0.8078.4",
+  "results": [
+    {
+      "id": "legacy",
+      "actual": {
+        "radio": {
+          "background": "rgb(191, 0, 31)",
+          "mark": "rgb(10, 20, 30)",
+          "height": 40
+        },
+        "checkbox": {
+          "background": "rgb(191, 0, 31)",
+          "mark": "rgb(10, 20, 30)",
+          "height": 40
+        },
+        "checkboxOverride": {
+          "background": "rgb(18, 52, 86)",
+          "mark": "rgb(1, 2, 3)",
+          "height": 40
+        },
+        "values": {
+          "reason": "字段尺寸保持 large",
+          "detail": "显式 rows=4",
+          "explicitAmount": 2,
+          "explicitDecision": "yes",
+          "explicitTags": ["a"],
+          "explicitNotify": true,
+          "groupDecision": "yes",
+          "groupTags": ["a", "override"]
+        }
+      },
+      "radioOverride": {
+        "background": "rgb(18, 52, 86)",
+        "mark": "rgb(1, 2, 3)"
+      }
+    },
+    {
+      "id": "host-light-comfortable",
+      "actual": {
+        "radio": {
+          "background": "rgb(191, 0, 31)",
+          "mark": "rgb(10, 20, 30)",
+          "height": 39.984375
+        },
+        "checkbox": {
+          "background": "rgb(191, 0, 31)",
+          "mark": "rgb(10, 20, 30)",
+          "height": 39.984375
+        },
+        "checkboxOverride": {
+          "background": "rgb(18, 52, 86)",
+          "mark": "rgb(1, 2, 3)",
+          "height": 39.984375
+        },
+        "values": {
+          "reason": "字段尺寸保持 large",
+          "detail": "显式 rows=4",
+          "explicitAmount": 2,
+          "explicitDecision": "yes",
+          "explicitTags": ["a"],
+          "explicitNotify": true,
+          "groupDecision": "yes",
+          "groupTags": ["a", "override"]
+        }
+      },
+      "radioOverride": {
+        "background": "rgb(18, 52, 86)",
+        "mark": "rgb(1, 2, 3)"
+      }
+    },
+    {
+      "id": "host-light-compact",
+      "actual": {
+        "radio": {
+          "background": "rgb(191, 0, 31)",
+          "mark": "rgb(10, 20, 30)",
+          "height": 39.984375
+        },
+        "checkbox": {
+          "background": "rgb(191, 0, 31)",
+          "mark": "rgb(10, 20, 30)",
+          "height": 39.984375
+        },
+        "checkboxOverride": {
+          "background": "rgb(18, 52, 86)",
+          "mark": "rgb(1, 2, 3)",
+          "height": 39.984375
+        },
+        "values": {
+          "reason": "字段尺寸保持 large",
+          "detail": "显式 rows=4",
+          "explicitAmount": 2,
+          "explicitDecision": "yes",
+          "explicitTags": ["a"],
+          "explicitNotify": true,
+          "groupDecision": "yes",
+          "groupTags": ["a", "override"]
+        }
+      },
+      "radioOverride": {
+        "background": "rgb(18, 52, 86)",
+        "mark": "rgb(1, 2, 3)"
+      }
+    },
+    {
+      "id": "host-dark-comfortable",
+      "actual": {
+        "radio": {
+          "background": "rgb(191, 0, 31)",
+          "mark": "rgb(10, 20, 30)",
+          "height": 39.984375
+        },
+        "checkbox": {
+          "background": "rgb(191, 0, 31)",
+          "mark": "rgb(10, 20, 30)",
+          "height": 39.984375
+        },
+        "checkboxOverride": {
+          "background": "rgb(18, 52, 86)",
+          "mark": "rgb(1, 2, 3)",
+          "height": 39.984375
+        },
+        "values": {
+          "reason": "字段尺寸保持 large",
+          "detail": "显式 rows=4",
+          "explicitAmount": 2,
+          "explicitDecision": "yes",
+          "explicitTags": ["a"],
+          "explicitNotify": true,
+          "groupDecision": "yes",
+          "groupTags": ["a", "override"]
+        }
+      },
+      "radioOverride": {
+        "background": "rgb(18, 52, 86)",
+        "mark": "rgb(1, 2, 3)"
+      }
+    },
+    {
+      "id": "host-dark-compact",
+      "actual": {
+        "radio": {
+          "background": "rgb(191, 0, 31)",
+          "mark": "rgb(10, 20, 30)",
+          "height": 39.984375
+        },
+        "checkbox": {
+          "background": "rgb(191, 0, 31)",
+          "mark": "rgb(10, 20, 30)",
+          "height": 39.984375
+        },
+        "checkboxOverride": {
+          "background": "rgb(18, 52, 86)",
+          "mark": "rgb(1, 2, 3)",
+          "height": 39.984375
+        },
+        "values": {
+          "reason": "字段尺寸保持 large",
+          "detail": "显式 rows=4",
+          "explicitAmount": 2,
+          "explicitDecision": "yes",
+          "explicitTags": ["a"],
+          "explicitNotify": true,
+          "groupDecision": "yes",
+          "groupTags": ["a", "override"]
+        }
+      },
+      "radioOverride": {
+        "background": "rgb(18, 52, 86)",
+        "mark": "rgb(1, 2, 3)"
+      }
+    },
+    {
+      "id": "brand-light-comfortable",
+      "actual": {
+        "radio": {
+          "background": "rgb(45, 62, 151)",
+          "mark": "rgb(255, 255, 255)",
+          "height": 39.984375
+        },
+        "checkbox": {
+          "background": "rgb(45, 62, 151)",
+          "mark": "rgb(255, 255, 255)",
+          "height": 39.984375
+        },
+        "checkboxOverride": {
+          "background": "rgb(45, 62, 151)",
+          "mark": "rgb(255, 255, 255)",
+          "height": 39.984375
+        },
+        "values": {
+          "reason": "字段尺寸保持 large",
+          "detail": "显式 rows=4",
+          "explicitAmount": 2,
+          "explicitDecision": "yes",
+          "explicitTags": ["a"],
+          "explicitNotify": true,
+          "groupDecision": "yes",
+          "groupTags": ["a", "override"]
+        }
+      },
+      "radioOverride": {
+        "background": "rgb(18, 52, 86)",
+        "mark": "rgb(1, 2, 3)"
+      }
+    },
+    {
+      "id": "brand-light-compact",
+      "actual": {
+        "radio": {
+          "background": "rgb(45, 62, 151)",
+          "mark": "rgb(255, 255, 255)",
+          "height": 39.984375
+        },
+        "checkbox": {
+          "background": "rgb(45, 62, 151)",
+          "mark": "rgb(255, 255, 255)",
+          "height": 39.984375
+        },
+        "checkboxOverride": {
+          "background": "rgb(45, 62, 151)",
+          "mark": "rgb(255, 255, 255)",
+          "height": 39.984375
+        },
+        "values": {
+          "reason": "字段尺寸保持 large",
+          "detail": "显式 rows=4",
+          "explicitAmount": 2,
+          "explicitDecision": "yes",
+          "explicitTags": ["a"],
+          "explicitNotify": true,
+          "groupDecision": "yes",
+          "groupTags": ["a", "override"]
+        }
+      },
+      "radioOverride": {
+        "background": "rgb(18, 52, 86)",
+        "mark": "rgb(1, 2, 3)"
+      }
+    },
+    {
+      "id": "brand-dark-comfortable",
+      "actual": {
+        "radio": {
+          "background": "rgb(165, 187, 255)",
+          "mark": "rgb(23, 31, 62)",
+          "height": 39.984375
+        },
+        "checkbox": {
+          "background": "rgb(165, 187, 255)",
+          "mark": "rgb(23, 31, 62)",
+          "height": 39.984375
+        },
+        "checkboxOverride": {
+          "background": "rgb(165, 187, 255)",
+          "mark": "rgb(23, 31, 62)",
+          "height": 39.984375
+        },
+        "values": {
+          "reason": "字段尺寸保持 large",
+          "detail": "显式 rows=4",
+          "explicitAmount": 2,
+          "explicitDecision": "yes",
+          "explicitTags": ["a"],
+          "explicitNotify": true,
+          "groupDecision": "yes",
+          "groupTags": ["a", "override"]
+        }
+      },
+      "radioOverride": {
+        "background": "rgb(18, 52, 86)",
+        "mark": "rgb(1, 2, 3)"
+      }
+    },
+    {
+      "id": "brand-dark-compact",
+      "actual": {
+        "radio": {
+          "background": "rgb(165, 187, 255)",
+          "mark": "rgb(23, 31, 62)",
+          "height": 39.984375
+        },
+        "checkbox": {
+          "background": "rgb(165, 187, 255)",
+          "mark": "rgb(23, 31, 62)",
+          "height": 39.984375
+        },
+        "checkboxOverride": {
+          "background": "rgb(165, 187, 255)",
+          "mark": "rgb(23, 31, 62)",
+          "height": 39.984375
+        },
+        "values": {
+          "reason": "字段尺寸保持 large",
+          "detail": "显式 rows=4",
+          "explicitAmount": 2,
+          "explicitDecision": "yes",
+          "explicitTags": ["a"],
+          "explicitNotify": true,
+          "groupDecision": "yes",
+          "groupTags": ["a", "override"]
+        }
+      },
+      "radioOverride": {
+        "background": "rgb(18, 52, 86)",
+        "mark": "rgb(1, 2, 3)"
+      }
+    }
+  ],
+  "errors": [],
+  "failures": [
+    "brand-light-comfortable: radio 字段颜色被覆盖：rgb(45, 62, 151)",
+    "brand-light-comfortable: radio 字段标记颜色被覆盖：rgb(255, 255, 255)",
+    "brand-light-comfortable: checkbox 字段颜色被覆盖：rgb(45, 62, 151)",
+    "brand-light-comfortable: checkbox 字段标记颜色被覆盖：rgb(255, 255, 255)",
+    "brand-light-comfortable: 多选选项颜色未优先",
+    "brand-light-compact: radio 字段颜色被覆盖：rgb(45, 62, 151)",
+    "brand-light-compact: radio 字段标记颜色被覆盖：rgb(255, 255, 255)",
+    "brand-light-compact: checkbox 字段颜色被覆盖：rgb(45, 62, 151)",
+    "brand-light-compact: checkbox 字段标记颜色被覆盖：rgb(255, 255, 255)",
+    "brand-light-compact: 多选选项颜色未优先",
+    "brand-dark-comfortable: radio 字段颜色被覆盖：rgb(165, 187, 255)",
+    "brand-dark-comfortable: radio 字段标记颜色被覆盖：rgb(23, 31, 62)",
+    "brand-dark-comfortable: checkbox 字段颜色被覆盖：rgb(165, 187, 255)",
+    "brand-dark-comfortable: checkbox 字段标记颜色被覆盖：rgb(23, 31, 62)",
+    "brand-dark-comfortable: 多选选项颜色未优先",
+    "brand-dark-compact: radio 字段颜色被覆盖：rgb(165, 187, 255)",
+    "brand-dark-compact: radio 字段标记颜色被覆盖：rgb(23, 31, 62)",
+    "brand-dark-compact: checkbox 字段颜色被覆盖：rgb(165, 187, 255)",
+    "brand-dark-compact: checkbox 字段标记颜色被覆盖：rgb(23, 31, 62)",
+    "brand-dark-compact: 多选选项颜色未优先"
+  ]
+}

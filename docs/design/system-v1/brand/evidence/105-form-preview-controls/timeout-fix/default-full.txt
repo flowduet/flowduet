@@ -1,0 +1,35 @@
+
+> flowduet-monorepo@0.0.0 test /Users/l/Documents/projects/flowduet
+> pnpm -r test
+
+Scope: 4 of 5 workspace projects
+packages/core test$ vitest run
+packages/core test:  RUN  v5.0.1 /Users/l/Documents/projects/flowduet/packages/core
+packages/core test:  Test Files  14 passed (14)
+packages/core test:       Tests  148 passed (148)
+packages/core test:    Start at  15:27:08
+packages/core test:    Duration  1.08s (tests 45%, transform 38%, import 14%, worker 2%)
+packages/core test: Done
+packages/designer test$ vitest run
+packages/designer test:  RUN  v5.0.1 /Users/l/Documents/projects/flowduet/packages/designer
+packages/designer test:  Test Files  15 passed (15)
+packages/designer test:       Tests  202 passed (202)
+packages/designer test:    Start at  15:27:10
+packages/designer test:    Duration  9.65s (tests 46%, import 23%, environment 17%, transform 13%, worker 1%)
+packages/designer test: Done
+packages/form-create test$ vitest run
+packages/form-create test:  RUN  v5.0.1 /Users/l/Documents/projects/flowduet/packages/form-create
+packages/form-create test:  Test Files  17 passed (17)
+packages/form-create test:       Tests  330 passed (330)
+packages/form-create test:    Start at  15:27:20
+packages/form-create test:    Duration  162.10s (tests 83%, import 12%, environment 4%, transform 1%)
+packages/form-create test:     Isolate  17 workers spawned · ~575ms startup each (spawn + environment, per file)
+packages/form-create test:              at least ~9.20s faster with isolate: false — reuses workers across files instead of one per file
+packages/form-create test: Done
+apps/playground test$ vitest run
+apps/playground test:  RUN  v5.0.1 /Users/l/Documents/projects/flowduet/apps/playground
+apps/playground test:  Test Files  17 passed (17)
+apps/playground test:       Tests  306 passed (306)
+apps/playground test:    Start at  15:30:03
+apps/playground test:    Duration  51.51s (tests 51%, import 32%, environment 10%, transform 7%)
+apps/playground test: Done
