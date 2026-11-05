@@ -325,12 +325,15 @@ export function createComponentTestFixture(bindings: FixtureBindings) {
     hasOpenEditor(): boolean;
   };
 
-  async function retainedManager(options: { isolateMainStyle?: boolean } = {}) {
+  async function retainedManager(options: { isolateMainStyle?: boolean; rules?: string } = {}) {
     const owner = beginManagerOwner();
     if (options.isolateMainStyle === true) isolateManagerDesignerStyle(owner);
     const target = owner.mount(() =>
       mount(FormManager, {
-        props: { forms: [{ ...APPLY_FORM, rules: numericDateRules }], editingMode: "retained" },
+        props: {
+          forms: [{ ...APPLY_FORM, rules: options.rules ?? numericDateRules }],
+          editingMode: "retained",
+        },
         attachTo: document.body,
       }),
     );
@@ -346,8 +349,8 @@ export function createComponentTestFixture(bindings: FixtureBindings) {
     return { owner, target, vm };
   }
 
-  async function retainedProtocolManager() {
-    return retainedManager({ isolateMainStyle: true });
+  async function retainedProtocolManager(rules = numericDateRules) {
+    return retainedManager({ isolateMainStyle: true, rules });
   }
 
   type ManagerFixture = Awaited<ReturnType<typeof retainedManager>>;

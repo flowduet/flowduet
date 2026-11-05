@@ -43,6 +43,10 @@ const {
   expectManagerStyleRestored,
 } = fixture;
 let currentFixtureCase: import("./__tests__/component-test-fixture.js").FixtureCaseKey | undefined;
+// 这组会话／捕获场景只编辑金额；日期组件的保真另由 retained-inputs 覆盖。
+const AMOUNT_RULES = JSON.stringify([
+  { type: "inputNumber", field: "amount", title: "金额", value: 0 },
+]);
 beforeEach(() => {
   currentFixtureCase = fixture.beforeEachCase();
 });
@@ -247,7 +251,7 @@ describe("retained 关闭与旧回调补充边界", () => {
     expect(vm.hasOpenEditor()).toBe(true);
   });
   it("retained序列化异常不关闭，修正后成功提交一次", async () => {
-    const manager = await retainedProtocolManager();
+    const manager = await retainedProtocolManager(AMOUNT_RULES);
     const { vm, target: wrapper } = manager;
     await managerRaw(manager, "11");
     const fc = wrapper!.findComponent(FcDesigner);
@@ -347,7 +351,13 @@ describe("retained 多实例与捕获版本", () => {
     expect((managers[1]!.vm as unknown as ManagerVm).hasOpenEditor()).toBe(true);
   });
   it("捕获中同步新输入使候选失效，下一次仍可收集最新值", async () => {
-    const { owner, target: wrapper, vm } = await retainedEditor();
+    const {
+      owner,
+      target: wrapper,
+      vm,
+    } = await retainedEditor(AMOUNT_RULES, {
+      isolateMainStyle: true,
+    });
     const input = await owner.step(() => selectRetained({ owner, target: wrapper }, "amount"));
     await owner.step(() => input.setValue("4"));
     await owner.step(() => flushPromises());
@@ -421,7 +431,7 @@ it("授权关闭的真实Dialog closed事件完成收尾并转发null", async ()
 });
 
 it("同一表单对象被宿主原位改写也不覆盖当前输入", async () => {
-  const manager = await retainedProtocolManager();
+  const manager = await retainedProtocolManager(AMOUNT_RULES);
   const { vm, target: wrapper } = manager;
   const input = await managerRaw(manager, "7");
   const form = wrapper!.props("forms")[0]!;
@@ -433,7 +443,7 @@ it("同一表单对象被宿主原位改写也不覆盖当前输入", async () =
 });
 
 it("旧Dialog迟到modelValue回调不能关闭同ID重开的编辑器", async () => {
-  const manager = await retainedProtocolManager();
+  const manager = await retainedProtocolManager(AMOUNT_RULES);
   const { vm, target: wrapper } = manager;
   await managerRaw(manager, "7");
   const oldDialog = wrapper!.findComponent(ElDialog),
@@ -484,7 +494,7 @@ it("当前Dialog modelValue=false只请求关闭，未经明确放弃不销毁",
 });
 
 it("同ID新会话尚未挂载时不读取或收集旧子ref", async () => {
-  const manager = await retainedProtocolManager();
+  const manager = await retainedProtocolManager(AMOUNT_RULES);
   const { vm, target: wrapper } = manager;
   await managerRaw(manager, "7");
   expect(vm.commitPendingEdit()).toBe(true);

@@ -1,0 +1,63 @@
+{
+  "node": "24.18.0",
+  "lint": {
+    "command": "pnpm lint",
+    "exitCode": 0
+  },
+  "build": {
+    "command": "pnpm build",
+    "exitCode": 0,
+    "packages": 4
+  },
+  "defaultTest": {
+    "command": "pnpm test",
+    "exitCode": 1,
+    "failedFile": "packages/form-create/src/components/retained-manager.test.ts",
+    "passed": 325,
+    "failed": 5,
+    "testTimeoutMs": 5000,
+    "reason": "单条用例超时；未观察到断言失败。默认命令因失败未继续运行 Playground。根因及与补丁的因果尚未确认。"
+  },
+  "priorDefaultTest": {
+    "command": "pnpm test",
+    "exitCode": 1,
+    "failedFile": "packages/form-create/src/components/retained-inputs.test.ts",
+    "passed": 327,
+    "failed": 3,
+    "testTimeoutMs": 5000
+  },
+  "isolatedDefaultTest": {
+    "command": "pnpm --filter @flowduet/form-create exec vitest run src/components/retained-inputs.test.ts",
+    "exitCode": 1,
+    "passed": 38,
+    "failed": 2,
+    "testTimeoutMs": 5000
+  },
+  "isolatedDiagnosticTest": {
+    "command": "pnpm --filter @flowduet/form-create exec vitest run src/components/retained-inputs.test.ts --testTimeout=15000",
+    "exitCode": 0,
+    "passed": 40
+  },
+  "diagnosticFullTest": {
+    "command": "pnpm -r test --testTimeout=15000",
+    "exitCode": 0,
+    "files": 63,
+    "passed": 986,
+    "testTimeoutMs": 15000,
+    "note": "仅诊断；未修改仓库配置，不替代默认门槛。"
+  },
+  "reviews": {
+    "standards": {
+      "important": 0,
+      "minor": 0,
+      "existing": 0
+    },
+    "spec": {
+      "important": 0,
+      "minor": 0,
+      "existing": 0
+    },
+    "fixed": ["F1", "F2"]
+  },
+  "deliveryGate": "blocked-by-default-test-timeouts"
+}

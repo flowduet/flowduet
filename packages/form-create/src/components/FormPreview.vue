@@ -301,6 +301,11 @@ function validate(): void {
   border-radius: var(--fd-radius);
 }
 
+/* EP 的 border 简写在宿主根解析；品牌实例需局部重建，不能只改 border-color。 */
+.form-preview.flowduet-appearance--brand {
+  --el-border: 1px solid var(--fd-control-border);
+}
+
 /* FormCreate 深层 EP 节点必须带预览根作用域，权重不依赖宿主样式导入顺序。 */
 :global(.form-preview.flowduet-appearance .el-form-item) {
   margin-bottom: var(--fd-field-gap);
@@ -318,6 +323,44 @@ function validate(): void {
   position: static;
   padding-top: 4px;
   color: var(--fd-danger);
+  line-height: 1.6;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+:global(.form-preview.flowduet-appearance :is(.el-radio-group, .el-checkbox-group)) {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--fd-row-gap);
+  max-width: 100%;
+}
+
+/* 高度由标签行高和上下 padding 组成，长标签自然撑开；显式 height 在 border-box 下保持原值。 */
+:global(.form-preview.flowduet-appearance :is(.el-radio, .el-checkbox)) {
+  box-sizing: border-box;
+  height: auto;
+  max-width: 100%;
+  margin-right: 0;
+  padding-block: 4.8px;
+  white-space: normal;
+}
+
+/* EP 已开放的高度变量仍优先；未指定时才让长标签自然撑开。 */
+:global(.form-preview.flowduet-appearance .el-checkbox) {
+  height: var(--el-checkbox-height, auto);
+}
+
+:global(.form-preview.flowduet-appearance :is(.el-radio--small, .el-checkbox--small)) {
+  padding-block: 2.4px;
+}
+
+:global(.form-preview.flowduet-appearance :is(.el-radio--large, .el-checkbox--large)) {
+  padding-block: 8.8px;
+}
+
+:global(.form-preview.flowduet-appearance :is(.el-radio__label, .el-checkbox__label)) {
+  min-width: 0;
   line-height: 1.6;
   white-space: normal;
   overflow-wrap: anywhere;
@@ -348,6 +391,62 @@ function validate(): void {
     :is(.el-input__clear, .el-textarea__icon, .el-input__count, .el-input__count-inner)
 ) {
   color: var(--fd-muted);
+}
+
+/* 在表单边界补标记前景，字段和选项可继续用原有 EP 变量覆盖；不在子选项重设通用主色。 */
+:global(.form-preview.flowduet-appearance--brand .el-form) {
+  --el-color-white: var(--fd-on-primary);
+}
+
+:global(.form-preview.flowduet-appearance--brand .el-checkbox) {
+  --el-checkbox-text-color: var(--fd-secondary);
+  --el-checkbox-bg-color: var(--fd-surface);
+  --el-checkbox-input-border: 1px solid var(--fd-control-border);
+  --el-checkbox-input-border-color-hover: var(--fd-focus);
+  --el-checkbox-checked-text-color: var(--el-color-primary);
+  --el-checkbox-checked-input-border-color: var(--el-color-primary);
+  --el-checkbox-checked-bg-color: var(--el-color-primary);
+  --el-checkbox-checked-icon-color: var(--el-color-white);
+  --el-checkbox-disabled-border-color: var(--fd-border);
+  --el-checkbox-disabled-input-fill: var(--fd-disabled-surface);
+  --el-checkbox-disabled-icon-color: var(--fd-disabled-text);
+  --el-checkbox-disabled-checked-input-fill: var(--fd-disabled-surface);
+  --el-checkbox-disabled-checked-input-border-color: var(--fd-border);
+  --el-checkbox-disabled-checked-icon-color: var(--fd-disabled-text);
+}
+
+:global(.form-preview.flowduet-appearance--brand .el-radio) {
+  --el-text-color-placeholder: var(--fd-disabled-text);
+  --el-radio-text-color: var(--fd-secondary);
+  --el-radio-input-bg-color: var(--fd-surface);
+  --el-radio-input-border: 1px solid var(--fd-control-border);
+  --el-radio-input-border-color: var(--fd-control-border);
+  --el-radio-input-border-color-hover: var(--fd-focus);
+}
+
+:global(.form-preview.flowduet-appearance--brand .el-switch) {
+  --el-switch-on-color: var(--fd-primary);
+  --el-switch-off-color: var(--fd-control-border);
+  --el-color-white: var(--fd-surface);
+}
+
+:global(.form-preview.flowduet-appearance--brand .el-switch.is-checked) {
+  --el-color-white: var(--fd-on-primary);
+}
+
+/* 颜色仍由 EP 各自变量提供；这里只统一焦点几何，显式 inline 变量保持优先。 */
+:global(
+  .form-preview.flowduet-appearance--brand .el-checkbox input:focus-visible + .el-checkbox__inner
+),
+:global(
+  .form-preview.flowduet-appearance--brand .el-radio__original:focus-visible + .el-radio__inner
+),
+:global(
+  .form-preview.flowduet-appearance--brand .el-switch__input:focus-visible ~ .el-switch__core
+) {
+  outline-width: 2px;
+  outline-style: solid;
+  outline-offset: 3px;
 }
 
 :global(.form-preview.flowduet-appearance--brand .el-button) {

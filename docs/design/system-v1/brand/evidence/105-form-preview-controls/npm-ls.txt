@@ -1,0 +1,21 @@
+flowduet-105-final-consumer@ /private/tmp/flowduet-105-height-consumer.pRQBHh
+├── @flowduet/core@0.3.0
+├── @flowduet/designer@0.1.0
+├── @flowduet/form-create@0.1.0
+├── @vitejs/plugin-vue@6.0.10
+├── element-plus@2.14.6
+├── typescript@5.9.3
+├── vite@8.3.5
+└── vue@3.5.44
+
+flowduet-105-final-consumer@ /private/tmp/flowduet-105-height-consumer.pRQBHh
+├─┬ @flowduet/designer@0.1.0
+│ └── element-plus@2.14.6 deduped
+├─┬ @flowduet/form-create@0.1.0
+│ ├─┬ @form-create/designer@3.5.0
+│ │ ├── @form-create/element-ui@3.3.4 deduped
+│ │ └── element-plus@2.14.6 deduped
+│ ├── @form-create/element-ui@3.3.4
+│ └── element-plus@2.14.6 deduped
+└── element-plus@2.14.6
+

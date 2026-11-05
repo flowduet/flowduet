@@ -1,0 +1,25 @@
+{
+  "actual": {
+    "radio": {
+      "style": "--el-color-primary: rgb(18, 52, 86); --el-color-white: rgb(1, 2, 3);",
+      "controlHeight": 163.15625,
+      "controlTop": 1623.078125,
+      "controlBottom": 1786.234375,
+      "labelHeight": 153.5625,
+      "labelTop": 1627.875,
+      "labelBottom": 1781.4375,
+      "labelWhiteSpace": "normal"
+    },
+    "checkbox": {
+      "style": "--el-checkbox-checked-text-color: rgb(18, 52, 86); --el-checkbox-checked-icon-color: rgb(1, 2, 3);",
+      "controlHeight": 163.15625,
+      "controlTop": 2163.765625,
+      "controlBottom": 2326.921875,
+      "labelHeight": 153.5625,
+      "labelTop": 2168.5625,
+      "labelBottom": 2322.125,
+      "labelWhiteSpace": "normal"
+    }
+  },
+  "failures": []
+}

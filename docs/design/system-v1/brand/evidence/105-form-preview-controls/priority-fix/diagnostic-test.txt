@@ -1,0 +1,34 @@
+Scope: 4 of 5 workspace projects
+packages/core test$ vitest run --testTimeout=15000
+packages/core test:  RUN  v5.0.1 /Users/l/Documents/projects/flowduet/packages/core
+packages/core test:  Test Files  14 passed (14)
+packages/core test:       Tests  148 passed (148)
+packages/core test:    Start at  14:59:48
+packages/core test:    Duration  1.40s (tests 46%, transform 39%, import 13%, worker 2%)
+packages/core test:   Transform  transforming modules took 2.72s · 39% of tracked time, re-done on every run
+packages/core test:              persist transforms across runs with fsModuleCache: true
+packages/core test:              learn more: https://vitest.dev/guide/improving-performance#caching-between-reruns
+packages/core test: Done
+packages/designer test$ vitest run --testTimeout=15000
+packages/designer test:  RUN  v5.0.1 /Users/l/Documents/projects/flowduet/packages/designer
+packages/designer test:  Test Files  15 passed (15)
+packages/designer test:       Tests  202 passed (202)
+packages/designer test:    Start at  14:59:50
+packages/designer test:    Duration  15.63s (tests 53%, import 19%, environment 17%, transform 11%)
+packages/designer test: Done
+packages/form-create test$ vitest run --testTimeout=15000
+packages/form-create test:  RUN  v5.0.1 /Users/l/Documents/projects/flowduet/packages/form-create
+packages/form-create test:  Test Files  17 passed (17)
+packages/form-create test:       Tests  330 passed (330)
+packages/form-create test:    Start at  15:00:06
+packages/form-create test:    Duration  186.99s (tests 84%, import 11%, environment 4%, transform 1%)
+packages/form-create test:     Isolate  17 workers spawned · ~644ms startup each (spawn + environment, per file)
+packages/form-create test:              at least ~10.31s faster with isolate: false — reuses workers across files instead of one per file
+packages/form-create test: Done
+apps/playground test$ vitest run --testTimeout=15000
+apps/playground test:  RUN  v5.0.1 /Users/l/Documents/projects/flowduet/apps/playground
+apps/playground test:  Test Files  17 passed (17)
+apps/playground test:       Tests  306 passed (306)
+apps/playground test:    Start at  15:03:14
+apps/playground test:    Duration  65.17s (tests 50%, import 32%, environment 9%, transform 9%)
+apps/playground test: Done

@@ -1,0 +1,47 @@
+{
+  "actual": {
+    "className": "form-preview flowduet-appearance flowduet-appearance--brand flowduet-appearance--dark flowduet-appearance--compact",
+    "primary": "#A5BBFF",
+    "background": "rgb(29, 36, 53)",
+    "numberHeight": 24,
+    "numberControlBorder": "rgb(117, 131, 159)",
+    "radioBackground": "rgb(165, 187, 255)",
+    "radioDot": "rgb(23, 31, 62)",
+    "checkboxBackground": "rgb(165, 187, 255)",
+    "checkboxCheck": "rgb(23, 31, 62)",
+    "mixed": true,
+    "mixedBar": "rgb(23, 31, 62)",
+    "switchTrack": "rgb(117, 131, 159)",
+    "switchAction": "rgb(29, 36, 53)",
+    "buttonHeight": 24,
+    "formClass": "el-form el-form--small el-form--label-top form-create"
+  },
+  "values": {
+    "reason": "实际安装包文本",
+    "detail": "实际安装包多行试填",
+    "amount": 2,
+    "decision": "yes",
+    "tags": ["a", "mixed"],
+    "notify": true
+  },
+  "switchOn": {
+    "track": "rgb(165, 187, 255)",
+    "action": "rgb(23, 31, 62)"
+  },
+  "resources": [
+    "http://127.0.0.1:4176/@vite/client",
+    "http://127.0.0.1:4176/main.ts",
+    "http://127.0.0.1:4176/node_modules/.vite/deps/vue.js?v=2c0d2c91",
+    "http://127.0.0.1:4176/node_modules/.vite/deps/@flowduet_form-create.js?v=d4e7d355",
+    "http://127.0.0.1:4176/node_modules/.vite/deps/@flowduet_designer.js?v=59b4bb55",
+    "http://127.0.0.1:4176/node_modules/element-plus/dist/index.css",
+    "http://127.0.0.1:4176/node_modules/@flowduet/form-create/dist/form-create.css",
+    "http://127.0.0.1:4176/node_modules/.vite/deps/vue.runtime.esm-bundler-YQ3yIb4w.js?v=628efbd5",
+    "http://127.0.0.1:4176/node_modules/.vite/deps/dist-BmiJLFoB.js?v=628efbd5",
+    "http://127.0.0.1:4176/node_modules/vite/dist/client/env.mjs",
+    "http://127.0.0.1:4176/node_modules/.vite/deps/es-lyvwYrJC.js?v=628efbd5"
+  ],
+  "errors": [],
+  "failures": [],
+  "result": "公开 JS / 严格 TS / CSS / 四类控件浏览器渲染通过"
+}
