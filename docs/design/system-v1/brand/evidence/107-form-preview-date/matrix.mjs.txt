@@ -1,0 +1,240 @@
+import { mkdir, writeFile } from "node:fs/promises";
+import { resolve } from "node:path";
+import { pathToFileURL } from "node:url";
+
+const [driverPath, baseUrl, outputDir] = process.argv.slice(2);
+if (!driverPath || !baseUrl || !outputDir) throw new Error("需要驱动、URL 和输出目录参数");
+const { chromium } = await import(pathToFileURL(resolve(driverPath)).href);
+await mkdir(outputDir, { recursive: true });
+const browser = await chromium.launch({
+  headless: true,
+  executablePath:
+    process.env.FLOWDUET_CHROMIUM_PATH ||
+    "/Users/l/Library/Caches/ms-playwright/chromium-1248/chrome-mac-x64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing",
+});
+const page = await browser.newPage({ viewport: { width: 1440, height: 1800 }, deviceScaleFactor: 1 });
+const errors = [];
+const resourceErrors = [];
+const failures = [];
+const results = [];
+page.on("pageerror", (error) => errors.push(`pageerror: ${error.stack || error.message}`));
+page.on("console", (message) => {
+  if (message.type() === "error") errors.push(`console: ${message.text()}`);
+});
+page.on("response", (response) => {
+  if (response.status() >= 400) resourceErrors.push(`${response.status()} ${response.url()}`);
+});
+const check = (condition, message) => {
+  if (!condition) failures.push(message);
+};
+const combinations = [
+  { colorSource: "host", mode: "light", density: "comfortable" },
+  { colorSource: "host", mode: "light", density: "compact" },
+  { colorSource: "host", mode: "dark", density: "comfortable" },
+  { colorSource: "host", mode: "dark", density: "compact" },
+  { colorSource: "brand", mode: "light", density: "comfortable" },
+  { colorSource: "brand", mode: "light", density: "compact" },
+  { colorSource: "brand", mode: "dark", density: "comfortable" },
+  { colorSource: "brand", mode: "dark", density: "compact" },
+];
+const cases = [
+  { type: "date", panel: ".preview-date-panel", table: ".el-date-table" },
+  { type: "datetime", panel: ".preview-datetime-panel", table: ".el-date-table" },
+  { type: "week", panel: ".preview-week-panel", table: ".el-date-table" },
+  { type: "month", panel: ".preview-month-panel", table: ".el-month-table" },
+  { type: "year", panel: ".preview-year-panel", table: ".el-year-table" },
+];
+const expected = {
+  "brand-light": {
+    surface: "rgb(255, 255, 255)",
+    primary: "rgb(45, 62, 151)",
+    onPrimary: "rgb(255, 255, 255)",
+    primaryInk: "rgb(45, 62, 151)",
+    primarySoft: "rgb(234, 240, 255)",
+    muted: "rgb(98, 109, 134)",
+    secondary: "rgb(86, 95, 118)",
+    focus: "rgb(45, 62, 151)",
+  },
+  "brand-dark": {
+    surface: "rgb(29, 36, 53)",
+    primary: "rgb(165, 187, 255)",
+    onPrimary: "rgb(23, 31, 62)",
+    primaryInk: "rgb(165, 187, 255)",
+    primarySoft: "rgb(42, 51, 84)",
+    muted: "rgb(163, 175, 201)",
+    secondary: "rgb(183, 192, 213)",
+    focus: "rgb(165, 187, 255)",
+  },
+};
+const first = () => page.locator('[data-test="form-appearance-first-instance"] [data-test="form-preview"]');
+const inputs = () => first().locator(".el-date-editor .el-input__inner");
+const setSelect = async (test, value) => {
+  await page.locator(`[data-test="${test}"]`).selectOption(value);
+  await page.waitForTimeout(150);
+};
+const setCheckbox = async (test, checked) => {
+  await page.locator(`[data-test="${test}"]`).setChecked(checked);
+  await page.waitForTimeout(150);
+};
+const setAppearance = async ({ colorSource, mode, density }) => {
+  await setCheckbox("form-appearance-host-dark", colorSource === "host" && mode === "dark");
+  await setSelect("form-appearance-first-source", colorSource);
+  if (colorSource === "brand") await setSelect("form-appearance-first-mode", mode);
+  await setSelect("form-appearance-first-density", density);
+};
+try {
+  await page.route("**/favicon.ico", (route) => route.fulfill({ status: 204, body: "" }));
+  await page.goto(baseUrl, { waitUntil: "networkidle" });
+  await page.locator('[data-test="form-appearance-scene-btn"]').click();
+  await page.locator('[data-test="form-appearance-first-dates"]').click();
+  await setCheckbox("form-appearance-second-mounted", false);
+  await first().waitFor({ state: "visible" });
+  await inputs().first().evaluate((element) => {
+    window.__fd107OriginalInputs = [...element.closest('[data-test="form-preview"]').querySelectorAll(".el-date-editor .el-input__inner")];
+  });
+
+  for (const combination of combinations) {
+    const { colorSource, mode, density } = combination;
+    const id = `${colorSource}-${mode}-${density}`;
+    await setAppearance(combination);
+    for (let index = 0; index < cases.length; index += 1) {
+      const item = cases[index];
+      const input = inputs().nth(index);
+      await input.click();
+      const panel = page.locator(item.panel);
+      await panel.waitFor({ state: "visible" });
+      await page.waitForTimeout(350);
+      console.log(`测量 ${id}/${item.type}`);
+      const actual = await panel.evaluate((panel, { index, type, table }) => {
+        const root = document.querySelector('[data-test="form-appearance-first-instance"] [data-test="form-preview"]');
+        const editor = root.querySelectorAll(".el-date-editor")[index];
+        const wrapper = editor;
+        const rect = (element) => {
+          const box = element.getBoundingClientRect();
+          return { left: box.left, right: box.right, top: box.top, bottom: box.bottom, width: box.width, height: box.height };
+        };
+        const read = (element) => {
+          if (!element) return null;
+          const style = getComputedStyle(element);
+          return {
+            color: style.color,
+            background: style.backgroundColor,
+            borderColor: style.borderColor,
+            radius: style.borderRadius,
+            outlineWidth: style.outlineWidth,
+            outlineStyle: style.outlineStyle,
+            outlineColor: style.outlineColor,
+            outlineOffset: style.outlineOffset,
+            fontSize: style.fontSize,
+          };
+        };
+        const current = type === "week"
+          ? panel.querySelector("tr.current td.available:not(.start-date):not(.end-date) .el-date-table-cell")
+          : panel.querySelector("td.current:not(.disabled) .el-date-table-cell__text");
+        const off = panel.querySelector("td.prev-month, td.next-month");
+        const owner = [...panel.classList].find((name) => name.startsWith("flowduet-form-preview-date-"));
+        const instanceStyle = [...document.head.querySelectorAll("style")].find((style) => style.textContent.includes(`.${owner}`));
+        const epDeclarations = [...(instanceStyle?.sheet?.cssRules || [])]
+          .flatMap((rule) => [...(rule.style || [])])
+          .filter((name) => name.startsWith("--el-"));
+        return {
+          owner,
+          panel: { ...rect(panel), ...read(panel) },
+          panelInlineStyle: panel.getAttribute("style"),
+          rootInlineStyle: root.getAttribute("style"),
+          table: Boolean(panel.querySelector(table)),
+          inputIdentity: editor.querySelector(".el-input__inner") === window.__fd107OriginalInputs[index],
+          input: { ...rect(wrapper), ...read(wrapper), disabled: editor.querySelector("input").disabled },
+          current: { ...rect(current), ...read(current) },
+          off: read(off),
+          today: read(panel.querySelector("td.today .el-date-table-cell__text")),
+          epDeclarations,
+          values: JSON.parse(root.querySelector('[data-test="form-preview-values"]').textContent),
+        };
+      }, { index, type: item.type, table: item.table });
+      const target = expected[`${colorSource}-${mode}`];
+      const controlHeight = density === "compact" ? 24 : 32;
+      check(actual.owner && actual.table, `${id}/${item.type}: 缺少实例标识或真实表格`);
+      check(actual.inputIdentity, `${id}/${item.type}: 外观切换重建了日期输入`);
+      check(Math.abs(actual.input.height - controlHeight) <= 0.1, `${id}/${item.type}: 输入高度 ${actual.input.height}，预期 ${controlHeight}`);
+      check(actual.panel.left >= 0 && actual.panel.right <= 1440 && actual.panel.top >= 0, `${id}/${item.type}: 面板超出视口 ${JSON.stringify(actual.panel)}`);
+      if (colorSource === "brand") {
+        check(actual.panel.background === target.surface, `${id}/${item.type}: 面板表面 ${actual.panel.background}`);
+        check(actual.panel.radius === "8px", `${id}/${item.type}: 品牌圆角 ${actual.panel.radius}`);
+        if (item.type === "week") {
+          check(actual.current.color === target.primaryInk && actual.current.background === target.primarySoft, `${id}/week: 周选中配对 ${actual.current.color}/${actual.current.background}`);
+        } else {
+          check(actual.current.color === target.onPrimary && actual.current.background === target.primary, `${id}/${item.type}: 选中配对 ${actual.current.color}/${actual.current.background}`);
+        }
+        if (actual.off) check(actual.off.color === target.muted, `${id}/${item.type}: 非当前值 ${actual.off.color}`);
+      } else {
+        if (item.type === "week") {
+          const inrange = mode === "light" ? "rgb(242, 246, 252)" : "rgb(43, 43, 44)";
+          check(actual.current.background === inrange, `${id}/week: 宿主周选中底色未保留 ${actual.current.background}`);
+        } else {
+          check(actual.current.background === "rgb(64, 158, 255)", `${id}/${item.type}: 宿主选中背景未保留 ${actual.current.background}`);
+          check(actual.current.color === "rgb(255, 255, 255)", `${id}/${item.type}: 宿主 EP 编译白色例外改变 ${actual.current.color}`);
+        }
+        check(!actual.rootInlineStyle.includes("--el-") && !actual.panelInlineStyle.includes("--el-") && actual.epDeclarations.length === 0, `${id}/${item.type}: 跟随宿主写入了 EP 变量`);
+      }
+      if (item.type === "datetime") {
+        const timeInput = panel.locator(".el-date-picker__time-header .el-input__inner").nth(1);
+        await timeInput.click();
+        const timePanel = panel.locator(".el-time-panel");
+        await timePanel.waitFor({ state: "visible" });
+        await page.waitForTimeout(350);
+        actual.time = await timePanel.evaluate((timePanel) => {
+          const active = timePanel.querySelector(".el-time-spinner__item.is-active");
+          const normal = timePanel.querySelector(".el-time-spinner__item:not(.is-active)");
+          const read = (element) => {
+            const style = getComputedStyle(element);
+            return { color: style.color, background: style.backgroundColor, height: element.getBoundingClientRect().height };
+          };
+          return {
+            owner: timePanel.closest(".el-picker__popper").className,
+            background: getComputedStyle(timePanel).backgroundColor,
+            active: read(active),
+            normal: read(normal),
+            confirm: read(timePanel.querySelector(".el-time-panel__btn.confirm")),
+          };
+        });
+        check(actual.time.owner.includes(actual.owner), `${id}/datetime: 时间子面板脱离了所属 Popper`);
+        const readTimeFocus = () => timePanel.evaluate((timePanel) => {
+          const active = document.activeElement;
+          const style = getComputedStyle(active);
+          return { className: active?.className, inside: timePanel.contains(active), outlineWidth: style.outlineWidth, outlineStyle: style.outlineStyle, outlineColor: style.outlineColor, outlineOffset: style.outlineOffset };
+        });
+        actual.time.focusSequence = [];
+        for (let step = 0; step < 8; step += 1) {
+          if (step === 0) await timeInput.press("Tab");
+          else await page.keyboard.press("Tab");
+          const focus = await readTimeFocus();
+          actual.time.focusSequence.push(focus);
+          if (focus.className.includes("el-time-panel__btn")) {
+            check(focus.inside && focus.outlineWidth === "2px" && focus.outlineStyle === "solid", `${id}/datetime: 时间按钮键盘焦点不可见 ${JSON.stringify(focus)}`);
+          }
+          if (focus.className.includes("el-time-panel__btn") && focus.className.includes("confirm")) break;
+        }
+        const focusedButtons = actual.time.focusSequence.filter((focus) => focus.className.includes("el-time-panel__btn")).map((focus) => focus.className);
+        check(focusedButtons.some((name) => name.includes("cancel")) && focusedButtons.some((name) => name.includes("confirm")), `${id}/datetime: 键盘未到达取消／确认按钮 ${JSON.stringify(actual.time.focusSequence)}`);
+        check(Math.abs(actual.time.active.height - 32) <= 0.1, `${id}/datetime: 时间列表行高被机械改成 ${actual.time.active.height}`);
+        if (colorSource === "brand") {
+          check(actual.time.background === target.surface && actual.time.active.color === target.primaryInk && actual.time.active.background === target.primarySoft && actual.time.normal.color === target.secondary && actual.time.confirm.color === target.primary, `${id}/datetime: 时间列表或确认状态颜色错误 ${JSON.stringify(actual.time)}`);
+        } else {
+          check(actual.time.background === actual.panel.background && actual.time.active.background === "rgba(0, 0, 0, 0)" && actual.time.confirm.color === "rgb(64, 158, 255)", `${id}/datetime: 宿主时间面板原值改变 ${JSON.stringify(actual.time)}`);
+        }
+        await page.screenshot({ path: resolve(outputDir, `${id}.png`), fullPage: true });
+      }
+      if (id === "brand-dark-compact") await page.screenshot({ path: resolve(outputDir, `${id}-${item.type}.png`), fullPage: true });
+      results.push({ ...combination, type: item.type, ...actual });
+      await input.press("Escape");
+      await panel.waitFor({ state: "hidden" });
+    }
+  }
+  const result = { browser: await browser.version(), viewport: "1440x1800@1", results, errors, resourceErrors, failures };
+  await writeFile(resolve(outputDir, "matrix.json"), JSON.stringify(result, null, 2));
+  console.log(JSON.stringify({ browser: result.browser, panels: results.length, errors, resourceErrors, failures }, null, 2));
+  if (errors.length || resourceErrors.length || failures.length) process.exitCode = 1;
+} finally {
+  await browser.close();
+}

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, defineComponent, onBeforeUnmount, reactive, ref, watch } from "vue";
-import { ElButton, ElInput, ElOption, ElSelect } from "element-plus";
+import { ElButton, ElDatePicker, ElInput, ElOption, ElSelect } from "element-plus";
 import {
   type AppearanceColorSource,
   type AppearanceDensity,
@@ -188,6 +188,88 @@ const CONTROL_FORM: FormDefinition = {
   options: "{}",
 };
 
+const DATE_FORM: FormDefinition = {
+  id: "form_preview_dates",
+  name: "日期单值与时间面板试填",
+  provider: "form-create/element-plus",
+  rules: JSON.stringify([
+    {
+      type: "datePicker",
+      field: "date",
+      title: "申请日期（date）",
+      value: "2026-11-15",
+      validate: [{ required: true, message: "请选择申请日期", trigger: "change" }],
+      props: {
+        type: "date",
+        format: "YYYY-MM-DD",
+        valueFormat: "YYYY-MM-DD",
+        clearable: true,
+        popperClass: "preview-date-panel",
+      },
+    },
+    {
+      type: "datePicker",
+      field: "datetime",
+      title: "审批时间（datetime，聚焦时间输入进入实际时间列表）",
+      value: "2026-11-15 09:30:45",
+      props: {
+        type: "datetime",
+        format: "YYYY-MM-DD HH:mm:ss",
+        valueFormat: "YYYY-MM-DD HH:mm:ss",
+        clearable: true,
+        popperClass: "preview-datetime-panel",
+      },
+    },
+    {
+      type: "datePicker",
+      field: "week",
+      title: "审批周（week）",
+      value: "2026-46th",
+      props: {
+        type: "week",
+        format: "YYYY-wo",
+        valueFormat: "YYYY-wo",
+        clearable: true,
+        popperClass: "preview-week-panel",
+      },
+    },
+    {
+      type: "datePicker",
+      field: "month",
+      title: "审批月份（month）",
+      value: "2026-11",
+      props: {
+        type: "month",
+        format: "YYYY-MM",
+        valueFormat: "YYYY-MM",
+        clearable: true,
+        popperClass: "preview-month-panel",
+      },
+    },
+    {
+      type: "datePicker",
+      field: "year",
+      title: "审批年份（year）",
+      value: "2026",
+      props: {
+        type: "year",
+        format: "YYYY",
+        valueFormat: "YYYY",
+        clearable: true,
+        popperClass: "preview-year-panel",
+      },
+    },
+    {
+      type: "datePicker",
+      field: "disabledDate",
+      title: "禁用日期",
+      value: "2026-11-16",
+      props: { type: "date", disabled: true, popperClass: "preview-disabled-date-panel" },
+    },
+  ]),
+  options: "{}",
+};
+
 const OTHER_FORM: FormDefinition = {
   id: "form_preview_other",
   name: "另一份文本表单",
@@ -364,6 +446,52 @@ const EXPLICIT_FORM: FormDefinition = {
       },
       options: [],
     },
+    {
+      type: "datePicker",
+      field: "explicitDate",
+      title: "显式外部挂载日期",
+      value: "15/11/2026",
+      props: {
+        type: "date",
+        size: "large",
+        format: "DD/MM/YYYY",
+        valueFormat: "DD/MM/YYYY",
+        appendTo: "#form-appearance-explicit-popper-target",
+        popperClass: ["explicit-date-panel", "explicit-date-panel-secondary"],
+        popperStyle: {
+          "--el-color-primary": "rgb(18, 52, 86)",
+          "--el-text-color-placeholder": "rgb(113, 130, 147)",
+          "--el-datepicker-active-color": "rgb(18, 52, 86)",
+          "--el-datepicker-off-text-color": "rgb(113, 130, 147)",
+          "--el-datepicker-inrange-bg-color": "rgb(230, 232, 240)",
+        },
+      },
+    },
+    {
+      type: "datePicker",
+      field: "inlineDate",
+      title: "显式原位日期",
+      value: "2026-11-15",
+      props: {
+        type: "date",
+        teleported: false,
+        appendTo: "#form-appearance-explicit-popper-target",
+        popperClass: "inline-date-panel",
+      },
+    },
+    ...(["month", "year"] as const).map((type) => ({
+      type: "datePicker",
+      field: `explicit${type}`,
+      title: `显式 ${type} 文本变量`,
+      value: type === "month" ? "2026-11" : "2026",
+      props: {
+        type,
+        format: type === "month" ? "YYYY-MM" : "YYYY",
+        valueFormat: type === "month" ? "YYYY-MM" : "YYYY",
+        popperClass: `explicit-${type}-panel`,
+        popperStyle: { "--el-datepicker-text-color": "rgb(18, 52, 86)" },
+      },
+    })),
   ]),
   options: JSON.stringify({
     form: {
@@ -397,6 +525,7 @@ const hostDark = ref(document.documentElement.classList.contains("dark"));
 const scopedDark = ref(false);
 const originallyDark = hostDark.value;
 const hostDecision = ref("hostA");
+const hostDate = ref("2026-11-15 09:30:45");
 
 function toAppearance(controls: InstanceControls): ComponentAppearance | undefined {
   if (!controls.enabled) return undefined;
@@ -519,6 +648,14 @@ onBeforeUnmount(() => {
         <ElOption label="宿主甲" value="hostA" />
         <ElOption label="宿主乙" value="hostB" />
       </ElSelect>
+      <span data-test="form-appearance-host-date-control">
+        <ElDatePicker
+          v-model="hostDate"
+          type="datetime"
+          value-format="YYYY-MM-DD HH:mm:ss"
+          popper-class="host-date-panel"
+        />
+      </span>
     </div>
 
     <div class="form-appearance-grid">
@@ -600,6 +737,20 @@ onBeforeUnmount(() => {
             @click="firstForm = { ...CONTROL_FORM }"
           >
             控件与下拉同 ID 重开
+          </button>
+          <button
+            type="button"
+            data-test="form-appearance-first-dates"
+            @click="firstForm = DATE_FORM"
+          >
+            日期与时间样例
+          </button>
+          <button
+            type="button"
+            data-test="form-appearance-first-reopen-dates"
+            @click="firstForm = { ...DATE_FORM }"
+          >
+            日期与时间同 ID 重开
           </button>
           <button
             type="button"
@@ -751,6 +902,7 @@ onBeforeUnmount(() => {
 .form-appearance-scoped-dark {
   --el-bg-color-page: #101817;
   --el-bg-color: #162220;
+  --el-bg-color-overlay: #162220;
   --el-fill-color-light: #1f302d;
   --el-text-color-primary: #e6f2f0;
   --el-text-color-regular: #b8ceca;

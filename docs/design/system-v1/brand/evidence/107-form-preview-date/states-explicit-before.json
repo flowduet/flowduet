@@ -1,0 +1,715 @@
+{
+  "browser": "156.0.8078.4",
+  "viewport": "1440x1800@1",
+  "results": [
+    {
+      "explicit": false,
+      "colorSource": "host",
+      "mode": "light",
+      "density": "comfortable",
+      "type": "month",
+      "legacy": {
+        "hover": true,
+        "color": "rgb(64, 158, 255)",
+        "arrowColor": "rgb(48, 49, 51)",
+        "selectedColor": "rgb(255, 255, 255)",
+        "selectedBackground": "rgb(64, 158, 255)"
+      },
+      "actual": {
+        "hover": true,
+        "color": "rgb(64, 158, 255)",
+        "arrowColor": "rgb(48, 49, 51)",
+        "selectedColor": "rgb(255, 255, 255)",
+        "selectedBackground": "rgb(64, 158, 255)"
+      }
+    },
+    {
+      "explicit": false,
+      "colorSource": "brand",
+      "mode": "light",
+      "density": "comfortable",
+      "type": "month",
+      "legacy": {
+        "hover": true,
+        "color": "rgb(64, 158, 255)",
+        "arrowColor": "rgb(48, 49, 51)",
+        "selectedColor": "rgb(255, 255, 255)",
+        "selectedBackground": "rgb(64, 158, 255)"
+      },
+      "actual": {
+        "hover": true,
+        "color": "rgb(45, 62, 151)",
+        "arrowColor": "rgb(32, 38, 61)",
+        "selectedColor": "rgb(255, 255, 255)",
+        "selectedBackground": "rgb(45, 62, 151)"
+      }
+    },
+    {
+      "explicit": false,
+      "colorSource": "host",
+      "mode": "light",
+      "density": "comfortable",
+      "type": "year",
+      "legacy": {
+        "hover": true,
+        "color": "rgb(64, 158, 255)",
+        "arrowColor": "rgb(48, 49, 51)",
+        "selectedColor": "rgb(255, 255, 255)",
+        "selectedBackground": "rgb(64, 158, 255)"
+      },
+      "actual": {
+        "hover": true,
+        "color": "rgb(64, 158, 255)",
+        "arrowColor": "rgb(48, 49, 51)",
+        "selectedColor": "rgb(255, 255, 255)",
+        "selectedBackground": "rgb(64, 158, 255)"
+      }
+    },
+    {
+      "explicit": false,
+      "colorSource": "brand",
+      "mode": "light",
+      "density": "comfortable",
+      "type": "year",
+      "legacy": {
+        "hover": true,
+        "color": "rgb(64, 158, 255)",
+        "arrowColor": "rgb(48, 49, 51)",
+        "selectedColor": "rgb(255, 255, 255)",
+        "selectedBackground": "rgb(64, 158, 255)"
+      },
+      "actual": {
+        "hover": true,
+        "color": "rgb(45, 62, 151)",
+        "arrowColor": "rgb(32, 38, 61)",
+        "selectedColor": "rgb(255, 255, 255)",
+        "selectedBackground": "rgb(45, 62, 151)"
+      }
+    },
+    {
+      "explicit": false,
+      "colorSource": "host",
+      "mode": "light",
+      "density": "compact",
+      "type": "month",
+      "legacy": {
+        "hover": true,
+        "color": "rgb(64, 158, 255)",
+        "arrowColor": "rgb(48, 49, 51)",
+        "selectedColor": "rgb(255, 255, 255)",
+        "selectedBackground": "rgb(64, 158, 255)"
+      },
+      "actual": {
+        "hover": true,
+        "color": "rgb(64, 158, 255)",
+        "arrowColor": "rgb(48, 49, 51)",
+        "selectedColor": "rgb(255, 255, 255)",
+        "selectedBackground": "rgb(64, 158, 255)"
+      }
+    },
+    {
+      "explicit": false,
+      "colorSource": "brand",
+      "mode": "light",
+      "density": "compact",
+      "type": "month",
+      "legacy": {
+        "hover": true,
+        "color": "rgb(64, 158, 255)",
+        "arrowColor": "rgb(48, 49, 51)",
+        "selectedColor": "rgb(255, 255, 255)",
+        "selectedBackground": "rgb(64, 158, 255)"
+      },
+      "actual": {
+        "hover": true,
+        "color": "rgb(45, 62, 151)",
+        "arrowColor": "rgb(32, 38, 61)",
+        "selectedColor": "rgb(255, 255, 255)",
+        "selectedBackground": "rgb(45, 62, 151)"
+      }
+    },
+    {
+      "explicit": false,
+      "colorSource": "host",
+      "mode": "light",
+      "density": "compact",
+      "type": "year",
+      "legacy": {
+        "hover": true,
+        "color": "rgb(64, 158, 255)",
+        "arrowColor": "rgb(48, 49, 51)",
+        "selectedColor": "rgb(255, 255, 255)",
+        "selectedBackground": "rgb(64, 158, 255)"
+      },
+      "actual": {
+        "hover": true,
+        "color": "rgb(64, 158, 255)",
+        "arrowColor": "rgb(48, 49, 51)",
+        "selectedColor": "rgb(255, 255, 255)",
+        "selectedBackground": "rgb(64, 158, 255)"
+      }
+    },
+    {
+      "explicit": false,
+      "colorSource": "brand",
+      "mode": "light",
+      "density": "compact",
+      "type": "year",
+      "legacy": {
+        "hover": true,
+        "color": "rgb(64, 158, 255)",
+        "arrowColor": "rgb(48, 49, 51)",
+        "selectedColor": "rgb(255, 255, 255)",
+        "selectedBackground": "rgb(64, 158, 255)"
+      },
+      "actual": {
+        "hover": true,
+        "color": "rgb(45, 62, 151)",
+        "arrowColor": "rgb(32, 38, 61)",
+        "selectedColor": "rgb(255, 255, 255)",
+        "selectedBackground": "rgb(45, 62, 151)"
+      }
+    },
+    {
+      "explicit": false,
+      "colorSource": "host",
+      "mode": "dark",
+      "density": "comfortable",
+      "type": "month",
+      "legacy": {
+        "hover": true,
+        "color": "rgb(64, 158, 255)",
+        "arrowColor": "rgb(229, 234, 243)",
+        "selectedColor": "rgb(255, 255, 255)",
+        "selectedBackground": "rgb(64, 158, 255)"
+      },
+      "actual": {
+        "hover": true,
+        "color": "rgb(64, 158, 255)",
+        "arrowColor": "rgb(229, 234, 243)",
+        "selectedColor": "rgb(255, 255, 255)",
+        "selectedBackground": "rgb(64, 158, 255)"
+      }
+    },
+    {
+      "explicit": false,
+      "colorSource": "brand",
+      "mode": "dark",
+      "density": "comfortable",
+      "type": "month",
+      "legacy": {
+        "hover": true,
+        "color": "rgb(64, 158, 255)",
+        "arrowColor": "rgb(229, 234, 243)",
+        "selectedColor": "rgb(255, 255, 255)",
+        "selectedBackground": "rgb(64, 158, 255)"
+      },
+      "actual": {
+        "hover": true,
+        "color": "rgb(165, 187, 255)",
+        "arrowColor": "rgb(233, 237, 247)",
+        "selectedColor": "rgb(23, 31, 62)",
+        "selectedBackground": "rgb(165, 187, 255)"
+      }
+    },
+    {
+      "explicit": false,
+      "colorSource": "host",
+      "mode": "dark",
+      "density": "comfortable",
+      "type": "year",
+      "legacy": {
+        "hover": true,
+        "color": "rgb(64, 158, 255)",
+        "arrowColor": "rgb(229, 234, 243)",
+        "selectedColor": "rgb(255, 255, 255)",
+        "selectedBackground": "rgb(64, 158, 255)"
+      },
+      "actual": {
+        "hover": true,
+        "color": "rgb(64, 158, 255)",
+        "arrowColor": "rgb(229, 234, 243)",
+        "selectedColor": "rgb(255, 255, 255)",
+        "selectedBackground": "rgb(64, 158, 255)"
+      }
+    },
+    {
+      "explicit": false,
+      "colorSource": "brand",
+      "mode": "dark",
+      "density": "comfortable",
+      "type": "year",
+      "legacy": {
+        "hover": true,
+        "color": "rgb(64, 158, 255)",
+        "arrowColor": "rgb(229, 234, 243)",
+        "selectedColor": "rgb(255, 255, 255)",
+        "selectedBackground": "rgb(64, 158, 255)"
+      },
+      "actual": {
+        "hover": true,
+        "color": "rgb(165, 187, 255)",
+        "arrowColor": "rgb(233, 237, 247)",
+        "selectedColor": "rgb(23, 31, 62)",
+        "selectedBackground": "rgb(165, 187, 255)"
+      }
+    },
+    {
+      "explicit": false,
+      "colorSource": "host",
+      "mode": "dark",
+      "density": "compact",
+      "type": "month",
+      "legacy": {
+        "hover": true,
+        "color": "rgb(64, 158, 255)",
+        "arrowColor": "rgb(229, 234, 243)",
+        "selectedColor": "rgb(255, 255, 255)",
+        "selectedBackground": "rgb(64, 158, 255)"
+      },
+      "actual": {
+        "hover": true,
+        "color": "rgb(64, 158, 255)",
+        "arrowColor": "rgb(229, 234, 243)",
+        "selectedColor": "rgb(255, 255, 255)",
+        "selectedBackground": "rgb(64, 158, 255)"
+      }
+    },
+    {
+      "explicit": false,
+      "colorSource": "brand",
+      "mode": "dark",
+      "density": "compact",
+      "type": "month",
+      "legacy": {
+        "hover": true,
+        "color": "rgb(64, 158, 255)",
+        "arrowColor": "rgb(229, 234, 243)",
+        "selectedColor": "rgb(255, 255, 255)",
+        "selectedBackground": "rgb(64, 158, 255)"
+      },
+      "actual": {
+        "hover": true,
+        "color": "rgb(165, 187, 255)",
+        "arrowColor": "rgb(233, 237, 247)",
+        "selectedColor": "rgb(23, 31, 62)",
+        "selectedBackground": "rgb(165, 187, 255)"
+      }
+    },
+    {
+      "explicit": false,
+      "colorSource": "host",
+      "mode": "dark",
+      "density": "compact",
+      "type": "year",
+      "legacy": {
+        "hover": true,
+        "color": "rgb(64, 158, 255)",
+        "arrowColor": "rgb(229, 234, 243)",
+        "selectedColor": "rgb(255, 255, 255)",
+        "selectedBackground": "rgb(64, 158, 255)"
+      },
+      "actual": {
+        "hover": true,
+        "color": "rgb(64, 158, 255)",
+        "arrowColor": "rgb(229, 234, 243)",
+        "selectedColor": "rgb(255, 255, 255)",
+        "selectedBackground": "rgb(64, 158, 255)"
+      }
+    },
+    {
+      "explicit": false,
+      "colorSource": "brand",
+      "mode": "dark",
+      "density": "compact",
+      "type": "year",
+      "legacy": {
+        "hover": true,
+        "color": "rgb(64, 158, 255)",
+        "arrowColor": "rgb(229, 234, 243)",
+        "selectedColor": "rgb(255, 255, 255)",
+        "selectedBackground": "rgb(64, 158, 255)"
+      },
+      "actual": {
+        "hover": true,
+        "color": "rgb(165, 187, 255)",
+        "arrowColor": "rgb(233, 237, 247)",
+        "selectedColor": "rgb(23, 31, 62)",
+        "selectedBackground": "rgb(165, 187, 255)"
+      }
+    },
+    {
+      "explicit": true,
+      "colorSource": "host",
+      "mode": "light",
+      "density": "comfortable",
+      "type": "month",
+      "legacy": {
+        "hover": true,
+        "color": "rgb(64, 158, 255)",
+        "arrowColor": "rgb(48, 49, 51)",
+        "selectedColor": "rgb(255, 255, 255)",
+        "selectedBackground": "rgb(64, 158, 255)"
+      },
+      "actual": {
+        "hover": true,
+        "color": "rgb(96, 98, 102)",
+        "arrowColor": "rgb(48, 49, 51)",
+        "selectedColor": "rgb(255, 255, 255)",
+        "selectedBackground": "rgb(64, 158, 255)"
+      }
+    },
+    {
+      "explicit": true,
+      "colorSource": "brand",
+      "mode": "light",
+      "density": "comfortable",
+      "type": "month",
+      "legacy": {
+        "hover": true,
+        "color": "rgb(64, 158, 255)",
+        "arrowColor": "rgb(48, 49, 51)",
+        "selectedColor": "rgb(255, 255, 255)",
+        "selectedBackground": "rgb(64, 158, 255)"
+      },
+      "actual": {
+        "hover": true,
+        "color": "rgb(86, 95, 118)",
+        "arrowColor": "rgb(32, 38, 61)",
+        "selectedColor": "rgb(255, 255, 255)",
+        "selectedBackground": "rgb(45, 62, 151)"
+      }
+    },
+    {
+      "explicit": true,
+      "colorSource": "host",
+      "mode": "light",
+      "density": "comfortable",
+      "type": "year",
+      "legacy": {
+        "hover": true,
+        "color": "rgb(64, 158, 255)",
+        "arrowColor": "rgb(48, 49, 51)",
+        "selectedColor": "rgb(255, 255, 255)",
+        "selectedBackground": "rgb(64, 158, 255)"
+      },
+      "actual": {
+        "hover": true,
+        "color": "rgb(96, 98, 102)",
+        "arrowColor": "rgb(48, 49, 51)",
+        "selectedColor": "rgb(255, 255, 255)",
+        "selectedBackground": "rgb(64, 158, 255)"
+      }
+    },
+    {
+      "explicit": true,
+      "colorSource": "brand",
+      "mode": "light",
+      "density": "comfortable",
+      "type": "year",
+      "legacy": {
+        "hover": true,
+        "color": "rgb(64, 158, 255)",
+        "arrowColor": "rgb(48, 49, 51)",
+        "selectedColor": "rgb(255, 255, 255)",
+        "selectedBackground": "rgb(64, 158, 255)"
+      },
+      "actual": {
+        "hover": true,
+        "color": "rgb(86, 95, 118)",
+        "arrowColor": "rgb(32, 38, 61)",
+        "selectedColor": "rgb(255, 255, 255)",
+        "selectedBackground": "rgb(45, 62, 151)"
+      }
+    },
+    {
+      "explicit": true,
+      "colorSource": "host",
+      "mode": "light",
+      "density": "compact",
+      "type": "month",
+      "legacy": {
+        "hover": true,
+        "color": "rgb(64, 158, 255)",
+        "arrowColor": "rgb(48, 49, 51)",
+        "selectedColor": "rgb(255, 255, 255)",
+        "selectedBackground": "rgb(64, 158, 255)"
+      },
+      "actual": {
+        "hover": true,
+        "color": "rgb(96, 98, 102)",
+        "arrowColor": "rgb(48, 49, 51)",
+        "selectedColor": "rgb(255, 255, 255)",
+        "selectedBackground": "rgb(64, 158, 255)"
+      }
+    },
+    {
+      "explicit": true,
+      "colorSource": "brand",
+      "mode": "light",
+      "density": "compact",
+      "type": "month",
+      "legacy": {
+        "hover": true,
+        "color": "rgb(64, 158, 255)",
+        "arrowColor": "rgb(48, 49, 51)",
+        "selectedColor": "rgb(255, 255, 255)",
+        "selectedBackground": "rgb(64, 158, 255)"
+      },
+      "actual": {
+        "hover": true,
+        "color": "rgb(86, 95, 118)",
+        "arrowColor": "rgb(32, 38, 61)",
+        "selectedColor": "rgb(255, 255, 255)",
+        "selectedBackground": "rgb(45, 62, 151)"
+      }
+    },
+    {
+      "explicit": true,
+      "colorSource": "host",
+      "mode": "light",
+      "density": "compact",
+      "type": "year",
+      "legacy": {
+        "hover": true,
+        "color": "rgb(64, 158, 255)",
+        "arrowColor": "rgb(48, 49, 51)",
+        "selectedColor": "rgb(255, 255, 255)",
+        "selectedBackground": "rgb(64, 158, 255)"
+      },
+      "actual": {
+        "hover": true,
+        "color": "rgb(96, 98, 102)",
+        "arrowColor": "rgb(48, 49, 51)",
+        "selectedColor": "rgb(255, 255, 255)",
+        "selectedBackground": "rgb(64, 158, 255)"
+      }
+    },
+    {
+      "explicit": true,
+      "colorSource": "brand",
+      "mode": "light",
+      "density": "compact",
+      "type": "year",
+      "legacy": {
+        "hover": true,
+        "color": "rgb(64, 158, 255)",
+        "arrowColor": "rgb(48, 49, 51)",
+        "selectedColor": "rgb(255, 255, 255)",
+        "selectedBackground": "rgb(64, 158, 255)"
+      },
+      "actual": {
+        "hover": true,
+        "color": "rgb(86, 95, 118)",
+        "arrowColor": "rgb(32, 38, 61)",
+        "selectedColor": "rgb(255, 255, 255)",
+        "selectedBackground": "rgb(45, 62, 151)"
+      }
+    },
+    {
+      "explicit": true,
+      "colorSource": "host",
+      "mode": "dark",
+      "density": "comfortable",
+      "type": "month",
+      "legacy": {
+        "hover": true,
+        "color": "rgb(64, 158, 255)",
+        "arrowColor": "rgb(229, 234, 243)",
+        "selectedColor": "rgb(255, 255, 255)",
+        "selectedBackground": "rgb(64, 158, 255)"
+      },
+      "actual": {
+        "hover": true,
+        "color": "rgb(207, 211, 220)",
+        "arrowColor": "rgb(229, 234, 243)",
+        "selectedColor": "rgb(255, 255, 255)",
+        "selectedBackground": "rgb(64, 158, 255)"
+      }
+    },
+    {
+      "explicit": true,
+      "colorSource": "brand",
+      "mode": "dark",
+      "density": "comfortable",
+      "type": "month",
+      "legacy": {
+        "hover": true,
+        "color": "rgb(64, 158, 255)",
+        "arrowColor": "rgb(229, 234, 243)",
+        "selectedColor": "rgb(255, 255, 255)",
+        "selectedBackground": "rgb(64, 158, 255)"
+      },
+      "actual": {
+        "hover": true,
+        "color": "rgb(183, 192, 213)",
+        "arrowColor": "rgb(233, 237, 247)",
+        "selectedColor": "rgb(23, 31, 62)",
+        "selectedBackground": "rgb(165, 187, 255)"
+      }
+    },
+    {
+      "explicit": true,
+      "colorSource": "host",
+      "mode": "dark",
+      "density": "comfortable",
+      "type": "year",
+      "legacy": {
+        "hover": true,
+        "color": "rgb(64, 158, 255)",
+        "arrowColor": "rgb(229, 234, 243)",
+        "selectedColor": "rgb(255, 255, 255)",
+        "selectedBackground": "rgb(64, 158, 255)"
+      },
+      "actual": {
+        "hover": true,
+        "color": "rgb(207, 211, 220)",
+        "arrowColor": "rgb(229, 234, 243)",
+        "selectedColor": "rgb(255, 255, 255)",
+        "selectedBackground": "rgb(64, 158, 255)"
+      }
+    },
+    {
+      "explicit": true,
+      "colorSource": "brand",
+      "mode": "dark",
+      "density": "comfortable",
+      "type": "year",
+      "legacy": {
+        "hover": true,
+        "color": "rgb(64, 158, 255)",
+        "arrowColor": "rgb(229, 234, 243)",
+        "selectedColor": "rgb(255, 255, 255)",
+        "selectedBackground": "rgb(64, 158, 255)"
+      },
+      "actual": {
+        "hover": true,
+        "color": "rgb(183, 192, 213)",
+        "arrowColor": "rgb(233, 237, 247)",
+        "selectedColor": "rgb(23, 31, 62)",
+        "selectedBackground": "rgb(165, 187, 255)"
+      }
+    },
+    {
+      "explicit": true,
+      "colorSource": "host",
+      "mode": "dark",
+      "density": "compact",
+      "type": "month",
+      "legacy": {
+        "hover": true,
+        "color": "rgb(64, 158, 255)",
+        "arrowColor": "rgb(229, 234, 243)",
+        "selectedColor": "rgb(255, 255, 255)",
+        "selectedBackground": "rgb(64, 158, 255)"
+      },
+      "actual": {
+        "hover": true,
+        "color": "rgb(207, 211, 220)",
+        "arrowColor": "rgb(229, 234, 243)",
+        "selectedColor": "rgb(255, 255, 255)",
+        "selectedBackground": "rgb(64, 158, 255)"
+      }
+    },
+    {
+      "explicit": true,
+      "colorSource": "brand",
+      "mode": "dark",
+      "density": "compact",
+      "type": "month",
+      "legacy": {
+        "hover": true,
+        "color": "rgb(64, 158, 255)",
+        "arrowColor": "rgb(229, 234, 243)",
+        "selectedColor": "rgb(255, 255, 255)",
+        "selectedBackground": "rgb(64, 158, 255)"
+      },
+      "actual": {
+        "hover": true,
+        "color": "rgb(183, 192, 213)",
+        "arrowColor": "rgb(233, 237, 247)",
+        "selectedColor": "rgb(23, 31, 62)",
+        "selectedBackground": "rgb(165, 187, 255)"
+      }
+    },
+    {
+      "explicit": true,
+      "colorSource": "host",
+      "mode": "dark",
+      "density": "compact",
+      "type": "year",
+      "legacy": {
+        "hover": true,
+        "color": "rgb(64, 158, 255)",
+        "arrowColor": "rgb(229, 234, 243)",
+        "selectedColor": "rgb(255, 255, 255)",
+        "selectedBackground": "rgb(64, 158, 255)"
+      },
+      "actual": {
+        "hover": true,
+        "color": "rgb(207, 211, 220)",
+        "arrowColor": "rgb(229, 234, 243)",
+        "selectedColor": "rgb(255, 255, 255)",
+        "selectedBackground": "rgb(64, 158, 255)"
+      }
+    },
+    {
+      "explicit": true,
+      "colorSource": "brand",
+      "mode": "dark",
+      "density": "compact",
+      "type": "year",
+      "legacy": {
+        "hover": true,
+        "color": "rgb(64, 158, 255)",
+        "arrowColor": "rgb(229, 234, 243)",
+        "selectedColor": "rgb(255, 255, 255)",
+        "selectedBackground": "rgb(64, 158, 255)"
+      },
+      "actual": {
+        "hover": true,
+        "color": "rgb(183, 192, 213)",
+        "arrowColor": "rgb(233, 237, 247)",
+        "selectedColor": "rgb(23, 31, 62)",
+        "selectedBackground": "rgb(165, 187, 255)"
+      }
+    },
+    {
+      "colorSource": "host",
+      "mode": "scoped-dark",
+      "type": "month",
+      "actual": {
+        "color": "rgb(127, 207, 199)",
+        "arrowColor": "rgb(230, 242, 240)"
+      }
+    },
+    {
+      "colorSource": "host",
+      "mode": "scoped-dark",
+      "type": "year",
+      "actual": {
+        "color": "rgb(127, 207, 199)",
+        "arrowColor": "rgb(230, 242, 240)"
+      }
+    }
+  ],
+  "errors": [],
+  "failures": [
+    "explicit/host/light/comfortable/month: 悬停 rgb(96, 98, 102)，预期 rgb(64, 158, 255)",
+    "explicit/brand/light/comfortable/month: 悬停 rgb(86, 95, 118)，预期 rgb(45, 62, 151)",
+    "explicit/host/light/comfortable/year: 悬停 rgb(96, 98, 102)，预期 rgb(64, 158, 255)",
+    "explicit/brand/light/comfortable/year: 悬停 rgb(86, 95, 118)，预期 rgb(45, 62, 151)",
+    "explicit/host/light/compact/month: 悬停 rgb(96, 98, 102)，预期 rgb(64, 158, 255)",
+    "explicit/brand/light/compact/month: 悬停 rgb(86, 95, 118)，预期 rgb(45, 62, 151)",
+    "explicit/host/light/compact/year: 悬停 rgb(96, 98, 102)，预期 rgb(64, 158, 255)",
+    "explicit/brand/light/compact/year: 悬停 rgb(86, 95, 118)，预期 rgb(45, 62, 151)",
+    "explicit/host/dark/comfortable/month: 悬停 rgb(207, 211, 220)，预期 rgb(64, 158, 255)",
+    "explicit/brand/dark/comfortable/month: 悬停 rgb(183, 192, 213)，预期 rgb(165, 187, 255)",
+    "explicit/host/dark/comfortable/year: 悬停 rgb(207, 211, 220)，预期 rgb(64, 158, 255)",
+    "explicit/brand/dark/comfortable/year: 悬停 rgb(183, 192, 213)，预期 rgb(165, 187, 255)",
+    "explicit/host/dark/compact/month: 悬停 rgb(207, 211, 220)，预期 rgb(64, 158, 255)",
+    "explicit/brand/dark/compact/month: 悬停 rgb(183, 192, 213)，预期 rgb(165, 187, 255)",
+    "explicit/host/dark/compact/year: 悬停 rgb(207, 211, 220)，预期 rgb(64, 158, 255)",
+    "explicit/brand/dark/compact/year: 悬停 rgb(183, 192, 213)，预期 rgb(165, 187, 255)"
+  ]
+}
