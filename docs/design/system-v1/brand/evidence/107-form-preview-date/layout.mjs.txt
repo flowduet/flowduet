@@ -1,0 +1,171 @@
+import { mkdir, writeFile } from "node:fs/promises";
+import { resolve } from "node:path";
+import { pathToFileURL } from "node:url";
+
+const [driverPath, baseUrl, outputDir] = process.argv.slice(2);
+if (!driverPath || !baseUrl || !outputDir) throw new Error("需要驱动、URL 和输出目录参数");
+const { chromium } = await import(pathToFileURL(resolve(driverPath)).href);
+await mkdir(outputDir, { recursive: true });
+const browser = await chromium.launch({
+  headless: true,
+  executablePath:
+    process.env.FLOWDUET_CHROMIUM_PATH ||
+    "/Users/l/Library/Caches/ms-playwright/chromium-1248/chrome-mac-x64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing",
+});
+const page = await browser.newPage({ viewport: { width: 900, height: 700 }, deviceScaleFactor: 1 });
+const errors = [];
+const resourceErrors = [];
+const failures = [];
+const results = [];
+page.on("pageerror", (error) => errors.push(`pageerror: ${error.stack || error.message}`));
+page.on("console", (message) => {
+  if (message.type() === "error") errors.push(`console: ${message.text()}`);
+});
+page.on("response", (response) => {
+  if (response.status() >= 400) resourceErrors.push(`${response.status()} ${response.url()}`);
+});
+const check = (condition, message) => {
+  if (!condition) failures.push(message);
+};
+const combinations = [
+  { colorSource: "host", mode: "light", density: "comfortable" },
+  { colorSource: "host", mode: "light", density: "compact" },
+  { colorSource: "host", mode: "dark", density: "comfortable" },
+  { colorSource: "host", mode: "dark", density: "compact" },
+  { colorSource: "brand", mode: "light", density: "comfortable" },
+  { colorSource: "brand", mode: "light", density: "compact" },
+  { colorSource: "brand", mode: "dark", density: "comfortable" },
+  { colorSource: "brand", mode: "dark", density: "compact" },
+];
+const firstInstance = () => page.locator('[data-test="form-appearance-first-instance"]');
+const first = () => firstInstance().locator('[data-test="form-preview"]');
+const inputs = () => first().locator(".el-date-editor .el-input__inner");
+const setSelect = async (test, value) => {
+  await page.evaluate(({ test, value }) => {
+    const select = document.querySelector(`[data-test="${test}"]`);
+    select.value = value;
+    select.dispatchEvent(new Event("change", { bubbles: true }));
+  }, { test, value });
+  await page.waitForTimeout(150);
+};
+const setCheckbox = async (test, checked) => {
+  await page.evaluate(({ test, checked }) => {
+    const input = document.querySelector(`[data-test="${test}"]`);
+    if (input.checked !== checked) {
+      input.checked = checked;
+      input.dispatchEvent(new Event("change", { bubbles: true }));
+    }
+  }, { test, checked });
+  await page.waitForTimeout(150);
+};
+const setAppearance = async ({ colorSource, mode, density }) => {
+  await setCheckbox("form-appearance-host-dark", colorSource === "host" && mode === "dark");
+  await setSelect("form-appearance-first-source", colorSource);
+  if (colorSource === "brand") await setSelect("form-appearance-first-mode", mode);
+  await setSelect("form-appearance-first-density", density);
+};
+const rect = async (locator) => locator.evaluate((element) => {
+  const box = element.getBoundingClientRect();
+  return { left: box.left, right: box.right, top: box.top, bottom: box.bottom, width: box.width, height: box.height };
+});
+const inViewport = (box) => box.left >= -1 && box.right <= 901 && box.top >= -1 && box.bottom <= 701;
+try {
+  await page.route("**/favicon.ico", (route) => route.fulfill({ status: 204, body: "" }));
+  await page.goto(baseUrl, { waitUntil: "networkidle" });
+  await page.locator('[data-test="form-appearance-scene-btn"]').click();
+  await page.locator('[data-test="form-appearance-first-dates"]').click();
+  await setCheckbox("form-appearance-second-mounted", false);
+  await firstInstance().evaluate((element) => {
+    element.style.width = "320px";
+    element.style.maxHeight = "260px";
+    element.style.overflow = "auto";
+    element.style.zoom = "200%";
+  });
+
+  for (const combination of combinations) {
+    const id = `${combination.colorSource}-${combination.mode}-${combination.density}`;
+    await setAppearance(combination);
+    const dateInput = inputs().nth(0);
+    await dateInput.scrollIntoViewIfNeeded();
+    await dateInput.focus();
+    await dateInput.press("ArrowDown");
+    const datePanel = page.locator(".preview-date-panel");
+    await datePanel.waitFor({ state: "visible" });
+    await page.waitForTimeout(350);
+    const before = await datePanel.evaluate((panel) => {
+      const trigger = document.querySelector('[data-test="form-appearance-first-instance"] .el-date-editor');
+      const selected = panel.querySelector("td.current .el-date-table-cell__text");
+      const box = (element) => {
+        const rect = element.getBoundingClientRect();
+        return { left: rect.left, right: rect.right, top: rect.top, bottom: rect.bottom, width: rect.width, height: rect.height };
+      };
+      const selectedBox = box(selected);
+      const hit = document.elementFromPoint((selectedBox.left + selectedBox.right) / 2, (selectedBox.top + selectedBox.bottom) / 2);
+      return {
+        panel: box(panel),
+        trigger: box(trigger),
+        placement: panel.getAttribute("data-popper-placement"),
+        zIndex: Number(getComputedStyle(panel).zIndex),
+        hit: selected === hit || selected.contains(hit),
+        pageOverflow: document.documentElement.scrollWidth > innerWidth + 1,
+      };
+    });
+    check(inViewport(before.panel) && before.zIndex >= 2000 && before.hit && !before.pageOverflow, `${id}: 缩放／边缘下日期面板不可达或被裁切 ${JSON.stringify(before)}`);
+    await firstInstance().evaluate((element) => {
+      element.scrollTop = Math.min(element.scrollTop + 30, element.scrollHeight);
+    });
+    await page.waitForTimeout(300);
+    const after = await datePanel.evaluate((panel) => {
+      const trigger = document.querySelector('[data-test="form-appearance-first-instance"] .el-date-editor');
+      return {
+        panelTop: panel.getBoundingClientRect().top,
+        triggerTop: trigger.getBoundingClientRect().top,
+        panelLeft: panel.getBoundingClientRect().left,
+        triggerLeft: trigger.getBoundingClientRect().left,
+        panel: (() => { const rect = panel.getBoundingClientRect(); return { left: rect.left, right: rect.right, top: rect.top, bottom: rect.bottom }; })(),
+        placement: panel.getAttribute("data-popper-placement"),
+      };
+    });
+    const samePlacementDelta = Math.abs((after.panelTop - before.panel.top) - (after.triggerTop - before.trigger.top)) <= 1;
+    const changedPlacementAligned = after.placement.startsWith("left") || after.placement.startsWith("right")
+      ? Math.abs((after.panel.top + after.panel.bottom) / 2 - (after.triggerTop + before.trigger.height / 2)) <= 1
+      : Math.abs((after.panel.left + after.panel.right) / 2 - (after.triggerLeft + before.trigger.width / 2)) <= 1;
+    const flippedWithinViewport = after.placement !== before.placement && inViewport(after.panel) && changedPlacementAligned;
+    check(samePlacementDelta || flippedWithinViewport, `${id}: 容器滚动后日期面板未跟随或正确翻转 ${JSON.stringify({ before: before.placement, after })}`);
+    await page.keyboard.press("Escape");
+    await datePanel.waitFor({ state: "hidden" });
+
+    const datetimeInput = inputs().nth(1);
+    await datetimeInput.scrollIntoViewIfNeeded();
+    await datetimeInput.click();
+    const datetimePanel = page.locator(".preview-datetime-panel");
+    await datetimePanel.waitFor({ state: "visible" });
+    const timeInput = datetimePanel.locator(".el-date-picker__time-header .el-input__inner").nth(1);
+    await timeInput.click();
+    const timePanel = datetimePanel.locator(".el-time-panel");
+    await timePanel.waitFor({ state: "visible" });
+    await page.waitForTimeout(350);
+    const outerBox = await rect(datetimePanel);
+    const timeBox = await rect(timePanel);
+    const active = timePanel.locator(".el-time-spinner__item.is-active").first();
+    const activeBox = await rect(active);
+    const activeHit = await active.evaluate((element) => {
+      const rect = element.getBoundingClientRect();
+      const hit = document.elementFromPoint((rect.left + rect.right) / 2, (rect.top + rect.bottom) / 2);
+      return element === hit || element.contains(hit);
+    });
+    check(inViewport(outerBox) && inViewport(timeBox) && inViewport(activeBox) && activeHit, `${id}: 时间子面板或活动项被裁切 ${JSON.stringify({ outerBox, timeBox, activeBox, activeHit })}`);
+    if (id === "brand-light-comfortable" || id === "brand-dark-compact") {
+      await page.screenshot({ path: resolve(outputDir, `${id}-zoom-200.png`), fullPage: true });
+    }
+    results.push({ ...combination, before, after, outerBox, timeBox, activeBox, activeHit });
+    await page.keyboard.press("Escape");
+    await datetimePanel.waitFor({ state: "hidden" });
+  }
+  const result = { browser: await browser.version(), viewport: "900x700@1 + CSS zoom 200%", results, errors, resourceErrors, failures };
+  await writeFile(resolve(outputDir, "layout.json"), JSON.stringify(result, null, 2));
+  console.log(JSON.stringify({ browser: result.browser, combinations: results.length, errors, resourceErrors, failures }, null, 2));
+  if (errors.length || resourceErrors.length || failures.length) process.exitCode = 1;
+} finally {
+  await browser.close();
+}

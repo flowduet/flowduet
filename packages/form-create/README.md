@@ -84,7 +84,7 @@ const xml = await exportDeployXml(session.current!.model, session.current!.forms
 
 组件层：`FormManager`（目录管理面板，内嵌 `FormDesigner` 真实设计器——菜单收口为八类常用字段与栅格布局，远程数据源 / 事件脚本 / 联动等范围外配置无 UI 入口）、`FormPreview`（真实渲染器试填、必填校验、查看值；试填值与设计定义隔离，切换目标即重置）。
 
-### FormPreview 文本、选择控件与下拉的实例外观（#104 / #105 / #106）
+### FormPreview 文本、选择控件、下拉与日期的实例外观（#104 / #105 / #106 / #107）
 
 省略 `appearance` 时保持原预览路径。传入合法对象才显式启用新适配；类型与规则直接复用 `@flowduet/designer`，本包根也重导出同一 `ComponentAppearance` 及三类枚举类型，没有第二套配置合同：
 
@@ -108,7 +108,7 @@ function useCompactBrand(): void {
 </template>
 ```
 
-`colorSource` 为 `host` / `brand`，默认 `host`；`mode` 为 `light` / `dark`，启用时必填；`density` 为 `comfortable` / `compact`，默认舒适。两档经 **form-create 自己解析到的 EP ConfigProvider** 补 `default` / `small`，自有校验按钮及数字、单选、多选、开关、下拉选择框与下拉选项的外层控件实测为 32 / 24px；旧路径按钮仍固定 `small`，外层宿主 size 继承不变。多行文本继续使用 `input + props.type=textarea`，不机械压成单行高度；勾选框、单选圆点、开关轨道与滑块保留 EP 的内部几何，不机械拉成外层控件高度。
+`colorSource` 为 `host` / `brand`，默认 `host`；`mode` 为 `light` / `dark`，启用时必填；`density` 为 `comfortable` / `compact`，默认舒适。两档经 **form-create 自己解析到的 EP ConfigProvider** 补 `default` / `small`，自有校验按钮及数字、单选、多选、开关、下拉选择框、下拉选项与日期输入的外层控件实测为 32 / 24px；旧路径按钮仍固定 `small`，外层宿主 size 继承不变。多行文本继续使用 `input + props.type=textarea`，不机械压成单行高度；勾选框、单选圆点、开关轨道、日历单元与时间列表保留 EP 各自的内部几何，不机械拉成外层控件高度。
 
 跟随宿主只读取 EP 主色、中性色、字体与圆角并派生 `--fd-*`，实例范围不写 `--el-*`；品牌预设仅在所属预览实例写入局部 EP 变量。缺省标签位置补为顶置，既有表单／字段／栅格的显式 `size`、`labelPosition`、`labelWidth`、`inline`、`style` 等值优先，原 `rules` / `options` 字符串不被改写。显式配置造成的视觉偏差属于配置影响，不记为主题目标通过。
 
@@ -122,7 +122,11 @@ function useCompactBrand(): void {
 
 两种配色来源都保留面板显式 `--el-font-size-base`（选项）与 `--el-select-font-size`（空面板）字号；只有未显式配置时才使用密度字号。选项自身的 inline 字号、高度／最大高度及换行设置同样优先，显式小于密度行高时不再被新增的最小高度抬高。此类配置造成的视觉偏差按配置影响记录，不计作密度目标通过。
 
-当前仅 **FormPreview 的文本、多行文本、数字、单选、多选、下拉单选、开关、下拉真实弹层及预览自有表面／反馈／操作区**完成本适配；日期与其弹层由后续切片交付。`FormManager`／`FormDesigner` 工具条及其弹层不在本切片。首批证据使用单份 EP 2.14.6、FormCreate renderer 3.3.4 与桌面 Chromium；其他 EP 解析组合、Firefox、Safari／WebKit、移动端、真实操作系统中文输入法及完整可访问性认证尚未验证。
+日期单值使用真实 `datePicker`／`ElDatePicker`，覆盖当前 `date`、`datetime`、`week`、`month`、`year` 及 `datetime` 内实际可达的时间列表，不增加范围或多值能力。渲染派生规则按 FormCreate 的全局默认→`datePicker` 组件默认→字段配置顺序合并业务 `popperClass`，再追加每实例标识；时间子面板与日期面板同属一个 Popper，无需额外 DOM 监听。原值、显示／值格式、清空、禁用、校验、显式 `size`、`teleported` 与 `appendTo` 保持原合同，换肤不重建输入或写回定义。
+
+品牌面板成套映射日／月／年及周的选中前景／背景、非当前值、时间列表、焦点与操作按钮；EP 2.14.6 编译为固定白色的选中文字在品牌下改用 `onPrimary`，不全局改写白色。跟随宿主保留这一 EP 原值并作为例外记录，实例样式只映射可见 CSS 属性、不写 EP 变量。业务 `popperStyle` 的通用 EP 变量继续按原消费关系生效；EP 在 `.el-date-picker` 内重新声明并遮蔽的组件专用变量，若旧路径本来就不生效，适配器不把它新增为可用配置，相关视觉偏差按配置影响记录。
+
+当前 **FormPreview 的文本、多行文本、数字、单选、多选、下拉单选、日期、开关及下拉／日期／时间真实弹层和预览自有表面／反馈／操作区**完成本适配。`FormManager`／`FormDesigner` 工具条及其弹层不在本切片。首批证据使用单份 EP 2.14.6、FormCreate renderer 3.3.4 与桌面 Chromium；其他 EP 解析组合、Firefox、Safari／WebKit、移动端、真实操作系统中文输入法及完整可访问性认证尚未验证。
 
 
 宿主只做文件 I/O 与展示（下载 Blob、读 File、把模型接进 `DingtalkDesigner` / `BpmnCanvas`），文档算法不复制到宿主。纯函数形式同样可用：`saveDesignDocument(model, forms?)` / `openDesignDocument(text)` / `exportDeployXml(model, forms)` / `collectReferenceIssues(model, forms)`。

@@ -1,0 +1,23 @@
+{
+  "baseline": "ff28754136cb73c895fe2eee6b304132617c5d85",
+  "round": 2,
+  "patchSha256": "79cc7f3834efcd279e44a9b872f3d21bec79549993a9bf908292fd4adfcf96fc",
+  "manifestFiles": 59,
+  "standards": {
+    "important": 0,
+    "minor": 0,
+    "existing": 0
+  },
+  "spec": {
+    "important": 0,
+    "minor": 0,
+    "existing": 0
+  },
+  "closedFindings": [
+    "固定并恢复 today 测试的系统时钟",
+    "合并 select/date 同形规则派生",
+    "两种来源的时间按钮均有真实键盘可见焦点"
+  ],
+  "newFindings": 0,
+  "method": "两个全新独立上下文只读复审完整补丁；未将复核写成重新执行测试"
+}

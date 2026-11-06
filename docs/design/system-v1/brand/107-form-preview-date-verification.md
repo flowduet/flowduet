@@ -1,0 +1,77 @@
+# #107 FormPreview 日期各形态与时间面板外观适配：验证记录
+
+日期：2026-11-06。范围：公开 `FormPreview` 的当前 `date`、`datetime`、`week`、`month`、`year` 单值形态及 `datetime` 真实可达时间子面板；不新增范围、多值、字段能力或公开 API，不代表 #108 或父规格 #102 的完整双入口发布验收已完成。
+
+## 实现与接口边界
+
+- 沿用 #104 的可选 `appearance`、共享 designer 外观合同和 form-create 本地 `ConfigProvider`；未修改 core／designer 产品代码、依赖、peer 或第三方包。
+- 经 `parseFormRules` 后的临时规则树递归处理 `datePicker`，按 FormCreate 的全局 `*`／`default`→`datePicker`→字段顺序合并业务 `popperClass`，再追加跨 Vue app 不重复的实例标识。原 `rules`／`options` 字符串不变，显式 `popperStyle`／`teleported`／`appendTo` 不覆盖。
+- 规则树身份只随定义换代。日期与时间子面板同属一个 `.el-picker__popper`，外层实例类覆盖二者，不增加 MutationObserver 或第二套归属机制。样式由每实例 `<style>` 承载，未启用、无日期、停用及卸载时清理新增资源。
+- 输入由 EP size 提供 32／24px；日期单元、月／年单元和时间列表分别保留 EP 的 24px 内容、36px 内容及 32px 行高等内部几何，不机械套成统一控件高度。
+- 品牌预设成套映射选中前景／背景、周选中行、非当前值、时间列表、焦点与操作；EP 2.14.6 编译固定白色的选中文字在品牌下使用 `onPrimary`，不全局改写白色。跟随宿主保留该白色原值并单列例外。
+
+## TDD 与公开组件回归
+
+测试接缝为公开 `FormPreview` props、真实 FormCreate DOM、鼠标／键盘事件与可见试填值；happy-dom 不承担真实定位、过渡或完整视觉结论。
+
+- 首轮红色结果实际观察到五种形态都缺少日期实例标识；最小规则派生后转绿。随后分别用红色回归驱动品牌选中配对、周与时间列表、显式 EP 通用变量和宿主“今天且已选中”状态修复。
+- 周夹具曾误用需要额外 Dayjs 插件的格式，改用 EP 当前支持的 `YYYY-wo`；键盘周选择又经旧路径同操作对照，两条路径均得到 `2026-48th`，未把夹具或预期错误记作产品缺陷。
+- EP 原位面板位于所属预览而非输入元素内部；禁用输入可预创建隐藏面板节点。组件断言分别核对其真实所属与不可见状态，不将 DOM 预创建误判为禁用失效。
+- [公开组件回归](../../../../packages/form-create/src/date-appearance.test.ts)共 17 条：五形态值／格式／面板、三种全局类名来源、周与时间状态、品牌显式 EP 变量、宿主编译白色、外部挂载、原位面板、清空禁用、旧路径、活动中换肤、定义重开和同 app 双实例清理。
+- 定向命令 `pnpm --filter @flowduet/form-create exec vitest run src/date-appearance.test.ts src/select-appearance.test.ts src/appearance.test.ts src/control-appearance.test.ts`：4 文件／55 条通过；#104 12 条、#105 6 条、#106 20 条保持绿色。
+
+## Chromium 八组外观矩阵
+
+源码构建与下述实际 tarball 生产页均执行同一[复测脚本](evidence/107-form-preview-date/matrix.mjs.txt)。环境为 HeadlessChrome 156.0.8078.4、Vue 3.5.43、单份 Element Plus 2.14.6、FormCreate renderer 3.3.4，视口 1440×1800、deviceScaleFactor 1。每组均逐一打开五种形态，datetime 另进入实际时间列表，共 40 个面板；源码与消费端的 `errors=[]`、`resourceErrors=[]`、`failures=[]`。
+
+| 配色来源 | 主题 | 舒适                                                               | 紧凑                                                           |
+| -------- | ---- | ------------------------------------------------------------------ | -------------------------------------------------------------- |
+| 跟随宿主 | 浅色 | [截图](evidence/107-form-preview-date/host-light-comfortable.png)  | [截图](evidence/107-form-preview-date/host-light-compact.png)  |
+| 跟随宿主 | 深色 | [截图](evidence/107-form-preview-date/host-dark-comfortable.png)   | [截图](evidence/107-form-preview-date/host-dark-compact.png)   |
+| 品牌预设 | 浅色 | [截图](evidence/107-form-preview-date/brand-light-comfortable.png) | [截图](evidence/107-form-preview-date/brand-light-compact.png) |
+| 品牌预设 | 深色 | [截图](evidence/107-form-preview-date/brand-dark-comfortable.png)  | [截图](evidence/107-form-preview-date/brand-dark-compact.png)  |
+
+[源码计算结果](evidence/107-form-preview-date/matrix.json)与[消费端结果](evidence/107-form-preview-date/consumer-scene/matrix.json)逐组记录输入高度与身份、面板归属、表面、圆角、日／月／年／周选中状态、非当前值、时间列表行高与选中配对、确认按钮、试填值和 EP 变量零回写。datetime 还记录真实 Tab 顺序，直至时间取消／确认按钮，并验证两种来源均有 2px 可见焦点。品牌圆角实测为 8px；跟随宿主的 EP 编译白色前景单列为例外。八组源码截图已逐张目检，消费端关键截图复核，未见混合主题、选中文字不可读或异常裁切。
+
+## 真实行为、显式配置与隔离
+
+[源码行为结果](evidence/107-form-preview-date/behavior.json)、[消费端行为结果](evidence/107-form-preview-date/consumer-scene/behavior.json)及[操作脚本](evidence/107-form-preview-date/behavior.mjs.txt)均 `errors=[]`、`resourceErrors=[]`、`unhandled=[]`、`failures=[]`：
+
+- 旧路径不追加实例标识或实例样式；真实清空得到 EP 默认 `null`，必填失败到重新选择成功，禁用输入不打开可见面板。
+- date、week、month、year 经真实键盘打开、方向键移动、Enter 选择并恢复输入焦点；当前单元格有 2px 可见焦点。week 新旧路径结果一致，显示与值格式不变。
+- datetime 聚焦时间输入进入同一所属 Popper 内的真实时间列；换来源、主题、密度和启停均保留时间输入 DOM、焦点和当前值。选择分钟并确认后得到 `2026-11-15 09:31:45`，子面板和外层面板按 EP 合同关闭并恢复焦点。
+- 日期输入／面板活动时切换外观保留当前值、输入 DOM 与 EP 当时的实际焦点；同 ID 重开恢复五种默认值并清除反馈。
+- [双实例截图](evidence/107-form-preview-date/dual-instances.png)覆盖同 app 的跟随宿主浅色舒适与品牌深色紧凑实例；面板标识、层级、显式外部挂载和 40px large 输入各自独立。原位面板留在所属预览，卸载／重挂清理面板与样式并生成新标识。
+- 无关宿主日期的选中前景、背景和无实例归属在实例重建及换肤前后一致。局部宿主深色的 body 弹层实际使用 `#162220` 表面、`#7FCFC7` 主色与 EP 白色选中文字，实例样式无 `--el-*` 声明；[截图](evidence/107-form-preview-date/scoped-host.png)。
+- 显式样例同时保留通用 EP 变量与组件专用变量。实测确认 EP 在 `.el-date-picker` 内重新声明组件专用变量；旧路径对被遮蔽变量也不响应，适配器不新增其生效能力。通用 `--el-color-primary`／`--el-text-color-placeholder` 的原有效果保持优先；其余视觉偏差按配置影响记录，不冒充品牌目标通过。
+
+## 滚动、缩放、边缘与裁切
+
+[布局结果](evidence/107-form-preview-date/layout.json)、[消费端布局](evidence/107-form-preview-date/consumer-scene/layout.json)及[复测脚本](evidence/107-form-preview-date/layout.mjs.txt)覆盖八组外观，环境为 900×700 视口、320px 容器、容器滚动及 CSS zoom 200%。日期与时间子面板均在视口内，选中项命中检测通过、层级正常、页面无横向溢出；滚动后保持位移，或在 `top`／`right`／`bottom` 间翻转后仍按对应中心轴对齐。
+
+[浅色舒适缩放截图](evidence/107-form-preview-date/brand-light-comfortable-zoom-200.png)与[深色紧凑缩放截图](evidence/107-form-preview-date/brand-dark-compact-zoom-200.png)已目检。该证据是 CSS zoom，不冒充浏览器／操作系统完整缩放矩阵。
+
+## 实际 tarball 消费
+
+三包构建并打包至 `/private/tmp/flowduet-107-pack.Mb3vC6`，在全新目录 `/private/tmp/flowduet-107-consumer.6Q7vrp` 从零安装；消费工程、驱动脚本和源码仓库分离，无源码 alias 或内部测试 API。
+
+- [依赖树](evidence/107-form-preview-date/npm-ls.txt)：core 0.3.0、designer 0.1.0、form-create 0.1.0；EP 2.14.6 单份、renderer 3.3.4、Vue 3.5.43。
+- [严格 TS 配置](evidence/107-form-preview-date/consumer-tsconfig.json)启用 `strict`、`exactOptionalPropertyTypes`、`noUncheckedIndexedAccess`、`skipLibCheck=false`；[公开消费源码](evidence/107-form-preview-date/consumer-main.ts.txt)含非法密度类型反例。`tsc --noEmit` 退出码 0（[日志](evidence/107-form-preview-date/consumer-tsc.txt)）。
+- [Vite 配置](evidence/107-form-preview-date/consumer-vite.config.ts.txt)与[生产构建日志](evidence/107-form-preview-date/consumer-vite-build.txt)无源码 alias。[静态结果](evidence/107-form-preview-date/consumer-static.json)确认公开 JS、声明、CSS 子路径与实际版本。
+- 消费页复制当前公开 Playground 场景，并由生产构建的 Vite preview 验收；完整 40 面板矩阵、行为和八组布局均零失败。本项不替代 #108 的双入口完整发布验收。
+
+## 工程检查
+
+- `pnpm lint`：ESLint 与 Prettier 通过；首轮仅发现新模块一处恒真 filter，删除后复测通过。
+- `pnpm test`：默认全量 **65 文件／1023 条全部通过**（core 148、designer 202、form-create 367、Playground 306）；未提高超时或跳过用例。
+- `pnpm build`：core、designer、form-create、Playground 全过；保留 Playground 既有大 chunk 提示。
+- changeset：`.changeset/form-preview-date-appearance.md`，仅 `@flowduet/form-create` minor；无依赖、peer 或锁文件变化。
+- 初轮独立 Standards 审查：重要 1／细节 1／既有 0，发现系统时钟依赖与 select/date 同形重复；Spec 审查：重要 1／细节 0／既有 0，发现宿主时间按钮键盘焦点不可见。测试已固定并恢复系统时钟，焦点几何改为两种来源共享，规则派生合并为同一类型化 helper。
+- 第二轮完整补丁复审对象 SHA-256：`79cc7f3834efcd279e44a9b872f3d21bec79549993a9bf908292fd4adfcf96fc`，清单 59 个文件与工作树哈希一致。Standards 重要 0／细节 0／既有 0；Spec 重要 0／细节 0／既有 0。初轮时钟依赖、重复遍历和宿主时间按钮焦点三项均已关闭，无新增发现；复审为独立上下文只读核对，未冒充重跑测试。
+
+## 限制与未测项
+
+- 本票未执行真实 macOS 中文输入法；既有合成组合输入回归不能冒充 OS IME 验收。
+- Firefox、Safari／WebKit、移动端与完整可访问性认证未验证；Chromium 通过不推断其他环境兼容。
+- 未执行本地 Node 22 矩阵或远端 CI；Node 22／24 双矩阵与维护者审阅留待后续 PR。
+- 未推送、未开 PR、未合并、未发布 npm；Issue 保持开放。

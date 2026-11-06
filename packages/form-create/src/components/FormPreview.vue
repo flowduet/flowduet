@@ -26,6 +26,7 @@ import type { FormDefinition } from "../document.js";
 import { parseFormOptions, parseFormRules, type FieldRule } from "../form-schema.js";
 import { ensureFormCreateInstalled } from "../form-create-setup.js";
 import { nextFormPreviewInstanceId } from "./form-preview-instance.js";
+import { brandDatePopperCss, hostDatePopperCss } from "./date-popper-style.js";
 import { explicitSelectPopperCss, hostSelectPopperCss } from "./select-popper-style.js";
 
 /**
@@ -57,11 +58,17 @@ const fApi = ref<{ validate?: (cb: (result: unknown) => void) => unknown } | nul
 const validation = ref<{ ok: boolean; message: string } | null>(null);
 
 const hostRef = ref<HTMLElement>();
-const selectPopperClass = `flowduet-form-preview-select-${nextFormPreviewInstanceId()}`;
+const instanceId = nextFormPreviewInstanceId();
+const selectPopperClass = `flowduet-form-preview-select-${instanceId}`;
+const datePopperClass = `flowduet-form-preview-date-${instanceId}`;
 const selectPopperClasses = reactive<Record<string, boolean>>({
   [selectPopperClass]: false,
 });
+const datePopperClasses = reactive<Record<string, boolean>>({
+  [datePopperClass]: false,
+});
 let selectPopperStyleElement: HTMLStyleElement | undefined;
+let datePopperStyleElement: HTMLStyleElement | undefined;
 const previewAppearance = shallowRef<ResolvedComponentAppearance>();
 const hostAppearance = shallowRef<HostAppearanceContext>();
 let disposed = false;
@@ -69,6 +76,7 @@ let sampleTicket = 0;
 onBeforeUnmount(() => {
   disposed = true;
   removeSelectPopperStyle();
+  removeDatePopperStyle();
 });
 function refreshHostAppearance(): void {
   if (disposed) return;
@@ -98,6 +106,7 @@ watch(
 onMounted(() => {
   refreshHostAppearance();
   syncSelectPopperStyle();
+  syncDatePopperStyle();
 });
 const previewClass = computed(() => {
   const appearance = previewAppearance.value;
@@ -153,23 +162,30 @@ function record(value: unknown): Record<string, unknown> {
     : {};
 }
 
-function selectGlobalProps(): Record<string, unknown> {
+type PopperRuleType = "select" | "datePicker";
+
+function globalPopperProps(type: PopperRuleType): Record<string, unknown> {
   const options = parseFormOptions(props.form.options);
   const global = record(options.global);
   // 与 FormCreate 的全局默认→组件默认→字段配置顺序一致，不能让实例标识遮住全局业务类。
   return {
     ...record(record(global["*"] || global.default).props),
-    ...record(record(global.select).props),
+    ...record(record(global[type]).props),
   };
 }
 
 // 仅修改解析后的临时规则树：实例标识稳定，规则身份只随定义换代。
-function adaptSelectRules(rules: FieldRule[], defaults: Record<string, unknown>): FieldRule[] {
+function adaptPopperRules(
+  rules: FieldRule[],
+  type: PopperRuleType,
+  defaults: Record<string, unknown>,
+  instanceClasses: Record<string, boolean>,
+): FieldRule[] {
   return rules.map((item) => {
     const children = Array.isArray(item.children)
-      ? adaptSelectRules(item.children as FieldRule[], defaults)
+      ? adaptPopperRules(item.children as FieldRule[], type, defaults, instanceClasses)
       : item.children;
-    if (item.type !== "select") return children === item.children ? item : { ...item, children };
+    if (item.type !== type) return children === item.children ? item : { ...item, children };
     if (
       item.props !== undefined &&
       (typeof item.props !== "object" || item.props === null || Array.isArray(item.props))
@@ -179,7 +195,7 @@ function adaptSelectRules(rules: FieldRule[], defaults: Record<string, unknown>)
     const businessClass =
       fieldProps.popperClass === undefined ? defaults.popperClass : fieldProps.popperClass;
     const popperClass =
-      businessClass === undefined ? selectPopperClasses : [businessClass, selectPopperClasses];
+      businessClass === undefined ? instanceClasses : [businessClass, instanceClasses];
     return {
       ...item,
       ...(children === item.children ? {} : { children }),
@@ -188,20 +204,37 @@ function adaptSelectRules(rules: FieldRule[], defaults: Record<string, unknown>)
   });
 }
 
-const rule = computed(() =>
-  contentError.value === null
-    ? adaptSelectRules(parseFormRules(props.form.rules), selectGlobalProps())
-    : [],
-);
+const rule = computed(() => {
+  if (contentError.value !== null) return [];
+  const parsed = parseFormRules(props.form.rules);
+  const selected = adaptPopperRules(
+    parsed,
+    "select",
+    globalPopperProps("select"),
+    selectPopperClasses,
+  );
+  return adaptPopperRules(
+    selected,
+    "datePicker",
+    globalPopperProps("datePicker"),
+    datePopperClasses,
+  );
+});
 
-function containsSelect(rules: FieldRule[]): boolean {
+function containsRuleType(rules: FieldRule[], type: PopperRuleType): boolean {
   return rules.some(
     (item) =>
-      item.type === "select" ||
-      (Array.isArray(item.children) && containsSelect(item.children as FieldRule[])),
+      item.type === type ||
+      (Array.isArray(item.children) && containsRuleType(item.children as FieldRule[], type)),
   );
 }
-const hasSelectRule = computed(() => containsSelect(rule.value));
+const hasSelectRule = computed(() => containsRuleType(rule.value, "select"));
+const hasDateRule = computed(() => containsRuleType(rule.value, "datePicker"));
+
+function removeDatePopperStyle(): void {
+  datePopperStyleElement?.remove();
+  datePopperStyleElement = undefined;
+}
 
 function removeSelectPopperStyle(): void {
   selectPopperStyleElement?.remove();
@@ -246,6 +279,39 @@ ${explicitSelectPopperCss(owner)}`
   selectPopperStyleElement.textContent = css;
 }
 watch([previewAppearance, previewStyle, hasSelectRule], syncSelectPopperStyle, {
+  immediate: true,
+  flush: "post",
+});
+
+// 日期与实际时间子面板同属一个 Popper；外层实例类覆盖两者，无需额外 DOM 监听。
+function syncDatePopperStyle(): void {
+  const appearance = previewAppearance.value;
+  const host = hostRef.value;
+  datePopperClasses[datePopperClass] = appearance !== undefined;
+  if (disposed || appearance === undefined || !hasDateRule.value || host === undefined) {
+    removeDatePopperStyle();
+    return;
+  }
+  const owner = `.el-picker__popper.${datePopperClass}`;
+  const variables = Object.entries(previewStyle.value ?? {})
+    .map(([name, value]) => `${name}:${value}`)
+    .join(";");
+  const css = `
+${owner}{${variables}}
+${
+  appearance.colorSource === "brand"
+    ? brandDatePopperCss(owner)
+    : hostAppearance.value === undefined
+      ? ""
+      : hostDatePopperCss(owner, host, hostAppearance.value)
+}`;
+  if (datePopperStyleElement === undefined) {
+    datePopperStyleElement = host.ownerDocument.createElement("style");
+    host.ownerDocument.head.append(datePopperStyleElement);
+  }
+  datePopperStyleElement.textContent = css;
+}
+watch([previewAppearance, previewStyle, hasDateRule], syncDatePopperStyle, {
   immediate: true,
   flush: "post",
 });
