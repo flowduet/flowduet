@@ -1,0 +1,84 @@
+import { mkdir, writeFile } from "node:fs/promises";
+import { resolve } from "node:path";
+import { pathToFileURL } from "node:url";
+const [driverPath, baseUrl, outputDir] = process.argv.slice(2);
+if (!driverPath || !baseUrl || !outputDir) throw new Error("需要驱动、URL和输出目录");
+const { chromium } = await import(pathToFileURL(resolve(driverPath)).href);
+await mkdir(outputDir, { recursive: true });
+const browser = await chromium.launch({
+  headless: true,
+  executablePath: process.env.FLOWDUET_CHROMIUM_PATH || "/Users/l/Library/Caches/ms-playwright/chromium-1248/chrome-mac-x64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing",
+});
+const page = await browser.newPage({ viewport: { width: 1440, height: 2200 } });
+const results = [];
+const errors = [];
+const failures = [];
+const check = (ok, message) => { if (!ok) failures.push(message); };
+page.on("pageerror", error => errors.push(error.message));
+try {
+  await page.goto(baseUrl, { waitUntil: "networkidle" });
+  await page.locator('[data-test="form-appearance-scene-btn"]').click();
+  const input = page.locator('[data-test="form-appearance-second-instance"] .el-select__input').nth(1);
+  const emptyInput = page.locator('[data-test="form-appearance-second-instance"] .el-select__input').nth(2);
+  const panel = page.locator('.el-select__popper.inline-select-panel');
+  const emptyPanel = page.locator('.el-select__popper.explicit-empty-select-panel');
+  const inputHandle = await input.elementHandle();
+  const variants = [{ source: "legacy", mode: "light", density: "compact" }];
+  for (const source of ["host", "brand"]) for (const mode of ["light", "dark"]) for (const density of ["compact", "comfortable"]) variants.push({ source, mode, density });
+  for (const variant of variants) {
+    const { source, mode, density } = variant;
+    const id = `${source}-${mode}-${density}`;
+    await page.locator('[data-test="form-appearance-second-enabled"]').setChecked(source !== "legacy");
+    await page.locator('[data-test="form-appearance-host-dark"]').setChecked(mode === "dark");
+    if (source !== "legacy") {
+      await page.locator('[data-test="form-appearance-second-source"]').selectOption(source);
+      if (source === "brand") await page.locator('[data-test="form-appearance-second-mode"]').selectOption(mode);
+      await page.locator('[data-test="form-appearance-second-density"]').selectOption(density);
+    }
+    await input.focus();
+    await input.press("ArrowDown");
+    await panel.waitFor({ state: "visible" });
+    await page.waitForTimeout(350);
+    const actual = await panel.evaluate(element => {
+      const selected = element.querySelector('.is-selected');
+      const option = element.querySelectorAll('.el-select-dropdown__item')[1];
+      const disabled = element.querySelector('.is-disabled');
+      const css = getComputedStyle(option);
+      return {
+        configured: element.style.getPropertyValue('--el-font-size-base'),
+        selectedFont: getComputedStyle(selected).fontSize,
+        optionFont: css.fontSize,
+        optionHeight: option.getBoundingClientRect().height,
+        optionMinHeight: css.minHeight,
+        optionWhiteSpace: css.whiteSpace,
+        textWhiteSpace: getComputedStyle(option.querySelector('span')).whiteSpace,
+        disabledHeight: disabled.getBoundingClientRect().height,
+        disabledFont: getComputedStyle(disabled).fontSize,
+      };
+    });
+    check(actual.configured === "28px" && actual.selectedFont === "28px", `${id}: 显式字号 ${JSON.stringify(actual)}`);
+    check(actual.optionFont === "18px" && Math.abs(actual.optionHeight - 20) < 0.1, `${id}: 显式选项尺寸 ${JSON.stringify(actual)}`);
+    check(actual.optionWhiteSpace === "nowrap" && actual.textWhiteSpace === "nowrap", `${id}: 显式换行被覆盖`);
+    check(Math.abs(actual.disabledHeight - 16) < 0.1 && actual.disabledFont === "16px", `${id}: 字符串最大高度／字号被覆盖`);
+    check(await inputHandle.evaluate(element => document.activeElement === element), `${id}: 焦点或输入DOM丢失`);
+    await input.press("Escape");
+    await emptyInput.focus();
+    await emptyInput.press("ArrowDown");
+    await emptyPanel.waitFor({ state: "visible" });
+    await page.waitForTimeout(350);
+    const emptyFont = await emptyPanel.locator('.el-select-dropdown__empty').evaluate(element => getComputedStyle(element).fontSize);
+    check(emptyFont === "26px", `${id}: 显式空面板字号 ${emptyFont}`);
+    await emptyInput.press("Escape");
+    results.push({ ...variant, ...actual, emptyFont });
+  }
+  await input.focus();
+  await input.press("ArrowDown");
+  await panel.waitFor({ state: "visible" });
+  await page.screenshot({ path: resolve(outputDir, 'explicit-density.png'), fullPage: true });
+} finally {
+  const report = { browser: browser.version(), results, errors, failures };
+  await writeFile(resolve(outputDir, 'style-density.json'), JSON.stringify(report, null, 2));
+  console.log(JSON.stringify({ cases: results.length, errors, failures }, null, 2));
+  await browser.close();
+}
+if (failures.length || errors.length) process.exitCode = 1;

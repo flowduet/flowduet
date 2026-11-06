@@ -1,0 +1,30 @@
+{
+  "node": "24.18.0",
+  "pnpm": "10.26.1",
+  "base": "db00ef3bef4d575eeb3e841310577ef4c5da0917",
+  "head": "4c27baf746f36baa3a1d22b7b05040e89cd30b10",
+  "uncommitted": true,
+  "checks": {
+    "pnpm lint": "exit 0",
+    "pnpm test": {
+      "exit": 0,
+      "files": 64,
+      "tests": 1001,
+      "core": 148,
+      "designer": 202,
+      "form-create": 345,
+      "playground": 306
+    },
+    "pnpm build": "exit 0; final form-create/playground builds also exit 0",
+    "consumer tsc --noEmit": "exit 0",
+    "consumer vite build": "exit 0"
+  },
+  "consumer": {
+    "path": "/private/tmp/flowduet-106-consumer.e0m7Qw",
+    "tarball": "/tmp/flowduet-106-review-pack.xhcSbi/flowduet-form-create-0.1.0.tgz",
+    "sha256": "98fdb363cbb665ee25e1a3e609a96c04d35a5519717d4ec1eb3408cfbd41c93a",
+    "element-plus": "2.14.6 (one copy)",
+    "renderer": "3.3.4",
+    "vue": "3.5.43"
+  }
+}

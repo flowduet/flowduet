@@ -1,0 +1,50 @@
+import { createApp, defineComponent, h } from "vue";
+import { FormPreview, type ComponentAppearance, type FormDefinition } from "@flowduet/form-create";
+import { createAppearanceVariables, resolveComponentAppearance } from "@flowduet/designer";
+import "element-plus/dist/index.css";
+import "@flowduet/form-create/style.css";
+
+const appearance: ComponentAppearance = { colorSource: "brand", mode: "dark", density: "compact" };
+const resolved = resolveComponentAppearance(appearance);
+if (resolved === undefined || createAppearanceVariables(resolved, undefined)?.["--fd-control-height"] !== "24px") {
+  throw new Error("公开共享外观合同不可用");
+}
+// @ts-expect-error mode 仅允许 light / dark
+const invalidMode: ComponentAppearance = { mode: "sepia" };
+// @ts-expect-error 启用适配时 mode 必填
+const missingMode: ComponentAppearance = { density: "compact" };
+void invalidMode;
+void missingMode;
+
+const form: FormDefinition = {
+  id: "tarball_select_preview",
+  name: "安装包下拉单选预览",
+  provider: "form-create/element-plus",
+  rules: JSON.stringify([
+    { type: "input", field: "reason", title: "安装包事由", value: "tarball 文本", $required: true },
+    {
+      type: "select",
+      field: "decision",
+      title: "安装包下拉",
+      value: "no",
+      validate: [{ required: true, message: "请选择安装包审批结果", trigger: "change" }],
+      props: { clearable: true, valueOnClear: "", placeholder: "请选择安装包结果", popperClass: "tarball-select-panel" },
+      options: [
+        { label: "同意", value: "yes" },
+        { label: "拒绝", value: "no" },
+        { label: "安装包长中文选项：用于验证真实弹层在公开消费包中的换行、选中、键盘高亮与焦点恢复。", value: "long" },
+        { label: "禁用选项", value: "disabled", disabled: true },
+      ],
+    },
+    { type: "select", field: "empty", title: "安装包空选项", options: [] },
+    { type: "select", field: "disabled", title: "安装包禁用", value: "no", props: { disabled: true }, options: [{ label: "禁用已选", value: "no" }] },
+  ]),
+  options: "{}",
+};
+
+const App = defineComponent({
+  setup() {
+    return () => h(FormPreview, { form, appearance });
+  },
+});
+createApp(App).mount("#app");

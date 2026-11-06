@@ -1,0 +1,57 @@
+{
+  "browser": "156.0.8078.4",
+  "results": [
+    {
+      "density": "compact",
+      "background": "rgb(248, 250, 249)",
+      "border": "rgb(120, 153, 136)",
+      "selected": "rgb(0, 104, 94)",
+      "normal": "rgb(38, 59, 54)",
+      "disabled": "rgb(136, 153, 136)",
+      "arrow": "rgb(248, 250, 249)"
+    },
+    {
+      "density": "comfortable",
+      "background": "rgb(248, 250, 249)",
+      "border": "rgb(120, 153, 136)",
+      "selected": "rgb(0, 104, 94)",
+      "normal": "rgb(38, 59, 54)",
+      "disabled": "rgb(136, 153, 136)",
+      "arrow": "rgb(248, 250, 249)"
+    },
+    {
+      "configured": {
+        "selected": "rgb(18, 52, 86)",
+        "normal": "rgb(52, 66, 80)",
+        "primary": "rgb(18, 52, 86)"
+      }
+    },
+    {
+      "brandMode": "dark",
+      "onlyEp": {
+        "selected": "rgb(165, 187, 255)",
+        "hovered": "rgb(37, 46, 67)",
+        "disabled": "rgb(127, 138, 162)",
+        "hasFdConfig": false
+      }
+    },
+    {
+      "brandMode": "light",
+      "onlyEp": {
+        "selected": "rgb(45, 62, 151)",
+        "hovered": "rgb(240, 242, 248)",
+        "disabled": "rgb(139, 146, 164)",
+        "hasFdConfig": false
+      }
+    }
+  ],
+  "errors": [],
+  "failures": [
+    "dark: 仅 EP 选中色被品牌覆盖 rgb(165, 187, 255)",
+    "dark: 仅 EP 悬停色被品牌覆盖 rgb(37, 46, 67)",
+    "dark: 仅 EP 禁用色被品牌覆盖 rgb(127, 138, 162)",
+    "light: 仅 EP 选中色被品牌覆盖 rgb(45, 62, 151)",
+    "light: 仅 EP 悬停色被品牌覆盖 rgb(240, 242, 248)",
+    "light: 仅 EP 禁用色被品牌覆盖 rgb(139, 146, 164)"
+  ]
+}

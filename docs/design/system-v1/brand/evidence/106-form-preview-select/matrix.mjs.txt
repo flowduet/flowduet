@@ -1,0 +1,242 @@
+import { mkdir, writeFile } from "node:fs/promises";
+import { resolve } from "node:path";
+import { pathToFileURL } from "node:url";
+
+const [driverPath, baseUrl, outputDir] = process.argv.slice(2);
+if (!driverPath || !baseUrl || !outputDir) throw new Error("需要驱动、URL 和输出目录参数");
+const { chromium } = await import(pathToFileURL(resolve(driverPath)).href);
+await mkdir(outputDir, { recursive: true });
+const browser = await chromium.launch({
+  headless: true,
+  executablePath:
+    process.env.FLOWDUET_CHROMIUM_PATH ||
+    "/Users/l/Library/Caches/ms-playwright/chromium-1248/chrome-mac-x64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing",
+});
+const page = await browser.newPage({ viewport: { width: 1440, height: 2200 }, deviceScaleFactor: 1 });
+const errors = [];
+const resourceErrors = [];
+const failures = [];
+const results = [];
+page.on("pageerror", (error) => errors.push(`pageerror: ${error.stack || error.message}`));
+page.on("console", (message) => {
+  if (message.type() === "error") errors.push(`console: ${message.text()}`);
+});
+page.on("response", (response) => {
+  if (response.status() >= 400) resourceErrors.push(`${response.status()} ${response.url()}`);
+});
+const check = (condition, message) => {
+  if (!condition) failures.push(message);
+};
+const combinations = [
+  { colorSource: "host", mode: "light", density: "comfortable" },
+  { colorSource: "host", mode: "light", density: "compact" },
+  { colorSource: "host", mode: "dark", density: "comfortable" },
+  { colorSource: "host", mode: "dark", density: "compact" },
+  { colorSource: "brand", mode: "light", density: "comfortable" },
+  { colorSource: "brand", mode: "light", density: "compact" },
+  { colorSource: "brand", mode: "dark", density: "comfortable" },
+  { colorSource: "brand", mode: "dark", density: "compact" },
+];
+const expected = {
+  "brand-light": {
+    surface: "rgb(255, 255, 255)",
+    text: "rgb(32, 38, 61)",
+    inset: "rgb(240, 242, 248)",
+    primaryInk: "rgb(45, 62, 151)",
+    primarySoft: "rgb(234, 240, 255)",
+    focus: "rgb(45, 62, 151)",
+    muted: "rgb(98, 109, 134)",
+    disabledText: "rgb(139, 146, 164)",
+    disabledSurface: "rgb(237, 240, 245)",
+  },
+  "brand-dark": {
+    surface: "rgb(29, 36, 53)",
+    text: "rgb(233, 237, 247)",
+    inset: "rgb(37, 46, 67)",
+    primaryInk: "rgb(165, 187, 255)",
+    primarySoft: "rgb(42, 51, 84)",
+    focus: "rgb(165, 187, 255)",
+    muted: "rgb(163, 175, 201)",
+    disabledText: "rgb(127, 138, 162)",
+    disabledSurface: "rgb(37, 45, 64)",
+  },
+};
+const setSelect = async (test, value) => {
+  await page.evaluate(
+    ({ test, value }) => {
+      const select = document.querySelector(`[data-test="${test}"]`);
+      select.value = value;
+      select.dispatchEvent(new Event("change", { bubbles: true }));
+    },
+    { test, value },
+  );
+  await page.waitForTimeout(150);
+};
+const setHostDark = async (dark) => {
+  await page.evaluate((dark) => {
+    const input = document.querySelector('[data-test="form-appearance-host-dark"]');
+    if (input.checked !== dark) {
+      input.checked = dark;
+      input.dispatchEvent(new Event("change", { bubbles: true }));
+    }
+  }, dark);
+  await page.waitForTimeout(150);
+};
+const first = () =>
+  page.locator('[data-test="form-appearance-first-instance"] [data-test="form-preview"]');
+const select = () => first().locator(".el-select").nth(0);
+const input = () => select().locator(".el-select__input");
+const panel = () => page.locator(".el-select__popper.preview-select-panel");
+const closePanel = async () => {
+  if (await panel().isVisible().catch(() => false)) {
+    await input().press("Escape");
+    await panel().waitFor({ state: "hidden" });
+  }
+};
+try {
+  await page.route("**/favicon.ico", (route) => route.fulfill({ status: 204, body: "" }));
+  await page.goto(baseUrl, { waitUntil: "networkidle" });
+  await page.locator('[data-test="form-appearance-scene-btn"]').click();
+  await page.locator('[data-test="form-appearance-first-controls"]').click();
+  await first().waitFor({ state: "visible" });
+  await input().evaluate((element) => {
+    window.__fd106OriginalInput = element;
+  });
+
+  for (const combination of combinations) {
+    const { colorSource, mode, density } = combination;
+    const id = `${colorSource}-${mode}-${density}`;
+    await closePanel();
+    await setHostDark(colorSource === "host" && mode === "dark");
+    await setSelect("form-appearance-first-source", colorSource);
+    if (colorSource === "brand") await setSelect("form-appearance-first-mode", mode);
+    await setSelect("form-appearance-first-density", density);
+    await input().focus();
+    await input().press("ArrowDown");
+    await panel().waitFor({ state: "visible" });
+    await input().press("ArrowUp");
+    await page.waitForTimeout(200);
+    const actual = await first().evaluate((root) => {
+      const rect = (element) => {
+        const box = element.getBoundingClientRect();
+        return { left: box.left, top: box.top, right: box.right, bottom: box.bottom, width: box.width, height: box.height };
+      };
+      const read = (element) => {
+        const value = getComputedStyle(element);
+        return {
+          color: value.color,
+          background: value.backgroundColor,
+          outlineWidth: value.outlineWidth,
+          outlineStyle: value.outlineStyle,
+          outlineColor: value.outlineColor,
+          outlineOffset: value.outlineOffset,
+          fontSize: value.fontSize,
+          lineHeight: value.lineHeight,
+          whiteSpace: value.whiteSpace,
+          zIndex: value.zIndex,
+        };
+      };
+      const select = root.querySelectorAll(".el-select")[0];
+      const wrapper = select.querySelector(".el-select__wrapper");
+      const panel = document.querySelector(".el-select__popper.preview-select-panel");
+      const items = [...panel.querySelectorAll(".el-select-dropdown__item")];
+      const selected = items.find((item) => item.textContent === "拒绝");
+      const hovering = items.find((item) => item.textContent === "同意");
+      const long = items.find((item) => item.textContent.startsWith("长中文选项"));
+      const disabled = items.find((item) => item.textContent === "禁用选项");
+      const emptySelect = root.querySelectorAll(".el-select")[1];
+      const placeholder = emptySelect.querySelector(".el-select__placeholder");
+      const disabledSelect = root.querySelectorAll(".el-select")[2];
+      const ownerClass = [...panel.classList].find((name) => name.startsWith("flowduet-form-preview-select-"));
+      const instanceStyle = [...document.head.querySelectorAll("style")].find((style) => style.textContent.includes(`.${ownerClass}`));
+      const longRect = rect(long);
+      const longTextRect = rect(long.querySelector("span"));
+      return {
+        rootClass: root.className,
+        rootInlineStyle: root.getAttribute("style"),
+        inputIdentity: select.querySelector("input") === window.__fd106OriginalInput,
+        focused: document.activeElement === select.querySelector("input"),
+        selectClass: select.className,
+        trigger: { ...rect(wrapper), ...read(wrapper) },
+        caret: read(select.querySelector(".el-select__caret")),
+        panel: { ...rect(panel), ...read(panel) },
+        panelInlineStyle: panel.getAttribute("style"),
+        instanceStyleText: instanceStyle?.textContent || "",
+        instanceEpDeclarations: [...(instanceStyle?.sheet?.cssRules || [])]
+          .flatMap((rule) => [...(rule.style || [])])
+          .filter((name) => name.startsWith("--el-")),
+        selected: { ...rect(selected), ...read(selected) },
+        hovering: { ...rect(hovering), ...read(hovering) },
+        long: { ...longRect, ...read(long), textRect: longTextRect },
+        disabledOption: read(disabled),
+        placeholder: { text: placeholder.textContent, ...read(placeholder) },
+        disabledSelect: {
+          disabled: disabledSelect.querySelector("input").disabled,
+          wrapper: { ...rect(disabledSelect.querySelector(".el-select__wrapper")), ...read(disabledSelect.querySelector(".el-select__wrapper")) },
+          selected: read(disabledSelect.querySelector(".el-select__placeholder")),
+        },
+        trialValues: JSON.parse(root.querySelector('[data-test="form-preview-values"]').textContent),
+        ownerClass,
+      };
+    });
+    const height = density === "compact" ? 24 : 32;
+    const fontSize = density === "compact" ? "12px" : "14px";
+    check(actual.inputIdentity, `${id}: 外观切换重建了下拉输入 DOM`);
+    check(actual.focused, `${id}: 键盘打开后输入焦点丢失`);
+    check(Math.abs(actual.trigger.height - height) <= 0.1, `${id}: 选择框高度 ${actual.trigger.height}，预期 ${height}`);
+    check(Math.abs(actual.selected.height - height) <= 0.1, `${id}: 选中选项行高 ${actual.selected.height}，预期 ${height}`);
+    check(actual.selected.fontSize === fontSize, `${id}: 选项字号 ${actual.selected.fontSize}，预期 ${fontSize}`);
+    check(actual.long.whiteSpace === "normal" && actual.long.height >= height - 0.1, `${id}: 长选项未换行或行高异常`);
+    check(actual.long.textRect.left >= actual.long.left && actual.long.textRect.right <= actual.long.right + 1, `${id}: 长选项文本横向越界`);
+    check(actual.long.textRect.bottom <= actual.long.bottom + 1, `${id}: 长选项文本纵向越界`);
+    check(actual.ownerClass, `${id}: 缺少实例面板标识`);
+    check(actual.panel.left >= 0 && actual.panel.right <= 1440, `${id}: 面板横向超出视口`);
+    check(Math.abs(actual.panel.left - actual.trigger.left) <= 1, `${id}: 面板未对齐所属选择框`);
+    check(Number(actual.panel.zIndex) >= 2000, `${id}: 面板层级异常 ${actual.panel.zIndex}`);
+    check(actual.trialValues.dropdownDecision === "no", `${id}: 八组切换丢失下拉选择`);
+    check(actual.rootInlineStyle.includes("--fd-"), `${id}: 实例缺少 FlowDuet 变量`);
+    if (colorSource === "host") {
+      check(!actual.rootInlineStyle.includes("--el-"), `${id}: 跟随宿主回写了根 EP 变量`);
+      check(!actual.panelInlineStyle.includes("--el-"), `${id}: 跟随宿主回写了面板 inline EP 变量`);
+      check(actual.instanceEpDeclarations.length === 0, `${id}: 跟随宿主的实例样式写入 EP 变量 ${actual.instanceEpDeclarations}`);
+    } else {
+      const target = expected[`brand-${mode}`];
+      check(actual.trigger.background === target.surface, `${id}: 选择框表面 ${actual.trigger.background}`);
+      check(actual.caret.color === target.text, `${id}: caret 前景 ${actual.caret.color}`);
+      check(actual.trigger.outlineWidth === "2px" && actual.trigger.outlineStyle === "solid", `${id}: 焦点环几何 ${actual.trigger.outlineWidth}/${actual.trigger.outlineStyle}`);
+      check(actual.trigger.outlineOffset === "3px" && actual.trigger.outlineColor === target.focus, `${id}: 焦点偏移／颜色 ${actual.trigger.outlineOffset}/${actual.trigger.outlineColor}`);
+      check(actual.panel.background === target.surface, `${id}: 面板表面 ${actual.panel.background}`);
+      check(actual.selected.color === target.primaryInk && actual.selected.background === target.primarySoft, `${id}: 选中前景／背景 ${actual.selected.color}/${actual.selected.background}`);
+      check(actual.hovering.background === target.inset, `${id}: 键盘高亮背景 ${actual.hovering.background}`);
+      check(actual.disabledOption.color === target.disabledText, `${id}: 禁用选项前景 ${actual.disabledOption.color}`);
+      check(actual.placeholder.color === target.muted, `${id}: 占位前景 ${actual.placeholder.color}`);
+      check(actual.disabledSelect.disabled && actual.disabledSelect.wrapper.background === target.inset, `${id}: 禁用选择框表面或禁用状态错误`);
+      check(actual.disabledSelect.selected.color === target.disabledText, `${id}: 禁用已选前景 ${actual.disabledSelect.selected.color}`);
+    }
+    await page.screenshot({ path: resolve(outputDir, `${id}.png`), fullPage: true });
+
+    await closePanel();
+    const emptyInput = first().locator(".el-select").nth(1).locator(".el-select__input");
+    await emptyInput.focus();
+    await emptyInput.press("ArrowDown");
+    const emptyPanel = page.locator(".el-select__popper:visible").last();
+    await emptyPanel.waitFor({ state: "visible" });
+    const empty = await emptyPanel.evaluate((element) => {
+      const content = element.querySelector(".el-select-dropdown__empty, .el-select-dropdown__loading") || element;
+      const style = getComputedStyle(content);
+      return { text: content.textContent, color: style.color, fontSize: style.fontSize };
+    });
+    check(empty.text.trim().length > 0 && empty.fontSize === fontSize, `${id}: 空选项反馈或字号错误 ${JSON.stringify(empty)}`);
+    if (colorSource === "brand") check(empty.color === expected[`brand-${mode}`].muted, `${id}: 空选项前景 ${empty.color}`);
+    actual.empty = empty;
+    results.push({ ...combination, ...actual });
+    await emptyInput.press("Escape");
+    await emptyPanel.waitFor({ state: "hidden" });
+  }
+  const result = { browser: await browser.version(), viewport: "1440x2200@1", results, errors, resourceErrors, failures };
+  await writeFile(resolve(outputDir, "matrix.json"), JSON.stringify(result, null, 2));
+  console.log(JSON.stringify({ browser: result.browser, combinations: results.length, errors, resourceErrors, failures }, null, 2));
+  if (errors.length || resourceErrors.length || failures.length) process.exitCode = 1;
+} finally {
+  await browser.close();
+}
