@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, reactive, ref } from "vue";
+import { computed, reactive, ref } from "vue";
 import { ElButton, ElInput } from "element-plus";
 import { BpmnModel, flowableAdapter } from "@flowduet/core";
 import {
@@ -10,6 +10,7 @@ import {
   type ComponentAppearance,
   type DesignerFormOption,
 } from "@flowduet/designer";
+import { useAppearanceHostMode } from "./useAppearanceHostMode";
 
 interface InstanceControls {
   enabled: boolean;
@@ -18,6 +19,12 @@ interface InstanceControls {
   mode: AppearanceMode;
   density: AppearanceDensity;
 }
+
+const props = defineProps<{ hostDark: boolean; scopedDark: boolean }>();
+const emit = defineEmits<{
+  "update:hostDark": [value: boolean];
+  "update:scopedDark": [value: boolean];
+}>();
 
 const FORM_OPTIONS: readonly DesignerFormOption[] = [
   { id: "form_apply", name: "申请单" },
@@ -81,9 +88,6 @@ const second = reactive<InstanceControls>({
   density: "compact",
 });
 const firstInvalid = ref(false);
-const hostDark = ref(document.documentElement.classList.contains("dark"));
-const declarativeScopedDark = ref(false);
-const originallyDark = hostDark.value;
 const firstChanges = ref(0);
 const firstDraftChanges = ref(0);
 
@@ -103,10 +107,7 @@ const firstAppearance = computed<ComponentAppearance | undefined>(() => {
 });
 const secondAppearance = computed(() => toAppearance(second));
 
-function syncFirstHostMode(): void {
-  if (first.colorSource === "host")
-    first.mode = hostDark.value || declarativeScopedDark.value ? "dark" : "light";
-}
+const { syncHostMode } = useAppearanceHostMode(props, [first, second]);
 
 function onFirstValidChange(): void {
   firstInvalid.value = false;
@@ -114,25 +115,22 @@ function onFirstValidChange(): void {
 
 function onFirstSourceChange(): void {
   onFirstValidChange();
-  syncFirstHostMode();
+  syncHostMode(first);
 }
 
-function onDeclarativeDarkChange(): void {
+function onSecondSourceChange(): void {
+  syncHostMode(second);
+}
+
+function onDeclarativeDarkChange(event: Event): void {
   onFirstValidChange();
-  syncFirstHostMode();
+  emit("update:scopedDark", (event.target as HTMLInputElement).checked);
 }
 
 function onHostThemeChange(event: Event): void {
-  const dark = (event.target as HTMLInputElement).checked;
-  hostDark.value = dark;
-  // 这是宿主主动切换自己的 EP 深色环境，不是组件 appearance 的副作用。
-  document.documentElement.classList.toggle("dark", dark);
-  syncFirstHostMode();
+  // 宿主主动声明自己的 EP 环境；实际 html 写操作由组合场景统一执行。
+  emit("update:hostDark", (event.target as HTMLInputElement).checked);
 }
-
-onBeforeUnmount(() => {
-  document.documentElement.classList.toggle("dark", originallyDark);
-});
 </script>
 
 <template>
@@ -146,7 +144,7 @@ onBeforeUnmount(() => {
         <label>
           <input
             type="checkbox"
-            :checked="hostDark"
+            :checked="props.hostDark"
             data-test="appearance-host-dark"
             @change="onHostThemeChange"
           />
@@ -154,7 +152,7 @@ onBeforeUnmount(() => {
         </label>
         <label>
           <input
-            v-model="declarativeScopedDark"
+            :checked="props.scopedDark"
             type="checkbox"
             data-test="appearance-declarative-dark"
             @change="onDeclarativeDarkChange"
@@ -230,7 +228,7 @@ onBeforeUnmount(() => {
         </div>
         <div
           class="appearance-designer-viewport"
-          :class="{ 'appearance-scoped-dark': declarativeScopedDark }"
+          :class="{ 'appearance-scoped-dark': props.scopedDark }"
         >
           <DingtalkDesigner
             v-if="first.mounted"
@@ -263,7 +261,11 @@ onBeforeUnmount(() => {
           >
           <label
             >配色
-            <select v-model="second.colorSource" data-test="appearance-second-source">
+            <select
+              v-model="second.colorSource"
+              data-test="appearance-second-source"
+              @change="onSecondSourceChange"
+            >
               <option value="host">跟随宿主</option>
               <option value="brand">品牌预设</option>
             </select>
@@ -287,7 +289,10 @@ onBeforeUnmount(() => {
             </select>
           </label>
         </div>
-        <div class="appearance-designer-viewport">
+        <div
+          class="appearance-designer-viewport"
+          :class="{ 'appearance-scoped-dark': props.scopedDark }"
+        >
           <DingtalkDesigner
             v-if="second.mounted"
             data-test="appearance-second-designer"
@@ -385,6 +390,15 @@ onBeforeUnmount(() => {
   --el-color-primary-light-3: #99dad3;
   --el-color-primary-dark-2: #5fb3aa;
   --el-color-white: #0c1f1d;
+}
+
+/* EP 非模态抽屉仍有全屏交互容器；仅演示宿主让它穿透，便于真实操作外观控件。 */
+.appearance-scene :deep(.el-modal-drawer) {
+  pointer-events: none;
+}
+
+.appearance-scene :deep(.el-drawer) {
+  pointer-events: auto;
 }
 
 @media (max-width: 1100px) {

@@ -17,8 +17,7 @@ import {
   FormPreview,
 } from "@flowduet/form-create";
 import type { FormDefinition, SaveDesignDocumentResult } from "@flowduet/form-create";
-import NodeAppearanceScene from "./NodeAppearanceScene.vue";
-import FormPreviewAppearanceScene from "./FormPreviewAppearanceScene.vue";
+import AppearanceConsumptionScene from "./AppearanceConsumptionScene.vue";
 
 /**
  * Playground 编辑区（#23）：挂 designer 组件的最小验收宿主。
@@ -96,7 +95,6 @@ const model = shallowRef<BpmnModel>(demoModel);
 
 const view = ref<"dingtalk" | "bpmn">("dingtalk");
 const appearanceSceneVisible = ref(false);
-const formAppearanceSceneVisible = ref(false);
 const viewSwitchKey = ref(0);
 const xml = ref("");
 const error = ref("");
@@ -609,16 +607,10 @@ onUnmounted(() => {
         />
         <ElButton data-test="form-manager-btn" @click="openFormManager">表单管理</ElButton>
         <ElButton data-test="form-preview-btn" @click="previewVisible = true">预览表单</ElButton>
-        <ElButton
-          data-test="appearance-scene-btn"
-          @click="appearanceSceneVisible = !appearanceSceneVisible"
-        >
-          外观验收
+        <ElButton data-test="appearance-scene-btn" @click="appearanceSceneVisible = true">
+          双入口外观
         </ElButton>
-        <ElButton
-          data-test="form-appearance-scene-btn"
-          @click="formAppearanceSceneVisible = !formAppearanceSceneVisible"
-        >
+        <ElButton data-test="form-appearance-scene-btn" @click="appearanceSceneVisible = true">
           预览外观
         </ElButton>
         <ElButton plain type="primary" data-test="save-local-btn" @click="onSaveLocalDraft">
@@ -665,8 +657,7 @@ onUnmounted(() => {
       </section>
     </main>
 
-    <NodeAppearanceScene v-if="appearanceSceneVisible" />
-    <FormPreviewAppearanceScene v-if="formAppearanceSceneVisible" />
+    <AppearanceConsumptionScene v-if="appearanceSceneVisible" />
 
     <ElDialog
       v-model="discardVisible"

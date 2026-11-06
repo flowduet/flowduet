@@ -1,0 +1,73 @@
+{
+  "browser": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+  "viewport": {
+    "initial": {
+      "width": 1440,
+      "height": 1100
+    },
+    "zoom": {
+      "width": 1024,
+      "height": 900,
+      "cssZoom": "200%"
+    }
+  },
+  "results": {
+    "legacyToggle": "旧路径 right/small 保持，启停保留输入与焦点",
+    "requiredFailure": {
+      "errorText": "请填写申请事由；这项长中文必填错误用于确认多行反馈不会覆盖后续字段或操作按钮。",
+      "errorColor": "rgb(180, 35, 58)",
+      "errorFontSize": "12px",
+      "errorLineHeight": "19.2px",
+      "errorPosition": "static",
+      "feedbackText": "校验未通过：请按字段提示补填（见上方错误信息）",
+      "feedbackColor": "rgb(180, 35, 58)",
+      "required": true
+    },
+    "validation": "真实 FormCreate 必填失败→成功通过，拒绝无 unhandledrejection",
+    "runtimeAndInvalid": "来源／主题／密度、启停与非法回退保留试填、DOM、焦点和反馈",
+    "composition": "合成中文组合期间换肤通过；未宣称真实 OS IME",
+    "definitionLifecycle": "同 ID 重开与另一表单替换均重置，外观变化不重置",
+    "explicitConfiguration": {
+      "formClass": "el-form el-form--large el-form--label-right form-create",
+      "formPadding": "7px",
+      "inputHeight": 40,
+      "inputMaxWidth": "320px",
+      "textareaRows": "4",
+      "labelWidth": "96px",
+      "buttonHeight": 24
+    },
+    "instanceIsolation": "双实例异主题、卸载／重挂、宿主控件与处理器均保持",
+    "keyboardFocus": "文本、textarea 与自有按钮均经真实 Tab 验证 2px 焦点环",
+    "longErrorZoom": {
+      "root": {
+        "left": 32,
+        "right": 392,
+        "width": 360
+      },
+      "errorHeight": 161.5625,
+      "errorText": "请填写申请事由；这项长中文必填错误用于确认多行反馈不会覆盖后续字段或操作按钮。",
+      "errorWidth": 264,
+      "errorScrollWidth": 264,
+      "button": {
+        "top": 1290.328125,
+        "bottom": 1354.328125,
+        "left": 80,
+        "right": 256
+      },
+      "documentScrollWidth": 1024,
+      "viewportWidth": 1024
+    }
+  },
+  "errors": [],
+  "resourceErrors": [],
+  "warnings": [
+    "[FlowDuet] appearance.density 只支持 \"comfortable\" 或 \"compact\"；已整份拒绝本次 appearance 配置。"
+  ],
+  "unhandledRejections": [],
+  "failures": [],
+  "limitations": [
+    "组合输入使用合成 CompositionEvent/InputEvent，未执行真实 macOS 中文输入法。",
+    "缩放证据使用 CSS zoom 200%，不冒充浏览器或操作系统完整缩放矩阵。",
+    "本轮仅桌面 Chromium；Firefox、Safari/WebKit、移动端与完整可访问性认证未验证。"
+  ]
+}

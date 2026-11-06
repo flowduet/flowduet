@@ -128,6 +128,8 @@ function useCompactBrand(): void {
 
 当前 **FormPreview 的文本、多行文本、数字、单选、多选、下拉单选、日期、开关及下拉／日期／时间真实弹层和预览自有表面／反馈／操作区**完成本适配。`FormManager`／`FormDesigner` 工具条及其弹层不在本切片。首批证据使用单份 EP 2.14.6、FormCreate renderer 3.3.4 与桌面 Chromium；其他 EP 解析组合、Firefox、Safari／WebKit、移动端、真实操作系统中文输入法及完整可访问性认证尚未验证。
 
+双实例操作、定义换代／卸载重挂、实际 tarball 安装与浏览器消费的可复测步骤见 [Playground 双入口接入说明](../../apps/playground/README.md#element-plus-双入口公开消费示例)。临时消费工程只用于包检查，不是另一套长期演示应用。
+
 
 宿主只做文件 I/O 与展示（下载 Blob、读 File、把模型接进 `DingtalkDesigner` / `BpmnCanvas`），文档算法不复制到宿主。纯函数形式同样可用：`saveDesignDocument(model, forms?)` / `openDesignDocument(text)` / `exportDeployXml(model, forms)` / `collectReferenceIssues(model, forms)`。
 
