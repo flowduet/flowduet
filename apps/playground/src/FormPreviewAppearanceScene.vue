@@ -479,6 +479,19 @@ const EXPLICIT_FORM: FormDefinition = {
         popperClass: "inline-date-panel",
       },
     },
+    ...(["month", "year"] as const).map((type) => ({
+      type: "datePicker",
+      field: `explicit${type}`,
+      title: `显式 ${type} 文本变量`,
+      value: type === "month" ? "2026-11" : "2026",
+      props: {
+        type,
+        format: type === "month" ? "YYYY-MM" : "YYYY",
+        valueFormat: type === "month" ? "YYYY-MM" : "YYYY",
+        popperClass: `explicit-${type}-panel`,
+        popperStyle: { "--el-datepicker-text-color": "rgb(18, 52, 86)" },
+      },
+    })),
   ]),
   options: JSON.stringify({
     form: {

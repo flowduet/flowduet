@@ -75,3 +75,43 @@
 - Firefox、Safari／WebKit、移动端与完整可访问性认证未验证；Chromium 通过不推断其他环境兼容。
 - 未执行本地 Node 22 矩阵或远端 CI；Node 22／24 双矩阵与维护者审阅留待后续 PR。
 - 未推送、未开 PR、未合并、未发布 npm；Issue 保持开放。
+
+## 2026-11-06 补充审查与修复
+
+用户另行调用 `code-review #107`，比较 `ff28754...f5763da`；[发现评论](https://github.com/flowduet/flowduet/issues/107#issuecomment-6677883437)记录 Standards 重要 0／细节 0／既有 0，Spec 重要 1／细节 1／既有 0。用户随后授权补充评论、修复、回归与复审；这次投入属于已明确批准的两项修复，不扩展字段或适配范围。
+
+| 发现                           | 原因与修复                                                                                                 | 处置                                 |
+| ------------------------------ | ---------------------------------------------------------------------------------------------------------- | ------------------------------------ |
+| P2，宿主月份／年份悬停主色丢失 | 普通文字选择器的三个 `:not()` 增加权重，压过悬停规则；用 `:where()` 保留匹配范围并降低权重，恢复状态优先级 | 已修复，真实悬停回归通过             |
+| P3，宿主日期导航箭头颜色变浅   | 图标变量回退到 secondary；恢复为宿主 `--el-text-color-primary`，未提供时使用已解析主文字色                 | 已修复，公开组件及 Chromium 回归通过 |
+
+漏检层次：原矩阵检查了输入、表面、选中配对与焦点，没有断言月份／年份悬停或导航箭头原色；现将两者纳入独立可复测的[状态脚本](evidence/107-form-preview-date/states.mjs.txt)。脚本从公开 Playground 入口操作真实 FormCreate，使用未启用外观的 EP 原路径作为宿主对照；品牌期望来自批准设计值，局部宿主期望来自独立场景配置，不从适配实现推算期望。
+
+- P2 红色：[修复前结果](evidence/107-form-preview-date/states-before.json)的宿主两主题×两密度×月份／年份共 8 项悬停失败，品牌 8 项通过，无资源／运行异常。降低权重并重建 form-create 产物后，16 项全部通过。
+- P3 红色：[公开组件失败日志](evidence/107-form-preview-date/arrow-before.txt)确认次要文字色与 EP 主文字色期望不符；最小修复后[同一测试通过](evidence/107-form-preview-date/arrow-after.txt)。局部宿主 CSS 继承交给 Chromium 验证，happy-dom 不承担该视觉保证。
+- 首次修复的生产构建 Chromium 156.0.8078.4 共 18 项通过（最终扩展结果见下文），包含八组外观的月份／年份真实悬停、宿主箭头与选中配对的旧路径对照，以及局部深色宿主的自定义悬停色／主文字色。`errors=[]`、`failures=[]`。
+- 本轮不重写前述历史矩阵与审查清单；旧清单固定的是旧快照，不代表本轮修复后补丁。最终检查、实际 tarball 结果与独立复审对象见后续补记。
+
+本轮工程门槛：`pnpm test` 默认全量 65 文件／1024 条全部通过（core 148、designer 202、form-create 368、Playground 306），无提高超时或关闭用例；`pnpm build` 四包通过，保留既有大 chunk 提示。新增一条公开日期箭头组件回归；真实悬停覆盖通过 Chromium 脚本维护，不用 happy-dom 推断 `:hover`。
+
+实际消费复测：重新构建并打包三包至 `/private/tmp/flowduet-107-fix-pack.GYytD9`，在独立空工程 `/private/tmp/flowduet-107-fix-consumer.mhnml3` 使用先前消费工程的依赖锁文件，更新三个本地 tarball 路径及对应 SHA-512 后运行 `npm ci --offline`；不使用源码 alias 或修改第三方包。首次宽泛版本安装因新依赖未缓存退出，不计通过；锁定安装、`tsc --noEmit` 与 Vite 生产构建均通过。实际依赖仍为单份 EP 2.14.6、renderer 3.3.4、Vue 3.5.43。
+
+首次修复的消费端 18 项状态检查亦全部通过（最终扩展结果见下文），`errors=[]`、`failures=[]`；[依赖树](evidence/107-form-preview-date/followup-npm-ls.txt)、[严格类型检查](evidence/107-form-preview-date/followup-consumer-tsc.txt)及[消费构建日志](evidence/107-form-preview-date/followup-consumer-vite-build.txt)已保存。源码与消费端均验证真实悬停和箭头颜色；本轮未重跑历史全部 40 面板、完整布局及行为矩阵，不将原历史结果冒充新执行结果。Firefox／WebKit、移动端、OS IME、Node 22／24 双矩阵 CI 等原有限制保持。
+
+复测入口：将 `states.mjs.txt` 复制到临时 `.mjs`，执行 `node <临时脚本> <playwright/index.mjs绝对路径> <生产页URL> <输出目录>`；浏览器路径可用 `FLOWDUET_CHROMIUM_PATH` 指定。组件回归命令为 `pnpm --filter @flowduet/form-create exec vitest run src/date-appearance.test.ts`。
+
+### 显式配置变体补修
+
+第一次修复后的完整独立复审：Standards 重要 0／细节 0／既有 0；Spec 重要 1／细节 0／既有 0。P3 已关闭；P2 在默认配置下通过，但显式 `popperStyle` 触发的属性选择器额外增加权重，与悬停规则同权重且后置，原 P2 尚未完全关闭。该项属于同一问题的配置变体，继续在用户本次两项修复授权内补齐，没有新增字段或适配目标。首次修复快照 SHA-256 为 `a2291656996864f12631b93941b89d9748ec63e2c64c9501e5f314c79b584b5f`，不作为最终通过对象。
+
+在原显式配置样例中追加月份／年份的 `popperStyle` 文本变量，通过公开表单定义复现；扩展状态脚本覆盖默认／显式配置×八组外观×月份／年份，加局部宿主两项，共 34 项。修复前[显式配置结果](evidence/107-form-preview-date/states-explicit-before.json)有 16 项悬停失败，涵盖两种配色来源；不将组件专用变量被 EP 遮蔽的既有例外当作新增悬停回退的豁免。仅降低显式属性匹配的权重仍会在品牌路径压过 EP 自身的悬停规则，因此最终让普通文字规则明确排除悬停、今天、选中和禁用状态；保持显式变量的原有匹配与优先机制，避免改动其他消费点。选中配对、箭头颜色及局部主题继续纳入对照。
+
+最终生产构建与重新安装 tarball 的消费端，均完成[源码 34 项](evidence/107-form-preview-date/states.json)和[消费端 34 项](evidence/107-form-preview-date/consumer-scene/states.json)回归，`errors=[]`、`failures=[]`。普通态、真实悬停、宿主箭头与选中配对、品牌悬停及局部宿主变量均通过；显式值沿原消费点保留，不为修复而改第三方变量定义或全局主题。通过后未再修改产品实现。
+
+### 最终检查与独立复审结论
+
+最终 `pnpm lint`、`pnpm test`、`pnpm build` 均通过；全量仍为 65 文件／1024 条（无跳过），源码与实际 tarball 消费端各 34 项真实状态检查通过，严格类型与消费生产构建通过。两位新上下文代理分别复审增量及其与完整状态映射的交互：Standards 重要 0／细节 0／既有 0，Spec 重要 0／细节 0／既有 0；P2（含显式配置变体）与 P3 均已修复，无新增待修复项。
+
+[复审记录](evidence/107-form-preview-date/followup-review.json)固定基线 `ff28754`、父提交 `f5763da` 与结论补记前的 71 文件快照：完整补丁 SHA-256 为 `301c21d5e81a830664a9a33d917cd1c1103f9070d4ebd3eecbfbb9e4efe61e3d`，修复增量 SHA-256 为 `8a4260b6cfc8c419edc1f7e9aab853beb49bb8f84c88ef1b0c19e92bacd81c94`；文件哈希逐一匹配。复审后仅追加本结论与复审元数据，产品实现、回归及浏览器脚本不再改变；该快照不包含描述自身结论的新增元数据。
+
+本地修复提交可作为独立回退单元；没有数据迁移或模型格式变化，未执行回退演练。未推送、未开 PR、未关闭工单，未执行发布；后续 Node 22／24 CI 与维护者审阅仍由 PR 流程完成。

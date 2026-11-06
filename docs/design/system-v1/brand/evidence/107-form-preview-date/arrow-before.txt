@@ -1,0 +1,34 @@
+
+ RUN  v5.0.1 /Users/l/Documents/projects/flowduet/packages/form-create
+
+ ❯ src/date-appearance.test.ts (18 tests | 1 failed | 17 skipped) 328ms
+   ❯ FormPreview 日期单值与时间面板实例外观（#107） (18)
+     × 跟随宿主的日期导航箭头保留 EP 主文字色而非次要文字色 327ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/date-appearance.test.ts > FormPreview 日期单值与时间面板实例外观（#107） > 跟随宿主的日期导航箭头保留 EP 主文字色而非次要文字色
+AssertionError: expected '#606266' to be '#303133' // Object.is equality
+
+Expected: "#303133"
+Received: "#606266"
+
+ ❯ src/date-appearance.test.ts:199:71
+    197|     );
+    198|     expect(arrows.length).toBeGreaterThan(0);
+    199|     for (const arrow of arrows) expect(getComputedStyle(arrow).color).…
+       |                                                                       ^
+    200|   });
+    201|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 17 skipped (18)
+   Start at  13:46:25
+   Duration  2.90s (import 50%, transform 27%, tests 12%, environment 11%)
+
+undefined
+/Users/l/Documents/projects/flowduet/packages/form-create:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run src/date-appearance.test.ts -t 导航箭头

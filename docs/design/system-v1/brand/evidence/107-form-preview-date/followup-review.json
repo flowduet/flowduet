@@ -1,0 +1,54 @@
+{
+  "baseline": "ff28754136cb73c895fe2eee6b304132617c5d85",
+  "reviewedParentHead": "f5763da60e26ea56d2d8c0bcb1f44c1e04f6f2c6",
+  "reviewedSnapshotFiles": 71,
+  "fullPatchSha256": "301c21d5e81a830664a9a33d917cd1c1103f9070d4ebd3eecbfbb9e4efe61e3d",
+  "fixPatchSha256": "8a4260b6cfc8c419edc1f7e9aab853beb49bb8f84c88ef1b0c19e92bacd81c94",
+  "method": "前轮完整双轴审查；本轮两个新上下文独立复审修复增量及其状态交互，逐一核验快照71文件。结论补记后只新增本记录与验证文档收尾，不改产品或测试。",
+  "standards": {
+    "important": 0,
+    "minor": 0,
+    "existing": 0
+  },
+  "spec": {
+    "important": 0,
+    "minor": 0,
+    "existing": 0
+  },
+  "closedFindings": [
+    "P2：默认及显式 popperStyle 配置的月份／年份悬停状态恢复",
+    "P3：导航箭头保留宿主主文字色"
+  ],
+  "checks": {
+    "pnpm lint": "passed",
+    "pnpm test": {
+      "files": 65,
+      "tests": 1024,
+      "skipped": 0
+    },
+    "pnpm build": "passed",
+    "tarballStrictTypecheck": "passed",
+    "tarballBuild": "passed",
+    "sourceChromium": {
+      "cases": 34,
+      "errors": 0,
+      "failures": 0
+    },
+    "tarballChromium": {
+      "cases": 34,
+      "errors": 0,
+      "failures": 0
+    }
+  },
+  "unchangedReviewedCode": {
+    "apps/playground/src/FormPreviewAppearanceScene.vue": "16b0a8d897c94f887537dde0d83c3fd5182620554b618faf3f21ed7cdc4b676d",
+    "packages/form-create/src/components/date-popper-style.ts": "d907096f31480da7899253646bcaff9ac4ba710dfad3e5ea017c26247c1c6db5",
+    "packages/form-create/src/date-appearance.test.ts": "34cd5c925e2ffb7477e6245b8a00ff802d6e8d3cd073c077aff2568b576229ec",
+    "docs/design/system-v1/brand/evidence/107-form-preview-date/states.mjs.txt": "6e0cd59cfd73d9021aaef425aff714b5edbd19565621387500e6b75ccfdd7f10"
+  },
+  "notRun": [
+    "历史40面板完整矩阵与完整行为布局矩阵的本轮重跑",
+    "Node 22/24 CI",
+    "Firefox/WebKit/移动端/真实OS IME"
+  ]
+}

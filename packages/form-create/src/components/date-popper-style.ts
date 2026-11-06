@@ -38,9 +38,10 @@ const DATE_POPPER_PROPERTIES: readonly DatePopperProperty[] = [
   ["--el-text-color-regular", CURRENT_WEEK_CELL, "color"],
   ["--el-text-color-regular", " .el-time-spinner__item", "color"],
   ["--el-text-color-regular", " .el-button.is-plain", "color"],
+  // 普通文字仅匹配非状态单元；显式变量恢复也不能覆盖悬停、今天、选中或禁用色。
   [
     "--el-datepicker-text-color",
-    " :is(.el-month-table, .el-year-table) td:not(.current):not(.start-date):not(.end-date) .el-date-table-cell__text",
+    " :is(.el-month-table, .el-year-table) :where(td:not(.current):not(.start-date):not(.end-date):not(.today):not(.disabled)) .el-date-table-cell__text:where(:not(:hover))",
     "color",
   ],
   ["--el-datepicker-text-color", " .el-picker-panel__shortcut", "color"],
@@ -246,7 +247,7 @@ export function hostDatePopperCss(
     "--el-datepicker-header-text-color": regular,
     "--el-border-color-lighter": border,
     "--el-datepicker-inner-border-color": border,
-    "--el-datepicker-icon-color": secondary,
+    "--el-datepicker-icon-color": read("--el-text-color-primary") || context.text,
     "--el-fill-color-darker": border,
     "--el-text-color-disabled": context.disabledText,
     "--el-fill-color-blank": surface,

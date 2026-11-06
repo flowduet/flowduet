@@ -187,6 +187,18 @@ describe("FormPreview 日期单值与时间面板实例外观（#107）", () => 
     }
   });
 
+  it("跟随宿主的日期导航箭头保留 EP 主文字色而非次要文字色", async () => {
+    const wrapper = mountPreview(dateForm("date"), { colorSource: "host", mode: "light" });
+    await flushPromises();
+    await wrapper.get(".el-date-editor .el-input__inner").trigger("click");
+    await flushPromises();
+    const arrows = document.querySelectorAll<HTMLElement>(
+      ".business-date-panel .el-picker-panel__icon-btn",
+    );
+    expect(arrows.length).toBeGreaterThan(0);
+    for (const arrow of arrows) expect(getComputedStyle(arrow).color).toBe("#303133");
+  });
+
   it("显式 appendTo、数组类名和 popperStyle 优先且不写回定义", async () => {
     const external = document.createElement("div");
     external.dataset.test = "external-date-target";
