@@ -289,7 +289,10 @@ function onHostThemeChange(event: Event): void {
             </select>
           </label>
         </div>
-        <div class="appearance-designer-viewport">
+        <div
+          class="appearance-designer-viewport"
+          :class="{ 'appearance-scoped-dark': props.scopedDark }"
+        >
           <DingtalkDesigner
             v-if="second.mounted"
             data-test="appearance-second-designer"

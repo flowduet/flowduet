@@ -175,6 +175,7 @@ try {
   const initialHost = await page.evaluate(() => ({
     htmlClass: document.documentElement.className,
     primary: getComputedStyle(document.documentElement).getPropertyValue("--el-color-primary"),
+    background: getComputedStyle(document.documentElement).getPropertyValue("--el-bg-color"),
     hostInput: getComputedStyle(
       document.querySelector('[data-test="appearance-host-input"]').closest(".el-input")
         .firstElementChild,
@@ -201,15 +202,68 @@ try {
   results.sharedHostTheme = { before: initialHost, after: shared };
 
   await setCheckbox("form-appearance-host-dark", false);
+  await page.locator('[data-test="appearance-second-source"]').selectOption("host");
   await setCheckbox("appearance-declarative-dark", true);
+  await openEntity("appearance-first-designer", "approval");
+  await openEntity("appearance-second-designer", "approval");
+  const scopedHostTheme = await page.evaluate(() => ({
+    htmlClass: document.documentElement.className,
+    hostPrimary: getComputedStyle(document.documentElement).getPropertyValue("--el-color-primary"),
+    hostBackground: getComputedStyle(document.documentElement).getPropertyValue("--el-bg-color"),
+    nodes: ["first", "second"].map((side) => {
+      const root = document.querySelector(`[data-test="appearance-${side}-designer"]`);
+      const drawer = root.querySelector('[data-test="node-drawer"]');
+      return {
+        side,
+        mode: document.querySelector(`[data-test="appearance-${side}-mode"]`).value,
+        hostBackground: getComputedStyle(root).getPropertyValue("--el-bg-color").trim(),
+        drawerBackground: getComputedStyle(drawer).backgroundColor,
+      };
+    }),
+  }));
   check(
-    (await page.locator('[data-test="appearance-first-mode"]').inputValue()) === "dark" &&
+    scopedHostTheme.nodes.every((node) => node.mode === "dark") &&
       (await page.locator('[data-test="form-appearance-first-mode"]').inputValue()) === "dark" &&
-      !(await page.evaluate(() => document.documentElement.classList.contains("dark"))),
+      !scopedHostTheme.htmlClass.includes("dark"),
     "声明式局部深色未同步或被错误提升为全局深色",
   );
+  for (const node of scopedHostTheme.nodes) {
+    check(
+      node.hostBackground === "#162220" && node.drawerBackground === "rgb(22, 34, 32)",
+      `${node.side} 节点声明深色但实际宿主／抽屉仍为浅色：${JSON.stringify(node)}`,
+    );
+  }
+  check(
+    scopedHostTheme.hostPrimary === initialHost.primary &&
+      scopedHostTheme.hostBackground === initialHost.background,
+    "局部主题改写了全局宿主变量",
+  );
+  results.scopedHostTheme = scopedHostTheme;
+  for (const side of ["second", "first"]) {
+    const drawer = page.locator(
+      `[data-test="appearance-${side}-designer"] [data-test="node-drawer"]`,
+    );
+    await drawer.locator('[data-test="drawer-cancel"]').click();
+    await drawer.waitFor({ state: "hidden" });
+  }
   await setCheckbox("appearance-declarative-dark", false);
-  results.scopedHostTheme = "通过";
+  const restoredHostTheme = await page.evaluate(() =>
+    ["first", "second"].map((side) => ({
+      side,
+      mode: document.querySelector(`[data-test="appearance-${side}-mode"]`).value,
+      background: getComputedStyle(
+        document.querySelector(`[data-test="appearance-${side}-designer"]`),
+      ).getPropertyValue("--el-bg-color"),
+    })),
+  );
+  check(
+    restoredHostTheme.every(
+      (node) => node.mode === "light" && node.background === initialHost.background,
+    ),
+    "关闭局部深色后双节点未恢复宿主浅色",
+  );
+  results.restoredHostTheme = restoredHostTheme;
+  await page.locator('[data-test="appearance-second-source"]').selectOption("brand");
 
   await openEntity("appearance-first-designer", "approval");
   await openEntity("appearance-second-designer", "approval");

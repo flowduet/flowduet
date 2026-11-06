@@ -89,7 +89,7 @@ node scripts/verify-appearance-browser.mjs \
   /tmp/flowduet-appearance-browser
 ```
 
-同一脚本也可对 Playground 开发页执行，URL 改为 `http://127.0.0.1:5173`。它核对旧路径基线、真实控件点击、跨入口主题同步、双抽屉、卸载重挂和弹层清理；JSON 与截图写入最后一个参数指定的目录。Playwright 驱动仅是临时验证工具，不是仓库新增依赖。
+同一脚本也可对 Playground 开发页执行，URL 改为 `http://127.0.0.1:5173`。它核对旧路径基线、真实控件点击、跨入口主题同步、双抽屉、卸载重挂和弹层清理；局部深色回归将第二节点切为 host，同时检查两个抽屉的实际背景、宿主变量、关闭后浅色恢复和全局变量保留。JSON 与截图写入最后一个参数指定的目录。Playwright 驱动仅是临时验证工具，不是仓库新增依赖。
 
 类型检查沿用公开消费先例：`tsc` 在 `skipLibCheck: false` 下检查公开 JS／类型入口，Vue SFC 由 Vite 编译并交给 Chromium 实测；不为掩盖声明问题开启 `skipLibCheck`，也不使用源码 alias 或跨 EP 副本注入。
 

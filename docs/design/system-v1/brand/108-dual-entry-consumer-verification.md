@@ -2,7 +2,7 @@
 
 ## 结论与边界
 
-2026-11-06，本票在既有 Playground 内完成双实例、双入口整合，并在同一最终代码状态下分别对源码宿主和实际三包 tarball 消费者执行每侧 19 个浏览器分项及 1 个整合脚本。两侧所有已执行脚本的 `failures`、`errors`、`resourceErrors`、`unhandled` 均为空。
+2026-11-06，本票在既有 Playground 内完成双实例、双入口整合。首次交付提交 `a933bc6` 的源码宿主与实际三包 tarball 消费者分别执行每侧 19 个浏览器分项及 1 个整合脚本，已执行脚本的异常与失败数组均为空。补充审查随后发现第二节点实例的局部深色遗漏；本次修复后的验证与证据单列于下文，不将首次矩阵结果当作修订后全部分项已经重跑。
 
 本地实施与自动验收完成；真实 OS 中文输入法、其他浏览器、移动端和完整可访问性认证仍未验证。Node 22／24 远端 CI 与维护者审阅属于后续 PR／合并门，本轮未执行，不写成已通过；父工单 #102 不因本票自动关闭。
 
@@ -10,6 +10,17 @@
 
 - 第 1 轮：Standards 重要 0／细节 1，Spec 重要 2／细节 1。两处主题逻辑重复已提取 `useAppearanceHostMode`；最终验证文档、依赖树、tarball 哈希与当前消费侧 `realControls` 证据已补齐；1.27:1 的显式日期选中项已单列配置影响。
 - 第 2 轮：Standards 重要 0／细节 0，Spec 重要 0／细节 1。剩余细节是 T08 把“另一表单”误写成四类行为均覆盖，现已按实际证据收窄为文本覆盖另一表单、各组覆盖同 ID 重开；最终 lint 与链接检查通过。两轮重要发现均已关闭。
+
+## 补充发现修复（2026-11-06）
+
+对 `develop@03c6919` → `a933bc6` 的补充独立审查发现 Standards 重要 1、Spec 重要 1，已在 [#108 评论](https://github.com/flowduet/flowduet/issues/108#issuecomment-6681355703) 登记。用户明确授权补充评论后修复、补回归并复审；该授权仅覆盖这两项及必要验证，不重置整批累计投入，不授权推送、PR、合并或发包。
+
+- 工程证据缺失：T14 的四份 `.log` 被忽略，没有进入原提交。本次改为可入库的 `.txt`，同步修正 T14 链接，并以本次重新运行的输出更新四份记录；不修改通用日志忽略规则。
+- 第二节点局部深色：全局浅色、第二节点切为 host、启用声明式局部深色时，原实现声明 `mode=dark`，但容器仍继承浅色变量。增强后的公开浏览器脚本先实际失败，见 [修复前反例](evidence/108-dual-entry-consumer/review-follow-up/before-fix.json)；最小修复为第二容器消费同一局部主题上下文。回归同时检查两个节点的 mode、真实 EP 变量、抽屉计算背景、关闭后恢复浅色以及全局宿主变量未被改写，不以类名或 happy-dom 推断视觉通过。
+
+修复后在源码 Playground 与重新创建的实际 tarball 消费者分别重跑增强后的整合脚本。两个节点均为 `mode=dark`、宿主背景变量 `#162220`、抽屉背景 `rgb(22, 34, 32)`；关闭后均恢复浅色，宿主全局变量保持原值。结果见 [Playground](evidence/108-dual-entry-consumer/review-follow-up/playground/integration.json)、[消费者](evidence/108-dual-entry-consumer/review-follow-up/consumer/integration.json)，两侧 `failures`／`errors` 均为空。新消费者的 [安装检查](evidence/108-dual-entry-consumer/review-follow-up/static-verification.json) 与 [依赖树](evidence/108-dual-entry-consumer/review-follow-up/npm-ls.txt) 记录单份 EP 2.14.6、renderer 3.3.4、公开类型与生产构建通过；未修改公开包源码或依赖。
+
+本次重新执行 lint、全量测试（仍为 66 文件／1025 用例）、build 与 changeset status，原始输出见下表 T14 的 `.txt` 链接。本次未重跑首次交付的全部 19 个浏览器分项；真实 OS IME、其他浏览器、移动端、完整可访问性与远端 Node 22／24 CI 的未验证边界保持。独立复审按固定 develop 基线和当前修复提交核对完整变更，结果另行记录在 #108 评论。
 
 ## 实际环境
 
@@ -59,7 +70,7 @@ Playground 与 tarball 消费者使用同名目录；下表链接优先指向 Pl
 | T11 长中文／焦点／对比   | 八组计算样式与截图、[宿主颜色 12 例](evidence/108-dual-entry-consumer/playground/node-host-colors/host-colors.json)、[焦点与对比专项](evidence/108-dual-entry-consumer/playground/node-contrast/round2-fixes.json)、长错误与 200% 布局；宿主原值和显式样式例外单列如下，不计作主题目标通过                                                                                                                                                                                                 |
 | T12 清理／非法配置／异常 | 整合卸载重挂、弹层清理、非法密度字段级告警、输入保留、校验拒绝与 `pageerror`／`unhandledrejection` 监测通过；未对第三方渲染器另做故障注入，不据此宣称所有异常路径均已覆盖                                                                                                                                                                                                                                                                                                                  |
 | T13 实际 tarball         | 上述静态报告、依赖树、tarball 哈希、消费侧整合 JSON 与消费侧 19 个分项；单份 EP 2.14.6、renderer 3.3.4，无源码 alias 或跨副本注入                                                                                                                                                                                                                                                                                                                                                          |
-| T14 工程门槛             | [lint](evidence/108-dual-entry-consumer/engineering/pnpm-lint.log)、[全量测试](evidence/108-dual-entry-consumer/engineering/pnpm-test.log)、[build](evidence/108-dual-entry-consumer/engineering/pnpm-build.log) 通过；[changeset status](evidence/108-dual-entry-consumer/engineering/changeset-status.log) 正常，远端 CI 未运行                                                                                                                                                          |
+| T14 工程门槛             | [lint](evidence/108-dual-entry-consumer/engineering/pnpm-lint.txt)、[全量测试](evidence/108-dual-entry-consumer/engineering/pnpm-test.txt)、[build](evidence/108-dual-entry-consumer/engineering/pnpm-build.txt) 通过；[changeset status](evidence/108-dual-entry-consumer/engineering/changeset-status.txt) 正常，远端 CI 未运行                                                                                                                                                          |
 
 全量测试共 66 个文件、1025 条用例：core 14／148、designer 15／202、form-create 19／368、Playground 18／307，全部通过。Playground 新增真实 App 双入口用例在并发负载下的超时上限按既有重组件先例设为 15 秒，最终根目录全量测试通过。
 

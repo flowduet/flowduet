@@ -1,0 +1,12 @@
+
+> flowduet-monorepo@0.0.0 changeset /Users/l/Documents/projects/flowduet
+> changeset status
+
+🦋 changeset v3.0.3
+
+Packages to be bumped:
+- minor
+  - @flowduet/designer
+  - @flowduet/form-create
+- patch
+  - @flowduet/core
