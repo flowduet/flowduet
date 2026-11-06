@@ -72,3 +72,58 @@
 - Firefox、Safari／WebKit、移动端与完整可访问性认证未验证；Chromium 通过不推断其他环境兼容。
 - 未执行本地 Node 22 矩阵或远端 CI；Node 22／24 双矩阵与维护者审阅留待后续 PR。
 - 未推送、未开 PR、未合并、未发布 npm；Issue 保持开放。
+
+## 2026-11-06：补充审查后的集中修正
+
+本轮以 `develop@db00ef3b` 对 `4c27baf7` 独立双轴审查，另发现 Standards 重要 1／Spec 重要 1，已在 [Issue 评论](https://github.com/flowduet/flowduet/issues/106#issuecomment-6674178915) 登记。此前零发现记录属于当时审查结果，不覆盖这两个新反例。
+
+- 全局类名：新增公开 `FormPreview` 回归实际观察 `options.global` 的 `*`／`default`／`select` 三条路径先失败，随后转绿；渲染派生遵守全局默认→组件默认→字段配置，保留字段级 `null`、空数组及显式数组的覆盖含义，启停适配不重建输入、不回写原始定义。新增 6 条组件回归。
+- 局部宿主主题：新增 Chromium [复测脚本](evidence/106-form-preview-select/review-regression.mjs.txt) 先捕捉默认 body 面板丢失局部主色、中性色及箭头背景的[红色结果](evidence/106-form-preview-select/review-2026-11-06/scoped-host-red.json)，修复后两档密度均使用宿主主色 `rgb(0,104,94)`、表面 `rgb(248,250,249)`，且禁用、边框、箭头与焦点正确。happy-dom 不能可靠继承宿主 CSS 自定义属性，本项不以其计算样式代替 Chromium。
+- 宿主适配集中在内部 `select-popper-style.ts`，限定 EP 2.14.6 当前下拉面板实际使用的可见 CSS 属性，不复制 EP 变量，不调整 Teleport 或新增监听。显式 inline EP 变量仍由浏览器解析并优先，选中与普通文字分别实测为 `rgb(18,52,86)`／`rgb(52,66,80)`，业务 `popperStyle` 不变。
+- 原矩阵以字符串包含 `--el-` 判断“写入”，将新选择器与变量引用误判为声明；改为逐条检查所属实例样式的 CSSOM 声明属性名。红色记录保留当时的误判项；颜色、几何、焦点与定位断言没有放宽。最终[八组矩阵](evidence/106-form-preview-select/review-2026-11-06/matrix.json)、[原行为场景](evidence/106-form-preview-select/review-2026-11-06/behavior.json)与[局部宿主／显式配置回归](evidence/106-form-preview-select/review-2026-11-06/scoped-host.json)均零失败。
+- 实际重新打包 form-create，并在原临时 tarball 消费工程安装替换，未改第三方包或依赖范围；严格 `tsc --noEmit`、Vite 生产构建及[局部宿主／配置回归](evidence/106-form-preview-select/review-2026-11-06/consumer-scoped-host.json)通过。core／designer tarball 不变；仍为单份 EP 2.14.6、renderer 3.3.4、Vue 3.5.43。本项是本轮改动的消费回归，不冒充重新完成父规格或 #108 的全入口发布验收。
+- 工程检查：`pnpm lint`、`pnpm build`，以及最后的 form-create／Playground 构建通过；默认全量 `pnpm test` 为 64 文件／1001 条通过（148＋202＋345＋306），未提高超时或跳过用例。[工程与 tarball 记录](evidence/106-form-preview-select/review-2026-11-06/engineering.json)。
+
+未新增依赖，沿用本票 changeset。修复尚未提交、推送或开 PR；独立复审结论另附，其他浏览器、真实 OS 输入法和 Node 22／24 CI 等未测范围沿用上节。
+
+### 品牌显式 EP 变量补修与第三轮复审对象
+
+上述首批修复后独立复审：Standards 重要 0／细节 0／既有 0，原全局类名问题关闭；Spec 确认局部宿主问题关闭，但新增一项品牌状态覆盖历史 EP 变量的 P2，详见[补充评论](https://github.com/flowduet/flowduet/issues/106#issuecomment-6674645973)。
+
+- 在现有显式原位下拉样例中只配置 EP 选中／悬停／禁用变量，不配置 FD token，新增 Chromium [红色记录](evidence/106-form-preview-select/review-2026-11-06/brand-ep-red.json) 在浅深品牌主题均实际失败；此前同时配置 EP／FD 的外部挂载样例保留，避免丢掉其回归。
+- 将有限属性映射中的显式覆盖规则统一为 `explicitSelectPopperCss`，品牌和宿主两条路径共同消费，不再用品牌状态 CSS 盖过原 inline EP 变量；不新增公开 API、不改依赖与挂载。修复后[品牌回归](evidence/106-form-preview-select/review-2026-11-06/brand-ep.json)浅深主题均为选中 `rgb(18,52,86)`、悬停 `rgb(224,232,240)`、禁用 `rgb(113,130,147)`，没有 FD 配置且零失败。
+- 另补 1 条公开组件回归，当前下拉文件 16 条通过；本轮共新增 7 条组件回归。`pnpm build` 已重新通过，最终全量检查与第三轮独立审查结果另附。第三轮若仍有重要发现，按项目约定暂停循环，不将待修复问题标记通过。
+
+### 第三轮最终结论与当前停止点
+
+审查快照 SHA-256：`a419e69379aff00658f98faca00ea7777baaa4b6b3da633406bd1e46d8f54079`。Standards 重要 0／细节 0／既有 0；Spec 重要 1／细节 0／既有 0。前三项具体发现（全局类名、局部宿主主题、品牌 EP 颜色）均已关闭，但显式样式优先这一类别尚有字号遗漏。
+
+- 未关闭 P2：显式 `popperStyle: {"--el-font-size-base":"28px"}` 的旧路径选项显示 28px，host／brand 紧凑路径均变为 12px；inline 仍保留 28px，效果却被密度 CSS 覆盖。父规格 §6 不允许静默忽略显式样式。独立 Spec 审查与主代理均在 Chromium 156 复现。[可复测反例](evidence/106-form-preview-select/font-size-counterexample.mjs.txt)只拦截公开样例 JS 响应增加这一业务配置，不改产品代码或 DOM；[实际结果](evidence/106-form-preview-select/review-2026-11-06/font-size-open.json)包含两条失败，退出码 1，不计作通过。
+- 最终适用检查：lint、build、默认全量 64 文件／1002 条测试通过（148＋202＋346＋306），没有调高超时或跳过用例；[最终八组矩阵](evidence/106-form-preview-select/review-2026-11-06/matrix-final.json)、[原行为场景](evidence/106-form-preview-select/review-2026-11-06/behavior-final.json)、最新 tarball 的严格 TS／构建及[局部宿主与品牌 EP 颜色回归](evidence/106-form-preview-select/review-2026-11-06/consumer-final.json)均通过。绿色检查没有覆盖并否定字号反例。
+- [最终审查与工程摘要](evidence/106-form-preview-select/review-2026-11-06/final-review.json)、[冻结对象清单](evidence/106-form-preview-select/review-2026-11-06/final-review-manifest.json)。产品代码与复审快照哈希一致；此后仅补充结果、反例及归档文档。未新增依赖，修复仍未提交／推送，未开 PR、未合并或发布。
+
+已达到本轮第三轮且仍有重要发现，按 `docs/agents/code-review.md` 暂停产品修正。下一步由用户选择：A，追加一次限定于当前下拉显式样式与密度交互的集中修正、验证和一轮独立复审，仍有重要发现就停止；B，保留当前三项修复和证据，字号 P2 继续开放，暂不合入。收到 A 的明确批准后由本聊天继续；没有建立后续自动检查任务。
+
+## 用户选择 A 后的限定追加修正（2026-11-06）
+
+用户在本聊天明确回复“A”，授权一次集中修正、验证及一轮独立双轴复审；范围仅当前下拉显式样式与密度交互，复审仍有重要发现即停止。历史投入与前述停止事实保留，不据此授权依赖、架构、字段能力、公共 API、推送或 PR。
+
+已沿用公开 FormPreview／Chromium 接缝。新增四条宿主／品牌×两密度组件回归，实际捕捉选项 `--el-font-size-base:28px`、空面板 `--el-select-font-size:26px` 被 12／14px 覆盖的失败。修复将这两项作为仅显式配置时生效的覆盖规则，不从宿主基准字号覆盖密度缺省值。同类选项高度与换行交互正在用真实浏览器核对，最终结论另附。
+
+### A 批集中修正与复审前证据
+
+- 字号：`EXPLICIT_SELECT_DENSITY_PROPERTIES` 仅在业务 inline 变量存在时恢复选项基准字号及空面板字号，不修改宿主默认映射；未配置字号的八组矩阵仍按 14／12px 验证。
+- 同类几何：Chromium 实际观察显式 20px 选项被密度抬为 24／32px，以及 `nowrap` 被子 span 改成 normal；[红色结果](evidence/106-form-preview-select/review-2026-11-06-a/style-density-red.json)保留这两项失败。修复仅在选项明确设置 height／max-height 时解除新增最小高度，子文本继承选项换行／断行规则，原生 inline min-height 仍优先。
+- 新增真实样例同时覆盖对象 style（20px 高度、18px 字号、nowrap）、字符串 style（16px 最大高度／字号）、面板 28px 选项字号和 26px 空面板字号。旧路径加两来源×两主题×两密度共 9 组[回归结果](evidence/106-form-preview-select/review-2026-11-06-a/style-density.json)零失败，字号、几何、换行与焦点均符合公开配置；属于配置影响，不算作默认密度目标通过。
+- 原有[八组矩阵](evidence/106-form-preview-select/review-2026-11-06-a/matrix.json)与[行为场景](evidence/106-form-preview-select/review-2026-11-06-a/behavior.json)复测零失败。`pnpm build` 通过。最终全量检查、实际 tarball 消费和本批唯一一轮独立复审结论另附。
+
+### A 批最终验证、断电恢复与独立复审
+
+A 批修正已完成，原显式字号 P2 已关闭，同类高度与换行限制一并修复。本批新增 4 条组件回归，当前下拉文件共 20 条；此前三项修复没有回退。
+
+- 最终工程检查：`pnpm lint`、`pnpm build`、默认全量 `pnpm test` 64 文件／1006 条均通过（148＋202＋350＋306），没有提高超时或跳过用例。
+- 实际新 tarball 消费的严格 TypeScript、生产构建与[9 组样式／密度回归](evidence/106-form-preview-select/review-2026-11-06-a/consumer-style-density.json)通过；EP 2.14.6 单份、renderer 3.3.4、Vue 3.5.43 不变。原八组默认外观、原行为场景和[原字号反例](evidence/106-form-preview-select/review-2026-11-06-a/font-size-closed.json)均零失败。[工程记录](evidence/106-form-preview-select/review-2026-11-06-a/engineering.json)保留实际结果与 tarball 哈希。
+- 用户报告断电后，临时目录及未返回结论的两个复审代理丢失。主代理从持久化文件重建完整补丁，SHA-256 仍精确等于 `f9be1955e3723618bdf09da9afe72237eec12500a3f8343a09bb862ef2c67351`；[96 文件清单](evidence/106-form-preview-select/review-2026-11-06-a/review-manifest.json)全部匹配，因此断电前完成的检查结果继续保留，不冒充断电后全量重跑。[恢复记录](evidence/106-form-preview-select/review-2026-11-06-a/power-recovery.json)另含主代理断电后实际重跑字号反例的通过结果。
+- 在同一冻结对象、同一 A 批审查轮内，以两个全新上下文重试中断的复审。Standards 重要 0／细节 0／既有 0，独立重跑下拉组件 20／20 通过；Spec 重要 0／细节 0／既有 0，独立重跑[字号反例](evidence/106-form-preview-select/review-2026-11-06-a/independent-font.json)与[9 组样式／密度场景](evidence/106-form-preview-select/review-2026-11-06-a/independent-style-density.json)均通过。两轴未发现新增需修复问题。[最终结论](evidence/106-form-preview-select/review-2026-11-06-a/review-result.json)。
+
+本批本地修复、验证及复审完成；仍未提交／推送、未开 PR、未合并或发布，不关票。其他浏览器、真实 OS 输入法、Node 22／24 CI、父规格及 #108 全部交付未验范围保持；局部审查通过不代替维护者审批。用户现在无需操作；后续推送、PR 与合并仍遵循各自授权。

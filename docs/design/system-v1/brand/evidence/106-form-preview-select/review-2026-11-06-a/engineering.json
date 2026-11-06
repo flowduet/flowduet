@@ -1,0 +1,29 @@
+{
+  "node": "24.18.0",
+  "pnpm": "10.26.1",
+  "checks": {
+    "lint": "exit 0",
+    "build": "exit 0",
+    "default_tests": {
+      "files": 64,
+      "tests": 1006,
+      "core": 148,
+      "designer": 202,
+      "form_create": 350,
+      "playground": 306,
+      "exit": 0
+    },
+    "browser_style_density": "9 cases; failures=[]",
+    "browser_matrix": "8 combinations; failures=[]",
+    "browser_behavior": "failures=[]",
+    "consumer_tsc": "exit 0",
+    "consumer_build": "exit 0",
+    "consumer_style_density": "9 cases; failures=[]",
+    "font_counterexample": "legacy/host/brand all 28px; failures=[]"
+  },
+  "tarball": {
+    "path": "/tmp/flowduet-106-a-pack.4gLh7V/flowduet-form-create-0.1.0.tgz",
+    "sha256": "856960122a52842e875e6f26a7c9fb6ec320e951dd12406c57005dbd3830828d"
+  },
+  "review_snapshot_sha256": "f9be1955e3723618bdf09da9afe72237eec12500a3f8343a09bb862ef2c67351"
+}

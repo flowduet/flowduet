@@ -1,0 +1,38 @@
+{
+  "browser": "156.0.8078.4",
+  "results": [
+    {
+      "density": "compact",
+      "background": "rgb(255, 255, 255)",
+      "border": "rgb(228, 231, 237)",
+      "selected": "rgb(64, 158, 255)",
+      "normal": "rgb(96, 98, 102)",
+      "disabled": "rgb(168, 171, 178)",
+      "arrow": "rgb(255, 255, 255)"
+    },
+    {
+      "density": "comfortable",
+      "background": "rgb(255, 255, 255)",
+      "border": "rgb(228, 231, 237)",
+      "selected": "rgb(64, 158, 255)",
+      "normal": "rgb(96, 98, 102)",
+      "disabled": "rgb(168, 171, 178)",
+      "arrow": "rgb(255, 255, 255)"
+    }
+  ],
+  "errors": [],
+  "failures": [
+    "compact: 局部宿主选中色丢失 rgb(64, 158, 255)",
+    "compact: 面板表面丢失 rgb(255, 255, 255)",
+    "compact: 面板边框丢失 rgb(228, 231, 237)",
+    "compact: 选项文字丢失 rgb(96, 98, 102)",
+    "compact: 禁用文字丢失 rgb(168, 171, 178)",
+    "compact: 跟随宿主写入 EP 变量",
+    "comfortable: 局部宿主选中色丢失 rgb(64, 158, 255)",
+    "comfortable: 面板表面丢失 rgb(255, 255, 255)",
+    "comfortable: 面板边框丢失 rgb(228, 231, 237)",
+    "comfortable: 选项文字丢失 rgb(96, 98, 102)",
+    "comfortable: 禁用文字丢失 rgb(168, 171, 178)",
+    "comfortable: 跟随宿主写入 EP 变量"
+  ]
+}

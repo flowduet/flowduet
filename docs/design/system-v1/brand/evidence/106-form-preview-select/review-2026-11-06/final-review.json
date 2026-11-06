@@ -1,0 +1,54 @@
+{
+  "review_round": 3,
+  "snapshot_sha256": "a419e69379aff00658f98faca00ea7777baaa4b6b3da633406bd1e46d8f54079",
+  "standards": {
+    "important": 0,
+    "details": 0,
+    "preexisting": 0
+  },
+  "spec": {
+    "important": 1,
+    "details": 0,
+    "preexisting": 0
+  },
+  "closed": [
+    "global popperClass priority",
+    "scoped host popup theme",
+    "brand explicit EP selected/hover/disabled colors"
+  ],
+  "open": [
+    {
+      "priority": "P2",
+      "issue": "explicit --el-font-size-base overridden",
+      "configured": "28px",
+      "legacy": "28px",
+      "hostCompact": "12px",
+      "brandCompact": "12px",
+      "evidence": "font-size-open.json"
+    }
+  ],
+  "checks": {
+    "lint": "exit 0",
+    "build": "exit 0",
+    "default_test": {
+      "files": 64,
+      "tests": 1002,
+      "core": 148,
+      "designer": 202,
+      "form_create": 346,
+      "playground": 306,
+      "exit": 0
+    },
+    "chromium_matrix": "8 combinations; failures=[]",
+    "chromium_behavior": "failures=[]",
+    "consumer_tsc": "exit 0",
+    "consumer_build": "exit 0",
+    "consumer_browser": "failures=[]",
+    "font_counterexample": "exit 1; host/brand 2 failures, known open P2"
+  },
+  "tarball": {
+    "path": "/tmp/flowduet-106-final-pack.P6Ixg5/flowduet-form-create-0.1.0.tgz",
+    "sha256": "94c2391980f283da1395df680d9d6137b17f3000b87818d721fdb186c8460d10"
+  },
+  "status": "stopped under third-round rule; awaiting user decision; uncommitted/unpushed"
+}

@@ -26,6 +26,7 @@ import type { FormDefinition } from "../document.js";
 import { parseFormOptions, parseFormRules, type FieldRule } from "../form-schema.js";
 import { ensureFormCreateInstalled } from "../form-create-setup.js";
 import { nextFormPreviewInstanceId } from "./form-preview-instance.js";
+import { explicitSelectPopperCss, hostSelectPopperCss } from "./select-popper-style.js";
 
 /**
  * 表单预览（#72）：真实 FormCreate 渲染器（@form-create/element-ui 3.3.4）试填。
@@ -146,11 +147,27 @@ const contentError = computed<string | null>(() => {
 
 const appearanceEnabled = computed(() => previewAppearance.value !== undefined);
 
+function record(value: unknown): Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value)
+    ? (value as Record<string, unknown>)
+    : {};
+}
+
+function selectGlobalProps(): Record<string, unknown> {
+  const options = parseFormOptions(props.form.options);
+  const global = record(options.global);
+  // 与 FormCreate 的全局默认→组件默认→字段配置顺序一致，不能让实例标识遮住全局业务类。
+  return {
+    ...record(record(global["*"] || global.default).props),
+    ...record(record(global.select).props),
+  };
+}
+
 // 仅修改解析后的临时规则树：实例标识稳定，规则身份只随定义换代。
-function adaptSelectRules(rules: FieldRule[]): FieldRule[] {
+function adaptSelectRules(rules: FieldRule[], defaults: Record<string, unknown>): FieldRule[] {
   return rules.map((item) => {
     const children = Array.isArray(item.children)
-      ? adaptSelectRules(item.children as FieldRule[])
+      ? adaptSelectRules(item.children as FieldRule[], defaults)
       : item.children;
     if (item.type !== "select") return children === item.children ? item : { ...item, children };
     if (
@@ -159,10 +176,10 @@ function adaptSelectRules(rules: FieldRule[]): FieldRule[] {
     )
       return item;
     const fieldProps = (item.props ?? {}) as Record<string, unknown>;
+    const businessClass =
+      fieldProps.popperClass === undefined ? defaults.popperClass : fieldProps.popperClass;
     const popperClass =
-      fieldProps.popperClass === undefined
-        ? selectPopperClasses
-        : [fieldProps.popperClass, selectPopperClasses];
+      businessClass === undefined ? selectPopperClasses : [businessClass, selectPopperClasses];
     return {
       ...item,
       ...(children === item.children ? {} : { children }),
@@ -172,7 +189,9 @@ function adaptSelectRules(rules: FieldRule[]): FieldRule[] {
 }
 
 const rule = computed(() =>
-  contentError.value === null ? adaptSelectRules(parseFormRules(props.form.rules)) : [],
+  contentError.value === null
+    ? adaptSelectRules(parseFormRules(props.form.rules), selectGlobalProps())
+    : [],
 );
 
 function containsSelect(rules: FieldRule[]): boolean {
@@ -203,17 +222,22 @@ function syncSelectPopperStyle(): void {
     .map(([name, value]) => `${name}:${value}`)
     .join(";");
   const brand = appearance.colorSource === "brand";
+  // 密度只补缺省行高；显式高度／最大高度需解除新增下限，文本继续继承选项的换行约定。
   const css = `
 ${owner}{${variables}}
 ${owner} .el-select-dropdown__item{display:flex;align-items:center;box-sizing:border-box;min-height:var(--fd-control-height);height:auto;font-size:var(--fd-control-font-size);line-height:1.6;white-space:normal;overflow-wrap:anywhere}
-${owner} .el-select-dropdown__item>span{min-width:0;white-space:normal;overflow-wrap:anywhere}
+${owner} .el-select-dropdown__item:is([style^="height:"],[style*="; height:"],[style^="max-height:"],[style*="; max-height:"]){min-height:0}
+${owner} .el-select-dropdown__item>span{min-width:0;white-space:inherit;overflow-wrap:inherit}
 ${owner} .el-select-dropdown__empty{font-size:var(--fd-control-font-size)}
 ${
   brand
     ? `${owner} .el-select-dropdown__item.is-hovering{background-color:var(--fd-inset)}
 ${owner} .el-select-dropdown__item.is-selected{color:var(--fd-primary-ink);background-color:var(--fd-primary-soft)}
-${owner} .el-select-dropdown__item.is-disabled{color:var(--fd-disabled-text)}`
-    : ""
+${owner} .el-select-dropdown__item.is-disabled{color:var(--fd-disabled-text)}
+${explicitSelectPopperCss(owner)}`
+    : hostAppearance.value === undefined
+      ? ""
+      : hostSelectPopperCss(owner, host, hostAppearance.value)
 }`;
   if (selectPopperStyleElement === undefined) {
     selectPopperStyleElement = host.ownerDocument.createElement("style");

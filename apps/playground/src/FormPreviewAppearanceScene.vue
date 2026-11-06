@@ -314,6 +314,8 @@ const EXPLICIT_FORM: FormDefinition = {
           "--fd-primary": "rgb(191, 0, 31)",
           "--fd-primary-ink": "rgb(18, 52, 86)",
           "--fd-primary-soft": "rgb(230, 232, 240)",
+          "--el-color-primary": "rgb(18, 52, 86)",
+          "--el-text-color-regular": "rgb(52, 66, 80)",
           "--el-select-input-color": "rgb(18, 52, 86)",
         },
       },
@@ -327,11 +329,40 @@ const EXPLICIT_FORM: FormDefinition = {
       field: "inlineDropdown",
       title: "显式原位下拉",
       value: "yes",
-      props: { teleported: false, popperClass: "inline-select-panel" },
+      props: {
+        teleported: false,
+        popperClass: "inline-select-panel",
+        popperStyle: {
+          "--el-font-size-base": "28px",
+          "--el-color-primary": "rgb(18, 52, 86)",
+          "--el-fill-color-light": "rgb(224, 232, 240)",
+          "--el-text-color-placeholder": "rgb(113, 130, 147)",
+        },
+      },
       options: [
         { label: "原位同意", value: "yes" },
-        { label: "原位拒绝", value: "no" },
+        {
+          label: "原位拒绝",
+          value: "no",
+          style: { height: "20px", lineHeight: "20px", fontSize: "18px", whiteSpace: "nowrap" },
+        },
+        {
+          label: "原位禁用",
+          value: "disabled",
+          disabled: true,
+          style: "max-height:16px;line-height:16px;font-size:16px;white-space:nowrap",
+        },
       ],
+    },
+    {
+      type: "select",
+      field: "explicitEmptyDropdown",
+      title: "显式空面板字号",
+      props: {
+        popperClass: "explicit-empty-select-panel",
+        popperStyle: { "--el-select-font-size": "26px" },
+      },
+      options: [],
     },
   ]),
   options: JSON.stringify({

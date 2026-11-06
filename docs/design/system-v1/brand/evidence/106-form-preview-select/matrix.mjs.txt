@@ -162,6 +162,9 @@ try {
         panel: { ...rect(panel), ...read(panel) },
         panelInlineStyle: panel.getAttribute("style"),
         instanceStyleText: instanceStyle?.textContent || "",
+        instanceEpDeclarations: [...(instanceStyle?.sheet?.cssRules || [])]
+          .flatMap((rule) => [...(rule.style || [])])
+          .filter((name) => name.startsWith("--el-")),
         selected: { ...rect(selected), ...read(selected) },
         hovering: { ...rect(hovering), ...read(hovering) },
         long: { ...longRect, ...read(long), textRect: longTextRect },
@@ -195,7 +198,7 @@ try {
     if (colorSource === "host") {
       check(!actual.rootInlineStyle.includes("--el-"), `${id}: 跟随宿主回写了根 EP 变量`);
       check(!actual.panelInlineStyle.includes("--el-"), `${id}: 跟随宿主回写了面板 inline EP 变量`);
-      check(!actual.instanceStyleText.includes("--el-"), `${id}: 跟随宿主的实例样式写入 EP 变量`);
+      check(actual.instanceEpDeclarations.length === 0, `${id}: 跟随宿主的实例样式写入 EP 变量 ${actual.instanceEpDeclarations}`);
     } else {
       const target = expected[`brand-${mode}`];
       check(actual.trigger.background === target.surface, `${id}: 选择框表面 ${actual.trigger.background}`);

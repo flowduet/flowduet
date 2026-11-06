@@ -54,6 +54,36 @@ afterEach(() => {
 });
 
 describe("FormPreview 下拉单选与所属弹层实例外观（#106）", () => {
+  it.each(["*", "default", "select"])(
+    "保留 options.global.%s 的业务面板类名，启停适配不覆盖全局默认",
+    async (type) => {
+      const form: FormDefinition = {
+        ...SELECT_FORM,
+        rules: JSON.stringify([
+          {
+            type: "select",
+            field: "globalChoice",
+            value: "yes",
+            options: [{ label: "全局配置选项", value: "yes" }],
+          },
+        ]),
+        options: JSON.stringify({ global: { [type]: { props: { popperClass: "global-panel" } } } }),
+      };
+      const wrapper = mountPreview(form);
+      await flushPromises();
+      await wrapper.get(".el-select__wrapper").trigger("click");
+      await flushPromises();
+      const input = wrapper.get(".el-select__input").element;
+      for (const appearance of [undefined, BRAND_DARK_COMPACT, undefined]) {
+        await wrapper.setProps({ appearance });
+        await flushPromises();
+        expect(document.querySelector(".el-select__popper")!.classList).toContain("global-panel");
+        expect(wrapper.get(".el-select__input").element).toBe(input);
+      }
+      expect(wrapper.props("form")).toEqual(form);
+    },
+  );
+
   it("经真实 FormCreate 打开面板并合并业务类名与所属实例标识", async () => {
     const wrapper = mountPreview(SELECT_FORM, BRAND_DARK_COMPACT);
     await flushPromises();
@@ -75,6 +105,35 @@ describe("FormPreview 下拉单选与所属弹层实例外观（#106）", () => 
     expect(preview.element.contains(panel)).toBe(false);
     expect(wrapper.props("form").rules).toBe(SELECT_FORM.rules);
   });
+
+  it.each([null, [], ["field-panel"]])(
+    "字段级 popperClass %j 继续覆盖全局默认",
+    async (popperClass) => {
+      const rules = JSON.parse(SELECT_FORM.rules);
+      rules[0].props.popperClass = popperClass;
+      const form: FormDefinition = {
+        ...SELECT_FORM,
+        rules: JSON.stringify(rules),
+        options: JSON.stringify({
+          global: {
+            "*": { props: { popperClass: "shared-panel" } },
+            select: { props: { popperClass: "select-panel" } },
+          },
+        }),
+      };
+      const wrapper = mountPreview(form, BRAND_DARK_COMPACT);
+      await flushPromises();
+      await wrapper.get(".el-select__wrapper").trigger("click");
+      await flushPromises();
+      const panel = document.querySelector(".el-select__popper")!;
+      expect(panel.classList).not.toContain("shared-panel");
+      expect(panel.classList).not.toContain("select-panel");
+      expect(panel.classList.contains("field-panel")).toBe(
+        Array.isArray(popperClass) && popperClass.length > 0,
+      );
+      expect(wrapper.props("form")).toEqual(form);
+    },
+  );
 
   it("真实选择、禁用选项、清除、必填标记与成功反馈保持既有行为", async () => {
     const wrapper = mountPreview(SELECT_FORM, BRAND_DARK_COMPACT);
@@ -110,6 +169,57 @@ describe("FormPreview 下拉单选与所属弹层实例外观（#106）", () => 
     });
     expect(readValue()).toBe("no");
     expect(wrapper.props("form").rules).toBe(SELECT_FORM.rules);
+  });
+
+  it("品牌面板保留仅使用 EP 变量的业务选中与禁用颜色", async () => {
+    const rules = JSON.parse(SELECT_FORM.rules);
+    rules[0].props.popperStyle = {
+      "--el-color-primary": "rgb(18, 52, 86)",
+      "--el-text-color-placeholder": "rgb(113, 130, 147)",
+    };
+    const form = { ...SELECT_FORM, rules: JSON.stringify(rules) };
+    const wrapper = mountPreview(form, BRAND_DARK_COMPACT);
+    await flushPromises();
+    await wrapper.get(".el-select__wrapper").trigger("click");
+    await flushPromises();
+    const selected = document.querySelector<HTMLElement>(".el-select-dropdown__item.is-selected")!;
+    const disabled = document.querySelector<HTMLElement>(".el-select-dropdown__item.is-disabled")!;
+    expect(getComputedStyle(selected).color).toBe("rgb(18, 52, 86)");
+    expect(getComputedStyle(disabled).color).toBe("rgb(113, 130, 147)");
+    expect(wrapper.props("form")).toEqual(form);
+  });
+
+  it.each([
+    ["host", "compact"],
+    ["host", "comfortable"],
+    ["brand", "compact"],
+    ["brand", "comfortable"],
+  ] as const)("%s／%s 保留显式选项及空面板字号", async (colorSource, density) => {
+    const rules = JSON.parse(SELECT_FORM.rules);
+    rules[0].props.popperStyle = { "--el-font-size-base": "28px" };
+    rules.push({
+      type: "select",
+      field: "emptyFont",
+      props: {
+        popperClass: "explicit-empty-font",
+        popperStyle: { "--el-select-font-size": "26px" },
+      },
+      options: [],
+    });
+    const form = { ...SELECT_FORM, rules: JSON.stringify(rules) };
+    const wrapper = mountPreview(form, { colorSource, mode: "light", density });
+    await flushPromises();
+    await wrapper.findAll(".el-select__wrapper")[0]!.trigger("click");
+    await flushPromises();
+    const selected = document.querySelector<HTMLElement>(".el-select-dropdown__item.is-selected")!;
+    expect.soft(getComputedStyle(selected).fontSize).toBe("28px");
+    await wrapper.findAll(".el-select__wrapper")[1]!.trigger("click");
+    await flushPromises();
+    const empty = document.querySelector<HTMLElement>(
+      ".explicit-empty-font .el-select-dropdown__empty",
+    )!;
+    expect(getComputedStyle(empty).fontSize).toBe("26px");
+    expect(wrapper.props("form")).toEqual(form);
   });
 
   it("显式 appendTo 与数组 popperClass 优先，实例标识仍追加且不写回规则", async () => {
