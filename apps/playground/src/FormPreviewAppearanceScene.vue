@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, defineComponent, onBeforeUnmount, reactive, ref, watch } from "vue";
+import { computed, defineComponent, reactive, ref, watch } from "vue";
 import { ElButton, ElDatePicker, ElInput, ElOption, ElSelect } from "element-plus";
 import {
   type AppearanceColorSource,
@@ -8,6 +8,7 @@ import {
   type ComponentAppearance,
 } from "@flowduet/designer";
 import { FormPreview, type FormDefinition } from "@flowduet/form-create";
+import { useAppearanceHostMode } from "./useAppearanceHostMode";
 
 interface InstanceControls {
   enabled: boolean;
@@ -16,6 +17,12 @@ interface InstanceControls {
   mode: AppearanceMode;
   density: AppearanceDensity;
 }
+
+const props = defineProps<{ hostDark: boolean; scopedDark: boolean }>();
+const emit = defineEmits<{
+  "update:hostDark": [value: boolean];
+  "update:scopedDark": [value: boolean];
+}>();
 
 const TEXT_FORM: FormDefinition = {
   id: "form_preview_text",
@@ -521,9 +528,6 @@ const second = reactive<InstanceControls>({
 const firstForm = ref<FormDefinition>(TEXT_FORM);
 const firstInvalid = ref(false);
 const samplingRaceArmed = ref(false);
-const hostDark = ref(document.documentElement.classList.contains("dark"));
-const scopedDark = ref(false);
-const originallyDark = hostDark.value;
 const hostDecision = ref("hostA");
 const hostDate = ref("2026-11-15 09:30:45");
 
@@ -543,10 +547,7 @@ const firstAppearance = computed<ComponentAppearance | undefined>(() => {
 });
 const secondAppearance = computed(() => toAppearance(second));
 
-function syncHostMode(controls: InstanceControls): void {
-  if (controls.colorSource === "host")
-    controls.mode = hostDark.value || scopedDark.value ? "dark" : "light";
-}
+const { syncHostMode } = useAppearanceHostMode(props, [first, second]);
 
 // 后置兄弟 watcher 在预览合法采样挂起后写入非法配置；只构造验收时序，不渲染 DOM。
 const FirstSamplingRaceTrigger = defineComponent({
@@ -578,18 +579,13 @@ function onSourceChange(controls: InstanceControls): void {
 }
 
 function onHostThemeChange(event: Event): void {
-  const dark = (event.target as HTMLInputElement).checked;
-  hostDark.value = dark;
-  // 宿主主动切换自己的 EP 深色环境，组件本身不操作 html/body。
-  document.documentElement.classList.toggle("dark", dark);
-  syncHostMode(first);
-  syncHostMode(second);
+  // 宿主主动声明自己的 EP 环境；实际 html 写操作由组合场景统一执行。
+  emit("update:hostDark", (event.target as HTMLInputElement).checked);
 }
 
-function onScopedDarkChange(): void {
+function onScopedDarkChange(event: Event): void {
   onFirstValidChange();
-  syncHostMode(first);
-  syncHostMode(second);
+  emit("update:scopedDark", (event.target as HTMLInputElement).checked);
 }
 
 function onFirstSamplingRace(): void {
@@ -597,20 +593,14 @@ function onFirstSamplingRace(): void {
   first.enabled = true;
   first.colorSource = "host";
   samplingRaceArmed.value = true;
-  scopedDark.value = true;
-  syncHostMode(first);
-  syncHostMode(second);
+  emit("update:scopedDark", true);
 }
-
-onBeforeUnmount(() => {
-  document.documentElement.classList.toggle("dark", originallyDark);
-});
 </script>
 
 <template>
   <section
     class="form-appearance-scene"
-    :class="{ 'form-appearance-scoped-dark': scopedDark }"
+    :class="{ 'form-appearance-scoped-dark': props.scopedDark }"
     data-test="form-appearance-scene"
   >
     <header class="form-appearance-header">
@@ -622,7 +612,7 @@ onBeforeUnmount(() => {
         <label>
           <input
             type="checkbox"
-            :checked="hostDark"
+            :checked="props.hostDark"
             data-test="form-appearance-host-dark"
             @change="onHostThemeChange"
           />
@@ -630,7 +620,7 @@ onBeforeUnmount(() => {
         </label>
         <label>
           <input
-            v-model="scopedDark"
+            :checked="props.scopedDark"
             type="checkbox"
             data-test="form-appearance-scoped-dark"
             @change="onScopedDarkChange"
@@ -776,7 +766,7 @@ onBeforeUnmount(() => {
           <span data-test="form-appearance-first-form-id">{{ firstForm.id }}</span>
         </div>
         <FormPreview v-if="first.mounted" :form="firstForm" :appearance="firstAppearance" />
-        <FirstSamplingRaceTrigger :armed="samplingRaceArmed" :dark="scopedDark" />
+        <FirstSamplingRaceTrigger :armed="samplingRaceArmed" :dark="props.scopedDark" />
       </section>
 
       <section class="form-appearance-instance" data-test="form-appearance-second-instance">

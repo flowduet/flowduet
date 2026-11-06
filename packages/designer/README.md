@@ -110,7 +110,9 @@ function useLegacyAppearance(): void {
 
 共享色板与宿主读取经包根 `createAppearanceVariables`、`readHostAppearance` 及 `HostAppearanceContext` 类型提供，FormPreview 由此复用同一 R2 映射而不复制算法或深引源码。这些函数不负责 EP size 注入；各组件须使用自己解析到的 EP 副本提供密度上下文。
 
-当前 **DingtalkDesigner 的节点属性抽屉**，以及 **FormPreview 的文本、多行文本与预览自有表面／反馈／操作区**已分别完成对应切片；FormPreview 其余字段与弹层仍由后续切片交付。`propertyEditing="external"` 不渲染抽屉，合法 `appearance` 没有可见效果，也不影响宿主自有属性面板。原生 `select` 的系统选项弹层外观受浏览器和操作系统限制，不为像素一致替换成 `ElSelect`。
+当前 **DingtalkDesigner 的节点属性抽屉**，以及 **FormPreview 的文本、多行文本、数字、单选、多选、下拉单选、日期、开关与真实下拉／日期／时间弹层**均已完成首批适配；预览侧合同详见 `@flowduet/form-create` 接入说明。`propertyEditing="external"` 不渲染抽屉，合法 `appearance` 没有可见效果，也不影响宿主自有属性面板。原生 `select` 的系统选项弹层外观受浏览器和操作系统限制，不为像素一致替换成 `ElSelect`。
+
+既有 Playground 提供同一 Vue app 内的双实例、双入口公开消费示例；实际 tarball 安装、严格类型、CSS、单份 EP 解析和 Chromium 复测步骤见 [Playground 接入说明](../../apps/playground/README.md#element-plus-双入口公开消费示例)。
 
 首批验证环境为单份 Element Plus 2.14.6 与桌面 Chromium；其他 EP 版本、Firefox、Safari／WebKit、移动端、真实操作系统中文输入法及完整可访问性认证尚未验证。
 

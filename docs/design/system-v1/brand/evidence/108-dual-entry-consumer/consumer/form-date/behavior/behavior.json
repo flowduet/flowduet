@@ -1,0 +1,220 @@
+{
+  "browser": "156.0.8078.4",
+  "viewport": "1440x1800@1",
+  "results": {
+    "legacy": {
+      "cleared": null,
+      "validation": "必填失败",
+      "disabled": true
+    },
+    "keyboard": [
+      {
+        "type": "date",
+        "value": "2026-11-16",
+        "focus": {
+          "tag": "TD",
+          "inside": true,
+          "outlineWidth": "2px",
+          "outlineStyle": "solid",
+          "outlineColor": "rgb(165, 187, 255)",
+          "outlineOffset": "1px"
+        }
+      },
+      {
+        "type": "week",
+        "value": "2026-48th",
+        "legacyValue": "2026-48th",
+        "focus": {
+          "tag": "TD",
+          "inside": true,
+          "outlineWidth": "2px",
+          "outlineStyle": "solid",
+          "outlineColor": "rgb(165, 187, 255)",
+          "outlineOffset": "1px"
+        }
+      },
+      {
+        "type": "month",
+        "value": "2026-12",
+        "focus": {
+          "tag": "TD",
+          "inside": true,
+          "outlineWidth": "2px",
+          "outlineStyle": "solid",
+          "outlineColor": "rgb(165, 187, 255)",
+          "outlineOffset": "1px"
+        }
+      },
+      {
+        "type": "year",
+        "value": "2027",
+        "focus": {
+          "tag": "TD",
+          "inside": true,
+          "outlineWidth": "2px",
+          "outlineStyle": "solid",
+          "outlineColor": "rgb(165, 187, 255)",
+          "outlineOffset": "1px"
+        }
+      }
+    ],
+    "validationRecovery": "清空失败后重新选择并通过",
+    "timeVariants": [
+      {
+        "variant": {
+          "colorSource": "brand",
+          "mode": "light",
+          "density": "comfortable"
+        },
+        "state": {
+          "identity": true,
+          "focused": true
+        },
+        "visible": true,
+        "value": "2026-11-15 09:30:45"
+      },
+      {
+        "variant": {
+          "colorSource": "host",
+          "mode": "light",
+          "density": "compact"
+        },
+        "state": {
+          "identity": true,
+          "focused": true
+        },
+        "visible": true,
+        "value": "2026-11-15 09:30:45"
+      },
+      {
+        "variant": {
+          "enabled": false
+        },
+        "state": {
+          "identity": true,
+          "focused": true
+        },
+        "visible": true,
+        "value": "2026-11-15 09:30:45"
+      },
+      {
+        "variant": {
+          "colorSource": "brand",
+          "mode": "dark",
+          "density": "compact"
+        },
+        "state": {
+          "identity": true,
+          "focused": true
+        },
+        "visible": true,
+        "value": "2026-11-15 09:30:45"
+      }
+    ],
+    "timeSelection": "2026-11-15 09:31:45",
+    "openVariants": [
+      {
+        "variant": {
+          "colorSource": "brand",
+          "mode": "light",
+          "density": "comfortable"
+        },
+        "state": {
+          "identity": true,
+          "focusIdentity": true
+        },
+        "visible": true,
+        "value": "2026-11-16"
+      },
+      {
+        "variant": {
+          "colorSource": "host",
+          "mode": "light",
+          "density": "compact"
+        },
+        "state": {
+          "identity": true,
+          "focusIdentity": true
+        },
+        "visible": true,
+        "value": "2026-11-16"
+      },
+      {
+        "variant": {
+          "enabled": false
+        },
+        "state": {
+          "identity": true,
+          "focusIdentity": true
+        },
+        "visible": true,
+        "value": "2026-11-16"
+      },
+      {
+        "variant": {
+          "colorSource": "brand",
+          "mode": "dark",
+          "density": "compact"
+        },
+        "state": {
+          "identity": true,
+          "focusIdentity": true
+        },
+        "visible": true,
+        "value": "2026-11-16"
+      }
+    ],
+    "definitionReset": {
+      "date": "2026-11-15",
+      "datetime": "2026-11-15 09:30:45",
+      "week": "2026-46th",
+      "month": "2026-11",
+      "year": "2026",
+      "disabledDate": "2026-11-16"
+    },
+    "dual": {
+      "first": {
+        "owner": "flowduet-form-preview-date-1",
+        "zIndex": 2063,
+        "selectedColor": "rgb(255, 255, 255)",
+        "selectedBackground": "rgb(64, 158, 255)"
+      },
+      "second": {
+        "owner": "flowduet-form-preview-date-3",
+        "zIndex": 2064,
+        "selectedColor": "rgb(23, 31, 62)",
+        "selectedBackground": "rgb(18, 52, 86)"
+      },
+      "externalMounted": true,
+      "explicitHeight": 40
+    },
+    "unmountRemount": {
+      "firstOwner": "flowduet-form-preview-date-1",
+      "remountedOwner": "flowduet-form-preview-date-4",
+      "secondOwner": "flowduet-form-preview-date-3",
+      "cleaned": true
+    },
+    "hostIsolation": {
+      "hostBefore": {
+        "color": "rgb(255, 255, 255)",
+        "background": "rgb(64, 158, 255)",
+        "owner": false
+      },
+      "hostAfter": {
+        "color": "rgb(255, 255, 255)",
+        "background": "rgb(64, 158, 255)",
+        "owner": false
+      }
+    },
+    "scopedHost": {
+      "background": "rgb(22, 34, 32)",
+      "selectedColor": "rgb(255, 255, 255)",
+      "selectedBackground": "rgb(127, 207, 199)",
+      "epDeclarations": []
+    }
+  },
+  "errors": [],
+  "resourceErrors": [],
+  "unhandled": [],
+  "failures": []
+}

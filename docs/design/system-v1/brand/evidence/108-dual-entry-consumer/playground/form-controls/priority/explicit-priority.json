@@ -1,0 +1,367 @@
+{
+  "browser": "156.0.8078.4",
+  "results": [
+    {
+      "id": "legacy",
+      "actual": {
+        "radio": {
+          "background": "rgb(191, 0, 31)",
+          "mark": "rgb(10, 20, 30)",
+          "height": 40
+        },
+        "checkbox": {
+          "background": "rgb(191, 0, 31)",
+          "mark": "rgb(10, 20, 30)",
+          "height": 56
+        },
+        "checkboxOverride": {
+          "background": "rgb(18, 52, 86)",
+          "mark": "rgb(1, 2, 3)",
+          "height": 72
+        },
+        "values": {
+          "reason": "字段尺寸保持 large",
+          "detail": "显式 rows=4",
+          "explicitAmount": 2,
+          "explicitDecision": "yes",
+          "explicitTags": ["a"],
+          "explicitNotify": true,
+          "groupDecision": "yes",
+          "groupTags": ["a", "override"],
+          "explicitDropdown": "no",
+          "inlineDropdown": "yes",
+          "explicitDate": "15/11/2026",
+          "inlineDate": "2026-11-15",
+          "explicitmonth": "2026-11",
+          "explicityear": "2026"
+        }
+      },
+      "radioOverride": {
+        "background": "rgb(18, 52, 86)",
+        "mark": "rgb(1, 2, 3)"
+      }
+    },
+    {
+      "id": "host-light-comfortable",
+      "actual": {
+        "radio": {
+          "background": "rgb(191, 0, 31)",
+          "mark": "rgb(10, 20, 30)",
+          "height": 39.984375
+        },
+        "checkbox": {
+          "background": "rgb(191, 0, 31)",
+          "mark": "rgb(10, 20, 30)",
+          "height": 56
+        },
+        "checkboxOverride": {
+          "background": "rgb(18, 52, 86)",
+          "mark": "rgb(1, 2, 3)",
+          "height": 72
+        },
+        "values": {
+          "reason": "字段尺寸保持 large",
+          "detail": "显式 rows=4",
+          "explicitAmount": 2,
+          "explicitDecision": "yes",
+          "explicitTags": ["a"],
+          "explicitNotify": true,
+          "groupDecision": "yes",
+          "groupTags": ["a", "override"],
+          "explicitDropdown": "no",
+          "inlineDropdown": "yes",
+          "explicitDate": "15/11/2026",
+          "inlineDate": "2026-11-15",
+          "explicitmonth": "2026-11",
+          "explicityear": "2026"
+        }
+      },
+      "radioOverride": {
+        "background": "rgb(18, 52, 86)",
+        "mark": "rgb(1, 2, 3)"
+      }
+    },
+    {
+      "id": "host-light-compact",
+      "actual": {
+        "radio": {
+          "background": "rgb(191, 0, 31)",
+          "mark": "rgb(10, 20, 30)",
+          "height": 39.984375
+        },
+        "checkbox": {
+          "background": "rgb(191, 0, 31)",
+          "mark": "rgb(10, 20, 30)",
+          "height": 56
+        },
+        "checkboxOverride": {
+          "background": "rgb(18, 52, 86)",
+          "mark": "rgb(1, 2, 3)",
+          "height": 72
+        },
+        "values": {
+          "reason": "字段尺寸保持 large",
+          "detail": "显式 rows=4",
+          "explicitAmount": 2,
+          "explicitDecision": "yes",
+          "explicitTags": ["a"],
+          "explicitNotify": true,
+          "groupDecision": "yes",
+          "groupTags": ["a", "override"],
+          "explicitDropdown": "no",
+          "inlineDropdown": "yes",
+          "explicitDate": "15/11/2026",
+          "inlineDate": "2026-11-15",
+          "explicitmonth": "2026-11",
+          "explicityear": "2026"
+        }
+      },
+      "radioOverride": {
+        "background": "rgb(18, 52, 86)",
+        "mark": "rgb(1, 2, 3)"
+      }
+    },
+    {
+      "id": "host-dark-comfortable",
+      "actual": {
+        "radio": {
+          "background": "rgb(191, 0, 31)",
+          "mark": "rgb(10, 20, 30)",
+          "height": 39.984375
+        },
+        "checkbox": {
+          "background": "rgb(191, 0, 31)",
+          "mark": "rgb(10, 20, 30)",
+          "height": 56
+        },
+        "checkboxOverride": {
+          "background": "rgb(18, 52, 86)",
+          "mark": "rgb(1, 2, 3)",
+          "height": 72
+        },
+        "values": {
+          "reason": "字段尺寸保持 large",
+          "detail": "显式 rows=4",
+          "explicitAmount": 2,
+          "explicitDecision": "yes",
+          "explicitTags": ["a"],
+          "explicitNotify": true,
+          "groupDecision": "yes",
+          "groupTags": ["a", "override"],
+          "explicitDropdown": "no",
+          "inlineDropdown": "yes",
+          "explicitDate": "15/11/2026",
+          "inlineDate": "2026-11-15",
+          "explicitmonth": "2026-11",
+          "explicityear": "2026"
+        }
+      },
+      "radioOverride": {
+        "background": "rgb(18, 52, 86)",
+        "mark": "rgb(1, 2, 3)"
+      }
+    },
+    {
+      "id": "host-dark-compact",
+      "actual": {
+        "radio": {
+          "background": "rgb(191, 0, 31)",
+          "mark": "rgb(10, 20, 30)",
+          "height": 39.984375
+        },
+        "checkbox": {
+          "background": "rgb(191, 0, 31)",
+          "mark": "rgb(10, 20, 30)",
+          "height": 56
+        },
+        "checkboxOverride": {
+          "background": "rgb(18, 52, 86)",
+          "mark": "rgb(1, 2, 3)",
+          "height": 72
+        },
+        "values": {
+          "reason": "字段尺寸保持 large",
+          "detail": "显式 rows=4",
+          "explicitAmount": 2,
+          "explicitDecision": "yes",
+          "explicitTags": ["a"],
+          "explicitNotify": true,
+          "groupDecision": "yes",
+          "groupTags": ["a", "override"],
+          "explicitDropdown": "no",
+          "inlineDropdown": "yes",
+          "explicitDate": "15/11/2026",
+          "inlineDate": "2026-11-15",
+          "explicitmonth": "2026-11",
+          "explicityear": "2026"
+        }
+      },
+      "radioOverride": {
+        "background": "rgb(18, 52, 86)",
+        "mark": "rgb(1, 2, 3)"
+      }
+    },
+    {
+      "id": "brand-light-comfortable",
+      "actual": {
+        "radio": {
+          "background": "rgb(191, 0, 31)",
+          "mark": "rgb(10, 20, 30)",
+          "height": 39.984375
+        },
+        "checkbox": {
+          "background": "rgb(191, 0, 31)",
+          "mark": "rgb(10, 20, 30)",
+          "height": 56
+        },
+        "checkboxOverride": {
+          "background": "rgb(18, 52, 86)",
+          "mark": "rgb(1, 2, 3)",
+          "height": 72
+        },
+        "values": {
+          "reason": "字段尺寸保持 large",
+          "detail": "显式 rows=4",
+          "explicitAmount": 2,
+          "explicitDecision": "yes",
+          "explicitTags": ["a"],
+          "explicitNotify": true,
+          "groupDecision": "yes",
+          "groupTags": ["a", "override"],
+          "explicitDropdown": "no",
+          "inlineDropdown": "yes",
+          "explicitDate": "15/11/2026",
+          "inlineDate": "2026-11-15",
+          "explicitmonth": "2026-11",
+          "explicityear": "2026"
+        }
+      },
+      "radioOverride": {
+        "background": "rgb(18, 52, 86)",
+        "mark": "rgb(1, 2, 3)"
+      }
+    },
+    {
+      "id": "brand-light-compact",
+      "actual": {
+        "radio": {
+          "background": "rgb(191, 0, 31)",
+          "mark": "rgb(10, 20, 30)",
+          "height": 39.984375
+        },
+        "checkbox": {
+          "background": "rgb(191, 0, 31)",
+          "mark": "rgb(10, 20, 30)",
+          "height": 56
+        },
+        "checkboxOverride": {
+          "background": "rgb(18, 52, 86)",
+          "mark": "rgb(1, 2, 3)",
+          "height": 72
+        },
+        "values": {
+          "reason": "字段尺寸保持 large",
+          "detail": "显式 rows=4",
+          "explicitAmount": 2,
+          "explicitDecision": "yes",
+          "explicitTags": ["a"],
+          "explicitNotify": true,
+          "groupDecision": "yes",
+          "groupTags": ["a", "override"],
+          "explicitDropdown": "no",
+          "inlineDropdown": "yes",
+          "explicitDate": "15/11/2026",
+          "inlineDate": "2026-11-15",
+          "explicitmonth": "2026-11",
+          "explicityear": "2026"
+        }
+      },
+      "radioOverride": {
+        "background": "rgb(18, 52, 86)",
+        "mark": "rgb(1, 2, 3)"
+      }
+    },
+    {
+      "id": "brand-dark-comfortable",
+      "actual": {
+        "radio": {
+          "background": "rgb(191, 0, 31)",
+          "mark": "rgb(10, 20, 30)",
+          "height": 39.984375
+        },
+        "checkbox": {
+          "background": "rgb(191, 0, 31)",
+          "mark": "rgb(10, 20, 30)",
+          "height": 56
+        },
+        "checkboxOverride": {
+          "background": "rgb(18, 52, 86)",
+          "mark": "rgb(1, 2, 3)",
+          "height": 72
+        },
+        "values": {
+          "reason": "字段尺寸保持 large",
+          "detail": "显式 rows=4",
+          "explicitAmount": 2,
+          "explicitDecision": "yes",
+          "explicitTags": ["a"],
+          "explicitNotify": true,
+          "groupDecision": "yes",
+          "groupTags": ["a", "override"],
+          "explicitDropdown": "no",
+          "inlineDropdown": "yes",
+          "explicitDate": "15/11/2026",
+          "inlineDate": "2026-11-15",
+          "explicitmonth": "2026-11",
+          "explicityear": "2026"
+        }
+      },
+      "radioOverride": {
+        "background": "rgb(18, 52, 86)",
+        "mark": "rgb(1, 2, 3)"
+      }
+    },
+    {
+      "id": "brand-dark-compact",
+      "actual": {
+        "radio": {
+          "background": "rgb(191, 0, 31)",
+          "mark": "rgb(10, 20, 30)",
+          "height": 39.984375
+        },
+        "checkbox": {
+          "background": "rgb(191, 0, 31)",
+          "mark": "rgb(10, 20, 30)",
+          "height": 56
+        },
+        "checkboxOverride": {
+          "background": "rgb(18, 52, 86)",
+          "mark": "rgb(1, 2, 3)",
+          "height": 72
+        },
+        "values": {
+          "reason": "字段尺寸保持 large",
+          "detail": "显式 rows=4",
+          "explicitAmount": 2,
+          "explicitDecision": "yes",
+          "explicitTags": ["a"],
+          "explicitNotify": true,
+          "groupDecision": "yes",
+          "groupTags": ["a", "override"],
+          "explicitDropdown": "no",
+          "inlineDropdown": "yes",
+          "explicitDate": "15/11/2026",
+          "inlineDate": "2026-11-15",
+          "explicitmonth": "2026-11",
+          "explicityear": "2026"
+        }
+      },
+      "radioOverride": {
+        "background": "rgb(18, 52, 86)",
+        "mark": "rgb(1, 2, 3)"
+      }
+    }
+  ],
+  "errors": [],
+  "failures": []
+}

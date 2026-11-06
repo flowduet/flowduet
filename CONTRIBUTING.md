@@ -27,7 +27,7 @@
 - **实施任何 issue 都在独立 feature 分支上施工**：开工第一步从最新 `develop` 切出分支，实现提交全部落在该分支，不直接提交到 `develop`——保证每个票的改动可整体审阅、可单独丢弃或重做。本地装有 husky pre-commit 防线：在 `develop` / `main` 上直接 `git commit` 会被拦截并提示切分支（`pnpm install` 经 `prepare` 脚本自动装钩子）。
 - 提交信息遵循 [约定式提交](https://www.conventionalcommits.org/zh-hans/v1.0.0/)，中文描述（详见 AGENTS.md）。
 - CI 在 PR 上跑 Node 22 / 24 双矩阵：`pnpm lint` + `pnpm test` + `pnpm build`，绿了才可合并。
-- 影响公开包 `@flowduet/core` 或 `@flowduet/designer` 的 PR 应附 changeset：运行 `pnpm changeset`，选择实际受影响的包和版本类型。纯文档或仅改私有 Playground 的 PR 不需要发包 changeset。
+- 影响公开包 `@flowduet/core`、`@flowduet/designer` 或 `@flowduet/form-create` 的 PR 应附 changeset：运行 `pnpm changeset`，选择实际受影响的包和版本类型。纯文档或仅改私有 Playground 的 PR 不需要发包 changeset。
 
 ## Issue 与 PR 内容
 
@@ -108,6 +108,8 @@ if (!existsSync(fileURLToPath(import.meta.resolve('@flowduet/form-create/style.c
 NODE
 )
 ```
+
+对于 Element Plus 双入口外观交付，另运行 `node scripts/verify-appearance-consumer.mjs`，固定单份 EP 2.14.6，核对 FormCreate renderer 版本、严格公开类型和生产构建；再按 `apps/playground/README.md` 对临时消费者执行 `scripts/verify-appearance-browser.mjs`。该脚本使用实际 tarball 与公开场景，不允许源码 alias；静态构建不能替代 Chromium 渲染证据。
 
 对于本轮新增的设计器导出场景，另将 Playground 生成的有效 XML 在 Flowable 6.8 部署验证；现有 `pnpm smoke` 主要覆盖仓库基准文件，不能代替该场景验收。任何门槛未通过时停止发布并记录原因。
 
