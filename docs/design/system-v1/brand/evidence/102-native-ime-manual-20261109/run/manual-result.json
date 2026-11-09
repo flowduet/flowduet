@@ -1,0 +1,124 @@
+{
+  "receivedAt": "2026-11-09T07:39:25.609Z",
+  "preparation": {
+    "baseline": "12806acd623aea3afc16ae3ea1a07e7fb7a32bd1",
+    "origin": "http://127.0.0.1:4187",
+    "preparedAt": "2026-11-09T07:32:12.705Z",
+    "observerSha256": "af06cc39ad170e1539c32af4fd7aed76927309da0dec78a113b5560f66af32ef",
+    "buildHashes": {
+      "assets/index-COyEt9A1.js": "1dcca1331547f933dad0052d89c39408eaabe95d7f43aac62a179d9e88a6f850",
+      "assets/index-DQAFhaf0.css": "1eeb44d17dc5c241829875d535082e4fba8d0102b1172417f4816e5a1bdb172a",
+      "index.html": "5a8556e654e6ab6fa2acbe392589ab287c8d81a5454fddc8527c15d828b9397a"
+    },
+    "method": "人工操作；无 CDP/WebDriver/CUA 控制；事件记录只读，isTrusted 本身不证明物理按键来源"
+  },
+  "record": {
+    "config": {
+      "baseline": "12806acd623aea3afc16ae3ea1a07e7fb7a32bd1",
+      "origin": "http://127.0.0.1:4187",
+      "preparedAt": "2026-11-09T07:32:12.705Z",
+      "observerSha256": "af06cc39ad170e1539c32af4fd7aed76927309da0dec78a113b5560f66af32ef",
+      "buildHashes": {
+        "assets/index-COyEt9A1.js": "1dcca1331547f933dad0052d89c39408eaabe95d7f43aac62a179d9e88a6f850",
+        "assets/index-DQAFhaf0.css": "1eeb44d17dc5c241829875d535082e4fba8d0102b1172417f4816e5a1bdb172a",
+        "index.html": "5a8556e654e6ab6fa2acbe392589ab287c8d81a5454fddc8527c15d828b9397a"
+      },
+      "method": "人工操作；无 CDP/WebDriver/CUA 控制；事件记录只读，isTrusted 本身不证明物理按键来源"
+    },
+    "stages": [],
+    "stopped": true,
+    "rows": [
+      {
+        "sequence": 1,
+        "at": 123431.90000000037,
+        "stage": null,
+        "type": "manual-stop",
+        "reason": "人工发现异常或流程无法完成，详见备注",
+        "state": {
+          "drawer": {
+            "inputId": 1,
+            "name": "shen'qing",
+            "visible": false,
+            "change": "change 0",
+            "card": "经理审批：用于核对较长中文节点名称与属性输入",
+            "density": "compact"
+          },
+          "preview": {
+            "inputs": [
+              {
+                "id": 2,
+                "value": "on",
+                "placeholder": null
+              },
+              {
+                "id": 3,
+                "value": "on",
+                "placeholder": null
+              },
+              {
+                "id": 4,
+                "value": "默认事由",
+                "placeholder": null
+              },
+              {
+                "id": 5,
+                "value": "默认说明",
+                "placeholder": null
+              }
+            ],
+            "definition": "form_preview_text",
+            "values": "{\n  \"reason\": \"默认事由\",\n  \"detail\": \"默认说明\"\n}",
+            "density": "comfortable"
+          }
+        }
+      }
+    ],
+    "note": "用户改由 Codex 操作。接管时页面已显示本轮停止，抽屉 change 0、draft 5，密度紧凑；FormPreview 未开始。Codex 未追加产品输入或重开入口，仅交回既有记录核对停止原因。停止的具体业务原因尚未由用户说明，不据此判定产品缺陷或原生验收通过。",
+    "environment": {
+      "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Safari/537.36",
+      "url": "http://127.0.0.1:4187/",
+      "viewport": {
+        "width": 2560,
+        "height": 883,
+        "dpr": 1
+      }
+    },
+    "final": {
+      "drawer": {
+        "inputId": 1,
+        "name": "shen'qing",
+        "visible": false,
+        "change": "change 0",
+        "card": "经理审批：用于核对较长中文节点名称与属性输入",
+        "density": "compact"
+      },
+      "preview": {
+        "inputs": [
+          {
+            "id": 2,
+            "value": "on",
+            "placeholder": null
+          },
+          {
+            "id": 3,
+            "value": "on",
+            "placeholder": null
+          },
+          {
+            "id": 4,
+            "value": "默认事由",
+            "placeholder": null
+          },
+          {
+            "id": 5,
+            "value": "默认说明",
+            "placeholder": null
+          }
+        ],
+        "definition": "form_preview_text",
+        "values": "{\n  \"reason\": \"默认事由\",\n  \"detail\": \"默认说明\"\n}",
+        "density": "comfortable"
+      }
+    }
+  }
+}

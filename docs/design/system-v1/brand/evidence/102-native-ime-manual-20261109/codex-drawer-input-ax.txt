@@ -1,0 +1,4 @@
+The following is a diff from the previous accessibility tree for Window: "FlowDuet Playground" with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.
+Removed element IDs: 393
+~								400 文本栏 (settable) 节点名称, Value: shenqing, Placeholder: 如：经理审批
+The focused UI element is 400 文本栏 (settable) 节点名称, Value: shenqing, Placeholder: 如：经理审批
