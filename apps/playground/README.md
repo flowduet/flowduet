@@ -99,10 +99,10 @@ node scripts/verify-appearance-browser.mjs \
 
 1. 打开双入口场景和节点实例一的审批抽屉，在节点名称中输入一段尚未上屏的中文拼音。
 2. 组合未结束时用鼠标切换密度、来源、主题及启停，确认拼音和已有文字不丢失、不自动确定或取消。
-3. 组合未结束时点击「确定」，应提示「输入法尚未完成本次输入，请完成后重试」；完成上屏后再确定，才按原合同写模型。
+3. 在候选窗仍存在时点击「确定」，记录组合事件与点击的先后顺序。若提交处理时组合仍未结束，应提示「输入法尚未完成本次输入，请完成后重试」，抽屉保持打开且模型不变；完成上屏后再确定，才按原合同写模型。若点击前已发生 `compositionend`，该次操作不覆盖组合态拒绝分支，不能用“没有提示”单独判定缺陷。事件序列若夹杂 `isTrusted=false` 的组合结束事件，单列来源未明的限制，不当作原生 IME 提交保护通过。
 4. 在 FormPreview 文本字段重复组合中切换外观，确认试填值和组合状态保留；换另一表单或同 ID 重开则仍应重置。
 5. 记录实际 OS、输入法、Chromium 版本和结果。仓库自动脚本只证明合成组合事件路径，不证明这一步已经执行。
 
 本批仅适配节点属性抽屉与 FormPreview。画布、抽屉外流程默认表单条、FormManager／FormDesigner 及其工具条未适配。其他 EP 组合、Firefox、Safari／WebKit、移动端和完整可访问性认证未验证；原生 `select` 的系统选项弹层受浏览器和操作系统限制，不承诺像素级主题一致。
 
-整合验收环境与 T01–T14 结果见 [双入口与安装包验证记录](../../docs/design/system-v1/brand/108-dual-entry-consumer-verification.md)。
+整合验收环境与 T01–T14 结果见 [双入口与安装包验证记录](../../docs/design/system-v1/brand/108-dual-entry-consumer-verification.md)。2026-11-09 的输入法报告、事件顺序核实与剩余验收门槛见 [#102 整批验收收尾记录](../../docs/design/system-v1/brand/102-appearance-acceptance.md)。
