@@ -1,0 +1,6 @@
+
+> flowduet-monorepo@0.0.0 lint /Users/l/Documents/projects/flowduet
+> eslint . && prettier --check .
+
+Checking formatting...
+All matched files use Prettier code style!

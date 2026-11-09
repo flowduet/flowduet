@@ -106,3 +106,5 @@ node scripts/verify-appearance-browser.mjs \
 本批仅适配节点属性抽屉与 FormPreview。画布、抽屉外流程默认表单条、FormManager／FormDesigner 及其工具条未适配。其他 EP 组合、Firefox、Safari／WebKit、移动端和完整可访问性认证未验证；原生 `select` 的系统选项弹层受浏览器和操作系统限制，不承诺像素级主题一致。
 
 整合验收环境与 T01–T14 结果见 [双入口与安装包验证记录](../../docs/design/system-v1/brand/108-dual-entry-consumer-verification.md)。2026-11-09 的输入法报告、事件顺序核实与剩余验收门槛见 [#102 整批验收收尾记录](../../docs/design/system-v1/brand/102-appearance-acceptance.md)。
+
+T03／T07 的判定口径、原人工准备及用户改由 Codex 后的结果，见 [判定口径与接管记录](../../docs/design/system-v1/brand/102-native-ime-manual.md)。该轮已结束，勿重复执行原启动入口。原生组合在显式确定前自然结束时，记录正常路径与未触发的保护分支；组合仍有效时拒绝提交的合同保持。历史合成结束事件不得据此改记为原生通过。

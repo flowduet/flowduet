@@ -1,0 +1,38 @@
+
+> flowduet-monorepo@0.0.0 test /Users/l/Documents/projects/flowduet
+> pnpm -r test
+
+Scope: 4 of 5 workspace projects
+packages/core test$ vitest run
+packages/core test:  RUN  v5.0.1 /Users/l/Documents/projects/flowduet/packages/core
+packages/core test:  Test Files  14 passed (14)
+packages/core test:       Tests  148 passed (148)
+packages/core test:    Start at  15:14:50
+packages/core test:    Duration  2.06s (transform 51%, tests 30%, import 16%, worker 2%, environment 1%)
+packages/core test:   Transform  transforming modules took 4.85s · 51% of tracked time, re-done on every run
+packages/core test:              persist transforms across runs with fsModuleCache: true
+packages/core test:              learn more: https://vitest.dev/guide/improving-performance#caching-between-reruns
+packages/core test: Done
+packages/designer test$ vitest run
+packages/designer test:  RUN  v5.0.1 /Users/l/Documents/projects/flowduet/packages/designer
+packages/designer test:  Test Files  15 passed (15)
+packages/designer test:       Tests  202 passed (202)
+packages/designer test:    Start at  15:14:53
+packages/designer test:    Duration  13.78s (tests 48%, import 21%, environment 17%, transform 14%)
+packages/designer test: Done
+packages/form-create test$ vitest run
+packages/form-create test:  RUN  v5.0.1 /Users/l/Documents/projects/flowduet/packages/form-create
+packages/form-create test:  Test Files  19 passed (19)
+packages/form-create test:       Tests  368 passed (368)
+packages/form-create test:    Start at  15:15:07
+packages/form-create test:    Duration  170.49s (tests 84%, import 12%, environment 4%, transform 1%)
+packages/form-create test:     Isolate  19 workers spawned · ~493ms startup each (spawn + environment, per file)
+packages/form-create test:              at least ~8.87s faster with isolate: false — reuses workers across files instead of one per file
+packages/form-create test: Done
+apps/playground test$ vitest run
+apps/playground test:  RUN  v5.0.1 /Users/l/Documents/projects/flowduet/apps/playground
+apps/playground test:  Test Files  18 passed (18)
+apps/playground test:       Tests  307 passed (307)
+apps/playground test:    Start at  15:17:58
+apps/playground test:    Duration  44.33s (tests 48%, import 34%, transform 9%, environment 9%)
+apps/playground test: Done

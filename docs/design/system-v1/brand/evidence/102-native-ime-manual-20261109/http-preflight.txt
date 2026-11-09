@@ -1,0 +1,2 @@
+PASS: observer served; frozen product JS byte-identical; reload rejected; traversal/Host/Origin rejected; chunked UTF-8 preserved; duplicate evidence rejected.
+HTTP-only preflight in isolated temporary directory; no browser or OS IME was exercised.

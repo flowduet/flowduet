@@ -1,0 +1,49 @@
+{
+  "operator": "Codex via CUA native Google Chrome app",
+  "host": "http://127.0.0.1:4187/",
+  "manualRecordBeforeTakeover": {
+    "stages": [],
+    "rowCount": 1,
+    "type": "manual-stop",
+    "result": "没有入口开始或输入事件流，不能还原先前人工操作"
+  },
+  "automation": {
+    "drawer": {
+      "input": "shenqing",
+      "density": "compact -> comfortable",
+      "beforeSaveChange": 0,
+      "afterSaveChange": 1,
+      "savedName": "shenqing",
+      "evidence": [
+        "codex-drawer-input-ax.txt",
+        "codex-drawer-density-ax.txt",
+        "codex-drawer-saved-ax.txt",
+        "codex-drawer-input.png"
+      ]
+    },
+    "preview": {
+      "input": "shenqing",
+      "density": "comfortable -> compact",
+      "valueAfterDensity": {
+        "reason": "shenqing",
+        "detail": "默认说明"
+      },
+      "definitionAfterReplacement": "form_preview_other",
+      "valueAfterReplacement": {
+        "subject": "新表单默认值"
+      },
+      "evidence": [
+        "codex-preview-input-ax.txt",
+        "codex-preview-density-ax.txt",
+        "codex-preview-reset-ax.txt",
+        "codex-preview-reset.png"
+      ]
+    }
+  },
+  "limits": [
+    "本次自动化未观察到原生候选组合态",
+    "观察器已在人工停止状态，Codex后续操作不在manual-result事件流中；以CUA回读文本和截图另列",
+    "不证明物理按键或原生组合事件，不记为T07原生通过",
+    "没有新增产品缺陷证据；未追加第二次同入口自动化流程"
+  ]
+}

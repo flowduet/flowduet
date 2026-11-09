@@ -1,0 +1,417 @@
+Window: "FlowDuet Playground", App: Google Chrome.
+0 标准窗口 FlowDuet Playground - Google Chrome, URL: 127.0.0.1:4187/, Secondary Actions: Raise
+	1 container FlowDuet Playground - Google Chrome, URL: 127.0.0.1:4187/
+		2 container
+			3 工具栏
+				4 按钮 (disabled) 返回
+				5 按钮 (disabled) 前进
+				6 按钮 重新加载
+				7 container
+					8 弹出式按钮 查看网站信息
+					9 文本栏 (settable) 地址和搜索栏, Value: 127.0.0.1:4187, Placeholder: 在 Google 中搜索，或输入网址
+					10 按钮 为此标签页添加书签
+				11 按钮 您
+				12 弹出式按钮 Chrome
+			13 container
+				14 滚动区
+					15 HTML 内容 FlowDuet Playground, URL: 127.0.0.1:4187/
+						16 container
+							17 标题 FlowDuet Playground, Value: 1
+								18 文本 FlowDuet Playground
+							19 radio-group
+								20 container
+									21 单选按钮 钉钉式, Value: 1
+									22 文本 钉钉式
+								23 container
+									24 单选按钮 BPMN 视图, Value: 0
+									25 文本 BPMN 视图
+							26 按钮 新建设计
+							27 按钮 打开文档
+							28 按钮 表单管理
+							29 按钮 预览表单
+							30 按钮 双入口外观
+							31 按钮 预览外观
+							32 按钮 保存草稿
+							33 按钮 下载设计文档
+							34 按钮 导出 XML
+							35 container
+								36 文本 流程默认表单
+								37 弹出式按钮 无
+									38 (selected) 无
+								39 文本 起
+								40 文本 开始
+								41 弹出式按钮 +, Help: 在此后添加节点
+								42 文本 审
+								43 文本 经理审批
+								44 文本 审批人 ${manager}
+								45 弹出式按钮 +, Help: 在此后添加节点
+								46 文本 审
+								47 文本 合同会签
+								48 文本 多人 · 集合 approvers
+								49 弹出式按钮 +, Help: 在此后添加节点
+								50 文本 抄
+								51 文本 抄送法务备案
+								52 文本 抄送：张三,李四
+								53 弹出式按钮 +, Help: 在此后添加节点
+								54 container
+									55 文本 条件分支
+									56 按钮 默认1, Help: 点击取消默认（其余情况无兜底支路）
+									57 按钮 默认2, Help: 把该支路设为默认（其余情况走此支路）
+									58 按钮 + 分支, Help: 添加分支
+									59 按钮 删块, Help: 删除整块（前后直连）
+								60 container
+									61 按钮 常规审批 其他情况（默认）, Help: 常规审批：其他情况（默认）；点击配置此分支
+									62 container
+										63 文本 审
+										64 文本 总监审批
+										65 文本 审批人 ${director}
+									66 弹出式按钮 +, Help: 在此后添加节点
+									67 按钮 大额复核 ${amount > 1000}, Help: 大额复核：${amount > 1000}；点击配置此分支
+									68 container
+										69 文本 并行分支
+										70 按钮 + 分支, Help: 添加分支
+										71 按钮 删块, Help: 删除整块（前后直连）
+										72 container
+											73 text 支路 1 审
+											74 文本 财务复核
+											75 文本 审批人 ${finance}
+											76 弹出式按钮 +, Help: 在此后添加节点
+										77 container
+											78 text 支路 2 审
+											79 文本 法务复核
+											80 文本 审批人 ${legal}
+											81 弹出式按钮 +, Help: 在此后添加节点
+								82 文本 终
+								83 文本 结束
+							84 container
+								85 文本 已保存到本地（刷新后可恢复），当前无待修复项
+								86 文本 点击「导出 XML」或编辑流程后自动生成
+							87 container
+								88 标题 Element Plus 双入口公开消费示例, Value: 2
+									89 文本 Element Plus 双入口公开消费示例
+								90 text 两个入口均只使用公开包根组件、类型与 CSS。各实例可独立切换来源、主题、密度、启停和挂载状态。 已适配：节点属性抽屉，以及 FormPreview 八类字段和真实可达弹层。未适配：画布、FormManager／FormDesigner。 未验证：其他 EP 组合、Firefox、Safari／WebKit、移动端及完整可访问性认证；真实 OS 中文输入法需按接入说明单独人工复测。
+							91 container
+								92 标题 节点属性抽屉外观验收, Value: 2
+									93 文本 节点属性抽屉外观验收
+								94 文本 两个公开 DingtalkDesigner 实例共享同一 Vue app，模型与编辑缓冲各自独立。
+								95 复选框 宿主启用 EP 深色, Value: 0
+								96 复选框 声明式局部深色宿主, Value: 0
+								97 文本 无关宿主控件
+								98 文本栏 (settable) 宿主原值
+								99 按钮 宿主主按钮
+								100 标题 实例一：目录选择器路径, Value: 3
+									101 文本 实例一：目录选择器路径
+								102 复选框 启用适配, Value: 1
+								103 复选框 挂载实例, Value: 1
+								104 container
+									105 文本 配色
+									106 弹出式按钮 配色, Value: 跟随宿主
+										107 (selected) 跟随宿主
+								108 container
+									109 文本 主题
+									110 弹出式按钮 (disabled) 主题, Value: 浅色
+								111 container
+									112 文本 密度
+									113 弹出式按钮 密度, Value: 舒适
+										114 (selected) 舒适
+								115 按钮 发送非法密度
+								116 text change 1 draft 13
+								117 container
+									118 文本 流程默认表单
+									119 弹出式按钮 申请单
+										120 (selected) 申请单
+									121 文本 起
+									122 文本 发起
+									123 弹出式按钮 +, Help: 在此后添加节点
+									124 文本 审
+									125 文本 shenqing
+									126 文本 审批人 ${manager}
+									127 文本 表单：申请单（继承默认）
+									128 弹出式按钮 +, Help: 在此后添加节点
+									129 文本 审
+									130 文本 合同会签
+									131 文本 多人 · 集合 approvers
+									132 文本 表单：申请单（继承默认）
+									133 弹出式按钮 +, Help: 在此后添加节点
+									134 文本 抄
+									135 文本 抄送法务备案
+									136 文本 抄送：张三,李四
+									137 弹出式按钮 +, Help: 在此后添加节点
+									138 container
+										139 文本 条件分支
+										140 按钮 默认1, Help: 点击取消默认（其余情况无兜底支路）
+										141 按钮 默认2, Help: 把该支路设为默认（其余情况走此支路）
+										142 按钮 + 分支, Help: 添加分支
+										143 按钮 删块, Help: 删除整块（前后直连）
+									144 container
+										145 按钮 常规审批 其他情况（默认）, Help: 常规审批：其他情况（默认）；点击配置此分支
+										146 container
+											147 文本 审
+											148 文本 总监审批
+											149 文本 审批人 ${director}
+											150 文本 表单：申请单（继承默认）
+										151 弹出式按钮 +, Help: 在此后添加节点
+										152 按钮 大额复核 ${amount > 1000}, Help: 大额复核：${amount > 1000}；点击配置此分支
+										153 container
+											154 文本 审
+											155 文本 财务复核
+											156 文本 审批人 ${finance}
+											157 文本 表单：申请单（继承默认）
+										158 弹出式按钮 +, Help: 在此后添加节点
+									159 文本 终
+									160 文本 结束
+								161 标题 实例二：手写 formKey 路径, Value: 3
+									162 文本 实例二：手写 formKey 路径
+								163 复选框 启用适配, Value: 1
+								164 复选框 挂载实例, Value: 1
+								165 container
+									166 文本 配色
+									167 弹出式按钮 配色, Value: 品牌预设
+										168 (selected) 品牌预设
+								169 container
+									170 文本 主题
+									171 弹出式按钮 主题, Value: 浅色
+										172 (selected) 浅色
+								173 container
+									174 文本 密度
+									175 弹出式按钮 密度, Value: 紧凑
+										176 (selected) 紧凑
+								177 container
+									178 文本 起
+									179 文本 发起
+								180 弹出式按钮 +, Help: 在此后添加节点
+								181 container
+									182 文本 审
+									183 文本 经理审批
+									184 文本 审批人 ${manager}
+								185 弹出式按钮 +, Help: 在此后添加节点
+								186 container
+									187 文本 审
+									188 文本 合同会签
+									189 文本 多人 · 集合 approvers
+								190 弹出式按钮 +, Help: 在此后添加节点
+								191 container
+									192 文本 抄
+									193 文本 抄送法务备案
+									194 文本 抄送：张三,李四
+								195 弹出式按钮 +, Help: 在此后添加节点
+								196 container
+									197 文本 条件分支
+									198 按钮 默认1, Help: 点击取消默认（其余情况无兜底支路）
+									199 按钮 默认2, Help: 把该支路设为默认（其余情况走此支路）
+									200 按钮 + 分支, Help: 添加分支
+									201 按钮 删块, Help: 删除整块（前后直连）
+									202 container
+										203 按钮 常规审批 其他情况（默认）, Help: 常规审批：其他情况（默认）；点击配置此分支
+										204 文本 审
+										205 文本 总监审批
+										206 文本 审批人 ${director}
+										207 弹出式按钮 +, Help: 在此后添加节点
+									208 container
+										209 按钮 大额复核 ${amount > 1000}, Help: 大额复核：${amount > 1000}；点击配置此分支
+										210 文本 审
+										211 文本 财务复核
+										212 文本 审批人 ${finance}
+										213 弹出式按钮 +, Help: 在此后添加节点
+								214 container
+									215 文本 终
+									216 文本 结束
+							217 container
+								218 标题 FormPreview 字段与真实弹层外观验收, Value: 2
+									219 文本 FormPreview 字段与真实弹层外观验收
+								220 文本 两个公开预览实例共享同一 Vue app；试填、校验反馈与设计定义各自独立。
+								221 复选框 宿主启用 EP 深色, Value: 0
+								222 复选框 声明式局部深色宿主, Value: 0
+								223 文本 无关宿主控件
+								224 文本栏 (settable) 宿主原值
+								225 按钮 宿主主按钮
+								226 container
+									227 组合框
+									228 文本 宿主甲
+									229 图像
+								230 container
+									231 图像
+									232 组合框 (settable) 2026-11-15 09:30:45
+								233 标题 实例一：缺省配置补默认, Value: 3
+									234 文本 实例一：缺省配置补默认
+								235 复选框 启用适配, Value: 1
+								236 复选框 挂载实例, Value: 1
+								237 container
+									238 文本 配色
+									239 弹出式按钮 配色, Value: 跟随宿主
+										240 (selected) 跟随宿主
+								241 container
+									242 文本 主题
+									243 弹出式按钮 (disabled) 主题, Value: 浅色
+								244 container
+									245 文本 密度
+									246 弹出式按钮 密度, Value: 紧凑
+										247 (selected) 紧凑
+								248 按钮 发送非法密度
+								249 按钮 同周期切深并发送非法密度
+								250 按钮 控件与下拉样例
+								251 按钮 控件与下拉同 ID 重开
+								252 按钮 日期与时间样例
+								253 按钮 日期与时间同 ID 重开
+								254 按钮 同 ID 重开
+								255 按钮 换另一表单
+								256 按钮 显式配置样例
+								257 文本 form_preview_other
+								258 container
+									259 文本 新表单主题
+									260 文本栏 (settable) 新表单主题, Value: 新表单默认值
+									261 文本 新表单备注
+									262 文本输入区 (settable) 新表单备注
+									263 按钮 提交
+								264 按钮 触发校验
+								265 文本 当前试填值（与设计默认值隔离，不随文档保存）
+								266 文本 {
+  "subject": "新表单默认值"
+}
+								267 标题 实例二：显式配置与异主题品牌预设, Value: 3
+									268 文本 实例二：显式配置与异主题品牌预设
+								269 复选框 启用适配, Value: 1
+								270 复选框 挂载实例, Value: 1
+								271 container
+									272 文本 配色
+									273 弹出式按钮 配色, Value: 品牌预设
+										274 (selected) 品牌预设
+								275 container
+									276 文本 主题
+									277 弹出式按钮 主题, Value: 深色
+										278 (selected) 深色
+								279 container
+									280 文本 密度
+									281 弹出式按钮 密度, Value: 紧凑
+										282 (selected) 紧凑
+								283 container
+									284 文本 *
+									285 文本 显式右置标签
+									286 文本栏 (settable) * 显式右置标签, Value: 字段尺寸保持 large
+									287 文本 显式多行说明
+									288 文本输入区 (settable) 显式多行说明, Value: 显式 rows=4
+									289 文本 显式右侧数字按钮
+									290 container
+										291 按钮 decrease number
+										292 按钮 increase number
+										293 步进器 (settable, float) 显式右侧数字按钮, Value: 2
+									294 文本 显式单选尺寸
+									295 显式单选尺寸
+										296 container
+											297 单选按钮 保持显式高度与颜色, Value: 1
+											298 文本 保持显式高度与颜色
+									299 文本 显式多选样式
+									300 container 显式多选样式
+										301 container
+											302 复选框 保留选项 inline color, Value: 1
+											303 文本 保留选项 inline color
+									304 文本 显式开关宽度
+									305 container
+										306 切换 显式开关宽度, Value: on
+										307 文本 接收
+									308 文本 字段级单选颜色
+									309 字段级单选颜色
+										310 container
+											311 单选按钮 继承字段颜色, Value: 1
+											312 文本 继承字段颜色
+										313 container
+											314 单选按钮 选项颜色优先, Value: 0
+											315 文本 选项颜色优先
+									316 文本 字段级多选颜色
+									317 container 字段级多选颜色
+										318 container
+											319 复选框 继承字段颜色, Value: 1
+											320 文本 继承字段颜色
+										321 container
+											322 复选框 选项颜色优先, Value: 1
+											323 文本 选项颜色优先
+									324 文本 显式外部挂载下拉
+									325 container
+										326 组合框 显式外部挂载下拉
+										327 文本 显式拒绝
+										328 图像
+									329 文本 显式原位下拉
+									330 container
+										331 组合框 显式原位下拉
+										332 文本 原位同意
+										333 图像
+									334 文本 显式空面板字号
+									335 container
+										336 组合框 显式空面板字号
+										337 文本 Select
+										338 图像
+									339 文本 显式外部挂载日期
+									340 container
+										341 图像
+										342 组合框 (settable) 显式外部挂载日期, Value: 15/11/2026
+									343 文本 显式原位日期
+									344 container
+										345 图像
+										346 组合框 (settable) 显式原位日期, Value: 2026-11-15
+									347 文本 显式 month 文本变量
+									348 container
+										349 图像
+										350 组合框 (settable) 显式 month 文本变量, Value: 2026-11
+									351 文本 显式 year 文本变量
+									352 container
+										353 图像
+										354 组合框 (settable) 显式 year 文本变量, Value: 2026
+									355 按钮 提交
+								356 按钮 触发校验
+								357 文本 当前试填值（与设计默认值隔离，不随文档保存）
+								358 文本 {
+  "reason": "字段尺寸保持 large",
+  "detail": "显式 rows=4",
+  "explicitAmount": 2,
+  "explicitDecision": "yes",
+  "explicitTags": [
+    "a"
+  ],
+  "explicitNotify": true,
+  "groupDecision": "yes",
+  "groupTags": [
+    "a",
+    "override"
+  ],
+  "explicitDropdown": "no",
+  "inlineDropdown": "yes",
+  "explicitDate": "15/11/2026",
+  "inlineDate": "2026-11-15",
+  "explicitmonth": "2026-11",
+  "explicityear": "2026"
+}
+						359 container
+							360 开合三角标记 原生 IME 人工验收（仅观察）
+								361 文本 原生 IME 人工验收（仅观察）
+							362 text 先手动点页面顶部「双入口外观」。系统简体拼音、Chrome；两入口各一次。阶段进行中不刷新、不切回聊天、不点记录器。 抽屉：手动打开左侧实例一的长名称节点；开始后全选名称，键入 shenqing 保持候选未上屏，鼠标将实例一密度改为紧凑，观察输入是否保留；完成选词，再点确定。不要靠重新输入掩盖丢字。若组合仍有效时点确定，应提示且不提交。 预览：开始后在下方 FormPreview 实例一「申请事由」全选并键入 shenqing，候选未上屏时鼠标改密度为紧凑；完成选词，核对字段与试填值；再点「换另一表单」，检查旧值没有残留。 每条流程结束后才点「完成当前入口」。如出现合成输入事件、页面隐藏或记录超限，立即停止并交回，不重试。
+							363 按钮 开始抽屉
+							364 按钮 开始预览
+							365 按钮 完成当前入口
+							366 按钮 发现丢字／提前提交或操作失败：停止
+							367 container
+								368 文本 实际环境与观察结果（最后填写）：
+								369 文本输入区 (settable) 实际环境与观察结果（最后填写）：, Placeholder: 确认系统简体拼音；两入口是否丢字、提示、提前提交；最终所选中文与显示是否一致, Value: 用户改由 Codex 操作。接管时页面已显示本轮停止，抽屉 change 0、draft 5，密度紧凑；FormPreview 未开始。Codex 未追加产品输入或重开入口，仅交回既有记录核对停止原因。停止的具体业务原因尚未由用户说明，不据此判定产品缺陷或原生验收通过。
+							370 按钮 (disabled) 结束并交回记录
+							371 文本 记录已交回。现在可回聊天回复「已交回记录」。请勿开始第二轮。
+			372 弹出式按钮 标签页搜索
+			373 container
+				374 标签组
+					375 标签 (selected, settable, boolean) FlowDuet Playground - 内存用量 - 109 MB, Value: on
+						376 按钮 关闭
+			377 按钮 新标签页
+	378 关闭按钮
+	379 全屏幕按钮 Help: 此按钮也可以执行缩放窗口的操作, Secondary Actions: 缩放窗口
+	380 最小化按钮
+381 menu bar
+	382 Chrome
+	383 文件
+	384 编辑
+	385 显示
+	386 历史记录
+	387 书签
+	388 个人资料
+	389 标签页
+	390 窗口
+	391 帮助
+
+The focused UI element is 255 按钮 换另一表单
