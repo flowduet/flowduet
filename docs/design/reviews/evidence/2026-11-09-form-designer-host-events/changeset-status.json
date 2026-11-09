@@ -1,0 +1,157 @@
+{
+  "changesets": [
+    {
+      "releases": [
+        {
+          "name": "@flowduet/form-create",
+          "type": "minor"
+        }
+      ],
+      "summary": "新增显式 retained 编辑模式及只读状态/同步捕获接口，保留数值和普通日期中间输入，并按实例与编辑版本保护 FormManager 的关闭确认；legacy 继续作为默认行为。",
+      "id": "b03-retained-number-date"
+    },
+    {
+      "releases": [
+        {
+          "name": "@flowduet/form-create",
+          "type": "patch"
+        }
+      ],
+      "summary": "修复显式 retained 模式下单行/多行文本清空后默认值丢失：区分显式空串与未设置，保持字段生命期和同步捕获保护；legacy 默认行为不变。",
+      "id": "b03-retained-text-defaults"
+    },
+    {
+      "releases": [
+        {
+          "name": "@flowduet/core",
+          "type": "patch"
+        },
+        {
+          "name": "@flowduet/designer",
+          "type": "patch"
+        }
+      ],
+      "summary": "修复审批单↔多转换及删除支路首节点/嵌套块时的支路身份、条件/default 与顺序丢失。转换保留原节点、连线和 DI；删除重接保留入边并废弃旧折线，BPMN 预览使用整图自动布局。新增 `BpmnModel.retargetSequenceFlow`，同步清理失效 DI，编译失败恢复原图容器。\n\n链节点和块删除不再新建 relay 连线；插入审批/抄送的新连线 ID 使用空闲序号。集成方应读取模型返回的真实连线 ID，不依赖 `flow_relay_*` 或节点 ID 派生的命名。多→单转换拒绝会被丢弃的自定义循环配置；默认 Identity 编译及普通配置/部署守卫保持严格。\n\n修复保存重开后的会签/或签无法转单签：识别解析器保留的标准 `xsi:type` 元数据，支持命名空间前缀变化，继续拒绝真正的自定义循环配置。\n\n重接前同时检查当前连线在源、旧目标和新目标的 incoming/outgoing，拒绝错误方向登记并保持引用、XML 和 DI 不变；不扩大为无关节点的全图检查。",
+      "id": "branch-identity-preservation"
+    },
+    {
+      "releases": [
+        {
+          "name": "@flowduet/form-create",
+          "type": "patch"
+        }
+      ],
+      "summary": "修复 FormDesigner 挂载后覆盖宿主 onbeforeunload 和 body.ondrop 的问题：保留宿主处理器，将供应商离页提示按实例注册并在卸载时清理，默认 drop 阻断仅作用于本编辑器范围；双实例与宿主后续改写互不覆盖，legacy 和 retained 的编辑、保存合同保持。",
+      "id": "form-designer-host-events"
+    },
+    {
+      "releases": [
+        {
+          "name": "@flowduet/form-create",
+          "type": "minor"
+        }
+      ],
+      "summary": "扩展 `FormPreview` 实例外观适配至数字、单选、多选与开关，覆盖选中标记、真实可达半选、禁用、键盘焦点、长中文选项和两档密度；保持既有字段配置（含字段及选项的颜色继承和多选高度变量）、试填值、边界行为与旧路径不变。",
+      "id": "form-preview-control-appearance"
+    },
+    {
+      "releases": [
+        {
+          "name": "@flowduet/form-create",
+          "type": "minor"
+        }
+      ],
+      "summary": "扩展 `FormPreview` 实例外观适配至 `date`、`datetime`、`week`、`month`、`year` 单值日期及真实时间子面板，覆盖两档输入密度、日历与时间状态、品牌选中前景／背景、键盘焦点和宿主局部主题；追加每实例面板标识并保留业务类名、显式样式与挂载配置，换肤、启停和卸载重挂不丢输入或串扰宿主。\n\n保持原日期值、格式、清空、禁用、边界与校验语义，不新增范围、多值、公开 API 或依赖，不修改第三方包。\n\n保留跟随宿主时月份／年份的悬停主色及日期导航箭头的主文字色，避免普通态覆盖状态颜色或使用错误回退值。",
+      "id": "form-preview-date-appearance"
+    },
+    {
+      "releases": [
+        {
+          "name": "@flowduet/form-create",
+          "type": "minor"
+        }
+      ],
+      "summary": "扩展 `FormPreview` 实例外观适配至下拉单选及真实选项面板，覆盖两档密度、键盘高亮、选中、占位、清除、禁用、空选项、长中文和焦点；为面板追加实例标识并保留既有 `popperClass`、`popperStyle`、`teleported`、`appendTo` 优先级，换肤与启停不重建输入或丢失试填，旧路径与无关宿主下拉保持不变。\n\n保留 FormCreate 全局配置中的业务面板类名，并修复默认传送到 body 的下拉面板未消费局部宿主主题的问题；跟随宿主时不写 EP 变量，显式 inline 配置保持优先。",
+      "id": "form-preview-select-appearance"
+    },
+    {
+      "releases": [
+        {
+          "name": "@flowduet/designer",
+          "type": "minor"
+        },
+        {
+          "name": "@flowduet/form-create",
+          "type": "minor"
+        }
+      ],
+      "summary": "公开共享组件外观的色板与宿主读取能力；`FormPreview` 新增可选 `appearance`，显式适配文本、多行文本及预览自有表面、反馈与操作区，支持跟随宿主／品牌、浅深主题和两档密度，同时保留旧路径、显式表单配置与试填生命周期。",
+      "id": "form-preview-text-appearance"
+    },
+    {
+      "releases": [
+        {
+          "name": "@flowduet/designer",
+          "type": "minor"
+        }
+      ],
+      "summary": "新增 `DingtalkDesigner` 的显式实例外观配置与共享外观类型／解析合同。合法 `appearance` 支持跟随宿主或品牌预设、浅深主题及舒适／紧凑密度，仅作用于节点属性抽屉；运行中切换和启停保留未提交输入、焦点与输入法组合，非法配置整份回退并给出字段级告警。省略配置保持旧路径，模型、BPMN XML、画布和外置属性编辑合同不变。\n\n跟随宿主时在 DOM 补丁完成后读取计算样式，支持短十六进制、HSL、OKLCH 等合法 CSS 颜色并按表面合成透明角色，跨明度背景下保证焦点环变量有效；抽屉样式权重覆盖宿主深色与不同引入顺序，不回写宿主变量。",
+      "id": "property-drawer-appearance"
+    },
+    {
+      "releases": [
+        {
+          "name": "@flowduet/designer",
+          "type": "minor"
+        }
+      ],
+      "summary": "增加显式外置属性编辑与按实际元素 ID 聚焦的组件接缝，默认继续使用既有抽屉。共享属性字段与校验规则，支持隐藏内置默认表单入口；输入法尚未完成时拒绝提交旧值。\n\n本变更不交付正式工作台、公开编辑控制器或新增 BPMN 编辑能力。",
+      "id": "stage-zero-external-editing"
+    }
+  ],
+  "releases": [
+    {
+      "name": "@flowduet/form-create",
+      "type": "minor",
+      "oldVersion": "0.1.0",
+      "changesets": [
+        "b03-retained-number-date",
+        "b03-retained-text-defaults",
+        "form-designer-host-events",
+        "form-preview-control-appearance",
+        "form-preview-date-appearance",
+        "form-preview-select-appearance",
+        "form-preview-text-appearance"
+      ],
+      "newVersion": "0.2.0"
+    },
+    {
+      "name": "@flowduet/core",
+      "type": "patch",
+      "oldVersion": "0.3.0",
+      "changesets": [
+        "branch-identity-preservation"
+      ],
+      "newVersion": "0.3.1"
+    },
+    {
+      "name": "@flowduet/designer",
+      "type": "minor",
+      "oldVersion": "0.1.0",
+      "changesets": [
+        "branch-identity-preservation",
+        "form-preview-text-appearance",
+        "property-drawer-appearance",
+        "stage-zero-external-editing"
+      ],
+      "newVersion": "0.2.0"
+    },
+    {
+      "name": "@flowduet/playground",
+      "type": "none",
+      "oldVersion": "0.0.0",
+      "changesets": [],
+      "newVersion": "0.0.0"
+    }
+  ]
+}

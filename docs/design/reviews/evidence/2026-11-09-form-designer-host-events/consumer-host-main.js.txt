@@ -1,0 +1,53 @@
+import { createApp, h, shallowRef } from "vue";
+import { FormDesigner } from "@flowduet/form-create";
+import "element-plus/dist/index.css";
+import "@flowduet/designer/style.css";
+import "@flowduet/form-create/style.css";
+
+const counts = { unload: 0, drop: 0, saved: 0 };
+let generation = 0;
+let hostUnload;
+let hostDrop;
+function installHostHandlers() {
+  generation++;
+  hostUnload = () => { counts.unload++; };
+  hostDrop = () => { counts.drop++; };
+  window.onbeforeunload = hostUnload;
+  document.body.ondrop = hostDrop;
+}
+installHostHandlers();
+const rules = JSON.stringify([{type: "input", field: "reason", title: "申请事由", value: "保留值"}]);
+let saved;
+function designer(name, mode) {
+  return h(FormDesigner, {
+    name, rules, options: "{}", editingMode: mode,
+    onSave(rules, options) { saved = { rules: JSON.parse(rules), options: JSON.parse(options) }; counts.saved++; },
+  });
+}
+const Harness = {
+  setup() {
+    const first = shallowRef(false);
+    const second = shallowRef(false);
+    const third = shallowRef(false);
+    let thirdApp;
+    const button = (id, text, onClick) => h("button", { "data-action": id, onClick }, text);
+    return () => h("main", [
+      h("div", {class: "actions"}, [
+        button("first", "切换实例一", () => { first.value = !first.value; }),
+        button("second", "切换实例二", () => { second.value = !second.value; }),
+        button("third", "切换独立 app", () => {
+          third.value = !third.value;
+          if (third.value) { thirdApp = createApp({ render: () => designer("独立 app", "legacy") }); thirdApp.mount("#third"); }
+          else { thirdApp.unmount(); thirdApp = undefined; }
+        }),
+        button("replace", "宿主更换处理器", installHostHandlers),
+      ]),
+      h("section", { "data-editor": "first" }, first.value ? designer("实例一", "legacy") : null),
+      h("section", { "data-editor": "second" }, second.value ? designer("实例二", "retained") : null),
+    ]);
+  },
+};
+createApp(Harness).mount("#app");
+window.hostEvidence = {
+  read: () => ({generation, counts: {...counts}, saved, unloadPreserved: window.onbeforeunload === hostUnload, dropPreserved: document.body.ondrop === hostDrop}),
+};

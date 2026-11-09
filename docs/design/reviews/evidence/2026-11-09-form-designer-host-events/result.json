@@ -1,0 +1,341 @@
+{
+  "browser": "156.0.8078.4",
+  "source": "三包真实 tarball，EP 2.14.6 单份；公开 FormDesigner 消费",
+  "errors": [],
+  "failures": [],
+  "steps": [
+    {
+      "name": "初始宿主",
+      "generation": 1,
+      "counts": {
+        "unload": 0,
+        "drop": 0,
+        "saved": 0
+      },
+      "unloadPreserved": true,
+      "dropPreserved": true
+    },
+    {
+      "name": "first 挂载",
+      "generation": 1,
+      "counts": {
+        "unload": 0,
+        "drop": 0,
+        "saved": 0
+      },
+      "unloadPreserved": true,
+      "dropPreserved": true
+    },
+    {
+      "name": "drop 作用范围",
+      "outside": {
+        "defaultPrevented": false
+      },
+      "inside": {
+        "defaultPrevented": true
+      }
+    },
+    {
+      "name": "second 挂载",
+      "generation": 1,
+      "counts": {
+        "unload": 2,
+        "drop": 1,
+        "saved": 1
+      },
+      "saved": {
+        "rules": [
+          {
+            "type": "input",
+            "field": "reason",
+            "title": "申请事由",
+            "value": "保留值",
+            "_fc_id": "id_F5kjmw91sdiqabc",
+            "name": "ref_Fjsamw91sdiqacc",
+            "display": true,
+            "hidden": false,
+            "_fc_drag_tag": "input"
+          }
+        ],
+        "options": {
+          "form": {
+            "inline": false,
+            "hideRequiredAsterisk": false,
+            "labelPosition": "right",
+            "size": "default",
+            "labelWidth": "125px"
+          },
+          "resetBtn": {
+            "show": false,
+            "innerText": "重置"
+          },
+          "submitBtn": {
+            "show": true,
+            "innerText": "提交"
+          }
+        }
+      },
+      "unloadPreserved": true,
+      "dropPreserved": true
+    },
+    {
+      "name": "first 卸载",
+      "generation": 1,
+      "counts": {
+        "unload": 3,
+        "drop": 1,
+        "saved": 2
+      },
+      "saved": {
+        "rules": [
+          {
+            "type": "input",
+            "field": "reason",
+            "title": "申请事由",
+            "value": "保留值",
+            "_fc_id": "id_Fq99mw91sdzzajc",
+            "name": "ref_F5djmw91sdzzakc",
+            "display": true,
+            "hidden": false,
+            "_fc_drag_tag": "input"
+          }
+        ],
+        "options": {
+          "form": {
+            "inline": false,
+            "hideRequiredAsterisk": false,
+            "labelPosition": "right",
+            "size": "default",
+            "labelWidth": "125px"
+          },
+          "resetBtn": {
+            "show": false,
+            "innerText": "重置"
+          },
+          "submitBtn": {
+            "show": true,
+            "innerText": "提交"
+          }
+        }
+      },
+      "unloadPreserved": true,
+      "dropPreserved": true
+    },
+    {
+      "name": "宿主挂载后改写",
+      "generation": 2,
+      "counts": {
+        "unload": 4,
+        "drop": 1,
+        "saved": 2
+      },
+      "saved": {
+        "rules": [
+          {
+            "type": "input",
+            "field": "reason",
+            "title": "申请事由",
+            "value": "保留值",
+            "_fc_id": "id_Fq99mw91sdzzajc",
+            "name": "ref_F5djmw91sdzzakc",
+            "display": true,
+            "hidden": false,
+            "_fc_drag_tag": "input"
+          }
+        ],
+        "options": {
+          "form": {
+            "inline": false,
+            "hideRequiredAsterisk": false,
+            "labelPosition": "right",
+            "size": "default",
+            "labelWidth": "125px"
+          },
+          "resetBtn": {
+            "show": false,
+            "innerText": "重置"
+          },
+          "submitBtn": {
+            "show": true,
+            "innerText": "提交"
+          }
+        }
+      },
+      "unloadPreserved": true,
+      "dropPreserved": true
+    },
+    {
+      "name": "third 挂载",
+      "generation": 2,
+      "counts": {
+        "unload": 4,
+        "drop": 1,
+        "saved": 2
+      },
+      "saved": {
+        "rules": [
+          {
+            "type": "input",
+            "field": "reason",
+            "title": "申请事由",
+            "value": "保留值",
+            "_fc_id": "id_Fq99mw91sdzzajc",
+            "name": "ref_F5djmw91sdzzakc",
+            "display": true,
+            "hidden": false,
+            "_fc_drag_tag": "input"
+          }
+        ],
+        "options": {
+          "form": {
+            "inline": false,
+            "hideRequiredAsterisk": false,
+            "labelPosition": "right",
+            "size": "default",
+            "labelWidth": "125px"
+          },
+          "resetBtn": {
+            "show": false,
+            "innerText": "重置"
+          },
+          "submitBtn": {
+            "show": true,
+            "innerText": "提交"
+          }
+        }
+      },
+      "unloadPreserved": true,
+      "dropPreserved": true
+    },
+    {
+      "name": "second 卸载",
+      "generation": 2,
+      "counts": {
+        "unload": 5,
+        "drop": 1,
+        "saved": 2
+      },
+      "saved": {
+        "rules": [
+          {
+            "type": "input",
+            "field": "reason",
+            "title": "申请事由",
+            "value": "保留值",
+            "_fc_id": "id_Fq99mw91sdzzajc",
+            "name": "ref_F5djmw91sdzzakc",
+            "display": true,
+            "hidden": false,
+            "_fc_drag_tag": "input"
+          }
+        ],
+        "options": {
+          "form": {
+            "inline": false,
+            "hideRequiredAsterisk": false,
+            "labelPosition": "right",
+            "size": "default",
+            "labelWidth": "125px"
+          },
+          "resetBtn": {
+            "show": false,
+            "innerText": "重置"
+          },
+          "submitBtn": {
+            "show": true,
+            "innerText": "提交"
+          }
+        }
+      },
+      "unloadPreserved": true,
+      "dropPreserved": true
+    },
+    {
+      "name": "third 卸载",
+      "generation": 2,
+      "counts": {
+        "unload": 6,
+        "drop": 1,
+        "saved": 2
+      },
+      "saved": {
+        "rules": [
+          {
+            "type": "input",
+            "field": "reason",
+            "title": "申请事由",
+            "value": "保留值",
+            "_fc_id": "id_Fq99mw91sdzzajc",
+            "name": "ref_F5djmw91sdzzakc",
+            "display": true,
+            "hidden": false,
+            "_fc_drag_tag": "input"
+          }
+        ],
+        "options": {
+          "form": {
+            "inline": false,
+            "hideRequiredAsterisk": false,
+            "labelPosition": "right",
+            "size": "default",
+            "labelWidth": "125px"
+          },
+          "resetBtn": {
+            "show": false,
+            "innerText": "重置"
+          },
+          "submitBtn": {
+            "show": true,
+            "innerText": "提交"
+          }
+        }
+      },
+      "unloadPreserved": true,
+      "dropPreserved": true
+    },
+    {
+      "name": "全部卸载，宿主新处理器保持",
+      "generation": 2,
+      "counts": {
+        "unload": 7,
+        "drop": 2,
+        "saved": 2
+      },
+      "saved": {
+        "rules": [
+          {
+            "type": "input",
+            "field": "reason",
+            "title": "申请事由",
+            "value": "保留值",
+            "_fc_id": "id_Fq99mw91sdzzajc",
+            "name": "ref_F5djmw91sdzzakc",
+            "display": true,
+            "hidden": false,
+            "_fc_drag_tag": "input"
+          }
+        ],
+        "options": {
+          "form": {
+            "inline": false,
+            "hideRequiredAsterisk": false,
+            "labelPosition": "right",
+            "size": "default",
+            "labelWidth": "125px"
+          },
+          "resetBtn": {
+            "show": false,
+            "innerText": "重置"
+          },
+          "submitBtn": {
+            "show": true,
+            "innerText": "提交"
+          }
+        }
+      },
+      "unloadPreserved": true,
+      "dropPreserved": true
+    }
+  ],
+  "note": "beforeunload 为合成 DOM 事件协议，不声称真实离页提示 UI 或 OS 输入法通过"
+}

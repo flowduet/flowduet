@@ -1,0 +1,38 @@
+
+> flowduet-monorepo@0.0.0 test /Users/l/Documents/projects/flowduet
+> pnpm -r test
+
+Scope: 4 of 5 workspace projects
+packages/core test$ vitest run
+packages/core test:  RUN  v5.0.1 /Users/l/Documents/projects/flowduet/packages/core
+packages/core test:  Test Files  14 passed (14)
+packages/core test:       Tests  148 passed (148)
+packages/core test:    Start at  17:19:11
+packages/core test:    Duration  1.07s (tests 44%, transform 41%, import 13%, worker 2%)
+packages/core test:   Transform  transforming modules took 2.18s · 41% of tracked time, re-done on every run
+packages/core test:              persist transforms across runs with fsModuleCache: true
+packages/core test:              learn more: https://vitest.dev/guide/improving-performance#caching-between-reruns
+packages/core test: Done
+packages/designer test$ vitest run
+packages/designer test:  RUN  v5.0.1 /Users/l/Documents/projects/flowduet/packages/designer
+packages/designer test:  Test Files  15 passed (15)
+packages/designer test:       Tests  202 passed (202)
+packages/designer test:    Start at  17:19:12
+packages/designer test:    Duration  8.35s (tests 43%, environment 21%, import 20%, transform 15%, worker 1%)
+packages/designer test: Done
+packages/form-create test$ vitest run
+packages/form-create test:  RUN  v5.0.1 /Users/l/Documents/projects/flowduet/packages/form-create
+packages/form-create test:  Test Files  20 passed (20)
+packages/form-create test:       Tests  374 passed (374)
+packages/form-create test:    Start at  17:19:21
+packages/form-create test:    Duration  161.35s (tests 84%, import 12%, environment 4%, transform 1%)
+packages/form-create test:     Isolate  20 workers spawned · ~439ms startup each (spawn + environment, per file)
+packages/form-create test:              at least ~8.33s faster with isolate: false — reuses workers across files instead of one per file
+packages/form-create test: Done
+apps/playground test$ vitest run
+apps/playground test:  RUN  v5.0.1 /Users/l/Documents/projects/flowduet/apps/playground
+apps/playground test:  Test Files  18 passed (18)
+apps/playground test:       Tests  307 passed (307)
+apps/playground test:    Start at  17:22:03
+apps/playground test:    Duration  40.35s (tests 51%, import 33%, environment 9%, transform 7%)
+apps/playground test: Done

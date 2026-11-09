@@ -28,6 +28,7 @@ import NumberDefaultEditor from "./NumberDefaultEditor.vue";
 import DateDefaultEditor from "./DateDefaultEditor.vue";
 import TextDefaultEditor from "./TextDefaultEditor.vue";
 import { prepareTextDefaults, restoreTextDefaults } from "./text-defaults.js";
+import { captureDesignerHostEvents } from "./designer-host-events.js";
 
 const props = defineProps<{
   /** 表单名（展示用） */
@@ -63,6 +64,7 @@ let changedMode = false,
 const pendingControls = new Map<Element, symbol>();
 const focusValues = new WeakMap<Element, string>();
 const captureError = ref("");
+let hostEvents: ReturnType<typeof captureDesignerHostEvents> | undefined;
 const inputState = createEditorInputState((edited) => {
   if (edited) {
     revision++;
@@ -258,6 +260,7 @@ function clearFields() {
   notifyDraftChange();
 }
 onBeforeUnmount(() => {
+  hostEvents?.dispose();
   disposed = true;
   inputState.clear();
   pendingControls.clear();
@@ -287,12 +290,20 @@ function notifyDraftChange(): void {
 // 宿主未全局安装时补装（画布字段渲染依赖 elm 组件映射注册）
 onBeforeMount(() => {
   ensureFormCreateInstalled();
+  hostEvents = captureDesignerHostEvents();
   if (mode === "retained") {
     FcDesigner.component("flowduetTextDefault", TextDefaultEditor);
     FcDesigner.component("flowduetNumberDefault", NumberDefaultEditor);
     FcDesigner.component("flowduetDateDefault", DateDefaultEditor);
   }
 });
+
+function bindDesignerHostEvents(): void {
+  hostEvents?.mount();
+}
+function onDesignerDrop(event: DragEvent): void {
+  hostEvents?.drop(event);
+}
 
 onMounted(() => {
   const designer = designerRef.value;
@@ -385,6 +396,7 @@ function save(): void {
     @focusin.capture="focusIn"
     @dragstart.capture="drag"
     @dragend.capture="drag"
+    @drop="onDesignerDrop"
   >
     <div class="form-designer-toolbar">
       <span class="form-designer-name" data-test="form-designer-name">{{ name }}</span>
@@ -402,6 +414,7 @@ function save(): void {
     <p v-if="captureError" role="alert">{{ captureError }}</p>
     <FcDesigner
       ref="designerRef"
+      @vue:before-mount="bindDesignerHostEvents"
       :menu="FIELD_MENU"
       :config="config"
       height="460px"

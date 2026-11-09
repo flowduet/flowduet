@@ -1,0 +1,9 @@
+
+ RUN  v5.0.1 /Users/l/Documents/projects/flowduet/packages/form-create
+
+
+ Test Files  1 passed (1)
+      Tests  6 passed (6)
+   Start at  17:13:13
+   Duration  5.72s (tests 63%, import 23%, transform 8%, environment 6%)
+
