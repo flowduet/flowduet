@@ -108,3 +108,5 @@ node scripts/verify-appearance-browser.mjs \
 整合验收环境与 T01–T14 结果见 [双入口与安装包验证记录](../../docs/design/system-v1/brand/108-dual-entry-consumer-verification.md)。2026-11-09 的输入法报告、事件顺序核实与剩余验收门槛见 [#102 整批验收收尾记录](../../docs/design/system-v1/brand/102-appearance-acceptance.md)。
 
 T03／T07 的判定口径、原人工准备及用户改由 Codex 后的结果，见 [判定口径与接管记录](../../docs/design/system-v1/brand/102-native-ime-manual.md)。该轮已结束，勿重复执行原启动入口。原生组合在显式确定前自然结束时，记录正常路径与未触发的保护分支；组合仍有效时拒绝提交的合同保持。历史合成结束事件不得据此改记为原生通过。
+
+2026-11-09，用户已接受现有分项证据限制并决定完成本批收尾；原生 IME 保持未验证，不再追加本批试验。详见 [最终裁定](../../docs/design/system-v1/brand/102-native-ime-manual.md#本批最终裁定2026-11-09)。该裁定不表示全部实测通过，也不授权推送、PR、关票或发包。
