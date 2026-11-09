@@ -1,0 +1,78 @@
+import { chromium } from "/Users/l/.npm/_npx/31e32ef8478fbf80/node_modules/playwright-core/index.mjs";
+import { mkdir, writeFile } from "node:fs/promises";
+const output = process.argv[2];
+if (!output) throw new Error("需要输出目录");
+await mkdir(output, {recursive: true});
+const browser = await chromium.launch({headless: true, executablePath: "/Users/l/Library/Caches/ms-playwright/chromium-1248/chrome-mac-x64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing"});
+const page = await browser.newPage({viewport: {width: 1440, height: 1200}});
+const result = {browser: browser.version(), source: "三包真实 tarball，EP 2.14.6 单份；公开 FormDesigner 消费", errors: [], failures: [], steps: []};
+page.on("pageerror", e => result.errors.push(String(e)));
+page.on("console", m => {if(m.type()==="error") result.errors.push(m.text());});
+page.on("response", response => {if(response.status()>=400) result.errors.push(`${response.status()} ${response.url()}`);});
+const read = () => page.evaluate(() => window.hostEvidence.read());
+function check(condition, message) {if(!condition) {result.failures.push(message); throw new Error(message);}}
+async function snapshot(name) {
+ const state=await read(); result.steps.push({name,...state});
+ check(state.unloadPreserved && state.dropPreserved, name+"：宿主处理器被覆盖");
+ return state;
+}
+async function toggle(name, present) {
+ await page.locator(`[data-action="${name}"]`).click();
+ await page.locator(`[data-editor="${name}"] [data-test="form-designer"]`).waitFor({state: present?"visible":"detached"});
+ if(present) await page.locator(`[data-editor="${name}"] ._fc-l-item`).first().waitFor({state:"visible"});
+ return snapshot(`${name} ${present?"挂载":"卸载"}`);
+}
+async function drop(selector) {return page.locator(selector).evaluate(el => {
+ const event=new DragEvent("drop", {bubbles:true,cancelable:true}); el.dispatchEvent(event); return {defaultPrevented:event.defaultPrevented};
+});}
+async function unloadSignal() {return page.evaluate(() => {
+ const event=new Event("beforeunload",{cancelable:true});
+ Object.defineProperty(event,"returnValue",{writable:true,value:""});
+ window.dispatchEvent(event); return event.returnValue;
+});}
+async function dirty(name) {
+ const menu=page.locator(`[data-editor="${name}"] ._fc-l-item`).first(); await menu.click(); await menu.click();
+ await page.waitForFunction(() => {
+  const e=new Event("beforeunload",{cancelable:true}); Object.defineProperty(e,"returnValue",{writable:true,value:""}); window.dispatchEvent(e); return e.returnValue!=="";
+ });
+}
+try {
+ await page.goto("http://127.0.0.1:4188/host.html"); await page.locator('[data-action="first"]').waitFor();
+ await snapshot("初始宿主");
+ await toggle("first",true);
+ const before=await read(); const outside=await drop("#outside"); const after=await read();
+ check(!outside.defaultPrevented && after.counts.drop===before.counts.drop+1,"宿主 drop 被阻断或回调未执行");
+ const inside=await drop('[data-editor="first"] [data-test="form-designer"]');
+ check(inside.defaultPrevented,"编辑器 drop 未阻断");
+ check((await read()).counts.drop===after.counts.drop,"编辑器内部 drop 穿透至宿主");
+ result.steps.push({name:"drop 作用范围",outside,inside});
+ await page.locator('[data-editor="first"] [data-test="form-designer-save"]').click();
+ check((await read()).saved.rules[0].value==="保留值","legacy 保存值变化");
+ await dirty("first");
+ const unloadBefore=await read(); check((await unloadSignal())!=="","脏数据离页回调丢失");
+ check((await read()).counts.unload===unloadBefore.counts.unload+1,"宿主离页回调重复或未调用");
+ await toggle("second",true);
+ await page.locator('[data-editor="second"] [data-test="form-designer-save"]').click();
+ await page.waitForFunction(() => window.hostEvidence.read().counts.saved===2);
+ check((await read()).saved.rules[0].value==="保留值","retained 保存值变化");
+ await dirty("second");
+ await toggle("first",false);
+ check((await unloadSignal())!=="","卸载第一实例误清理第二实例离页监听");
+ await page.locator('[data-action="replace"]').click(); await snapshot("宿主挂载后改写");
+ await toggle("third",true);
+ await dirty("third");
+ await toggle("second",false);
+ check((await unloadSignal())!=="","卸载同 app 实例误清理独立 app 监听");
+ const thirdDrop=await drop('[data-editor="third"] [data-test="form-designer"]');
+ check(thirdDrop.defaultPrevented,"独立 app drop 监听丢失");
+ await page.screenshot({path: `${output}/independent-app.png`, fullPage:true});
+ await toggle("third",false);
+ check((await unloadSignal())==="","卸载后残留离页监听");
+ const finalBefore=await read(); check(!(await drop("#outside")).defaultPrevented,"全部卸载后仍阻断宿主 drop");
+ check((await read()).counts.drop===finalBefore.counts.drop+1,"全部卸载后宿主 drop 回调失效");
+ await snapshot("全部卸载，宿主新处理器保持");
+ await page.screenshot({path:`${output}/final.png`,fullPage:true});
+} catch(error) {if(!result.failures.includes(error.message)) result.failures.push(String(error.stack||error)); await page.screenshot({path:`${output}/failure.png`,fullPage:true}).catch(()=>{});}
+finally {result.note="beforeunload 为合成 DOM 事件协议，不声称真实离页提示 UI 或 OS 输入法通过"; await writeFile(`${output}/result.json`, JSON.stringify(result,null,2)); await browser.close();}
+console.log(JSON.stringify(result,null,2));
+if(result.failures.length || result.errors.length) process.exitCode=1;

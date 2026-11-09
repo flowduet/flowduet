@@ -1,0 +1,31 @@
+
+ RUN  v5.0.1 /Users/l/Documents/projects/flowduet/packages/form-create
+
+ ❯ src/components/host-events.test.ts (6 tests | 1 failed) 4094ms
+   ❯ FormDesigner 宿主事件隔离 (6)
+     × 脏数据离页回调保持且卸载后移除，不重复执行宿主回调 1607ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/components/host-events.test.ts > FormDesigner 宿主事件隔离 > 脏数据离页回调保持且卸载后移除，不重复执行宿主回调
+AssertionError: expected '' not to be '' // Object.is equality
+ ❯ src/components/host-events.test.ts:191:58
+    189|     expect(hostUnload).toHaveBeenCalledTimes(1);
+    190|     await owner.step(() => target.get("._fc-l-item").trigger("click"));
+    191|     await owner.waitFor(() => expect(signalUnload()).not.toBe(""));
+       |                                                          ^
+    192|     const calls = hostUnload.mock.calls.length;
+    193|     owner.close();
+ ❯ src/components/__tests__/component-test-fixture.ts:143:11
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 5 passed (6)
+   Start at  17:12:17
+   Duration  6.32s (tests 66%, import 22%, transform 7%, environment 5%)
+
+undefined
+/Users/l/Documents/projects/flowduet/packages/form-create:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run src/components/host-events.test.ts

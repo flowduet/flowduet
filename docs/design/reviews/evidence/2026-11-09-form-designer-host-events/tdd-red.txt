@@ -1,0 +1,37 @@
+
+ RUN  v5.0.1 /Users/l/Documents/projects/flowduet/packages/form-create
+
+ ❯ src/components/host-events.test.ts (1 test | 1 failed) 566ms
+   ❯ FormDesigner 宿主事件隔离 (1)
+     × legacy 挂载和卸载都保留宿主处理器 564ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/components/host-events.test.ts > FormDesigner 宿主事件隔离 > legacy 挂载和卸载都保留宿主处理器
+AssertionError: expected [Function] to be [Function Mock] // Object.is equality
+
+- Expected
++ Received
+
+- [Function Mock]
++ [Function anonymous]
+
+ ❯ src/components/host-events.test.ts:54:35
+     52|     );
+     53|     await owner.step(flushPromises);
+     54|     expect(window.onbeforeunload).toBe(hostUnload);
+       |                                   ^
+     55|     expect(document.body.ondrop).toBe(hostDrop);
+     56|     owner.close();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  17:09:11
+   Duration  4.12s (import 57%, environment 15%, tests 14%, transform 13%)
+
+undefined
+/Users/l/Documents/projects/flowduet/packages/form-create:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run src/components/host-events.test.ts

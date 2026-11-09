@@ -212,6 +212,8 @@ retained 的 `exportContent()`、工具栏保存和 `FormManager#commitPendingEd
 非重建拖拽取消、完整 OS 输入法及天然异常矩阵仍未完成，B03 整体未通过；默认 legacy 不获得 retained 保真承诺。供应商实验已冻结，限定交付范围与当前结果见[本地整合报告](../../docs/design/2026-10-25-stage-zero-p2-integration-result.md)。当前 Playground 的 FormManager 未显式启用 retained，因此不能直接用默认 Playground 宣称展示了这项输入保留修复。
 
 
-### 当前宿主集成限制
+### 宿主事件边界
 
-本地固定组合的包消费核对确认：当前上游设计器挂载会替换宿主的 `window.onbeforeunload` 与 `document.body.ondrop`，卸载后未恢复。P2 文字修复未改变此行为；存在这些处理器的宿主不能将本候选视为已完成安全嵌入验收。当前结果及后续处置见[本地整合报告](../../docs/design/2026-10-25-stage-zero-p2-integration-result.md)。
+`FormDesigner` 在 legacy 和 retained 两条路径均保留宿主的 `window.onbeforeunload` 与 `document.body.ondrop`。供应商的脏数据离页回调由当前实例独立监听，卸载只清理本实例；默认 drop 阻断限定在该编辑器范围，宿主其他区域仍按宿主处理器处理。挂载后宿主自行更换处理器，后续卸载不会还原旧引用。
+
+这修复了 [P2 历史整合报告](../../docs/design/2026-10-25-stage-zero-p2-integration-result.md) 中已确认的覆盖问题，但不将历史失败改写为通过，也不等同于所有宿主集成风险已排除。验证限于固定供应商组合、公开 FormDesigner 和 Chromium；离页事件协议不等同于真实关闭提示 UI。此段描述尚未发布的源码能力，详见[宿主事件验证记录](../../docs/design/reviews/2026-11-09-form-designer-host-events.md)。
