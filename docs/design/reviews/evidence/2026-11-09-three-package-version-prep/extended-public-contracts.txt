@@ -1,0 +1,110 @@
+{
+  "browser": "156.0.8078.4",
+  "source": "C0.4.0 D/F0.2.0 实际tarball，仅公开props/事件/方法与DOM",
+  "errors": [],
+  "failures": [
+    "locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('.el-message-box:visible').getByRole('button', { name: '放弃并关闭' })\u001b[22m\n\u001b[2m    - locator resolved to <button type=\"button\" aria-disabled=\"false\" class=\"el-button el-button--primary\">…</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is not stable\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <span>表单的尺寸</span> from <div id=\"app\" data-v-app=\"\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    58 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is visible, enabled and stable\u001b[22m\n\u001b[2m       - scrolling into view if needed\u001b[22m\n\u001b[2m       - done scrolling\u001b[22m\n\u001b[2m       - <span>表单的尺寸</span> from <div id=\"app\" data-v-app=\"\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m     - retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\n    at /private/tmp/flowduet-release-prep.JE4FOq/verify-extended-public-contracts.mjs:40:83"
+  ],
+  "checks": [
+    {
+      "name": "external受控选择/真实焦点/结构请求/零模型写入",
+      "state": {
+        "selections": [
+          {
+            "id": "b",
+            "renderRevision": 7,
+            "modelMatches": true
+          }
+        ],
+        "operations": [
+          {
+            "type": "remove-node",
+            "nodeId": "b",
+            "renderRevision": 7,
+            "modelMatches": true
+          }
+        ],
+        "changes": 0,
+        "reentrant": [],
+        "capture": null,
+        "managerUpdates": [],
+        "managerCommit": null,
+        "focus": {
+          "status": "focused",
+          "selectedId": "b"
+        },
+        "externalCollect": false,
+        "selected": "b",
+        "actualSelected": "b",
+        "editorState": {
+          "mode": "retained",
+          "revision": 0,
+          "canSuspend": true,
+          "canCapture": true,
+          "blockers": []
+        },
+        "managerState": null,
+        "managerOpen": false
+      }
+    },
+    {
+      "name": "同步捕获重入屏障",
+      "reentrant": [
+        {
+          "status": "blocked",
+          "blockers": [
+            {
+              "code": "pending-update",
+              "field": "amount",
+              "message": "等待默认值公开回显"
+            }
+          ]
+        }
+      ],
+      "capture": {
+        "status": "captured",
+        "revision": 2,
+        "content": {
+          "rules": "[{\"type\":\"inputNumber\",\"field\":\"amount\",\"title\":\"金额\",\"value\":1,\"_fc_id\":\"id_F2mnmw9552u8abc\",\"name\":\"ref_Fgukmw9552u8acc\",\"display\":true,\"hidden\":false,\"_fc_drag_tag\":\"inputNumber\"}]",
+          "options": "{\"form\":{\"inline\":false,\"hideRequiredAsterisk\":false,\"labelPosition\":\"right\",\"size\":\"default\",\"labelWidth\":\"125px\"},\"resetBtn\":{\"show\":false,\"innerText\":\"重置\"},\"submitBtn\":{\"show\":true,\"innerText\":\"提交\"}}"
+        }
+      }
+    },
+    {
+      "name": "公开删除/菜单新建不继承旧输入",
+      "capture": {
+        "status": "captured",
+        "revision": 8,
+        "content": {
+          "rules": "[{\"type\":\"inputNumber\",\"field\":\"Few4mw9553gmadc\",\"title\":\"计数器\",\"info\":\"\",\"$required\":false,\"_fc_id\":\"id_F1c4mw9553gmaec\",\"name\":\"ref_F7ekmw9553gmafc\",\"display\":true,\"hidden\":false,\"_fc_drag_tag\":\"inputNumber\"}]",
+          "options": "{\"form\":{\"inline\":false,\"hideRequiredAsterisk\":false,\"labelPosition\":\"right\",\"size\":\"default\",\"labelWidth\":\"125px\"},\"resetBtn\":{\"show\":false,\"innerText\":\"重置\"},\"submitBtn\":{\"show\":true,\"innerText\":\"提交\"}}"
+        }
+      }
+    },
+    {
+      "name": "FormDesigner模式固定",
+      "state": {
+        "mode": "retained",
+        "revision": 9,
+        "canSuspend": false,
+        "canCapture": false,
+        "blockers": [
+          {
+            "code": "unsupported-mode",
+            "message": "编辑模式仅在挂载时确定；legacy请使用exportContent"
+          }
+        ]
+      }
+    },
+    {
+      "name": "旧页头迟到DOM事件不关闭新会话",
+      "state": {
+        "mode": "retained",
+        "revision": 2,
+        "canSuspend": true,
+        "canCapture": true,
+        "blockers": []
+      }
+    }
+  ]
+}

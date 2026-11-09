@@ -1,0 +1,44 @@
+{
+  "browser": "156.0.8078.4",
+  "coreVersion": "0.4.0",
+  "errors": [],
+  "failures": [],
+  "scenarios": [
+    {
+      "name": "default 删除",
+      "nativeDownload": "/tmp/flowduet-release-prep.JE4FOq/structure-ui-deletions/default-deleted.flowduet.json",
+      "target": "tail",
+      "branchIdentity": true,
+      "defaultOrCondition": true,
+      "formReferences": true,
+      "DI": true
+    },
+    {
+      "name": "condition 删除",
+      "nativeDownload": "/tmp/flowduet-release-prep.JE4FOq/structure-ui-deletions/condition-deleted.flowduet.json",
+      "target": "tail",
+      "branchIdentity": true,
+      "defaultOrCondition": true,
+      "formReferences": true,
+      "DI": true
+    },
+    {
+      "name": "nested-default 删除",
+      "nativeDownload": "/tmp/flowduet-release-prep.JE4FOq/structure-ui-deletions/nested-default-deleted.flowduet.json",
+      "target": "tail",
+      "branchIdentity": true,
+      "defaultOrCondition": true,
+      "formReferences": true,
+      "DI": true
+    },
+    {
+      "name": "nested-condition 删除",
+      "nativeDownload": "/tmp/flowduet-release-prep.JE4FOq/structure-ui-deletions/nested-condition-deleted.flowduet.json",
+      "target": "tail",
+      "branchIdentity": true,
+      "defaultOrCondition": true,
+      "formReferences": true,
+      "DI": true
+    }
+  ]
+}

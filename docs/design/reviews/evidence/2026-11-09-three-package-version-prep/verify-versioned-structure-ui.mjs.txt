@@ -1,0 +1,63 @@
+import { chromium, selectors } from "/Users/l/.npm/_npx/31e32ef8478fbf80/node_modules/playwright-core/index.mjs";
+import { createRequire } from "node:module";
+import { pathToFileURL } from "node:url";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { strict as assert } from "node:assert";
+selectors.setTestIdAttribute("data-test");
+const out=process.argv[2];if(!out)throw new Error("需要输出目录");await mkdir(out,{recursive:true});
+const req=createRequire("/private/var/folders/47/jtpz279529q04_3hhr6t7ptr0000gn/T/flowduet-appearance-108-DIZO1Z/consumer/package.json");
+const {parse,flowableAdapter,CORE_VERSION}=await import(pathToFileURL(req.resolve("@flowduet/core")).href);
+assert.equal(CORE_VERSION,"0.4.0");
+const browser=await chromium.launch({headless:true,executablePath:"/Users/l/Library/Caches/ms-playwright/chromium-1248/chrome-mac-x64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing"});
+const report={browser:browser.version(),coreVersion:CORE_VERSION,errors:[],failures:[],scenarios:[]};
+async function fresh() {
+ const page=await browser.newPage({viewport:{width:1440,height:1100}});
+ await page.route("**/favicon.ico",r=>r.fulfill({status:204,body:""}));
+ page.on("pageerror",e=>report.errors.push(String(e)));
+ await page.goto("http://127.0.0.1:4189");await page.getByTestId("open-doc-btn").waitFor();return page;
+}
+async function open(page,file,key) {
+ const chooser=page.waitForEvent("filechooser");await page.getByTestId("open-doc-btn").click();await(await chooser).setFiles(file);
+ await page.waitForTimeout(100);
+ if(await page.getByTestId("discard-ok").isVisible())await page.getByTestId("discard-ok").click();
+ await page.getByTestId("doc-status").filter({hasText:`发布验收-${key}`}).waitFor();
+}
+async function saveDoc(page,name) {const wait=page.waitForEvent("download");await page.getByTestId("save-doc-btn").click();const download=await wait;const file=`${out}/${name}.flowduet.json`;await download.saveAs(file);return file;}
+async function readXml(page,name,predicate) {
+ await page.getByTestId("export-btn").click();
+ if(predicate)await page.waitForFunction(predicate);
+ await page.getByTestId("xml-preview").waitFor();const xml=await page.getByTestId("xml-preview").textContent();
+ assert.ok(xml && xml.includes("<bpmn:definitions"));await writeFile(`${out}/${name}.bpmn`,xml);
+ return parse(xml,{adapter:flowableAdapter});
+}
+function invariant(model,kind,target) {
+ const edge=model.elementOf("fa");assert.equal(edge.get("targetRef").get("id"),target);
+ assert.deepEqual(model.elementOf("fork").get("outgoing").map(e=>e.get("id")),["fa","fb"]);
+ if(kind.endsWith("default"))assert.equal(model.elementOf("fork").get("default"),edge);
+ else assert.equal(edge.get("conditionExpression").get("body"),"${amount > 100}");
+ assert.equal(model.defaultFormKey,"form_release");assert.equal(model.elementOf("tail").get("formKey"),"form_release");
+ assert.ok(model.waypointsOf("fa").length>=2);
+}
+try {
+ if(process.argv[3]!=="deletions") for(const mode of ["all","any","sequential"]) {
+  const page=await fresh();await open(page,"/tmp/flowduet-release-prep.JE4FOq/ui-fixtures/default.flowduet.json","default");
+  await page.locator('[data-entity-id="a"]').click();const drawer=page.locator('[data-test="node-drawer"]:visible');
+  await drawer.getByTestId(`kind-${mode}`).click();await drawer.getByTestId("drawer-assignee").fill("approvers");await drawer.getByTestId("drawer-save").click();await drawer.waitFor({state:"hidden"});
+  const multi=await readXml(page,`approval-${mode}-multi`,()=>document.querySelector('[data-test="xml-preview"]')?.textContent.includes("multiInstanceLoopCharacteristics"));invariant(multi,"default","a");assert.ok(multi.elementOf("a").get("loopCharacteristics"));
+  const file=await saveDoc(page,`approval-${mode}`);await open(page,file,"default");
+  await page.locator('[data-entity-id="a"]').click();await drawer.getByTestId("kind-single").click();await drawer.getByTestId("drawer-assignee").fill("alice");await drawer.getByTestId("drawer-save").click();await drawer.waitFor({state:"hidden"});
+  const single=await readXml(page,`approval-${mode}-reopened-single`,()=>!document.querySelector('[data-test="xml-preview"]')?.textContent.includes("multiInstanceLoopCharacteristics"));invariant(single,"default","a");assert.equal(single.elementOf("a").get("loopCharacteristics"),undefined);
+  report.scenarios.push({name:`${mode} 保存重开转单签`,nativeDownload:file,defaultAndOrder:true,formReferences:true});await page.close();
+ }
+ for(const kind of ["default","condition","nested-default","nested-condition"]) {
+  const page=await fresh();await open(page,`/tmp/flowduet-release-prep.JE4FOq/ui-fixtures/${kind}.flowduet.json`,kind);
+  if(kind.startsWith("nested")) {await page.getByTestId("block-delete-inner").locator("..").hover();await page.getByTestId("block-delete-inner").click();}
+  else {await page.locator('[data-entity-id="a"]').hover();await page.getByTestId("node-delete-a").click();}
+  const model=await readXml(page,`${kind}-deleted`,()=>/id="fa"[^>]*targetRef="tail"/.test(document.querySelector('[data-test="xml-preview"]')?.textContent||""));invariant(model,kind,"tail");assert.throws(()=>model.elementOf("a"));if(kind.startsWith("nested"))assert.throws(()=>model.elementOf("inner"));
+  const file=await saveDoc(page,`${kind}-deleted`);const saved=JSON.parse(await readFile(file,"utf8"));const reopened=await parse(saved.xml,{adapter:flowableAdapter});invariant(reopened,kind,"tail");assert.equal(saved.forms.length,1);
+  await page.getByTestId("view-bpmn").click();await page.getByTestId("bpmn-canvas").waitFor();await page.screenshot({path:`${out}/${kind}-bpmn.png`,fullPage:true});
+  report.scenarios.push({name:`${kind} 删除`,nativeDownload:file,target:"tail",branchIdentity:true,defaultOrCondition:true,formReferences:true,DI:true});await page.close();
+ }
+} catch(e) {report.failures.push(String(e.stack||e));}
+finally {await writeFile(`${out}/result.json`,JSON.stringify(report,null,2));await browser.close();}
+console.log(JSON.stringify(report,null,2));if(report.failures.length||report.errors.length)process.exitCode=1;

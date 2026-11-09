@@ -1,0 +1,133 @@
+{
+  "browser": "156.0.8078.4",
+  "source": "C0.4.0 D/F0.2.0 实际tarball，仅公开props/事件/方法与DOM",
+  "errors": [],
+  "failures": [],
+  "checks": [
+    {
+      "name": "external受控选择/真实焦点/结构请求/零模型写入",
+      "state": {
+        "selections": [
+          {
+            "id": "b",
+            "renderRevision": 7,
+            "modelMatches": true
+          }
+        ],
+        "operations": [
+          {
+            "type": "remove-node",
+            "nodeId": "b",
+            "renderRevision": 7,
+            "modelMatches": true
+          }
+        ],
+        "changes": 0,
+        "reentrant": [],
+        "capture": null,
+        "managerUpdates": [],
+        "managerCommit": null,
+        "focus": {
+          "status": "focused",
+          "selectedId": "b"
+        },
+        "externalCollect": false,
+        "selected": "b",
+        "actualSelected": "b",
+        "editorState": {
+          "mode": "retained",
+          "revision": 0,
+          "canSuspend": true,
+          "canCapture": true,
+          "blockers": []
+        },
+        "managerState": null,
+        "managerOpen": false
+      }
+    },
+    {
+      "name": "同步捕获重入屏障",
+      "reentrant": [
+        {
+          "status": "blocked",
+          "blockers": [
+            {
+              "code": "pending-update",
+              "field": "amount",
+              "message": "等待默认值公开回显"
+            }
+          ]
+        }
+      ],
+      "capture": {
+        "status": "captured",
+        "revision": 2,
+        "content": {
+          "rules": "[{\"type\":\"inputNumber\",\"field\":\"amount\",\"title\":\"金额\",\"value\":1,\"_fc_id\":\"id_Fldkmw9599knabc\",\"name\":\"ref_F6k9mw9599knacc\",\"display\":true,\"hidden\":false,\"_fc_drag_tag\":\"inputNumber\"}]",
+          "options": "{\"form\":{\"inline\":false,\"hideRequiredAsterisk\":false,\"labelPosition\":\"right\",\"size\":\"default\",\"labelWidth\":\"125px\"},\"resetBtn\":{\"show\":false,\"innerText\":\"重置\"},\"submitBtn\":{\"show\":true,\"innerText\":\"提交\"}}"
+        }
+      }
+    },
+    {
+      "name": "公开删除/菜单新建不继承旧输入",
+      "capture": {
+        "status": "captured",
+        "revision": 8,
+        "content": {
+          "rules": "[{\"type\":\"inputNumber\",\"field\":\"Fpu0mw959aekadc\",\"title\":\"计数器\",\"info\":\"\",\"$required\":false,\"_fc_id\":\"id_Fajomw959aekaec\",\"name\":\"ref_F0x8mw959aekafc\",\"display\":true,\"hidden\":false,\"_fc_drag_tag\":\"inputNumber\"}]",
+          "options": "{\"form\":{\"inline\":false,\"hideRequiredAsterisk\":false,\"labelPosition\":\"right\",\"size\":\"default\",\"labelWidth\":\"125px\"},\"resetBtn\":{\"show\":false,\"innerText\":\"重置\"},\"submitBtn\":{\"show\":true,\"innerText\":\"提交\"}}"
+        }
+      }
+    },
+    {
+      "name": "FormDesigner模式固定",
+      "state": {
+        "mode": "retained",
+        "revision": 9,
+        "canSuspend": false,
+        "canCapture": false,
+        "blockers": [
+          {
+            "code": "unsupported-mode",
+            "message": "编辑模式仅在挂载时确定；legacy请使用exportContent"
+          }
+        ]
+      }
+    },
+    {
+      "name": "旧页头迟到DOM事件不关闭新会话",
+      "state": {
+        "mode": "retained",
+        "revision": 2,
+        "canSuspend": true,
+        "canCapture": true,
+        "blockers": []
+      }
+    },
+    {
+      "name": "旧关闭确认迟到不消费新会话授权",
+      "state": {
+        "mode": "retained",
+        "revision": 2,
+        "canSuspend": true,
+        "canCapture": true,
+        "blockers": []
+      }
+    },
+    {
+      "name": "FormManager双向模式变更拒绝，legacy提交保持",
+      "state": {
+        "mode": "legacy",
+        "revision": 0,
+        "canCapture": false,
+        "canSuspend": false,
+        "blockers": [
+          {
+            "code": "unsupported-mode",
+            "message": "编辑模式不可在当前挂载中切换"
+          }
+        ]
+      }
+    }
+  ]
+}

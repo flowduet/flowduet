@@ -1,0 +1,32 @@
+{
+  "config": {
+    "baseBranch": "develop",
+    "access": "public",
+    "changedFilePatterns": [
+      "**"
+    ],
+    "format": "auto",
+    "ignore": [],
+    "fixed": [],
+    "linked": [],
+    "updateInternalDependencies": "patch",
+    "privatePackages": {
+      "version": false,
+      "tag": false
+    },
+    "bumpVersionsWithWorkspaceProtocolOnly": false,
+    "snapshot": {
+      "useCalculatedVersion": false
+    },
+    "changelog": [
+      "@changesets/cli/changelog",
+      null
+    ],
+    "commit": false,
+    "___experimentalUnsafeOptions_WILL_CHANGE_IN_PATCH": {
+      "onlyUpdatePeerDependentsWhenOutOfRange": false,
+      "updateInternalDependents": "always"
+    }
+  },
+  "warnings": []
+}

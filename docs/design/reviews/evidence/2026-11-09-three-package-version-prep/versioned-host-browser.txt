@@ -1,0 +1,848 @@
+{
+  "browser": "156.0.8078.4",
+  "source": "三包真实 tarball，EP 2.14.6 单份；公开 FormDesigner 消费",
+  "errors": [],
+  "failures": [],
+  "steps": [
+    {
+      "name": "初始宿主",
+      "generation": 1,
+      "counts": {
+        "unload": 0,
+        "drop": 0,
+        "saved": 0
+      },
+      "unloadPreserved": true,
+      "dropPreserved": true
+    },
+    {
+      "name": "first 挂载",
+      "generation": 1,
+      "counts": {
+        "unload": 0,
+        "drop": 0,
+        "saved": 0
+      },
+      "unloadPreserved": true,
+      "dropPreserved": true
+    },
+    {
+      "name": "drop 作用范围",
+      "outside": {
+        "defaultPrevented": false
+      },
+      "inside": {
+        "defaultPrevented": true
+      }
+    },
+    {
+      "name": "second 挂载",
+      "generation": 1,
+      "counts": {
+        "unload": 2,
+        "drop": 1,
+        "saved": 1
+      },
+      "saved": {
+        "rules": [
+          {
+            "type": "input",
+            "field": "reason",
+            "title": "申请事由",
+            "value": "保留值",
+            "_fc_id": "id_Fm3gmw93k8bjabc",
+            "name": "ref_Fetimw93k8bjacc",
+            "display": true,
+            "hidden": false,
+            "_fc_drag_tag": "input"
+          },
+          {
+            "type": "input",
+            "field": "empty",
+            "title": "显式空串",
+            "value": "",
+            "_fc_id": "id_F57gmw93k8bjadc",
+            "name": "ref_F9lwmw93k8bjaec",
+            "display": true,
+            "hidden": false,
+            "_fc_drag_tag": "input"
+          },
+          {
+            "type": "input",
+            "field": "unset",
+            "title": "无默认值",
+            "_fc_id": "id_Fhxkmw93k8bjafc",
+            "name": "ref_Fg96mw93k8bjagc",
+            "display": true,
+            "hidden": false,
+            "_fc_drag_tag": "input"
+          },
+          {
+            "type": "inputNumber",
+            "field": "amount",
+            "title": "金额",
+            "value": 0,
+            "_fc_id": "id_Fblgmw93k8bjahc",
+            "name": "ref_Fur4mw93k8bjaic",
+            "display": true,
+            "hidden": false,
+            "_fc_drag_tag": "inputNumber"
+          },
+          {
+            "type": "datePicker",
+            "field": "date",
+            "title": "日期",
+            "value": "2024-02-29",
+            "props": {
+              "type": "date",
+              "valueFormat": "YYYY-MM-DD"
+            },
+            "_fc_id": "id_F66umw93k8bjajc",
+            "name": "ref_F8tmmw93k8bjakc",
+            "display": true,
+            "hidden": false,
+            "_fc_drag_tag": "datePicker"
+          },
+          {
+            "type": "switch",
+            "field": "flag",
+            "title": "开关",
+            "value": false,
+            "_fc_id": "id_Fzgjmw93k8bjalc",
+            "name": "ref_Fqzzmw93k8bjamc",
+            "display": true,
+            "hidden": false,
+            "_fc_drag_tag": "switch"
+          }
+        ],
+        "options": {
+          "form": {
+            "inline": false,
+            "hideRequiredAsterisk": false,
+            "labelPosition": "right",
+            "size": "default",
+            "labelWidth": "125px"
+          },
+          "resetBtn": {
+            "show": false,
+            "innerText": "重置"
+          },
+          "submitBtn": {
+            "show": true,
+            "innerText": "提交"
+          }
+        }
+      },
+      "unloadPreserved": true,
+      "dropPreserved": true
+    },
+    {
+      "name": "retained 数值日期阻断、原文、0/false、空串与未设置、保存重开",
+      "generation": 1,
+      "counts": {
+        "unload": 2,
+        "drop": 1,
+        "saved": 5
+      },
+      "saved": {
+        "rules": [
+          {
+            "type": "input",
+            "field": "reason",
+            "title": "申请事由",
+            "value": "保留值",
+            "_fc_id": "id_Fza5mw93k8znatc",
+            "name": "ref_Fjhymw93k8znauc",
+            "_fc_drag_tag": "input",
+            "display": true,
+            "hidden": false
+          },
+          {
+            "type": "input",
+            "field": "empty",
+            "title": "显式空串",
+            "value": "",
+            "_fc_id": "id_F366mw93k8znavc",
+            "name": "ref_Fdctmw93k8znawc",
+            "_fc_drag_tag": "input",
+            "display": true,
+            "hidden": false
+          },
+          {
+            "type": "input",
+            "field": "unset",
+            "title": "无默认值",
+            "_fc_id": "id_F087mw93k8znaxc",
+            "name": "ref_F91bmw93k8znayc",
+            "_fc_drag_tag": "input",
+            "display": true,
+            "hidden": false
+          },
+          {
+            "type": "inputNumber",
+            "field": "amount",
+            "title": "金额",
+            "value": 0,
+            "_fc_id": "id_Fyummw93k8zoazc",
+            "name": "ref_Fbw1mw93k8zob0c",
+            "_fc_drag_tag": "inputNumber",
+            "display": true,
+            "hidden": false
+          },
+          {
+            "type": "datePicker",
+            "field": "date",
+            "title": "日期",
+            "value": "2024-02-29",
+            "props": {
+              "type": "date",
+              "valueFormat": "YYYY-MM-DD"
+            },
+            "_fc_id": "id_Flrmmw93k8zob1c",
+            "name": "ref_F9ttmw93k8zob2c",
+            "_fc_drag_tag": "datePicker",
+            "display": true,
+            "hidden": false
+          },
+          {
+            "type": "switch",
+            "field": "flag",
+            "title": "开关",
+            "value": false,
+            "_fc_id": "id_Fko0mw93k8zob3c",
+            "name": "ref_Fviemw93k8zob4c",
+            "_fc_drag_tag": "switch",
+            "display": true,
+            "hidden": false
+          }
+        ],
+        "options": {
+          "form": {
+            "inline": false,
+            "hideRequiredAsterisk": false,
+            "labelPosition": "right",
+            "size": "default",
+            "labelWidth": "125px"
+          },
+          "resetBtn": {
+            "show": false,
+            "innerText": "重置"
+          },
+          "submitBtn": {
+            "show": true,
+            "innerText": "提交"
+          }
+        }
+      },
+      "unloadPreserved": true,
+      "dropPreserved": true
+    },
+    {
+      "name": "first 卸载",
+      "generation": 1,
+      "counts": {
+        "unload": 3,
+        "drop": 1,
+        "saved": 5
+      },
+      "saved": {
+        "rules": [
+          {
+            "type": "input",
+            "field": "reason",
+            "title": "申请事由",
+            "value": "保留值",
+            "_fc_id": "id_Fza5mw93k8znatc",
+            "name": "ref_Fjhymw93k8znauc",
+            "_fc_drag_tag": "input",
+            "display": true,
+            "hidden": false
+          },
+          {
+            "type": "input",
+            "field": "empty",
+            "title": "显式空串",
+            "value": "",
+            "_fc_id": "id_F366mw93k8znavc",
+            "name": "ref_Fdctmw93k8znawc",
+            "_fc_drag_tag": "input",
+            "display": true,
+            "hidden": false
+          },
+          {
+            "type": "input",
+            "field": "unset",
+            "title": "无默认值",
+            "_fc_id": "id_F087mw93k8znaxc",
+            "name": "ref_F91bmw93k8znayc",
+            "_fc_drag_tag": "input",
+            "display": true,
+            "hidden": false
+          },
+          {
+            "type": "inputNumber",
+            "field": "amount",
+            "title": "金额",
+            "value": 0,
+            "_fc_id": "id_Fyummw93k8zoazc",
+            "name": "ref_Fbw1mw93k8zob0c",
+            "_fc_drag_tag": "inputNumber",
+            "display": true,
+            "hidden": false
+          },
+          {
+            "type": "datePicker",
+            "field": "date",
+            "title": "日期",
+            "value": "2024-02-29",
+            "props": {
+              "type": "date",
+              "valueFormat": "YYYY-MM-DD"
+            },
+            "_fc_id": "id_Flrmmw93k8zob1c",
+            "name": "ref_F9ttmw93k8zob2c",
+            "_fc_drag_tag": "datePicker",
+            "display": true,
+            "hidden": false
+          },
+          {
+            "type": "switch",
+            "field": "flag",
+            "title": "开关",
+            "value": false,
+            "_fc_id": "id_Fko0mw93k8zob3c",
+            "name": "ref_Fviemw93k8zob4c",
+            "_fc_drag_tag": "switch",
+            "display": true,
+            "hidden": false
+          }
+        ],
+        "options": {
+          "form": {
+            "inline": false,
+            "hideRequiredAsterisk": false,
+            "labelPosition": "right",
+            "size": "default",
+            "labelWidth": "125px"
+          },
+          "resetBtn": {
+            "show": false,
+            "innerText": "重置"
+          },
+          "submitBtn": {
+            "show": true,
+            "innerText": "提交"
+          }
+        }
+      },
+      "unloadPreserved": true,
+      "dropPreserved": true
+    },
+    {
+      "name": "宿主挂载后改写",
+      "generation": 2,
+      "counts": {
+        "unload": 4,
+        "drop": 1,
+        "saved": 5
+      },
+      "saved": {
+        "rules": [
+          {
+            "type": "input",
+            "field": "reason",
+            "title": "申请事由",
+            "value": "保留值",
+            "_fc_id": "id_Fza5mw93k8znatc",
+            "name": "ref_Fjhymw93k8znauc",
+            "_fc_drag_tag": "input",
+            "display": true,
+            "hidden": false
+          },
+          {
+            "type": "input",
+            "field": "empty",
+            "title": "显式空串",
+            "value": "",
+            "_fc_id": "id_F366mw93k8znavc",
+            "name": "ref_Fdctmw93k8znawc",
+            "_fc_drag_tag": "input",
+            "display": true,
+            "hidden": false
+          },
+          {
+            "type": "input",
+            "field": "unset",
+            "title": "无默认值",
+            "_fc_id": "id_F087mw93k8znaxc",
+            "name": "ref_F91bmw93k8znayc",
+            "_fc_drag_tag": "input",
+            "display": true,
+            "hidden": false
+          },
+          {
+            "type": "inputNumber",
+            "field": "amount",
+            "title": "金额",
+            "value": 0,
+            "_fc_id": "id_Fyummw93k8zoazc",
+            "name": "ref_Fbw1mw93k8zob0c",
+            "_fc_drag_tag": "inputNumber",
+            "display": true,
+            "hidden": false
+          },
+          {
+            "type": "datePicker",
+            "field": "date",
+            "title": "日期",
+            "value": "2024-02-29",
+            "props": {
+              "type": "date",
+              "valueFormat": "YYYY-MM-DD"
+            },
+            "_fc_id": "id_Flrmmw93k8zob1c",
+            "name": "ref_F9ttmw93k8zob2c",
+            "_fc_drag_tag": "datePicker",
+            "display": true,
+            "hidden": false
+          },
+          {
+            "type": "switch",
+            "field": "flag",
+            "title": "开关",
+            "value": false,
+            "_fc_id": "id_Fko0mw93k8zob3c",
+            "name": "ref_Fviemw93k8zob4c",
+            "_fc_drag_tag": "switch",
+            "display": true,
+            "hidden": false
+          }
+        ],
+        "options": {
+          "form": {
+            "inline": false,
+            "hideRequiredAsterisk": false,
+            "labelPosition": "right",
+            "size": "default",
+            "labelWidth": "125px"
+          },
+          "resetBtn": {
+            "show": false,
+            "innerText": "重置"
+          },
+          "submitBtn": {
+            "show": true,
+            "innerText": "提交"
+          }
+        }
+      },
+      "unloadPreserved": true,
+      "dropPreserved": true
+    },
+    {
+      "name": "third 挂载",
+      "generation": 2,
+      "counts": {
+        "unload": 4,
+        "drop": 1,
+        "saved": 5
+      },
+      "saved": {
+        "rules": [
+          {
+            "type": "input",
+            "field": "reason",
+            "title": "申请事由",
+            "value": "保留值",
+            "_fc_id": "id_Fza5mw93k8znatc",
+            "name": "ref_Fjhymw93k8znauc",
+            "_fc_drag_tag": "input",
+            "display": true,
+            "hidden": false
+          },
+          {
+            "type": "input",
+            "field": "empty",
+            "title": "显式空串",
+            "value": "",
+            "_fc_id": "id_F366mw93k8znavc",
+            "name": "ref_Fdctmw93k8znawc",
+            "_fc_drag_tag": "input",
+            "display": true,
+            "hidden": false
+          },
+          {
+            "type": "input",
+            "field": "unset",
+            "title": "无默认值",
+            "_fc_id": "id_F087mw93k8znaxc",
+            "name": "ref_F91bmw93k8znayc",
+            "_fc_drag_tag": "input",
+            "display": true,
+            "hidden": false
+          },
+          {
+            "type": "inputNumber",
+            "field": "amount",
+            "title": "金额",
+            "value": 0,
+            "_fc_id": "id_Fyummw93k8zoazc",
+            "name": "ref_Fbw1mw93k8zob0c",
+            "_fc_drag_tag": "inputNumber",
+            "display": true,
+            "hidden": false
+          },
+          {
+            "type": "datePicker",
+            "field": "date",
+            "title": "日期",
+            "value": "2024-02-29",
+            "props": {
+              "type": "date",
+              "valueFormat": "YYYY-MM-DD"
+            },
+            "_fc_id": "id_Flrmmw93k8zob1c",
+            "name": "ref_F9ttmw93k8zob2c",
+            "_fc_drag_tag": "datePicker",
+            "display": true,
+            "hidden": false
+          },
+          {
+            "type": "switch",
+            "field": "flag",
+            "title": "开关",
+            "value": false,
+            "_fc_id": "id_Fko0mw93k8zob3c",
+            "name": "ref_Fviemw93k8zob4c",
+            "_fc_drag_tag": "switch",
+            "display": true,
+            "hidden": false
+          }
+        ],
+        "options": {
+          "form": {
+            "inline": false,
+            "hideRequiredAsterisk": false,
+            "labelPosition": "right",
+            "size": "default",
+            "labelWidth": "125px"
+          },
+          "resetBtn": {
+            "show": false,
+            "innerText": "重置"
+          },
+          "submitBtn": {
+            "show": true,
+            "innerText": "提交"
+          }
+        }
+      },
+      "unloadPreserved": true,
+      "dropPreserved": true
+    },
+    {
+      "name": "second 卸载",
+      "generation": 2,
+      "counts": {
+        "unload": 5,
+        "drop": 1,
+        "saved": 5
+      },
+      "saved": {
+        "rules": [
+          {
+            "type": "input",
+            "field": "reason",
+            "title": "申请事由",
+            "value": "保留值",
+            "_fc_id": "id_Fza5mw93k8znatc",
+            "name": "ref_Fjhymw93k8znauc",
+            "_fc_drag_tag": "input",
+            "display": true,
+            "hidden": false
+          },
+          {
+            "type": "input",
+            "field": "empty",
+            "title": "显式空串",
+            "value": "",
+            "_fc_id": "id_F366mw93k8znavc",
+            "name": "ref_Fdctmw93k8znawc",
+            "_fc_drag_tag": "input",
+            "display": true,
+            "hidden": false
+          },
+          {
+            "type": "input",
+            "field": "unset",
+            "title": "无默认值",
+            "_fc_id": "id_F087mw93k8znaxc",
+            "name": "ref_F91bmw93k8znayc",
+            "_fc_drag_tag": "input",
+            "display": true,
+            "hidden": false
+          },
+          {
+            "type": "inputNumber",
+            "field": "amount",
+            "title": "金额",
+            "value": 0,
+            "_fc_id": "id_Fyummw93k8zoazc",
+            "name": "ref_Fbw1mw93k8zob0c",
+            "_fc_drag_tag": "inputNumber",
+            "display": true,
+            "hidden": false
+          },
+          {
+            "type": "datePicker",
+            "field": "date",
+            "title": "日期",
+            "value": "2024-02-29",
+            "props": {
+              "type": "date",
+              "valueFormat": "YYYY-MM-DD"
+            },
+            "_fc_id": "id_Flrmmw93k8zob1c",
+            "name": "ref_F9ttmw93k8zob2c",
+            "_fc_drag_tag": "datePicker",
+            "display": true,
+            "hidden": false
+          },
+          {
+            "type": "switch",
+            "field": "flag",
+            "title": "开关",
+            "value": false,
+            "_fc_id": "id_Fko0mw93k8zob3c",
+            "name": "ref_Fviemw93k8zob4c",
+            "_fc_drag_tag": "switch",
+            "display": true,
+            "hidden": false
+          }
+        ],
+        "options": {
+          "form": {
+            "inline": false,
+            "hideRequiredAsterisk": false,
+            "labelPosition": "right",
+            "size": "default",
+            "labelWidth": "125px"
+          },
+          "resetBtn": {
+            "show": false,
+            "innerText": "重置"
+          },
+          "submitBtn": {
+            "show": true,
+            "innerText": "提交"
+          }
+        }
+      },
+      "unloadPreserved": true,
+      "dropPreserved": true
+    },
+    {
+      "name": "third 卸载",
+      "generation": 2,
+      "counts": {
+        "unload": 6,
+        "drop": 1,
+        "saved": 5
+      },
+      "saved": {
+        "rules": [
+          {
+            "type": "input",
+            "field": "reason",
+            "title": "申请事由",
+            "value": "保留值",
+            "_fc_id": "id_Fza5mw93k8znatc",
+            "name": "ref_Fjhymw93k8znauc",
+            "_fc_drag_tag": "input",
+            "display": true,
+            "hidden": false
+          },
+          {
+            "type": "input",
+            "field": "empty",
+            "title": "显式空串",
+            "value": "",
+            "_fc_id": "id_F366mw93k8znavc",
+            "name": "ref_Fdctmw93k8znawc",
+            "_fc_drag_tag": "input",
+            "display": true,
+            "hidden": false
+          },
+          {
+            "type": "input",
+            "field": "unset",
+            "title": "无默认值",
+            "_fc_id": "id_F087mw93k8znaxc",
+            "name": "ref_F91bmw93k8znayc",
+            "_fc_drag_tag": "input",
+            "display": true,
+            "hidden": false
+          },
+          {
+            "type": "inputNumber",
+            "field": "amount",
+            "title": "金额",
+            "value": 0,
+            "_fc_id": "id_Fyummw93k8zoazc",
+            "name": "ref_Fbw1mw93k8zob0c",
+            "_fc_drag_tag": "inputNumber",
+            "display": true,
+            "hidden": false
+          },
+          {
+            "type": "datePicker",
+            "field": "date",
+            "title": "日期",
+            "value": "2024-02-29",
+            "props": {
+              "type": "date",
+              "valueFormat": "YYYY-MM-DD"
+            },
+            "_fc_id": "id_Flrmmw93k8zob1c",
+            "name": "ref_F9ttmw93k8zob2c",
+            "_fc_drag_tag": "datePicker",
+            "display": true,
+            "hidden": false
+          },
+          {
+            "type": "switch",
+            "field": "flag",
+            "title": "开关",
+            "value": false,
+            "_fc_id": "id_Fko0mw93k8zob3c",
+            "name": "ref_Fviemw93k8zob4c",
+            "_fc_drag_tag": "switch",
+            "display": true,
+            "hidden": false
+          }
+        ],
+        "options": {
+          "form": {
+            "inline": false,
+            "hideRequiredAsterisk": false,
+            "labelPosition": "right",
+            "size": "default",
+            "labelWidth": "125px"
+          },
+          "resetBtn": {
+            "show": false,
+            "innerText": "重置"
+          },
+          "submitBtn": {
+            "show": true,
+            "innerText": "提交"
+          }
+        }
+      },
+      "unloadPreserved": true,
+      "dropPreserved": true
+    },
+    {
+      "name": "全部卸载，宿主新处理器保持",
+      "generation": 2,
+      "counts": {
+        "unload": 7,
+        "drop": 2,
+        "saved": 5
+      },
+      "saved": {
+        "rules": [
+          {
+            "type": "input",
+            "field": "reason",
+            "title": "申请事由",
+            "value": "保留值",
+            "_fc_id": "id_Fza5mw93k8znatc",
+            "name": "ref_Fjhymw93k8znauc",
+            "_fc_drag_tag": "input",
+            "display": true,
+            "hidden": false
+          },
+          {
+            "type": "input",
+            "field": "empty",
+            "title": "显式空串",
+            "value": "",
+            "_fc_id": "id_F366mw93k8znavc",
+            "name": "ref_Fdctmw93k8znawc",
+            "_fc_drag_tag": "input",
+            "display": true,
+            "hidden": false
+          },
+          {
+            "type": "input",
+            "field": "unset",
+            "title": "无默认值",
+            "_fc_id": "id_F087mw93k8znaxc",
+            "name": "ref_F91bmw93k8znayc",
+            "_fc_drag_tag": "input",
+            "display": true,
+            "hidden": false
+          },
+          {
+            "type": "inputNumber",
+            "field": "amount",
+            "title": "金额",
+            "value": 0,
+            "_fc_id": "id_Fyummw93k8zoazc",
+            "name": "ref_Fbw1mw93k8zob0c",
+            "_fc_drag_tag": "inputNumber",
+            "display": true,
+            "hidden": false
+          },
+          {
+            "type": "datePicker",
+            "field": "date",
+            "title": "日期",
+            "value": "2024-02-29",
+            "props": {
+              "type": "date",
+              "valueFormat": "YYYY-MM-DD"
+            },
+            "_fc_id": "id_Flrmmw93k8zob1c",
+            "name": "ref_F9ttmw93k8zob2c",
+            "_fc_drag_tag": "datePicker",
+            "display": true,
+            "hidden": false
+          },
+          {
+            "type": "switch",
+            "field": "flag",
+            "title": "开关",
+            "value": false,
+            "_fc_id": "id_Fko0mw93k8zob3c",
+            "name": "ref_Fviemw93k8zob4c",
+            "_fc_drag_tag": "switch",
+            "display": true,
+            "hidden": false
+          }
+        ],
+        "options": {
+          "form": {
+            "inline": false,
+            "hideRequiredAsterisk": false,
+            "labelPosition": "right",
+            "size": "default",
+            "labelWidth": "125px"
+          },
+          "resetBtn": {
+            "show": false,
+            "innerText": "重置"
+          },
+          "submitBtn": {
+            "show": true,
+            "innerText": "提交"
+          }
+        }
+      },
+      "unloadPreserved": true,
+      "dropPreserved": true
+    }
+  ],
+  "note": "beforeunload 为合成 DOM 事件协议，不声称真实离页提示 UI 或 OS 输入法通过"
+}

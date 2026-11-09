@@ -1,0 +1,6 @@
+
+> typecheck
+> tsc -p tsconfig.json
+
+src/release-contracts.ts(7,26): error TS2345: Argument of type '{ processId: string; }' is not assignable to parameter of type 'BpmnModelSpec'.
+  Property 'adapter' is missing in type '{ processId: string; }' but required in type 'BpmnModelSpec'.

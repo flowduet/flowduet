@@ -1,0 +1,47 @@
+{
+  "base": "a17af75406571478c0ffc86d88033c048590ef95",
+  "patchSha256": "b9679d9149fd881d9f117b4566b92592a995e6e0d585005541a0ab541b231f83",
+  "round": 1,
+  "standards": {
+    "important": 1,
+    "minor": 0,
+    "acceptedExistingRisk": 1
+  },
+  "spec": {
+    "important": 1,
+    "minor": 0,
+    "acceptedExistingRisk": 1
+  },
+  "compatibility": {
+    "important": 0,
+    "minor": 0,
+    "acceptedExistingRisk": 1
+  },
+  "findings": [
+    {
+      "id": "R1",
+      "axis": "Standards",
+      "finding": "追加公开TS合同没有纳入原tsconfig include，原成功不能验证这些接口",
+      "disposition": "已修复，第二轮待复核",
+      "evidence": [
+        "consumer-tsconfig.json",
+        "public-type-files.txt",
+        "public-types-final.txt"
+      ],
+      "notes": "纳入后实际检出消费示例缺少必填adapter，修正示例再通过；保留此前结果原物。"
+    },
+    {
+      "id": "R2",
+      "axis": "Spec",
+      "finding": "实际包缺 external/retained 完整运行消费证据",
+      "disposition": "已补齐，第二轮待复核",
+      "evidence": [
+        "public-contract-main.js.txt",
+        "verify-extended-public-contracts.mjs.txt",
+        "extended-public-contracts-final/result.json"
+      ],
+      "notes": "7类公开props/事件/方法及DOM协议检查通过；旧页头与旧确认按受控迟到DOM协议，不冒称原生指针时序。"
+    }
+  ],
+  "scopeNote": "第1轮Standards亲跑listFilesOnly发现缺口；兼容性专项亲跑公开ESM/配置读取；Spec核对原物与范围。未冒称独立全量或引擎执行。"
+}

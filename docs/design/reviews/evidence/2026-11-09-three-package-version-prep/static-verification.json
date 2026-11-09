@@ -1,0 +1,135 @@
+{
+  "generatedAt": "2026-11-09T09:46:14.341Z",
+  "node": "v24.18.0",
+  "platform": "darwin",
+  "arch": "x64",
+  "registry": "https://registry.npmmirror.com",
+  "temporaryRoot": "/private/var/folders/47/jtpz279529q04_3hhr6t7ptr0000gn/T/flowduet-appearance-108-DIZO1Z",
+  "consumerDir": "/private/var/folders/47/jtpz279529q04_3hhr6t7ptr0000gn/T/flowduet-appearance-108-DIZO1Z/consumer",
+  "tarballs": [
+    {
+      "package": "@flowduet/core",
+      "file": "flowduet-core-0.4.0.tgz",
+      "sha256": "ee82e4903ecdb2f4cbcb3bc7361be6e230c4fc23ea7a715ed2da6f9bccbb864c",
+      "path": "/private/var/folders/47/jtpz279529q04_3hhr6t7ptr0000gn/T/flowduet-appearance-108-DIZO1Z/packs/flowduet-core-0.4.0.tgz"
+    },
+    {
+      "package": "@flowduet/designer",
+      "file": "flowduet-designer-0.2.0.tgz",
+      "sha256": "f59e6b50f0b3d388541456f5839047490e971e6ac1c48d54b62e340bb8991b20",
+      "path": "/private/var/folders/47/jtpz279529q04_3hhr6t7ptr0000gn/T/flowduet-appearance-108-DIZO1Z/packs/flowduet-designer-0.2.0.tgz"
+    },
+    {
+      "package": "@flowduet/form-create",
+      "file": "flowduet-form-create-0.2.0.tgz",
+      "sha256": "000faee55fbee37d837dbc4080d1fd15771c2c6053a1d324fcf19c252bc78124",
+      "path": "/private/var/folders/47/jtpz279529q04_3hhr6t7ptr0000gn/T/flowduet-appearance-108-DIZO1Z/packs/flowduet-form-create-0.2.0.tgz"
+    }
+  ],
+  "dependencies": {
+    "elementPlus": "2.14.6",
+    "elementPlusCopies": [
+      "/private/var/folders/47/jtpz279529q04_3hhr6t7ptr0000gn/T/flowduet-appearance-108-DIZO1Z/consumer/node_modules/element-plus/package.json"
+    ],
+    "renderer": "3.3.4",
+    "vue": "3.5.43"
+  },
+  "checks": {
+    "actualTarballInstall": true,
+    "strictTypeScript": true,
+    "productionBuild": true,
+    "sourceAlias": false,
+    "browserRender": "待对 consumerDir 执行 Chromium 检查；本脚本不把构建当作渲染证据"
+  },
+  "commands": [
+    {
+      "command": "pnpm",
+      "args": [
+        "build"
+      ],
+      "cwd": "/Users/l/Documents/projects/flowduet/",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm",
+      "args": [
+        "--filter",
+        "@flowduet/core",
+        "pack",
+        "--pack-destination",
+        "/private/var/folders/47/jtpz279529q04_3hhr6t7ptr0000gn/T/flowduet-appearance-108-DIZO1Z/packs"
+      ],
+      "cwd": "/Users/l/Documents/projects/flowduet/",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm",
+      "args": [
+        "--filter",
+        "@flowduet/designer",
+        "pack",
+        "--pack-destination",
+        "/private/var/folders/47/jtpz279529q04_3hhr6t7ptr0000gn/T/flowduet-appearance-108-DIZO1Z/packs"
+      ],
+      "cwd": "/Users/l/Documents/projects/flowduet/",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm",
+      "args": [
+        "--filter",
+        "@flowduet/form-create",
+        "pack",
+        "--pack-destination",
+        "/private/var/folders/47/jtpz279529q04_3hhr6t7ptr0000gn/T/flowduet-appearance-108-DIZO1Z/packs"
+      ],
+      "cwd": "/Users/l/Documents/projects/flowduet/",
+      "exitCode": 0
+    },
+    {
+      "command": "npm",
+      "args": [
+        "install",
+        "--registry=https://registry.npmmirror.com",
+        "--no-audit",
+        "--no-fund",
+        "/private/var/folders/47/jtpz279529q04_3hhr6t7ptr0000gn/T/flowduet-appearance-108-DIZO1Z/packs/flowduet-core-0.4.0.tgz",
+        "/private/var/folders/47/jtpz279529q04_3hhr6t7ptr0000gn/T/flowduet-appearance-108-DIZO1Z/packs/flowduet-designer-0.2.0.tgz",
+        "/private/var/folders/47/jtpz279529q04_3hhr6t7ptr0000gn/T/flowduet-appearance-108-DIZO1Z/packs/flowduet-form-create-0.2.0.tgz"
+      ],
+      "cwd": "/private/var/folders/47/jtpz279529q04_3hhr6t7ptr0000gn/T/flowduet-appearance-108-DIZO1Z/consumer",
+      "exitCode": 0
+    },
+    {
+      "command": "npm",
+      "args": [
+        "ls",
+        "--all",
+        "element-plus",
+        "@form-create/element-ui",
+        "@form-create/designer",
+        "vue"
+      ],
+      "cwd": "/private/var/folders/47/jtpz279529q04_3hhr6t7ptr0000gn/T/flowduet-appearance-108-DIZO1Z/consumer",
+      "exitCode": 0
+    },
+    {
+      "command": "npm",
+      "args": [
+        "run",
+        "typecheck"
+      ],
+      "cwd": "/private/var/folders/47/jtpz279529q04_3hhr6t7ptr0000gn/T/flowduet-appearance-108-DIZO1Z/consumer",
+      "exitCode": 0
+    },
+    {
+      "command": "npm",
+      "args": [
+        "run",
+        "build"
+      ],
+      "cwd": "/private/var/folders/47/jtpz279529q04_3hhr6t7ptr0000gn/T/flowduet-appearance-108-DIZO1Z/consumer",
+      "exitCode": 0
+    }
+  ]
+}

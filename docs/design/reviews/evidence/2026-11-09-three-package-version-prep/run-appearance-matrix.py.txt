@@ -1,0 +1,16 @@
+from pathlib import Path
+import subprocess,json,hashlib,sys,datetime,os
+root=Path('/Users/l/Documents/projects/flowduet'); work=Path('/tmp/flowduet-release-prep.JE4FOq'); side=sys.argv[1]; url=sys.argv[2]; pkg=sys.argv[3]
+items=[('103-property-drawer','matrix'),('103-property-drawer','behavior'),('103-property-drawer','host-colors'),('103-property-drawer','round2-fixes'),('104-form-preview-text','matrix'),('104-form-preview-text','behavior'),('104-form-preview-text','review-fixes'),('105-form-preview-controls','matrix'),('105-form-preview-controls','behavior'),('105-form-preview-controls','explicit-priority'),('105-form-preview-controls','inline-layout'),('106-form-preview-select','matrix'),('106-form-preview-select','behavior'),('106-form-preview-select','review-regression'),('106-form-preview-select','style-density-regression'),('107-form-preview-date','matrix'),('107-form-preview-date','behavior'),('107-form-preview-date','states'),('107-form-preview-date','layout')]
+scriptdir=work/'drivers';scriptdir.mkdir(exist_ok=True); outroot=work/'appearance'/side;outroot.mkdir(parents=True,exist_ok=True); records=[]
+for folder,name in items:
+ src=root/'docs/design/system-v1/brand/evidence'/folder/(name+'.mjs.txt'); content=src.read_bytes(); driver=scriptdir/(folder[:3]+'-'+name+'.mjs');driver.write_bytes(content)
+ output=outroot/(folder[:3]+'-'+name);output.mkdir(exist_ok=True)
+ arg=str(output/'result.json') if name=='review-fixes' else str(output)
+ cmd=['node',str(driver),'/Users/l/.npm/_npx/31e32ef8478fbf80/node_modules/playwright-core/index.mjs',url,arg]
+ if name=='round2-fixes':cmd.append(pkg)
+ start=datetime.datetime.now(datetime.timezone.utc).isoformat(); log=output/'command.txt'
+ with log.open('w') as f:r=subprocess.run(cmd,stdout=f,stderr=subprocess.STDOUT,env=dict(os.environ,FLOWDUET_CHROMIUM_PATH='/Users/l/Library/Caches/ms-playwright/chromium-1248/chrome-mac-x64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing'))
+ row={'source':str(src.relative_to(root)),'sourceSha256':hashlib.sha256(content).hexdigest(),'command':cmd,'startedAt':start,'exit':r.returncode,'output':str(output)}; records.append(row); (outroot/'commands.json').write_text(json.dumps(records,ensure_ascii=False,indent=2)); print(side,folder[:3],name,'exit',r.returncode,flush=True)
+ if r.returncode:sys.exit(r.returncode)
+print(side,'19 existing subcases passed',flush=True)

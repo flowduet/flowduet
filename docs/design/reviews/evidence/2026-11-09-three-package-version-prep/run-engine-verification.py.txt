@@ -1,0 +1,67 @@
+from pathlib import Path
+import os,signal,subprocess,json,time,hashlib,uuid,urllib.request,urllib.error,base64,xml.etree.ElementTree as ET
+root=Path('/Users/l/Documents/projects/flowduet'); work=Path('/tmp/flowduet-release-prep.JE4FOq'); out=work/'engine';out.mkdir(exist_ok=True)
+env=dict(os.environ);env.pop('DOCKER_HOST',None);env['DOCKER_CONTEXT']='desktop-linux';env.update(SMOKE_IMAGE='flowable/flowable-ui:6.8.0',SMOKE_PORT='18080',SMOKE_TIMEOUT='180',SMOKE_USER='admin',SMOKE_PASS='test')
+records={'context':'desktop-linux','image':env['SMOKE_IMAGE'],'status':'running','commands':[],'candidateDeployments':[],'cleanup':None}
+container=None
+
+def save(): (out/'result.json').write_text(json.dumps(records,ensure_ascii=False,indent=2))
+def run(cmd,name,timeout=30,capture=False):
+ print('running',name,flush=True)
+ with (out/(name+'.txt')).open('w') as log:
+  p=subprocess.Popen(cmd,cwd=root,env=env,stdout=subprocess.PIPE if capture else log,stderr=log,text=True,start_new_session=True)
+  try:stdout,_=p.communicate(timeout=timeout)
+  except subprocess.TimeoutExpired:
+   os.killpg(p.pid,signal.SIGTERM)
+   try:p.communicate(timeout=15)
+   except subprocess.TimeoutExpired:os.killpg(p.pid,signal.SIGKILL);p.communicate()
+   records['commands'].append({'name':name,'command':cmd,'timeout':timeout,'exit':'timeout'});save();raise
+  if capture:log.write(stdout)
+ records['commands'].append({'name':name,'command':cmd,'exit':p.returncode});save()
+ if p.returncode:raise RuntimeError(f'{name} exited {p.returncode}; see log')
+ return stdout if capture else None
+
+def request(path,body=None,content_type=None):
+ authorization='Basic '+base64.b64encode((env['SMOKE_USER']+':'+env['SMOKE_PASS']).encode()).decode()
+ headers={'Authorization':authorization}
+ if content_type:headers['Content-Type']=content_type
+ req=urllib.request.Request('http://127.0.0.1:18081/flowable-ui/process-api/'+path,data=body,headers=headers,method='POST' if body is not None else 'GET')
+ with urllib.request.urlopen(req,timeout=20) as response:return response.status,json.loads(response.read())
+
+try:
+ assert subprocess.check_output(['docker','context','show'],env=env,text=True).strip()=='desktop-linux'
+ entries=json.loads((work/'engine-xml-manifest.json').read_text());unique={}
+ for item in entries:
+  p=Path(item['path']);assert hashlib.sha256(p.read_bytes()).hexdigest()==item['sha256'];unique.setdefault(item['sha256'],item)
+ records['candidateFiles']=len(entries);records['uniqueContents']=len(unique)
+ run(['docker','pull',env['SMOKE_IMAGE']],'image-pull',600)
+ records['imageIdentity']=run(['docker','image','inspect',env['SMOKE_IMAGE'],'--format','{{.Id}} {{json .RepoDigests}} {{.Architecture}}'],'image-identity',capture=True).strip()
+ run(['pnpm','smoke'],'baseline-smoke',360)
+ name='flowduet-release-120-'+uuid.uuid4().hex[:12]
+ container=run(['docker','run','-d','--rm','--name',name,'-p','127.0.0.1:18081:8080',env['SMOKE_IMAGE']],'candidate-container-start',capture=True).strip();records['containerId']=container
+ deadline=time.monotonic()+180;last_error=''
+ while True:
+  try:_,engine=request('management/engine');break
+  except Exception as e:
+   last_error=str(e)
+   if time.monotonic()>=deadline:raise RuntimeError('candidate engine readiness failed: '+last_error)
+   time.sleep(2)
+ records['engine']=engine;assert str(engine.get('version','')).startswith('6.8'),engine
+ for sha,item in unique.items():
+  data=Path(item['path']).read_bytes();key=ET.fromstring(data).find('{http://www.omg.org/spec/BPMN/20100524/MODEL}process').attrib['id'];boundary='flowduet-'+uuid.uuid4().hex
+  body=(f'--{boundary}\r\nContent-Disposition: form-data; name="file"; filename="{Path(item["name"]).stem}.bpmn20.xml"\r\nContent-Type: application/xml\r\n\r\n').encode()+data+f'\r\n--{boundary}--\r\n'.encode()
+  status,deployment=request('repository/deployments',body,'multipart/form-data; boundary='+boundary);assert status in [200,201],status
+  _,definitions=request('repository/process-definitions?size=100')
+  matched=[d for d in definitions['data'] if d.get('deploymentId')==deployment['id'] and d.get('key')==key];assert len(matched)==1,(key,deployment,matched)
+  records['candidateDeployments'].append({'file':item['name'],'sha256':sha,'httpStatus':status,'deploymentId':deployment['id'],'processKey':key,'definitionId':matched[0]['id'],'fileAliases':[v['name'] for v in entries if v['sha256']==sha]});save();print('registered',item['name'],flush=True)
+ records['status']='passed'
+except Exception as e:
+ records['status']='failed';records['error']=str(e);print(str(e),flush=True)
+finally:
+ if container:
+  with (out/'candidate-container-log.txt').open('w') as f:subprocess.run(['docker','logs',container],env=env,stdout=f,stderr=subprocess.STDOUT,text=True)
+  cleanup=subprocess.run(['docker','stop',container],env=env,capture_output=True,text=True);records['cleanup']={'containerId':container,'exit':cleanup.returncode,'stdout':cleanup.stdout,'stderr':cleanup.stderr}
+  if cleanup.returncode:records['status']='failed';records['cleanupError']='candidate container stop failed'
+ save()
+if records['status']!='passed':raise SystemExit(1)
+print('baseline smoke and candidate deployments passed',flush=True)

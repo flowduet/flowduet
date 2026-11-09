@@ -1,0 +1,88 @@
+# 三包版本准备与版本化产物验证
+
+日期：2026-11-09。关联 [#120](https://github.com/flowduet/flowduet/issues/120)，承接 [#117 范围报告](https://github.com/flowduet/flowduet/issues/117#issuecomment-6736018847)。施工分支 `release/three-packages-20261109`，固定起点为 `develop@a17af75406571478c0ffc86d88033c048590ef95`。
+
+版本候选为 core 0.4.0、designer/form-create 0.2.0；本页记录本地版本准备，不表示已合并、npm 已发布或 tag 已推送。风险为高，涉及公开包兼容性与发版规划。日期布局的一项原始反例已由用户明确接受，仍作为限制；其他失败不继承该豁免。引擎验证正等待本轮单独授权，不能据构建/测试或旧 CI 宣称部署门槛通过。
+
+## 已确认范围与前置修复
+
+用户在 #117 报告后要求按推荐执行，确认先限定修复宿主处理器，再准备版本。前置 [#118](https://github.com/flowduet/flowduet/issues/118) 已通过 [PR #119](https://github.com/flowduet/flowduet/pull/119) squash 合入并收尾；合并树与已验证 head `53d3ad8` 一致。其 Node 22/24 PR CI 各 1031 条全过；合并提交的 develop CI 也已成功。本轮不把这些旧对象的 CI 当作本版本候选 CI。
+
+累计十份 Changesets 一并消费：原报告九份，加 `form-designer-host-events`。不只发布外观适配；还包含支路身份/DI、外置属性编辑、retained 输入与默认值修复及宿主处理器保护。私有 Playground 不发 npm。#102 已接受的原生 OS IME 证据限制继续保持，不重开已结束试验，不扩展浏览器、EP 多副本、完整可访问性或供应商改造矩阵。
+
+本轮[完整证据目录](evidence/2026-11-09-three-package-version-prep/)保留原始命令/日志、实际包信息、消费源码与锁文件、浏览器原物和 XML；[两侧分项归档](evidence/2026-11-09-three-package-version-prep/appearance-evidence.tar.gz)按原字节压缩保存，文件清单可核对，不将临时目录当长期唯一证据。
+
+## 版本、配置与生成文件
+
+- `branch-identity-preservation` 的 core 分类从 patch 改为 minor，理由为新增公开 `BpmnModel.retargetSequenceFlow`，这是用户已选方案；designer 对应 patch 保持。
+- 顶层无效 `updateInternalDependents: always` 移至当前工具支持的 `___experimentalUnsafeOptions_WILL_CHANGE_IN_PATCH`。实际 `readConfig` 返回 always、warnings=[]；不升级工具依赖，`updateInternalDependencies` 仍为默认 patch。
+- `pnpm changeset status` 在版本化前给出三包 0.4.0/0.2.0/0.2.0、十份 Changesets；随后实际执行 `pnpm version-packages`，更新三包 package.json/CHANGELOG，删除已消费十份文件。
+- CORE_VERSION 已同步 0.4.0。原防漂移测试先实际报告 0.3.0≠0.4.0，修正常量后定向测试通过，没有新增只复述实现的版本测试。
+- 内部依赖源码仍为 `workspace:*`；实际 tarball 已解析为 D→C 0.4.0、F→C 0.4.0、F→D 0.2.0。Vue/EP/FormCreate 等依赖及 peer 区间未改，锁文件无需修改；`pnpm install --frozen-lockfile --offline` 通过。
+
+版本化后再次调用 `changeset status --output` 返回 1：该 CLI 在工作区存在包变更、但 Changesets 已被 version 消费时提示“Some packages have been changed but no changesets were found”，没有生成空状态报告。本页不将其记为退出 0，也不为消除提示补一份空 Changeset。确认依据为版本化前计划、version 输出、已消费文件、三包版本/CHANGELOG 和实际包 manifest，而不是伪造剩余计划。
+
+官方 npm `version versions dist-tags` 在版本准备起点及审查补齐后再次读回：core latest 0.3.0、D/F latest 0.1.0，三个目标版本均未出现在官方 versions；命令、时间及完整结果保存在证据中。这只证明当时状态，不预留版本，实际发布前必须再次官方读回。二次读回原物分别为 [core](evidence/2026-11-09-three-package-version-prep/core-registry-final.json)、[designer](evidence/2026-11-09-three-package-version-prep/designer-registry-final.json)、[form-create](evidence/2026-11-09-three-package-version-prep/form-create-registry-final.json)。
+
+核对入口：[版本化前计划](evidence/2026-11-09-three-package-version-prep/status-before-version.json)、[生效配置](evidence/2026-11-09-three-package-version-prep/effective-config.json)、[version 输出](evidence/2026-11-09-three-package-version-prep/version-packages.txt)、[三包实际 manifest](evidence/2026-11-09-three-package-version-prep/tarball-manifests.json)。官方读回分列为 [core](evidence/2026-11-09-three-package-version-prep/core-registry.json)、[designer](evidence/2026-11-09-three-package-version-prep/designer-registry.json)、[form-create](evidence/2026-11-09-three-package-version-prep/form-create-registry.json)。
+
+## 工程与实际包消费
+
+本地 Node 24.18.0、pnpm 10.26.1。以下是本版本化对象的执行，不挪用 #118 旧日志：
+
+| 检查                               | 实际结果                                                                                                                          |
+| ---------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| CORE_VERSION 防漂移与结构/恢复定向 | 3 文件/25 项通过；版本常量同步前的失败保留                                                                                        |
+| `pnpm test`                        | 一次原样默认全量，67 文件/1031 项通过：148+202+374+307                                                                            |
+| `pnpm build`                       | 由 `verify-appearance-consumer.mjs` 首步实际执行，四包构建与正式类型/声明检查通过；保留既有大 chunk 告警                          |
+| `pnpm lint`                        | 通过；最终新增说明文档另核格式                                                                                                    |
+| 三包 `pack --dry-run --json`       | 分别退出 0；随后三包实际 tarball 在临时空工程同时安装，manifest/exports/内部依赖与版本均匹配                                      |
+| 公开 JS/ESM/CSS                    | core 0.4.0、公开类及共享外观函数、两包 CSS 子路径、F 模块解析通过；F 渲染由浏览器承担，不声称 Node SSR                            |
+| 严格公开 TypeScript                | tsc 通过，含 core 新方法、CORE_VERSION 字面版本、D external/appearance 组件 props、F retained DTO/捕获接口/组件类型；无源码 alias |
+| EP/renderer                        | EP 2.14.6 物理副本 1 份，renderer 3.3.4，Vue 3.5.43；不外推整个 peer 区间                                                         |
+
+初次公开 JS 检查把 `toXML()` 返回对象当成字符串进行严格比较，因脚本期望错误而失败；改为比较其公开 `xml` 字段后通过。原失败和修正后结果分开保留，没有因此修改产品。D 的 19 份 dist 文件、F 的 26 份 dist 文件与 #118 实际已验 tarball 逐字相同；本次版本元数据变化不被冒称新 UI 实现。
+
+工程及消费证据：[默认全量](evidence/2026-11-09-three-package-version-prep/pnpm-test.txt)、[构建/打包/安装/严格类型完整输出](evidence/2026-11-09-three-package-version-prep/consumer-preparation.txt)、[静态消费报告](evidence/2026-11-09-three-package-version-prep/static-verification.json)、[追加公开类型最终结果](evidence/2026-11-09-three-package-version-prep/public-types-final.txt)、[公开 JS](evidence/2026-11-09-three-package-version-prep/public-js-contracts.txt)、[与 #118 dist 身份对照](evidence/2026-11-09-three-package-version-prep/dist-identity-with-118.json)。
+
+### 第 1 轮审查发现的验证遗漏与补齐
+
+第 1 轮固定补丁 `b9679d9149fd881d9f117b4566b92592a995e6e0d585005541a0ab541b231f83`，98 个现存文件、10 个删除项。Standards 重要 1／细节 0；Spec 重要 1／细节 0；兼容性专项重要 0／细节 0；同一日期布局已接受风险分别保留，不重复计数。
+
+- R1：原消费者 tsconfig 仅 include main/env，追加公开 TS 文件未纳入，原退出 0 没有验证该文件。本次将它明确纳入 include，并保存实际 tsc 文件清单。真正检查先检出消费示例漏传必填 adapter，修正示例后，版本字面量、retarget、external props/聚焦方法、retained DTO/捕获和 FormManager 公开方法全部通过；没有因此改产品或放宽 strict/skipLibCheck。原配置、两次准备结果与最终结果分开保留。
+- R2：补实际版本化 tarball 的公开运行消费页，完整通过七类合同：external 受控选择/实际焦点/请求且不写 XML；同步 draft-change 回调重入 captureContent 的回显屏障；公开删除及菜单新建字段不继承旧原文；FormDesigner 模式固定；旧页头迟到关闭事件；旧确认迟到不关闭或覆盖已重开的新会话输入；FormManager 双向模式变更拒绝及 legacy 原提交保持。
+
+新消费页只使用三包根导出、组件公开 props/事件/方法和 DOM；不改产品，不引用内部模块。旧页头/旧确认用受控迟到 DOM 事件模拟排队回调，宿主并发提交通过公开方法调用，不冒充遮罩背后的普通指针操作。默认 UI 重建生成新的 field ID，不声称提供了强制复用同 ID 的公开入口。首次旧确认的普通 click 被新对话框遮挡，属于驱动模拟方式错误，改为明确的迟到事件协议后通过；原失败保留。
+
+[第 1 轮发现与处置](evidence/2026-11-09-three-package-version-prep/review-round-1.json)、[真正包含追加文件的配置](evidence/2026-11-09-three-package-version-prep/consumer-tsconfig.json)、[tsc 文件清单](evidence/2026-11-09-three-package-version-prep/public-type-files.txt)、[最终类型结果](evidence/2026-11-09-three-package-version-prep/public-types-final.txt)、[公开运行合同结果](evidence/2026-11-09-three-package-version-prep/extended-public-contracts-final/result.json)。第二轮固定完整补丁复审待补记。
+
+## 浏览器与实际流程产物
+
+Chromium 156.0.8078.4，公开场景和实际版本化三包消费者分别执行既有 19 分项及双入口整合脚本；没有源码 alias。两侧整合脚本的 errors/warnings/failures 均为空，含第二节点局部深色、双抽屉、启停/卸载及宿主隔离。
+
+| 范围                       | 实际结果与边界                                                                                                                                                                |
+| -------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Playground 19 分项         | 19/19 退出 0                                                                                                                                                                  |
+| 消费者 19 分项             | 首轮 18/19 退出 0；日期 layout 一项失败，见下文用户裁定；不能写为首轮全部通过                                                                                                 |
+| 日期 layout 原脚本隔离     | 8 组通过，但不覆盖首次失败；同一浅色路径只读取证两侧通过，原因仍未确定                                                                                                        |
+| 版本化 FormDesigner 消费   | 11 步通过；真实保存/重开、retained `-`/`2026-` 阻断及跨字段保留、0/false、显式空串/未设置、宿主改写、双实例/独立 app、离页监听清理均核对；离页仅合成 DOM 协议                 |
+| core 实际 tarball 公共接口 | 条件/default 两条重接，身份/顺序、非法自环前置拒绝/状态不变、导出/parse 往返通过，生成两份 XML                                                                                |
+| Playground 实际结构操作    | all/any/sequential 三种多人审批经真实点击、原生文档下载、重开、转单签通过；条件/default 首节点与内嵌块删除共四项通过，原入边 fa/顺序/语义、DI、流程默认表单与节点覆盖引用保持 |
+
+实际结构 UI 脚本的初始准备曾遗漏 Playwright 的 `data-test` 配置，并使用不存在的 Vue Flow renderer 类名作为等待条件。均为驱动定位问题，保留失败输出；配置测试属性后先完成三种审批路径，改用公开 bpmn-canvas 接缝后单独完成四种删除路径。不把不同命令拼写成一次完整 UI 脚本全过。原生下载 JSON 与 XML、DOM 导出的有效 XML 均按真实字节保存；共十二个候选 XML 文件、十种唯一内容。
+
+浏览器原物入口：[两侧分项结果](evidence/2026-11-09-three-package-version-prep/appearance-summary.json)、[Playground 整合](evidence/2026-11-09-three-package-version-prep/integration-playground/integration.json)、[消费者整合](evidence/2026-11-09-three-package-version-prep/integration-consumer/integration.json)、[版本化宿主/retained](evidence/2026-11-09-three-package-version-prep/versioned-host-browser/result.json)、[三种审批路径及后段驱动错误](evidence/2026-11-09-three-package-version-prep/structure-ui-final/result.json)、[修正接缝后的四种删除](evidence/2026-11-09-three-package-version-prep/structure-ui-deletions/result.json)。
+
+### 日期布局单项的用户裁定
+
+首次消费者 host/light/compact、900×700、局部 CSS zoom 200%：datetime 外面板 top=415、bottom=841，超出视口；时间子面板 bottom=689、activeHit=true。原始 JSON 的失败保持。原脚本隔离重跑通过；之后仅对同一浅色 comfortable→compact 路径追加一次只读位置取证，两侧均通过，没有确定唯一原因，也没有产品修复。
+
+实施方展示“限定定位/修复、接受风险继续、保留候选停止”对照后，用户明确选择“接受这一布局风险，记录限制后继续”。[裁定记录](https://github.com/flowduet/flowduet/issues/120#issuecomment-6737305773)只豁免本次已观察的布局项，不将它标记为全部通过，不推广到其他缺陷或部署/发布授权；本轮不再追加定位或修复。
+
+## 引擎验证、审查与交付状态
+
+引擎执行计划已固定 12 份 XML 的哈希与 10 份唯一内容，Docker Desktop 本地 context 可用，国内镜像渠道连通性预检成功，但 Flowable 6.8 镜像未缓存。当前等待用户对本地验证的单独授权；没有运行 `pnpm smoke` 或真实引擎部署。计划明确现有 smoke 包含基准实例/任务运行时断言，候选批次只部署注册，不将其冒称业务执行验收。
+
+第 1 轮独立审查的两项验证遗漏已补齐；第 2 轮针对完整固定补丁的规范/需求及发版兼容性复审待补记。Node 22/24 对本版本候选的远端 CI 尚未运行，需版本 PR 获批创建后触发。推送、版本 PR、合并、实际 npm 发布及原生包名 tag 均按各自阶段授权；本页不提前宣布发版完成。
+
+未发布前可撤销本版本准备分支，恢复版本、CORE_VERSION、CHANGELOG、配置及已消费 Changesets；没有用户数据迁移。此为恢复方案，未演练。npm 一旦发布则不撤包、不复用版本，部分发布失败先官方读回每包精确版本/dist-tag/integrity，再对照 Git tag 和来源决定恢复。

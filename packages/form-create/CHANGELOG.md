@@ -1,5 +1,34 @@
 # @flowduet/form-create
 
+## 0.2.0
+
+### Minor Changes
+
+- 9a0d6bd: 新增显式 retained 编辑模式及只读状态/同步捕获接口，保留数值和普通日期中间输入，并按实例与编辑版本保护 FormManager 的关闭确认；legacy 继续作为默认行为。
+- db00ef3: 扩展 `FormPreview` 实例外观适配至数字、单选、多选与开关，覆盖选中标记、真实可达半选、禁用、键盘焦点、长中文选项和两档密度；保持既有字段配置（含字段及选项的颜色继承和多选高度变量）、试填值、边界行为与旧路径不变。
+- 03c6919: 扩展 `FormPreview` 实例外观适配至 `date`、`datetime`、`week`、`month`、`year` 单值日期及真实时间子面板，覆盖两档输入密度、日历与时间状态、品牌选中前景／背景、键盘焦点和宿主局部主题；追加每实例面板标识并保留业务类名、显式样式与挂载配置，换肤、启停和卸载重挂不丢输入或串扰宿主。
+
+  保持原日期值、格式、清空、禁用、边界与校验语义，不新增范围、多值、公开 API 或依赖，不修改第三方包。
+
+  保留跟随宿主时月份／年份的悬停主色及日期导航箭头的主文字色，避免普通态覆盖状态颜色或使用错误回退值。
+
+- ff28754: 扩展 `FormPreview` 实例外观适配至下拉单选及真实选项面板，覆盖两档密度、键盘高亮、选中、占位、清除、禁用、空选项、长中文和焦点；为面板追加实例标识并保留既有 `popperClass`、`popperStyle`、`teleported`、`appendTo` 优先级，换肤与启停不重建输入或丢失试填，旧路径与无关宿主下拉保持不变。
+
+  保留 FormCreate 全局配置中的业务面板类名，并修复默认传送到 body 的下拉面板未消费局部宿主主题的问题；跟随宿主时不写 EP 变量，显式 inline 配置保持优先。
+
+- e1ec425: 公开共享组件外观的色板与宿主读取能力；`FormPreview` 新增可选 `appearance`，显式适配文本、多行文本及预览自有表面、反馈与操作区，支持跟随宿主／品牌、浅深主题和两档密度，同时保留旧路径、显式表单配置与试填生命周期。
+
+### Patch Changes
+
+- fee8b05: 修复显式 retained 模式下单行/多行文本清空后默认值丢失：区分显式空串与未设置，保持字段生命期和同步捕获保护；legacy 默认行为不变。
+- a17af75: 修复 FormDesigner 挂载后覆盖宿主 onbeforeunload 和 body.ondrop 的问题：保留宿主处理器，将供应商离页提示按实例注册并在卸载时清理，默认 drop 阻断仅作用于本编辑器范围；双实例与宿主后续改写互不覆盖，legacy 和 retained 的编辑、保存合同保持。
+- Updated dependencies [02d3474]
+- Updated dependencies [e1ec425]
+- Updated dependencies [341da2c]
+- Updated dependencies [10b2a13]
+  - @flowduet/core@0.4.0
+  - @flowduet/designer@0.2.0
+
 ## 0.1.0
 
 ### Minor Changes

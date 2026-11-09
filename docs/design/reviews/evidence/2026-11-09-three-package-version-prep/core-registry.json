@@ -1,0 +1,20 @@
+{
+  "checkedAt": "2026-11-09T17:43:38.179472+08:00",
+  "command": [
+    "npm",
+    "view",
+    "@flowduet/core",
+    "version",
+    "versions",
+    "dist-tags",
+    "--json",
+    "--registry=https://registry.npmjs.org/",
+    "--fetch-retries=0",
+    "--fetch-timeout=20000"
+  ],
+  "exit": 0,
+  "stdout": "{\n  \"version\": \"0.3.0\",\n  \"versions\": [\n    \"0.1.0\",\n    \"0.1.1\",\n    \"0.1.2\",\n    \"0.2.0\",\n    \"0.2.1\",\n    \"0.3.0\"\n  ],\n  \"dist-tags\": {\n    \"latest\": \"0.3.0\"\n  }\n}\n",
+  "stderr": "",
+  "candidate": "0.4.0",
+  "candidateOccupied": false
+}

@@ -38,3 +38,6 @@ docs/design/system-v1/probes/evidence/
 
 # #118 宿主事件的浏览器、消费和运行原始证据保留字节。
 docs/design/reviews/evidence/2026-11-09-form-designer-host-events/
+
+# #120 版本化产物、浏览器与引擎验收原物保留字节。
+docs/design/reviews/evidence/2026-11-09-three-package-version-prep/

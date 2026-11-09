@@ -1,0 +1,152 @@
+{
+  "browser": "156.0.8078.4",
+  "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+  "viewport": {
+    "width": 1440,
+    "height": 1100,
+    "deviceScaleFactor": 1,
+    "zoom": 1
+  },
+  "baseUrl": "http://127.0.0.1:4189",
+  "results": {
+    "publicEntries": {
+      "nodeDesigners": 2,
+      "formPreviews": 2,
+      "hostControls": 1
+    },
+    "legacyBaseline": {
+      "node": {
+        "className": "flowduet-node-drawer el-drawer rtl open",
+        "inlineStyle": "width: 360px;",
+        "inputHeight": 32,
+        "saveHeight": 32
+      },
+      "form": {
+        "className": "form-preview",
+        "inlineStyle": "",
+        "validateHeight": 24
+      }
+    },
+    "realControls": {
+      "densityClickFocused": true,
+      "density": "compact",
+      "retained": true
+    },
+    "sharedHostTheme": {
+      "before": {
+        "htmlClass": "",
+        "primary": "#409eff",
+        "background": "#fff",
+        "hostInput": "rgb(220, 223, 230) 0px 0px 0px 1px inset"
+      },
+      "after": {
+        "htmlClass": "dark",
+        "nodeMode": "dark",
+        "formMode": "dark",
+        "nodeSecondMode": "light",
+        "formSecondSource": "brand",
+        "primary": "#409eff",
+        "hostInput": "rgb(76, 77, 79) 0px 0px 0px 1px inset"
+      }
+    },
+    "scopedHostTheme": {
+      "htmlClass": "",
+      "hostPrimary": "#409eff",
+      "hostBackground": "#fff",
+      "nodes": [
+        {
+          "side": "first",
+          "mode": "dark",
+          "hostBackground": "#162220",
+          "drawerBackground": "rgb(22, 34, 32)"
+        },
+        {
+          "side": "second",
+          "mode": "dark",
+          "hostBackground": "#162220",
+          "drawerBackground": "rgb(22, 34, 32)"
+        }
+      ]
+    },
+    "restoredHostTheme": [
+      {
+        "side": "first",
+        "mode": "light",
+        "background": "#fff"
+      },
+      {
+        "side": "second",
+        "mode": "light",
+        "background": "#fff"
+      }
+    ],
+    "beforeNodeUnmount": [
+      {
+        "owner": "appearance-first-designer",
+        "drawer": "flowduet-node-drawer flowduet-appearance flowduet-appearance--host flowduet-appearance--light flowduet-appearance--comfortable el-drawer rtl open",
+        "inlineStyle": "width: 360px; --fd-control-height: 32px; --fd-control-font-size: 14px; --fd-field-gap: 16px; --fd-panel-padding: 24px; --fd-node-padding: 16px; --fd-row-gap: 12px; --fd-canvas: #F2F3F5; --fd-surface: #FFFFFF; --fd-inset: #F5F7FA; --fd-text: #303133; --fd-secondary: #606266; --fd-muted: #6E6F70; --fd-border: #E4E7ED; --fd-control-border: #8B8C8D; --fd-primary: #409EFF; --fd-primary-hover: #79BBFF; --fd-primary-pressed: #337ECC; --fd-on-primary: #FFFFFF; --fd-primary-soft: #E6F2FF; --fd-primary-ink: #006EC6; --fd-focus: #006EC6; --fd-danger: #B4233A; --fd-danger-soft: #FFF0F2; --fd-success: #23714D; --fd-warning: #8C5C12; --fd-disabled-text: #A8ABB2; --fd-disabled-surface: #F5F7FA; --fd-font-family: \"Helvetica Neue\", Helvetica, \"PingFang SC\", \"Hiragino Sans GB\", \"Microsoft YaHei\", \"微软雅黑\", Arial, sans-serif; --fd-font-size-base: 14px; --fd-radius: 4px;",
+        "rect": {
+          "width": 360,
+          "height": 1100,
+          "x": 1080,
+          "y": 0
+        },
+        "display": "flex",
+        "visibility": "visible",
+        "opacity": "1"
+      },
+      {
+        "owner": "appearance-second-designer",
+        "drawer": "flowduet-node-drawer flowduet-appearance flowduet-appearance--brand flowduet-appearance--light flowduet-appearance--compact el-drawer rtl open",
+        "inlineStyle": "--fd-control-height: 24px; --fd-control-font-size: 12px; --fd-field-gap: 12px; --fd-panel-padding: 16px; --fd-node-padding: 12px; --fd-row-gap: 8px; --fd-canvas: #F5F6FA; --fd-surface: #FFFFFF; --fd-inset: #F0F2F8; --fd-text: #20263D; --fd-secondary: #565F76; --fd-muted: #626D86; --fd-border: #CDD2E0; --fd-control-border: #7A859E; --fd-primary: #2D3E97; --fd-primary-hover: #222F87; --fd-primary-pressed: #181F77; --fd-on-primary: #FFFFFF; --fd-primary-soft: #EAF0FF; --fd-primary-ink: #2D3E97; --fd-focus: #2D3E97; --fd-danger: #B4233A; --fd-danger-soft: #FFF0F2; --fd-success: #23714D; --fd-warning: #8C5C12; --fd-disabled-text: #8B92A4; --fd-disabled-surface: #EDF0F5; --fd-font-family: system-ui, -apple-system, \"PingFang SC\", \"Microsoft YaHei\", sans-serif; --fd-font-size-base: 14px; --fd-radius: 8px; width: 360px; --el-color-primary: #2D3E97; --el-color-primary-light-3: #6C78B6; --el-color-primary-light-5: #969FCB; --el-color-primary-light-7: #C0C5E0; --el-color-primary-light-8: #D5D8EA; --el-color-primary-light-9: #EAECF5; --el-color-primary-dark-2: #243279; --el-bg-color-page: #F5F6FA; --el-bg-color: #FFFFFF; --el-bg-color-overlay: #FFFFFF; --el-fill-color-blank: #FFFFFF; --el-fill-color-light: #F0F2F8; --el-text-color-primary: #20263D; --el-text-color-regular: #565F76; --el-text-color-secondary: #626D86; --el-text-color-placeholder: #626D86; --el-border-color: #7A859E; --el-border-color-hover: #7A859E; --el-border-color-light: #CDD2E0; --el-border-color-lighter: #CDD2E0; --el-disabled-text-color: #8B92A4; --el-disabled-bg-color: #EDF0F5; --el-disabled-border-color: #CDD2E0; --el-color-danger: #B4233A; --el-color-success: #23714D; --el-color-warning: #8C5C12; --el-font-family: system-ui, -apple-system, \"PingFang SC\", \"Microsoft YaHei\", sans-serif; --el-font-size-base: 14px; --el-form-label-font-size: 13px; --el-border-radius-base: 8px;",
+        "rect": {
+          "width": 360,
+          "height": 1100,
+          "x": 1080,
+          "y": 0
+        },
+        "display": "flex",
+        "visibility": "visible",
+        "opacity": "1"
+      }
+    ],
+    "nodeUnmount": {
+      "firstChecked": false,
+      "firstDesigners": 0,
+      "secondDesigners": 1,
+      "firstDrawers": 0,
+      "secondDrawers": 1,
+      "visibleDrawers": 1,
+      "htmlClass": "",
+      "drawerStates": [
+        {
+          "owner": "appearance-second-designer",
+          "drawer": "flowduet-node-drawer flowduet-appearance flowduet-appearance--brand flowduet-appearance--light flowduet-appearance--compact el-drawer rtl open",
+          "inlineStyle": "--fd-control-height: 24px; --fd-control-font-size: 12px; --fd-field-gap: 12px; --fd-panel-padding: 16px; --fd-node-padding: 12px; --fd-row-gap: 8px; --fd-canvas: #F5F6FA; --fd-surface: #FFFFFF; --fd-inset: #F0F2F8; --fd-text: #20263D; --fd-secondary: #565F76; --fd-muted: #626D86; --fd-border: #CDD2E0; --fd-control-border: #7A859E; --fd-primary: #2D3E97; --fd-primary-hover: #222F87; --fd-primary-pressed: #181F77; --fd-on-primary: #FFFFFF; --fd-primary-soft: #EAF0FF; --fd-primary-ink: #2D3E97; --fd-focus: #2D3E97; --fd-danger: #B4233A; --fd-danger-soft: #FFF0F2; --fd-success: #23714D; --fd-warning: #8C5C12; --fd-disabled-text: #8B92A4; --fd-disabled-surface: #EDF0F5; --fd-font-family: system-ui, -apple-system, \"PingFang SC\", \"Microsoft YaHei\", sans-serif; --fd-font-size-base: 14px; --fd-radius: 8px; width: 360px; --el-color-primary: #2D3E97; --el-color-primary-light-3: #6C78B6; --el-color-primary-light-5: #969FCB; --el-color-primary-light-7: #C0C5E0; --el-color-primary-light-8: #D5D8EA; --el-color-primary-light-9: #EAECF5; --el-color-primary-dark-2: #243279; --el-bg-color-page: #F5F6FA; --el-bg-color: #FFFFFF; --el-bg-color-overlay: #FFFFFF; --el-fill-color-blank: #FFFFFF; --el-fill-color-light: #F0F2F8; --el-text-color-primary: #20263D; --el-text-color-regular: #565F76; --el-text-color-secondary: #626D86; --el-text-color-placeholder: #626D86; --el-border-color: #7A859E; --el-border-color-hover: #7A859E; --el-border-color-light: #CDD2E0; --el-border-color-lighter: #CDD2E0; --el-disabled-text-color: #8B92A4; --el-disabled-bg-color: #EDF0F5; --el-disabled-border-color: #CDD2E0; --el-color-danger: #B4233A; --el-color-success: #23714D; --el-color-warning: #8C5C12; --el-font-family: system-ui, -apple-system, \"PingFang SC\", \"Microsoft YaHei\", sans-serif; --el-font-size-base: 14px; --el-form-label-font-size: 13px; --el-border-radius-base: 8px;",
+          "rect": {
+            "width": 360,
+            "height": 1100,
+            "x": 1080,
+            "y": 0
+          },
+          "display": "flex",
+          "visibility": "visible",
+          "opacity": "1"
+        }
+      ]
+    },
+    "nodeRemount": "通过",
+    "formUnmountRemount": {
+      "ownerBefore": "el-popper is-pure is-light el-tooltip el-select__popper preview-select-panel flowduet-form-preview-select-1 el-zoom-in-top-enter-active el-zoom-in-top-enter-to",
+      "cleaned": true,
+      "remounted": true
+    }
+  },
+  "errors": [],
+  "warnings": [],
+  "failures": [],
+  "limitations": [
+    "本脚本核对跨入口公开装配与生命周期；字段、弹层和八组矩阵由同页重跑的分项脚本补充。",
+    "未执行真实 OS 中文输入法、Firefox、Safari/WebKit、移动端或完整可访问性认证。"
+  ]
+}

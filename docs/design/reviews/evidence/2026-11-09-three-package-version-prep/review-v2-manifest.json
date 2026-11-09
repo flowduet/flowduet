@@ -1,0 +1,502 @@
+{
+  "base": "a17af75406571478c0ffc86d88033c048590ef95",
+  "patchSha256": "39a2339f41d5125767eacf958dd0a9f6abff8fcdfe48bc583b4f6c4260b61d61",
+  "files": {
+    ".changeset/config.json": {
+      "sha256": "d84eb7f63aeb614de89fbe4c80434aa56f85468b04c086eeb933a6500b33318e",
+      "bytes": 242
+    },
+    ".prettierignore": {
+      "sha256": "f5c1c06447413f3774cdc3b3f65a98ed563806dc937ee76ae7290c33bc451cb2",
+      "bytes": 1747
+    },
+    "docs/design/reviews/2026-11-09-three-package-version-prep.md": {
+      "sha256": "a4baaace93622111138a5dda1c8b140f91448b0e753e2bc3c776ee985c0a5c62",
+      "bytes": 15804
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/appearance-evidence.tar.gz": {
+      "sha256": "58b8ad9bab3b7279187e63f9f13b37ea8aedfdb39d6cff85ace61fa4ef015d32",
+      "bytes": 25895876
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/appearance-file-manifest.json": {
+      "sha256": "f32db5c0f2d70ab9364c9571ab55c8d5e8cb5485ee486df4ad4b0ab4220f22fd",
+      "bytes": 37683
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/appearance-summary.json": {
+      "sha256": "4ef34dbdb5614dd899630646ea378312cc92b81438a15d21cb7d450f1b6b358d",
+      "bytes": 289
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/aux-consumer-build.txt": {
+      "sha256": "6c92c724189aac4264f3c23835a17ff9adab3d9432db469aea2d58b8adb54458",
+      "bytes": 761
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/consumer-host-main.js.txt": {
+      "sha256": "fc6fa78d0f29fbdbad806cb12b82daa43f0497905e7f2242808cb868eaee6d2c",
+      "bytes": 2928
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/consumer-package-lock.json": {
+      "sha256": "64b08a7085aa988904d702b3b44e9bf65388acdb2960eb85af737643815b363b",
+      "bytes": 87161
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/consumer-package.json": {
+      "sha256": "0584362a6093a4fa00117c86d5c1a98a0f4093e95334d7829f57367016c24a9e",
+      "bytes": 657
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/consumer-preparation.txt": {
+      "sha256": "43e1cee2c371851465c16d47c77a6c3bb1f888846f7c81ed0a796b8bb5897201",
+      "bytes": 11690
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/consumer-tsconfig-not-included-first.json": {
+      "sha256": "a873192e63b74b555a342b2f9be2f57155056e005771843ccf57353b6d1bce51",
+      "bytes": 380
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/consumer-tsconfig.json": {
+      "sha256": "ae542bc478734e5fb3f8435a8a85951715546bffa4de337a9367192d76b939bb",
+      "bytes": 460
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/contracts.html.txt": {
+      "sha256": "a80b5feb09d3c04d0c1287c8b240982fae257fbd08e148684ec6cf5874b63f98",
+      "bytes": 343
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/core-registry-final.json": {
+      "sha256": "cb82cd32c0b6b328d61e19302aa0d138c08cea21d1b701b0d9b951cc112ef79a",
+      "bytes": 583
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/core-registry.json": {
+      "sha256": "6cf3c70f2120cd5542e7cc75ea94ee56a762a0040e9a58dee85333613774fd22",
+      "bytes": 583
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/core-targeted.txt": {
+      "sha256": "37a2cbed52407064f0adb562bbb3242eacc44859509c9f22c56a88bf70d16f59",
+      "bytes": 213
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/designer-pack-dry-run.txt": {
+      "sha256": "6720e6dbd43bf30e9668c2ebfd0b2d41ecfa1d60560e8ad9c189133fc636a6c8",
+      "bytes": 1350
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/designer-registry-final.json": {
+      "sha256": "e04d56cc2a8940a17384b96581296b398769b4c3b527a0214318abb69718791b",
+      "bytes": 587
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/designer-registry.json": {
+      "sha256": "8041edd26569839fb581ad215616bbf851c1887c8de81cdbbfae300ff7e007d6",
+      "bytes": 587
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/dist-identity-with-118.json": {
+      "sha256": "a78e67515f85c48bdb8a55f70f5fbff9d4085d19307ecb3369d943f900bb520d",
+      "bytes": 125
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/effective-config.json": {
+      "sha256": "565e682016196252b25026af93240bc678e8f7cc2325b71e04b61f3bf6dd4578",
+      "bytes": 701
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/engine-execution-plan.md": {
+      "sha256": "bc6642bc0d989ec81e2cabfca4d5e7b42c0e7b80e231b52bcd4656ba8b865251",
+      "bytes": 4119
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/engine-xml-manifest.json": {
+      "sha256": "6cef57fc9ac09bea008ed65bf47ff3998cf74ba4cd163b4ebbf1951294b9a504",
+      "bytes": 2976
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/extended-contract-build.txt": {
+      "sha256": "c7bc3fff7477ea7ddeae5175265cd89ab046bc39cf6a6c2e4811def08880011a",
+      "bytes": 782
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/extended-public-contracts-final.txt": {
+      "sha256": "edd38c11b4630788c12135b17a44cddc6293c0078cf13db803311ca2175f5d46",
+      "bytes": 4055
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/extended-public-contracts-final/final.png": {
+      "sha256": "a21e3de0dd6a45c00db376b22de83bd0341495127246e017fb8302e780762885",
+      "bytes": 157957
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/extended-public-contracts-final/result.json": {
+      "sha256": "920169ea9fd36663cf20a3c487d30c903aca5b711b93306c6d6a977edde496b8",
+      "bytes": 4054
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/extended-public-contracts-first/failure.png": {
+      "sha256": "06f92a589f1bd4724049aa816209ece504530eefb577e7a58f17419a0dd4a957",
+      "bytes": 126748
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/extended-public-contracts-first/result.json": {
+      "sha256": "110e7417fd92477c4855a91bf286f12d95fcece337596de64aa0b8cf8c40c3f9",
+      "bytes": 5095
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/extended-public-contracts.txt": {
+      "sha256": "9e83b1bd3dc1a173ab926ffa33dd725ad9d274796540470203e50c0a6f66a5da",
+      "bytes": 5096
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/form-create-pack-dry-run.txt": {
+      "sha256": "eee1d0b4d74b290ca298cd6682a763c3fd5d03439040d4f6ac2ef3c3111ad0e5",
+      "bytes": 1838
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/form-create-registry-final.json": {
+      "sha256": "854f63c55c2017635d037652e9dbf9883500c4ccc6e40cd535a91d28df1896d4",
+      "bytes": 532
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/form-create-registry.json": {
+      "sha256": "e5fa9b624106db8be3e9a6e1cd6903e8a645349230815d263b1efb0d0ddad40a",
+      "bytes": 532
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/frozen-install.txt": {
+      "sha256": "384d00c8282b557305a5c510a38fab426492c6e3508f6ca66c63cb1b742082fa",
+      "bytes": 137
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/generate-ui-fixtures.mjs.txt": {
+      "sha256": "89add0fc6627f321bdb778f1010b97f128aeec69a8482de98a4b030ce5852943",
+      "bytes": 2538
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/host.html.txt": {
+      "sha256": "5da962e341858846b4208b2d74440a18c5a50d4217a3d167a66a35550eb26387",
+      "bytes": 537
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/integration-consumer.txt": {
+      "sha256": "d0f6b5e80af5549d87c6b13bf7c573ea26efa231f095b689a1a9c8f2f74b2346",
+      "bytes": 8390
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/integration-consumer/dual-entry.png": {
+      "sha256": "0de36235e7a70d7ca8eb79bd9cdeb4e4a27018d3840ac550032dd42d7703529e",
+      "bytes": 169260
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/integration-consumer/integration.json": {
+      "sha256": "71ed1a25c846e955d1573b149f6108b2290d54251826720f6d6784bce08a1c28",
+      "bytes": 8966
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/integration-playground.txt": {
+      "sha256": "d0f6b5e80af5549d87c6b13bf7c573ea26efa231f095b689a1a9c8f2f74b2346",
+      "bytes": 8390
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/integration-playground/dual-entry.png": {
+      "sha256": "0f6a3df1b2e6f1e3868f6a8e11e335b57b83ab09b2c7a52586ff4c8e07b51ce9",
+      "bytes": 180659
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/integration-playground/integration.json": {
+      "sha256": "fa5a0a425db0354e05c10fda520f13b7e2a7cd58e7e1ea4284bbbfc7212fb564",
+      "bytes": 8966
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/layout-risk-acceptance.md": {
+      "sha256": "4bb95885e4685075489145d5d4f16b35e12743c1798a71fad97e6fbedb7c07b2",
+      "bytes": 1183
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/mirror-connectivity.json": {
+      "sha256": "81974b4e8274cc75dd6135d9378d68cceda7b4d75026ba1f36ee29fb3cc9b4b4",
+      "bytes": 103
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/pnpm-lint-final.txt": {
+      "sha256": "b245bc45561a8c51ff8e798a51515f0afe1f96cd19976d8c3feb89ffd3f4ab9f",
+      "bytes": 169
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/pnpm-lint.txt": {
+      "sha256": "b245bc45561a8c51ff8e798a51515f0afe1f96cd19976d8c3feb89ffd3f4ab9f",
+      "bytes": 169
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/pnpm-pack-dry-run.txt": {
+      "sha256": "e87e925d90729f74ac55f318e190fc05c76784776d4b253688534c6ed817768f",
+      "bytes": 3403
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/pnpm-test.txt": {
+      "sha256": "775f77c354b2f76dff2b70865b29d003c5c2f8b18232646f9a0647a9e80c8915",
+      "bytes": 1968
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/public-contract-main.js.txt": {
+      "sha256": "e36363ad0ce57e4908a0f92a7e92c2719864a4d4e880a7d35d65d12647166feb",
+      "bytes": 3816
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/public-js-contracts-first.txt": {
+      "sha256": "8bc617e956ff7cca0ca043f034117c4efbe4026dffcf91f505b1194baa06fd3e",
+      "bytes": 5485
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/public-js-contracts.txt": {
+      "sha256": "c9701a6c02887885474495e1016935b004844aa29ef6f7aba5e70eded4dcf4a5",
+      "bytes": 234
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/public-type-files.txt": {
+      "sha256": "86d8da7ed259ef908a16c8d61523c83df37400ee28abdf6663b329e3474ad1f6",
+      "bytes": 16255
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/public-types-final.txt": {
+      "sha256": "396901319daac4a4413b23478852db3c572014f86c71d148273565f0f3332696",
+      "bytes": 37
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/public-types-not-included-first.txt": {
+      "sha256": "396901319daac4a4413b23478852db3c572014f86c71d148273565f0f3332696",
+      "bytes": 37
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/public-types-required-adapter.txt": {
+      "sha256": "b9530d70a407a8402b47574615f8b0d6d70747d9dc11783dba4e909517c3797a",
+      "bytes": 284
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/public-types.txt": {
+      "sha256": "396901319daac4a4413b23478852db3c572014f86c71d148273565f0f3332696",
+      "bytes": 37
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/release-contracts-not-included-first.ts.txt": {
+      "sha256": "9cd77d8e7dbc86f862d5bcd279ef6f9100dae61316579447e005dcd828b6a1bd",
+      "bytes": 1324
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/release-contracts.mjs.txt": {
+      "sha256": "1beb0f8cef863ab50012f5635a3ae59b3dfbfe57c9166007ce12942271fe115e",
+      "bytes": 2961
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/release-contracts.ts.txt": {
+      "sha256": "cbe9d460fc518f08fb944e952d4ff5b46ab494bfbac4c83b5a3cfff92a31c2c5",
+      "bytes": 1888
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/review-round-1.json": {
+      "sha256": "f7e02283ff4747b2379be2db0276a2253aea057e851c4a6e1b2e71be1978e864",
+      "bytes": 1604
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/review-v1-manifest.json": {
+      "sha256": "69c82ab7ce57779513d1a1bb2f567587c3711140aed866704659b0c913ca98cd",
+      "bytes": 21565
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/run-appearance-matrix.py.txt": {
+      "sha256": "f67fa6885df5b53343c2d613fd6b90a352210450dd40046ff00b408437ea2328",
+      "bytes": 2401
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/run-engine-verification.py.txt": {
+      "sha256": "816c798fd412e6630911779c0055262af88c12f8c0fcfeb62c315fc742d94fdb",
+      "bytes": 5192
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/scenarios/condition-retarget.bpmn": {
+      "sha256": "e1ca7753c95a94636059534e93ee0b6ed6dde139996ba5c31d3ae1a9bcd772de",
+      "bytes": 4407
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/scenarios/default-retarget.bpmn": {
+      "sha256": "c255aaccc57fd93cb166f1d13b0b6098661aa11184c50cd24d9354f576db353f",
+      "bytes": 4398
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/scenarios/public-contracts.json": {
+      "sha256": "34d5f703e06e58c3ac07a297f512f8a896076d5c553b1b607e9c041779987c38",
+      "bytes": 507
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/static-verification.json": {
+      "sha256": "0b00e0f6e024a9dd9c085a0e4ed42c1da7f2a13b50dcc58d991cb79faa6eb48d",
+      "bytes": 4559
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/status-after-version.txt": {
+      "sha256": "a534b9c3787cbd5c65387be036ad5b64365324fcf739eadcc83bf120da869c39",
+      "bytes": 430
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/status-before-version.json": {
+      "sha256": "888876e4652d2897f2d12c9f1aa774a74ef379d670d0d963fc981a6c2eae2f5b",
+      "bytes": 7978
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/structure-ui-deletions.txt": {
+      "sha256": "a6b0aa3b660e84cb3d8c60f8dc1184c1423900e90a6bff36aa914cf24df25b46",
+      "bytes": 1325
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/structure-ui-deletions/condition-bpmn.png": {
+      "sha256": "6121c63e87125f44afec26277a417a1a2d2471066267c385c0234fde75af02c8",
+      "bytes": 237160
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/structure-ui-deletions/condition-deleted.bpmn": {
+      "sha256": "957b6df16d19ebf926d9e616638c81d0344e311ad7a14d988831407b5b5999b8",
+      "bytes": 4609
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/structure-ui-deletions/condition-deleted.flowduet.json": {
+      "sha256": "3437b0b12728788f961933d09f0c257d7010a286aba4c2535f027dcee4b728cc",
+      "bytes": 5349
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/structure-ui-deletions/default-bpmn.png": {
+      "sha256": "8ba16192476c3d876316e44b5ea5861faa2fbe87d2257cc636b46b4d83e6abbc",
+      "bytes": 238607
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/structure-ui-deletions/default-deleted.bpmn": {
+      "sha256": "6ac977f2b6e31c3eb18ace4532f1efd380d5b620cab2c25dfeaa0ddbfa53556e",
+      "bytes": 4597
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/structure-ui-deletions/default-deleted.flowduet.json": {
+      "sha256": "57a8d01a91582cc9e93aaff071e15c4048c8cc7b6afd70ba2d00a7e8384d8e14",
+      "bytes": 5337
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/structure-ui-deletions/nested-condition-bpmn.png": {
+      "sha256": "15594b764f6adaff9f96053c081fdc50a69a65d993867fe749696c641177c4b2",
+      "bytes": 237627
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/structure-ui-deletions/nested-condition-deleted.bpmn": {
+      "sha256": "4344801fdbcb426e9ba60e196c53feb4c55ee5f4ddb366df2318da9bcb2502b9",
+      "bytes": 4651
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/structure-ui-deletions/nested-condition-deleted.flowduet.json": {
+      "sha256": "797d33032ba6b667a56b0d38ea1daae9f3a3ea20632896d134533bce6befcdd5",
+      "bytes": 5391
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/structure-ui-deletions/nested-default-bpmn.png": {
+      "sha256": "2b9a9f3d3fec303d6b1246652251aa1ee06b40c2f51cee6d5d05bd09ff3a9348",
+      "bytes": 238673
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/structure-ui-deletions/nested-default-deleted.bpmn": {
+      "sha256": "c6aa54bdb78c1ae537a47d6457e2914269f23f1d27d86515ec71d966f01e4a77",
+      "bytes": 4639
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/structure-ui-deletions/nested-default-deleted.flowduet.json": {
+      "sha256": "9ddf44963723760e04bb67440ace795a429b949be53463e35a74cc72d837fd87",
+      "bytes": 5379
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/structure-ui-deletions/result.json": {
+      "sha256": "d2849d81de961953c92f80e69082ce4e41de21cc57d7118a6888478560117f9b",
+      "bytes": 1324
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/structure-ui-final.txt": {
+      "sha256": "7cbaa5dad6f1f39a04f99d0c49d2900bdc41213e5640959828ebacf3d0a5b145",
+      "bytes": 1032
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/structure-ui-final/approval-all-multi.bpmn": {
+      "sha256": "868ae4938e31a00509048600502615595c3b0edbd6feb8fbe2aead7b26b1b8b6",
+      "bytes": 5428
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/structure-ui-final/approval-all-reopened-single.bpmn": {
+      "sha256": "cc4a73226ef59c528f58a097135d761e054202f762f487632acb0a029b5a2cea",
+      "bytes": 5123
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/structure-ui-final/approval-all.flowduet.json": {
+      "sha256": "14580843f3eb2fa5606a7d95fcb608b2ce68b351e67f4c25143c50ece4b13781",
+      "bytes": 6225
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/structure-ui-final/approval-any-multi.bpmn": {
+      "sha256": "44d3be7a3e852faf7bd37387a7b18550ebd4e92d77315fe8d88be70296c54b95",
+      "bytes": 5419
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/structure-ui-final/approval-any-reopened-single.bpmn": {
+      "sha256": "cc4a73226ef59c528f58a097135d761e054202f762f487632acb0a029b5a2cea",
+      "bytes": 5123
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/structure-ui-final/approval-any.flowduet.json": {
+      "sha256": "6b16ca3e79713e74fb96e72b394444d4eed583f21c1f0e8d2118a91d0058529f",
+      "bytes": 6216
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/structure-ui-final/approval-sequential-multi.bpmn": {
+      "sha256": "e78b944d0dbdca0bb6598ee0d965f8c2f2d731802cd0e9550e2188380c2092dc",
+      "bytes": 5265
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/structure-ui-final/approval-sequential-reopened-single.bpmn": {
+      "sha256": "cc4a73226ef59c528f58a097135d761e054202f762f487632acb0a029b5a2cea",
+      "bytes": 5123
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/structure-ui-final/approval-sequential.flowduet.json": {
+      "sha256": "559f192be0458f5c19a256704ac46906e672d00dbb200108d6977ba87067071d",
+      "bytes": 6060
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/structure-ui-final/default-deleted.bpmn": {
+      "sha256": "6ac977f2b6e31c3eb18ace4532f1efd380d5b620cab2c25dfeaa0ddbfa53556e",
+      "bytes": 4597
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/structure-ui-final/default-deleted.flowduet.json": {
+      "sha256": "57a8d01a91582cc9e93aaff071e15c4048c8cc7b6afd70ba2d00a7e8384d8e14",
+      "bytes": 5337
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/structure-ui-final/result.json": {
+      "sha256": "ecc93bd084cfb98865043abe2910ede98c37f97ca02a628d7019656e8f137fd0",
+      "bytes": 1031
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/structure-ui.txt": {
+      "sha256": "a0cd4d9520eb858dbcf23c25213443c65901d011ae4ba1f7dcde371f96bdd35c",
+      "bytes": 455
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/tarball-manifests.json": {
+      "sha256": "0e4f064e0699ed93f0f2824f1c2a2c84eec02f920437dc1e1d34c91ec9950d84",
+      "bytes": 1109
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/ui-fixtures/condition.flowduet.json": {
+      "sha256": "3ed48258e7a93ca2d4fd01bd7bc61c2f7139f4d8ba4395734f56a5c294201645",
+      "bytes": 5923
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/ui-fixtures/default.flowduet.json": {
+      "sha256": "a795891ca31ca3dd2610b1411653e5ec7409ebdb00b54c8b0f5dfc3b2f6b40d3",
+      "bytes": 5911
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/ui-fixtures/nested-condition.flowduet.json": {
+      "sha256": "24d40f96b52d0fa1048b15755d5d1e1ec31d2e8790b3bc0d20e4863915e20b30",
+      "bytes": 8660
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/ui-fixtures/nested-default.flowduet.json": {
+      "sha256": "f672eaa959610ee281e4caa7e490e3d89e94fb48dd1d3bb162a234edb6e1733f",
+      "bytes": 8648
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/verify-extended-public-contracts.mjs.txt": {
+      "sha256": "a6969f09bb434028fe3bf7a759dcfa2493bcb08d65fdff5eaafdf33041ef151f",
+      "bytes": 8740
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/verify-versioned-host-browser.mjs.txt": {
+      "sha256": "cf737f020e621894b9cf5a067087335d6c2243434b36371bae08d97f97eb6a35",
+      "bytes": 8208
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/verify-versioned-structure-ui.mjs.txt": {
+      "sha256": "bfda30d32ba8ea09a8f3c6133ceefa43a477778987262bde95bc9fbab808a53b",
+      "bytes": 6157
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/version-guard-red.txt": {
+      "sha256": "b8aa6a5b772b0527c9a830e6dab4bc6edc538199209726e42d57eec134c6997c",
+      "bytes": 1092
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/version-packages.txt": {
+      "sha256": "ca9095e10641c14fc411f292e9904c384085379d840973bf06cbdd6ec45345c7",
+      "bytes": 193
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/versioned-host-browser.txt": {
+      "sha256": "05a195351948f08de736daa0b35a81f676b0b2f1e374aaf55cd1bdea0501a363",
+      "bytes": 23167
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/versioned-host-browser/final.png": {
+      "sha256": "096d90f70f56db3c4016a675ef9567db43d080ad12fd40eb5cf50b643258980f",
+      "bytes": 25356
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/versioned-host-browser/independent-app.png": {
+      "sha256": "20db102c0e6d8084108efe85c297cc93cd8cb5709ca96f0830468d6275058b8b",
+      "bytes": 90561
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/versioned-host-browser/result.json": {
+      "sha256": "087a42004a35f811a7c99fde82b6a22461a7b5776bcb206d7bcc108e5120d77b",
+      "bytes": 23166
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/vite.contracts.config.ts.txt": {
+      "sha256": "025f432d44cf0d1ec1ce8125368c2e9d4f0c313d79e95134bb9f2e7b8692a167",
+      "bytes": 218
+    },
+    "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/vite.release.config.ts.txt": {
+      "sha256": "875c3f2a768ea4d4dac76fdaaf51b6820d163101214d5a95da513319baee67e3",
+      "bytes": 206
+    },
+    "packages/core/CHANGELOG.md": {
+      "sha256": "ddd4f57c295886d86acd251ca27c87535be6df2b08671a404232521f9e217e12",
+      "bytes": 23363
+    },
+    "packages/core/package.json": {
+      "sha256": "632b107c03f1e959fe7aefb6744d1e366908ef3394cd5b626586b1decd63a13a",
+      "bytes": 1001
+    },
+    "packages/core/src/index.ts": {
+      "sha256": "09b8714573b07235253c417dd4c32a304c2f4bdf0a28b726643c539f29f01e48",
+      "bytes": 2155
+    },
+    "packages/designer/CHANGELOG.md": {
+      "sha256": "8897135f70ce8b860b16c89f2fde193cf39a3f827b85a144fb9875ed295278b2",
+      "bytes": 21329
+    },
+    "packages/designer/package.json": {
+      "sha256": "a0ebb19a2c20f16fd94ad74e8516e6c6c1b565d6c82491cc5a7f29e31dc75a70",
+      "bytes": 1433
+    },
+    "packages/form-create/CHANGELOG.md": {
+      "sha256": "670f56a1e852b13e77dffe3e6e0dcce4e632e3e5fcf160e848a8df487e2a4afe",
+      "bytes": 15199
+    },
+    "packages/form-create/package.json": {
+      "sha256": "e6f004a3edf7ff4664cf8e65d0754b26b05f73e305391cb0b6aa9bba615cc699",
+      "bytes": 1577
+    }
+  },
+  "deleted": [
+    ".changeset/b03-retained-number-date.md",
+    ".changeset/b03-retained-text-defaults.md",
+    ".changeset/branch-identity-preservation.md",
+    ".changeset/form-designer-host-events.md",
+    ".changeset/form-preview-control-appearance.md",
+    ".changeset/form-preview-date-appearance.md",
+    ".changeset/form-preview-select-appearance.md",
+    ".changeset/form-preview-text-appearance.md",
+    ".changeset/property-drawer-appearance.md",
+    ".changeset/stage-zero-external-editing.md"
+  ]
+}
