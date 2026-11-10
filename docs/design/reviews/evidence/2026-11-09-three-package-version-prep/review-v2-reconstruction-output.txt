@@ -1,0 +1,12 @@
+<stdin>:499624: trailing whitespace.
+[plugin builtin:vite-reporter] 
+<stdin>:502217: trailing whitespace.
+apps/playground build: [plugin builtin:vite-reporter] 
+<stdin>:502437: trailing whitespace.
+[plugin builtin:vite-reporter] 
+<stdin>:502898: trailing whitespace.
+[plugin builtin:vite-reporter] 
+<stdin>:502579: new blank line at EOF.
++
+warning: squelched 3 whitespace errors
+warning: 8 lines add whitespace errors.

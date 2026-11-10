@@ -1,0 +1,324 @@
+
+    //////////          &&&& &&&                                          ,,,         ,,,
+  //////////////     &&&&&&& &&&                                          ,,,         ,,,
+ ///          ///   &&&      &&&                                          ,,,         ,,,
+ ////////     ///   &&&&&&&& &&&   &&&&&&&   &&&   &&&    &&&  ,,,,,,,,,, ,,,,,,,,,   ,,,   ,,,,,,,
+ //////   //  ///   &&&&&&&& &&& &&&&   &&&& &&&   &&&    &&& ,,,    ,,,, ,,,,   ,,,, ,,, ,,,    ,,
+ ///    ////  ///   &&&      &&& &&&     &&& &&&   &&&    &&& ,,      ,,, ,,,     ,,, ,,, ,,,,,,,,,
+ //    /////  ///   &&&      &&& &&&    &&&& &&&   &&&    &&& ,,,    ,,,, ,,,,    ,,, ,,, ,,,
+     ///////////    &&&      &&&  &&&&&&&&    &&&&&&&&&&&&&&   ,,,,,,,,,,   ,,,,,,,,  ,,,  ,,,,,,,,
+
+  :: Flowable :: (v6.8.0)    :: Spring Boot ::  (v2.7.6)
+
+2026-11-10 01:00:13.501  INFO 1 --- [           main] o.f.u.application.FlowableUiApplication  : Starting FlowableUiApplication using Java 11.0.15 on 18007643aec6 with PID 1 (/app/WEB-INF/classes started by flowable in /)
+2026-11-10 01:00:13.509  INFO 1 --- [           main] o.f.u.application.FlowableUiApplication  : No active profile set, falling back to 1 default profile: "default"
+2026-11-10 01:00:16.686  INFO 1 --- [           main] trationDelegate$BeanPostProcessorChecker : Bean 'org.flowable.ui.common.properties.FlowableRemoteIdmAutoConfiguration' of type [org.flowable.ui.common.properties.FlowableRemoteIdmAutoConfiguration] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2026-11-10 01:00:16.716  INFO 1 --- [           main] trationDelegate$BeanPostProcessorChecker : Bean 'flowable.common.app-org.flowable.ui.common.properties.FlowableCommonAppProperties' of type [org.flowable.ui.common.properties.FlowableCommonAppProperties] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2026-11-10 01:00:16.717  INFO 1 --- [           main] trationDelegate$BeanPostProcessorChecker : Bean 'grantedAuthorityDefaults' of type [org.springframework.security.config.core.GrantedAuthorityDefaults] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2026-11-10 01:00:17.116  INFO 1 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8080 (http)
+2026-11-10 01:00:17.131  INFO 1 --- [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-11-10 01:00:17.132  INFO 1 --- [           main] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.69]
+2026-11-10 01:00:17.506  INFO 1 --- [           main] o.a.c.c.C.[.[localhost].[/flowable-ui]   : Initializing Spring embedded WebApplicationContext
+2026-11-10 01:00:17.506  INFO 1 --- [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 3341 ms
+2026-11-10 01:00:18.393  INFO 1 --- [           main] o.f.s.b.ProcessEngineAutoConfiguration   : No deployment resources were found for autodeployment
+2026-11-10 01:00:18.673  INFO 1 --- [           main] o.f.s.b.c.CmmnEngineAutoConfiguration    : No deployment resources were found for autodeployment
+2026-11-10 01:00:18.805  INFO 1 --- [           main] o.f.s.b.dmn.DmnEngineAutoConfiguration   : No deployment resources were found for autodeployment
+2026-11-10 01:00:18.853  INFO 1 --- [           main] o.f.s.b.f.FormEngineAutoConfiguration    : No deployment resources were found for autodeployment
+2026-11-10 01:00:18.913  INFO 1 --- [           main] o.f.s.b.e.EventRegistryAutoConfiguration : No deployment resources were found for autodeployment
+2026-11-10 01:00:18.954  INFO 1 --- [           main] o.f.s.b.app.AppEngineAutoConfiguration   : No deployment resources were found for autodeployment
+2026-11-10 01:00:18.976  INFO 1 --- [           main] o.f.a.s.SpringAppEngineConfiguration     : Found 7 Engine Configurators in total:
+2026-11-10 01:00:18.978  INFO 1 --- [           main] o.f.a.s.SpringAppEngineConfiguration     : class org.flowable.engine.spring.configurator.SpringProcessEngineConfigurator (priority:50000)
+2026-11-10 01:00:18.978  INFO 1 --- [           main] o.f.a.s.SpringAppEngineConfiguration     : class org.flowable.eventregistry.spring.configurator.SpringEventRegistryConfigurator (priority:100000)
+2026-11-10 01:00:18.978  INFO 1 --- [           main] o.f.a.s.SpringAppEngineConfiguration     : class org.flowable.idm.spring.configurator.SpringIdmEngineConfigurator (priority:150000)
+2026-11-10 01:00:18.978  INFO 1 --- [           main] o.f.a.s.SpringAppEngineConfiguration     : class org.flowable.dmn.spring.configurator.SpringDmnEngineConfigurator (priority:200000)
+2026-11-10 01:00:18.978  INFO 1 --- [           main] o.f.a.s.SpringAppEngineConfiguration     : class org.flowable.form.spring.configurator.SpringFormEngineConfigurator (priority:300000)
+2026-11-10 01:00:18.978  INFO 1 --- [           main] o.f.a.s.SpringAppEngineConfiguration     : class org.flowable.content.spring.configurator.SpringContentEngineConfigurator (priority:400000)
+2026-11-10 01:00:18.978  INFO 1 --- [           main] o.f.a.s.SpringAppEngineConfiguration     : class org.flowable.cmmn.spring.configurator.SpringCmmnEngineConfigurator (priority:500000)
+2026-11-10 01:00:18.978  INFO 1 --- [           main] o.f.a.s.SpringAppEngineConfiguration     : Executing beforeInit() of class org.flowable.engine.spring.configurator.SpringProcessEngineConfigurator (priority:50000)
+2026-11-10 01:00:19.050  INFO 1 --- [           main] o.f.a.s.SpringAppEngineConfiguration     : Executing beforeInit() of class org.flowable.eventregistry.spring.configurator.SpringEventRegistryConfigurator (priority:100000)
+2026-11-10 01:00:19.054  INFO 1 --- [           main] o.f.a.s.SpringAppEngineConfiguration     : Executing beforeInit() of class org.flowable.idm.spring.configurator.SpringIdmEngineConfigurator (priority:150000)
+2026-11-10 01:00:19.057  INFO 1 --- [           main] o.f.a.s.SpringAppEngineConfiguration     : Executing beforeInit() of class org.flowable.dmn.spring.configurator.SpringDmnEngineConfigurator (priority:200000)
+2026-11-10 01:00:19.060  INFO 1 --- [           main] o.f.a.s.SpringAppEngineConfiguration     : Executing beforeInit() of class org.flowable.form.spring.configurator.SpringFormEngineConfigurator (priority:300000)
+2026-11-10 01:00:19.065  INFO 1 --- [           main] o.f.a.s.SpringAppEngineConfiguration     : Executing beforeInit() of class org.flowable.content.spring.configurator.SpringContentEngineConfigurator (priority:400000)
+2026-11-10 01:00:19.068  INFO 1 --- [           main] o.f.a.s.SpringAppEngineConfiguration     : Executing beforeInit() of class org.flowable.cmmn.spring.configurator.SpringCmmnEngineConfigurator (priority:500000)
+2026-11-10 01:00:19.107  INFO 1 --- [           main] com.zaxxer.hikari.HikariDataSource       : flowable-ui - Starting...
+2026-11-10 01:00:19.537  INFO 1 --- [           main] com.zaxxer.hikari.HikariDataSource       : flowable-ui - Start completed.
+2026-11-10 01:00:20.985  INFO 1 --- [           main] o.f.a.s.SpringAppEngineConfiguration     : Executing configure() of class org.flowable.engine.spring.configurator.SpringProcessEngineConfigurator (priority:50000)
+2026-11-10 01:00:21.262  INFO 1 --- [           main] o.f.c.e.impl.db.CommonDbSchemaManager    : performing create on common with resource org/flowable/common/db/create/flowable.h2.create.common.sql
+2026-11-10 01:00:21.272  INFO 1 --- [           main] o.f.i.s.i.d.IdentityLinkDbSchemaManager  : performing create on identitylink with resource org/flowable/identitylink/service/db/create/flowable.h2.create.identitylink.sql
+2026-11-10 01:00:21.280  INFO 1 --- [           main] o.f.i.s.i.d.IdentityLinkDbSchemaManager  : performing create on identitylink.history with resource org/flowable/identitylink/service/db/create/flowable.h2.create.identitylink.history.sql
+2026-11-10 01:00:21.288  INFO 1 --- [           main] o.f.e.s.i.db.EntityLinkDbSchemaManager   : performing create on entitylink with resource org/flowable/entitylink/service/db/create/flowable.h2.create.entitylink.sql
+2026-11-10 01:00:21.292  INFO 1 --- [           main] o.f.e.s.i.db.EntityLinkDbSchemaManager   : performing create on entitylink.history with resource org/flowable/entitylink/service/db/create/flowable.h2.create.entitylink.history.sql
+2026-11-10 01:00:21.297  INFO 1 --- [           main] e.s.i.d.EventSubscriptionDbSchemaManager : performing create on eventsubscription with resource org/flowable/eventsubscription/service/db/create/flowable.h2.create.eventsubscription.sql
+2026-11-10 01:00:21.303  INFO 1 --- [           main] o.f.t.s.impl.db.TaskDbSchemaManager      : performing create on task with resource org/flowable/task/service/db/create/flowable.h2.create.task.sql
+2026-11-10 01:00:21.308  INFO 1 --- [           main] o.f.t.s.impl.db.TaskDbSchemaManager      : performing create on task.history with resource org/flowable/task/service/db/create/flowable.h2.create.task.history.sql
+2026-11-10 01:00:21.314  INFO 1 --- [           main] o.f.v.s.impl.db.VariableDbSchemaManager  : performing create on variable with resource org/flowable/variable/service/db/create/flowable.h2.create.variable.sql
+2026-11-10 01:00:21.327  INFO 1 --- [           main] o.f.v.s.impl.db.VariableDbSchemaManager  : performing create on variable.history with resource org/flowable/variable/service/db/create/flowable.h2.create.variable.history.sql
+2026-11-10 01:00:21.331  INFO 1 --- [           main] o.f.j.s.impl.db.JobDbSchemaManager       : performing create on job with resource org/flowable/job/service/db/create/flowable.h2.create.job.sql
+2026-11-10 01:00:21.359  INFO 1 --- [           main] o.f.b.s.impl.db.BatchDbSchemaManager     : performing create on batch with resource org/flowable/batch/service/db/create/flowable.h2.create.batch.sql
+2026-11-10 01:00:21.365  INFO 1 --- [           main] o.f.e.impl.db.ProcessDbSchemaManager     : performing create on engine with resource org/flowable/db/create/flowable.h2.create.engine.sql
+2026-11-10 01:00:21.413  INFO 1 --- [           main] o.f.e.impl.db.ProcessDbSchemaManager     : performing create on history with resource org/flowable/db/create/flowable.h2.create.history.sql
+2026-11-10 01:00:21.426  INFO 1 --- [           main] o.f.engine.impl.ProcessEngineImpl        : ProcessEngine default created
+2026-11-10 01:00:21.500  INFO 1 --- [           main] o.f.e.impl.cmd.ValidateV5EntitiesCmd     : Total of v5 deployments found: 0
+2026-11-10 01:00:21.509  INFO 1 --- [           main] o.f.a.s.SpringAppEngineConfiguration     : Executing configure() of class org.flowable.eventregistry.spring.configurator.SpringEventRegistryConfigurator (priority:100000)
+2026-11-10 01:00:21.836  INFO 1 --- [           main] liquibase.servicelocator                 : Cannot load service: liquibase.license.LicenseService: Provider liquibase.license.pro.DaticalTrueLicenseService could not be instantiated
+2026-11-10 01:00:21.843  INFO 1 --- [           main] liquibase.database                       : Set default schema name to PUBLIC
+2026-11-10 01:00:22.059  INFO 1 --- [           main] liquibase.lockservice                    : Successfully acquired change log lock
+2026-11-10 01:00:22.546  INFO 1 --- [           main] liquibase.changelog                      : Creating database history table with name: PUBLIC.FLW_EV_DATABASECHANGELOG
+2026-11-10 01:00:22.552  INFO 1 --- [           main] liquibase.changelog                      : Reading from PUBLIC.FLW_EV_DATABASECHANGELOG
+2026-11-10 01:00:22.758  INFO 1 --- [           main] liquibase.changelog                      : Table FLW_EVENT_DEPLOYMENT created
+2026-11-10 01:00:22.762  INFO 1 --- [           main] liquibase.changelog                      : Table FLW_EVENT_RESOURCE created
+2026-11-10 01:00:22.766  INFO 1 --- [           main] liquibase.changelog                      : Table FLW_EVENT_DEFINITION created
+2026-11-10 01:00:22.768  INFO 1 --- [           main] liquibase.changelog                      : Index ACT_IDX_EVENT_DEF_UNIQ created
+2026-11-10 01:00:22.772  INFO 1 --- [           main] liquibase.changelog                      : Table FLW_CHANNEL_DEFINITION created
+2026-11-10 01:00:22.773  INFO 1 --- [           main] liquibase.changelog                      : Index ACT_IDX_CHANNEL_DEF_UNIQ created
+2026-11-10 01:00:22.774  INFO 1 --- [           main] liquibase.changelog                      : ChangeSet org/flowable/eventregistry/db/liquibase/flowable-eventregistry-db-changelog.xml::1::flowable ran successfully in 21ms
+2026-11-10 01:00:22.792  INFO 1 --- [           main] liquibase.changelog                      : Columns TYPE_(varchar(255)) added to FLW_CHANNEL_DEFINITION
+2026-11-10 01:00:22.797  INFO 1 --- [           main] liquibase.changelog                      : Columns IMPLEMENTATION_(varchar(255)) added to FLW_CHANNEL_DEFINITION
+2026-11-10 01:00:22.798  INFO 1 --- [           main] liquibase.changelog                      : ChangeSet org/flowable/eventregistry/db/liquibase/flowable-eventregistry-db-changelog.xml::2::flowable ran successfully in 16ms
+2026-11-10 01:00:22.815  INFO 1 --- [           main] liquibase.changelog                      : Set Channel Definition type and implementation columns
+2026-11-10 01:00:22.815  INFO 1 --- [           main] liquibase.changelog                      : ChangeSet org/flowable/eventregistry/db/liquibase/flowable-eventregistry-db-changelog.xml::3::flowable ran successfully in 14ms
+2026-11-10 01:00:22.820  INFO 1 --- [           main] liquibase.lockservice                    : Successfully released change log lock
+2026-11-10 01:00:22.821  INFO 1 --- [           main] o.f.e.impl.EventRegistryEngineImpl       : EventRegistryEngine default created
+2026-11-10 01:00:22.823  INFO 1 --- [           main] o.f.a.s.SpringAppEngineConfiguration     : Executing configure() of class org.flowable.idm.spring.configurator.SpringIdmEngineConfigurator (priority:150000)
+2026-11-10 01:00:22.840  INFO 1 --- [           main] o.f.i.engine.impl.db.IdmDbSchemaManager  : performing create on identity with resource org/flowable/idm/db/create/flowable.h2.create.identity.sql
+2026-11-10 01:00:22.850  INFO 1 --- [           main] o.f.idm.engine.impl.IdmEngineImpl        : IdmEngine default created
+2026-11-10 01:00:22.852  INFO 1 --- [           main] o.f.a.s.SpringAppEngineConfiguration     : Executing configure() of class org.flowable.dmn.spring.configurator.SpringDmnEngineConfigurator (priority:200000)
+2026-11-10 01:00:22.876  INFO 1 --- [           main] liquibase.database                       : Set default schema name to PUBLIC
+2026-11-10 01:00:22.886  INFO 1 --- [           main] liquibase.lockservice                    : Successfully acquired change log lock
+2026-11-10 01:00:22.907  INFO 1 --- [           main] liquibase.changelog                      : Creating database history table with name: PUBLIC.ACT_DMN_DATABASECHANGELOG
+2026-11-10 01:00:22.910  INFO 1 --- [           main] liquibase.changelog                      : Reading from PUBLIC.ACT_DMN_DATABASECHANGELOG
+2026-11-10 01:00:22.959  INFO 1 --- [           main] liquibase.changelog                      : Table ACT_DMN_DEPLOYMENT created
+2026-11-10 01:00:22.962  INFO 1 --- [           main] liquibase.changelog                      : Table ACT_DMN_DEPLOYMENT_RESOURCE created
+2026-11-10 01:00:22.964  INFO 1 --- [           main] liquibase.changelog                      : Table ACT_DMN_DECISION_TABLE created
+2026-11-10 01:00:22.964  INFO 1 --- [           main] liquibase.changelog                      : ChangeSet org/flowable/dmn/db/liquibase/flowable-dmn-db-changelog.xml::1::activiti ran successfully in 6ms
+2026-11-10 01:00:22.971  INFO 1 --- [           main] liquibase.changelog                      : Table ACT_DMN_HI_DECISION_EXECUTION created
+2026-11-10 01:00:22.971  INFO 1 --- [           main] liquibase.changelog                      : ChangeSet org/flowable/dmn/db/liquibase/flowable-dmn-db-changelog.xml::2::flowable ran successfully in 4ms
+2026-11-10 01:00:22.980  INFO 1 --- [           main] liquibase.changelog                      : Columns SCOPE_TYPE_(varchar(255)) added to ACT_DMN_HI_DECISION_EXECUTION
+2026-11-10 01:00:22.981  INFO 1 --- [           main] liquibase.changelog                      : ChangeSet org/flowable/dmn/db/liquibase/flowable-dmn-db-changelog.xml::3::flowable ran successfully in 6ms
+2026-11-10 01:00:22.986  INFO 1 --- [           main] liquibase.changelog                      : Column ACT_DMN_DECISION_TABLE.PARENT_DEPLOYMENT_ID_ dropped
+2026-11-10 01:00:22.987  INFO 1 --- [           main] liquibase.changelog                      : ChangeSet org/flowable/dmn/db/liquibase/flowable-dmn-db-changelog.xml::4::flowable ran successfully in 4ms
+2026-11-10 01:00:22.991  INFO 1 --- [           main] liquibase.changelog                      : Index ACT_IDX_DEC_TBL_UNIQ created
+2026-11-10 01:00:22.991  INFO 1 --- [           main] liquibase.changelog                      : ChangeSet org/flowable/dmn/db/liquibase/flowable-dmn-db-changelog.xml::6::flowable ran successfully in 2ms
+2026-11-10 01:00:22.996  INFO 1 --- [           main] liquibase.changelog                      : Index ACT_IDX_DEC_TBL_UNIQ dropped from table ACT_DMN_DECISION_TABLE
+2026-11-10 01:00:22.997  INFO 1 --- [           main] liquibase.changelog                      : Table ACT_DMN_DECISION_TABLE renamed to ACT_DMN_DECISION
+2026-11-10 01:00:22.998  INFO 1 --- [           main] liquibase.changelog                      : Index ACT_IDX_DMN_DEC_UNIQ created
+2026-11-10 01:00:22.998  INFO 1 --- [           main] liquibase.changelog                      : ChangeSet org/flowable/dmn/db/liquibase/flowable-dmn-db-changelog.xml::7::flowable ran successfully in 4ms
+2026-11-10 01:00:23.005  INFO 1 --- [           main] liquibase.changelog                      : Columns DECISION_TYPE_(varchar(255)) added to ACT_DMN_DECISION
+2026-11-10 01:00:23.006  INFO 1 --- [           main] liquibase.changelog                      : ChangeSet org/flowable/dmn/db/liquibase/flowable-dmn-db-changelog.xml::8::flowable ran successfully in 5ms
+2026-11-10 01:00:23.012  INFO 1 --- [           main] liquibase.changelog                      : Index ACT_IDX_DMN_INSTANCE_ID created
+2026-11-10 01:00:23.012  INFO 1 --- [           main] liquibase.changelog                      : ChangeSet org/flowable/dmn/db/liquibase/flowable-dmn-db-changelog.xml::9::flowable ran successfully in 2ms
+2026-11-10 01:00:23.015  INFO 1 --- [           main] liquibase.lockservice                    : Successfully released change log lock
+2026-11-10 01:00:23.016  INFO 1 --- [           main] o.f.dmn.engine.impl.DmnEngineImpl        : DmnEngine default created
+2026-11-10 01:00:23.019  INFO 1 --- [           main] o.f.a.s.SpringAppEngineConfiguration     : Executing configure() of class org.flowable.form.spring.configurator.SpringFormEngineConfigurator (priority:300000)
+2026-11-10 01:00:23.036  INFO 1 --- [           main] liquibase.database                       : Set default schema name to PUBLIC
+2026-11-10 01:00:23.046  INFO 1 --- [           main] liquibase.lockservice                    : Successfully acquired change log lock
+2026-11-10 01:00:23.067  INFO 1 --- [           main] liquibase.changelog                      : Creating database history table with name: PUBLIC.ACT_FO_DATABASECHANGELOG
+2026-11-10 01:00:23.070  INFO 1 --- [           main] liquibase.changelog                      : Reading from PUBLIC.ACT_FO_DATABASECHANGELOG
+2026-11-10 01:00:23.091  INFO 1 --- [           main] liquibase.changelog                      : Table ACT_FO_FORM_DEPLOYMENT created
+2026-11-10 01:00:23.093  INFO 1 --- [           main] liquibase.changelog                      : Table ACT_FO_FORM_RESOURCE created
+2026-11-10 01:00:23.095  INFO 1 --- [           main] liquibase.changelog                      : Table ACT_FO_FORM_DEFINITION created
+2026-11-10 01:00:23.097  INFO 1 --- [           main] liquibase.changelog                      : Table ACT_FO_FORM_INSTANCE created
+2026-11-10 01:00:23.098  INFO 1 --- [           main] liquibase.changelog                      : ChangeSet org/flowable/form/db/liquibase/flowable-form-db-changelog.xml::1::activiti ran successfully in 9ms
+2026-11-10 01:00:23.107  INFO 1 --- [           main] liquibase.changelog                      : Columns SCOPE_ID_(varchar(255)),SCOPE_TYPE_(varchar(255)),SCOPE_DEFINITION_ID_(varchar(255)) added to ACT_FO_FORM_INSTANCE
+2026-11-10 01:00:23.108  INFO 1 --- [           main] liquibase.changelog                      : ChangeSet org/flowable/form/db/liquibase/flowable-form-db-changelog.xml::2::flowable ran successfully in 8ms
+2026-11-10 01:00:23.112  INFO 1 --- [           main] liquibase.changelog                      : Column ACT_FO_FORM_DEFINITION.PARENT_DEPLOYMENT_ID_ dropped
+2026-11-10 01:00:23.113  INFO 1 --- [           main] liquibase.changelog                      : ChangeSet org/flowable/form/db/liquibase/flowable-form-db-changelog.xml::3::flowable ran successfully in 2ms
+2026-11-10 01:00:23.115  INFO 1 --- [           main] liquibase.changelog                      : Index ACT_IDX_FORM_DEF_UNIQ created
+2026-11-10 01:00:23.115  INFO 1 --- [           main] liquibase.changelog                      : ChangeSet org/flowable/form/db/liquibase/flowable-form-db-changelog.xml::5::flowable ran successfully in 1ms
+2026-11-10 01:00:23.118  INFO 1 --- [           main] liquibase.changelog                      : Index ACT_IDX_FORM_TASK created
+2026-11-10 01:00:23.119  INFO 1 --- [           main] liquibase.changelog                      : Index ACT_IDX_FORM_PROC created
+2026-11-10 01:00:23.121  INFO 1 --- [           main] liquibase.changelog                      : Index ACT_IDX_FORM_SCOPE created
+2026-11-10 01:00:23.121  INFO 1 --- [           main] liquibase.changelog                      : ChangeSet org/flowable/form/db/liquibase/flowable-form-db-changelog.xml::6::flowable ran successfully in 4ms
+2026-11-10 01:00:23.123  INFO 1 --- [           main] liquibase.lockservice                    : Successfully released change log lock
+2026-11-10 01:00:23.124  INFO 1 --- [           main] o.f.form.engine.impl.FormEngineImpl      : FormEngine default created
+2026-11-10 01:00:23.125  INFO 1 --- [           main] o.f.a.s.SpringAppEngineConfiguration     : Executing configure() of class org.flowable.content.spring.configurator.SpringContentEngineConfigurator (priority:400000)
+2026-11-10 01:00:23.129  INFO 1 --- [           main] o.f.c.s.SpringContentEngineConfiguration : Content file system root : /data
+2026-11-10 01:00:23.132  INFO 1 --- [           main] f.c.e.i.f.SimpleFileSystemContentStorage : Created content folder in /data/task-content
+2026-11-10 01:00:23.133  INFO 1 --- [           main] f.c.e.i.f.SimpleFileSystemContentStorage : Created content folder in /data/process-instance-content
+2026-11-10 01:00:23.133  INFO 1 --- [           main] f.c.e.i.f.SimpleFileSystemContentStorage : Created content folder in /data/cmmn
+2026-11-10 01:00:23.134  INFO 1 --- [           main] f.c.e.i.f.SimpleFileSystemContentStorage : Created content folder in /data/uncategorized
+2026-11-10 01:00:23.137  INFO 1 --- [           main] liquibase.database                       : Set default schema name to PUBLIC
+2026-11-10 01:00:23.145  INFO 1 --- [           main] liquibase.lockservice                    : Successfully acquired change log lock
+2026-11-10 01:00:23.162  INFO 1 --- [           main] liquibase.changelog                      : Creating database history table with name: PUBLIC.ACT_CO_DATABASECHANGELOG
+2026-11-10 01:00:23.165  INFO 1 --- [           main] liquibase.changelog                      : Reading from PUBLIC.ACT_CO_DATABASECHANGELOG
+2026-11-10 01:00:23.179  INFO 1 --- [           main] liquibase.changelog                      : Table ACT_CO_CONTENT_ITEM created
+2026-11-10 01:00:23.180  INFO 1 --- [           main] liquibase.changelog                      : Index idx_contitem_taskid created
+2026-11-10 01:00:23.181  INFO 1 --- [           main] liquibase.changelog                      : Index idx_contitem_procid created
+2026-11-10 01:00:23.181  INFO 1 --- [           main] liquibase.changelog                      : ChangeSet org/flowable/content/db/liquibase/flowable-content-db-changelog.xml::1::activiti ran successfully in 6ms
+2026-11-10 01:00:23.191  INFO 1 --- [           main] liquibase.changelog                      : Columns SCOPE_ID_(varchar(255)),SCOPE_TYPE_(varchar(255)) added to ACT_CO_CONTENT_ITEM
+2026-11-10 01:00:23.192  INFO 1 --- [           main] liquibase.changelog                      : Index idx_contitem_scope created
+2026-11-10 01:00:23.192  INFO 1 --- [           main] liquibase.changelog                      : ChangeSet org/flowable/content/db/liquibase/flowable-content-db-changelog.xml::2::flowable ran successfully in 8ms
+2026-11-10 01:00:23.195  INFO 1 --- [           main] liquibase.lockservice                    : Successfully released change log lock
+2026-11-10 01:00:23.195  INFO 1 --- [           main] o.f.c.engine.impl.ContentEngineImpl      : ContentEngine default created
+2026-11-10 01:00:23.197  INFO 1 --- [           main] o.f.a.s.SpringAppEngineConfiguration     : Executing configure() of class org.flowable.cmmn.spring.configurator.SpringCmmnEngineConfigurator (priority:500000)
+2026-11-10 01:00:23.322  INFO 1 --- [           main] liquibase.database                       : Set default schema name to PUBLIC
+2026-11-10 01:00:23.334  INFO 1 --- [           main] liquibase.lockservice                    : Successfully acquired change log lock
+2026-11-10 01:00:23.371  INFO 1 --- [           main] liquibase.changelog                      : Creating database history table with name: PUBLIC.ACT_CMMN_DATABASECHANGELOG
+2026-11-10 01:00:23.373  INFO 1 --- [           main] liquibase.changelog                      : Reading from PUBLIC.ACT_CMMN_DATABASECHANGELOG
+2026-11-10 01:00:23.479  INFO 1 --- [           main] liquibase.changelog                      : Table ACT_CMMN_DEPLOYMENT created
+2026-11-10 01:00:23.480  INFO 1 --- [           main] liquibase.changelog                      : Table ACT_CMMN_DEPLOYMENT_RESOURCE created
+2026-11-10 01:00:23.483  INFO 1 --- [           main] liquibase.changelog                      : Foreign key constraint added to ACT_CMMN_DEPLOYMENT_RESOURCE (DEPLOYMENT_ID_)
+2026-11-10 01:00:23.484  INFO 1 --- [           main] liquibase.changelog                      : Index ACT_IDX_CMMN_RSRC_DPL created
+2026-11-10 01:00:23.486  INFO 1 --- [           main] liquibase.changelog                      : Table ACT_CMMN_CASEDEF created
+2026-11-10 01:00:23.488  INFO 1 --- [           main] liquibase.changelog                      : Foreign key constraint added to ACT_CMMN_CASEDEF (DEPLOYMENT_ID_)
+2026-11-10 01:00:23.489  INFO 1 --- [           main] liquibase.changelog                      : Index ACT_IDX_CASE_DEF_DPLY created
+2026-11-10 01:00:23.492  INFO 1 --- [           main] liquibase.changelog                      : Table ACT_CMMN_RU_CASE_INST created
+2026-11-10 01:00:23.494  INFO 1 --- [           main] liquibase.changelog                      : Foreign key constraint added to ACT_CMMN_RU_CASE_INST (CASE_DEF_ID_)
+2026-11-10 01:00:23.495  INFO 1 --- [           main] liquibase.changelog                      : Index ACT_IDX_CASE_INST_CASE_DEF created
+2026-11-10 01:00:23.496  INFO 1 --- [           main] liquibase.changelog                      : Index ACT_IDX_CASE_INST_PARENT created
+2026-11-10 01:00:23.499  INFO 1 --- [           main] liquibase.changelog                      : Table ACT_CMMN_RU_PLAN_ITEM_INST created
+2026-11-10 01:00:23.500  INFO 1 --- [           main] liquibase.changelog                      : Foreign key constraint added to ACT_CMMN_RU_PLAN_ITEM_INST (CASE_DEF_ID_)
+2026-11-10 01:00:23.501  INFO 1 --- [           main] liquibase.changelog                      : Index ACT_IDX_PLAN_ITEM_CASE_DEF created
+2026-11-10 01:00:23.503  INFO 1 --- [           main] liquibase.changelog                      : Foreign key constraint added to ACT_CMMN_RU_PLAN_ITEM_INST (CASE_INST_ID_)
+2026-11-10 01:00:23.504  INFO 1 --- [           main] liquibase.changelog                      : Index ACT_IDX_PLAN_ITEM_CASE_INST created
+2026-11-10 01:00:23.506  INFO 1 --- [           main] liquibase.changelog                      : Table ACT_CMMN_RU_SENTRY_PART_INST created
+2026-11-10 01:00:23.508  INFO 1 --- [           main] liquibase.changelog                      : Foreign key constraint added to ACT_CMMN_RU_SENTRY_PART_INST (CASE_DEF_ID_)
+2026-11-10 01:00:23.509  INFO 1 --- [           main] liquibase.changelog                      : Index ACT_IDX_SENTRY_CASE_DEF created
+2026-11-10 01:00:23.511  INFO 1 --- [           main] liquibase.changelog                      : Foreign key constraint added to ACT_CMMN_RU_SENTRY_PART_INST (CASE_INST_ID_)
+2026-11-10 01:00:23.512  INFO 1 --- [           main] liquibase.changelog                      : Index ACT_IDX_SENTRY_CASE_INST created
+2026-11-10 01:00:23.514  INFO 1 --- [           main] liquibase.changelog                      : Foreign key constraint added to ACT_CMMN_RU_SENTRY_PART_INST (PLAN_ITEM_INST_ID_)
+2026-11-10 01:00:23.515  INFO 1 --- [           main] liquibase.changelog                      : Index ACT_IDX_SENTRY_PLAN_ITEM created
+2026-11-10 01:00:23.516  INFO 1 --- [           main] liquibase.changelog                      : Table ACT_CMMN_RU_MIL_INST created
+2026-11-10 01:00:23.518  INFO 1 --- [           main] liquibase.changelog                      : Foreign key constraint added to ACT_CMMN_RU_MIL_INST (CASE_DEF_ID_)
+2026-11-10 01:00:23.519  INFO 1 --- [           main] liquibase.changelog                      : Index ACT_IDX_MIL_CASE_DEF created
+2026-11-10 01:00:23.521  INFO 1 --- [           main] liquibase.changelog                      : Foreign key constraint added to ACT_CMMN_RU_MIL_INST (CASE_INST_ID_)
+2026-11-10 01:00:23.522  INFO 1 --- [           main] liquibase.changelog                      : Index ACT_IDX_MIL_CASE_INST created
+2026-11-10 01:00:23.525  INFO 1 --- [           main] liquibase.changelog                      : Table ACT_CMMN_HI_CASE_INST created
+2026-11-10 01:00:23.527  INFO 1 --- [           main] liquibase.changelog                      : Table ACT_CMMN_HI_MIL_INST created
+2026-11-10 01:00:23.527  INFO 1 --- [           main] liquibase.changelog                      : ChangeSet org/flowable/cmmn/db/liquibase/flowable-cmmn-db-changelog.xml::1::flowable ran successfully in 54ms
+2026-11-10 01:00:23.538  INFO 1 --- [           main] liquibase.changelog                      : Columns DGRM_RESOURCE_NAME_(varchar(4000)),HAS_START_FORM_KEY_(boolean) added to ACT_CMMN_CASEDEF
+2026-11-10 01:00:23.541  INFO 1 --- [           main] liquibase.changelog                      : Columns GENERATED_(boolean) added to ACT_CMMN_DEPLOYMENT_RESOURCE
+2026-11-10 01:00:23.547  INFO 1 --- [           main] liquibase.changelog                      : Columns LOCK_TIME_(datetime) added to ACT_CMMN_RU_CASE_INST
+2026-11-10 01:00:23.554  INFO 1 --- [           main] liquibase.changelog                      : Columns ITEM_DEFINITION_ID_(varchar(255)),ITEM_DEFINITION_TYPE_(varchar(255)) added to ACT_CMMN_RU_PLAN_ITEM_INST
+2026-11-10 01:00:23.554  INFO 1 --- [           main] liquibase.changelog                      : ChangeSet org/flowable/cmmn/db/liquibase/flowable-cmmn-db-changelog.xml::2::flowable ran successfully in 24ms
+2026-11-10 01:00:23.560  INFO 1 --- [           main] liquibase.changelog                      : Columns IS_COMPLETEABLE_(boolean) added to ACT_CMMN_RU_PLAN_ITEM_INST
+2026-11-10 01:00:23.564  INFO 1 --- [           main] liquibase.changelog                      : Columns IS_COMPLETEABLE_(boolean) added to ACT_CMMN_RU_CASE_INST
+2026-11-10 01:00:23.565  INFO 1 --- [           main] liquibase.changelog                      : Index ACT_IDX_PLAN_ITEM_STAGE_INST created
+2026-11-10 01:00:23.569  INFO 1 --- [           main] liquibase.changelog                      : Columns IS_COUNT_ENABLED_(boolean) added to ACT_CMMN_RU_PLAN_ITEM_INST
+2026-11-10 01:00:23.573  INFO 1 --- [           main] liquibase.changelog                      : Columns VAR_COUNT_(integer) added to ACT_CMMN_RU_PLAN_ITEM_INST
+2026-11-10 01:00:23.578  INFO 1 --- [           main] liquibase.changelog                      : Columns SENTRY_PART_INST_COUNT_(integer) added to ACT_CMMN_RU_PLAN_ITEM_INST
+2026-11-10 01:00:23.578  INFO 1 --- [           main] liquibase.changelog                      : ChangeSet org/flowable/cmmn/db/liquibase/flowable-cmmn-db-changelog.xml::3::flowable ran successfully in 22ms
+2026-11-10 01:00:23.583  INFO 1 --- [           main] liquibase.changelog                      : Table ACT_CMMN_HI_PLAN_ITEM_INST created
+2026-11-10 01:00:23.587  INFO 1 --- [           main] liquibase.changelog                      : Columns TENANT_ID_(varchar(255)) added to ACT_CMMN_RU_MIL_INST
+2026-11-10 01:00:23.590  INFO 1 --- [           main] liquibase.changelog                      : Columns TENANT_ID_(varchar(255)) added to ACT_CMMN_HI_MIL_INST
+2026-11-10 01:00:23.590  INFO 1 --- [           main] liquibase.changelog                      : ChangeSet org/flowable/cmmn/db/liquibase/flowable-cmmn-db-changelog.xml::4::flowable ran successfully in 10ms
+2026-11-10 01:00:23.593  INFO 1 --- [           main] liquibase.changelog                      : Index ACT_IDX_CASE_DEF_UNIQ created
+2026-11-10 01:00:23.593  INFO 1 --- [           main] liquibase.changelog                      : ChangeSet org/flowable/cmmn/db/liquibase/flowable-cmmn-db-changelog.xml::6::flowable ran successfully in 1ms
+2026-11-10 01:00:23.596  INFO 1 --- [           main] liquibase.changelog                      : Column ACT_CMMN_RU_PLAN_ITEM_INST.START_TIME_ renamed to CREATE_TIME_
+2026-11-10 01:00:23.596  INFO 1 --- [           main] liquibase.changelog                      : Column ACT_CMMN_HI_PLAN_ITEM_INST.CREATED_TIME_ renamed to CREATE_TIME_
+2026-11-10 01:00:23.637  INFO 1 --- [           main] liquibase.changelog                      : Columns LAST_AVAILABLE_TIME_(datetime(3)),LAST_ENABLED_TIME_(datetime(3)),LAST_DISABLED_TIME_(datetime(3)),LAST_STARTED_TIME_(datetime(3)),LAST_SUSPENDED_TIME_(datetime(3)),COMPLETED_TIME_(datetime(3)),OCCURRED_TIME_(datetime(3)),TERMINATED_TIME_(datetime(3)),EXIT_TIME_(datetime(3)),ENDED_TIME_(datetime(3)),ENTRY_CRITERION_ID_(varchar(255)),EXIT_CRITERION_ID_(varchar(255)) added to ACT_CMMN_RU_PLAN_ITEM_INST
+2026-11-10 01:00:23.642  INFO 1 --- [           main] liquibase.changelog                      : Columns ENTRY_CRITERION_ID_(varchar(255)),EXIT_CRITERION_ID_(varchar(255)) added to ACT_CMMN_HI_PLAN_ITEM_INST
+2026-11-10 01:00:23.642  INFO 1 --- [           main] liquibase.changelog                      : ChangeSet org/flowable/cmmn/db/liquibase/flowable-cmmn-db-changelog.xml::7::flowable ran successfully in 47ms
+2026-11-10 01:00:23.647  INFO 1 --- [           main] liquibase.changelog                      : Columns SHOW_IN_OVERVIEW_(boolean) added to ACT_CMMN_HI_PLAN_ITEM_INST
+2026-11-10 01:00:23.647  INFO 1 --- [           main] liquibase.changelog                      : ChangeSet org/flowable/cmmn/db/liquibase/flowable-cmmn-db-changelog.xml::8::flowable ran successfully in 3ms
+2026-11-10 01:00:23.664  INFO 1 --- [           main] liquibase.changelog                      : Columns EXTRA_VALUE_(varchar(255)) added to ACT_CMMN_RU_PLAN_ITEM_INST
+2026-11-10 01:00:23.667  INFO 1 --- [           main] liquibase.changelog                      : Columns EXTRA_VALUE_(varchar(255)) added to ACT_CMMN_HI_PLAN_ITEM_INST
+2026-11-10 01:00:23.668  INFO 1 --- [           main] liquibase.changelog                      : ChangeSet org/flowable/cmmn/db/liquibase/flowable-cmmn-db-changelog.xml::9::flowable ran successfully in 19ms
+2026-11-10 01:00:23.672  INFO 1 --- [           main] liquibase.changelog                      : Columns REFERENCE_ID_(varchar(255)) added to ACT_CMMN_RU_CASE_INST
+2026-11-10 01:00:23.675  INFO 1 --- [           main] liquibase.changelog                      : Columns REFERENCE_TYPE_(varchar(255)) added to ACT_CMMN_RU_CASE_INST
+2026-11-10 01:00:23.676  INFO 1 --- [           main] liquibase.changelog                      : Index ACT_IDX_CASE_INST_REF_ID_ created
+2026-11-10 01:00:23.679  INFO 1 --- [           main] liquibase.changelog                      : Columns REFERENCE_ID_(varchar(255)) added to ACT_CMMN_HI_CASE_INST
+2026-11-10 01:00:23.681  INFO 1 --- [           main] liquibase.changelog                      : Columns REFERENCE_TYPE_(varchar(255)) added to ACT_CMMN_HI_CASE_INST
+2026-11-10 01:00:23.681  INFO 1 --- [           main] liquibase.changelog                      : ChangeSet org/flowable/cmmn/db/liquibase/flowable-cmmn-db-changelog.xml::10::flowable ran successfully in 12ms
+2026-11-10 01:00:23.686  INFO 1 --- [           main] liquibase.changelog                      : Columns DERIVED_CASE_DEF_ID_(varchar(255)) added to ACT_CMMN_RU_PLAN_ITEM_INST
+2026-11-10 01:00:23.689  INFO 1 --- [           main] liquibase.changelog                      : Columns DERIVED_CASE_DEF_ID_(varchar(255)) added to ACT_CMMN_HI_PLAN_ITEM_INST
+2026-11-10 01:00:23.689  INFO 1 --- [           main] liquibase.changelog                      : ChangeSet org/flowable/cmmn/db/liquibase/flowable-cmmn-db-changelog.xml::11::flowable ran successfully in 7ms
+2026-11-10 01:00:23.695  INFO 1 --- [           main] liquibase.changelog                      : Columns LOCK_OWNER_(varchar(255)) added to ACT_CMMN_RU_CASE_INST
+2026-11-10 01:00:23.695  INFO 1 --- [           main] liquibase.changelog                      : ChangeSet org/flowable/cmmn/db/liquibase/flowable-cmmn-db-changelog.xml::12::flowable ran successfully in 4ms
+2026-11-10 01:00:23.702  INFO 1 --- [           main] liquibase.changelog                      : Columns LAST_UNAVAILABLE_TIME_(datetime(3)) added to ACT_CMMN_RU_PLAN_ITEM_INST
+2026-11-10 01:00:23.704  INFO 1 --- [           main] liquibase.changelog                      : Columns LAST_UNAVAILABLE_TIME_(datetime(3)) added to ACT_CMMN_HI_PLAN_ITEM_INST
+2026-11-10 01:00:23.704  INFO 1 --- [           main] liquibase.changelog                      : ChangeSet org/flowable/cmmn/db/liquibase/flowable-cmmn-db-changelog.xml::13::flowable ran successfully in 7ms
+2026-11-10 01:00:23.712  INFO 1 --- [           main] liquibase.changelog                      : Columns LAST_REACTIVATION_TIME_(datetime(3)),LAST_REACTIVATION_USER_ID_(varchar(255)) added to ACT_CMMN_RU_CASE_INST
+2026-11-10 01:00:23.716  INFO 1 --- [           main] liquibase.changelog                      : Columns LAST_REACTIVATION_TIME_(datetime(3)),LAST_REACTIVATION_USER_ID_(varchar(255)) added to ACT_CMMN_HI_CASE_INST
+2026-11-10 01:00:23.716  INFO 1 --- [           main] liquibase.changelog                      : ChangeSet org/flowable/cmmn/db/liquibase/flowable-cmmn-db-changelog.xml::14::flowable ran successfully in 11ms
+2026-11-10 01:00:23.721  INFO 1 --- [           main] liquibase.changelog                      : Columns BUSINESS_STATUS_(varchar(255)) added to ACT_CMMN_RU_CASE_INST
+2026-11-10 01:00:23.723  INFO 1 --- [           main] liquibase.changelog                      : Columns BUSINESS_STATUS_(varchar(255)) added to ACT_CMMN_HI_CASE_INST
+2026-11-10 01:00:23.724  INFO 1 --- [           main] liquibase.changelog                      : ChangeSet org/flowable/cmmn/db/liquibase/flowable-cmmn-db-changelog.xml::16::flowable ran successfully in 6ms
+2026-11-10 01:00:23.726  INFO 1 --- [           main] liquibase.changelog                      : Index ACT_IDX_HI_CASE_INST_END created
+2026-11-10 01:00:23.726  INFO 1 --- [           main] liquibase.changelog                      : ChangeSet org/flowable/cmmn/db/liquibase/flowable-cmmn-db-changelog.xml::17::flowable ran successfully in 1ms
+2026-11-10 01:00:23.728  INFO 1 --- [           main] liquibase.lockservice                    : Successfully released change log lock
+2026-11-10 01:00:23.728  INFO 1 --- [           main] o.f.cmmn.engine.impl.CmmnEngineImpl      : CmmnEngine default created
+2026-11-10 01:00:23.736  INFO 1 --- [           main] liquibase.database                       : Set default schema name to PUBLIC
+2026-11-10 01:00:23.746  INFO 1 --- [           main] liquibase.lockservice                    : Successfully acquired change log lock
+2026-11-10 01:00:23.765  INFO 1 --- [           main] liquibase.changelog                      : Creating database history table with name: PUBLIC.ACT_APP_DATABASECHANGELOG
+2026-11-10 01:00:23.767  INFO 1 --- [           main] liquibase.changelog                      : Reading from PUBLIC.ACT_APP_DATABASECHANGELOG
+2026-11-10 01:00:23.777  INFO 1 --- [           main] liquibase.changelog                      : Table ACT_APP_DEPLOYMENT created
+2026-11-10 01:00:23.778  INFO 1 --- [           main] liquibase.changelog                      : Table ACT_APP_DEPLOYMENT_RESOURCE created
+2026-11-10 01:00:23.780  INFO 1 --- [           main] liquibase.changelog                      : Foreign key constraint added to ACT_APP_DEPLOYMENT_RESOURCE (DEPLOYMENT_ID_)
+2026-11-10 01:00:23.780  INFO 1 --- [           main] liquibase.changelog                      : Index ACT_IDX_APP_RSRC_DPL created
+2026-11-10 01:00:23.782  INFO 1 --- [           main] liquibase.changelog                      : Table ACT_APP_APPDEF created
+2026-11-10 01:00:23.783  INFO 1 --- [           main] liquibase.changelog                      : Foreign key constraint added to ACT_APP_APPDEF (DEPLOYMENT_ID_)
+2026-11-10 01:00:23.784  INFO 1 --- [           main] liquibase.changelog                      : Index ACT_IDX_APP_DEF_DPLY created
+2026-11-10 01:00:23.784  INFO 1 --- [           main] liquibase.changelog                      : ChangeSet org/flowable/app/db/liquibase/flowable-app-db-changelog.xml::1::flowable ran successfully in 9ms
+2026-11-10 01:00:23.786  INFO 1 --- [           main] liquibase.changelog                      : Index ACT_IDX_APP_DEF_UNIQ created
+2026-11-10 01:00:23.786  INFO 1 --- [           main] liquibase.changelog                      : ChangeSet org/flowable/app/db/liquibase/flowable-app-db-changelog.xml::3::flowable ran successfully in 1ms
+2026-11-10 01:00:23.788  INFO 1 --- [           main] liquibase.lockservice                    : Successfully released change log lock
+2026-11-10 01:00:23.789  INFO 1 --- [           main] o.f.app.engine.impl.AppEngineImpl        : AppEngine default created
+2026-11-10 01:00:23.970  INFO 1 --- [           main] o.f.u.m.c.ModelerDatabaseConfiguration   : database product name: 'H2'
+2026-11-10 01:00:23.970  INFO 1 --- [           main] o.f.u.m.c.ModelerDatabaseConfiguration   : using database type: h2
+2026-11-10 01:00:24.523  INFO 1 --- [           main] o.s.b.a.w.s.WelcomePageHandlerMapping    : Adding welcome page: class path resource [static/index.html]
+2026-11-10 01:00:24.767  INFO 1 --- [           main] u.c.s.CustomPersistentRememberMeServices : Cookie max-age set to 2678400 seconds
+2026-11-10 01:00:24.767  INFO 1 --- [           main] u.c.s.CustomPersistentRememberMeServices : Cookie refresh age set to 86400 seconds
+2026-11-10 01:00:24.822  INFO 1 --- [           main] liquibase.database                       : Set default schema name to PUBLIC
+2026-11-10 01:00:24.830  INFO 1 --- [           main] liquibase.lockservice                    : Successfully acquired change log lock
+2026-11-10 01:00:24.841  INFO 1 --- [           main] liquibase.changelog                      : Creating database history table with name: PUBLIC.ACT_ADM_DATABASECHANGELOG
+2026-11-10 01:00:24.844  INFO 1 --- [           main] liquibase.changelog                      : Reading from PUBLIC.ACT_ADM_DATABASECHANGELOG
+2026-11-10 01:00:24.850  INFO 1 --- [           main] liquibase.changelog                      : Table ACT_ADM_SERVER_CONFIG created
+2026-11-10 01:00:24.850  INFO 1 --- [           main] liquibase.changelog                      : ChangeSet META-INF/liquibase/flowable-admin-app-db-changelog.xml::1::flowable ran successfully in 2ms
+2026-11-10 01:00:24.852  INFO 1 --- [           main] liquibase.lockservice                    : Successfully released change log lock
+2026-11-10 01:00:25.140  INFO 1 --- [           main] o.s.s.web.DefaultSecurityFilterChain     : Will secure Ant [pattern='/api/idm/**'] with [org.springframework.security.web.session.DisableEncodeUrlFilter@4d652bc6, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@4cf93f80, org.springframework.security.web.context.SecurityContextPersistenceFilter@6ea48ca1, org.springframework.security.web.header.HeaderWriterFilter@7451338e, org.springframework.security.web.authentication.logout.LogoutFilter@a929b6, org.springframework.security.web.authentication.www.BasicAuthenticationFilter@1bbebf8e, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@52d04234, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@654e793f, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@77b987f3, org.springframework.security.web.session.SessionManagementFilter@4cf5db07, org.springframework.security.web.access.ExceptionTranslationFilter@43c76550, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@4b76a0f4]
+2026-11-10 01:00:25.143  INFO 1 --- [           main] o.s.s.web.DefaultSecurityFilterChain     : Will secure Ant [pattern='/*-api/**'] with [org.springframework.security.web.session.DisableEncodeUrlFilter@4ff1e20b, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@38c464df, org.springframework.security.web.context.SecurityContextPersistenceFilter@3c8802cf, org.springframework.security.web.header.HeaderWriterFilter@4b7ecd37, org.springframework.security.web.authentication.logout.LogoutFilter@2e3334d, org.springframework.security.web.authentication.www.BasicAuthenticationFilter@4e2f6452, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@68a1906f, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@558bff39, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@45957b8f, org.springframework.security.web.session.SessionManagementFilter@28c06c3c, org.springframework.security.web.access.ExceptionTranslationFilter@d7b20d9, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@70f446c]
+2026-11-10 01:00:25.146  INFO 1 --- [           main] o.s.s.web.DefaultSecurityFilterChain     : Will secure Ant [pattern='/api/editor/**'] with [org.springframework.security.web.session.DisableEncodeUrlFilter@16b6493d, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@3bf7c70e, org.springframework.security.web.context.SecurityContextPersistenceFilter@133acad0, org.springframework.security.web.header.HeaderWriterFilter@5b9815b6, org.springframework.security.web.authentication.logout.LogoutFilter@26e199ed, org.springframework.security.web.authentication.www.BasicAuthenticationFilter@2dc0cbbc, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@7e1b96a7, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@65b51977, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@1aa945f6, org.springframework.security.web.session.SessionManagementFilter@3c175d82, org.springframework.security.web.access.ExceptionTranslationFilter@9dc9212, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@452c8a6c]
+2026-11-10 01:00:25.149  INFO 1 --- [           main] o.s.s.web.DefaultSecurityFilterChain     : Will secure org.flowable.ui.common.security.ActuatorRequestMatcher@29b21fa6 with [org.springframework.security.web.session.DisableEncodeUrlFilter@4159c66d, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@19a48bde, org.springframework.security.web.context.SecurityContextPersistenceFilter@6e8fa647, org.springframework.security.web.header.HeaderWriterFilter@5d852761, org.springframework.security.web.authentication.logout.LogoutFilter@1fb947f6, org.springframework.security.web.authentication.www.BasicAuthenticationFilter@50931911, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@12eb281f, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@6621ab0c, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@5137526a, org.springframework.security.web.session.SessionManagementFilter@106f566b, org.springframework.security.web.access.ExceptionTranslationFilter@58c48b92, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@6d26b068]
+<服务日志中可能包含凭据的行已省略>
+2026-11-10 01:00:25.193  INFO 1 --- [           main] o.f.u.m.c.ModelerDatabaseConfiguration   : Configuring Liquibase
+2026-11-10 01:00:25.195  INFO 1 --- [           main] liquibase.database                       : Set default schema name to PUBLIC
+2026-11-10 01:00:25.202  INFO 1 --- [           main] liquibase.lockservice                    : Successfully acquired change log lock
+2026-11-10 01:00:25.217  INFO 1 --- [           main] liquibase.changelog                      : Creating database history table with name: PUBLIC.ACT_DE_DATABASECHANGELOG
+2026-11-10 01:00:25.219  INFO 1 --- [           main] liquibase.changelog                      : Reading from PUBLIC.ACT_DE_DATABASECHANGELOG
+2026-11-10 01:00:25.228  INFO 1 --- [           main] liquibase.changelog                      : Table ACT_DE_MODEL created
+2026-11-10 01:00:25.229  INFO 1 --- [           main] liquibase.changelog                      : Index idx_proc_mod_created created
+2026-11-10 01:00:25.231  INFO 1 --- [           main] liquibase.changelog                      : Table ACT_DE_MODEL_HISTORY created
+2026-11-10 01:00:25.231  INFO 1 --- [           main] liquibase.changelog                      : Index idx_proc_mod_history_proc created
+2026-11-10 01:00:25.233  INFO 1 --- [           main] liquibase.changelog                      : Table ACT_DE_MODEL_RELATION created
+2026-11-10 01:00:25.235  INFO 1 --- [           main] liquibase.changelog                      : Foreign key constraint added to ACT_DE_MODEL_RELATION (parent_model_id)
+2026-11-10 01:00:25.237  INFO 1 --- [           main] liquibase.changelog                      : Foreign key constraint added to ACT_DE_MODEL_RELATION (model_id)
+2026-11-10 01:00:25.237  INFO 1 --- [           main] liquibase.changelog                      : ChangeSet META-INF/liquibase/flowable-modeler-app-db-changelog.xml::1::flowable ran successfully in 11ms
+2026-11-10 01:00:25.241  INFO 1 --- [           main] liquibase.changelog                      : Columns tenant_id(varchar(255)) added to ACT_DE_MODEL
+2026-11-10 01:00:25.243  INFO 1 --- [           main] liquibase.changelog                      : Columns tenant_id(varchar(255)) added to ACT_DE_MODEL_HISTORY
+2026-11-10 01:00:25.243  INFO 1 --- [           main] liquibase.changelog                      : ChangeSet META-INF/liquibase/flowable-modeler-app-db-changelog.xml::3::flowable ran successfully in 4ms
+2026-11-10 01:00:25.245  INFO 1 --- [           main] liquibase.lockservice                    : Successfully released change log lock
+2026-11-10 01:00:25.716  INFO 1 --- [           main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 14 endpoint(s) beneath base path '/actuator'
+2026-11-10 01:00:25.789  INFO 1 --- [           main] o.f.j.s.i.a.AbstractAsyncExecutor        : Starting up the async job executor [org.flowable.spring.job.service.SpringAsyncExecutor] for engine cmmn
+2026-11-10 01:00:25.801  INFO 1 --- [       Thread-4] o.f.j.s.i.a.ResetExpiredJobsRunnable     : starting to reset expired jobs for engine cmmn
+2026-11-10 01:00:25.808  INFO 1 --- [       Thread-2] o.f.j.s.i.a.AcquireAsyncJobsDueRunnable  : starting to acquire async jobs due for engine cmmn
+2026-11-10 01:00:25.808  INFO 1 --- [       Thread-3] o.f.j.s.i.a.AcquireTimerJobsRunnable     : starting to acquire async jobs due for engine cmmn
+2026-11-10 01:00:25.808  INFO 1 --- [           main] o.f.j.s.i.a.AbstractAsyncExecutor        : Starting up the async job executor [org.flowable.spring.job.service.SpringAsyncExecutor] for engine bpmn
+2026-11-10 01:00:25.817  INFO 1 --- [       Thread-6] o.f.j.s.i.a.AcquireTimerJobsRunnable     : starting to acquire async jobs due for engine bpmn
+2026-11-10 01:00:25.817  INFO 1 --- [       Thread-5] o.f.j.s.i.a.AcquireAsyncJobsDueRunnable  : starting to acquire async jobs due for engine bpmn
+2026-11-10 01:00:25.820  INFO 1 --- [       Thread-7] o.f.j.s.i.a.ResetExpiredJobsRunnable     : starting to reset expired jobs for engine bpmn
+2026-11-10 01:00:25.856  INFO 1 --- [           main] o.a.c.c.C.[.[localhost].[/flowable-ui]   : Initializing Spring DispatcherServlet 'Flowable IDM App Servlet'
+2026-11-10 01:00:25.856  INFO 1 --- [           main] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'Flowable IDM App Servlet'
+2026-11-10 01:00:25.953  INFO 1 --- [           main] o.s.web.servlet.DispatcherServlet        : Completed initialization in 97 ms
+2026-11-10 01:00:25.953  INFO 1 --- [           main] o.a.c.c.C.[.[localhost].[/flowable-ui]   : Initializing Spring DispatcherServlet 'Flowable Admin App'
+2026-11-10 01:00:25.953  INFO 1 --- [           main] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'Flowable Admin App'
+2026-11-10 01:00:26.217  INFO 1 --- [           main] o.s.web.servlet.DispatcherServlet        : Completed initialization in 264 ms
+2026-11-10 01:00:26.218  INFO 1 --- [           main] o.a.c.c.C.[.[localhost].[/flowable-ui]   : Initializing Spring DispatcherServlet 'Flowable Modeler App Servlet'
+2026-11-10 01:00:26.218  INFO 1 --- [           main] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'Flowable Modeler App Servlet'
+2026-11-10 01:00:26.369  INFO 1 --- [           main] o.s.web.servlet.DispatcherServlet        : Completed initialization in 151 ms
+2026-11-10 01:00:26.369  INFO 1 --- [           main] o.a.c.c.C.[.[localhost].[/flowable-ui]   : Initializing Spring DispatcherServlet 'Flowable Modeler App API Servlet'
+2026-11-10 01:00:26.369  INFO 1 --- [           main] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'Flowable Modeler App API Servlet'
+2026-11-10 01:00:26.408  INFO 1 --- [           main] o.s.web.servlet.DispatcherServlet        : Completed initialization in 39 ms
+2026-11-10 01:00:26.409  INFO 1 --- [           main] o.a.c.c.C.[.[localhost].[/flowable-ui]   : Initializing Spring DispatcherServlet 'Flowable IDM App API Servlet'
+2026-11-10 01:00:26.409  INFO 1 --- [           main] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'Flowable IDM App API Servlet'
+2026-11-10 01:00:26.453  INFO 1 --- [           main] o.s.web.servlet.DispatcherServlet        : Completed initialization in 44 ms
+2026-11-10 01:00:26.454  INFO 1 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8080 (http) with context path '/flowable-ui'
+2026-11-10 01:00:26.476  INFO 1 --- [           main] o.flowable.ui.idm.conf.IdmBootstrapper   : No admin user found, initializing default entities
+2026-11-10 01:00:26.521  INFO 1 --- [           main] o.f.ui.task.conf.TaskBootstrapper        : Migrated 0 app deployments
+2026-11-10 01:00:26.522  INFO 1 --- [           main] o.f.u.a.d.g.MinimalDataGenerator         : Verifying if minimal data is present
+2026-11-10 01:00:26.534  INFO 1 --- [           main] o.f.u.a.d.g.MinimalDataGenerator         : No server configurations found, creating default server configurations
+2026-11-10 01:00:26.554  INFO 1 --- [           main] o.f.u.application.FlowableUiApplication  : Started FlowableUiApplication in 13.636 seconds (JVM running for 14.074)
+2026-11-10 01:00:26.658  INFO 1 --- [nio-8080-exec-1] o.a.c.c.C.[.[localhost].[/flowable-ui]   : Initializing Spring DispatcherServlet 'Flowable BPMN Rest API'
+2026-11-10 01:00:26.658  INFO 1 --- [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'Flowable BPMN Rest API'
+2026-11-10 01:00:27.134  INFO 1 --- [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 476 ms

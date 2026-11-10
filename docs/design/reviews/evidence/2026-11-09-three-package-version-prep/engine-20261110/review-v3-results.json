@@ -1,0 +1,23 @@
+{
+  "base": "57da235412b7a107d3ac11d5b2f4fc888e9f22a2",
+  "patchSha256": "9b1c668ae275bd3c9fdfc0bd50d047001d41331a08234652abab276ace2aff46",
+  "round": 3,
+  "scope": "新增12文件引擎证据和与原候选的交互",
+  "standards": {
+    "important": 0,
+    "minor": 0,
+    "acceptedExistingReleaseRisk": 1
+  },
+  "spec": {
+    "important": 0,
+    "minor": 0,
+    "acceptedExistingReleaseRisk": 1
+  },
+  "engineEvidence": {
+    "important": 0,
+    "minor": 0,
+    "existingEngineEvidenceDefect": 0
+  },
+  "checks": "三名新上下文审查者均核对快照/文件，Spec与专项核对12 XML对应候选提交及10部署映射；专项只读image inspect/容器/端口核对无残留并验证删减日志一致。未重跑smoke、pull或部署。",
+  "limits": "基准运行时与候选注册分开；日期布局单项风险不扩大；新候选Node22/24 CI仍待版本PR；未授权npm发布/tag。"
+}

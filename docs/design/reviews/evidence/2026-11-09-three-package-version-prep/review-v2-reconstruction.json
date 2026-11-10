@@ -1,0 +1,13 @@
+{
+  "base": "a17af75406571478c0ffc86d88033c048590ef95",
+  "patchSha256": "39a2339f41d5125767eacf958dd0a9f6abff8fcdfe48bc583b4f6c4260b61d61",
+  "targetTree": "e02d145bf56b12a6ac5cbafd3a7b06abdc05cbb4",
+  "manifestRebuildTree": "e02d145bf56b12a6ac5cbafd3a7b06abdc05cbb4",
+  "matches": true,
+  "files": 121,
+  "deleted": 10,
+  "sourceOverride": {
+    "docs/design/reviews/2026-11-09-three-package-version-prep.md": "docs/design/reviews/evidence/2026-11-09-three-package-version-prep/report-reviewed-v2.md.txt"
+  },
+  "realIndexModified": false
+}

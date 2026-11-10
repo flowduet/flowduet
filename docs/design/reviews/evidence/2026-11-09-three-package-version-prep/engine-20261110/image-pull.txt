@@ -1,0 +1,43 @@
+6.8.0: Pulling from flowable/flowable-ui
+9f796f62009b: Pulling fs layer
+3a7f4f2ba128: Pulling fs layer
+7c6615a5d94a: Pulling fs layer
+cf4d3f7316c3: Pulling fs layer
+cd6296c9e17e: Pulling fs layer
+fab8950508e4: Pulling fs layer
+3e219acf4ff8: Pulling fs layer
+2408cc74d12b: Pulling fs layer
+3d4177d25912: Pulling fs layer
+9de9a716bfba: Pulling fs layer
+4e37b5c39ff0: Pulling fs layer
+c05c3f547f2d: Pulling fs layer
+50846ef53257: Pulling fs layer
+3a7f4f2ba128: Download complete
+9f796f62009b: Download complete
+7c6615a5d94a: Download complete
+cf4d3f7316c3: Download complete
+fab8950508e4: Download complete
+cd6296c9e17e: Download complete
+3d4177d25912: Download complete
+c05c3f547f2d: Download complete
+9de9a716bfba: Download complete
+3e219acf4ff8: Download complete
+2408cc74d12b: Download complete
+2408cc74d12b: Pull complete
+3d4177d25912: Pull complete
+4e37b5c39ff0: Download complete
+4e37b5c39ff0: Pull complete
+7c6615a5d94a: Pull complete
+9de9a716bfba: Pull complete
+3e219acf4ff8: Pull complete
+3a7f4f2ba128: Pull complete
+cd6296c9e17e: Pull complete
+c05c3f547f2d: Pull complete
+50846ef53257: Download complete
+9f796f62009b: Pull complete
+cf4d3f7316c3: Pull complete
+fab8950508e4: Pull complete
+50846ef53257: Pull complete
+Digest: sha256:8ceeaed674582051590c6a7d23533c4920bda70bbe86e7ca09ad0fa68714fed3
+Status: Downloaded newer image for flowable/flowable-ui:6.8.0
+docker.io/flowable/flowable-ui:6.8.0

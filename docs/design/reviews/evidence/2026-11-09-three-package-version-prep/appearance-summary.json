@@ -1,0 +1,13 @@
+{
+  "playground": {
+    "commands": 19,
+    "passed": 19,
+    "failed": 0
+  },
+  "consumer": {
+    "commands": 19,
+    "passed": 18,
+    "failed": 1
+  },
+  "layoutDecision": "用户明确接受本次单项布局风险后继续；不改写为全部通过，不追加定位或产品修改"
+}

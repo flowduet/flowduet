@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:flowable="http://flowable.org/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="release_default_defs" targetNamespace="http://flowduet.dev/bpmn">
+  <bpmn:process id="release_default" isExecutable="true">
+    <bpmn:startEvent id="s">
+      <bpmn:outgoing>sf</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:exclusiveGateway id="fork" default="fa">
+      <bpmn:incoming>sf</bpmn:incoming>
+      <bpmn:outgoing>fa</bpmn:outgoing>
+      <bpmn:outgoing>fb</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="tail" name="后续审批" flowable:assignee="bob">
+      <bpmn:incoming>fa</bpmn:incoming>
+      <bpmn:outgoing>tj</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="b" name="另一支路" flowable:assignee="carol">
+      <bpmn:incoming>fb</bpmn:incoming>
+      <bpmn:outgoing>bj</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="join">
+      <bpmn:incoming>tj</bpmn:incoming>
+      <bpmn:incoming>bj</bpmn:incoming>
+      <bpmn:outgoing>je</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:endEvent id="e">
+      <bpmn:incoming>je</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="sf" sourceRef="s" targetRef="fork" />
+    <bpmn:sequenceFlow id="fa" name="保留支路" sourceRef="fork" targetRef="tail" />
+    <bpmn:sequenceFlow id="tj" sourceRef="tail" targetRef="join" />
+    <bpmn:sequenceFlow id="fb" sourceRef="fork" targetRef="b">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${amount &lt;= 100}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="bj" sourceRef="b" targetRef="join" />
+    <bpmn:sequenceFlow id="je" sourceRef="join" targetRef="e" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="release_default_di">
+    <bpmndi:BPMNPlane id="release_default_plane" bpmnElement="release_default">
+      <bpmndi:BPMNShape id="s_di" bpmnElement="s">
+        <dc:Bounds x="167" y="40" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="fork_di" bpmnElement="fork">
+        <dc:Bounds x="160" y="136" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="tail_di" bpmnElement="tail">
+        <dc:Bounds x="40" y="256" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="b_di" bpmnElement="b">
+        <dc:Bounds x="230" y="256" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="join_di" bpmnElement="join">
+        <dc:Bounds x="160" y="406" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="e_di" bpmnElement="e">
+        <dc:Bounds x="167" y="516" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="sf_di" bpmnElement="sf">
+        <di:waypoint x="185" y="76" />
+        <di:waypoint x="185" y="136" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="fa_di" bpmnElement="fa">
+        <di:waypoint x="176.66666666666669" y="186" />
+        <di:waypoint x="176.66666666666669" y="194" />
+        <di:waypoint x="90" y="194" />
+        <di:waypoint x="90" y="256" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="tj_di" bpmnElement="tj">
+        <di:waypoint x="90" y="336" />
+        <di:waypoint x="90" y="398" />
+        <di:waypoint x="176.66666666666669" y="398" />
+        <di:waypoint x="176.66666666666669" y="406" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="fb_di" bpmnElement="fb">
+        <di:waypoint x="193.33333333333331" y="186" />
+        <di:waypoint x="193.33333333333331" y="202" />
+        <di:waypoint x="280" y="202" />
+        <di:waypoint x="280" y="256" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="bj_di" bpmnElement="bj">
+        <di:waypoint x="280" y="336" />
+        <di:waypoint x="280" y="390" />
+        <di:waypoint x="193.33333333333331" y="390" />
+        <di:waypoint x="193.33333333333331" y="406" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="je_di" bpmnElement="je">
+        <di:waypoint x="185" y="456" />
+        <di:waypoint x="185" y="516" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

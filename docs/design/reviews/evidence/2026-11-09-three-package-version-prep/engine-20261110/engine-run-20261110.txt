@@ -1,0 +1,15 @@
+running image-pull
+running image-identity
+running baseline-smoke
+running candidate-container-start
+registered approval-all-multi.bpmn
+registered approval-all-reopened-single.bpmn
+registered approval-any-multi.bpmn
+registered approval-sequential-multi.bpmn
+registered condition-deleted.bpmn
+registered condition-retarget.bpmn
+registered default-deleted.bpmn
+registered default-retarget.bpmn
+registered nested-condition-deleted.bpmn
+registered nested-default-deleted.bpmn
+baseline smoke and candidate deployments passed

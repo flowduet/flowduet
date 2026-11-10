@@ -1,0 +1,28 @@
+{
+  "version": "0.4.0",
+  "scenarios": [
+    {
+      "mode": "condition",
+      "target": "tail",
+      "outgoing": [
+        "fa",
+        "fb"
+      ],
+      "rejectedSelfLoop": true,
+      "roundtrip": true
+    },
+    {
+      "mode": "default",
+      "target": "tail",
+      "outgoing": [
+        "fa",
+        "fb"
+      ],
+      "rejectedSelfLoop": true,
+      "roundtrip": true
+    }
+  ],
+  "esm": true,
+  "publicJsCssResolution": true,
+  "formCreateNodeBoundary": "resolve only; render in Chromium"
+}

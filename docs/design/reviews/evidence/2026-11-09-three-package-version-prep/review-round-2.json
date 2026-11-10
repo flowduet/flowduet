@@ -1,0 +1,35 @@
+{
+  "base": "a17af75406571478c0ffc86d88033c048590ef95",
+  "patchSha256": "39a2339f41d5125767eacf958dd0a9f6abff8fcdfe48bc583b4f6c4260b61d61",
+  "reviewTargetTree": "e02d145bf56b12a6ac5cbafd3a7b06abdc05cbb4",
+  "round": 2,
+  "standards": {
+    "important": 0,
+    "minor": 0,
+    "acceptedExistingRisk": 1
+  },
+  "spec": {
+    "important": 0,
+    "minor": 0,
+    "acceptedExistingRisk": 1
+  },
+  "compatibility": {
+    "important": 0,
+    "minor": 0,
+    "acceptedExistingRisk": 1
+  },
+  "findings": [
+    {
+      "id": "R1",
+      "state": "已修复并独立复核关闭",
+      "proof": "Standards/兼容性均在真实消费者亲跑严格tsc和listFilesOnly，追加文件实际纳入且与归档逐字相同"
+    },
+    {
+      "id": "R2",
+      "state": "已补齐并独立复核关闭",
+      "proof": "实际三包公共props/事件/方法/DOM运行页7类合同通过；Spec/兼容性核对断言与原物一致"
+    }
+  ],
+  "executionLimits": "两名审查者亲跑公开TS；兼容性另亲跑ESM/配置；Spec亲核包和12XML哈希。未冒称全量/浏览器/引擎独立重跑。",
+  "acceptedRisk": "日期layout同一项已由用户接受，三轴不累计为三项。引擎及本候选远端CI仍待各自授权。"
+}

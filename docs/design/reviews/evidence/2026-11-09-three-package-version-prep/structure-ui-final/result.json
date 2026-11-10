@@ -1,0 +1,28 @@
+{
+  "browser": "156.0.8078.4",
+  "coreVersion": "0.4.0",
+  "errors": [],
+  "failures": [
+    "locator.waitFor: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('.vue-flow__renderer') to be visible\u001b[22m\n\n    at /private/tmp/flowduet-release-prep.JE4FOq/verify-versioned-structure-ui.mjs:58:89"
+  ],
+  "scenarios": [
+    {
+      "name": "all 保存重开转单签",
+      "nativeDownload": "/tmp/flowduet-release-prep.JE4FOq/structure-ui-final/approval-all.flowduet.json",
+      "defaultAndOrder": true,
+      "formReferences": true
+    },
+    {
+      "name": "any 保存重开转单签",
+      "nativeDownload": "/tmp/flowduet-release-prep.JE4FOq/structure-ui-final/approval-any.flowduet.json",
+      "defaultAndOrder": true,
+      "formReferences": true
+    },
+    {
+      "name": "sequential 保存重开转单签",
+      "nativeDownload": "/tmp/flowduet-release-prep.JE4FOq/structure-ui-final/approval-sequential.flowduet.json",
+      "defaultAndOrder": true,
+      "formReferences": true
+    }
+  ]
+}

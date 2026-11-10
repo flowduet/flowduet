@@ -1,0 +1,278 @@
+
+$ pnpm build
+
+> flowduet-monorepo@0.0.0 build /Users/l/Documents/projects/flowduet
+> pnpm -r build
+
+Scope: 4 of 5 workspace projects
+packages/core build$ tsc -p tsconfig.build.json && node scripts/pack-declarations.mjs
+packages/core build: ✓ ambient 声明已打包：bpmn-moddle.d.ts
+packages/core build: Done
+packages/designer build$ vite build && vue-tsc -p tsconfig.build.json
+packages/designer build: vite v8.3.0 building client environment for production...
+packages/designer build: transforming...
+packages/designer build: ✓ 35 modules transformed.
+packages/designer build: rendering chunks...
+packages/designer build: computing gzip size...
+packages/designer build: dist/designer.css  15.25 kB │ gzip:  3.01 kB
+packages/designer build: dist/index.js      68.72 kB │ gzip: 20.50 kB
+packages/designer build: ✓ built in 304ms
+packages/designer build: Done
+packages/form-create build$ vite build && vue-tsc -p tsconfig.build.json && node scripts/strip-css-imports.mjs
+packages/form-create build: vite v8.3.0 building client environment for production...
+packages/form-create build: transforming...
+packages/form-create build: ✓ 34 modules transformed.
+packages/form-create build: rendering chunks...
+packages/form-create build: computing gzip size...
+packages/form-create build: dist/form-create.css  20.06 kB │ gzip:  4.33 kB
+packages/form-create build: dist/index.js         75.87 kB │ gzip: 20.19 kB
+packages/form-create build: ✓ built in 274ms
+packages/form-create build: ✓ 已剥离 1 行 CSS 副作用 import
+packages/form-create build: Done
+apps/playground build$ vite build
+apps/playground build: vite v8.3.0 building client environment for production...
+apps/playground build: transforming...
+apps/playground build: ✓ 1617 modules transformed.
+apps/playground build: rendering chunks...
+apps/playground build: computing gzip size...
+apps/playground build: dist/index.html                     0.50 kB │ gzip:   0.31 kB
+apps/playground build: dist/assets/index-CF5x6k7r.css    407.52 kB │ gzip:  56.41 kB
+apps/playground build: dist/assets/index-DBhum2Ya.js   2,633.36 kB │ gzip: 823.84 kB
+apps/playground build: ✓ built in 1.08s
+apps/playground build: [plugin builtin:vite-reporter] 
+apps/playground build: (!) Some chunks are larger than 500 kB after minification. Consider:
+apps/playground build: - Using dynamic import() to code-split the application
+apps/playground build: - Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+apps/playground build: - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+apps/playground build: Done
+
+$ pnpm --filter @flowduet/core pack --pack-destination /private/var/folders/47/jtpz279529q04_3hhr6t7ptr0000gn/T/flowduet-appearance-108-DIZO1Z/packs
+📦  @flowduet/core@0.4.0
+Tarball Contents
+dist/adapter/adapter-contract.d.ts
+dist/adapter/adapter-contract.d.ts.map
+dist/adapter/adapter-contract.js
+dist/adapter/adapter-contract.js.map
+dist/adapter/engine-adapter.d.ts
+dist/adapter/engine-adapter.d.ts.map
+dist/adapter/engine-adapter.js
+dist/adapter/engine-adapter.js.map
+dist/adapter/flowable-adapter.d.ts
+dist/adapter/flowable-adapter.d.ts.map
+dist/adapter/flowable-adapter.js
+dist/adapter/flowable-adapter.js.map
+dist/adapter/flowduet-package.d.ts
+dist/adapter/flowduet-package.d.ts.map
+dist/adapter/flowduet-package.js
+dist/adapter/flowduet-package.js.map
+dist/compile/compiler.d.ts
+dist/compile/compiler.d.ts.map
+dist/compile/compiler.js
+dist/compile/compiler.js.map
+dist/index.d.ts
+dist/index.d.ts.map
+dist/index.js
+dist/index.js.map
+dist/layout/di-layout.d.ts
+dist/layout/di-layout.d.ts.map
+dist/layout/di-layout.js
+dist/layout/di-layout.js.map
+dist/layout/vertical-layout.d.ts
+dist/layout/vertical-layout.d.ts.map
+dist/layout/vertical-layout.js
+dist/layout/vertical-layout.js.map
+dist/model/bpmn-model.d.ts
+dist/model/bpmn-model.d.ts.map
+dist/model/bpmn-model.js
+dist/model/bpmn-model.js.map
+dist/model/form-binding.d.ts
+dist/model/form-binding.d.ts.map
+dist/model/form-binding.js
+dist/model/form-binding.js.map
+dist/parse/namespace-usage.d.ts
+dist/parse/namespace-usage.d.ts.map
+dist/parse/namespace-usage.js
+dist/parse/namespace-usage.js.map
+dist/parse/parser.d.ts
+dist/parse/parser.d.ts.map
+dist/parse/parser.js
+dist/parse/parser.js.map
+dist/types/bpmn-moddle.d.ts
+dist/util/moddle-utils.d.ts
+dist/util/moddle-utils.d.ts.map
+dist/util/moddle-utils.js
+dist/util/moddle-utils.js.map
+LICENSE
+package.json
+README.md
+Tarball Details
+/private/var/folders/47/jtpz279529q04_3hhr6t7ptr0000gn/T/flowduet-appearance-108-DIZO1Z/packs/flowduet-core-0.4.0.tgz
+
+$ pnpm --filter @flowduet/designer pack --pack-destination /private/var/folders/47/jtpz279529q04_3hhr6t7ptr0000gn/T/flowduet-appearance-108-DIZO1Z/packs
+📦  @flowduet/designer@0.2.0
+Tarball Contents
+dist/appearance-style.d.ts
+dist/appearance.d.ts
+dist/canvas-props.d.ts
+dist/components/BlockNodeList.vue.d.ts
+dist/components/BpmnCanvas.vue.d.ts
+dist/components/BpmnEdge.vue.d.ts
+dist/components/BpmnNode.vue.d.ts
+dist/components/DingtalkDesigner.vue.d.ts
+dist/components/NodeCard.vue.d.ts
+dist/components/NodeDrawer.vue.d.ts
+dist/components/NodePropertyFields.vue.d.ts
+dist/designer.css
+dist/export.d.ts
+dist/form-options.d.ts
+dist/geometry.d.ts
+dist/index.d.ts
+dist/index.js
+dist/operations.d.ts
+dist/property-editing.d.ts
+LICENSE
+package.json
+README.md
+Tarball Details
+/private/var/folders/47/jtpz279529q04_3hhr6t7ptr0000gn/T/flowduet-appearance-108-DIZO1Z/packs/flowduet-designer-0.2.0.tgz
+
+$ pnpm --filter @flowduet/form-create pack --pack-destination /private/var/folders/47/jtpz279529q04_3hhr6t7ptr0000gn/T/flowduet-appearance-108-DIZO1Z/packs
+📦  @flowduet/form-create@0.2.0
+Tarball Contents
+dist/binding.d.ts
+dist/components/checkbox-defaults.d.ts
+dist/components/date-popper-style.d.ts
+dist/components/DateDefaultEditor.vue.d.ts
+dist/components/designer-config.d.ts
+dist/components/designer-host-events.d.ts
+dist/components/editor-input-state.d.ts
+dist/components/form-preview-instance.d.ts
+dist/components/FormDesigner.vue.d.ts
+dist/components/FormManager.vue.d.ts
+dist/components/FormPreview.vue.d.ts
+dist/components/NumberDefaultEditor.vue.d.ts
+dist/components/select-popper-style.d.ts
+dist/components/text-defaults.d.ts
+dist/components/TextDefaultEditor.vue.d.ts
+dist/document.d.ts
+dist/editor-state.d.ts
+dist/element-label.d.ts
+dist/export.d.ts
+dist/form-create-setup.d.ts
+dist/form-create.css
+dist/form-schema.d.ts
+dist/form-semantics.d.ts
+dist/index.d.ts
+dist/index.js
+dist/session.d.ts
+LICENSE
+package.json
+README.md
+Tarball Details
+/private/var/folders/47/jtpz279529q04_3hhr6t7ptr0000gn/T/flowduet-appearance-108-DIZO1Z/packs/flowduet-form-create-0.2.0.tgz
+
+$ npm install --registry=https://registry.npmmirror.com --no-audit --no-fund /private/var/folders/47/jtpz279529q04_3hhr6t7ptr0000gn/T/flowduet-appearance-108-DIZO1Z/packs/flowduet-core-0.4.0.tgz /private/var/folders/47/jtpz279529q04_3hhr6t7ptr0000gn/T/flowduet-appearance-108-DIZO1Z/packs/flowduet-designer-0.2.0.tgz /private/var/folders/47/jtpz279529q04_3hhr6t7ptr0000gn/T/flowduet-appearance-108-DIZO1Z/packs/flowduet-form-create-0.2.0.tgz
+npm warn deprecated codemirror@6.65.7: This is an accidentally mis-tagged instance of 5.65.7
+
+added 156 packages in 19s
+npm warn allow-scripts 3 packages have install scripts not yet covered by allowScripts:
+npm warn allow-scripts   vue-demi@0.14.10 (postinstall: node -e "try{require('./scripts/postinstall.js')}catch(e){}")
+npm warn allow-scripts   vue-demi@0.14.10 (postinstall: node -e "try{require('./scripts/postinstall.js')}catch(e){}")
+npm warn allow-scripts   core-js-pure@3.51.0 (postinstall: node -e "try{require('./postinstall')}catch(e){}")
+npm warn allow-scripts
+npm warn allow-scripts Run `npm approve-scripts --allow-scripts-pending` to review, or `npm approve-scripts <pkg>` to allow.
+
+$ npm ls --all element-plus @form-create/element-ui @form-create/designer vue
+flowduet-appearance-consumer-check@ /private/var/folders/47/jtpz279529q04_3hhr6t7ptr0000gn/T/flowduet-appearance-108-DIZO1Z/consumer
+├─┬ @flowduet/designer@0.2.0
+│ ├─┬ @vue-flow/core@1.48.2
+│ │ ├─┬ @vueuse/core@10.11.1
+│ │ │ ├─┬ @vueuse/shared@10.11.1
+│ │ │ │ └─┬ vue-demi@0.14.10
+│ │ │ │   └── vue@3.5.43 deduped
+│ │ │ └─┬ vue-demi@0.14.10
+│ │ │   └── vue@3.5.43 deduped
+│ │ └── vue@3.5.43 deduped
+│ ├── element-plus@2.14.6 deduped
+│ └── vue@3.5.43 deduped
+├─┬ @flowduet/form-create@0.2.0
+│ ├─┬ @form-create/designer@3.5.0
+│ │ ├─┬ @form-create/component-wangeditor@3.3.0
+│ │ │ └── vue@3.5.43 deduped
+│ │ ├── @form-create/element-ui@3.3.4 deduped
+│ │ ├── element-plus@2.14.6 deduped
+│ │ ├── vue@3.5.43 deduped
+│ │ └─┬ vuedraggable@4.1.0
+│ │   └── vue@3.5.43 deduped
+│ ├─┬ @form-create/element-ui@3.3.4
+│ │ ├─┬ @form-create/component-elm-checkbox@3.3.0
+│ │ │ └── vue@3.5.43 deduped
+│ │ ├─┬ @form-create/component-elm-frame@3.3.6
+│ │ │ └── vue@3.5.43 deduped
+│ │ ├─┬ @form-create/component-elm-group@3.3.6
+│ │ │ └── vue@3.5.43 deduped
+│ │ ├─┬ @form-create/component-elm-radio@3.3.0
+│ │ │ └── vue@3.5.43 deduped
+│ │ ├─┬ @form-create/component-elm-select@3.3.0
+│ │ │ └── vue@3.5.43 deduped
+│ │ ├─┬ @form-create/component-elm-tree@3.3.6
+│ │ │ └── vue@3.5.43 deduped
+│ │ ├─┬ @form-create/component-elm-upload@3.3.0
+│ │ │ └── vue@3.5.43 deduped
+│ │ ├─┬ @form-create/component-subform@3.3.0
+│ │ │ └── vue@3.5.43 deduped
+│ │ ├─┬ @form-create/core@3.3.6
+│ │ │ └── vue@3.5.43 deduped
+│ │ └── vue@3.5.43 deduped
+│ ├── element-plus@2.14.6 deduped
+│ └── vue@3.5.43 deduped
+├─┬ @vitejs/plugin-vue@6.0.9
+│ └── vue@3.5.43 deduped
+├─┬ element-plus@2.14.6
+│ ├─┬ @element-plus/icons-vue@2.3.2
+│ │ └── vue@3.5.43 deduped
+│ ├─┬ @vueuse/core@15.0.0
+│ │ ├─┬ @vueuse/shared@15.0.0
+│ │ │ └── vue@3.5.43 deduped
+│ │ └── vue@3.5.43 deduped
+│ └── vue@3.5.43 deduped
+└── vue@3.5.43
+
+
+$ npm run typecheck
+
+> typecheck
+> tsc -p tsconfig.json
+
+
+$ npm run build
+
+> build
+> vite build
+
+vite v8.3.0 building client environment for production...
+transforming...
+✓ 1615 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                     0.52 kB │ gzip:   0.36 kB
+dist/assets/index-D33N5opv.css    402.54 kB │ gzip:  55.47 kB
+dist/assets/index-DrfFfhD0.js   2,414.72 kB │ gzip: 754.35 kB
+
+[plugin builtin:vite-reporter] 
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 793ms
+
+{
+  "result": "静态安装包消费检查通过；浏览器渲染尚待单独验证",
+  "temporaryRoot": "/private/var/folders/47/jtpz279529q04_3hhr6t7ptr0000gn/T/flowduet-appearance-108-DIZO1Z",
+  "consumerDir": "/private/var/folders/47/jtpz279529q04_3hhr6t7ptr0000gn/T/flowduet-appearance-108-DIZO1Z/consumer",
+  "elementPlus": "2.14.6",
+  "elementPlusCopies": 1,
+  "renderer": "3.3.4",
+  "vue": "3.5.43",
+  "next": "cd /private/var/folders/47/jtpz279529q04_3hhr6t7ptr0000gn/T/flowduet-appearance-108-DIZO1Z/consumer && npm run preview -- --port 4174"
+}

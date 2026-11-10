@@ -1,0 +1,74 @@
+[
+  {
+    "name": "approval-all-multi.bpmn",
+    "path": "/tmp/flowduet-release-prep.JE4FOq/structure-ui-final/approval-all-multi.bpmn",
+    "sha256": "868ae4938e31a00509048600502615595c3b0edbd6feb8fbe2aead7b26b1b8b6",
+    "bytes": 5428
+  },
+  {
+    "name": "approval-all-reopened-single.bpmn",
+    "path": "/tmp/flowduet-release-prep.JE4FOq/structure-ui-final/approval-all-reopened-single.bpmn",
+    "sha256": "cc4a73226ef59c528f58a097135d761e054202f762f487632acb0a029b5a2cea",
+    "bytes": 5123
+  },
+  {
+    "name": "approval-any-multi.bpmn",
+    "path": "/tmp/flowduet-release-prep.JE4FOq/structure-ui-final/approval-any-multi.bpmn",
+    "sha256": "44d3be7a3e852faf7bd37387a7b18550ebd4e92d77315fe8d88be70296c54b95",
+    "bytes": 5419
+  },
+  {
+    "name": "approval-any-reopened-single.bpmn",
+    "path": "/tmp/flowduet-release-prep.JE4FOq/structure-ui-final/approval-any-reopened-single.bpmn",
+    "sha256": "cc4a73226ef59c528f58a097135d761e054202f762f487632acb0a029b5a2cea",
+    "bytes": 5123
+  },
+  {
+    "name": "approval-sequential-multi.bpmn",
+    "path": "/tmp/flowduet-release-prep.JE4FOq/structure-ui-final/approval-sequential-multi.bpmn",
+    "sha256": "e78b944d0dbdca0bb6598ee0d965f8c2f2d731802cd0e9550e2188380c2092dc",
+    "bytes": 5265
+  },
+  {
+    "name": "approval-sequential-reopened-single.bpmn",
+    "path": "/tmp/flowduet-release-prep.JE4FOq/structure-ui-final/approval-sequential-reopened-single.bpmn",
+    "sha256": "cc4a73226ef59c528f58a097135d761e054202f762f487632acb0a029b5a2cea",
+    "bytes": 5123
+  },
+  {
+    "name": "condition-deleted.bpmn",
+    "path": "/tmp/flowduet-release-prep.JE4FOq/structure-ui-deletions/condition-deleted.bpmn",
+    "sha256": "957b6df16d19ebf926d9e616638c81d0344e311ad7a14d988831407b5b5999b8",
+    "bytes": 4609
+  },
+  {
+    "name": "condition-retarget.bpmn",
+    "path": "/tmp/flowduet-release-prep.JE4FOq/scenarios/condition-retarget.bpmn",
+    "sha256": "e1ca7753c95a94636059534e93ee0b6ed6dde139996ba5c31d3ae1a9bcd772de",
+    "bytes": 4407
+  },
+  {
+    "name": "default-deleted.bpmn",
+    "path": "/tmp/flowduet-release-prep.JE4FOq/structure-ui-deletions/default-deleted.bpmn",
+    "sha256": "6ac977f2b6e31c3eb18ace4532f1efd380d5b620cab2c25dfeaa0ddbfa53556e",
+    "bytes": 4597
+  },
+  {
+    "name": "default-retarget.bpmn",
+    "path": "/tmp/flowduet-release-prep.JE4FOq/scenarios/default-retarget.bpmn",
+    "sha256": "c255aaccc57fd93cb166f1d13b0b6098661aa11184c50cd24d9354f576db353f",
+    "bytes": 4398
+  },
+  {
+    "name": "nested-condition-deleted.bpmn",
+    "path": "/tmp/flowduet-release-prep.JE4FOq/structure-ui-deletions/nested-condition-deleted.bpmn",
+    "sha256": "4344801fdbcb426e9ba60e196c53feb4c55ee5f4ddb366df2318da9bcb2502b9",
+    "bytes": 4651
+  },
+  {
+    "name": "nested-default-deleted.bpmn",
+    "path": "/tmp/flowduet-release-prep.JE4FOq/structure-ui-deletions/nested-default-deleted.bpmn",
+    "sha256": "c6aa54bdb78c1ae537a47d6457e2914269f23f1d27d86515ec71d966f01e4a77",
+    "bytes": 4639
+  }
+]

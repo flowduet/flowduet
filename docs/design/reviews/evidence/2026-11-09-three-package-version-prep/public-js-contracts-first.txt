@@ -1,0 +1,27 @@
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: Values have same structure but are not reference-equal:
+
+{
+  xml: '<?xml version="1.0" encoding="UTF-8"?>\n' +
+    '<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:flowable="http://flowable.org/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="release_condition_defs" targetNamespace="http://flowduet.dev/bpmn"><bpmn:process id="release_condition" isExecutable="true"><bpmn:startEvent id="s"><bpmn:outgoing>sf</bpmn:outgoing></bpmn:startEvent><bpmn:exclusiveGateway id="fork" default="fb"><bpmn:incoming>sf</bpmn:incoming><bpmn:outgoing>fa</bpmn:outgoing><bpmn:outgoing>fb</bpmn:outgoing></bpmn:exclusiveGateway><bpmn:userTask id="tail" name="后续审批" flowable:assignee="bob"><bpmn:incoming>fa</bpmn:incoming><bpmn:outgoing>tj</bpmn:outgoing></bpmn:userTask><bpmn:userTask id="b" name="另一支路" flowable:assignee="carol"><bpmn:incoming>fb</bpmn:incoming><bpmn:outgoing>bj</bpmn:outgoing></bpmn:userTask><bpmn:exclusiveGateway id="join"><bpmn:incoming>tj</bpmn:incoming><bpmn:incoming>bj</bpmn:incoming><bpmn:outgoing>je</bpmn:outgoing></bpmn:exclusiveGateway><bpmn:endEvent id="e"><bpmn:incoming>je</bpmn:incoming></bpmn:endEvent><bpmn:sequenceFlow id="sf" sourceRef="s" targetRef="fork" /><bpmn:sequenceFlow id="fa" name="保留支路" sourceRef="fork" targetRef="tail"><bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${amount &gt; 100}</bpmn:conditionExpression></bpmn:sequenceFlow><bpmn:sequenceFlow id="tj" sourceRef="tail" targetRef="join" /><bpmn:sequenceFlow id="fb" sourceRef="fork" targetRef="b" /><bpmn:sequenceFlow id="bj" sourceRef="b" targetRef="join" /><bpmn:sequenceFlow id="je" sourceRef="join" targetRef="e" /></bpmn:process></bpmn:definitions>'
+}
+
+    at file:///private/var/folders/47/jtpz279529q04_3hhr6t7ptr0000gn/T/flowduet-appearance-108-DIZO1Z/consumer/release-contracts.mjs:16:93 {
+  generatedMessage: true,
+  code: 'ERR_ASSERTION',
+  actual: {
+    xml: '<?xml version="1.0" encoding="UTF-8"?>\n' +
+      '<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:flowable="http://flowable.org/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="release_condition_defs" targetNamespace="http://flowduet.dev/bpmn"><bpmn:process id="release_condition" isExecutable="true"><bpmn:startEvent id="s"><bpmn:outgoing>sf</bpmn:outgoing></bpmn:startEvent><bpmn:exclusiveGateway id="fork" default="fb"><bpmn:incoming>sf</bpmn:incoming><bpmn:outgoing>fa</bpmn:outgoing><bpmn:outgoing>fb</bpmn:outgoing></bpmn:exclusiveGateway><bpmn:userTask id="tail" name="后续审批" flowable:assignee="bob"><bpmn:incoming>fa</bpmn:incoming><bpmn:outgoing>tj</bpmn:outgoing></bpmn:userTask><bpmn:userTask id="b" name="另一支路" flowable:assignee="carol"><bpmn:incoming>fb</bpmn:incoming><bpmn:outgoing>bj</bpmn:outgoing></bpmn:userTask><bpmn:exclusiveGateway id="join"><bpmn:incoming>tj</bpmn:incoming><bpmn:incoming>bj</bpmn:incoming><bpmn:outgoing>je</bpmn:outgoing></bpmn:exclusiveGateway><bpmn:endEvent id="e"><bpmn:incoming>je</bpmn:incoming></bpmn:endEvent><bpmn:sequenceFlow id="sf" sourceRef="s" targetRef="fork" /><bpmn:sequenceFlow id="fa" name="保留支路" sourceRef="fork" targetRef="tail"><bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${amount &gt; 100}</bpmn:conditionExpression></bpmn:sequenceFlow><bpmn:sequenceFlow id="tj" sourceRef="tail" targetRef="join" /><bpmn:sequenceFlow id="fb" sourceRef="fork" targetRef="b" /><bpmn:sequenceFlow id="bj" sourceRef="b" targetRef="join" /><bpmn:sequenceFlow id="je" sourceRef="join" targetRef="e" /></bpmn:process></bpmn:definitions>'
+  },
+  expected: {
+    xml: '<?xml version="1.0" encoding="UTF-8"?>\n' +
+      '<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:flowable="http://flowable.org/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="release_condition_defs" targetNamespace="http://flowduet.dev/bpmn"><bpmn:process id="release_condition" isExecutable="true"><bpmn:startEvent id="s"><bpmn:outgoing>sf</bpmn:outgoing></bpmn:startEvent><bpmn:exclusiveGateway id="fork" default="fb"><bpmn:incoming>sf</bpmn:incoming><bpmn:outgoing>fa</bpmn:outgoing><bpmn:outgoing>fb</bpmn:outgoing></bpmn:exclusiveGateway><bpmn:userTask id="tail" name="后续审批" flowable:assignee="bob"><bpmn:incoming>fa</bpmn:incoming><bpmn:outgoing>tj</bpmn:outgoing></bpmn:userTask><bpmn:userTask id="b" name="另一支路" flowable:assignee="carol"><bpmn:incoming>fb</bpmn:incoming><bpmn:outgoing>bj</bpmn:outgoing></bpmn:userTask><bpmn:exclusiveGateway id="join"><bpmn:incoming>tj</bpmn:incoming><bpmn:incoming>bj</bpmn:incoming><bpmn:outgoing>je</bpmn:outgoing></bpmn:exclusiveGateway><bpmn:endEvent id="e"><bpmn:incoming>je</bpmn:incoming></bpmn:endEvent><bpmn:sequenceFlow id="sf" sourceRef="s" targetRef="fork" /><bpmn:sequenceFlow id="fa" name="保留支路" sourceRef="fork" targetRef="tail"><bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${amount &gt; 100}</bpmn:conditionExpression></bpmn:sequenceFlow><bpmn:sequenceFlow id="tj" sourceRef="tail" targetRef="join" /><bpmn:sequenceFlow id="fb" sourceRef="fork" targetRef="b" /><bpmn:sequenceFlow id="bj" sourceRef="b" targetRef="join" /><bpmn:sequenceFlow id="je" sourceRef="join" targetRef="e" /></bpmn:process></bpmn:definitions>'
+  },
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v24.18.0
