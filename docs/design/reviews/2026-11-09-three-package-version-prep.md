@@ -1,8 +1,8 @@
 # 三包版本准备与版本化产物验证
 
-日期：2026-11-09。关联 [#120](https://github.com/flowduet/flowduet/issues/120)，承接 [#117 范围报告](https://github.com/flowduet/flowduet/issues/117#issuecomment-6736018847)。施工分支 `release/three-packages-20261109`，固定起点为 `develop@a17af75406571478c0ffc86d88033c048590ef95`。
+版本准备日期：2026-11-09；引擎补验日期：2026-11-10。关联 [#120](https://github.com/flowduet/flowduet/issues/120)，承接 [#117 范围报告](https://github.com/flowduet/flowduet/issues/117#issuecomment-6736018847)。施工分支 `release/three-packages-20261109`，固定起点为 `develop@a17af75406571478c0ffc86d88033c048590ef95`。
 
-版本候选为 core 0.4.0、designer/form-create 0.2.0；本页记录本地版本准备，不表示已合并、npm 已发布或 tag 已推送。风险为高，涉及公开包兼容性与发版规划。日期布局的一项原始反例已由用户明确接受，仍作为限制；其他失败不继承该豁免。引擎验证正等待本轮单独授权，不能据构建/测试或旧 CI 宣称部署门槛通过。
+版本候选为 core 0.4.0、designer/form-create 0.2.0；本页记录本地版本准备，不表示已合并、npm 已发布或 tag 已推送。风险为高，涉及公开包兼容性与发版规划。日期布局的一项原始反例已由用户明确接受，仍作为限制；其他失败不继承该豁免。2026-11-10 获用户单独授权后，本地 Flowable 6.8 验证已通过；其证据与执行范围在本页末段分列，不以构建/测试或旧 CI 替代。
 
 ## 已确认范围与前置修复
 
@@ -83,7 +83,24 @@ Chromium 156.0.8078.4，公开场景和实际版本化三包消费者分别执�
 
 ## 引擎验证、审查与交付状态
 
-引擎执行计划已固定 12 份 XML 的哈希与 10 份唯一内容，Docker Desktop 本地 context 可用，国内镜像渠道连通性预检成功，但 Flowable 6.8 镜像未缓存。当前等待用户对本地验证的单独授权；没有运行 `pnpm smoke` 或真实引擎部署。计划明确现有 smoke 包含基准实例/任务运行时断言，候选批次只部署注册，不将其冒称业务执行验收。
+原引擎计划在 2026-11-09 固定十二份 XML、十种唯一内容后停在独立授权处。2026-11-10，用户在问题卡片明确选择“授权按计划进行本地验证”，本轮据此执行，没有将先前等待状态改写为当时已通过。
+
+验证针对本地候选提交 `57da235412b7a107d3ac11d5b2f4fc888e9f22a2`。执行前工作区干净，十二份 XML 哈希全部匹配，Docker context 固定 `desktop-linux` 且端点为本地 Unix socket，18080/18081 可用；现有 registry mirror 小规模连通预检为 HTTP 200。沿用镜像配置运行一次 pull，退出 0；该结果不单独证明实际传输命中了哪一个 mirror，未修改 Docker 配置。
+
+| 引擎检查       | 本轮实际结果                                                                                                                                                               |
+| -------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 镜像及引擎身份 | `flowable/flowable-ui:6.8.0`，amd64；镜像/RepoDigest 均读回 `sha256:8ceeaed674582051590c6a7d23533c4920bda70bbe86e7ca09ad0fa68714fed3`，候选引擎管理 API 返回 version 6.8.0 |
+| `pnpm smoke`   | 退出 0；十份基准部署并注册，既有单人 assignee、多实例会签/或签/依次、默认表单及覆盖 formKey 的实例/任务断言通过；这是基准运行时证据                                        |
+| 候选 XML       | 十二份文件映射至十种唯一内容，各执行一次部署，均 HTTP 201；逐项查询确认 process key 与此次 deploymentId 对应的流程定义已注册。没有以同 key 的旧版本定义充当本次注册        |
+| 清理           | 基准脚本自身清理成功，候选容器 stop 退出 0；末次检查两类任务前缀容器均为空，18080/18081 已释放。保留镜像缓存，未操作其他现有容器                                           |
+
+[授权与前检](evidence/2026-11-09-three-package-version-prep/engine-20261110/engine-preflight-20261110.json)、[基准日志](evidence/2026-11-09-three-package-version-prep/engine-20261110/baseline-smoke.txt)、[候选部署/定义注册逐项记录](evidence/2026-11-09-three-package-version-prep/engine-20261110/result.json)、[末次清理/哈希复核](evidence/2026-11-09-three-package-version-prep/engine-20261110/engine-final-check-20261110.json)均已归档。服务日志另提供标注的删去凭据关键词行副本及原始哈希，不把该副本称为未改写原物。
+
+候选批次只验证部署/解析及定义注册，未额外启动这十二份场景的业务流程实例；不能把基准运行时断言推广为每个候选场景完整业务执行通过。未涉及生产引擎、真实用户数据、npm 发布或 Git tag。此前接受的日期布局风险、原生 OS IME 与其他浏览器等限制仍保持。
+
+本次新增的是引擎证据与状态说明，产品源码、版本、依赖、配置及既有产物输入均与上述已验证候选提交相同。第 3 轮仅审查该增量及其交互：Standards 重要 0／细节 0／既有风险 1，Spec 同为 0／0／1；引擎证据专项重要 0／细节 0／既有引擎证据缺陷 0，发布层面已接受的单项布局风险仍保持。
+
+审查固定 12 文件完整增量 SHA-256 `9b1c668ae275bd3c9fdfc0bd50d047001d41331a08234652abab276ace2aff46`，[补丁](evidence/2026-11-09-three-package-version-prep/engine-20261110/review-v3.patch.gz)、[清单](evidence/2026-11-09-three-package-version-prep/engine-20261110/review-v3-manifest.json)及[结论](evidence/2026-11-09-three-package-version-prep/engine-20261110/review-v3-results.json)已保存。三位审查者核对快照和原物，专项另只读查询镜像、容器及端口；没有重新创建容器或冒称独立重跑部署。审查后只追加结论元数据，不改变执行器、XML、结果、产品或配置。
 
 两轮独立审查已完成，R1/R2 关闭；当前没有未关闭的重要实现/本地验证发现。Node 22/24 对本版本候选的远端 CI 尚未运行，需版本 PR 获批创建后触发。推送、版本 PR、合并、实际 npm 发布及原生包名 tag 均按各自阶段授权；本页不提前宣布发版完成。
 

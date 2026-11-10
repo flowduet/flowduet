@@ -1,0 +1,16 @@
+{
+  "checkedAt": "2026-11-10T09:01:19.330593+08:00",
+  "candidateCommit": "57da235412b7a107d3ac11d5b2f4fc888e9f22a2",
+  "workingTreeClean": true,
+  "engineVersion": "6.8.0",
+  "baselineExit": 0,
+  "candidateFiles": 12,
+  "uniqueRegistered": 10,
+  "allManifestHashesMatch": true,
+  "candidateCleanupExit": 0,
+  "taskPrefixContainersRemaining": [],
+  "portsReleased": [
+    18080,
+    18081
+  ]
+}

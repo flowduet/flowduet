@@ -1,0 +1,9 @@
+{
+  "originalSha256": "64dd933042987cab40733b80fffad22ff1c088ba14e8123c4815a6c740b80381",
+  "originalBytes": 57622,
+  "redactedLineNumbers": [
+    274
+  ],
+  "publishedFile": "candidate-container-log.redacted.txt",
+  "note": "服务原始日志仍保留于本机临时目录；提交的是明确标注的删去凭据关键词行副本，不将其称为未改写原物。"
+}
