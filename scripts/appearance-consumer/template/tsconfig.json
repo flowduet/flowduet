@@ -11,5 +11,5 @@
     "noEmit": true,
     "types": ["vite/client"]
   },
-  "include": ["src/main.ts", "src/env.d.ts"]
+  "include": ["src/main.ts", "src/env.d.ts", "src/release-contracts.ts"]
 }

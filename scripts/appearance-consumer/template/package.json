@@ -6,7 +6,7 @@
     "dev": "vite --host 127.0.0.1",
     "build": "vite build",
     "preview": "vite preview --host 127.0.0.1",
-    "typecheck": "tsc -p tsconfig.json"
+    "typecheck": "node verify-types.mjs"
   },
   "dependencies": {
     "element-plus": "2.14.6",
