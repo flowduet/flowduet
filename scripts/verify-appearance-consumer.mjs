@@ -4,6 +4,7 @@ import { cp, mkdir, mkdtemp, readFile, readdir, realpath, writeFile } from "node
 import { tmpdir } from "node:os";
 import { basename, dirname, join } from "node:path";
 import { fileURLToPath, URL } from "node:url";
+import { buildArtifacts } from "./appearance-consumer/artifacts.mjs";
 
 const repoRoot = fileURLToPath(new URL("../", import.meta.url));
 const templateDir = join(repoRoot, "scripts", "appearance-consumer", "template");
@@ -157,6 +158,8 @@ const vue = await readJson(join(consumerDir, "node_modules", "vue", "package.jso
 
 await run("npm", ["run", "typecheck"], consumerDir);
 await run("npm", ["run", "build"], consumerDir);
+const typeCoverage = await readJson(join(consumerDir, "type-verification.json"));
+if (!typeCoverage.passed) throw new Error("公开类型合同缺少实际编译覆盖");
 
 const report = {
   generatedAt: new Date().toISOString(),
@@ -166,6 +169,8 @@ const report = {
   registry,
   temporaryRoot,
   consumerDir,
+  typeCoverage,
+  buildArtifacts: await buildArtifacts(join(consumerDir, "dist")),
   tarballs: tarballs.map(({ path, ...tarball }) => ({ ...tarball, path })),
   dependencies: {
     elementPlus: elementPlus.version,
