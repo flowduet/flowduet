@@ -1,0 +1,159 @@
+/* global window, document */
+// 临时消费者自己的控制层；不向产品包添加测试 API。
+import { createApp, h, shallowRef, nextTick } from "vue";
+import { BpmnModel, flowableAdapter } from "@flowduet/core";
+import { DingtalkDesigner } from "@flowduet/designer";
+import { FormDesigner, FormManager } from "@flowduet/form-create";
+import "element-plus/dist/index.css";
+import "@flowduet/designer/style.css";
+import "@flowduet/form-create/style.css";
+const model = BpmnModel.create({ processId: "external_consumer", adapter: flowableAdapter })
+  .addStartEvent({ id: "s" })
+  .addUserTask({ id: "a", name: "初审", assignee: "alice" })
+  .addUserTask({ id: "b", name: "复核", assignee: "bob" })
+  .addEndEvent({ id: "e" })
+  .addSequenceFlow({ id: "sa", sourceRef: "s", targetRef: "a" })
+  .addSequenceFlow({ id: "ab", sourceRef: "a", targetRef: "b" })
+  .addSequenceFlow({ id: "be", sourceRef: "b", targetRef: "e" });
+const numericRules = JSON.stringify([
+  { type: "inputNumber", field: "amount", title: "金额", value: 1 },
+]);
+const record = {
+  selections: [],
+  operations: [],
+  changes: 0,
+  reentrant: [],
+  capture: null,
+  managerUpdates: [],
+  managerCommit: null,
+  focus: null,
+  externalCollect: null,
+};
+const Harness = {
+  setup() {
+    const ext = shallowRef(null),
+      editor = shallowRef(null),
+      manager = shallowRef(null),
+      selected = shallowRef("a"),
+      probeMode = shallowRef("retained"),
+      managerMode = shallowRef("retained"),
+      managerKey = shallowRef(0);
+    const forms = shallowRef([
+      {
+        id: "form_manager",
+        name: "会话表单",
+        provider: "form-create/element-plus",
+        rules: numericRules,
+        options: "{}",
+      },
+    ]);
+    let armed = false;
+    window.contractHarness = {
+      read: () => ({
+        ...record,
+        selected: selected.value,
+        actualSelected: ext.value?.actualSelectedId,
+        editorState: editor.value?.readEditingState(),
+        managerState: manager.value?.readEditingState(),
+        managerOpen: manager.value?.hasOpenEditor(),
+      }),
+      xml: async () => (await model.toXML()).xml,
+      applySelection: async () => {
+        selected.value = record.selections.at(-1).id;
+        await nextTick();
+        record.focus = await ext.value.focusElement(selected.value);
+      },
+      collectExternal: () => {
+        record.externalCollect = ext.value.commitPendingChanges();
+      },
+      arm: () => {
+        record.reentrant = [];
+        armed = true;
+      },
+      disarm: () => {
+        armed = false;
+      },
+      capture: () => {
+        record.capture = editor.value.captureContent();
+        return record.capture;
+      },
+      switchEditorMode: async () => {
+        probeMode.value = "legacy";
+        await nextTick();
+      },
+      managerCommit: () => {
+        record.managerCommit = manager.value.commitPendingEdit();
+        return record.managerCommit;
+      },
+      managerReopen: async () => {
+        await nextTick();
+        document.querySelector('[data-test="form-edit-btn-form_manager"]').click();
+        await nextTick();
+      },
+      managerSwitchMode: async () => {
+        managerMode.value = managerMode.value === "legacy" ? "retained" : "legacy";
+        await nextTick();
+      },
+      managerRemountLegacy: async () => {
+        managerKey.value++;
+        managerMode.value = "legacy";
+        await nextTick();
+      },
+    };
+    return () =>
+      h("main", [
+        h("h1", "公开包 external / retained 合同"),
+        h("section", { "data-contract": "external" }, [
+          h("h2", "外置属性编辑"),
+          h(DingtalkDesigner, {
+            ref: ext,
+            model,
+            propertyEditing: "external",
+            selectedId: selected.value,
+            showDefaultForm: false,
+            modelRevision: 7,
+            onSelectionRequest: (r) =>
+              record.selections.push({
+                id: r.id,
+                renderRevision: r.renderRevision,
+                modelMatches: r.model === model,
+              }),
+            onOperationRequest: (r) =>
+              record.operations.push({
+                ...r.operation,
+                renderRevision: r.renderRevision,
+                modelMatches: r.model === model,
+              }),
+            onChange: () => record.changes++,
+          }),
+        ]),
+        h("section", { "data-contract": "probe" }, [
+          h("h2", "公开同步捕获与字段生命期"),
+          h(FormDesigner, {
+            ref: editor,
+            name: "协议编辑器",
+            rules: numericRules,
+            options: "{}",
+            editingMode: probeMode.value,
+            onDraftChange: () => {
+              if (armed && editor.value) record.reentrant.push(editor.value.captureContent());
+            },
+          }),
+        ]),
+        h("section", { "data-contract": "manager" }, [
+          h("h2", "公开会话保护"),
+          h(FormManager, {
+            key: managerKey.value,
+            ref: manager,
+            forms: forms.value,
+            editingMode: managerMode.value,
+            onUpdateContent: (id, rules, options) => {
+              record.managerUpdates.push({ id, rules, options });
+              forms.value = forms.value.map((f) => (f.id === id ? { ...f, rules, options } : f));
+            },
+          }),
+        ]),
+      ]);
+  },
+};
+createApp(Harness).mount("#app");

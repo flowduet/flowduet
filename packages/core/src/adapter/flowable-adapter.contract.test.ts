@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { assertAdapterContract } from "./adapter-contract";
-import { flowableAdapter } from "./flowable-adapter";
-import { BpmnModel } from "../model/bpmn-model";
-import { compile } from "../compile/compiler";
-import { parse } from "../parse/parser";
+import { assertAdapterContract } from "./adapter-contract.js";
+import { flowableAdapter } from "./flowable-adapter.js";
+import { BpmnModel } from "../model/bpmn-model.js";
+import { compile } from "../compile/compiler.js";
+import { parse } from "../parse/parser.js";
 
 const SHAPE = { x: 160, y: 160, width: 100, height: 80 };
 
@@ -16,7 +16,7 @@ describe("适配器合同（ADR-0005 三收敛点）", () => {
     const broken = {
       ...flowableAdapter,
       taskTypeMapping: { ...flowableAdapter.taskTypeMapping, mail: undefined },
-    } as typeof flowableAdapter;
+    } as unknown as typeof flowableAdapter;
     await expect(assertAdapterContract(broken)).rejects.toThrow("[合同点三]");
   });
 
@@ -53,5 +53,32 @@ describe("适配器合同（ADR-0005 三收敛点）", () => {
     );
     const model = await parse(xml, { adapter: flowableAdapter });
     expect(() => model.addTask("service", { id: "svc", name: "服务", shape: SHAPE })).not.toThrow();
+  });
+
+  it("多实例描述符扩展：collection/elementVariable 以方言前缀序列化（合同点二）", async () => {
+    const xml = await compile(
+      BpmnModel.create({ processId: "contract_mi", adapter: flowableAdapter }).addApprovalTask({
+        id: "counter_sign",
+        collection: "approvers",
+        mode: "all",
+        shape: SHAPE,
+      }),
+    );
+    expect(xml).toContain('flowable:collection="approvers"');
+    expect(xml).toContain('flowable:elementVariable="assignee"');
+    expect(xml).toContain("flowable:assignee=");
+  });
+
+  it("抄送经中立映射落 ServiceTask，ccTo 是扩展属性注入点的首个真实消费者", async () => {
+    const xml = await compile(
+      BpmnModel.create({ processId: "contract_cc", adapter: flowableAdapter }).addTask("cc", {
+        id: "cc_notify",
+        recipients: "张三,李四",
+        shape: SHAPE,
+      }),
+    );
+    expect(xml).toContain('<bpmn:serviceTask id="cc_notify"');
+    expect(xml).toContain('flowable:ccTo="张三,李四"');
+    expect(xml).toContain('flowable:delegateExpression="${flowduetCcTask}"');
   });
 });

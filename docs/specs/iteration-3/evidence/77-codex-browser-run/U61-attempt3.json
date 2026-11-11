@@ -1,0 +1,23 @@
+{
+  "title": "确认文件替换",
+  "source": "A15",
+  "method": "Codex内置浏览器真实UI",
+  "startedUTC": "2026-10-12T10:56:03.611Z",
+  "status": "待诊断",
+  "attempts": [
+    {
+      "status": "失败",
+      "evidence": "U61-attempt1.json"
+    },
+    {
+      "status": "通过",
+      "evidence": "U61-attempt2.json"
+    }
+  ],
+  "error": "Error: Playwright selector deadline exceeded\nlocator.waitFor(visible) timed out for selector [data-test=\"doc-status\"] >> internal:has-text=\"已保存到本地\"i\nLocator diagnostics: {\"kind\":\"no_matches\",\"action\":\"waitFor\",\"locator\":\"[data-test=\\\"doc-status\\\"] >> internal:has-text=\\\"已保存到本地\\\"i\",\"matchCount\":0,\"matches\":[],\"visibleCount\":0,\"truncated\":false}",
+  "completedUTC": "2026-10-12T10:56:08.756Z",
+  "evidence": [
+    "U61.ax.txt",
+    "U61.jpg"
+  ]
+}

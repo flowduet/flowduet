@@ -1,0 +1,6 @@
+ Test Files  2 passed (2)
+      Tests  6 passed (6)
+   Start at  22:46:37
+   Duration  2.90s (import 47%, transform 27%, environment 24%, tests 1%, worker 1%)
+
+ledger: Task 4: complete (commits 48d890e..eb3773b, tests: pnpm --filter @flowduet/playground exec vitest run probes/stage-zero/form-state/drag-boundary.test.ts probes/stage-zero/form-state/retention-policy.test.ts →    Duration  2.90s (import 47%, transform 27%, environment 24%, tests 1%, worker 1%))

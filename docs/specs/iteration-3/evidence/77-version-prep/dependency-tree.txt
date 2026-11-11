@@ -1,0 +1,9 @@
+flowduet-version-consumer@ /private/var/folders/47/jtpz279529q04_3hhr6t7ptr0000gn/T/flowduet77-release-zrfevaqr
+├── @flowduet/core@0.3.0
+├── @flowduet/designer@0.1.0
+├── @flowduet/form-create@0.1.0
+├── element-plus@2.14.7
+├── typescript@5.9.3
+├── vite@8.3.0
+└── vue@3.5.43
+

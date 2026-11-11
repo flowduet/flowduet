@@ -1,0 +1,6 @@
+### Result
+{"message":"已确认选中 fa 的实际配置抽屉（内部DOM桥接）","state":{"documentEpoch":1,"view":"edit","node":{"documentEpoch":1,"kind":"node","id":"approval_1","lifetime":3},"branch":{"documentEpoch":1,"kind":"flow","id":"fa","lifetime":9},"nodeAlive":true,"branchAlive":true,"branchBuffer":{"input":{"condition":"${amount > 200}"},"conflict":false},"nodeBuffer":{"input":{"name":"未应用节点名"},"conflict":true},"headTarget":"approval_1","branchOrder":["fa","fb"],"defaultFormKey":"form_1"},"drawer":{"name":"金额分支","condition":"${amount > 100}"}}
+### Ran Playwright code
+```js
+await (async (page) => { const root=page.locator("[data-location-case=chain]"); return {message:await root.locator("[data-test=location-result]").textContent(),state:JSON.parse(await root.locator("[data-test=location-state]").textContent()),drawer:{name:await root.locator(".el-drawer.open [data-test=drawer-name]").inputValue(),condition:await root.locator(".el-drawer.open [data-test=drawer-condition]").inputValue()}}; })(page);
+```

@@ -1,0 +1,82 @@
+{
+  "base": "9a0d6bd542178e2d405279eae7c13d7f076ed024",
+  "source": "fcd715408579979240b8543cfbcab844c451436d",
+  "files": [
+    {
+      "path": ".changeset/b03-retained-text-defaults.md",
+      "sha256": "ee0a9ec75d021e9b255fc5a70e2aaec99e3d32562eeb1ea461b0be7602dfd713"
+    },
+    {
+      "path": "apps/playground/probes/stage-zero/form-repair/FormRepairProbe.vue",
+      "sha256": "e5c35642c01f6757b37e41dda9c4b981c93afcdc9439772bcf5a92ce963dcd9c"
+    },
+    {
+      "path": "eslint.config.mjs",
+      "sha256": "5e8f57c198b6f620fe71f68a754c43693182caa6c36d3027c321b585e4905e4d"
+    },
+    {
+      "path": "packages/form-create/src/components.test.ts",
+      "sha256": "a528cc8d5ea0302286a89df6eba51b6d3159726166a7cff0a2ab79841e638776"
+    },
+    {
+      "path": "packages/form-create/src/components/FormDesigner.vue",
+      "sha256": "09e683cab21c7c366acb0cd18e375048701d1e9f070a6440d10e34c3e89c42e5"
+    },
+    {
+      "path": "packages/form-create/src/components/TextDefaultEditor.vue",
+      "sha256": "4a24757d60d62c5164ef88b53765455c9e479ffd71fa88ecfb5788ad7a16c545"
+    },
+    {
+      "path": "packages/form-create/src/components/__tests__/component-test-fixture.ts",
+      "sha256": "6184ce50ef04e2b798d31265e277e27d059919a0ccd5564873269b5f461cd6e5"
+    },
+    {
+      "path": "packages/form-create/src/components/__tests__/component-test-fixture.typecheck.ts",
+      "sha256": "2fec42b0b2ba5df1716f7172c604c3d5f98ec421f08a066f3d191a3055de2d70"
+    },
+    {
+      "path": "packages/form-create/src/components/component-test-fixture.test.ts",
+      "sha256": "bdf20faa1272bf20fc41cd197ad1dd2012a911f649c960b332cbd503e2ecbf8f"
+    },
+    {
+      "path": "packages/form-create/src/components/designer-config.ts",
+      "sha256": "d58dd02d36ba48f0ef360e87f134c35a31ef0a5b85f7ebf8da8d0bfac75253ff"
+    },
+    {
+      "path": "packages/form-create/src/components/editor-input-state.ts",
+      "sha256": "950550ba894dd356d60f8f4366ba33a69624bf4481d374d1794920c6b07da534"
+    },
+    {
+      "path": "packages/form-create/src/components/retained-inputs.test.ts",
+      "sha256": "4b914b63748e4df002b54c124a870cd19b97b17d631dcafa14065589e10c929c"
+    },
+    {
+      "path": "packages/form-create/src/components/retained-manager.test.ts",
+      "sha256": "512a5e9076181c24307107b2716fc4159029447595b48d363e0fb5a9d53630a2"
+    },
+    {
+      "path": "packages/form-create/src/components/text-defaults.test.ts",
+      "sha256": "95a7ce84e1b2ed03ed4244b82cf4ed928221963132cdfe0def60154b69350988"
+    },
+    {
+      "path": "packages/form-create/src/components/text-defaults.ts",
+      "sha256": "4a89b4cc3a4f2d08e2823b3a87dde7abd02b59b699c4714bf09b4162bad43562"
+    },
+    {
+      "path": "packages/form-create/src/components/text-lifetime.test.ts",
+      "sha256": "28c26acf337c7e6f94d68aefa9b223050ae97e6834b750f9d5da6b5b39a72bbc"
+    },
+    {
+      "path": "packages/form-create/tsconfig.build.json",
+      "sha256": "bc965ab5b30b576c143f698f439a7219548383c9707221fcfb3295c4b7dc2b06"
+    },
+    {
+      "path": "packages/form-create/tsconfig.test-fixtures.json",
+      "sha256": "f60d7b24fc53fc44120eb411ebb6e168e768977dc55b2f6ac84bfd32b261d9f0"
+    },
+    {
+      "path": "packages/form-create/vitest.config.ts",
+      "sha256": "bbe9d86cf0a7c29b702b3fc96999999d88c29a6800bc4f0f1a9673446ccd66ac"
+    }
+  ]
+}

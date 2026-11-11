@@ -1,0 +1,23 @@
+📦  @flowduet/form-create@0.1.0
+Tarball Contents
+dist/binding.d.ts
+dist/components/checkbox-defaults.d.ts
+dist/components/designer-config.d.ts
+dist/components/FormDesigner.vue.d.ts
+dist/components/FormManager.vue.d.ts
+dist/components/FormPreview.vue.d.ts
+dist/document.d.ts
+dist/element-label.d.ts
+dist/export.d.ts
+dist/form-create-setup.d.ts
+dist/form-create.css
+dist/form-schema.d.ts
+dist/form-semantics.d.ts
+dist/index.d.ts
+dist/index.js
+dist/session.d.ts
+LICENSE
+package.json
+README.md
+Tarball Details
+/Users/l/Documents/projects/flowduet/docs/specs/iteration-3/evidence/77-version-prep/tarballs/flowduet-form-create-0.1.0.tgz

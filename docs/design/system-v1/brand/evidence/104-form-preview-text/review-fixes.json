@@ -1,0 +1,35 @@
+{
+  "browser": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+  "hostSwitch": {
+    "hostPrimary": "#409eff",
+    "hostSurface": "#141414",
+    "derivedPrimary": "#409EFF",
+    "derivedSurface": "#141414",
+    "inlineStyle": "--fd-control-height: 32px; --fd-control-font-size: 14px; --fd-field-gap: 16px; --fd-panel-padding: 24px; --fd-node-padding: 16px; --fd-row-gap: 12px; --fd-canvas: #0A0A0A; --fd-surface: #141414; --fd-inset: #262727; --fd-text: #E5EAF3; --fd-secondary: #CFD3DC; --fd-muted: #8B8E93; --fd-border: #414243; --fd-control-border: #6E7074; --fd-primary: #409EFF; --fd-primary-hover: #3375B9; --fd-primary-pressed: #66B1FF; --fd-on-primary: #FFFFFF; --fd-primary-soft: #1D3753; --fd-primary-ink: #48A1FF; --fd-focus: #409EFF; --fd-danger: #FF9DAE; --fd-danger-soft: #422835; --fd-success: #81D5A6; --fd-warning: #F0C46B; --fd-disabled-text: #8D9095; --fd-disabled-surface: #262727; --fd-font-family: \"Helvetica Neue\", Helvetica, \"PingFang SC\", \"Hiragino Sans GB\", \"Microsoft YaHei\", \"微软雅黑\", Arial, sans-serif; --fd-font-size-base: 14px; --fd-radius: 4px;",
+    "inputValue": "审查修复中文试填",
+    "inputFocused": true
+  },
+  "primary": {
+    "text": "提交",
+    "background": "rgb(165, 187, 255)",
+    "color": "rgb(23, 31, 62)"
+  },
+  "beforeRace": {
+    "surface": "#FFFFFF",
+    "primary": "#409EFF"
+  },
+  "samplingRace": {
+    "className": "form-preview flowduet-appearance flowduet-appearance--host flowduet-appearance--dark flowduet-appearance--comfortable",
+    "hostPrimary": "#7fcfc7",
+    "hostSurface": "#162220",
+    "derivedPrimary": "#7FCFC7",
+    "derivedSurface": "#162220",
+    "inputValue": "审查修复中文试填"
+  },
+  "secondInstanceUnchanged": true,
+  "errors": [],
+  "warnings": [
+    "[FlowDuet] appearance.density 只支持 \"comfortable\" 或 \"compact\"；已整份拒绝本次 appearance 配置。"
+  ],
+  "failures": []
+}

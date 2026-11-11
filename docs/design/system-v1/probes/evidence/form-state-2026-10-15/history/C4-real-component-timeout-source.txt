@@ -1,0 +1,26 @@
+import { it, expect } from "vitest";
+import { mount, flushPromises } from "@vue/test-utils";
+import FormDesigner from "../../../../packages/form-create/src/components/FormDesigner.vue";
+import { equivalentContent } from "./form-state/state-evidence";
+it("真实FormDesigner双实例导出隔离与失败清理（不代表焦点恢复）", async () => {
+  const views: ReturnType<typeof mount>[] = [];
+  try {
+    const a=mount(FormDesigner,{props:{name:"A",rules:"[]",options:'{"formName":"甲"}'},attachTo:document.body});views.push(a);
+    const b=mount(FormDesigner,{props:{name:"B",rules:"[]",options:'{"formName":"乙"}'},attachTo:document.body});views.push(b);
+    await flushPromises();
+    const beforeA=a.vm.exportContent(), beforeB=b.vm.exportContent();
+    expect(beforeA).not.toBeNull();expect(beforeB).not.toBeNull();
+    if(!beforeA||!beforeB)throw Error("真实导出尚未就绪");
+    expect(equivalentContent(beforeA,beforeB)).toBe(false);
+    expect(beforeA.options).toContain("甲");expect(beforeB.options).toContain("乙");
+    const proof=mount(FormDesigner,{props:{name:"A-proof",...beforeA},attachTo:document.body});views.push(proof);await flushPromises();
+    expect(equivalentContent(beforeA,proof.vm.exportContent()!)).toBe(true);
+    // 人为断言异常只验证finally清理，不伪装成第三方自然序列化失败。
+    expect(()=>{throw Error("测试体中断")}).toThrow("测试体中断");
+    expect(equivalentContent(beforeB,b.vm.exportContent()!)).toBe(true);
+  } finally {
+    for(const v of views.reverse())v.unmount();
+    expect(document.querySelectorAll(".form-designer-host")).toHaveLength(0);
+    document.body.innerHTML="";
+  }
+});

@@ -1,11 +1,50 @@
 // @ts-check
 import eslint from "@eslint/js";
 import tseslint from "typescript-eslint";
+import pluginVue from "eslint-plugin-vue";
+import vueParser from "vue-eslint-parser";
 
 export default tseslint.config(
   {
-    ignores: ["**/dist/", "**/coverage/", "npm/flowduet/"],
+    ignores: [
+      "**/dist/",
+      "**/coverage/",
+      "npm/flowduet/",
+      // 验收操作脚本是原始证据快照，不作为工程源码改写。
+      "docs/specs/iteration-3/evidence/77-codex-browser-run/scripts/",
+      // 施工账本和源码快照是资料；维护源码仍放正常工程目录接受规则检查。
+      ".superpowers/sdd/**",
+      // 两份历史脚本保留原字节，只做归档成员与SHA审计。
+      "docs/design/system-v1/probes/evidence/b03-p2-fixture-partition/static-map.cjs",
+      "docs/design/system-v1/probes/evidence/b03-p2-manager-lifecycle-2026-10-19/migrate.mjs",
+    ],
+  },
+  // Node 构建脚本（*.mjs）：console/process 等 Node 全局可用
+  {
+    files: ["**/*.mjs"],
+    languageOptions: {
+      globals: {
+        console: "readonly",
+        process: "readonly",
+      },
+    },
   },
   eslint.configs.recommended,
   ...tseslint.configs.recommended,
+  // Vue SFC：vue 解析器承载模板，script 块复用 TS 解析与 TS 规则；
+  // 模板规则取 essential（避免与 Prettier 的格式判断打架）
+  ...pluginVue.configs["flat/essential"],
+  {
+    files: ["**/*.vue"],
+    languageOptions: {
+      parser: vueParser,
+      parserOptions: { parser: tseslint.parser, sourceType: "module" },
+    },
+  },
+  ...tseslint.configs.recommended
+    .filter((config) => config.rules !== undefined)
+    .map((config) => ({
+      files: ["**/*.vue"],
+      rules: config.rules,
+    })),
 );

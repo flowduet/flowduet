@@ -25,3 +25,6 @@ jobs:
       - run: pnpm lint
       - run: pnpm test
       - run: pnpm build
+      - name: 产物可被 Node 原生 ESM 导入（防 extensionless 回归）
+        run: |
+          node --input-type=module -e "import('./packages/core/dist/index.js').then(m => { if (!m.CORE_VERSION) throw new Error('CORE_VERSION 缺失'); console.log('dist 导入 OK', m.CORE_VERSION); })"

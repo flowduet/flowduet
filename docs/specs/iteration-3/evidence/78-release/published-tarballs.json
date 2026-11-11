@@ -1,0 +1,34 @@
+[
+  {
+    "name": "@flowduet/core",
+    "version": "0.3.0",
+    "sha256Local": "34525e8342615aa99d645c200009121b7b0e1ec9af71e8a6fb8f9626fc3d0cf1",
+    "sha1Local": "fb7ab762a23245fb51f7f5af1813da17b9f1d19a",
+    "registryShasum": "fb7ab762a23245fb51f7f5af1813da17b9f1d19a",
+    "matches77Baseline": true,
+    "gitTag": "@flowduet/core@0.3.0",
+    "tagCommit": "085802a470147b9f7cf322d217f7450fe1c4700e"
+  },
+  {
+    "name": "@flowduet/designer",
+    "version": "0.1.0",
+    "sha256Local": "9b30e38db352f5ee0a7912676501c4759cb0173e0c0e38d04a77aa6a1edefc2e",
+    "sha1Local": "be8d184033d826688a5c67876c595fc5130aa7c7",
+    "registryShasum": "be8d184033d826688a5c67876c595fc5130aa7c7",
+    "matches77Baseline": true,
+    "gitTag": "@flowduet/designer@0.1.0",
+    "tagCommit": "085802a470147b9f7cf322d217f7450fe1c4700e"
+  },
+  {
+    "name": "@flowduet/form-create",
+    "version": "0.1.0",
+    "sha256Local": "b95ea68e2f73ab980353b93a734f7cbf725a1f83506ac0f6aeec44a0a50f7ee2",
+    "sha1Local": "680f81c3f6fa60cc606b9fc75f93cc96f20f22bc",
+    "registryShasum": "680f81c3f6fa60cc606b9fc75f93cc96f20f22bc",
+    "remoteTarballSha256": "b95ea68e2f73ab980353b93a734f7cbf725a1f83506ac0f6aeec44a0a50f7ee2",
+    "matches77Baseline": true,
+    "gitTag": "@flowduet/form-create@0.1.0",
+    "tagCommit": "085802a470147b9f7cf322d217f7450fe1c4700e",
+    "note": "packument 曾现 CDN 404 负缓存，恢复验证见 publish-record.md"
+  }
+]

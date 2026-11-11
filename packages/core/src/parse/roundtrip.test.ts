@@ -1,10 +1,17 @@
 import { describe, expect, it } from "vitest";
 import type { ModdleElement } from "bpmn-moddle";
-import { flowableAdapter } from "../adapter/flowable-adapter";
-import { BpmnModel } from "../model/bpmn-model";
-import { compile } from "../compile/compiler";
-import { parse } from "./parser";
-import { buildMinimalFlow } from "../compile/__fixtures__/minimal-flow";
+import { flowableAdapter } from "../adapter/flowable-adapter.js";
+import { BpmnModel } from "../model/bpmn-model.js";
+import { compile } from "../compile/compiler.js";
+import { parse } from "./parser.js";
+import { buildMinimalFlow } from "../compile/__fixtures__/minimal-flow.js";
+import { buildMiFlow } from "../compile/__fixtures__/mi-flow.js";
+import {
+  buildDefaultBranchFlow,
+  buildParallelFlow,
+} from "../compile/__fixtures__/branching-flows.js";
+import { buildCcFlow } from "../compile/__fixtures__/cc-flow.js";
+import { APPROVAL_MODES } from "../model/bpmn-model.js";
 
 /**
  * 往返保真（ROADMAP Step 1 测试链 2，全项目最高优先级不变量，ADR-0002）：
@@ -181,8 +188,68 @@ describe("往返保真（parse → model → compile 语义等价）", () => {
     expect(task.get("assignee")).toBe("${manager}");
   });
 
+  describe("多实例审批三档", () => {
+    for (const mode of APPROVAL_MODES) {
+      it(`${mode} 档往返逐字一致（loopCharacteristics 与方言属性等价恢复）`, async () => {
+        const { first, second } = await roundTrip(() => buildMiFlow(mode));
+        expect(second).toBe(first);
+      });
+    }
+
+    it("parse 恢复多实例结构与方言属性", async () => {
+      const xml = await compile(buildMiFlow("all"));
+      const model = await parse(xml, { adapter: flowableAdapter });
+      const task = findFlowElement(model, "counter_sign");
+      expect(task.get("assignee")).toBe("${assignee}");
+      const loop = task.get("loopCharacteristics") as ModdleElement;
+      expect(loop.$type).toBe("bpmn:MultiInstanceLoopCharacteristics");
+      expect(loop.get("collection")).toBe("approvers");
+      expect(loop.get("elementVariable")).toBe("assignee");
+      const condition = loop.get("completionCondition") as ModdleElement;
+      expect(condition.get("body")).toBe("${nrOfCompletedInstances == nrOfInstances}");
+    });
+  });
+
+  it("并行分裂-汇合往返逐字一致", async () => {
+    const { first, second } = await roundTrip(buildParallelFlow);
+    expect(second).toBe(first);
+  });
+
+  it("默认流转往返逐字一致：网关 default 引用等价恢复且不产生条件", async () => {
+    const { first, second } = await roundTrip(buildDefaultBranchFlow);
+    expect(second).toBe(first);
+
+    const model = await parse(first, { adapter: flowableAdapter });
+    const gateway = findFlowElement(model, "decision");
+    const defaultFlow = gateway.get("default") as ModdleElement;
+    expect(defaultFlow.get("id")).toBe("flow_rejected");
+    expect(defaultFlow.get("conditionExpression")).toBeUndefined();
+  });
+
+  it("抄送任务往返逐字一致：ccTo 与占位 delegate 引用等价恢复", async () => {
+    const { first, second } = await roundTrip(buildCcFlow);
+    expect(second).toBe(first);
+  });
+
   it("空白 XML 拒绝解析", async () => {
     await expect(parse("   ", { adapter: flowableAdapter })).rejects.toThrow("XML 不能为空白");
+  });
+
+  it("拒绝警告按需启用，默认解析与无警告 XML 的往返合同保持不变", async () => {
+    const xml = await compile(buildMinimalFlow());
+    const damaged = xml.replace(
+      "</bpmn:process>",
+      '<bpmn:userTask id="manager_approval" /></bpmn:process>',
+    );
+
+    const tolerant = await parse(damaged, { adapter: flowableAdapter });
+    expect(await compile(tolerant)).toBe(xml);
+    await expect(
+      parse(damaged, { adapter: flowableAdapter, rejectWarnings: true }),
+    ).rejects.toThrow("duplicate ID <manager_approval>");
+
+    const restored = await parse(xml, { adapter: flowableAdapter, rejectWarnings: true });
+    expect(await compile(restored)).toBe(xml);
   });
 });
 

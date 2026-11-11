@@ -1,0 +1,46 @@
+[
+  {
+    "name": "@flowduet/core",
+    "distTags": {
+      "latest": "0.3.0"
+    },
+    "latestShasum": "fb7ab762a23245fb51f7f5af1813da17b9f1d19a",
+    "latestTarball": "https://registry.npmjs.org/@flowduet/core/-/core-0.3.0.tgz",
+    "dependencies": {
+      "bpmn-moddle": "^10.2.0"
+    },
+    "approvedVersion": "0.3.0",
+    "matchesApproval": true
+  },
+  {
+    "name": "@flowduet/designer",
+    "distTags": {
+      "latest": "0.1.0"
+    },
+    "latestShasum": "be8d184033d826688a5c67876c595fc5130aa7c7",
+    "latestTarball": "https://registry.npmjs.org/@flowduet/designer/-/designer-0.1.0.tgz",
+    "dependencies": {
+      "element-plus": "^2.14.6",
+      "@flowduet/core": "0.3.0",
+      "@vue-flow/core": "^1.48.2"
+    },
+    "approvedVersion": "0.1.0",
+    "matchesApproval": true
+  },
+  {
+    "name": "@flowduet/form-create",
+    "distTags": {
+      "latest": "0.1.0"
+    },
+    "latestShasum": "680f81c3f6fa60cc606b9fc75f93cc96f20f22bc",
+    "latestTarball": "https://registry.npmjs.org/@flowduet/form-create/-/form-create-0.1.0.tgz",
+    "dependencies": {
+      "@flowduet/core": "0.3.0",
+      "@flowduet/designer": "0.1.0",
+      "@form-create/designer": "3.5.0",
+      "@form-create/element-ui": "3.3.4"
+    },
+    "approvedVersion": "0.1.0",
+    "matchesApproval": true
+  }
+]

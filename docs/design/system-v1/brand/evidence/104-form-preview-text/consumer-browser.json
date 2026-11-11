@@ -1,0 +1,28 @@
+{
+  "actual": {
+    "className": "form-preview flowduet-appearance flowduet-appearance--brand flowduet-appearance--dark flowduet-appearance--compact",
+    "primary": "#A5BBFF",
+    "background": "rgb(29, 36, 53)",
+    "textareaBackground": "rgb(29, 36, 53)",
+    "buttonHeight": 24,
+    "primaryBackground": "rgb(165, 187, 255)",
+    "primaryColor": "rgb(23, 31, 62)",
+    "formClass": "el-form el-form--small el-form--label-top form-create"
+  },
+  "resources": [
+    "http://127.0.0.1:4174/@vite/client",
+    "http://127.0.0.1:4174/main.ts",
+    "http://127.0.0.1:4174/node_modules/.vite/deps/vue.js?v=0d068d96",
+    "http://127.0.0.1:4174/node_modules/.vite/deps/@flowduet_designer.js?v=71109aa3",
+    "http://127.0.0.1:4174/node_modules/element-plus/dist/index.css",
+    "http://127.0.0.1:4174/node_modules/@flowduet/form-create/dist/form-create.css",
+    "http://127.0.0.1:4174/node_modules/.vite/deps/@flowduet_form-create.js?v=c641ed4d",
+    "http://127.0.0.1:4174/node_modules/.vite/deps/vue.runtime.esm-bundler-YQ3yIb4w.js?v=0f20586a",
+    "http://127.0.0.1:4174/node_modules/.vite/deps/dist-BmiJLFoB.js?v=0f20586a",
+    "http://127.0.0.1:4174/node_modules/vite/dist/client/env.mjs",
+    "http://127.0.0.1:4174/node_modules/.vite/deps/es-lyvwYrJC.js?v=0f20586a"
+  ],
+  "errors": [],
+  "failures": [],
+  "result": "公开 JS / 严格 TS / CSS / 浏览器渲染通过"
+}

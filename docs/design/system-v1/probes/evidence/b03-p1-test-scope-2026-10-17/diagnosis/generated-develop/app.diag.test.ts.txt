@@ -1,0 +1,2173 @@
+import { vi as diagVi } from "vitest";
+import { AsyncLocalStorage } from 'node:async_hooks';
+import { appendFileSync, mkdirSync } from 'node:fs';
+const diagStore = new AsyncLocalStorage<any>();
+const diagOwners = new WeakMap<object, any>();
+let diagSeq = 0, diagActive: any, diagCleanup = false;
+const diagDir = process.env.DIAG_DIR!; mkdirSync(diagDir,{recursive:true});
+const diagWrite=(record:any)=>appendFileSync(diagDir+'/app.jsonl',JSON.stringify(record)+'\n');
+const diagInitialString = Object.getOwnPropertyDescriptor(Element.prototype,'toString');
+const diagOriginalString = Element.prototype.toString;
+function diagDom(selector:string) {
+ return [...document.querySelectorAll(selector)].slice(0,4).map((el:any)=>({value:el.value??null,connected:el.isConnected,title:el.closest('[role="dialog"]')?.getAttribute('aria-label'),hidden:el.closest('[role="dialog"]')?.getAttribute('aria-hidden')}));
+}
+function diagMark(label:string,extra:any={}) {
+ const owner=diagStore.getStore()??diagActive;if(!owner)return;
+ const entry={label,ms:performance.now()-owner.start,closed:!!owner.closed,active:diagActive?.id,...extra};
+ owner.marks.push(entry);
+ if(owner.closed&&!diagCleanup)diagWrite({kind:'late',owner:owner.id,name:owner.name,...entry});
+}
+function diagReadWrapper():any {
+ const owner=diagStore.getStore();
+ if(owner&&!diagCleanup){const actual=wrapper?diagOwners.get(wrapper):null;if(owner.closed||actual?.id!==owner.id)diagMark('wrapper-owner',{actual:actual?.id??null});}
+ return wrapper;
+}
+function diagQuery<T extends Element=Element>(selector:string):T|null {
+ const el=document.querySelector<T>(selector);
+ if(selector.includes('drawer-'))diagMark('query:'+selector,{nodes:diagDom(selector)});
+ return el;
+}
+const mount=((...args:any[])=>{
+ const start=performance.now();const result=(realMount as any)(...args);const owner=diagStore.getStore();if(owner)diagOwners.set(result,owner);diagMark('mount',{duration:performance.now()-start});return result;
+}) as typeof realMount;
+function diagWrapRegistration(real:any):any { return new Proxy(real,{
+ get(target,prop,receiver){if(prop==='each')return (...table:any[])=>diagWrapRegistration(Reflect.apply(Reflect.get(target,prop),target,table));return Reflect.get(target,prop,receiver);},
+ apply(target,thisArg,args){
+ const index=args.findIndex((arg:any,i:number)=>i>0&&typeof arg==='function');if(index<0)return Reflect.apply(target,thisArg,args);
+ const name=String(args[0]),fn=args[index];args[index]=(...params:any[])=>{
+ const owner={id:process.pid+':'+(++diagSeq),name,start:performance.now(),marks:[],strings:{calls:0,ms:0,chars:0,samples:[]},closed:false};diagActive=owner;
+ const original=diagOriginalString;
+ Object.defineProperty(Element.prototype,'toString',{configurable:true,writable:true,value:function(){
+  const now=performance.now();const value=process.env.DIAG_COMPAT==='1'?Object.prototype.toString.call(this):original.call(this);const duration=performance.now()-now;
+  const o=diagStore.getStore()??diagActive;if(o){o.strings.calls++;o.strings.ms+=duration;o.strings.chars+=value.length;if((duration>5||o.strings.samples.length<2)&&o.strings.samples.length<6)o.strings.samples.push({duration,chars:value.length,tag:this.tagName,stack:new Error().stack?.split('\n').slice(2,7)});}
+  return value;
+ }});
+ return diagStore.run(owner,()=>fn(...params));};
+ return Reflect.apply(target,thisArg,args);
+ }});}
+const it=diagWrapRegistration(realIt) as typeof realIt;
+const afterEach=((fn:any,...args:any[])=> (realAfterEach as any)((...params:any[])=>{
+ const owner=diagActive;diagCleanup=true;const start=performance.now();
+ try{return fn(...params);}finally{
+  if(owner){owner.closed=true;diagWrite({kind:'case',id:owner.id,name:owner.name,ms:performance.now()-owner.start,cleanupMs:performance.now()-start,mocks:{url:diagVi.isMockFunction(URL.createObjectURL),anchor:diagVi.isMockFunction(HTMLAnchorElement.prototype.click)},bodyChildren:document.body.childElementCount,strings:owner.strings,marks:owner.marks});}
+  if(diagInitialString)Object.defineProperty(Element.prototype,'toString',diagInitialString);else Reflect.deleteProperty(Element.prototype,'toString');diagCleanup=false;
+ }
+},...args)) as typeof realAfterEach;
+
+import { afterEach as realAfterEach, describe, expect, it as realIt, vi } from "vitest";
+import { flushPromises, mount as realMount } from "@vue/test-utils";
+import { FlowDesignSession } from "@flowduet/form-create";
+import { flowableAdapter, parse } from "@flowduet/core";
+import App from "/tmp/b03-failures-diagnosis-2026-10-17/refs/56d9e07/apps/playground/src/App.vue";
+let wrapper: ReturnType<typeof mount> | undefined;
+// happy-dom 缺 ResizeObserver，VueFlow 初始化需要——与 designer canvas 测试同款最小桩
+class ResizeObserverStub {
+    observe(): void { }
+    unobserve(): void { }
+    disconnect(): void { }
+}
+(globalThis as unknown as {
+    ResizeObserver: typeof ResizeObserverStub;
+}).ResizeObserver =
+    ResizeObserverStub;
+afterEach(() => {
+    diagReadWrapper()?.unmount();
+    wrapper = undefined;
+    document.body.innerHTML = "";
+    // 本地草稿链路（#76）：残留会串扰下一次挂载的刷新恢复
+    localStorage.clear();
+});
+/** 直接向文件选择器注入 File（happy-dom 下 files 为只读 FileList） */
+function pickFile(target: ReturnType<typeof mount>, json: string, readText?: () => Promise<string>): void {
+    const input = target.find<HTMLInputElement>('input[data-test="open-doc-input"]');
+    const file = new File([json], "design.flowduet.json", { type: "application/json" });
+    if (readText !== undefined)
+        Object.defineProperty(file, "text", { value: readText });
+    Object.defineProperty(input.element, "files", {
+        value: [file],
+        configurable: true,
+    });
+}
+/** 原生 input 赋值并派发 input 事件（drawer 内 v-model 监听 input） */
+async function setValue(input: HTMLInputElement, value: string): Promise<void> {
+    input.value = value;
+    input.dispatchEvent(new Event("input", { bubbles: true }));
+    diagMark("before:L45");
+    await flushPromises();
+    diagMark("after:L45");
+}
+/** 「+」类型菜单插入：点触发器后点 teleport 到 body 的菜单项 */
+async function insertViaMenu(target: ReturnType<typeof mount>, afterId: string, kind: "approval" | "cc" = "approval"): Promise<void> {
+    diagMark("before:L54");
+    await target.find(`[data-test="insert-btn-${afterId}"]`).trigger("click");
+    diagMark("after:L54");
+    diagMark("before:L55");
+    await flushPromises();
+    diagMark("after:L55");
+    const item = diagQuery(`[data-test="insert-kind-${kind}"]`);
+    if (item instanceof HTMLElement)
+        item.click();
+    diagMark("before:L58");
+    await flushPromises();
+    diagMark("after:L58");
+}
+/** 打开新建设计中唯一的审批节点抽屉（最小流程卡片序：开始、审批、结束） */
+async function openApprovalDrawer(target: ReturnType<typeof mount>): Promise<void> {
+    diagMark("before:L63");
+    await target.findAll('[data-test="node-card"]')[1]!.trigger("click");
+    diagMark("after:L63");
+    diagMark("before:L64");
+    await flushPromises();
+    diagMark("after:L64");
+}
+describe("Playground 与 designer 的导出链路", () => {
+    it("插入抄送草稿后自动与手动导出均报错，配置收件人后自动恢复 XML", async () => {
+        wrapper = mount(App, { attachTo: document.body });
+        diagMark("before:L70");
+        await diagReadWrapper().find('[data-test="export-btn"]').trigger("click");
+        diagMark("after:L70");
+        diagMark("before:L71");
+        await flushPromises();
+        diagMark("after:L71");
+        expect(diagReadWrapper().find('[data-test="xml-preview"]').exists()).toBe(true);
+        diagMark("before:L74");
+        await diagReadWrapper().find('[data-test="insert-btn-approval_1"]').trigger("click");
+        diagMark("after:L74");
+        diagMark("before:L75");
+        await flushPromises();
+        diagMark("after:L75");
+        const ccMenuItem = diagQuery<HTMLElement>('[data-test="insert-kind-cc"]');
+        expect(ccMenuItem).not.toBeNull();
+        ccMenuItem!.click();
+        diagMark("before:L79");
+        await flushPromises();
+        diagMark("after:L79");
+        diagMark("before:L81");
+        await vi.waitFor(() => {
+            expect(diagReadWrapper()!.find('[data-test="xml-error"]').text()).toContain("收件人");
+        }, { timeout: 3000 });
+        diagMark("after:L81");
+        expect(diagReadWrapper().find('[data-test="xml-preview"]').exists()).toBe(false);
+        diagMark("before:L89");
+        await diagReadWrapper().find('[data-test="export-btn"]').trigger("click");
+        diagMark("after:L89");
+        diagMark("before:L90");
+        await flushPromises();
+        diagMark("after:L90");
+        expect(diagReadWrapper().find('[data-test="xml-error"]').text()).toContain("收件人");
+        const ccCard = diagReadWrapper().findAll('[data-test="node-card"]')
+            .find((card) => card.text().includes("抄送节点"));
+        expect(ccCard).toBeDefined();
+        diagMark("before:L97");
+        await ccCard!.trigger("click");
+        diagMark("after:L97");
+        diagMark("before:L98");
+        await flushPromises();
+        diagMark("after:L98");
+        const recipients = diagQuery<HTMLInputElement>('[data-test="drawer-recipients"]');
+        expect(recipients).not.toBeNull();
+        recipients!.value = "李四";
+        recipients!.dispatchEvent(new Event("input", { bubbles: true }));
+        diagMark("before:L103");
+        await flushPromises();
+        diagMark("after:L103");
+        diagQuery<HTMLElement>('[data-test="drawer-save"]')!.click();
+        diagMark("before:L105");
+        await flushPromises();
+        diagMark("after:L105");
+        diagMark("before:L106");
+        await vi.waitFor(() => {
+            expect(diagReadWrapper()!.find('[data-test="xml-preview"]').text()).toContain('flowable:ccTo="李四"');
+        }, { timeout: 3000 });
+        diagMark("after:L106");
+        expect(diagReadWrapper().find('[data-test="xml-error"]').exists()).toBe(false);
+    });
+});
+describe("Playground 设计文档闭环（#71：保存 → 打开 → 继续编辑）", () => {
+    it("打开省略节点连线标记的标准 BPMN 后，可通过设计器继续增删节点", async () => {
+        wrapper = mount(App, { attachTo: document.body });
+        const xml = `<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" id="defs" targetNamespace="urn:test">
+      <bpmn:process id="standard_flow" isExecutable="true">
+        <bpmn:startEvent id="s" />
+        <bpmn:userTask id="t" name="原审批" />
+        <bpmn:endEvent id="e" />
+        <bpmn:sequenceFlow id="f1" sourceRef="s" targetRef="t" />
+        <bpmn:sequenceFlow id="f2" sourceRef="t" targetRef="e" />
+      </bpmn:process>
+    </bpmn:definitions>`;
+        pickFile(diagReadWrapper(), JSON.stringify({ format: "flowduet.design", version: 1, engine: "flowable", xml, forms: [] }));
+        diagMark("before:L133");
+        await diagReadWrapper().find('[data-test="open-doc-input"]').trigger("change");
+        diagMark("after:L133");
+        diagMark("before:L134");
+        await flushPromises();
+        diagMark("after:L134");
+        expect(diagReadWrapper().find('[data-test="doc-status"]').text()).toContain("已打开设计文档");
+        const count = diagReadWrapper().findAll('[data-test="node-card"]').length;
+        diagMark("before:L138");
+        await diagReadWrapper().find('[data-test="insert-btn-t"]').trigger("click");
+        diagMark("after:L138");
+        diagMark("before:L139");
+        await flushPromises();
+        diagMark("after:L139");
+        diagQuery<HTMLElement>('[data-test="insert-kind-approval"]')!.click();
+        diagMark("before:L141");
+        await flushPromises();
+        diagMark("after:L141");
+        expect(diagReadWrapper().find('[data-test="action-error"]').exists()).toBe(false);
+        expect(diagReadWrapper().findAll('[data-test="node-card"]')).toHaveLength(count + 1);
+        diagMark("before:L146");
+        await diagReadWrapper().find('[data-test="node-delete-t"]').trigger("click");
+        diagMark("after:L146");
+        diagMark("before:L147");
+        await flushPromises();
+        diagMark("after:L147");
+        expect(diagReadWrapper().find('[data-test="action-error"]').exists()).toBe(false);
+        expect(diagReadWrapper().findAll('[data-test="node-card"]')).toHaveLength(count);
+        expect(diagReadWrapper().text()).not.toContain("原审批");
+    });
+    it("新建草稿可保存并报告待修复项；配齐后下载文档，从文件打开继续编辑，双视图同一新模型", async () => {
+        wrapper = mount(App, { attachTo: document.body });
+        diagMark("before:L157");
+        // 新建最小流程：审批人未配是业务草稿——部署导出被拦截，保存不受影响
+        await diagReadWrapper().find('[data-test="new-design-btn"]').trigger("click");
+        diagMark("after:L157");
+        expect(diagReadWrapper().find('[data-test="doc-status"]').text()).toContain("已新建设计");
+        diagMark("before:L159");
+        await vi.waitFor(() => {
+            expect(diagReadWrapper().find('[data-test="xml-error"]').text()).toContain("审批人");
+        }, { timeout: 3000 });
+        diagMark("after:L159");
+        // 草稿保存：成功 + 报告待修复项（与部署导出的拦截形成对照）
+        const createdDraft: Blob[] = [];
+        const objectUrlSpy = vi
+            .spyOn(URL, "createObjectURL")
+            .mockImplementation((blob: Blob): string => {
+            createdDraft.push(blob);
+            return "blob:mock";
+        });
+        const clickSpy = vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(() => { });
+        diagMark("before:L175");
+        await diagReadWrapper().find('[data-test="save-doc-btn"]').trigger("click");
+        diagMark("after:L175");
+        diagMark("before:L176");
+        await flushPromises();
+        diagMark("after:L176");
+        expect(diagReadWrapper().find('[data-test="doc-status"]').text()).toContain("待修复 1 项");
+        diagMark("before:L178");
+        expect(JSON.parse(await createdDraft[0]!.text()).format).toBe("flowduet.design");
+        diagMark("after:L178");
+        diagMark("before:L181");
+        // 继续编辑：插入抄送节点并配置收件人
+        await diagReadWrapper().find('[data-test="insert-btn-approval_1"]').trigger("click");
+        diagMark("after:L181");
+        diagMark("before:L182");
+        await flushPromises();
+        diagMark("after:L182");
+        diagQuery<HTMLElement>('[data-test="insert-kind-cc"]')!.click();
+        diagMark("before:L184");
+        await flushPromises();
+        diagMark("after:L184");
+        const ccCard = diagReadWrapper().findAll('[data-test="node-card"]')
+            .find((card) => card.text().includes("抄送节点"));
+        expect(ccCard).toBeDefined();
+        diagMark("before:L189");
+        await ccCard!.trigger("click");
+        diagMark("after:L189");
+        diagMark("before:L190");
+        await flushPromises();
+        diagMark("after:L190");
+        const recipients = diagQuery<HTMLInputElement>('[data-test="drawer-recipients"]');
+        recipients!.value = "王五";
+        recipients!.dispatchEvent(new Event("input", { bubbles: true }));
+        diagMark("before:L194");
+        await flushPromises();
+        diagMark("after:L194");
+        diagQuery<HTMLElement>('[data-test="drawer-save"]')!.click();
+        diagMark("before:L196");
+        await flushPromises();
+        diagMark("after:L196");
+        // 补齐审批人，配置完整后再次保存
+        const approvalCard = diagReadWrapper().findAll('[data-test="node-card"]')
+            .find((card) => card.text().includes("审批节点"));
+        diagMark("before:L202");
+        await approvalCard!.trigger("click");
+        diagMark("after:L202");
+        diagMark("before:L203");
+        await flushPromises();
+        diagMark("after:L203");
+        const assignee = diagQuery<HTMLInputElement>('[data-test="drawer-assignee"]');
+        assignee!.value = "${boss}";
+        assignee!.dispatchEvent(new Event("input", { bubbles: true }));
+        diagMark("before:L207");
+        await flushPromises();
+        diagMark("after:L207");
+        diagQuery<HTMLElement>('[data-test="drawer-save"]')!.click();
+        diagMark("before:L209");
+        await flushPromises();
+        diagMark("after:L209");
+        diagMark("before:L211");
+        await diagReadWrapper().find('[data-test="save-doc-btn"]').trigger("click");
+        diagMark("after:L211");
+        diagMark("before:L212");
+        await flushPromises();
+        diagMark("after:L212");
+        expect(diagReadWrapper().find('[data-test="doc-status"]').text()).toContain("无待修复项");
+        diagMark("before:L214");
+        const json = await createdDraft[1]!.text();
+        diagMark("after:L214");
+        clickSpy.mockRestore();
+        objectUrlSpy.mockRestore();
+        // 从文件打开：整体替换，旧实例状态不保留（演示流程节点退场）
+        pickFile(diagReadWrapper(), json);
+        diagMark("before:L220");
+        await diagReadWrapper().find('input[data-test="open-doc-input"]').trigger("change");
+        diagMark("after:L220");
+        diagMark("before:L221");
+        await flushPromises();
+        diagMark("after:L221");
+        expect(diagReadWrapper().find('[data-test="doc-status"]').text()).toContain("已打开设计文档");
+        expect(diagReadWrapper().text()).not.toContain("合同会签");
+        expect(diagReadWrapper().text()).not.toContain("演示审批流");
+        diagMark("before:L227");
+        // 打开后的新模型可继续编辑：导出预览展示同一新模型（抄送与审批人齐备）
+        await vi.waitFor(() => {
+            expect(diagReadWrapper().find('[data-test="xml-preview"]').text()).toContain('flowable:ccTo="王五"');
+        }, { timeout: 3000 });
+        diagMark("after:L227");
+        expect(diagReadWrapper().find('[data-test="xml-error"]').exists()).toBe(false);
+        expect(diagReadWrapper().text()).toContain("抄送节点");
+        diagMark("before:L237");
+        // BPMN 只读投影：切视图后画布渲染同一新模型，不保留旧实例
+        await diagReadWrapper().find('[data-test="view-bpmn"]').find("input").setValue();
+        diagMark("after:L237");
+        diagMark("before:L238");
+        await flushPromises();
+        diagMark("after:L238");
+        expect(diagReadWrapper().find('[data-test="bpmn-canvas"]').exists()).toBe(true);
+        expect(diagReadWrapper().find('[data-test="canvas-bpmn:ServiceTask"]').exists()).toBe(true);
+        expect(diagReadWrapper().text()).not.toContain("合同会签");
+    });
+    it("打开坏文档报错，当前编辑内容不被替换", async () => {
+        wrapper = mount(App, { attachTo: document.body });
+        // 演示流程在场作为「当前编辑内容」
+        expect(diagReadWrapper().text()).toContain("合同会签");
+        pickFile(diagReadWrapper(), "{not-a-json");
+        diagMark("before:L250");
+        await diagReadWrapper().find('input[data-test="open-doc-input"]').trigger("change");
+        diagMark("after:L250");
+        diagMark("before:L251");
+        await flushPromises();
+        diagMark("after:L251");
+        expect(diagReadWrapper().find('[data-test="doc-error"]').text()).toContain("不是合法 JSON");
+        expect(diagReadWrapper().find('[data-test="doc-status"]').exists()).toBe(false);
+        // 原模型仍在场可继续编辑
+        expect(diagReadWrapper().text()).toContain("合同会签");
+    });
+});
+describe("Playground 默认表单闭环（#72：表单 → 绑定 → 保存 → 打开 → 导出）", () => {
+    it("真实组件串联：新建表单、设默认、下载文档、从文件打开恢复绑定、组合导出含默认引用", async () => {
+        wrapper = mount(App, { attachTo: document.body });
+        diagMark("before:L265");
+        // 新建最小流程（业务草稿）
+        await diagReadWrapper().find('[data-test="new-design-btn"]').trigger("click");
+        diagMark("after:L265");
+        diagMark("before:L266");
+        await flushPromises();
+        diagMark("after:L266");
+        diagMark("before:L270");
+        // 表单管理：新建「申请单」（内容为空表单——真实设计器的装载与内容保存
+        // 在 form-create 组件测试覆盖，此处验证装配链路）
+        await diagReadWrapper().find('[data-test="form-manager-btn"]').trigger("click");
+        diagMark("after:L270");
+        diagMark("before:L271");
+        await flushPromises();
+        diagMark("after:L271");
+        diagMark("before:L272");
+        await diagReadWrapper().find('[data-test="form-manager-new-name"]').setValue("申请单");
+        diagMark("after:L272");
+        diagMark("before:L273");
+        await diagReadWrapper().find('[data-test="form-manager-create-btn"]').trigger("click");
+        diagMark("after:L273");
+        diagMark("before:L274");
+        await flushPromises();
+        diagMark("after:L274");
+        expect(diagReadWrapper().find("[data-test=form-item-form_1]").text()).toContain("申请单");
+        // 流程默认表单选择条：设为 form_1；审批卡片显示继承
+        const strip = diagReadWrapper().find('[data-test="default-form-select"]');
+        expect(strip.exists()).toBe(true);
+        diagMark("before:L280");
+        await strip.setValue("form_1");
+        diagMark("after:L280");
+        diagMark("before:L281");
+        await flushPromises();
+        diagMark("after:L281");
+        expect(diagReadWrapper().find('[data-test="node-form-approval_1"]').text()).toContain("表单：申请单（继承默认）");
+        // 下载设计文档：forms 携带表单，xml 含默认引用
+        const created: Blob[] = [];
+        const objectUrlSpy = vi
+            .spyOn(URL, "createObjectURL")
+            .mockImplementation((blob: Blob): string => {
+            created.push(blob);
+            return "blob:mock";
+        });
+        const clickSpy = vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(() => { });
+        diagMark("before:L295");
+        await diagReadWrapper().find('[data-test="save-doc-btn"]').trigger("click");
+        diagMark("after:L295");
+        diagMark("before:L296");
+        await flushPromises();
+        diagMark("after:L296");
+        expect(diagReadWrapper().find('[data-test="doc-status"]').text()).toContain("已保存设计文档");
+        diagMark("before:L298");
+        const document_ = JSON.parse(await created[0]!.text()) as {
+            forms: {
+                id: string;
+                name: string;
+            }[];
+            xml: string;
+        };
+        diagMark("after:L298");
+        expect(document_.forms).toEqual([expect.objectContaining({ id: "form_1", name: "申请单" })]);
+        expect(document_.xml).toContain('flowduet:defaultFormKey="form_1"');
+        const json = JSON.stringify(document_);
+        clickSpy.mockRestore();
+        objectUrlSpy.mockRestore();
+        diagMark("before:L309");
+        // 组合部署导出：草稿（审批人未配）被拦截，报告业务待修复项
+        await diagReadWrapper().find('[data-test="export-btn"]').trigger("click");
+        diagMark("after:L309");
+        diagMark("before:L310");
+        await flushPromises();
+        diagMark("after:L310");
+        expect(diagReadWrapper().find('[data-test="xml-error"]').text()).toContain("审批人");
+        diagMark("before:L314");
+        // 新建设计替换当前状态，再从文件打开：表单与默认绑定恢复
+        await diagReadWrapper().find('[data-test="new-design-btn"]').trigger("click");
+        diagMark("after:L314");
+        diagMark("before:L315");
+        await flushPromises();
+        diagMark("after:L315");
+        expect(diagReadWrapper().find('[data-test="node-form-approval_1"]').exists()).toBe(false);
+        pickFile(diagReadWrapper(), json);
+        diagMark("before:L319");
+        await diagReadWrapper().find('input[data-test="open-doc-input"]').trigger("change");
+        diagMark("after:L319");
+        diagMark("before:L320");
+        await flushPromises();
+        diagMark("after:L320");
+        expect(diagReadWrapper().find('[data-test="doc-status"]').text()).toContain("已打开设计文档");
+        expect(diagReadWrapper().find('[data-test="node-form-approval_1"]').text()).toContain("表单：申请单（继承默认）");
+        // 打开后的模型可继续编辑并导出同一绑定（抽屉补审批人后部署导出放行）
+        const approvalCard = diagReadWrapper().findAll('[data-test="node-card"]')
+            .find((card) => card.text().includes("审批节点"));
+        diagMark("before:L330");
+        await approvalCard!.trigger("click");
+        diagMark("after:L330");
+        diagMark("before:L331");
+        await flushPromises();
+        diagMark("after:L331");
+        const assignee = diagQuery<HTMLInputElement>('[data-test="drawer-assignee"]');
+        assignee!.value = "${boss}";
+        assignee!.dispatchEvent(new Event("input", { bubbles: true }));
+        diagMark("before:L335");
+        await flushPromises();
+        diagMark("after:L335");
+        diagQuery<HTMLElement>('[data-test="drawer-save"]')!.click();
+        diagMark("before:L337");
+        await flushPromises();
+        diagMark("after:L337");
+        diagMark("before:L338");
+        await vi.waitFor(() => {
+            expect(diagReadWrapper().find('[data-test="xml-preview"]').text()).toContain('flowduet:defaultFormKey="form_1"');
+        }, { timeout: 3000 });
+        diagMark("after:L338");
+        expect(diagReadWrapper().find('[data-test="xml-error"]').exists()).toBe(false);
+        diagMark("before:L350");
+        // 失效默认引用修复后，顶部诊断须随模型原位编辑立即消失。
+        // （#76 起有未保存修改时先弹替换确认，openDocument 代表用户确认替换）
+        await openDocument(JSON.stringify({
+            ...document_,
+            xml: document_.xml.replace('defaultFormKey="form_1"', 'defaultFormKey="ghost_form"'),
+        }));
+        diagMark("after:L350");
+        expect(diagReadWrapper().find('[data-test="reference-issues"]').text()).toContain("ghost_form");
+        diagMark("before:L358");
+        // A16（表单语境）：引用失效后导出报当前错误，旧的有效 XML 不再呈现为当前结果
+        await diagReadWrapper().find('[data-test="export-btn"]').trigger("click");
+        diagMark("after:L358");
+        diagMark("before:L359");
+        await flushPromises();
+        diagMark("after:L359");
+        expect(diagReadWrapper().find('[data-test="xml-error"]').text()).toContain("ghost_form");
+        expect(diagReadWrapper().find('[data-test="xml-preview"]').exists()).toBe(false);
+        diagMark("before:L362");
+        await diagReadWrapper().find('[data-test="default-form-select"]').setValue("form_1");
+        diagMark("after:L362");
+        diagMark("before:L363");
+        await flushPromises();
+        diagMark("after:L363");
+        expect(diagReadWrapper().find('[data-test="reference-issues"]').exists()).toBe(false);
+        // 修复后恢复导出（A16 后半）：引用修好后仍需业务配置完整——补上审批人，
+        // 当前配置重新产出有效 XML
+        const ghostCard = diagReadWrapper().findAll('[data-test="node-card"]')
+            .find((card) => card.text().includes("审批节点"));
+        diagMark("before:L370");
+        await ghostCard!.trigger("click");
+        diagMark("after:L370");
+        diagMark("before:L371");
+        await flushPromises();
+        diagMark("after:L371");
+        const ghostAssignee = diagQuery<HTMLInputElement>('[data-test="drawer-assignee"]');
+        ghostAssignee!.value = "${boss}";
+        ghostAssignee!.dispatchEvent(new Event("input", { bubbles: true }));
+        diagMark("before:L375");
+        await flushPromises();
+        diagMark("after:L375");
+        diagQuery<HTMLElement>('[data-test="drawer-save"]')!.click();
+        diagMark("before:L377");
+        await flushPromises();
+        diagMark("after:L377");
+        diagMark("before:L378");
+        await vi.waitFor(() => {
+            expect(diagReadWrapper().find('[data-test="xml-preview"]').text()).toContain('flowduet:defaultFormKey="form_1"');
+        }, { timeout: 3000 });
+        diagMark("after:L378");
+        expect(diagReadWrapper().find('[data-test="xml-error"]').exists()).toBe(false);
+        diagMark("before:L390");
+        // 即使目录恰好存在同样带空格的 ID，该引用仍不允许预览。
+        // （#76 起有未保存修改时先弹替换确认，openDocument 代表用户确认替换）
+        await openDocument(JSON.stringify({
+            ...document_,
+            forms: document_.forms.map((form) => ({ ...form, id: " form_1 " })),
+            xml: document_.xml.replace('defaultFormKey="form_1"', 'defaultFormKey=" form_1 "'),
+        }));
+        diagMark("after:L390");
+        diagMark("before:L397");
+        await diagReadWrapper().find('[data-test="form-preview-btn"]').trigger("click");
+        diagMark("after:L397");
+        diagMark("before:L398");
+        await flushPromises();
+        diagMark("after:L398");
+        diagMark("before:L399");
+        await diagReadWrapper().find('[data-test="preview-node-select"]').setValue("approval_1");
+        diagMark("after:L399");
+        diagMark("before:L400");
+        await flushPromises();
+        diagMark("after:L400");
+        expect(diagReadWrapper().find('[data-test="preview-target-error"]').text()).toContain("引用失效");
+    });
+    it("流程新增审批节点后，再次打开预览能选择新节点", async () => {
+        wrapper = mount(App, { attachTo: document.body });
+        diagMark("before:L406");
+        await diagReadWrapper().find('[data-test="form-preview-btn"]').trigger("click");
+        diagMark("after:L406");
+        diagMark("before:L407");
+        await flushPromises();
+        diagMark("after:L407");
+        const before = document.querySelectorAll('[data-test="preview-node-select"] option').length;
+        const close = diagQuery<HTMLElement>('[data-test="form-preview-dialog"] .el-dialog__headerbtn');
+        expect(close).not.toBeNull();
+        close!.click();
+        diagMark("before:L414");
+        await flushPromises();
+        diagMark("after:L414");
+        diagMark("before:L416");
+        await diagReadWrapper().find('[data-test="insert-btn-approval_1"]').trigger("click");
+        diagMark("after:L416");
+        diagMark("before:L417");
+        await flushPromises();
+        diagMark("after:L417");
+        diagQuery<HTMLElement>('[data-test="insert-kind-approval"]')!.click();
+        diagMark("before:L419");
+        await flushPromises();
+        diagMark("after:L419");
+        diagMark("before:L421");
+        await diagReadWrapper().find('[data-test="form-preview-btn"]').trigger("click");
+        diagMark("after:L421");
+        diagMark("before:L422");
+        await flushPromises();
+        diagMark("after:L422");
+        expect(document.querySelectorAll('[data-test="preview-node-select"] option')).toHaveLength(before + 1);
+    });
+    it("删除当前预览节点后，重新打开预览不会解析已删除的 ID", async () => {
+        wrapper = mount(App, { attachTo: document.body });
+        diagMark("before:L430");
+        await diagReadWrapper().find('[data-test="form-preview-btn"]').trigger("click");
+        diagMark("after:L430");
+        diagMark("before:L431");
+        await flushPromises();
+        diagMark("after:L431");
+        diagMark("before:L432");
+        await diagReadWrapper().find('[data-test="preview-node-select"]').setValue("approval_1");
+        diagMark("after:L432");
+        diagMark("before:L433");
+        await flushPromises();
+        diagMark("after:L433");
+        diagQuery<HTMLElement>('[data-test="form-preview-dialog"] .el-dialog__headerbtn')!
+            .click();
+        diagMark("before:L437");
+        await flushPromises();
+        diagMark("after:L437");
+        diagMark("before:L439");
+        await diagReadWrapper().find('[data-test="node-delete-approval_1"]').trigger("click");
+        diagMark("after:L439");
+        diagMark("before:L440");
+        await flushPromises();
+        diagMark("after:L440");
+        diagMark("before:L441");
+        await diagReadWrapper().find('[data-test="form-preview-btn"]').trigger("click");
+        diagMark("after:L441");
+        diagMark("before:L442");
+        await flushPromises();
+        diagMark("after:L442");
+        expect(diagReadWrapper().find('[data-test="preview-target-hint"]').exists()).toBe(true);
+        expect(diagReadWrapper().find('[data-test="preview-node-select"]').text()).not.toContain("经理审批");
+    });
+});
+/**
+ * 多表单管理与节点覆盖闭环（#73）：双表单（默认继承 + 显式覆盖）经真实
+ * 组件串联的创建、绑定、保存打开恢复、删除守卫与预览目标隔离。
+ */
+/** 新建设计并在表单管理面板新建多张表单（名称依次传入） */
+async function setupWithForms(names: string[]): Promise<void> {
+    diagMark("before:L456");
+    await diagReadWrapper()!.find('[data-test="new-design-btn"]').trigger("click");
+    diagMark("after:L456");
+    diagMark("before:L457");
+    await flushPromises();
+    diagMark("after:L457");
+    diagMark("before:L458");
+    await diagReadWrapper()!.find('[data-test="form-manager-btn"]').trigger("click");
+    diagMark("after:L458");
+    diagMark("before:L459");
+    await flushPromises();
+    diagMark("after:L459");
+    diagMark("before:L460");
+    for (const name of names) {
+        diagMark("before:L461");
+        await diagReadWrapper()!.find('[data-test="form-manager-new-name"]').setValue(name);
+        diagMark("after:L461");
+        diagMark("before:L462");
+        await diagReadWrapper()!.find('[data-test="form-manager-create-btn"]').trigger("click");
+        diagMark("after:L462");
+        diagMark("before:L463");
+        await flushPromises();
+        diagMark("after:L463");
+    }
+    diagMark("after:L460");
+    diagQuery<HTMLElement>('[data-test="form-manager-dialog"] .el-dialog__headerbtn')!
+        .click();
+    diagMark("before:L468");
+    await flushPromises();
+    diagMark("after:L468");
+}
+/** 打开指定卡片的配置抽屉（卡片按文本匹配） */
+async function openCardOf(text: string): Promise<void> {
+    const card = diagReadWrapper()!
+        .findAll('[data-test="node-card"]')
+        .find((candidate) => candidate.text().includes(text));
+    diagMark("before:L476");
+    await card!.trigger("click");
+    diagMark("after:L476");
+    diagMark("before:L477");
+    await flushPromises();
+    diagMark("after:L477");
+}
+describe("Playground 多表单管理与节点覆盖闭环（#73）", () => {
+    it("双表单：抽屉选覆盖、保存打开后默认/覆盖关系恢复、导出含两处引用", async () => {
+        wrapper = mount(App, { attachTo: document.body });
+        diagMark("before:L483");
+        await setupWithForms(["申请单", "复核单"]);
+        diagMark("after:L483");
+        diagMark("before:L486");
+        // 默认 = 申请单；审批节点抽屉选「复核单」显式覆盖
+        await diagReadWrapper().find('[data-test="default-form-select"]').setValue("form_1");
+        diagMark("after:L486");
+        diagMark("before:L487");
+        await flushPromises();
+        diagMark("after:L487");
+        diagMark("before:L488");
+        await openCardOf("审批节点");
+        diagMark("after:L488");
+        const select = diagQuery<HTMLSelectElement>('[data-test="drawer-form-select"]');
+        expect(select).not.toBeNull();
+        // 继承选项呈现当前默认名，覆盖选项可区分
+        expect(select!.selectedOptions[0]?.text).toContain("继承默认（申请单）");
+        select!.value = "form_2";
+        select!.dispatchEvent(new Event("change", { bubbles: true }));
+        diagMark("before:L495");
+        await flushPromises();
+        diagMark("after:L495");
+        diagQuery<HTMLElement>('[data-test="drawer-save"]')!.click();
+        diagMark("before:L497");
+        await flushPromises();
+        diagMark("after:L497");
+        // 卡片摘要：节点指定复核单（不再随默认变化）
+        expect(diagReadWrapper().find('[data-test="node-form-approval_1"]').text()).toContain("表单：复核单（节点指定）");
+        // 保存文档：forms 双表单 + xml 双引用
+        const created: Blob[] = [];
+        const objectUrlSpy = vi
+            .spyOn(URL, "createObjectURL")
+            .mockImplementation((blob: Blob): string => {
+            created.push(blob);
+            return "blob:mock";
+        });
+        const clickSpy = vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(() => { });
+        diagMark("before:L513");
+        await diagReadWrapper().find('[data-test="save-doc-btn"]').trigger("click");
+        diagMark("after:L513");
+        diagMark("before:L514");
+        await flushPromises();
+        diagMark("after:L514");
+        diagMark("before:L515");
+        const document_ = JSON.parse(await created[0]!.text()) as {
+            forms: {
+                id: string;
+            }[];
+            xml: string;
+        };
+        diagMark("after:L515");
+        clickSpy.mockRestore();
+        objectUrlSpy.mockRestore();
+        expect(document_.forms.map((form) => form.id)).toEqual(["form_1", "form_2"]);
+        expect(document_.xml).toContain('flowduet:defaultFormKey="form_1"');
+        expect(document_.xml).toContain('flowable:formKey="form_2"');
+        diagMark("before:L526");
+        // 换新设计后从文件打开：默认与覆盖关系逐项恢复
+        await diagReadWrapper().find('[data-test="new-design-btn"]').trigger("click");
+        diagMark("after:L526");
+        diagMark("before:L527");
+        await flushPromises();
+        diagMark("after:L527");
+        pickFile(diagReadWrapper(), JSON.stringify(document_));
+        diagMark("before:L529");
+        await diagReadWrapper().find('input[data-test="open-doc-input"]').trigger("change");
+        diagMark("after:L529");
+        diagMark("before:L530");
+        await flushPromises();
+        diagMark("after:L530");
+        expect(diagReadWrapper().find('[data-test="node-form-approval_1"]').text()).toContain("表单：复核单（节点指定）");
+        expect(diagReadWrapper().find('[data-test="default-form-select"]').element).toHaveProperty("value", "form_1");
+        diagMark("before:L540");
+        // 补审批人后组合导出：部署 XML 同时携带默认与覆盖引用
+        await openCardOf("审批节点");
+        diagMark("after:L540");
+        const assignee = diagQuery<HTMLInputElement>('[data-test="drawer-assignee"]');
+        assignee!.value = "${boss}";
+        assignee!.dispatchEvent(new Event("input", { bubbles: true }));
+        diagMark("before:L544");
+        await flushPromises();
+        diagMark("after:L544");
+        diagQuery<HTMLElement>('[data-test="drawer-save"]')!.click();
+        diagMark("before:L546");
+        await flushPromises();
+        diagMark("after:L546");
+        diagMark("before:L547");
+        await vi.waitFor(() => {
+            expect(diagReadWrapper().find('[data-test="xml-preview"]').text()).toContain('flowable:formKey="form_2"');
+        }, { timeout: 3000 });
+        diagMark("after:L547");
+        expect(diagReadWrapper().find('[data-test="xml-preview"]').text()).toContain('flowduet:defaultFormKey="form_1"');
+    });
+    it("删除守卫：被默认引用拒绝并说明位置，解除引用后可删除（A06）", async () => {
+        wrapper = mount(App, { attachTo: document.body });
+        diagMark("before:L562");
+        await setupWithForms(["申请单"]);
+        diagMark("after:L562");
+        diagMark("before:L564");
+        await diagReadWrapper().find('[data-test="default-form-select"]').setValue("form_1");
+        diagMark("after:L564");
+        diagMark("before:L565");
+        await flushPromises();
+        diagMark("after:L565");
+        diagMark("before:L568");
+        // 删除被默认引用的表单：两段确认后错误就地反馈引用位置
+        await diagReadWrapper().find('[data-test="form-manager-btn"]').trigger("click");
+        diagMark("after:L568");
+        diagMark("before:L569");
+        await flushPromises();
+        diagMark("after:L569");
+        diagMark("before:L570");
+        await diagReadWrapper().find('[data-test="form-delete-btn-form_1"]').trigger("click");
+        diagMark("after:L570");
+        diagMark("before:L571");
+        await flushPromises();
+        diagMark("after:L571");
+        diagMark("before:L572");
+        await diagReadWrapper().find('[data-test="form-delete-confirm-form_1"]').trigger("click");
+        diagMark("after:L572");
+        diagMark("before:L573");
+        await flushPromises();
+        diagMark("after:L573");
+        expect(diagReadWrapper().find('[data-test="doc-error"]').text()).toContain("流程默认表单");
+        expect(diagReadWrapper().find('[data-test="form-manager-dialog"] [data-test="form-manager-error"]').text()).toContain("流程默认表单");
+        expect(diagReadWrapper().find('[data-test="form-item-form_1"]').exists()).toBe(true);
+        // 解除默认引用后再删：成功，列表清空（上一轮错误横幅随操作自动清除）
+        diagQuery<HTMLElement>('[data-test="form-manager-dialog"] .el-dialog__headerbtn')!
+            .click();
+        diagMark("before:L584");
+        await flushPromises();
+        diagMark("after:L584");
+        diagMark("before:L585");
+        await diagReadWrapper().find('[data-test="default-form-select"]').setValue("");
+        diagMark("after:L585");
+        diagMark("before:L586");
+        await flushPromises();
+        diagMark("after:L586");
+        diagMark("before:L587");
+        await diagReadWrapper().find('[data-test="form-manager-btn"]').trigger("click");
+        diagMark("after:L587");
+        diagMark("before:L588");
+        await flushPromises();
+        diagMark("after:L588");
+        expect(diagReadWrapper().find('[data-test="form-manager-error"]').exists()).toBe(false);
+        diagMark("before:L590");
+        await diagReadWrapper().find('[data-test="form-delete-btn-form_1"]').trigger("click");
+        diagMark("after:L590");
+        diagMark("before:L591");
+        await flushPromises();
+        diagMark("after:L591");
+        diagMark("before:L592");
+        await diagReadWrapper().find('[data-test="form-delete-confirm-form_1"]').trigger("click");
+        diagMark("after:L592");
+        diagMark("before:L593");
+        await flushPromises();
+        diagMark("after:L593");
+        expect(diagReadWrapper().find('[data-test="form-manager-empty"]').exists()).toBe(true);
+        expect(diagReadWrapper().find('[data-test="doc-error"]').exists()).toBe(false);
+        expect(diagReadWrapper().find('[data-test="form-manager-error"]').exists()).toBe(false);
+    });
+    // 真实 FcDesigner 装载较重（单跑已近 4s），并发全量时给足超时上限
+    it("预览多目标：同表单双节点切换清理旧试填值；失效只阻止相关目标（AC5）", { timeout: 15000 }, async () => {
+        wrapper = mount(App, { attachTo: document.body });
+        diagMark("before:L605");
+        await setupWithForms(["申请单"]);
+        diagMark("after:L605");
+        diagMark("before:L608");
+        // 给申请单塞带默认值的字段（经真实 FormDesigner 的保存通道写入目录）
+        await diagReadWrapper().find('[data-test="form-manager-btn"]').trigger("click");
+        diagMark("after:L608");
+        diagMark("before:L609");
+        await flushPromises();
+        diagMark("after:L609");
+        diagMark("before:L610");
+        await diagReadWrapper().find('[data-test="form-edit-btn-form_1"]').trigger("click");
+        diagMark("after:L610");
+        diagMark("before:L611");
+        await flushPromises();
+        diagMark("after:L611");
+        diagReadWrapper().findComponent({ name: "FormDesigner" })
+            .vm.$emit("save", JSON.stringify([
+            { type: "input", field: "reason", title: "申请事由", value: "默认事由" },
+        ]), "{}");
+        diagMark("before:L621");
+        await flushPromises();
+        diagMark("after:L621");
+        diagQuery<HTMLElement>('[data-test="form-manager-dialog"] .el-dialog__headerbtn')!
+            .click();
+        diagMark("before:L625");
+        await flushPromises();
+        diagMark("after:L625");
+        diagMark("before:L628");
+        // 默认 = form_1；approval_1 显式覆盖为同一张表单（两个目标同表单不同节点）
+        await diagReadWrapper().find('[data-test="default-form-select"]').setValue("form_1");
+        diagMark("after:L628");
+        diagMark("before:L629");
+        await flushPromises();
+        diagMark("after:L629");
+        diagMark("before:L630");
+        await openCardOf("审批节点");
+        diagMark("after:L630");
+        const select = diagQuery<HTMLSelectElement>('[data-test="drawer-form-select"]');
+        select!.value = "form_1";
+        select!.dispatchEvent(new Event("change", { bubbles: true }));
+        diagMark("before:L634");
+        await flushPromises();
+        diagMark("after:L634");
+        diagQuery<HTMLElement>('[data-test="drawer-save"]')!.click();
+        diagMark("before:L636");
+        await flushPromises();
+        diagMark("after:L636");
+        diagMark("before:L639");
+        // 再插入一个继承节点（同样解析到 form_1）
+        await diagReadWrapper().find('[data-test="insert-btn-approval_1"]').trigger("click");
+        diagMark("after:L639");
+        diagMark("before:L640");
+        await flushPromises();
+        diagMark("after:L640");
+        diagQuery<HTMLElement>('[data-test="insert-kind-approval"]')!.click();
+        diagMark("before:L642");
+        await flushPromises();
+        diagMark("after:L642");
+        diagMark("before:L645");
+        // 预览覆盖节点：试填写入值
+        await diagReadWrapper().find('[data-test="form-preview-btn"]').trigger("click");
+        diagMark("after:L645");
+        diagMark("before:L646");
+        await flushPromises();
+        diagMark("after:L646");
+        diagMark("before:L647");
+        await diagReadWrapper().find('[data-test="preview-node-select"]').setValue("approval_1");
+        diagMark("after:L647");
+        diagMark("before:L648");
+        await flushPromises();
+        diagMark("after:L648");
+        const input = diagQuery<HTMLInputElement>('[data-test="form-preview-render"] input');
+        expect(input).not.toBeNull();
+        input!.value = "试用内容";
+        input!.dispatchEvent(new Event("input", { bubbles: true }));
+        diagMark("before:L655");
+        await flushPromises();
+        diagMark("after:L655");
+        expect(diagReadWrapper().find('[data-test="form-preview-values"]').text()).toContain("试用内容");
+        diagMark("before:L659");
+        // 切到继承节点：目标即重挂（同表单也不带入旧试填值）
+        await diagReadWrapper().find('[data-test="preview-node-select"]').setValue("approval_2");
+        diagMark("after:L659");
+        diagMark("before:L660");
+        await flushPromises();
+        diagMark("after:L660");
+        expect(diagReadWrapper().find('[data-test="form-preview"]').exists()).toBe(true);
+        expect(diagReadWrapper().find('[data-test="form-preview-values"]').text()).not.toContain("试用内容");
+        // 失效只阻止相关目标：篡改覆盖节点的 key 后重开——
+        // 覆盖节点预览报失效（保留原 key），继承节点仍渲染同一张有效表单
+        const created: Blob[] = [];
+        const objectUrlSpy = vi
+            .spyOn(URL, "createObjectURL")
+            .mockImplementation((blob: Blob): string => {
+            created.push(blob);
+            return "blob:mock";
+        });
+        const clickSpy = vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(() => { });
+        diagMark("before:L674");
+        await diagReadWrapper().find('[data-test="save-doc-btn"]').trigger("click");
+        diagMark("after:L674");
+        diagMark("before:L675");
+        await flushPromises();
+        diagMark("after:L675");
+        clickSpy.mockRestore();
+        objectUrlSpy.mockRestore();
+        diagMark("before:L678");
+        const document_ = JSON.parse(await created[0]!.text()) as {
+            xml: string;
+        };
+        diagMark("after:L678");
+        pickFile(diagReadWrapper(), JSON.stringify({
+            ...document_,
+            xml: document_.xml.replace('flowable:formKey="form_1"', 'flowable:formKey="ghost_form"'),
+        }));
+        diagQuery<HTMLElement>('[data-test="form-preview-dialog"] .el-dialog__headerbtn')!
+            .click();
+        diagMark("before:L689");
+        await flushPromises();
+        diagMark("after:L689");
+        diagMark("before:L690");
+        await diagReadWrapper().find('input[data-test="open-doc-input"]').trigger("change");
+        diagMark("after:L690");
+        diagMark("before:L691");
+        await flushPromises();
+        diagMark("after:L691");
+        diagMark("before:L693");
+        await diagReadWrapper().find('[data-test="form-preview-btn"]').trigger("click");
+        diagMark("after:L693");
+        diagMark("before:L694");
+        await flushPromises();
+        diagMark("after:L694");
+        diagMark("before:L695");
+        await diagReadWrapper().find('[data-test="preview-node-select"]').setValue("approval_1");
+        diagMark("after:L695");
+        diagMark("before:L696");
+        await flushPromises();
+        diagMark("after:L696");
+        expect(diagReadWrapper().find('[data-test="preview-target-error"]').text()).toContain("ghost_form");
+        expect(diagReadWrapper().find('[data-test="form-preview-render"]').exists()).toBe(false);
+        diagMark("before:L700");
+        await diagReadWrapper().find('[data-test="preview-node-select"]').setValue("approval_2");
+        diagMark("after:L700");
+        diagMark("before:L701");
+        await flushPromises();
+        diagMark("after:L701");
+        expect(diagReadWrapper().find('[data-test="preview-target-error"]').exists()).toBe(false);
+        expect(diagReadWrapper().find('[data-test="form-preview-render"]').exists()).toBe(true);
+    });
+});
+/**
+ * 文档兼容检查与原子打开（#75，A11–A13、A20）：
+ * 经 Playground 的公开文件打开入口注入文档，验证实际解析/恢复结果——
+ * 合法内容恢复、业务未配齐的以草稿打开、真正不兼容的内容明确拒绝，
+ * 拒绝时先持有的未保存设计与表单目录不被部分覆盖。
+ */
+/** 文档 JSON 包装（默认空表单目录） */
+function designDoc(xml: string, forms: unknown[] = []): string {
+    return JSON.stringify({ format: "flowduet.design", version: 1, engine: "flowable", xml, forms });
+}
+/** 单审批节点最小流程骨架；extraAttrs 注入 userTask、decls 注入 definitions */
+function minimalFlowXml(extraAttrs = "", decls = "", processAttrs = ""): string {
+    return `<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" ${decls} id="compat_defs" targetNamespace="http://example.com/compat">
+  <bpmn:process id="compat_flow" name="兼容检查流程" isExecutable="true" ${processAttrs}>
+    <bpmn:startEvent id="s" name="开始" />
+    <bpmn:userTask id="t1" name="审批节点" ${extraAttrs} />
+    <bpmn:endEvent id="e" name="结束" />
+    <bpmn:sequenceFlow id="f1" sourceRef="s" targetRef="t1" />
+    <bpmn:sequenceFlow id="f2" sourceRef="t1" targetRef="e" />
+  </bpmn:process>
+</bpmn:definitions>`;
+}
+async function openDocument(json: string): Promise<void> {
+    pickFile(diagReadWrapper()!, json);
+    diagMark("before:L736");
+    await diagReadWrapper()!.find('input[data-test="open-doc-input"]').trigger("change");
+    diagMark("after:L736");
+    diagMark("before:L737");
+    await flushPromises();
+    diagMark("after:L737");
+    // 有未保存修改时宿主先弹替换确认（#76）：这里代表用户确认替换；
+    // 打开失败路径的「未保存内容保留」断言不受影响。
+    const confirm = diagQuery<HTMLElement>('[data-test="discard-ok"]');
+    diagMark("before:L741");
+    if (confirm !== null) {
+        confirm.click();
+        diagMark("before:L743");
+        await flushPromises();
+        diagMark("after:L743");
+    }
+    diagMark("after:L741");
+}
+/** 只延迟文件 I/O，后续文档解析与原子恢复仍走真实公开入口。 */
+function pendingFileRead(): {
+    text: Promise<string>;
+    resolve: (value: string) => void;
+    reject: (reason: Error) => void;
+} {
+    let resolve!: (value: string) => void;
+    let reject!: (reason: Error) => void;
+    const text = new Promise<string>((ok, fail) => {
+        resolve = ok;
+        reject = fail;
+    });
+    return { text, resolve, reject };
+}
+describe("Playground 文件读取与打开竞态（A14）", () => {
+    it.each(["成功", "读取失败", "坏文档"])("旧文件迟到%s不覆盖新文件或其反馈", async (outcome) => {
+        wrapper = mount(App, { attachTo: document.body });
+        const oldJson = designDoc(minimalFlowXml('fa:assignee="oldA75"', 'xmlns:fa="http://flowable.org/bpmn"'));
+        const newJson = designDoc(minimalFlowXml('fa:assignee="newB75"', 'xmlns:fa="http://flowable.org/bpmn"').replace('name="兼容检查流程"', 'name="新请求B75"'), [
+            {
+                id: "new_form",
+                name: "新请求表单B75",
+                provider: "form-create/element-plus",
+                rules: "[]",
+                options: "{}",
+            },
+        ]);
+        const slow = pendingFileRead();
+        pickFile(diagReadWrapper(), oldJson, () => slow.text);
+        diagMark("before:L785");
+        await diagReadWrapper().find('[data-test="open-doc-input"]').trigger("change");
+        diagMark("after:L785");
+        diagMark("before:L786");
+        await openDocument(newJson);
+        diagMark("after:L786");
+        expect(diagReadWrapper().find('[data-test="doc-status"]').text()).toContain("新请求B75");
+        if (outcome === "读取失败")
+            slow.reject(new Error("旧文件读取失败75"));
+        else
+            slow.resolve(outcome === "坏文档" ? "{bad-json" : oldJson);
+        diagMark("before:L791");
+        await flushPromises();
+        diagMark("after:L791");
+        expect(diagReadWrapper().find('[data-test="doc-status"]').text()).toContain("新请求B75");
+        expect(diagReadWrapper().find('[data-test="doc-error"]').exists()).toBe(false);
+        diagMark("before:L794");
+        await diagReadWrapper().find('[data-test="export-btn"]').trigger("click");
+        diagMark("after:L794");
+        diagMark("before:L795");
+        await flushPromises();
+        diagMark("after:L795");
+        expect(diagReadWrapper().find('[data-test="xml-preview"]').text()).toContain('assignee="newB75"');
+        expect(diagReadWrapper().find('[data-test="xml-preview"]').text()).not.toContain("oldA75");
+        diagMark("before:L798");
+        await diagReadWrapper().find('[data-test="form-manager-btn"]').trigger("click");
+        diagMark("after:L798");
+        diagMark("before:L799");
+        await flushPromises();
+        diagMark("after:L799");
+        expect(diagReadWrapper().find('[data-test="form-item-new_form"]').text()).toContain("新请求表单B75");
+    });
+    it("较新文件失败后，旧文件迟到也不能替换原未保存设计", async () => {
+        wrapper = mount(App, { attachTo: document.body });
+        diagMark("before:L805");
+        await setupWithForms(["未保存申请单"]);
+        diagMark("after:L805");
+        const slow = pendingFileRead();
+        const oldJson = designDoc(minimalFlowXml());
+        pickFile(diagReadWrapper(), oldJson, () => slow.text);
+        diagMark("before:L809");
+        await diagReadWrapper().find('[data-test="open-doc-input"]').trigger("change");
+        diagMark("after:L809");
+        diagMark("before:L810");
+        await openDocument("{new-bad-json");
+        diagMark("after:L810");
+        slow.resolve(oldJson);
+        diagMark("before:L812");
+        await flushPromises();
+        diagMark("after:L812");
+        expect(diagReadWrapper().find('[data-test="doc-error"]').text()).toContain("不是合法 JSON");
+        expect(diagReadWrapper().find('[data-test="doc-status"]').exists()).toBe(false);
+        expect(diagReadWrapper().text()).toContain("审批节点");
+        diagMark("before:L816");
+        await diagReadWrapper().find('[data-test="form-manager-btn"]').trigger("click");
+        diagMark("after:L816");
+        diagMark("before:L817");
+        await flushPromises();
+        diagMark("after:L817");
+        expect(diagReadWrapper().find('[data-test="form-item-form_1"]').text()).toContain("未保存申请单");
+    });
+    it.each(["成功", "读取失败"])("新建设计后旧文件迟到%s被忽略", async (outcome) => {
+        wrapper = mount(App, { attachTo: document.body });
+        const slow = pendingFileRead();
+        const oldJson = designDoc(minimalFlowXml());
+        pickFile(diagReadWrapper(), oldJson, () => slow.text);
+        diagMark("before:L826");
+        await diagReadWrapper().find('[data-test="open-doc-input"]').trigger("change");
+        diagMark("after:L826");
+        diagMark("before:L827");
+        await diagReadWrapper().find('[data-test="new-design-btn"]').trigger("click");
+        diagMark("after:L827");
+        if (outcome === "读取失败")
+            slow.reject(new Error("旧文件读取失败75"));
+        else
+            slow.resolve(oldJson);
+        diagMark("before:L830");
+        await flushPromises();
+        diagMark("after:L830");
+        expect(diagReadWrapper().find('[data-test="doc-status"]').text()).toContain("已新建设计");
+        expect(diagReadWrapper().find('[data-test="doc-error"]').exists()).toBe(false);
+        expect(diagReadWrapper().text()).toContain("审批节点");
+        expect(diagReadWrapper().text()).not.toContain("兼容检查流程");
+    });
+});
+describe("Playground 文档兼容检查与原子打开（#75）", () => {
+    it("字符引用 URI 文件可打开并导出；非法 xml 重绑定文件拒绝且未保存内容不丢失", async () => {
+        wrapper = mount(App, { attachTo: document.body });
+        const encoded = minimalFlowXml('fa:assignee="john"', 'xmlns:fa="http://flowable.org/bp&#x6D;n"');
+        diagMark("before:L845");
+        await openDocument(designDoc(encoded));
+        diagMark("after:L845");
+        expect(diagReadWrapper().find('[data-test="doc-error"]').exists()).toBe(false);
+        diagMark("before:L847");
+        await diagReadWrapper().find('[data-test="export-btn"]').trigger("click");
+        diagMark("after:L847");
+        diagMark("before:L848");
+        await flushPromises();
+        diagMark("after:L848");
+        diagMark("before:L849");
+        const exported = await parse(diagReadWrapper().find('[data-test="xml-preview"]').text(), {
+            adapter: flowableAdapter,
+            rejectWarnings: true,
+            rejectUnregisteredNamespaces: true,
+        });
+        diagMark("after:L849");
+        expect(exported.elementOf("t1").get("assignee")).toBe("john");
+        diagMark("before:L856");
+        await setupWithForms(["未保存申请单"]);
+        diagMark("after:L856");
+        const invalid = minimalFlowXml('xml:assignee="john"', 'xmlns:xml="http://camunda.org/schema/1.0/bpmn"');
+        diagMark("before:L861");
+        await openDocument(designDoc(invalid));
+        diagMark("after:L861");
+        expect(diagReadWrapper().find('[data-test="doc-error"]').text()).toMatch(/xmlns:xml.*非法.*命名空间声明/);
+        expect(diagReadWrapper().text()).toContain("审批节点");
+        diagMark("before:L864");
+        await diagReadWrapper().find('[data-test="form-manager-btn"]').trigger("click");
+        diagMark("after:L864");
+        diagMark("before:L865");
+        await flushPromises();
+        diagMark("after:L865");
+        expect(diagReadWrapper().find("[data-test=form-item-form_1]").text()).toContain("未保存申请单");
+    });
+    it("导入失效表单 key 的可恢复文档：以草稿打开、key 保留并定位、预览与部署导出受阻（A11）", async () => {
+        wrapper = mount(App, { attachTo: document.body });
+        const xml = minimalFlowXml('fa:assignee="${manager}" fa:formKey="ghost_form"', 'xmlns:fa="http://flowable.org/bpmn" xmlns:fd="urn:flowduet:bpmn"', 'fd:defaultFormKey="missing_form"');
+        const validForm = {
+            id: "form_apply",
+            name: "申请单",
+            provider: "form-create/element-plus",
+            rules: JSON.stringify([{ type: "input", field: "reason", title: "申请事由" }]),
+            options: "{}",
+        };
+        diagMark("before:L883");
+        await openDocument(designDoc(xml, [validForm]));
+        diagMark("after:L883");
+        // 草稿打开成功：不是「文档结构损坏」的报错形态
+        expect(diagReadWrapper().find('[data-test="doc-error"]').exists()).toBe(false);
+        expect(diagReadWrapper().find('[data-test="doc-status"]').text()).toContain("兼容检查流程");
+        // 引用失效定位：默认与节点覆盖两条都报出，key 原样保留
+        const issues = diagReadWrapper().find('[data-test="reference-issues"]').text();
+        expect(issues).toContain("missing_form");
+        expect(issues).toContain("ghost_form");
+        expect(issues).toContain("已保留原值");
+        diagMark("before:L895");
+        // 相关预览受阻：覆盖节点预览报失效（不回退默认、不渲染其他表单）
+        await diagReadWrapper().find('[data-test="form-preview-btn"]').trigger("click");
+        diagMark("after:L895");
+        diagMark("before:L896");
+        await flushPromises();
+        diagMark("after:L896");
+        diagMark("before:L897");
+        await diagReadWrapper().find('[data-test="preview-node-select"]').setValue("t1");
+        diagMark("after:L897");
+        diagMark("before:L898");
+        await flushPromises();
+        diagMark("after:L898");
+        expect(diagReadWrapper().find('[data-test="preview-target-error"]').text()).toContain("ghost_form");
+        expect(diagReadWrapper().find('[data-test="form-preview-render"]').exists()).toBe(false);
+        diagMark("before:L903");
+        // 部署导出受阻：组合校验拦截失效引用（草稿不冒充可部署产物）
+        await diagReadWrapper().find('[data-test="export-btn"]').trigger("click");
+        diagMark("after:L903");
+        diagMark("before:L904");
+        await flushPromises();
+        diagMark("after:L904");
+        expect(diagReadWrapper().find('[data-test="xml-error"]').text()).toContain("missing_form");
+        expect(diagReadWrapper().find('[data-test="xml-preview"]').exists()).toBe(false);
+    });
+    it("先持有未保存设计与表单目录，打开失败后全部保留（A12）", async () => {
+        wrapper = mount(App, { attachTo: document.body });
+        diagMark("before:L912");
+        // 未保存状态 = 新建的最小流程 + 目录里新建的表单（从未点过下载）
+        await setupWithForms(["未保存申请单"]);
+        diagMark("after:L912");
+        expect(diagReadWrapper().text()).toContain("审批节点");
+        diagMark("before:L916");
+        // 未知引擎：拒绝
+        await openDocument(JSON.stringify({
+            format: "flowduet.design",
+            version: 1,
+            engine: "camunda",
+            xml: minimalFlowXml(),
+            forms: [],
+        }));
+        diagMark("after:L916");
+        expect(diagReadWrapper().find('[data-test="doc-error"]').text()).toContain("不支持的目标引擎");
+        expect(diagReadWrapper().find('[data-test="doc-status"]').exists()).toBe(false);
+        // 未保存的模型与表单目录原样在场
+        expect(diagReadWrapper().text()).toContain("审批节点");
+        diagMark("before:L929");
+        await diagReadWrapper().find('[data-test="form-manager-btn"]').trigger("click");
+        diagMark("after:L929");
+        diagMark("before:L930");
+        await flushPromises();
+        diagMark("after:L930");
+        expect(diagReadWrapper().find("[data-test=form-item-form_1]").text()).toContain("未保存申请单");
+        diagMark("before:L934");
+        // 坏 XML：同样拒绝且不部分覆盖（表单管理弹窗开着也不受影响）
+        await openDocument(designDoc("<bpmn:not-closed"));
+        diagMark("after:L934");
+        expect(diagReadWrapper().find('[data-test="doc-error"]').text()).toContain("文档 XML 无法解析");
+        expect(diagReadWrapper().find("[data-test=form-item-form_1]").text()).toContain("未保存申请单");
+        // 假 flowable 前缀但 URI 不匹配：按实际 URI 拒绝
+        const fakePrefixXml = minimalFlowXml('flowable:assignee="${manager}"', 'xmlns:flowable="http://vendor.example/private-ns"');
+        diagMark("before:L943");
+        await openDocument(designDoc(fakePrefixXml));
+        diagMark("after:L943");
+        expect(diagReadWrapper().find('[data-test="doc-error"]').text()).toContain("不支持的扩展");
+        expect(diagReadWrapper().find("[data-test=form-item-form_1]").text()).toContain("未保存申请单");
+        // 重复表单 ID 与未知提供者：目录级拒绝（其余组合由 document.test.ts 单测兜底）
+        const baseForm = {
+            id: "form_dup",
+            name: "重复项",
+            provider: "form-create/element-plus",
+            rules: "[]",
+            options: "{}",
+        };
+        diagMark("before:L955");
+        await openDocument(designDoc(minimalFlowXml(), [baseForm, { ...baseForm, name: "再来一份" }]));
+        diagMark("after:L955");
+        expect(diagReadWrapper().find('[data-test="doc-error"]').text()).toContain("id 重复");
+        diagMark("before:L957");
+        await openDocument(designDoc(minimalFlowXml(), [{ ...baseForm, provider: "other-vendor/antd" }]));
+        diagMark("after:L957");
+        expect(diagReadWrapper().find('[data-test="doc-error"]').text()).toContain("只支持 form-create/element-plus");
+        expect(diagReadWrapper().find("[data-test=form-item-form_1]").text()).toContain("未保存申请单");
+        diagQuery<HTMLElement>('[data-test="form-manager-dialog"] .el-dialog__headerbtn')!
+            .click();
+        diagMark("before:L967");
+        await flushPromises();
+        diagMark("after:L967");
+        expect(diagReadWrapper().text()).toContain("审批节点");
+    });
+    it("多流程、超编辑子集与超表单范围的文档拒绝打开并点名（A13）", async () => {
+        wrapper = mount(App, { attachTo: document.body });
+        expect(diagReadWrapper().text()).toContain("合同会签");
+        const multiProcessXml = `<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" id="multi_defs" targetNamespace="http://example.com/multi">
+  <bpmn:process id="flow_a" isExecutable="true">
+    <bpmn:startEvent id="a_s" />
+    <bpmn:endEvent id="a_e" />
+    <bpmn:sequenceFlow id="a_f1" sourceRef="a_s" targetRef="a_e" />
+  </bpmn:process>
+  <bpmn:process id="flow_b" isExecutable="true">
+    <bpmn:startEvent id="b_s" />
+    <bpmn:endEvent id="b_e" />
+    <bpmn:sequenceFlow id="b_f1" sourceRef="b_s" targetRef="b_e" />
+  </bpmn:process>
+</bpmn:definitions>`;
+        diagMark("before:L988");
+        await openDocument(designDoc(multiProcessXml));
+        diagMark("after:L988");
+        expect(diagReadWrapper().find('[data-test="doc-error"]').text()).toContain("2 个流程");
+        const scriptTaskXml = minimalFlowXml().replace('<bpmn:userTask id="t1" name="审批节点"  />', '<bpmn:scriptTask id="t1" name="系统脚本" />');
+        diagMark("before:L995");
+        await openDocument(designDoc(scriptTaskXml));
+        diagMark("after:L995");
+        expect(diagReadWrapper().find('[data-test="doc-error"]').text()).toContain("t1");
+        expect(diagReadWrapper().find('[data-test="doc-error"]').text()).toContain("ScriptTask");
+        const uploadForm = {
+            id: "form_upload",
+            name: "上传表单",
+            provider: "form-create/element-plus",
+            rules: JSON.stringify([{ type: "upload", field: "attachment", title: "附件" }]),
+            options: "{}",
+        };
+        diagMark("before:L1006");
+        await openDocument(designDoc(minimalFlowXml(), [uploadForm]));
+        diagMark("after:L1006");
+        expect(diagReadWrapper().find('[data-test="doc-error"]').text()).toContain("支持的组件");
+        // 三次拒绝后当前演示设计原样在场
+        expect(diagReadWrapper().text()).toContain("合同会签");
+    });
+    it("标准草稿无 Flowable 扩展可打开；缺审批人仍拦截部署导出（A20 前半）", async () => {
+        wrapper = mount(App, { attachTo: document.body });
+        // flowableAdapter 产出的未配置审批人标准流程：无任何 Flowable 扩展声明与使用
+        const standardXml = minimalFlowXml();
+        diagMark("before:L1017");
+        await openDocument(designDoc(standardXml));
+        diagMark("after:L1017");
+        expect(diagReadWrapper().find('[data-test="doc-error"]').exists()).toBe(false);
+        expect(diagReadWrapper().find('[data-test="doc-status"]').text()).toContain("兼容检查流程");
+        expect(diagReadWrapper().findAll('[data-test="node-card"]').length).toBeGreaterThan(0);
+        diagMark("before:L1024");
+        // 缺业务配置：打开为草稿可以，部署导出被拦（不因「能打开」冒充可部署）
+        await diagReadWrapper().find('[data-test="export-btn"]').trigger("click");
+        diagMark("after:L1024");
+        diagMark("before:L1025");
+        await flushPromises();
+        diagMark("after:L1025");
+        expect(diagReadWrapper().find('[data-test="xml-error"]').text()).toContain("审批人");
+    });
+    it("前缀更名 URI 不变可识别、未使用声明放行、实际使用冲突扩展拒绝（A20 后半）", async () => {
+        wrapper = mount(App, { attachTo: document.body });
+        // fa 前缀 + 正确 flowable URI：assignee 语义恢复
+        const renamedXml = minimalFlowXml('fa:assignee="${manager}"', 'xmlns:fa="http://flowable.org/bpmn"');
+        diagMark("before:L1037");
+        await openDocument(designDoc(renamedXml));
+        diagMark("after:L1037");
+        expect(diagReadWrapper().find('[data-test="doc-error"]').exists()).toBe(false);
+        expect(diagReadWrapper().find('[data-test="doc-status"]').text()).toContain("兼容检查流程");
+        // 仅声明未使用的 camunda 命名空间：不构成冲突
+        const declaredOnlyXml = minimalFlowXml("", 'xmlns:camunda="http://camunda.org/schema/1.0/bpmn"');
+        diagMark("before:L1046");
+        await openDocument(designDoc(declaredOnlyXml));
+        diagMark("after:L1046");
+        expect(diagReadWrapper().find('[data-test="doc-error"]').exists()).toBe(false);
+        const nodeCardCount = diagReadWrapper().findAll('[data-test="node-card"]').length;
+        // 实际使用 camunda 扩展：按 URI 拒绝（前缀叫什么不重要）
+        const actuallyUsedXml = minimalFlowXml('camunda:assignee="demo"', 'xmlns:camunda="http://camunda.org/schema/1.0/bpmn"');
+        diagMark("before:L1055");
+        await openDocument(designDoc(actuallyUsedXml));
+        diagMark("after:L1055");
+        expect(diagReadWrapper().find('[data-test="doc-error"]').text()).toContain("camunda:assignee");
+        expect(diagReadWrapper().find('[data-test="doc-error"]').text()).toContain("http://camunda.org/schema/1.0/bpmn");
+        // 拒绝后当前设计仍是上一次成功打开的内容（打开尝试会清空状态文案，以节点为准）
+        expect(diagReadWrapper().findAll('[data-test="node-card"]')).toHaveLength(nodeCardCount);
+    });
+});
+describe("Playground 本地草稿与未完成设计保护（#76）", () => {
+    it("A07：抽屉输入未确认即保存草稿，刷新后恢复收集到的内容且部署导出仍受阻", async () => {
+        wrapper = mount(App, { attachTo: document.body });
+        diagMark("before:L1068");
+        await diagReadWrapper().find('[data-test="new-design-btn"]').trigger("click");
+        diagMark("after:L1068");
+        diagMark("before:L1069");
+        await flushPromises();
+        diagMark("after:L1069");
+        diagMark("before:L1070");
+        await openApprovalDrawer(diagReadWrapper());
+        diagMark("after:L1070");
+        diagMark("before:L1071");
+        await setValue(diagQuery<HTMLInputElement>('[data-test="drawer-name"]')!, "初审节点");
+        diagMark("after:L1071");
+        diagMark("before:L1077");
+        // 抽屉不点确定，直接保存草稿：当前输入必须被收集，不能只保存旧模型
+        await diagReadWrapper().find('[data-test="save-local-btn"]').trigger("click");
+        diagMark("after:L1077");
+        diagMark("before:L1078");
+        await flushPromises();
+        diagMark("after:L1078");
+        expect(diagReadWrapper().find('[data-test="doc-status"]').text()).toContain("已保存到本地");
+        expect(diagReadWrapper().find('[data-test="doc-error"]').exists()).toBe(false);
+        diagMark("before:L1083");
+        // 审批人未配齐是业务草稿：部署导出仍被拦截
+        await vi.waitFor(() => {
+            expect(diagReadWrapper().find('[data-test="xml-error"]').text()).toContain("审批人");
+        }, { timeout: 3000 });
+        diagMark("after:L1083");
+        // 卸载重挂 = 刷新：本地草稿恢复，抽屉里收集过的节点名在场
+        diagReadWrapper().unmount();
+        wrapper = mount(App, { attachTo: document.body });
+        diagMark("before:L1093");
+        await flushPromises();
+        diagMark("after:L1093");
+        expect(diagReadWrapper().find('[data-test="doc-status"]').text()).toContain("已恢复本地草稿");
+        expect(diagReadWrapper().text()).toContain("初审节点");
+        diagMark("before:L1096");
+        await vi.waitFor(() => {
+            expect(diagReadWrapper().find('[data-test="xml-error"]').text()).toContain("审批人");
+        }, { timeout: 3000 });
+        diagMark("after:L1096");
+    });
+    it("收集被抽屉守卫拦截时中止保存：错误可见且不显示保存成功（AC2）", async () => {
+        wrapper = mount(App, { attachTo: document.body });
+        diagMark("before:L1106");
+        await diagReadWrapper().find('[data-test="new-design-btn"]').trigger("click");
+        diagMark("after:L1106");
+        diagMark("before:L1107");
+        await flushPromises();
+        diagMark("after:L1107");
+        diagMark("before:L1108");
+        await openApprovalDrawer(diagReadWrapper());
+        diagMark("after:L1108");
+        // 切会签 + 表达式形态的审批人：格式非法（守卫不可绕过），非业务草稿
+        diagQuery<HTMLElement>('[data-test="kind-all"]')!.click();
+        diagMark("before:L1111");
+        await flushPromises();
+        diagMark("after:L1111");
+        diagMark("before:L1112");
+        await setValue(diagQuery<HTMLInputElement>('[data-test="drawer-assignee"]')!, "${managers}");
+        diagMark("after:L1112");
+        diagMark("before:L1117");
+        await diagReadWrapper().find('[data-test="save-local-btn"]').trigger("click");
+        diagMark("after:L1117");
+        diagMark("before:L1118");
+        await flushPromises();
+        diagMark("after:L1118");
+        expect(diagReadWrapper().find('[data-test="doc-error"]').text()).toContain("抽屉");
+        expect(diagReadWrapper().find('[data-test="doc-status"]').exists()).toBe(false);
+        expect(localStorage.getItem("flowduet.playground.design")).toBeNull();
+        // 抽屉保持打开、输入保留供修正；修正为合法集合变量后保存成功
+        expect(diagQuery<HTMLInputElement>('[data-test="drawer-assignee"]')!.value).toBe("${managers}");
+        diagMark("before:L1127");
+        await setValue(diagQuery<HTMLInputElement>('[data-test="drawer-assignee"]')!, "managers");
+        diagMark("after:L1127");
+        diagMark("before:L1131");
+        await diagReadWrapper().find('[data-test="save-local-btn"]').trigger("click");
+        diagMark("after:L1131");
+        diagMark("before:L1132");
+        await flushPromises();
+        diagMark("after:L1132");
+        expect(diagReadWrapper().find('[data-test="doc-error"]').exists()).toBe(false);
+        expect(diagReadWrapper().find('[data-test="doc-status"]').text()).toContain("已保存到本地");
+    });
+    it("AC7：恢复含有效表单定义的草稿后可继续试填，试填不落本地草稿", async () => {
+        wrapper = mount(App, { attachTo: document.body });
+        const form = {
+            id: "form_apply",
+            name: "申请单",
+            provider: "form-create/element-plus",
+            rules: JSON.stringify([{ type: "input", field: "reason", title: "申请事由" }]),
+            options: "{}",
+        };
+        const xml = minimalFlowXml('fa:assignee="${manager}"', 'xmlns:fa="http://flowable.org/bpmn" xmlns:fd="urn:flowduet:bpmn"', 'fd:defaultFormKey="form_apply"');
+        diagMark("before:L1151");
+        await openDocument(designDoc(xml, [form]));
+        diagMark("after:L1151");
+        diagMark("before:L1152");
+        await diagReadWrapper().find('[data-test="save-local-btn"]').trigger("click");
+        diagMark("after:L1152");
+        diagMark("before:L1153");
+        await flushPromises();
+        diagMark("after:L1153");
+        expect(diagReadWrapper().find('[data-test="doc-status"]').text()).toContain("已保存到本地");
+        // 刷新恢复：表单目录与默认绑定都在，可继续试填
+        diagReadWrapper().unmount();
+        wrapper = mount(App, { attachTo: document.body });
+        diagMark("before:L1159");
+        await flushPromises();
+        diagMark("after:L1159");
+        expect(diagReadWrapper().find('[data-test="doc-status"]').text()).toContain("已恢复本地草稿");
+        diagMark("before:L1161");
+        await diagReadWrapper().find('[data-test="form-preview-btn"]').trigger("click");
+        diagMark("after:L1161");
+        diagMark("before:L1162");
+        await flushPromises();
+        diagMark("after:L1162");
+        diagMark("before:L1163");
+        await diagReadWrapper().find('[data-test="preview-node-select"]').setValue("t1");
+        diagMark("after:L1163");
+        diagMark("before:L1164");
+        await flushPromises();
+        diagMark("after:L1164");
+        const previewInput = diagQuery<HTMLInputElement>('[data-test="form-preview-render"] input');
+        expect(previewInput).not.toBeNull();
+        previewInput!.value = "预览试填事由";
+        previewInput!.dispatchEvent(new Event("input", { bubbles: true }));
+        diagMark("before:L1171");
+        await flushPromises();
+        diagMark("after:L1171");
+        diagMark("before:L1172");
+        await diagReadWrapper().find('[data-test="form-preview-dialog"] .el-dialog__headerbtn').trigger("click");
+        diagMark("after:L1172");
+        diagMark("before:L1173");
+        await flushPromises();
+        diagMark("after:L1173");
+        diagMark("before:L1176");
+        // 再保存一次：本地草稿中的表单规则不含试填值（试填与设计隔离）
+        await diagReadWrapper().find('[data-test="save-local-btn"]').trigger("click");
+        diagMark("after:L1176");
+        diagMark("before:L1177");
+        await flushPromises();
+        diagMark("after:L1177");
+        const saved = JSON.parse(localStorage.getItem("flowduet.playground.design")!);
+        expect(JSON.stringify(saved.forms[0]!.rules)).not.toContain("预览试填");
+    });
+    it("A15：本地草稿与文件下载/打开复用同一文档合同，两条途径恢复结果一致", async () => {
+        wrapper = mount(App, { attachTo: document.body });
+        diagMark("before:L1184");
+        await diagReadWrapper().find('[data-test="new-design-btn"]').trigger("click");
+        diagMark("after:L1184");
+        diagMark("before:L1185");
+        await flushPromises();
+        diagMark("after:L1185");
+        diagMark("before:L1186");
+        await openApprovalDrawer(diagReadWrapper());
+        diagMark("after:L1186");
+        diagMark("before:L1187");
+        await setValue(diagQuery<HTMLInputElement>('[data-test="drawer-name"]')!, "初审节点");
+        diagMark("after:L1187");
+        diagMark("before:L1191");
+        await diagReadWrapper().find('[data-test="save-local-btn"]').trigger("click");
+        diagMark("after:L1191");
+        diagMark("before:L1192");
+        await flushPromises();
+        diagMark("after:L1192");
+        const localJson = localStorage.getItem("flowduet.playground.design");
+        expect(localJson).not.toBeNull();
+        expect(JSON.parse(localJson!).format).toBe("flowduet.design");
+        // 文件打开走同一 openDesignDocument 合同：同内容文件恢复结果与本地一致
+        diagReadWrapper().unmount();
+        localStorage.clear();
+        wrapper = mount(App, { attachTo: document.body });
+        diagMark("before:L1201");
+        await flushPromises();
+        diagMark("after:L1201");
+        expect(diagReadWrapper().find('[data-test="doc-status"]').exists()).toBe(false);
+        pickFile(diagReadWrapper(), localJson!);
+        diagMark("before:L1204");
+        await diagReadWrapper().find('[data-test="open-doc-input"]').trigger("change");
+        diagMark("after:L1204");
+        diagMark("before:L1205");
+        await flushPromises();
+        diagMark("after:L1205");
+        expect(diagReadWrapper().find('[data-test="doc-status"]').text()).toContain("已打开设计文档");
+        // 与本地恢复同内容：同一快照打开后再保存，产物与原本地草稿逐字一致
+        expect(diagReadWrapper().text()).toContain("初审节点");
+        diagMark("before:L1209");
+        await diagReadWrapper().find('[data-test="save-local-btn"]').trigger("click");
+        diagMark("after:L1209");
+        diagMark("before:L1210");
+        await flushPromises();
+        diagMark("after:L1210");
+        expect(localStorage.getItem("flowduet.playground.design")).toBe(localJson);
+    });
+    it("A14：本地存储写入被拒时不显示保存成功，错误可见", async () => {
+        wrapper = mount(App, { attachTo: document.body });
+        diagMark("before:L1216");
+        await diagReadWrapper().find('[data-test="new-design-btn"]').trigger("click");
+        diagMark("after:L1216");
+        diagMark("before:L1217");
+        await flushPromises();
+        diagMark("after:L1217");
+        const setItemSpy = vi.spyOn(localStorage, "setItem").mockImplementation(() => {
+            throw new DOMException("quota exceeded", "QuotaExceededError");
+        });
+        diagMark("before:L1221");
+        try {
+            diagMark("before:L1222");
+            await diagReadWrapper().find('[data-test="save-local-btn"]').trigger("click");
+            diagMark("after:L1222");
+            diagMark("before:L1223");
+            await flushPromises();
+            diagMark("after:L1223");
+            expect(diagReadWrapper().find('[data-test="doc-error"]').text()).toContain("本地存储");
+            expect(diagReadWrapper().find('[data-test="doc-status"]').exists()).toBe(false);
+        }
+        finally {
+            setItemSpy.mockRestore();
+        }
+        diagMark("after:L1221");
+    });
+});
+describe("Playground 未保存替换提示（#76：新建/打开前确认）", () => {
+    it("打开文件前提示替换影响；取消后模型、表单、未提交输入与未保存状态全部保持", async () => {
+        wrapper = mount(App, { attachTo: document.body });
+        diagMark("before:L1236");
+        // 未保存内容同时含表单目录：取消替换后必须一并保留
+        await setupWithForms(["未保存申请单"]);
+        diagMark("after:L1236");
+        diagMark("before:L1237");
+        await openApprovalDrawer(diagReadWrapper());
+        diagMark("after:L1237");
+        diagMark("before:L1238");
+        await setValue(diagQuery<HTMLInputElement>('[data-test="drawer-name"]')!, "初审节点");
+        diagMark("after:L1238");
+        expect(diagReadWrapper().find('[data-test="dirty-badge"]').exists()).toBe(true);
+        pickFile(diagReadWrapper(), designDoc(minimalFlowXml('fa:assignee="${manager}"', 'xmlns:fa="http://flowable.org/bpmn"')));
+        diagMark("before:L1248");
+        await diagReadWrapper().find('[data-test="open-doc-input"]').trigger("change");
+        diagMark("after:L1248");
+        diagMark("before:L1249");
+        await flushPromises();
+        diagMark("after:L1249");
+        const dialog = diagReadWrapper().find('[data-test="discard-dialog"]');
+        expect(dialog.exists()).toBe(true);
+        expect(dialog.text()).toContain("未保存");
+        diagQuery<HTMLElement>('[data-test="discard-cancel"]')!.click();
+        diagMark("before:L1255");
+        await flushPromises();
+        diagMark("after:L1255");
+        // 取消 = 什么都不动：未保存标记、抽屉缓冲、当前模型全部保持
+        expect(diagReadWrapper().find('[data-test="discard-dialog"]').isVisible()).toBe(false);
+        expect(diagReadWrapper().find('[data-test="dirty-badge"]').exists()).toBe(true);
+        expect(diagQuery<HTMLInputElement>('[data-test="drawer-name"]')!.value).toBe("初审节点");
+        expect(diagReadWrapper().text()).toContain("审批节点");
+        diagMark("before:L1265");
+        // 表单目录原样在场（AC4：模型、表单、未提交输入、未保存状态全部保持）
+        await diagReadWrapper().find('[data-test="form-manager-btn"]').trigger("click");
+        diagMark("after:L1265");
+        diagMark("before:L1266");
+        await flushPromises();
+        diagMark("after:L1266");
+        expect(diagReadWrapper().find("[data-test=form-item-form_1]").text()).toContain("未保存申请单");
+        expect(diagReadWrapper().text()).not.toContain("已打开设计文档");
+    });
+    it("确认替换后载入新文档并重置未保存状态", async () => {
+        wrapper = mount(App, { attachTo: document.body });
+        diagMark("before:L1273");
+        await diagReadWrapper().find('[data-test="new-design-btn"]').trigger("click");
+        diagMark("after:L1273");
+        diagMark("before:L1274");
+        await flushPromises();
+        diagMark("after:L1274");
+        diagMark("before:L1275");
+        await openApprovalDrawer(diagReadWrapper());
+        diagMark("after:L1275");
+        diagMark("before:L1276");
+        await setValue(diagQuery<HTMLInputElement>('[data-test="drawer-name"]')!, "会被替换的名字");
+        diagMark("after:L1276");
+        expect(diagReadWrapper().find('[data-test="dirty-badge"]').exists()).toBe(true);
+        pickFile(diagReadWrapper(), designDoc(minimalFlowXml('fa:assignee="${manager}"', 'xmlns:fa="http://flowable.org/bpmn"')));
+        diagMark("before:L1286");
+        await diagReadWrapper().find('[data-test="open-doc-input"]').trigger("change");
+        diagMark("after:L1286");
+        diagMark("before:L1287");
+        await flushPromises();
+        diagMark("after:L1287");
+        diagQuery<HTMLElement>('[data-test="discard-ok"]')!.click();
+        diagMark("before:L1289");
+        await flushPromises();
+        diagMark("after:L1289");
+        expect(diagReadWrapper().find('[data-test="doc-status"]').text()).toContain("已打开设计文档");
+        expect(diagReadWrapper().find('[data-test="dirty-badge"]').exists()).toBe(false);
+    });
+    it("无未保存修改时打开文件直通，不弹替换确认", async () => {
+        wrapper = mount(App, { attachTo: document.body });
+        pickFile(diagReadWrapper(), designDoc(minimalFlowXml('fa:assignee="${manager}"', 'xmlns:fa="http://flowable.org/bpmn"')));
+        diagMark("before:L1301");
+        await diagReadWrapper().find('[data-test="open-doc-input"]').trigger("change");
+        diagMark("after:L1301");
+        diagMark("before:L1302");
+        await flushPromises();
+        diagMark("after:L1302");
+        expect(diagReadWrapper().find('[data-test="doc-status"]').text()).toContain("已打开设计文档");
+        expect(diagReadWrapper().find('[data-test="discard-dialog"]').exists()).toBe(false);
+    });
+    it("新建设计同样受替换提示保护；确认后载入最小流程并重置未保存状态", async () => {
+        wrapper = mount(App, { attachTo: document.body });
+        diagMark("before:L1309");
+        await diagReadWrapper().find('[data-test="new-design-btn"]').trigger("click");
+        diagMark("after:L1309");
+        diagMark("before:L1310");
+        await flushPromises();
+        diagMark("after:L1310");
+        diagMark("before:L1311");
+        await insertViaMenu(diagReadWrapper(), "start");
+        diagMark("after:L1311");
+        expect(diagReadWrapper().findAll('[data-test="node-card"]')).toHaveLength(4);
+        expect(diagReadWrapper().find('[data-test="dirty-badge"]').exists()).toBe(true);
+        diagMark("before:L1315");
+        await diagReadWrapper().find('[data-test="new-design-btn"]').trigger("click");
+        diagMark("after:L1315");
+        diagMark("before:L1316");
+        await flushPromises();
+        diagMark("after:L1316");
+        diagQuery<HTMLElement>('[data-test="discard-ok"]')!.click();
+        diagMark("before:L1318");
+        await flushPromises();
+        diagMark("after:L1318");
+        expect(diagReadWrapper().findAll('[data-test="node-card"]')).toHaveLength(3);
+        expect(diagReadWrapper().find('[data-test="dirty-badge"]').exists()).toBe(false);
+        expect(diagReadWrapper().find('[data-test="doc-status"]').text()).toContain("已新建设计");
+    });
+});
+describe("Playground 表单目录联动导出预览（A16 目录侧，#76）", () => {
+    it("修复失效引用后 XML 预览自动恢复：旧错误不再冒充当前结果", async () => {
+        wrapper = mount(App, { attachTo: document.body });
+        // 默认 key 指向不存在的 form_1：部署导出被引用完整性校验拦截
+        const xml = minimalFlowXml('fa:assignee="${manager}"', 'xmlns:fa="http://flowable.org/bpmn" xmlns:fd="urn:flowduet:bpmn"', 'fd:defaultFormKey="form_1"');
+        diagMark("before:L1335");
+        await openDocument(designDoc(xml));
+        diagMark("after:L1335");
+        diagMark("before:L1336");
+        await vi.waitFor(() => {
+            expect(diagReadWrapper()!.find('[data-test="xml-error"]').text()).toContain("form_1");
+        }, { timeout: 3000 });
+        diagMark("after:L1336");
+        diagMark("before:L1344");
+        // 新建表单（目录自动分配 id=form_1）修复引用：目录变化必须重刷导出预览
+        await diagReadWrapper().find('[data-test="form-manager-btn"]').trigger("click");
+        diagMark("after:L1344");
+        diagMark("before:L1345");
+        await flushPromises();
+        diagMark("after:L1345");
+        diagMark("before:L1346");
+        await diagReadWrapper().find('[data-test="form-manager-new-name"]').setValue("申请单");
+        diagMark("after:L1346");
+        diagMark("before:L1347");
+        await diagReadWrapper().find('[data-test="form-manager-create-btn"]').trigger("click");
+        diagMark("after:L1347");
+        diagMark("before:L1348");
+        await flushPromises();
+        diagMark("after:L1348");
+        diagQuery<HTMLElement>('[data-test="form-manager-dialog"] .el-dialog__headerbtn')!
+            .click();
+        diagMark("before:L1352");
+        await flushPromises();
+        diagMark("after:L1352");
+        diagMark("before:L1354");
+        await vi.waitFor(() => {
+            expect(diagReadWrapper()!.find('[data-test="xml-preview"]').text()).toContain("defaultFormKey");
+        }, { timeout: 3000 });
+        diagMark("after:L1354");
+        expect(diagReadWrapper().find('[data-test="xml-error"]').exists()).toBe(false);
+    });
+});
+describe("Playground 抄送草稿保存（#76 AC9）", () => {
+    it("存量占位收件人属业务草稿：可保存恢复并报告待修复，部署导出仍拦截", async () => {
+        wrapper = mount(App, { attachTo: document.body });
+        diagMark("before:L1367");
+        await diagReadWrapper().find('[data-test="new-design-btn"]').trigger("click");
+        diagMark("after:L1367");
+        diagMark("before:L1368");
+        await flushPromises();
+        diagMark("after:L1368");
+        diagMark("before:L1370");
+        // 插入抄送节点（默认收件人为占位串）但不进抽屉：模型留存量占位
+        await insertViaMenu(diagReadWrapper(), "approval_1", "cc");
+        diagMark("after:L1370");
+        diagMark("before:L1371");
+        await diagReadWrapper().find('[data-test="save-local-btn"]').trigger("click");
+        diagMark("after:L1371");
+        diagMark("before:L1372");
+        await flushPromises();
+        diagMark("after:L1372");
+        expect(diagReadWrapper().find('[data-test="doc-status"]').text()).toContain("占位串");
+        diagReadWrapper().unmount();
+        wrapper = mount(App, { attachTo: document.body });
+        diagMark("before:L1377");
+        await flushPromises();
+        diagMark("after:L1377");
+        expect(diagReadWrapper().find('[data-test="doc-status"]').text()).toContain("已恢复本地草稿");
+        expect(diagReadWrapper().text()).toContain("抄送节点");
+        diagMark("before:L1380");
+        await vi.waitFor(() => {
+            expect(diagReadWrapper()!.find('[data-test="xml-error"]').text()).toContain("收件人");
+        }, { timeout: 3000 });
+        diagMark("after:L1380");
+    });
+    it("抽屉里空白收件人可保存为业务草稿，恢复后部署仍拦截", async () => {
+        wrapper = mount(App, { attachTo: document.body });
+        diagMark("before:L1390");
+        await diagReadWrapper().find('[data-test="new-design-btn"]').trigger("click");
+        diagMark("after:L1390");
+        diagMark("before:L1391");
+        await flushPromises();
+        diagMark("after:L1391");
+        diagMark("before:L1392");
+        await insertViaMenu(diagReadWrapper(), "approval_1", "cc");
+        diagMark("after:L1392");
+        const ccCard = diagReadWrapper().findAll('[data-test="node-card"]')
+            .find((card) => card.text().includes("抄送节点"));
+        diagMark("before:L1396");
+        await ccCard!.trigger("click");
+        diagMark("after:L1396");
+        diagMark("before:L1397");
+        await flushPromises();
+        diagMark("after:L1397");
+        diagMark("before:L1398");
+        await setValue(diagQuery<HTMLInputElement>('[data-test="drawer-recipients"]')!, "");
+        diagMark("after:L1398");
+        diagMark("before:L1402");
+        await diagReadWrapper().find('[data-test="save-local-btn"]').trigger("click");
+        diagMark("after:L1402");
+        diagMark("before:L1403");
+        await flushPromises();
+        diagMark("after:L1403");
+        expect(diagReadWrapper().find('[data-test="doc-error"]').exists()).toBe(false);
+        expect(diagReadWrapper().find('[data-test="doc-status"]').text()).toContain("待修复");
+        expect(localStorage.getItem("flowduet.playground.design")).not.toBeNull();
+        diagReadWrapper().unmount();
+        wrapper = mount(App, { attachTo: document.body });
+        diagMark("before:L1409");
+        await flushPromises();
+        diagMark("after:L1409");
+        diagMark("before:L1410");
+        await vi.waitFor(() => expect(diagReadWrapper()!.find('[data-test="xml-error"]').text()).toContain("收件人"));
+        diagMark("after:L1410");
+    });
+});
+describe("Playground 保存竞态（真实组件，#76 AC5）", () => {
+    it("序列化期间改动默认表单绑定：完成后报告快照而非当前状态已保存", async () => {
+        wrapper = mount(App, { attachTo: document.body });
+        diagMark("before:L1419");
+        await setupWithForms(["申请单"]);
+        diagMark("after:L1419");
+        // 保存发起后、任何 await 之前同步改默认绑定（select 常驻 DOM，原生事件零渲染等待），
+        // 确保编辑落在快照世代之后
+        diagReadWrapper().find('[data-test="save-local-btn"]').trigger("click");
+        const select = diagQuery<HTMLSelectElement>('[data-test="default-form-select"]');
+        select!.value = "form_1";
+        select!.dispatchEvent(new Event("change"));
+        diagMark("before:L1426");
+        await flushPromises();
+        diagMark("after:L1426");
+        diagMark("before:L1428");
+        await vi.waitFor(() => {
+            expect(diagReadWrapper()!.find('[data-test="doc-status"]').text()).toContain("序列化期间又有新编辑");
+        }, { timeout: 3000 });
+        diagMark("after:L1428");
+        expect(diagReadWrapper().find('[data-test="dirty-badge"]').exists()).toBe(true);
+        // 快照属于旧世代：尚未绑定默认表单
+        const saved = JSON.parse(localStorage.getItem("flowduet.playground.design")!);
+        expect(saved.xml).not.toContain('defaultFormKey="form_1"');
+    });
+});
+describe("PR88 保存与抽屉边界回归", () => {
+    it.each(["成功", "失败"])("旧保存晚到%s不覆盖较新本地草稿及反馈", async (outcome) => {
+        const original = FlowDesignSession.prototype.save;
+        let release!: () => void;
+        const gate = new Promise<void>((resolve) => {
+            release = resolve;
+        });
+        let count = 0;
+        const spy = vi.spyOn(FlowDesignSession.prototype, "save").mockImplementation(async function () {
+            diagMark("before:L1450");
+            const result = await original.call(this);
+            diagMark("after:L1450");
+            diagMark("before:L1451");
+            if (++count === 1) {
+                diagMark("before:L1452");
+                await gate;
+                diagMark("after:L1452");
+                if (outcome === "失败")
+                    throw new Error("旧保存失败");
+            }
+            diagMark("after:L1451");
+            return result;
+        });
+        diagMark("before:L1457");
+        try {
+            wrapper = mount(App, { attachTo: document.body });
+            diagMark("before:L1459");
+            await setupWithForms(["申请单"]);
+            diagMark("after:L1459");
+            diagMark("before:L1460");
+            await diagReadWrapper().find('[data-test="save-local-btn"]').trigger("click");
+            diagMark("after:L1460");
+            diagMark("before:L1461");
+            await vi.waitFor(() => expect(count).toBe(1));
+            diagMark("after:L1461");
+            const select = diagQuery<HTMLSelectElement>('[data-test="default-form-select"]')!;
+            select.value = "form_1";
+            select.dispatchEvent(new Event("change"));
+            diagMark("before:L1467");
+            await diagReadWrapper().find('[data-test="save-local-btn"]').trigger("click");
+            diagMark("after:L1467");
+            diagMark("before:L1468");
+            await vi.waitFor(() => expect(count).toBe(2));
+            diagMark("after:L1468");
+            diagMark("before:L1469");
+            await flushPromises();
+            diagMark("after:L1469");
+            expect(JSON.parse(localStorage.getItem("flowduet.playground.design")!).xml).toContain('defaultFormKey="form_1"');
+            release();
+            diagMark("before:L1474");
+            await flushPromises();
+            diagMark("after:L1474");
+            expect(JSON.parse(localStorage.getItem("flowduet.playground.design")!).xml).toContain('defaultFormKey="form_1"');
+            expect(diagReadWrapper().find('[data-test="dirty-badge"]').exists()).toBe(false);
+            expect(diagReadWrapper().find('[data-test="doc-status"]').text()).not.toContain("尚未保存");
+            expect(diagReadWrapper().find('[data-test="doc-error"]').exists()).toBe(false);
+        }
+        finally {
+            release();
+            spy.mockRestore();
+        }
+        diagMark("after:L1457");
+    });
+    it("保存期间新建设计使旧保存失效，不落盘或覆盖新建反馈", async () => {
+        const original = FlowDesignSession.prototype.save;
+        let release!: () => void;
+        const gate = new Promise<void>((resolve) => {
+            release = resolve;
+        });
+        let ready = false;
+        const spy = vi.spyOn(FlowDesignSession.prototype, "save").mockImplementation(async function () {
+            diagMark("before:L1495");
+            const result = await original.call(this);
+            diagMark("after:L1495");
+            ready = true;
+            diagMark("before:L1497");
+            await gate;
+            diagMark("after:L1497");
+            return result;
+        });
+        diagMark("before:L1500");
+        try {
+            wrapper = mount(App, { attachTo: document.body });
+            diagMark("before:L1502");
+            await diagReadWrapper().find('[data-test="save-local-btn"]').trigger("click");
+            diagMark("after:L1502");
+            diagMark("before:L1503");
+            await vi.waitFor(() => expect(ready).toBe(true));
+            diagMark("after:L1503");
+            diagMark("before:L1504");
+            await diagReadWrapper().find('[data-test="new-design-btn"]').trigger("click");
+            diagMark("after:L1504");
+            release();
+            diagMark("before:L1506");
+            await flushPromises();
+            diagMark("after:L1506");
+            expect(localStorage.getItem("flowduet.playground.design")).toBeNull();
+            expect(diagReadWrapper().find('[data-test="doc-status"]').text()).toContain("已新建设计");
+            expect(diagReadWrapper().find('[data-test="dirty-badge"]').exists()).toBe(false);
+        }
+        finally {
+            release();
+            spy.mockRestore();
+        }
+        diagMark("after:L1500");
+    });
+    it("切换抽屉目标前收集未提交名称，保存后不丢失", async () => {
+        wrapper = mount(App, { attachTo: document.body });
+        diagMark("before:L1518");
+        await openApprovalDrawer(diagReadWrapper());
+        diagMark("after:L1518");
+        diagMark("before:L1519");
+        await setValue(diagQuery<HTMLInputElement>('[data-test="drawer-name"]')!, "未提交的新名称");
+        diagMark("after:L1519");
+        diagMark("before:L1523");
+        await diagReadWrapper().findAll('[data-test="node-card"]')[2]!.trigger("click");
+        diagMark("after:L1523");
+        diagMark("before:L1524");
+        await flushPromises();
+        diagMark("after:L1524");
+        diagMark("before:L1525");
+        await diagReadWrapper().find('[data-test="save-local-btn"]').trigger("click");
+        diagMark("after:L1525");
+        diagMark("before:L1526");
+        await flushPromises();
+        diagMark("after:L1526");
+        expect(JSON.parse(localStorage.getItem("flowduet.playground.design")!).xml).toContain("未提交的新名称");
+    });
+    it("非法集合格式阻止切换，保留原节点及输入", async () => {
+        wrapper = mount(App, { attachTo: document.body });
+        diagMark("before:L1534");
+        await diagReadWrapper().findAll('[data-test="node-card"]')[2]!.trigger("click");
+        diagMark("after:L1534");
+        diagMark("before:L1535");
+        await flushPromises();
+        diagMark("after:L1535");
+        diagMark("before:L1536");
+        await setValue(diagQuery<HTMLInputElement>('[data-test="drawer-assignee"]')!, "张三,李四");
+        diagMark("after:L1536");
+        diagMark("before:L1540");
+        await diagReadWrapper().findAll('[data-test="node-card"]')[1]!.trigger("click");
+        diagMark("after:L1540");
+        diagMark("before:L1541");
+        await flushPromises();
+        diagMark("after:L1541");
+        expect(diagQuery<HTMLInputElement>('[data-test="drawer-assignee"]')!.value).toBe("张三,李四");
+        expect(diagReadWrapper().find('[data-test="action-error"]').text()).toContain("集合变量名");
+    });
+    it("单签切多人未配置集合可保存恢复，部署仍拒绝", async () => {
+        wrapper = mount(App, { attachTo: document.body });
+        diagMark("before:L1550");
+        await diagReadWrapper().find('[data-test="new-design-btn"]').trigger("click");
+        diagMark("after:L1550");
+        diagMark("before:L1551");
+        await openApprovalDrawer(diagReadWrapper());
+        diagMark("after:L1551");
+        diagQuery<HTMLElement>('[data-test="kind-all"]')!.click();
+        diagMark("before:L1553");
+        await flushPromises();
+        diagMark("after:L1553");
+        diagMark("before:L1554");
+        await diagReadWrapper().find('[data-test="save-local-btn"]').trigger("click");
+        diagMark("after:L1554");
+        diagMark("before:L1555");
+        await flushPromises();
+        diagMark("after:L1555");
+        expect(diagReadWrapper().find('[data-test="doc-error"]').exists()).toBe(false);
+        expect(diagReadWrapper().find('[data-test="doc-status"]').text()).toContain("待修复");
+        diagReadWrapper().unmount();
+        wrapper = mount(App, { attachTo: document.body });
+        diagMark("before:L1560");
+        await flushPromises();
+        diagMark("after:L1560");
+        diagMark("before:L1561");
+        await openApprovalDrawer(diagReadWrapper());
+        diagMark("after:L1561");
+        expect(diagQuery<HTMLInputElement>('[data-test="drawer-assignee"]')!.value).toBe("");
+        diagMark("before:L1565");
+        await vi.waitFor(() => expect(diagReadWrapper()!.find('[data-test="xml-error"]').text()).toContain("集合"));
+        diagMark("after:L1565");
+    });
+});
+describe("PR88 产品验收视图切换回归", () => {
+    it("P24 切换只读视图前收集当前抽屉输入，保存恢复不丢失", async () => {
+        wrapper = mount(App, { attachTo: document.body });
+        diagMark("before:L1574");
+        await openApprovalDrawer(diagReadWrapper());
+        diagMark("after:L1574");
+        diagMark("before:L1575");
+        await setValue(diagQuery<HTMLInputElement>('[data-test="drawer-name"]')!, "切视图保留名称");
+        diagMark("after:L1575");
+        diagMark("before:L1579");
+        await diagReadWrapper().find('[data-test="view-bpmn"] input').setValue();
+        diagMark("after:L1579");
+        diagMark("before:L1580");
+        await flushPromises();
+        diagMark("after:L1580");
+        diagMark("before:L1581");
+        await diagReadWrapper().find('[data-test="save-local-btn"]').trigger("click");
+        diagMark("after:L1581");
+        diagMark("before:L1582");
+        await flushPromises();
+        diagMark("after:L1582");
+        expect(JSON.parse(localStorage.getItem("flowduet.playground.design")!).xml).toContain("切视图保留名称");
+    });
+    it("P24 非法格式阻止离开当前视图，输入仍在原抽屉", async () => {
+        wrapper = mount(App, { attachTo: document.body });
+        diagMark("before:L1590");
+        await diagReadWrapper().findAll('[data-test="node-card"]')[2]!.trigger("click");
+        diagMark("after:L1590");
+        diagMark("before:L1591");
+        await flushPromises();
+        diagMark("after:L1591");
+        diagMark("before:L1592");
+        await setValue(diagQuery<HTMLInputElement>('[data-test="drawer-assignee"]')!, "张三,李四");
+        diagMark("after:L1592");
+        diagMark("before:L1596");
+        await diagReadWrapper().find('[data-test="view-bpmn"] input').setValue();
+        diagMark("after:L1596");
+        diagMark("before:L1597");
+        await flushPromises();
+        diagMark("after:L1597");
+        expect(diagReadWrapper().find('[data-test="view-dingtalk"] input').element.checked).toBe(true);
+        expect(diagQuery<HTMLInputElement>('[data-test="drawer-assignee"]')!.value).toBe("张三,李四");
+        expect(diagReadWrapper().find('[data-test="action-error"]').text()).toContain("集合变量名");
+    });
+});
+describe("E16 文件读取期间新编辑保护", () => {
+    it("新抽屉输入取消迟到打开，模型目录缓冲dirty保持，重试仍可打开", async () => {
+        wrapper = mount(App, { attachTo: document.body });
+        diagMark("before:L1609");
+        await setupWithForms(["保留目录76"]);
+        diagMark("after:L1609");
+        diagMark("before:L1610");
+        await diagReadWrapper().find('[data-test="save-local-btn"]').trigger("click");
+        diagMark("after:L1610");
+        diagMark("before:L1611");
+        await flushPromises();
+        diagMark("after:L1611");
+        const slow = pendingFileRead();
+        const incoming = designDoc(minimalFlowXml().replace('name="兼容检查流程"', 'name="迟到文档76"'));
+        pickFile(diagReadWrapper(), incoming, () => slow.text);
+        diagMark("before:L1617");
+        await diagReadWrapper().find('[data-test="open-doc-input"]').trigger("change");
+        diagMark("after:L1617");
+        diagMark("before:L1618");
+        await openApprovalDrawer(diagReadWrapper());
+        diagMark("after:L1618");
+        diagMark("before:L1619");
+        await setValue(diagQuery<HTMLInputElement>('[data-test="drawer-name"]')!, "读取期间新输入76");
+        diagMark("after:L1619");
+        slow.resolve(incoming);
+        diagMark("before:L1624");
+        await flushPromises();
+        diagMark("after:L1624");
+        expect(diagReadWrapper().find('[data-test="doc-error"]').text()).toContain("新编辑");
+        expect(diagQuery<HTMLInputElement>('[data-test="drawer-name"]')!.value).toBe("读取期间新输入76");
+        expect(diagReadWrapper().find('[data-test="dirty-badge"]').exists()).toBe(true);
+        diagMark("before:L1631");
+        // 目录必须仍是旧会话的目录，不能仅跳过宿主 adoptModel 而留半换状态。
+        await diagReadWrapper().find('[data-test="save-local-btn"]').trigger("click");
+        diagMark("after:L1631");
+        diagMark("before:L1632");
+        await flushPromises();
+        diagMark("after:L1632");
+        const saved = JSON.parse(localStorage.getItem("flowduet.playground.design")!);
+        expect(saved.xml).toContain("读取期间新输入76");
+        expect(saved.forms[0].name).toBe("保留目录76");
+        diagMark("before:L1636");
+        await openDocument(incoming);
+        diagMark("after:L1636");
+        expect(diagReadWrapper().find('[data-test="doc-status"]').text()).toContain("迟到文档76");
+    });
+    it("读取期间新打开表单编辑器也保持当前目录及编辑器", async () => {
+        wrapper = mount(App, { attachTo: document.body });
+        diagMark("before:L1642");
+        await setupWithForms(["保留编辑器76"]);
+        diagMark("after:L1642");
+        diagMark("before:L1643");
+        await diagReadWrapper().find('[data-test="save-local-btn"]').trigger("click");
+        diagMark("after:L1643");
+        diagMark("before:L1644");
+        await flushPromises();
+        diagMark("after:L1644");
+        const slow = pendingFileRead();
+        const incoming = designDoc(minimalFlowXml());
+        pickFile(diagReadWrapper(), incoming, () => slow.text);
+        diagMark("before:L1648");
+        await diagReadWrapper().find('[data-test="open-doc-input"]').trigger("change");
+        diagMark("after:L1648");
+        diagMark("before:L1649");
+        await diagReadWrapper().find('[data-test="form-manager-btn"]').trigger("click");
+        diagMark("after:L1649");
+        diagMark("before:L1650");
+        await diagReadWrapper().find('[data-test="form-edit-btn-form_1"]').trigger("click");
+        diagMark("after:L1650");
+        diagMark("before:L1651");
+        await flushPromises();
+        diagMark("after:L1651");
+        slow.resolve(incoming);
+        diagMark("before:L1653");
+        await flushPromises();
+        diagMark("after:L1653");
+        expect(diagReadWrapper().find('[data-test="doc-error"]').text()).toContain("新编辑");
+        expect(diagReadWrapper().find('[data-test="form-designer-name"]').text()).toContain("保留编辑器76");
+    });
+});

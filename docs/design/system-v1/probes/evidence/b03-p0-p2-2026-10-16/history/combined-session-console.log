@@ -1,0 +1,92 @@
+### Result
+Total messages: 10 (Errors: 0, Warnings: 8)
+Returning 8 messages for level "info"
+
+[WARNING] ElementPlusError: [ElSwitch] model-value must be active-value or inactive-value
+    at debugWarn (http://127.0.0.1:5182/node_modules/.vite/deps/es-BbPSVIrd.js?v=de70a3f6:4894:35)
+    at setup (http://127.0.0.1:5182/node_modules/.vite/deps/es-BbPSVIrd.js?v=de70a3f6:46721:4)
+    at callWithErrorHandling (http://127.0.0.1:5182/node_modules/.vite/deps/vue.runtime.esm-bundler-BHjI00_4.js?v=de70a3f6:1941:17)
+    at setupStatefulComponent (http://127.0.0.1:5182/node_modules/.vite/deps/vue.runtime.esm-bundler-BHjI00_4.js?v=de70a3f6:6966:23)
+    at setupComponent (http://127.0.0.1:5182/node_modules/.vite/deps/vue.runtime.esm-bundler-BHjI00_4.js?v=de70a3f6:6942:35)
+    at mountComponent (http://127.0.0.1:5182/node_modules/.vite/deps/vue.runtime.esm-bundler-BHjI00_4.js?v=de70a3f6:5693:3)
+    at processComponent (http://127.0.0.1:5182/node_modules/.vite/deps/vue.runtime.esm-bundler-BHjI00_4.js?v=de70a3f6:5683:9)
+    at patch (http://127.0.0.1:5182/node_modules/.vite/deps/vue.runtime.esm-bundler-BHjI00_4.js?v=de70a3f6:5473:28)
+    at mountChildren (http://127.0.0.1:5182/node_modules/.vite/deps/vue.runtime.esm-bundler-BHjI00_4.js?v=de70a3f6:5587:4)
+    at processFragment (http://127.0.0.1:5182/node_modules/.vite/deps/vue.runtime.esm-bundler-BHjI00_4.js?v=de70a3f6:5673:4) @ http://127.0.0.1:5182/@vite/client:298
+[WARNING] ElementPlusError: [ElSwitch] model-value must be active-value or inactive-value
+    at debugWarn (http://127.0.0.1:5182/node_modules/.vite/deps/es-BbPSVIrd.js?v=de70a3f6:4894:35)
+    at setup (http://127.0.0.1:5182/node_modules/.vite/deps/es-BbPSVIrd.js?v=de70a3f6:46721:4)
+    at callWithErrorHandling (http://127.0.0.1:5182/node_modules/.vite/deps/vue.runtime.esm-bundler-BHjI00_4.js?v=de70a3f6:1941:17)
+    at setupStatefulComponent (http://127.0.0.1:5182/node_modules/.vite/deps/vue.runtime.esm-bundler-BHjI00_4.js?v=de70a3f6:6966:23)
+    at setupComponent (http://127.0.0.1:5182/node_modules/.vite/deps/vue.runtime.esm-bundler-BHjI00_4.js?v=de70a3f6:6942:35)
+    at mountComponent (http://127.0.0.1:5182/node_modules/.vite/deps/vue.runtime.esm-bundler-BHjI00_4.js?v=de70a3f6:5693:3)
+    at processComponent (http://127.0.0.1:5182/node_modules/.vite/deps/vue.runtime.esm-bundler-BHjI00_4.js?v=de70a3f6:5683:9)
+    at patch (http://127.0.0.1:5182/node_modules/.vite/deps/vue.runtime.esm-bundler-BHjI00_4.js?v=de70a3f6:5473:28)
+    at mountChildren (http://127.0.0.1:5182/node_modules/.vite/deps/vue.runtime.esm-bundler-BHjI00_4.js?v=de70a3f6:5587:4)
+    at processFragment (http://127.0.0.1:5182/node_modules/.vite/deps/vue.runtime.esm-bundler-BHjI00_4.js?v=de70a3f6:5673:4) @ http://127.0.0.1:5182/@vite/client:298
+[WARNING] ElementPlusError: [ElSwitch] model-value must be active-value or inactive-value
+    at debugWarn (http://127.0.0.1:5182/node_modules/.vite/deps/es-BbPSVIrd.js?v=de70a3f6:4894:35)
+    at setup (http://127.0.0.1:5182/node_modules/.vite/deps/es-BbPSVIrd.js?v=de70a3f6:46721:4)
+    at callWithErrorHandling (http://127.0.0.1:5182/node_modules/.vite/deps/vue.runtime.esm-bundler-BHjI00_4.js?v=de70a3f6:1941:17)
+    at setupStatefulComponent (http://127.0.0.1:5182/node_modules/.vite/deps/vue.runtime.esm-bundler-BHjI00_4.js?v=de70a3f6:6966:23)
+    at setupComponent (http://127.0.0.1:5182/node_modules/.vite/deps/vue.runtime.esm-bundler-BHjI00_4.js?v=de70a3f6:6942:35)
+    at mountComponent (http://127.0.0.1:5182/node_modules/.vite/deps/vue.runtime.esm-bundler-BHjI00_4.js?v=de70a3f6:5693:3)
+    at processComponent (http://127.0.0.1:5182/node_modules/.vite/deps/vue.runtime.esm-bundler-BHjI00_4.js?v=de70a3f6:5683:9)
+    at patch (http://127.0.0.1:5182/node_modules/.vite/deps/vue.runtime.esm-bundler-BHjI00_4.js?v=de70a3f6:5473:28)
+    at mountChildren (http://127.0.0.1:5182/node_modules/.vite/deps/vue.runtime.esm-bundler-BHjI00_4.js?v=de70a3f6:5587:4)
+    at processFragment (http://127.0.0.1:5182/node_modules/.vite/deps/vue.runtime.esm-bundler-BHjI00_4.js?v=de70a3f6:5673:4) @ http://127.0.0.1:5182/@vite/client:298
+[WARNING] ElementPlusError: [ElSwitch] model-value must be active-value or inactive-value
+    at debugWarn (http://127.0.0.1:5182/node_modules/.vite/deps/es-BbPSVIrd.js?v=de70a3f6:4894:35)
+    at setup (http://127.0.0.1:5182/node_modules/.vite/deps/es-BbPSVIrd.js?v=de70a3f6:46721:4)
+    at callWithErrorHandling (http://127.0.0.1:5182/node_modules/.vite/deps/vue.runtime.esm-bundler-BHjI00_4.js?v=de70a3f6:1941:17)
+    at setupStatefulComponent (http://127.0.0.1:5182/node_modules/.vite/deps/vue.runtime.esm-bundler-BHjI00_4.js?v=de70a3f6:6966:23)
+    at setupComponent (http://127.0.0.1:5182/node_modules/.vite/deps/vue.runtime.esm-bundler-BHjI00_4.js?v=de70a3f6:6942:35)
+    at mountComponent (http://127.0.0.1:5182/node_modules/.vite/deps/vue.runtime.esm-bundler-BHjI00_4.js?v=de70a3f6:5693:3)
+    at processComponent (http://127.0.0.1:5182/node_modules/.vite/deps/vue.runtime.esm-bundler-BHjI00_4.js?v=de70a3f6:5683:9)
+    at patch (http://127.0.0.1:5182/node_modules/.vite/deps/vue.runtime.esm-bundler-BHjI00_4.js?v=de70a3f6:5473:28)
+    at mountChildren (http://127.0.0.1:5182/node_modules/.vite/deps/vue.runtime.esm-bundler-BHjI00_4.js?v=de70a3f6:5587:4)
+    at processFragment (http://127.0.0.1:5182/node_modules/.vite/deps/vue.runtime.esm-bundler-BHjI00_4.js?v=de70a3f6:5673:4) @ http://127.0.0.1:5182/@vite/client:298
+[WARNING] ElementPlusError: [ElSwitch] model-value must be active-value or inactive-value
+    at debugWarn (http://127.0.0.1:5182/node_modules/.vite/deps/es-BbPSVIrd.js?v=de70a3f6:4894:35)
+    at setup (http://127.0.0.1:5182/node_modules/.vite/deps/es-BbPSVIrd.js?v=de70a3f6:46721:4)
+    at callWithErrorHandling (http://127.0.0.1:5182/node_modules/.vite/deps/vue.runtime.esm-bundler-BHjI00_4.js?v=de70a3f6:1941:17)
+    at setupStatefulComponent (http://127.0.0.1:5182/node_modules/.vite/deps/vue.runtime.esm-bundler-BHjI00_4.js?v=de70a3f6:6966:23)
+    at setupComponent (http://127.0.0.1:5182/node_modules/.vite/deps/vue.runtime.esm-bundler-BHjI00_4.js?v=de70a3f6:6942:35)
+    at mountComponent (http://127.0.0.1:5182/node_modules/.vite/deps/vue.runtime.esm-bundler-BHjI00_4.js?v=de70a3f6:5693:3)
+    at processComponent (http://127.0.0.1:5182/node_modules/.vite/deps/vue.runtime.esm-bundler-BHjI00_4.js?v=de70a3f6:5683:9)
+    at patch (http://127.0.0.1:5182/node_modules/.vite/deps/vue.runtime.esm-bundler-BHjI00_4.js?v=de70a3f6:5473:28)
+    at mountChildren (http://127.0.0.1:5182/node_modules/.vite/deps/vue.runtime.esm-bundler-BHjI00_4.js?v=de70a3f6:5587:4)
+    at processFragment (http://127.0.0.1:5182/node_modules/.vite/deps/vue.runtime.esm-bundler-BHjI00_4.js?v=de70a3f6:5673:4) @ http://127.0.0.1:5182/@vite/client:298
+[WARNING] ElementPlusError: [ElSwitch] model-value must be active-value or inactive-value
+    at debugWarn (http://127.0.0.1:5182/node_modules/.vite/deps/es-BbPSVIrd.js?v=de70a3f6:4894:35)
+    at setup (http://127.0.0.1:5182/node_modules/.vite/deps/es-BbPSVIrd.js?v=de70a3f6:46721:4)
+    at callWithErrorHandling (http://127.0.0.1:5182/node_modules/.vite/deps/vue.runtime.esm-bundler-BHjI00_4.js?v=de70a3f6:1941:17)
+    at setupStatefulComponent (http://127.0.0.1:5182/node_modules/.vite/deps/vue.runtime.esm-bundler-BHjI00_4.js?v=de70a3f6:6966:23)
+    at setupComponent (http://127.0.0.1:5182/node_modules/.vite/deps/vue.runtime.esm-bundler-BHjI00_4.js?v=de70a3f6:6942:35)
+    at mountComponent (http://127.0.0.1:5182/node_modules/.vite/deps/vue.runtime.esm-bundler-BHjI00_4.js?v=de70a3f6:5693:3)
+    at processComponent (http://127.0.0.1:5182/node_modules/.vite/deps/vue.runtime.esm-bundler-BHjI00_4.js?v=de70a3f6:5683:9)
+    at patch (http://127.0.0.1:5182/node_modules/.vite/deps/vue.runtime.esm-bundler-BHjI00_4.js?v=de70a3f6:5473:28)
+    at mountChildren (http://127.0.0.1:5182/node_modules/.vite/deps/vue.runtime.esm-bundler-BHjI00_4.js?v=de70a3f6:5587:4)
+    at processFragment (http://127.0.0.1:5182/node_modules/.vite/deps/vue.runtime.esm-bundler-BHjI00_4.js?v=de70a3f6:5673:4) @ http://127.0.0.1:5182/@vite/client:298
+[WARNING] ElementPlusError: [ElSwitch] model-value must be active-value or inactive-value
+    at debugWarn (http://127.0.0.1:5182/node_modules/.vite/deps/es-BbPSVIrd.js?v=de70a3f6:4894:35)
+    at setup (http://127.0.0.1:5182/node_modules/.vite/deps/es-BbPSVIrd.js?v=de70a3f6:46721:4)
+    at callWithErrorHandling (http://127.0.0.1:5182/node_modules/.vite/deps/vue.runtime.esm-bundler-BHjI00_4.js?v=de70a3f6:1941:17)
+    at setupStatefulComponent (http://127.0.0.1:5182/node_modules/.vite/deps/vue.runtime.esm-bundler-BHjI00_4.js?v=de70a3f6:6966:23)
+    at setupComponent (http://127.0.0.1:5182/node_modules/.vite/deps/vue.runtime.esm-bundler-BHjI00_4.js?v=de70a3f6:6942:35)
+    at mountComponent (http://127.0.0.1:5182/node_modules/.vite/deps/vue.runtime.esm-bundler-BHjI00_4.js?v=de70a3f6:5693:3)
+    at processComponent (http://127.0.0.1:5182/node_modules/.vite/deps/vue.runtime.esm-bundler-BHjI00_4.js?v=de70a3f6:5683:9)
+    at patch (http://127.0.0.1:5182/node_modules/.vite/deps/vue.runtime.esm-bundler-BHjI00_4.js?v=de70a3f6:5473:28)
+    at mountChildren (http://127.0.0.1:5182/node_modules/.vite/deps/vue.runtime.esm-bundler-BHjI00_4.js?v=de70a3f6:5587:4)
+    at processFragment (http://127.0.0.1:5182/node_modules/.vite/deps/vue.runtime.esm-bundler-BHjI00_4.js?v=de70a3f6:5673:4) @ http://127.0.0.1:5182/@vite/client:298
+[WARNING] ElementPlusError: [ElSwitch] model-value must be active-value or inactive-value
+    at debugWarn (http://127.0.0.1:5182/node_modules/.vite/deps/es-BbPSVIrd.js?v=de70a3f6:4894:35)
+    at setup (http://127.0.0.1:5182/node_modules/.vite/deps/es-BbPSVIrd.js?v=de70a3f6:46721:4)
+    at callWithErrorHandling (http://127.0.0.1:5182/node_modules/.vite/deps/vue.runtime.esm-bundler-BHjI00_4.js?v=de70a3f6:1941:17)
+    at setupStatefulComponent (http://127.0.0.1:5182/node_modules/.vite/deps/vue.runtime.esm-bundler-BHjI00_4.js?v=de70a3f6:6966:23)
+    at setupComponent (http://127.0.0.1:5182/node_modules/.vite/deps/vue.runtime.esm-bundler-BHjI00_4.js?v=de70a3f6:6942:35)
+    at mountComponent (http://127.0.0.1:5182/node_modules/.vite/deps/vue.runtime.esm-bundler-BHjI00_4.js?v=de70a3f6:5693:3)
+    at processComponent (http://127.0.0.1:5182/node_modules/.vite/deps/vue.runtime.esm-bundler-BHjI00_4.js?v=de70a3f6:5683:9)
+    at patch (http://127.0.0.1:5182/node_modules/.vite/deps/vue.runtime.esm-bundler-BHjI00_4.js?v=de70a3f6:5473:28)
+    at mountChildren (http://127.0.0.1:5182/node_modules/.vite/deps/vue.runtime.esm-bundler-BHjI00_4.js?v=de70a3f6:5587:4)
+    at processFragment (http://127.0.0.1:5182/node_modules/.vite/deps/vue.runtime.esm-bundler-BHjI00_4.js?v=de70a3f6:5673:4) @ http://127.0.0.1:5182/@vite/client:298

@@ -1,0 +1,39 @@
+
+ RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground
+
+ ❯ src/test-utils/browser-test-scope.test.ts (6 tests | 1 failed | 5 skipped) 1011ms
+   ❯ 浏览器测试作用域 (6)
+     × 同例协议：A清理后释放迟到动作，不点击B抽屉、不改变B模型或spy 1010ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/test-utils/browser-test-scope.test.ts > 浏览器测试作用域 > 同例协议：A清理后释放迟到动作，不点击B抽屉、不改变B模型或spy
+AssertionError: expected undefined to deeply equal Error: 测试实例已失效，拒绝迟到动作
+
+- Expected:
+Error {
+  "message": "测试实例已失效，拒绝迟到动作",
+}
+
++ Received:
+undefined
+
+ ❯ src/test-utils/browser-test-scope.test.ts:153:32
+    151|       const urlSpy = vi.spyOn(URL, "createObjectURL").mockReturnValue(…
+    152|       release();
+    153|       expect(await lateAction).toEqual(new Error("测试实例已失效，拒绝迟到动作"));
+       |                                ^
+    154|       await flushPromises();
+    155|       expect(drawer.isVisible()).toBe(true);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 5 skipped (6)
+   Start at  11:53:12
+   Duration  4.68s (import 41%, transform 26%, tests 22%, environment 10%)
+
+undefined
+/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run src/test-utils/browser-test-scope.test.ts -t 同例协议

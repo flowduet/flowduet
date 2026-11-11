@@ -1,0 +1,19 @@
+### Result
+{"text":"-","observation":{"states":[{"mode":"retained","revision":4,"canSuspend":true,"canCapture":false,"blockers":[{"code":"pending-input","field":"a_amount","message":"默认值尚未完成，请补全数值或有效日期"}]},{"mode":"retained","revision":0,"canSuspend":true,"canCapture":true,"blockers":[]}],"captures":[{"status":"blocked","blockers":[{"code":"pending-input","field":"a_amount","message":"默认值尚未完成，请补全数值或有效日期"}]},{"status":"captured","revision":0,"content":{"rules":"[{\"type\":\"input\",\"field\":\"b_subject\",\"title\":\"乙文本\",\"value\":\"事项乙\",\"props\":{\"placeholder\":\"输入事项\"},\"_fc_id\":\"id_Fiwlmvatnbwocjc\",\"name\":\"ref_F9cnmvatnbwockc\",\"display\":true,\"hidden\":false,\"_fc_drag_tag\":\"input\"},{\"type\":\"input\",\"field\":\"b_notes\",\"title\":\"乙多行文本\",\"props\":{\"type\":\"textarea\",\"placeholder\":\"输入说明\"},\"value\":\"第一行\\n第二行\",\"_fc_id\":\"id_Fgmpmvatnbwpclc\",\"name\":\"ref_Fbbomvatnbwpcmc\",\"display\":true,\"hidden\":false,\"_fc_drag_tag\":\"input\"},{\"type\":\"inputNumber\",\"field\":\"b_amount\",\"title\":\"乙数字\",\"value\":0,\"_fc_id\":\"id_F14amvatnbwpcnc\",\"name\":\"ref_F52qmvatnbwpcoc\",\"display\":true,\"hidden\":false,\"_fc_drag_tag\":\"inputNumber\"},{\"type\":\"radio\",\"field\":\"b_priority\",\"title\":\"乙单选\",\"options\":[{\"label\":\"b数值零\",\"value\":0},{\"label\":\"b字符串零\",\"value\":\"0\"},{\"label\":\"b普通\",\"value\":\"normal\"},{\"label\":\"b广州\",\"value\":\"gz\"},{\"label\":\"b深圳\",\"value\":\"sz\"}],\"value\":0,\"_fc_id\":\"id_Fmg9mvatnbwpcpc\",\"name\":\"ref_F72umvatnbwpcqc\",\"display\":true,\"hidden\":false,\"_fc_drag_tag\":\"radio\"},{\"type\":\"checkbox\",\"field\":\"b_areas\",\"title\":\"乙多选\",\"options\":[{\"label\":\"b数值零\",\"value\":0},{\"label\":\"b字符串零\",\"value\":\"0\"},{\"label\":\"b普通\",\"value\":\"normal\"},{\"label\":\"b广州\",\"value\":\"gz\"},{\"label\":\"b深圳\",\"value\":\"sz\"}],\"_fc_id\":\"id_Fs3nmvatnbwpcrc\",\"name\":\"ref_Fp6vmvatnbwpcsc\",\"display\":true,\"hidden\":false,\"_fc_drag_tag\":\"checkbox\",\"value\":[]},{\"type\":\"select\",\"field\":\"b_department\",\"title\":\"乙下拉单选\",\"options\":[{\"label\":\"b数值零\",\"value\":0},{\"label\":\"b字符串零\",\"value\":\"0\"},{\"label\":\"b普通\",\"value\":\"normal\"},{\"label\":\"b广州\",\"value\":\"gz\"},{\"label\":\"b深圳\",\"value\":\"sz\"}],\"value\":0,\"_fc_id\":\"id_Fozjmvatnbwpctc\",\"name\":\"ref_Fhe4mvatnbwpcuc\",\"display\":true,\"hidden\":false,\"_fc_drag_tag\":\"select\"},{\"type\":\"datePicker\",\"field\":\"b_date\",\"title\":\"乙日期\",\"props\":{\"type\":\"date\",\"valueFormat\":\"YYYY-MM-DD\"},\"value\":\"2026-10-15\",\"_fc_id\":\"id_F89pmvatnbwpcvc\",\"name\":\"ref_Feuumvatnbwpcwc\",\"display\":true,\"hidden\":false,\"_fc_drag_tag\":\"datePicker\"},{\"type\":\"switch\",\"field\":\"b_urgent\",\"title\":\"乙开关\",\"value\":false,\"_fc_id\":\"id_F5k3mvatnbwpcxc\",\"name\":\"ref_Fnnpmvatnbwpcyc\",\"display\":true,\"hidden\":false,\"_fc_drag_tag\":\"switch\"}]","options":"{\"form\":{\"inline\":false,\"hideRequiredAsterisk\":false,\"labelPosition\":\"right\",\"size\":\"default\",\"labelWidth\":\"125px\"},\"resetBtn\":{\"show\":false,\"innerText\":\"重置\"},\"submitBtn\":{\"show\":true,\"innerText\":\"提交\"}}"}}],"calls":[],"liveUnchanged":true,"persistCalls":0}}
+### Ran Playwright code
+```js
+await (async page => {
+ const root=page.locator('[data-repair-instance="0"]');
+ await root.locator('._fc-m-drag ._fd-drag-mask').nth(2).click();
+ const raw=root.locator('[data-retained-input="number"]');
+ await raw.waitFor({state:'visible'});
+ await raw.fill('-');
+ await page.locator('[data-test="repair-nav-1"]').click();
+ await page.locator('[data-test="repair-nav-0"]').click();
+ const text=await raw.inputValue();
+ await page.locator('[data-test="repair-observe"]').click();
+ const observation=JSON.parse(await page.locator('[data-test="repair-result"]').textContent());
+ return {text,observation};
+}
+)(page);
+```

@@ -1,0 +1,74 @@
+Browser tab: 2, Title: "FlowDuet Playground", URL: "http://127.0.0.1:5173/".
+0 AXWebArea FlowDuet Playground, URL: 127.0.0.1:5173/
+	1 container app
+		2 container
+			3 heading FlowDuet Playground, Value: 1
+				4 text FlowDuet Playground
+			5 Description: radio-group, ID: el-id-5651-37
+				6 container
+					7 radio button (settable, integer) Description: 钉钉式, Value: 1
+					8 text 钉钉式
+				9 container
+					10 radio button (settable, integer) Description: BPMN 视图, Value: 0
+					11 text BPMN 视图
+			12 button 新建设计
+			13 button 打开文档
+			14 button 表单管理
+			15 button 预览表单
+			16 button 保存草稿
+			17 button 下载设计文档
+			18 button 导出 XML
+		19 container
+			20 text 流程默认表单
+			21 pop up button (collapsed, settable) Value: 无, Secondary Actions: Expand
+				22 menu
+					23 (selected) 无
+			24 container
+				25 text 起 开始
+			26 pop up button (collapsed) +, Help: 在此后添加节点, ID: el-id-5651-38, Secondary Actions: Expand
+			27 container
+				28 text 审 浏览器回归名称 审批人 ${manager}
+			29 pop up button (collapsed) +, Help: 在此后添加节点, ID: el-id-5651-42, Secondary Actions: Expand
+			30 container
+				31 text 审 合同会签 多人 · 集合
+			32 pop up button (collapsed) +, Help: 在此后添加节点, ID: el-id-5651-46, Secondary Actions: Expand
+			33 container
+				34 text 抄 抄送法务备案 抄送：张三,李四
+			35 pop up button (collapsed) +, Help: 在此后添加节点, ID: el-id-5651-50, Secondary Actions: Expand
+			36 container
+				37 text 条件分支
+				38 button 默认1, Help: 点击取消默认（其余情况无兜底支路）
+				39 button 默认2, Help: 把该支路设为默认（其余情况走此支路）
+				40 button + 分支, Help: 添加分支
+				41 button 删块, Help: 删除整块（前后直连）
+				42 container
+					43 button 常规审批 其他情况（默认）, Help: 常规审批：其他情况（默认）；点击配置此分支
+						44 text 常规审批
+						45 text 其他情况（默认）
+					46 text 审
+					47 text 总监审批
+					48 text 审批人 ${director}
+					49 pop up button (collapsed) +, Help: 在此后添加节点, ID: el-id-5651-54, Secondary Actions: Expand
+				50 container
+					51 button 大额复核 ${amount > 1000}, Help: 大额复核：${amount > 1000}；点击配置此分支
+						52 text 大额复核
+						53 text ${amount > 1000}
+					54 container
+						55 text 并行分支
+						56 button + 分支, Help: 添加分支
+						57 button 删块, Help: 删除整块（前后直连）
+					58 container
+						59 text 支路 1
+						60 container
+							61 text 审 财务复核 审批人 ${finance}
+						62 pop up button (collapsed) +, Help: 在此后添加节点, ID: el-id-5651-58, Secondary Actions: Expand
+						63 text 支路 2
+						64 container
+							65 text 审 法务复核 审批人 ${legal}
+						66 pop up button (collapsed) +, Help: 在此后添加节点, ID: el-id-5651-62, Secondary Actions: Expand
+			67 container
+				68 text 终 结束
+			69 text 已恢复本地草稿（最近一次保存的内容），可继续编辑
+			70 text 多人审批节点「合同会签（approval_mi）」的集合变量为空白，请在抽屉补填后再导出
+
+The focused UI element is 0 AXWebArea FlowDuet Playground, URL: 127.0.0.1:5173/

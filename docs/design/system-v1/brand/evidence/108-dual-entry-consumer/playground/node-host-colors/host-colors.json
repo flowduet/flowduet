@@ -1,0 +1,163 @@
+{
+  "browser": "156.0.8078.4",
+  "results": [
+    {
+      "value": "#ff0000",
+      "expected": "#FF0000",
+      "actual": {
+        "primary": "#FF0000",
+        "secondary": "#666666",
+        "hasEpWrites": false,
+        "value": "颜色切换后保留的草稿",
+        "focused": true,
+        "children": 3,
+        "canvases": 0
+      }
+    },
+    {
+      "value": "#f00",
+      "expected": "#FF0000",
+      "actual": {
+        "primary": "#FF0000",
+        "secondary": "#666666",
+        "hasEpWrites": false,
+        "value": "颜色切换后保留的草稿",
+        "focused": true,
+        "children": 3,
+        "canvases": 0
+      }
+    },
+    {
+      "value": "#ff0000ff",
+      "expected": "#FF0000",
+      "actual": {
+        "primary": "#FF0000",
+        "secondary": "#666666",
+        "hasEpWrites": false,
+        "value": "颜色切换后保留的草稿",
+        "focused": true,
+        "children": 3,
+        "canvases": 0
+      }
+    },
+    {
+      "value": "red",
+      "expected": "#FF0000",
+      "actual": {
+        "primary": "#FF0000",
+        "secondary": "#666666",
+        "hasEpWrites": false,
+        "value": "颜色切换后保留的草稿",
+        "focused": true,
+        "children": 3,
+        "canvases": 0
+      }
+    },
+    {
+      "value": "rgb(100% 0% 0%)",
+      "expected": "#FF0000",
+      "actual": {
+        "primary": "#FF0000",
+        "secondary": "#666666",
+        "hasEpWrites": false,
+        "value": "颜色切换后保留的草稿",
+        "focused": true,
+        "children": 3,
+        "canvases": 0
+      }
+    },
+    {
+      "value": "hsl(0 100% 50%)",
+      "expected": "#FF0000",
+      "actual": {
+        "primary": "#FF0000",
+        "secondary": "#666666",
+        "hasEpWrites": false,
+        "value": "颜色切换后保留的草稿",
+        "focused": true,
+        "children": 3,
+        "canvases": 0
+      }
+    },
+    {
+      "value": "oklch(0.62795536 0.25768331 29.233885)",
+      "expected": "#FF0000",
+      "actual": {
+        "primary": "#FF0000",
+        "secondary": "#666666",
+        "hasEpWrites": false,
+        "value": "颜色切换后保留的草稿",
+        "focused": true,
+        "children": 3,
+        "canvases": 0
+      }
+    },
+    {
+      "value": "color(display-p3 1 0 0)",
+      "expected": "#FF0000",
+      "actual": {
+        "primary": "#FF0000",
+        "secondary": "#666666",
+        "hasEpWrites": false,
+        "value": "颜色切换后保留的草稿",
+        "focused": true,
+        "children": 3,
+        "canvases": 0
+      }
+    },
+    {
+      "value": "rgb(255 0 0 / 50%)",
+      "expected": "#FF8080",
+      "actual": {
+        "primary": "#FF8080",
+        "secondary": "#666666",
+        "hasEpWrites": false,
+        "value": "颜色切换后保留的草稿",
+        "focused": true,
+        "children": 3,
+        "canvases": 0
+      }
+    },
+    {
+      "value": "#f008",
+      "expected": "#FF7777",
+      "actual": {
+        "primary": "#FF7777",
+        "secondary": "#666666",
+        "hasEpWrites": false,
+        "value": "颜色切换后保留的草稿",
+        "focused": true,
+        "children": 3,
+        "canvases": 0
+      }
+    },
+    {
+      "value": "currentColor",
+      "expected": "#0F6B65",
+      "actual": {
+        "primary": "#0F6B65",
+        "secondary": "#666666",
+        "hasEpWrites": false,
+        "value": "颜色切换后保留的草稿",
+        "focused": true,
+        "children": 3,
+        "canvases": 0
+      }
+    },
+    {
+      "value": "invalid-color",
+      "expected": "#409EFF",
+      "actual": {
+        "primary": "#409EFF",
+        "secondary": "#666666",
+        "hasEpWrites": false,
+        "value": "颜色切换后保留的草稿",
+        "focused": true,
+        "children": 3,
+        "canvases": 0
+      }
+    }
+  ],
+  "errors": [],
+  "failures": []
+}

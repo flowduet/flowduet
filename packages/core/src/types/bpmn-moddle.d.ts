@@ -8,6 +8,7 @@ declare module "bpmn-moddle" {
   export interface ModdleElement {
     /** 元素的描述符类型，如 "bpmn:UserTask" */
     $type: string;
+    $instanceOf(type: string): boolean;
     get(prop: string): unknown;
     set(prop: string, value: unknown): void;
   }
@@ -34,6 +35,10 @@ declare module "bpmn-moddle" {
       xml: string,
       typeName?: string,
       options?: object,
-    ): Promise<{ rootElement: ModdleElement; references?: unknown[]; warnings?: string[] }>;
+    ): Promise<{
+      rootElement: ModdleElement;
+      references?: unknown[];
+      warnings?: { message: string }[];
+    }>;
   }
 }

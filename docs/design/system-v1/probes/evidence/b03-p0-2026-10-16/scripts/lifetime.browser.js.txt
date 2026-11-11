@@ -1,0 +1,23 @@
+async page => {
+ page.setDefaultTimeout(7000); const rows=[];
+ const events=async()=>JSON.parse(await page.locator('[data-test=seam-events]').textContent());
+ const root=page.locator('[data-seam-owner=A]');
+ for(const layout of ['top','grid']) for(let run=1;run<=3;run++) {
+  await page.locator('[data-test=seam-layout]').selectOption(layout);await page.locator('[data-test=seam-load]').click();
+  const card=root.locator('._fc-m-drag ._fd-drag-tool').filter({has:page.locator('.el-form-item__label',{hasText:'甲数字'})}).last();
+  await card.click(); await page.locator('[data-seam-input=A]').waitFor();
+  await page.locator('[data-test=seam-clear]').click();
+  await card.locator('.icon-delete').click();
+  const deleted=(await events()).find(e=>e.event==='public-delete');
+  await root.locator('._fc-l-item').nth(2).click();
+  const input=root.getByRole('textbox',{name:'字段 ID',exact:true});
+  await input.fill('a_amount'); await input.press('Tab');
+  await page.locator('[data-test=seam-clone-A]').click();
+  const trace=await events();
+  const active=trace.filter(e=>e.event==='public-active').at(-1);
+  const clone=trace.filter(e=>e.event==='public-clone').at(-1);
+  rows.push({case:'delete-immediate-field-reuse',layout,run,source:'native-pointer-keyboard',actualMode:'public-seam-sample',deleted,active,trace,
+   pass:deleted?.detail.field==='a_amount'&&deleted.detail.token===deleted.detail.sourceToken&&active&&active.detail.token!==deleted.detail.token&&clone.detail.fields.some(f=>f.field==='a_amount'&&f.source===active.detail.token&&f.source!==deleted.detail.token)&&trace.findIndex(e=>e.event==='public-delete')<trace.findIndex(e=>e.event==='public-drag')});
+ }
+ return rows;
+}

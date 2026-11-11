@@ -1,0 +1,111 @@
+
+ RUN  v5.0.1 /Users/l/Documents/projects/flowduet/packages/core
+
+
+ Test Files  12 passed (12)
+      Tests  125 passed (125)
+   Start at  11:23:45
+   Duration  4.64s (tests 50%, import 29%, transform 17%, worker 4%)
+
+    Isolate  12 workers spawned · ~211ms startup each (spawn + environment, per file)
+             at least ~2.32s faster with isolate: false — reuses workers across files instead of one per file
+
+
+ RUN  v5.0.1 /Users/l/Documents/projects/flowduet/packages/designer
+
+
+ Test Files  8 passed (8)
+      Tests  127 passed (127)
+   Start at  11:23:51
+   Duration  37.69s (tests 60%, import 25%, environment 11%, transform 4%)
+
+    Isolate  8 workers spawned · ~744ms startup each (spawn + environment, per file)
+             at least ~5.21s faster with isolate: false — reuses workers across files instead of one per file
+
+
+ RUN  v5.0.1 /Users/l/Documents/projects/flowduet/packages/form-create
+
+stderr | src/components.test.ts > 设计器开放范围收口（A13，designer-config 与真实面板） > 选中字段后：联动与编辑数据入口不渲染，静态选项与必填配置在场
+ElementPlusError: [ElSwitch] model-value must be active-value or inactive-value
+    at debugWarn (file:///Users/l/Documents/projects/flowduet/node_modules/.pnpm/element-plus@2.14.6_vue@3.5.43_typescript@5.9.3_/node_modules/element-plus/es/utils/error.mjs:14:35)
+    at setup (file:///Users/l/Documents/projects/flowduet/node_modules/.pnpm/element-plus@2.14.6_vue@3.5.43_typescript@5.9.3_/node_modules/element-plus/es/components/switch/src/switch.vue_vue_type_script_setup_true_lang.mjs:72:4)
+    at callWithErrorHandling (/Users/l/Documents/projects/flowduet/node_modules/.pnpm/@vue+runtime-core@3.5.43/node_modules/@vue/runtime-core/dist/runtime-core.cjs.js:200:19)
+    at setupStatefulComponent (/Users/l/Documents/projects/flowduet/node_modules/.pnpm/@vue+runtime-core@3.5.43/node_modules/@vue/runtime-core/dist/runtime-core.cjs.js:8257:25)
+    at setupComponent (/Users/l/Documents/projects/flowduet/node_modules/.pnpm/@vue+runtime-core@3.5.43/node_modules/@vue/runtime-core/dist/runtime-core.cjs.js:8219:36)
+    at mountComponent (/Users/l/Documents/projects/flowduet/node_modules/.pnpm/@vue+runtime-core@3.5.43/node_modules/@vue/runtime-core/dist/runtime-core.cjs.js:6095:7)
+    at processComponent (/Users/l/Documents/projects/flowduet/node_modules/.pnpm/@vue+runtime-core@3.5.43/node_modules/@vue/runtime-core/dist/runtime-core.cjs.js:6061:9)
+    at patch (/Users/l/Documents/projects/flowduet/node_modules/.pnpm/@vue+runtime-core@3.5.43/node_modules/@vue/runtime-core/dist/runtime-core.cjs.js:5566:11)
+    at mountChildren (/Users/l/Documents/projects/flowduet/node_modules/.pnpm/@vue+runtime-core@3.5.43/node_modules/@vue/runtime-core/dist/runtime-core.cjs.js:5817:7)
+    at processFragment (/Users/l/Documents/projects/flowduet/node_modules/.pnpm/@vue+runtime-core@3.5.43/node_modules/@vue/runtime-core/dist/runtime-core.cjs.js:6004:7)
+
+ ❯ src/components.test.ts (34 tests | 4 failed) 80257ms
+   ❯ FormManager（目录管理面板） (6)
+     × 内容守卫前置：超范围字段不 emit 且编辑器保持打开供修正 6921ms
+     × 重复字段标识不能关闭编辑器或上报保存 6841ms
+     × 取消内容编辑时关闭弹窗，不留下空白编辑器 6991ms
+   ❯ 设计器开放范围收口（A13，designer-config 与真实面板） (5)
+     × 选中字段后：联动与编辑数据入口不渲染，静态选项与必填配置在场 5039ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/components.test.ts > FormManager（目录管理面板） > 内容守卫前置：超范围字段不 emit 且编辑器保持打开供修正
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ src/components.test.ts:212:3
+    210|   });
+    211|
+    212|   it("内容守卫前置：超范围字段不 emit 且编辑器保持打开供修正", async () => {
+       |   ^
+    213|     const manager = mount(FormManager, { props: { forms: [APPLY_FORM] …
+    214|     await manager.find('[data-test="form-edit-btn-form_apply"]').trigg…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  src/components.test.ts > FormManager（目录管理面板） > 重复字段标识不能关闭编辑器或上报保存
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ src/components.test.ts:234:3
+    232|   });
+    233|
+    234|   it("重复字段标识不能关闭编辑器或上报保存", async () => {
+       |   ^
+    235|     wrapper = mount(FormManager, { props: { forms: [APPLY_FORM] }, att…
+    236|     await wrapper.find('[data-test="form-edit-btn-form_apply"]').trigg…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  src/components.test.ts > FormManager（目录管理面板） > 取消内容编辑时关闭弹窗，不留下空白编辑器
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ src/components.test.ts:254:3
+    252|   });
+    253|
+    254|   it("取消内容编辑时关闭弹窗，不留下空白编辑器", async () => {
+       |   ^
+    255|     wrapper = mount(FormManager, { props: { forms: [APPLY_FORM] }, att…
+    256|     await wrapper.find('[data-test="form-edit-btn-form_apply"]').trigg…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+ FAIL  src/components.test.ts > 设计器开放范围收口（A13，designer-config 与真实面板） > 选中字段后：联动与编辑数据入口不渲染，静态选项与必填配置在场
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ src/components.test.ts:686:3
+    684|   });
+    685|
+    686|   it("选中字段后：联动与编辑数据入口不渲染，静态选项与必填配置在场", async () => {
+       |   ^
+    687|     // 未选中时配置面板是 v-show 预渲染（DOM 文案在场但不可达），
+    688|     // 入口收口的实际效果以选中字段后的面板为准
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/4]⎯
+
+
+ Test Files  1 failed | 6 passed (7)
+      Tests  4 failed | 117 passed (121)
+   Start at  11:24:29
+   Duration  93.45s (tests 88%, import 8%, environment 3%, transform 2%)
+
+undefined
+/Users/l/Documents/projects/flowduet/packages/form-create:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run --maxWorkers=1

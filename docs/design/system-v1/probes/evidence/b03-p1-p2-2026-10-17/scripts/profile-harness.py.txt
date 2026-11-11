@@ -1,0 +1,19 @@
+from pathlib import Path
+import json,os,sys
+root=Path('/Users/l/.codex/worktrees/design-system-stage-zero/flowduet')
+phase=sys.argv[1]; out=Path('/tmp/b03-p1-p2-2026-10-17')/('harness-'+phase);out.mkdir(exist_ok=True)
+s=(root/'packages/form-create/src/components.test.ts').read_text().replace('from "./','from "'+str(root/'packages/form-create/src')+'/')
+start=s.index('async function selectRetained(field: string) {');end=s.index('\ndescribe(',start)
+block=s[start:end]
+block=block.replace('async function selectRetained(field: string) {','async function selectRetained(field: string) {\n const started=performance.now();let selects=0;')
+block=block.replace('wrapper!.findComponent(FcDesigner).vm.triggerActive(field);','selects++; wrapper!.findComponent(FcDesigner).vm.triggerActive(field);')
+block=block.replace('  return wrapper!.get<HTMLInputElement>', '  console.log("SELECT_PROFILE",JSON.stringify({field,selects,ms:performance.now()-started}));\n  return wrapper!.get<HTMLInputElement>')
+s=s[:start]+block+s[end:]
+(out/'harness.test.ts').write_text(s)
+if not (out/'node_modules').exists():os.symlink(root/'packages/form-create/node_modules',out/'node_modules')
+vitest=(root/'node_modules/vitest').resolve()/'dist/config.js';vue=(root/'apps/playground/node_modules/@vitejs/plugin-vue').resolve()/'dist/index.mjs'
+config='import {defineConfig} from '+json.dumps(str(vitest))+';\nimport vue from '+json.dumps(str(vue))+';\nexport default defineConfig('+json.dumps({'root':str(out),'test':{'environment':'happy-dom','include':['harness.test.ts']},'resolve':{'alias':{'@flowduet/core':str(root/'packages/core/src/index.ts'),'@flowduet/designer':str(root/'packages/designer/src/index.ts')}}}).replace('"root":','plugins:[vue()],"root":',1)+');\n'
+# add plugin outside the serialized object, preserving valid JS object syntax
+config=config.replace('defineConfig(plugins:[vue()],','defineConfig({plugins:[vue()],') if 'defineConfig(plugins:' in config else config
+(out/'vitest.config.mts').write_text(config)
+print(out/'vitest.config.mts')

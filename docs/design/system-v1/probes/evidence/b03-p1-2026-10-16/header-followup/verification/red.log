@@ -1,0 +1,47 @@
+
+ RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/form-create
+
+ ❯ src/components.test.ts (76 tests | 1 failed | 75 skipped) 2903ms
+   × 旧页头关闭按钮的迟到click不取得新会话的放弃授权 2901ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/components.test.ts > 旧页头关闭按钮的迟到click不取得新会话的放弃授权
+AssertionError: expected "Mock" to not be called at all, but actually been called 1 times
+
+Received:
+
+  1st Mock call:
+
+    Array [
+      "放弃本表单全部未提交修改并关闭？",
+      "关闭表单",
+      Object {
+        "cancelButtonText": "继续编辑",
+        "confirmButtonText": "放弃并关闭",
+        "type": "warning",
+      },
+    ]
+
+
+Number of calls: 1
+
+ ❯ src/components.test.ts:1692:25
+    1690|   try {
+    1691|     oldX.dispatchEvent(new MouseEvent("click", { bubbles: true })); aw…
+    1692|     expect(confirm).not.toHaveBeenCalled();
+       |                         ^
+    1693|     expect(vm.hasOpenEditor()).toBe(true);
+    1694|     expect(wrapper!.emitted("updateContent")?.length).toBe(1);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 75 skipped (76)
+   Start at  19:40:20
+   Duration  5.20s (tests 57%, import 27%, transform 10%, environment 6%)
+
+undefined
+/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/form-create:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run src/components.test.ts -t 旧页头

@@ -1,0 +1,241 @@
+{
+  "head": "f139036301dbedb8ae40dd2836df94d9c75ea0c7",
+  "sourceHashes": {
+    "packages/form-create/src/components.test.ts": "948b6f221c63198b4b44c52bbc80dbf8eaaf06309804b96cd8aab0f7b268afbd",
+    "packages/form-create/src/components/FormManager.vue": "e0192a701c6b4f60765306072cd0656bfcd98c0d77146d6a071ea819e1cca639",
+    "packages/form-create/src/components/FormDesigner.vue": "42272c2cf7fd5a1322e9a53ea3a1795d65c03575fb60c57cc613a7a32d53cea4",
+    "pnpm-lock.yaml": "389033cc7766f87a4d94e73c70a2400eca8bd5fa6fda63eed9191f0d5d6eba6a"
+  },
+  "historicalSourceSameAs1506b16": true,
+  "node": "v24.16.0",
+  "observations": {
+    "real": {
+      "内容守卫前置：超范围字段不 emit 且编辑器保持打开供修正": [
+        {
+          "mode": "real-1",
+          "testMs": 2266.758543,
+          "openMs": 1531.727656,
+          "firstFlushMs": 670.3859809999994,
+          "emitMs": 0.5454099999997197,
+          "unmountMs": 20.06609800000024
+        },
+        {
+          "mode": "real-2",
+          "testMs": 2495.055522,
+          "openMs": 1623.037292,
+          "firstFlushMs": 804.8996999999995,
+          "emitMs": 0.7410129999998389,
+          "unmountMs": 21.928160999999818
+        },
+        {
+          "mode": "real-3",
+          "testMs": 2252.4859699999997,
+          "openMs": 1504.3594129999997,
+          "firstFlushMs": 685.8010940000004,
+          "emitMs": 0.5087180000000444,
+          "unmountMs": 18.992199999999684
+        }
+      ],
+      "重复字段标识不能关闭编辑器或上报保存": [
+        {
+          "mode": "real-1",
+          "testMs": 1922.356347,
+          "openMs": 1248.8275190000004,
+          "firstFlushMs": 646.2938990000002,
+          "emitMs": 2.568989000000329,
+          "unmountMs": 13.399180999999771
+        },
+        {
+          "mode": "real-2",
+          "testMs": 2137.566006,
+          "openMs": 1425.2784789999996,
+          "firstFlushMs": 684.7449500000002,
+          "emitMs": 2.553664000000026,
+          "unmountMs": 13.557042999999794
+        },
+        {
+          "mode": "real-3",
+          "testMs": 3050.475485,
+          "openMs": 1991.5401280000005,
+          "firstFlushMs": 1029.8025979999993,
+          "emitMs": 2.6954479999994874,
+          "unmountMs": 14.413653999999951
+        }
+      ]
+    },
+    "nativeString": {
+      "内容守卫前置：超范围字段不 emit 且编辑器保持打开供修正": [
+        {
+          "mode": "native-string-1",
+          "testMs": 770.7889499999997,
+          "openMs": 675.0220060000001,
+          "firstFlushMs": 31.530421999999817,
+          "emitMs": 0.7208850000001803,
+          "unmountMs": 19.972026999999798
+        },
+        {
+          "mode": "native-string-2",
+          "testMs": 767.950409,
+          "openMs": 670.585192,
+          "firstFlushMs": 28.96767600000021,
+          "emitMs": 0.520078999999896,
+          "unmountMs": 19.250762000000122
+        },
+        {
+          "mode": "native-string-3",
+          "testMs": 758.61204,
+          "openMs": 661.9841670000001,
+          "firstFlushMs": 30.078160000000025,
+          "emitMs": 0.5551429999995889,
+          "unmountMs": 22.159632999999758
+        }
+      ],
+      "重复字段标识不能关闭编辑器或上报保存": [
+        {
+          "mode": "native-string-1",
+          "testMs": 497.1957689999999,
+          "openMs": 445.13258700000006,
+          "firstFlushMs": 26.20202100000006,
+          "emitMs": 2.5218039999999746,
+          "unmountMs": 13.292973999999958
+        },
+        {
+          "mode": "native-string-2",
+          "testMs": 493.791659,
+          "openMs": 442.73929799999996,
+          "firstFlushMs": 25.246161999999913,
+          "emitMs": 2.5233800000000883,
+          "unmountMs": 13.553672000000006
+        },
+        {
+          "mode": "native-string-3",
+          "testMs": 492.1472880000001,
+          "openMs": 441.06872299999986,
+          "firstFlushMs": 24.338118000000122,
+          "emitMs": 3.069745999999668,
+          "unmountMs": 13.423898000000008
+        }
+      ]
+    },
+    "stub": {
+      "内容守卫前置：超范围字段不 emit 且编辑器保持打开供修正": [
+        {
+          "mode": "stub-1",
+          "testMs": 75.16163600000027,
+          "openMs": 32.21007000000009,
+          "firstFlushMs": 0.10744999999997162,
+          "emitMs": 0.6074579999999514,
+          "unmountMs": 2.5496039999998175
+        },
+        {
+          "mode": "stub-2",
+          "testMs": 75.14617399999997,
+          "openMs": 34.18779199999972,
+          "firstFlushMs": 0.11462699999992765,
+          "emitMs": 0.6433259999998882,
+          "unmountMs": 2.9029030000001512
+        },
+        {
+          "mode": "stub-3",
+          "testMs": 88.42900999999983,
+          "openMs": 41.66987500000005,
+          "firstFlushMs": 0.264140999999654,
+          "emitMs": 0.6856490000000122,
+          "unmountMs": 3.689241000000038
+        }
+      ],
+      "重复字段标识不能关闭编辑器或上报保存": [
+        {
+          "mode": "stub-1",
+          "testMs": 16.75950600000033,
+          "openMs": 7.200861000000259,
+          "firstFlushMs": 0.08454799999981333,
+          "emitMs": 0.4675090000000637,
+          "unmountMs": 1.1133639999998195
+        },
+        {
+          "mode": "stub-2",
+          "testMs": 17.609386000000086,
+          "openMs": 7.4158769999999095,
+          "firstFlushMs": 0.13873899999998685,
+          "emitMs": 0.4315320000000611,
+          "unmountMs": 1.0429990000002363
+        },
+        {
+          "mode": "stub-3",
+          "testMs": 22.395958000000064,
+          "openMs": 10.02599599999985,
+          "firstFlushMs": 0.3006279999999606,
+          "emitMs": 0.5476079999998547,
+          "unmountMs": 1.6164130000001933
+        }
+      ]
+    }
+  },
+  "status": "diagnosis-and-proposal-only; repository unchanged",
+  "limits": [
+    "current original default runs passed; historical failures remain valid but their exact host load was not reconstructed",
+    "injected failure demonstrates cleanup hole, not proof all historical timeouts caused it",
+    "scoped-only-two proposal had one other A13 test timeout; final proposal bounds compatibility to this test file",
+    "counterfactual source copies run in /tmp; not production modifications, full657 rerun or remote CI evidence"
+  ],
+  "proposalSha256": "25852f838e7a23033bf6423b200c1f17021b2738a9a06c01c6f8ed3e1c94f530",
+  "proposalScope": "one test file;28 additions,6 deletions; not applied",
+  "candidateFinal": {
+    "tests": 34,
+    "pass": 34,
+    "targetMs": [
+      744,
+      540
+    ],
+    "defaultTimeoutMs": 5000,
+    "durationSec": 12.74,
+    "compatTypeCheckExit": 0
+  },
+  "matchedOriginal": {
+    "tests": 34,
+    "pass": 34,
+    "targetMs": [
+      2197,
+      2045
+    ],
+    "durationSec": 48.04
+  },
+  "evidenceHashes": {
+    "candidate-whole-file.log": "5674f1899561f7dc8960db1d93605223d72f7c19d884897bd67ecc0e61e8ca66",
+    "failure-local.log": "69c9a684620fae9f4ee357e2adfb9570de919b9cd58b30c9b1aaee1aecf19281",
+    "stub-3.log": "f8754a4f850b7d78f3d847ac9e0d7741e5af7c9e772060c56b02f040e174e230",
+    "stub-2.log": "b14b0c9d88d8846fb1cad79857d59cd4d13f0fc900f4b1f9e9fe271fba132e2b",
+    "original-default.log": "e64e3aa6e3ad6f56d01ca5b1fcff1d491a463ccd0a0c6372ae85fe89e4027ae8",
+    "compat-type-check.log": "67151d815cb859fbafc15df8e03ceeacb2aa82f4a67b73b498e3f5ddedea8f5f",
+    "stub-1.log": "a2c7d39925bb441d4f70c03344129b8510a94336aec78fb1f55eeb1e445090e5",
+    "profile-summary.json": "e2dbff3265973446de12721917bf4032307385a32d689ce967f0e9eb8abca1c0",
+    "compat-type-check.json": "b6c2ace71c64b906b1af96e5f4d40cc248a7667b9a150b78d02fbc3f918d0b32",
+    "real-3.log": "d006824fe22944a6a4ec4c13b2f53087e914af89711ac292a5113f8eb40c6126",
+    "real-2.log": "9cef0de55ccded3883224fbbd76f942979d0486bdc6424697721dbf7a23042db",
+    "compat-type-check-final.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "proposal-format.log": "0096a724b65010275a6c35ef9be84777c4391b85da70c002e098b6e089fe7115",
+    "candidate-filewide.log": "97a8bb37a8003f28979f2d7a2937165576979f66262a8515312d3e08215d9792",
+    "real-1.log": "2db22882b271e611032247103fa9b7e53d71d65bc5530b8d86a2913fa48f43b2",
+    "failure-central.log": "a30f0891cc557cbf47276818dc67d02c8e91b624968a60681bf8cf092e9d8489",
+    "candidate-final.log": "bf10624eef0212b94a4c077f5f7237408ae5e0ef0ddedb61275d341987f8ae35",
+    "instrumented-default.log": "b999f940af6b67c04813607cf77eb05d63009e5942913a7a1adf2e19472e32ea",
+    "native-string-3.log": "cb761d0acfd0f021d9ae4a9400f3f553326e8c020a91e62f6feb21216e763ad2",
+    "real-profile.log": "ab6c477c81c2aec8bbddf3eca8ab77b36a0303b0933eeb168f3f4ad83165069f",
+    "matched-original.log": "1ec476e8e1908821756c386b5be1bdae3f8978c1d61a6a6738533785dce18501",
+    "native-string-2.log": "bd9ea8ce376e530bd07619c2fa26a3a778df2aed03316027e4304c9390feabb5",
+    "matched-candidate.log": "c26386d9c4f15501a160d13acff04f51a5fd7a3aaecb006bad86f3a8ff4b701e",
+    "native-string-1.log": "eb98c4eb06a28ec78e28abf748f5b02e781e5ef5bacd116204a6a0bb8cae328a",
+    "dom-happydom.json": "ca4791f9c5625897054931c15ae43840fee35de78d73c7e6f30c6375da98ba8a",
+    "diagnosis.txt": "3f4925b4223136e1c4de8af4fe510b7ef82966ca5fdb220a948377120803d069",
+    "whole-file-real.log": "51bd88508695e916bcff1bb93e72ae91415125279d08d0635c6b8a76e397d8dd",
+    "proposed-components.test.txt": "82aeac2c574fd3855889d94671c48735a82d977b0097195e6e9ca4ecd37b0667",
+    "dom-happydom.log": "dd5bf52a51594daf8fb4286bd8520b3c7109f11dd602ac08c433bbc37c52ff7c",
+    "whole-file-native-string.log": "283e6bcf6f2da79c682522912a27f11d703ce5e7e070062f250ee64ee7fc1248",
+    "trace.jsonl": "80d71f3786834840281dd6ceb64baa93f95a5727d454d8674cb06fc35bc4548d",
+    "original-snapshot.test.txt": "948b6f221c63198b4b44c52bbc80dbf8eaaf06309804b96cd8aab0f7b268afbd",
+    "whole-file-stub.log": "f7e9dd2470950b1cc78b12a6ad34a984c9758db183fc5628380e7c0255c20fe1",
+    "proposed.patch": "25852f838e7a23033bf6423b200c1f17021b2738a9a06c01c6f8ed3e1c94f530",
+    "dom-chromium.txt": "714c48e572aae5760493e2b94561625f583e1b89eff4c0a37ee1bf9a1e65a7a5"
+  }
+}

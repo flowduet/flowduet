@@ -1,0 +1,113 @@
+
+ RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground
+
+ ❯ probes/stage-zero/contracts/draft-store.test.ts (8 tests | 8 failed) 27ms
+   ❯ 冲突保留与显式恢复 (8)
+     × unknown_form_replace_keeps_live_editor_on_capture_throw 10ms
+     × in_place_change_keeps_original_basis 3ms
+     × discard_affects_one_record 2ms
+     × restart_uses_current_without_copying_local 2ms
+     × deleted_target_cannot_restart 2ms
+     × delete_confirmation_expires_after_edit 2ms
+     × failed_cascade_keeps_buffers 2ms
+     × successful_cascade_clears_only_deleted 2ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 8 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  probes/stage-zero/contracts/draft-store.test.ts > 冲突保留与显式恢复 > unknown_form_replace_keeps_live_editor_on_capture_throw
+Error: DraftStore尚未实现
+ ❯ createDraftStore probes/stage-zero/contracts/draft-store.ts:1:70
+      1| export function createDraftStore(..._args: unknown[]): never { throw n…
+       |                                                                      ^
+      2|
+ ❯ fixture probes/stage-zero/contracts/fixtures.ts:45:18
+ ❯ probes/stage-zero/contracts/draft-store.test.ts:7:15
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/8]⎯
+
+ FAIL  probes/stage-zero/contracts/draft-store.test.ts > 冲突保留与显式恢复 > in_place_change_keeps_original_basis
+Error: DraftStore尚未实现
+ ❯ createDraftStore probes/stage-zero/contracts/draft-store.ts:1:70
+      1| export function createDraftStore(..._args: unknown[]): never { throw n…
+       |                                                                      ^
+      2|
+ ❯ fixture probes/stage-zero/contracts/fixtures.ts:45:18
+ ❯ probes/stage-zero/contracts/draft-store.test.ts:16:15
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/8]⎯
+
+ FAIL  probes/stage-zero/contracts/draft-store.test.ts > 冲突保留与显式恢复 > discard_affects_one_record
+Error: DraftStore尚未实现
+ ❯ createDraftStore probes/stage-zero/contracts/draft-store.ts:1:70
+      1| export function createDraftStore(..._args: unknown[]): never { throw n…
+       |                                                                      ^
+      2|
+ ❯ fixture probes/stage-zero/contracts/fixtures.ts:45:18
+ ❯ probes/stage-zero/contracts/draft-store.test.ts:24:15
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/8]⎯
+
+ FAIL  probes/stage-zero/contracts/draft-store.test.ts > 冲突保留与显式恢复 > restart_uses_current_without_copying_local
+Error: DraftStore尚未实现
+ ❯ createDraftStore probes/stage-zero/contracts/draft-store.ts:1:70
+      1| export function createDraftStore(..._args: unknown[]): never { throw n…
+       |                                                                      ^
+      2|
+ ❯ fixture probes/stage-zero/contracts/fixtures.ts:45:18
+ ❯ probes/stage-zero/contracts/draft-store.test.ts:31:15
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/8]⎯
+
+ FAIL  probes/stage-zero/contracts/draft-store.test.ts > 冲突保留与显式恢复 > deleted_target_cannot_restart
+Error: DraftStore尚未实现
+ ❯ createDraftStore probes/stage-zero/contracts/draft-store.ts:1:70
+      1| export function createDraftStore(..._args: unknown[]): never { throw n…
+       |                                                                      ^
+      2|
+ ❯ fixture probes/stage-zero/contracts/fixtures.ts:45:18
+ ❯ probes/stage-zero/contracts/draft-store.test.ts:40:15
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/8]⎯
+
+ FAIL  probes/stage-zero/contracts/draft-store.test.ts > 冲突保留与显式恢复 > delete_confirmation_expires_after_edit
+Error: DraftStore尚未实现
+ ❯ createDraftStore probes/stage-zero/contracts/draft-store.ts:1:70
+      1| export function createDraftStore(..._args: unknown[]): never { throw n…
+       |                                                                      ^
+      2|
+ ❯ fixture probes/stage-zero/contracts/fixtures.ts:45:18
+ ❯ probes/stage-zero/contracts/draft-store.test.ts:46:15
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/8]⎯
+
+ FAIL  probes/stage-zero/contracts/draft-store.test.ts > 冲突保留与显式恢复 > failed_cascade_keeps_buffers
+Error: DraftStore尚未实现
+ ❯ createDraftStore probes/stage-zero/contracts/draft-store.ts:1:70
+      1| export function createDraftStore(..._args: unknown[]): never { throw n…
+       |                                                                      ^
+      2|
+ ❯ fixture probes/stage-zero/contracts/fixtures.ts:45:18
+ ❯ probes/stage-zero/contracts/draft-store.test.ts:53:15
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/8]⎯
+
+ FAIL  probes/stage-zero/contracts/draft-store.test.ts > 冲突保留与显式恢复 > successful_cascade_clears_only_deleted
+Error: DraftStore尚未实现
+ ❯ createDraftStore probes/stage-zero/contracts/draft-store.ts:1:70
+      1| export function createDraftStore(..._args: unknown[]): never { throw n…
+       |                                                                      ^
+      2|
+ ❯ fixture probes/stage-zero/contracts/fixtures.ts:45:18
+ ❯ probes/stage-zero/contracts/draft-store.test.ts:58:15
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/8]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  8 failed (8)
+   Start at  09:39:22
+   Duration  2.50s (import 58%, transform 28%, environment 13%, tests 1%)
+
+undefined
+/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run probes/stage-zero/contracts/draft-store.test.ts --testTimeout 20000

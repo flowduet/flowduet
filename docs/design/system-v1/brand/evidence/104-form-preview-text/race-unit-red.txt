@@ -1,0 +1,45 @@
+
+ RUN  v5.0.1 /Users/l/Documents/projects/flowduet/packages/form-create
+
+ ❯ src/appearance.test.ts (12 tests | 1 failed | 11 skipped) 148ms
+   ❯ FormPreview 文本与多行文本实例外观（#104） (12)
+     ↓ 公开品牌紧凑配置适配真实文本字段与自有操作按钮
+     ↓ 新适配为缺省标签位置补顶置，旧路径保留 FormCreate 原默认
+     ↓ 旧路径继续继承外层 EP size，自有操作按钮保持固定 small
+     ↓ 显式表单、字段与栅格配置优先于新默认且原定义不变
+     ↓ 跟随宿主在同周期主题更新后采样，实例范围不写任何 EP 变量
+     × 合法宿主更新等待采样时接到非法配置，仍落地最新有效快照 146ms
+     ↓ 品牌浅色直切宿主深色时读取宿主而非尚未移除的旧品牌变量
+     ↓ 外观变化不重置试填，同 ID 定义重开仍清空旧值与反馈
+     ↓ 合成中文组合期间换肤不丢字、不重建输入或提前产生校验反馈
+     ↓ 非法配置整份拒绝并告警，合法停用后的非法输入不复活旧主题
+     ↓ 运行时换肤与启停保留文本试填、输入 DOM、焦点、有效反馈及原定义
+     ↓ 同 app 双预览切换、卸载与重挂互不影响，并保留宿主处理器
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/appearance.test.ts > FormPreview 文本与多行文本实例外观（#104） > 合法宿主更新等待采样时接到非法配置，仍落地最新有效快照
+AssertionError: expected '#FAFCFC' to be '#162220' // Object.is equality
+
+Expected: "#162220"
+Received: "#FAFCFC"
+
+ ❯ src/appearance.test.ts:278:68
+    276|     expect(preview.classes()).toContain("flowduet-appearance--host");
+    277|     expect(preview.classes()).toContain("flowduet-appearance--dark");
+    278|     expect(preview.element.style.getPropertyValue("--fd-surface")).toB…
+       |                                                                    ^
+    279|     expect(preview.element.style.getPropertyValue("--fd-primary")).toB…
+    280|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 11 skipped (12)
+   Start at  18:31:45
+   Duration  3.80s (import 59%, transform 23%, environment 14%, tests 4%)
+
+undefined
+/Users/l/Documents/projects/flowduet/packages/form-create:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run src/appearance.test.ts -t 合法宿主更新等待采样时接到非法配置

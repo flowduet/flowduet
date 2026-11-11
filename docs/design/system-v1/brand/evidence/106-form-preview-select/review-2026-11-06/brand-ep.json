@@ -1,0 +1,50 @@
+{
+  "browser": "156.0.8078.4",
+  "results": [
+    {
+      "density": "compact",
+      "background": "rgb(248, 250, 249)",
+      "border": "rgb(120, 153, 136)",
+      "selected": "rgb(0, 104, 94)",
+      "normal": "rgb(38, 59, 54)",
+      "disabled": "rgb(136, 153, 136)",
+      "arrow": "rgb(248, 250, 249)"
+    },
+    {
+      "density": "comfortable",
+      "background": "rgb(248, 250, 249)",
+      "border": "rgb(120, 153, 136)",
+      "selected": "rgb(0, 104, 94)",
+      "normal": "rgb(38, 59, 54)",
+      "disabled": "rgb(136, 153, 136)",
+      "arrow": "rgb(248, 250, 249)"
+    },
+    {
+      "configured": {
+        "selected": "rgb(18, 52, 86)",
+        "normal": "rgb(52, 66, 80)",
+        "primary": "rgb(18, 52, 86)"
+      }
+    },
+    {
+      "brandMode": "dark",
+      "onlyEp": {
+        "selected": "rgb(18, 52, 86)",
+        "hovered": "rgb(224, 232, 240)",
+        "disabled": "rgb(113, 130, 147)",
+        "hasFdConfig": false
+      }
+    },
+    {
+      "brandMode": "light",
+      "onlyEp": {
+        "selected": "rgb(18, 52, 86)",
+        "hovered": "rgb(224, 232, 240)",
+        "disabled": "rgb(113, 130, 147)",
+        "hasFdConfig": false
+      }
+    }
+  ],
+  "errors": [],
+  "failures": []
+}

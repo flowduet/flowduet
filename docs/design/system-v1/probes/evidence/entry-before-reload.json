@@ -1,0 +1,12 @@
+[
+  {
+    "embedded": true,
+    "value": "form_1",
+    "visible": true
+  },
+  {
+    "embedded": false,
+    "value": "form_1",
+    "visible": true
+  }
+]

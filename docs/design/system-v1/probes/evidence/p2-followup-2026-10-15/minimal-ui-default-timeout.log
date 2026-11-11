@@ -1,0 +1,31 @@
+
+ RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground
+
+ ❯ probes/stage-zero/contract-location.test.ts (21 tests | 1 failed | 18 skipped) 8023ms
+   ❯ 四项P2的真实组件回归 (3)
+     × 表单还原后下一次候选不复活已放弃字段且保留其他表单输入 7116ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  probes/stage-zero/contract-location.test.ts > 四项P2的真实组件回归 > 表单还原后下一次候选不复活已放弃字段且保留其他表单输入
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ probes/stage-zero/contract-location.test.ts:358:3
+    356|
+    357| describe("四项P2的真实组件回归", () => {
+    358|   it("表单还原后下一次候选不复活已放弃字段且保留其他表单输入", async () => {
+       |   ^
+    359|     // 两张空表单足以复现内部字段复活，避免将八类控件全量初始化带入此接缝回归。
+    360|     const w = mount(ContractInstanceProbe, {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 2 passed | 18 skipped (21)
+   Start at  13:47:14
+   Duration  12.34s (tests 66%, import 23%, transform 8%, environment 4%)
+
+undefined
+/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run probes/stage-zero/contract-location.test.ts -t 表单还原后|默认表单冲突

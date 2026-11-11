@@ -1,0 +1,1994 @@
+[
+  {
+    "field": "F03",
+    "layout": "top",
+    "run": 1,
+    "case": "public_default_editor_preserves_pending_number",
+    "actualMode": "legacy",
+    "before": {
+      "text": "",
+      "badInput": true,
+      "focused": true
+    },
+    "returned": {
+      "text": "",
+      "badInput": false,
+      "focused": false
+    },
+    "original": {
+      "owner": "C-A",
+      "sameSession": true,
+      "sameModel": true,
+      "sameForms": true,
+      "sameGraph": true,
+      "activeId": "C-A:1",
+      "phase": "forms",
+      "persistCalls": 0,
+      "generation": 5,
+      "dirty": true,
+      "validationCurrent": false,
+      "forms": [
+        {
+          "id": "form_1",
+          "name": "甲表单",
+          "provider": "form-create/element-plus",
+          "rules": "[{\"type\":\"inputNumber\",\"field\":\"a_amount\",\"title\":\"甲数字\",\"value\":0}]",
+          "options": "{}"
+        },
+        {
+          "id": "form_2",
+          "name": "乙表单",
+          "provider": "form-create/element-plus",
+          "rules": "[{\"type\":\"inputNumber\",\"field\":\"b_amount\",\"title\":\"乙数字\",\"value\":0}]",
+          "options": "{}"
+        }
+      ],
+      "views": [
+        {
+          "id": "C-A:1",
+          "target": {
+            "controllerId": "C-A",
+            "documentEpoch": 1,
+            "kind": "form",
+            "id": "form_1",
+            "lifetime": 7
+          },
+          "live": true,
+          "provisional": false,
+          "composing": false,
+          "dragging": false
+        }
+      ],
+      "conflicts": [],
+      "recovery": {
+        "pending": false,
+        "temporary": 0
+      },
+      "result": {
+        "ok": true,
+        "value": {
+          "active": {
+            "ref": {
+              "controllerId": "C-A",
+              "documentEpoch": 1,
+              "kind": "form",
+              "id": "form_1",
+              "lifetime": 7
+            },
+            "facet": "form-content"
+          },
+          "actual": "kept"
+        }
+      },
+      "resultSequence": 1
+    },
+    "after": {
+      "owner": "C-A",
+      "sameSession": true,
+      "sameModel": true,
+      "sameForms": true,
+      "sameGraph": true,
+      "activeId": "C-A:1",
+      "phase": "forms",
+      "persistCalls": 0,
+      "generation": 6,
+      "dirty": true,
+      "validationCurrent": false,
+      "forms": [
+        {
+          "id": "form_1",
+          "name": "甲表单",
+          "provider": "form-create/element-plus",
+          "rules": "[{\"type\":\"inputNumber\",\"field\":\"a_amount\",\"title\":\"甲数字\",\"value\":0}]",
+          "options": "{}"
+        },
+        {
+          "id": "form_2",
+          "name": "乙表单",
+          "provider": "form-create/element-plus",
+          "rules": "[{\"type\":\"inputNumber\",\"field\":\"b_amount\",\"title\":\"乙数字\",\"value\":0}]",
+          "options": "{}"
+        }
+      ],
+      "views": [
+        {
+          "id": "C-A:1",
+          "target": {
+            "controllerId": "C-A",
+            "documentEpoch": 1,
+            "kind": "form",
+            "id": "form_1",
+            "lifetime": 7
+          },
+          "live": true,
+          "provisional": false,
+          "composing": false,
+          "dragging": false
+        },
+        {
+          "id": "C-A:2",
+          "target": {
+            "controllerId": "C-A",
+            "documentEpoch": 1,
+            "kind": "form",
+            "id": "form_2",
+            "lifetime": 8
+          },
+          "live": true,
+          "provisional": false,
+          "composing": false,
+          "dragging": false
+        }
+      ],
+      "conflicts": [],
+      "recovery": {
+        "pending": false,
+        "temporary": 0
+      },
+      "result": {
+        "ok": true,
+        "value": {
+          "active": {
+            "ref": {
+              "controllerId": "C-A",
+              "documentEpoch": 1,
+              "kind": "form",
+              "id": "form_1",
+              "lifetime": 7
+            },
+            "facet": "form-content"
+          },
+          "actual": "kept"
+        }
+      },
+      "resultSequence": 3
+    },
+    "pass": false
+  },
+  {
+    "field": "F07",
+    "layout": "top",
+    "run": 1,
+    "case": "public_default_editor_preserves_pending_date",
+    "actualMode": "legacy",
+    "before": {
+      "text": "2026-",
+      "badInput": false,
+      "focused": true
+    },
+    "returned": {
+      "text": "2026-01-01",
+      "badInput": false,
+      "focused": false
+    },
+    "original": {
+      "owner": "C-A",
+      "sameSession": true,
+      "sameModel": true,
+      "sameForms": true,
+      "sameGraph": true,
+      "activeId": "C-A:1",
+      "phase": "forms",
+      "persistCalls": 0,
+      "generation": 4,
+      "dirty": true,
+      "validationCurrent": false,
+      "forms": [
+        {
+          "id": "form_1",
+          "name": "甲表单",
+          "provider": "form-create/element-plus",
+          "rules": "[{\"type\":\"datePicker\",\"field\":\"a_date\",\"title\":\"甲日期\",\"props\":{\"type\":\"date\",\"valueFormat\":\"YYYY-MM-DD\"},\"value\":\"2026-10-15\"}]",
+          "options": "{}"
+        },
+        {
+          "id": "form_2",
+          "name": "乙表单",
+          "provider": "form-create/element-plus",
+          "rules": "[{\"type\":\"datePicker\",\"field\":\"b_date\",\"title\":\"乙日期\",\"props\":{\"type\":\"date\",\"valueFormat\":\"YYYY-MM-DD\"},\"value\":\"2026-10-15\"}]",
+          "options": "{}"
+        }
+      ],
+      "views": [
+        {
+          "id": "C-A:1",
+          "target": {
+            "controllerId": "C-A",
+            "documentEpoch": 1,
+            "kind": "form",
+            "id": "form_1",
+            "lifetime": 7
+          },
+          "live": true,
+          "provisional": false,
+          "composing": false,
+          "dragging": false
+        }
+      ],
+      "conflicts": [],
+      "recovery": {
+        "pending": false,
+        "temporary": 0
+      },
+      "result": {
+        "ok": true,
+        "value": {
+          "active": {
+            "ref": {
+              "controllerId": "C-A",
+              "documentEpoch": 1,
+              "kind": "form",
+              "id": "form_1",
+              "lifetime": 7
+            },
+            "facet": "form-content"
+          },
+          "actual": "kept"
+        }
+      },
+      "resultSequence": 1
+    },
+    "after": {
+      "owner": "C-A",
+      "sameSession": true,
+      "sameModel": true,
+      "sameForms": true,
+      "sameGraph": true,
+      "activeId": "C-A:1",
+      "phase": "forms",
+      "persistCalls": 0,
+      "generation": 5,
+      "dirty": true,
+      "validationCurrent": false,
+      "forms": [
+        {
+          "id": "form_1",
+          "name": "甲表单",
+          "provider": "form-create/element-plus",
+          "rules": "[{\"type\":\"datePicker\",\"field\":\"a_date\",\"title\":\"甲日期\",\"props\":{\"type\":\"date\",\"valueFormat\":\"YYYY-MM-DD\"},\"value\":\"2026-10-15\"}]",
+          "options": "{}"
+        },
+        {
+          "id": "form_2",
+          "name": "乙表单",
+          "provider": "form-create/element-plus",
+          "rules": "[{\"type\":\"datePicker\",\"field\":\"b_date\",\"title\":\"乙日期\",\"props\":{\"type\":\"date\",\"valueFormat\":\"YYYY-MM-DD\"},\"value\":\"2026-10-15\"}]",
+          "options": "{}"
+        }
+      ],
+      "views": [
+        {
+          "id": "C-A:1",
+          "target": {
+            "controllerId": "C-A",
+            "documentEpoch": 1,
+            "kind": "form",
+            "id": "form_1",
+            "lifetime": 7
+          },
+          "live": true,
+          "provisional": false,
+          "composing": false,
+          "dragging": false
+        },
+        {
+          "id": "C-A:2",
+          "target": {
+            "controllerId": "C-A",
+            "documentEpoch": 1,
+            "kind": "form",
+            "id": "form_2",
+            "lifetime": 8
+          },
+          "live": true,
+          "provisional": false,
+          "composing": false,
+          "dragging": false
+        }
+      ],
+      "conflicts": [],
+      "recovery": {
+        "pending": false,
+        "temporary": 0
+      },
+      "result": {
+        "ok": true,
+        "value": {
+          "active": {
+            "ref": {
+              "controllerId": "C-A",
+              "documentEpoch": 1,
+              "kind": "form",
+              "id": "form_1",
+              "lifetime": 7
+            },
+            "facet": "form-content"
+          },
+          "actual": "kept"
+        }
+      },
+      "resultSequence": 3
+    },
+    "pass": false
+  },
+  {
+    "field": "F03",
+    "layout": "grid",
+    "run": 1,
+    "case": "public_default_editor_preserves_pending_number",
+    "actualMode": "legacy",
+    "before": {
+      "text": "",
+      "badInput": true,
+      "focused": true
+    },
+    "returned": {
+      "text": "",
+      "badInput": false,
+      "focused": false
+    },
+    "original": {
+      "owner": "C-A",
+      "sameSession": true,
+      "sameModel": true,
+      "sameForms": true,
+      "sameGraph": true,
+      "activeId": "C-A:1",
+      "phase": "forms",
+      "persistCalls": 0,
+      "generation": 5,
+      "dirty": true,
+      "validationCurrent": false,
+      "forms": [
+        {
+          "id": "form_1",
+          "name": "甲表单",
+          "provider": "form-create/element-plus",
+          "rules": "[{\"type\":\"fcRow\",\"children\":[{\"type\":\"col\",\"props\":{\"span\":12},\"children\":[{\"type\":\"inputNumber\",\"field\":\"a_amount\",\"title\":\"甲数字\",\"value\":0}]},{\"type\":\"col\",\"props\":{\"span\":12},\"children\":[]}]}]",
+          "options": "{}"
+        },
+        {
+          "id": "form_2",
+          "name": "乙表单",
+          "provider": "form-create/element-plus",
+          "rules": "[{\"type\":\"fcRow\",\"children\":[{\"type\":\"col\",\"props\":{\"span\":12},\"children\":[{\"type\":\"inputNumber\",\"field\":\"b_amount\",\"title\":\"乙数字\",\"value\":0}]},{\"type\":\"col\",\"props\":{\"span\":12},\"children\":[]}]}]",
+          "options": "{}"
+        }
+      ],
+      "views": [
+        {
+          "id": "C-A:1",
+          "target": {
+            "controllerId": "C-A",
+            "documentEpoch": 1,
+            "kind": "form",
+            "id": "form_1",
+            "lifetime": 7
+          },
+          "live": true,
+          "provisional": false,
+          "composing": false,
+          "dragging": false
+        }
+      ],
+      "conflicts": [],
+      "recovery": {
+        "pending": false,
+        "temporary": 0
+      },
+      "result": {
+        "ok": true,
+        "value": {
+          "active": {
+            "ref": {
+              "controllerId": "C-A",
+              "documentEpoch": 1,
+              "kind": "form",
+              "id": "form_1",
+              "lifetime": 7
+            },
+            "facet": "form-content"
+          },
+          "actual": "kept"
+        }
+      },
+      "resultSequence": 1
+    },
+    "after": {
+      "owner": "C-A",
+      "sameSession": true,
+      "sameModel": true,
+      "sameForms": true,
+      "sameGraph": true,
+      "activeId": "C-A:1",
+      "phase": "forms",
+      "persistCalls": 0,
+      "generation": 6,
+      "dirty": true,
+      "validationCurrent": false,
+      "forms": [
+        {
+          "id": "form_1",
+          "name": "甲表单",
+          "provider": "form-create/element-plus",
+          "rules": "[{\"type\":\"fcRow\",\"children\":[{\"type\":\"col\",\"props\":{\"span\":12},\"children\":[{\"type\":\"inputNumber\",\"field\":\"a_amount\",\"title\":\"甲数字\",\"value\":0}]},{\"type\":\"col\",\"props\":{\"span\":12},\"children\":[]}]}]",
+          "options": "{}"
+        },
+        {
+          "id": "form_2",
+          "name": "乙表单",
+          "provider": "form-create/element-plus",
+          "rules": "[{\"type\":\"fcRow\",\"children\":[{\"type\":\"col\",\"props\":{\"span\":12},\"children\":[{\"type\":\"inputNumber\",\"field\":\"b_amount\",\"title\":\"乙数字\",\"value\":0}]},{\"type\":\"col\",\"props\":{\"span\":12},\"children\":[]}]}]",
+          "options": "{}"
+        }
+      ],
+      "views": [
+        {
+          "id": "C-A:1",
+          "target": {
+            "controllerId": "C-A",
+            "documentEpoch": 1,
+            "kind": "form",
+            "id": "form_1",
+            "lifetime": 7
+          },
+          "live": true,
+          "provisional": false,
+          "composing": false,
+          "dragging": false
+        },
+        {
+          "id": "C-A:2",
+          "target": {
+            "controllerId": "C-A",
+            "documentEpoch": 1,
+            "kind": "form",
+            "id": "form_2",
+            "lifetime": 8
+          },
+          "live": true,
+          "provisional": false,
+          "composing": false,
+          "dragging": false
+        }
+      ],
+      "conflicts": [],
+      "recovery": {
+        "pending": false,
+        "temporary": 0
+      },
+      "result": {
+        "ok": true,
+        "value": {
+          "active": {
+            "ref": {
+              "controllerId": "C-A",
+              "documentEpoch": 1,
+              "kind": "form",
+              "id": "form_1",
+              "lifetime": 7
+            },
+            "facet": "form-content"
+          },
+          "actual": "kept"
+        }
+      },
+      "resultSequence": 3
+    },
+    "pass": false
+  },
+  {
+    "field": "F07",
+    "layout": "grid",
+    "run": 1,
+    "case": "public_default_editor_preserves_pending_date",
+    "actualMode": "legacy",
+    "before": {
+      "text": "2026-",
+      "badInput": false,
+      "focused": true
+    },
+    "returned": {
+      "text": "2026-01-01",
+      "badInput": false,
+      "focused": false
+    },
+    "original": {
+      "owner": "C-A",
+      "sameSession": true,
+      "sameModel": true,
+      "sameForms": true,
+      "sameGraph": true,
+      "activeId": "C-A:1",
+      "phase": "forms",
+      "persistCalls": 0,
+      "generation": 4,
+      "dirty": true,
+      "validationCurrent": false,
+      "forms": [
+        {
+          "id": "form_1",
+          "name": "甲表单",
+          "provider": "form-create/element-plus",
+          "rules": "[{\"type\":\"fcRow\",\"children\":[{\"type\":\"col\",\"props\":{\"span\":12},\"children\":[{\"type\":\"datePicker\",\"field\":\"a_date\",\"title\":\"甲日期\",\"props\":{\"type\":\"date\",\"valueFormat\":\"YYYY-MM-DD\"},\"value\":\"2026-10-15\"}]},{\"type\":\"col\",\"props\":{\"span\":12},\"children\":[]}]}]",
+          "options": "{}"
+        },
+        {
+          "id": "form_2",
+          "name": "乙表单",
+          "provider": "form-create/element-plus",
+          "rules": "[{\"type\":\"fcRow\",\"children\":[{\"type\":\"col\",\"props\":{\"span\":12},\"children\":[{\"type\":\"datePicker\",\"field\":\"b_date\",\"title\":\"乙日期\",\"props\":{\"type\":\"date\",\"valueFormat\":\"YYYY-MM-DD\"},\"value\":\"2026-10-15\"}]},{\"type\":\"col\",\"props\":{\"span\":12},\"children\":[]}]}]",
+          "options": "{}"
+        }
+      ],
+      "views": [
+        {
+          "id": "C-A:1",
+          "target": {
+            "controllerId": "C-A",
+            "documentEpoch": 1,
+            "kind": "form",
+            "id": "form_1",
+            "lifetime": 7
+          },
+          "live": true,
+          "provisional": false,
+          "composing": false,
+          "dragging": false
+        }
+      ],
+      "conflicts": [],
+      "recovery": {
+        "pending": false,
+        "temporary": 0
+      },
+      "result": {
+        "ok": true,
+        "value": {
+          "active": {
+            "ref": {
+              "controllerId": "C-A",
+              "documentEpoch": 1,
+              "kind": "form",
+              "id": "form_1",
+              "lifetime": 7
+            },
+            "facet": "form-content"
+          },
+          "actual": "kept"
+        }
+      },
+      "resultSequence": 1
+    },
+    "after": {
+      "owner": "C-A",
+      "sameSession": true,
+      "sameModel": true,
+      "sameForms": true,
+      "sameGraph": true,
+      "activeId": "C-A:1",
+      "phase": "forms",
+      "persistCalls": 0,
+      "generation": 5,
+      "dirty": true,
+      "validationCurrent": false,
+      "forms": [
+        {
+          "id": "form_1",
+          "name": "甲表单",
+          "provider": "form-create/element-plus",
+          "rules": "[{\"type\":\"fcRow\",\"children\":[{\"type\":\"col\",\"props\":{\"span\":12},\"children\":[{\"type\":\"datePicker\",\"field\":\"a_date\",\"title\":\"甲日期\",\"props\":{\"type\":\"date\",\"valueFormat\":\"YYYY-MM-DD\"},\"value\":\"2026-10-15\"}]},{\"type\":\"col\",\"props\":{\"span\":12},\"children\":[]}]}]",
+          "options": "{}"
+        },
+        {
+          "id": "form_2",
+          "name": "乙表单",
+          "provider": "form-create/element-plus",
+          "rules": "[{\"type\":\"fcRow\",\"children\":[{\"type\":\"col\",\"props\":{\"span\":12},\"children\":[{\"type\":\"datePicker\",\"field\":\"b_date\",\"title\":\"乙日期\",\"props\":{\"type\":\"date\",\"valueFormat\":\"YYYY-MM-DD\"},\"value\":\"2026-10-15\"}]},{\"type\":\"col\",\"props\":{\"span\":12},\"children\":[]}]}]",
+          "options": "{}"
+        }
+      ],
+      "views": [
+        {
+          "id": "C-A:1",
+          "target": {
+            "controllerId": "C-A",
+            "documentEpoch": 1,
+            "kind": "form",
+            "id": "form_1",
+            "lifetime": 7
+          },
+          "live": true,
+          "provisional": false,
+          "composing": false,
+          "dragging": false
+        },
+        {
+          "id": "C-A:2",
+          "target": {
+            "controllerId": "C-A",
+            "documentEpoch": 1,
+            "kind": "form",
+            "id": "form_2",
+            "lifetime": 8
+          },
+          "live": true,
+          "provisional": false,
+          "composing": false,
+          "dragging": false
+        }
+      ],
+      "conflicts": [],
+      "recovery": {
+        "pending": false,
+        "temporary": 0
+      },
+      "result": {
+        "ok": true,
+        "value": {
+          "active": {
+            "ref": {
+              "controllerId": "C-A",
+              "documentEpoch": 1,
+              "kind": "form",
+              "id": "form_1",
+              "lifetime": 7
+            },
+            "facet": "form-content"
+          },
+          "actual": "kept"
+        }
+      },
+      "resultSequence": 3
+    },
+    "pass": false
+  },
+  {
+    "field": "F03",
+    "layout": "top",
+    "run": 2,
+    "case": "public_default_editor_preserves_pending_number",
+    "actualMode": "legacy",
+    "before": {
+      "text": "",
+      "badInput": true,
+      "focused": true
+    },
+    "returned": {
+      "text": "",
+      "badInput": false,
+      "focused": false
+    },
+    "original": {
+      "owner": "C-A",
+      "sameSession": true,
+      "sameModel": true,
+      "sameForms": true,
+      "sameGraph": true,
+      "activeId": "C-A:1",
+      "phase": "forms",
+      "persistCalls": 0,
+      "generation": 5,
+      "dirty": true,
+      "validationCurrent": false,
+      "forms": [
+        {
+          "id": "form_1",
+          "name": "甲表单",
+          "provider": "form-create/element-plus",
+          "rules": "[{\"type\":\"inputNumber\",\"field\":\"a_amount\",\"title\":\"甲数字\",\"value\":0}]",
+          "options": "{}"
+        },
+        {
+          "id": "form_2",
+          "name": "乙表单",
+          "provider": "form-create/element-plus",
+          "rules": "[{\"type\":\"inputNumber\",\"field\":\"b_amount\",\"title\":\"乙数字\",\"value\":0}]",
+          "options": "{}"
+        }
+      ],
+      "views": [
+        {
+          "id": "C-A:1",
+          "target": {
+            "controllerId": "C-A",
+            "documentEpoch": 1,
+            "kind": "form",
+            "id": "form_1",
+            "lifetime": 7
+          },
+          "live": true,
+          "provisional": false,
+          "composing": false,
+          "dragging": false
+        }
+      ],
+      "conflicts": [],
+      "recovery": {
+        "pending": false,
+        "temporary": 0
+      },
+      "result": {
+        "ok": true,
+        "value": {
+          "active": {
+            "ref": {
+              "controllerId": "C-A",
+              "documentEpoch": 1,
+              "kind": "form",
+              "id": "form_1",
+              "lifetime": 7
+            },
+            "facet": "form-content"
+          },
+          "actual": "kept"
+        }
+      },
+      "resultSequence": 1
+    },
+    "after": {
+      "owner": "C-A",
+      "sameSession": true,
+      "sameModel": true,
+      "sameForms": true,
+      "sameGraph": true,
+      "activeId": "C-A:1",
+      "phase": "forms",
+      "persistCalls": 0,
+      "generation": 6,
+      "dirty": true,
+      "validationCurrent": false,
+      "forms": [
+        {
+          "id": "form_1",
+          "name": "甲表单",
+          "provider": "form-create/element-plus",
+          "rules": "[{\"type\":\"inputNumber\",\"field\":\"a_amount\",\"title\":\"甲数字\",\"value\":0}]",
+          "options": "{}"
+        },
+        {
+          "id": "form_2",
+          "name": "乙表单",
+          "provider": "form-create/element-plus",
+          "rules": "[{\"type\":\"inputNumber\",\"field\":\"b_amount\",\"title\":\"乙数字\",\"value\":0}]",
+          "options": "{}"
+        }
+      ],
+      "views": [
+        {
+          "id": "C-A:1",
+          "target": {
+            "controllerId": "C-A",
+            "documentEpoch": 1,
+            "kind": "form",
+            "id": "form_1",
+            "lifetime": 7
+          },
+          "live": true,
+          "provisional": false,
+          "composing": false,
+          "dragging": false
+        },
+        {
+          "id": "C-A:2",
+          "target": {
+            "controllerId": "C-A",
+            "documentEpoch": 1,
+            "kind": "form",
+            "id": "form_2",
+            "lifetime": 8
+          },
+          "live": true,
+          "provisional": false,
+          "composing": false,
+          "dragging": false
+        }
+      ],
+      "conflicts": [],
+      "recovery": {
+        "pending": false,
+        "temporary": 0
+      },
+      "result": {
+        "ok": true,
+        "value": {
+          "active": {
+            "ref": {
+              "controllerId": "C-A",
+              "documentEpoch": 1,
+              "kind": "form",
+              "id": "form_1",
+              "lifetime": 7
+            },
+            "facet": "form-content"
+          },
+          "actual": "kept"
+        }
+      },
+      "resultSequence": 3
+    },
+    "pass": false
+  },
+  {
+    "field": "F07",
+    "layout": "top",
+    "run": 2,
+    "case": "public_default_editor_preserves_pending_date",
+    "actualMode": "legacy",
+    "before": {
+      "text": "2026-",
+      "badInput": false,
+      "focused": true
+    },
+    "returned": {
+      "text": "2026-01-01",
+      "badInput": false,
+      "focused": false
+    },
+    "original": {
+      "owner": "C-A",
+      "sameSession": true,
+      "sameModel": true,
+      "sameForms": true,
+      "sameGraph": true,
+      "activeId": "C-A:1",
+      "phase": "forms",
+      "persistCalls": 0,
+      "generation": 4,
+      "dirty": true,
+      "validationCurrent": false,
+      "forms": [
+        {
+          "id": "form_1",
+          "name": "甲表单",
+          "provider": "form-create/element-plus",
+          "rules": "[{\"type\":\"datePicker\",\"field\":\"a_date\",\"title\":\"甲日期\",\"props\":{\"type\":\"date\",\"valueFormat\":\"YYYY-MM-DD\"},\"value\":\"2026-10-15\"}]",
+          "options": "{}"
+        },
+        {
+          "id": "form_2",
+          "name": "乙表单",
+          "provider": "form-create/element-plus",
+          "rules": "[{\"type\":\"datePicker\",\"field\":\"b_date\",\"title\":\"乙日期\",\"props\":{\"type\":\"date\",\"valueFormat\":\"YYYY-MM-DD\"},\"value\":\"2026-10-15\"}]",
+          "options": "{}"
+        }
+      ],
+      "views": [
+        {
+          "id": "C-A:1",
+          "target": {
+            "controllerId": "C-A",
+            "documentEpoch": 1,
+            "kind": "form",
+            "id": "form_1",
+            "lifetime": 7
+          },
+          "live": true,
+          "provisional": false,
+          "composing": false,
+          "dragging": false
+        }
+      ],
+      "conflicts": [],
+      "recovery": {
+        "pending": false,
+        "temporary": 0
+      },
+      "result": {
+        "ok": true,
+        "value": {
+          "active": {
+            "ref": {
+              "controllerId": "C-A",
+              "documentEpoch": 1,
+              "kind": "form",
+              "id": "form_1",
+              "lifetime": 7
+            },
+            "facet": "form-content"
+          },
+          "actual": "kept"
+        }
+      },
+      "resultSequence": 1
+    },
+    "after": {
+      "owner": "C-A",
+      "sameSession": true,
+      "sameModel": true,
+      "sameForms": true,
+      "sameGraph": true,
+      "activeId": "C-A:1",
+      "phase": "forms",
+      "persistCalls": 0,
+      "generation": 5,
+      "dirty": true,
+      "validationCurrent": false,
+      "forms": [
+        {
+          "id": "form_1",
+          "name": "甲表单",
+          "provider": "form-create/element-plus",
+          "rules": "[{\"type\":\"datePicker\",\"field\":\"a_date\",\"title\":\"甲日期\",\"props\":{\"type\":\"date\",\"valueFormat\":\"YYYY-MM-DD\"},\"value\":\"2026-10-15\"}]",
+          "options": "{}"
+        },
+        {
+          "id": "form_2",
+          "name": "乙表单",
+          "provider": "form-create/element-plus",
+          "rules": "[{\"type\":\"datePicker\",\"field\":\"b_date\",\"title\":\"乙日期\",\"props\":{\"type\":\"date\",\"valueFormat\":\"YYYY-MM-DD\"},\"value\":\"2026-10-15\"}]",
+          "options": "{}"
+        }
+      ],
+      "views": [
+        {
+          "id": "C-A:1",
+          "target": {
+            "controllerId": "C-A",
+            "documentEpoch": 1,
+            "kind": "form",
+            "id": "form_1",
+            "lifetime": 7
+          },
+          "live": true,
+          "provisional": false,
+          "composing": false,
+          "dragging": false
+        },
+        {
+          "id": "C-A:2",
+          "target": {
+            "controllerId": "C-A",
+            "documentEpoch": 1,
+            "kind": "form",
+            "id": "form_2",
+            "lifetime": 8
+          },
+          "live": true,
+          "provisional": false,
+          "composing": false,
+          "dragging": false
+        }
+      ],
+      "conflicts": [],
+      "recovery": {
+        "pending": false,
+        "temporary": 0
+      },
+      "result": {
+        "ok": true,
+        "value": {
+          "active": {
+            "ref": {
+              "controllerId": "C-A",
+              "documentEpoch": 1,
+              "kind": "form",
+              "id": "form_1",
+              "lifetime": 7
+            },
+            "facet": "form-content"
+          },
+          "actual": "kept"
+        }
+      },
+      "resultSequence": 3
+    },
+    "pass": false
+  },
+  {
+    "field": "F03",
+    "layout": "grid",
+    "run": 2,
+    "case": "public_default_editor_preserves_pending_number",
+    "actualMode": "legacy",
+    "before": {
+      "text": "",
+      "badInput": true,
+      "focused": true
+    },
+    "returned": {
+      "text": "",
+      "badInput": false,
+      "focused": false
+    },
+    "original": {
+      "owner": "C-A",
+      "sameSession": true,
+      "sameModel": true,
+      "sameForms": true,
+      "sameGraph": true,
+      "activeId": "C-A:1",
+      "phase": "forms",
+      "persistCalls": 0,
+      "generation": 5,
+      "dirty": true,
+      "validationCurrent": false,
+      "forms": [
+        {
+          "id": "form_1",
+          "name": "甲表单",
+          "provider": "form-create/element-plus",
+          "rules": "[{\"type\":\"fcRow\",\"children\":[{\"type\":\"col\",\"props\":{\"span\":12},\"children\":[{\"type\":\"inputNumber\",\"field\":\"a_amount\",\"title\":\"甲数字\",\"value\":0}]},{\"type\":\"col\",\"props\":{\"span\":12},\"children\":[]}]}]",
+          "options": "{}"
+        },
+        {
+          "id": "form_2",
+          "name": "乙表单",
+          "provider": "form-create/element-plus",
+          "rules": "[{\"type\":\"fcRow\",\"children\":[{\"type\":\"col\",\"props\":{\"span\":12},\"children\":[{\"type\":\"inputNumber\",\"field\":\"b_amount\",\"title\":\"乙数字\",\"value\":0}]},{\"type\":\"col\",\"props\":{\"span\":12},\"children\":[]}]}]",
+          "options": "{}"
+        }
+      ],
+      "views": [
+        {
+          "id": "C-A:1",
+          "target": {
+            "controllerId": "C-A",
+            "documentEpoch": 1,
+            "kind": "form",
+            "id": "form_1",
+            "lifetime": 7
+          },
+          "live": true,
+          "provisional": false,
+          "composing": false,
+          "dragging": false
+        }
+      ],
+      "conflicts": [],
+      "recovery": {
+        "pending": false,
+        "temporary": 0
+      },
+      "result": {
+        "ok": true,
+        "value": {
+          "active": {
+            "ref": {
+              "controllerId": "C-A",
+              "documentEpoch": 1,
+              "kind": "form",
+              "id": "form_1",
+              "lifetime": 7
+            },
+            "facet": "form-content"
+          },
+          "actual": "kept"
+        }
+      },
+      "resultSequence": 1
+    },
+    "after": {
+      "owner": "C-A",
+      "sameSession": true,
+      "sameModel": true,
+      "sameForms": true,
+      "sameGraph": true,
+      "activeId": "C-A:1",
+      "phase": "forms",
+      "persistCalls": 0,
+      "generation": 6,
+      "dirty": true,
+      "validationCurrent": false,
+      "forms": [
+        {
+          "id": "form_1",
+          "name": "甲表单",
+          "provider": "form-create/element-plus",
+          "rules": "[{\"type\":\"fcRow\",\"children\":[{\"type\":\"col\",\"props\":{\"span\":12},\"children\":[{\"type\":\"inputNumber\",\"field\":\"a_amount\",\"title\":\"甲数字\",\"value\":0}]},{\"type\":\"col\",\"props\":{\"span\":12},\"children\":[]}]}]",
+          "options": "{}"
+        },
+        {
+          "id": "form_2",
+          "name": "乙表单",
+          "provider": "form-create/element-plus",
+          "rules": "[{\"type\":\"fcRow\",\"children\":[{\"type\":\"col\",\"props\":{\"span\":12},\"children\":[{\"type\":\"inputNumber\",\"field\":\"b_amount\",\"title\":\"乙数字\",\"value\":0}]},{\"type\":\"col\",\"props\":{\"span\":12},\"children\":[]}]}]",
+          "options": "{}"
+        }
+      ],
+      "views": [
+        {
+          "id": "C-A:1",
+          "target": {
+            "controllerId": "C-A",
+            "documentEpoch": 1,
+            "kind": "form",
+            "id": "form_1",
+            "lifetime": 7
+          },
+          "live": true,
+          "provisional": false,
+          "composing": false,
+          "dragging": false
+        },
+        {
+          "id": "C-A:2",
+          "target": {
+            "controllerId": "C-A",
+            "documentEpoch": 1,
+            "kind": "form",
+            "id": "form_2",
+            "lifetime": 8
+          },
+          "live": true,
+          "provisional": false,
+          "composing": false,
+          "dragging": false
+        }
+      ],
+      "conflicts": [],
+      "recovery": {
+        "pending": false,
+        "temporary": 0
+      },
+      "result": {
+        "ok": true,
+        "value": {
+          "active": {
+            "ref": {
+              "controllerId": "C-A",
+              "documentEpoch": 1,
+              "kind": "form",
+              "id": "form_1",
+              "lifetime": 7
+            },
+            "facet": "form-content"
+          },
+          "actual": "kept"
+        }
+      },
+      "resultSequence": 3
+    },
+    "pass": false
+  },
+  {
+    "field": "F07",
+    "layout": "grid",
+    "run": 2,
+    "case": "public_default_editor_preserves_pending_date",
+    "actualMode": "legacy",
+    "before": {
+      "text": "2026-",
+      "badInput": false,
+      "focused": true
+    },
+    "returned": {
+      "text": "2026-01-01",
+      "badInput": false,
+      "focused": false
+    },
+    "original": {
+      "owner": "C-A",
+      "sameSession": true,
+      "sameModel": true,
+      "sameForms": true,
+      "sameGraph": true,
+      "activeId": "C-A:1",
+      "phase": "forms",
+      "persistCalls": 0,
+      "generation": 4,
+      "dirty": true,
+      "validationCurrent": false,
+      "forms": [
+        {
+          "id": "form_1",
+          "name": "甲表单",
+          "provider": "form-create/element-plus",
+          "rules": "[{\"type\":\"fcRow\",\"children\":[{\"type\":\"col\",\"props\":{\"span\":12},\"children\":[{\"type\":\"datePicker\",\"field\":\"a_date\",\"title\":\"甲日期\",\"props\":{\"type\":\"date\",\"valueFormat\":\"YYYY-MM-DD\"},\"value\":\"2026-10-15\"}]},{\"type\":\"col\",\"props\":{\"span\":12},\"children\":[]}]}]",
+          "options": "{}"
+        },
+        {
+          "id": "form_2",
+          "name": "乙表单",
+          "provider": "form-create/element-plus",
+          "rules": "[{\"type\":\"fcRow\",\"children\":[{\"type\":\"col\",\"props\":{\"span\":12},\"children\":[{\"type\":\"datePicker\",\"field\":\"b_date\",\"title\":\"乙日期\",\"props\":{\"type\":\"date\",\"valueFormat\":\"YYYY-MM-DD\"},\"value\":\"2026-10-15\"}]},{\"type\":\"col\",\"props\":{\"span\":12},\"children\":[]}]}]",
+          "options": "{}"
+        }
+      ],
+      "views": [
+        {
+          "id": "C-A:1",
+          "target": {
+            "controllerId": "C-A",
+            "documentEpoch": 1,
+            "kind": "form",
+            "id": "form_1",
+            "lifetime": 7
+          },
+          "live": true,
+          "provisional": false,
+          "composing": false,
+          "dragging": false
+        }
+      ],
+      "conflicts": [],
+      "recovery": {
+        "pending": false,
+        "temporary": 0
+      },
+      "result": {
+        "ok": true,
+        "value": {
+          "active": {
+            "ref": {
+              "controllerId": "C-A",
+              "documentEpoch": 1,
+              "kind": "form",
+              "id": "form_1",
+              "lifetime": 7
+            },
+            "facet": "form-content"
+          },
+          "actual": "kept"
+        }
+      },
+      "resultSequence": 1
+    },
+    "after": {
+      "owner": "C-A",
+      "sameSession": true,
+      "sameModel": true,
+      "sameForms": true,
+      "sameGraph": true,
+      "activeId": "C-A:1",
+      "phase": "forms",
+      "persistCalls": 0,
+      "generation": 5,
+      "dirty": true,
+      "validationCurrent": false,
+      "forms": [
+        {
+          "id": "form_1",
+          "name": "甲表单",
+          "provider": "form-create/element-plus",
+          "rules": "[{\"type\":\"fcRow\",\"children\":[{\"type\":\"col\",\"props\":{\"span\":12},\"children\":[{\"type\":\"datePicker\",\"field\":\"a_date\",\"title\":\"甲日期\",\"props\":{\"type\":\"date\",\"valueFormat\":\"YYYY-MM-DD\"},\"value\":\"2026-10-15\"}]},{\"type\":\"col\",\"props\":{\"span\":12},\"children\":[]}]}]",
+          "options": "{}"
+        },
+        {
+          "id": "form_2",
+          "name": "乙表单",
+          "provider": "form-create/element-plus",
+          "rules": "[{\"type\":\"fcRow\",\"children\":[{\"type\":\"col\",\"props\":{\"span\":12},\"children\":[{\"type\":\"datePicker\",\"field\":\"b_date\",\"title\":\"乙日期\",\"props\":{\"type\":\"date\",\"valueFormat\":\"YYYY-MM-DD\"},\"value\":\"2026-10-15\"}]},{\"type\":\"col\",\"props\":{\"span\":12},\"children\":[]}]}]",
+          "options": "{}"
+        }
+      ],
+      "views": [
+        {
+          "id": "C-A:1",
+          "target": {
+            "controllerId": "C-A",
+            "documentEpoch": 1,
+            "kind": "form",
+            "id": "form_1",
+            "lifetime": 7
+          },
+          "live": true,
+          "provisional": false,
+          "composing": false,
+          "dragging": false
+        },
+        {
+          "id": "C-A:2",
+          "target": {
+            "controllerId": "C-A",
+            "documentEpoch": 1,
+            "kind": "form",
+            "id": "form_2",
+            "lifetime": 8
+          },
+          "live": true,
+          "provisional": false,
+          "composing": false,
+          "dragging": false
+        }
+      ],
+      "conflicts": [],
+      "recovery": {
+        "pending": false,
+        "temporary": 0
+      },
+      "result": {
+        "ok": true,
+        "value": {
+          "active": {
+            "ref": {
+              "controllerId": "C-A",
+              "documentEpoch": 1,
+              "kind": "form",
+              "id": "form_1",
+              "lifetime": 7
+            },
+            "facet": "form-content"
+          },
+          "actual": "kept"
+        }
+      },
+      "resultSequence": 3
+    },
+    "pass": false
+  },
+  {
+    "field": "F03",
+    "layout": "top",
+    "run": 3,
+    "case": "public_default_editor_preserves_pending_number",
+    "actualMode": "legacy",
+    "before": {
+      "text": "",
+      "badInput": true,
+      "focused": true
+    },
+    "returned": {
+      "text": "",
+      "badInput": false,
+      "focused": false
+    },
+    "original": {
+      "owner": "C-A",
+      "sameSession": true,
+      "sameModel": true,
+      "sameForms": true,
+      "sameGraph": true,
+      "activeId": "C-A:1",
+      "phase": "forms",
+      "persistCalls": 0,
+      "generation": 5,
+      "dirty": true,
+      "validationCurrent": false,
+      "forms": [
+        {
+          "id": "form_1",
+          "name": "甲表单",
+          "provider": "form-create/element-plus",
+          "rules": "[{\"type\":\"inputNumber\",\"field\":\"a_amount\",\"title\":\"甲数字\",\"value\":0}]",
+          "options": "{}"
+        },
+        {
+          "id": "form_2",
+          "name": "乙表单",
+          "provider": "form-create/element-plus",
+          "rules": "[{\"type\":\"inputNumber\",\"field\":\"b_amount\",\"title\":\"乙数字\",\"value\":0}]",
+          "options": "{}"
+        }
+      ],
+      "views": [
+        {
+          "id": "C-A:1",
+          "target": {
+            "controllerId": "C-A",
+            "documentEpoch": 1,
+            "kind": "form",
+            "id": "form_1",
+            "lifetime": 7
+          },
+          "live": true,
+          "provisional": false,
+          "composing": false,
+          "dragging": false
+        }
+      ],
+      "conflicts": [],
+      "recovery": {
+        "pending": false,
+        "temporary": 0
+      },
+      "result": {
+        "ok": true,
+        "value": {
+          "active": {
+            "ref": {
+              "controllerId": "C-A",
+              "documentEpoch": 1,
+              "kind": "form",
+              "id": "form_1",
+              "lifetime": 7
+            },
+            "facet": "form-content"
+          },
+          "actual": "kept"
+        }
+      },
+      "resultSequence": 1
+    },
+    "after": {
+      "owner": "C-A",
+      "sameSession": true,
+      "sameModel": true,
+      "sameForms": true,
+      "sameGraph": true,
+      "activeId": "C-A:1",
+      "phase": "forms",
+      "persistCalls": 0,
+      "generation": 6,
+      "dirty": true,
+      "validationCurrent": false,
+      "forms": [
+        {
+          "id": "form_1",
+          "name": "甲表单",
+          "provider": "form-create/element-plus",
+          "rules": "[{\"type\":\"inputNumber\",\"field\":\"a_amount\",\"title\":\"甲数字\",\"value\":0}]",
+          "options": "{}"
+        },
+        {
+          "id": "form_2",
+          "name": "乙表单",
+          "provider": "form-create/element-plus",
+          "rules": "[{\"type\":\"inputNumber\",\"field\":\"b_amount\",\"title\":\"乙数字\",\"value\":0}]",
+          "options": "{}"
+        }
+      ],
+      "views": [
+        {
+          "id": "C-A:1",
+          "target": {
+            "controllerId": "C-A",
+            "documentEpoch": 1,
+            "kind": "form",
+            "id": "form_1",
+            "lifetime": 7
+          },
+          "live": true,
+          "provisional": false,
+          "composing": false,
+          "dragging": false
+        },
+        {
+          "id": "C-A:2",
+          "target": {
+            "controllerId": "C-A",
+            "documentEpoch": 1,
+            "kind": "form",
+            "id": "form_2",
+            "lifetime": 8
+          },
+          "live": true,
+          "provisional": false,
+          "composing": false,
+          "dragging": false
+        }
+      ],
+      "conflicts": [],
+      "recovery": {
+        "pending": false,
+        "temporary": 0
+      },
+      "result": {
+        "ok": true,
+        "value": {
+          "active": {
+            "ref": {
+              "controllerId": "C-A",
+              "documentEpoch": 1,
+              "kind": "form",
+              "id": "form_1",
+              "lifetime": 7
+            },
+            "facet": "form-content"
+          },
+          "actual": "kept"
+        }
+      },
+      "resultSequence": 3
+    },
+    "pass": false
+  },
+  {
+    "field": "F07",
+    "layout": "top",
+    "run": 3,
+    "case": "public_default_editor_preserves_pending_date",
+    "actualMode": "legacy",
+    "before": {
+      "text": "2026-",
+      "badInput": false,
+      "focused": true
+    },
+    "returned": {
+      "text": "2026-01-01",
+      "badInput": false,
+      "focused": false
+    },
+    "original": {
+      "owner": "C-A",
+      "sameSession": true,
+      "sameModel": true,
+      "sameForms": true,
+      "sameGraph": true,
+      "activeId": "C-A:1",
+      "phase": "forms",
+      "persistCalls": 0,
+      "generation": 4,
+      "dirty": true,
+      "validationCurrent": false,
+      "forms": [
+        {
+          "id": "form_1",
+          "name": "甲表单",
+          "provider": "form-create/element-plus",
+          "rules": "[{\"type\":\"datePicker\",\"field\":\"a_date\",\"title\":\"甲日期\",\"props\":{\"type\":\"date\",\"valueFormat\":\"YYYY-MM-DD\"},\"value\":\"2026-10-15\"}]",
+          "options": "{}"
+        },
+        {
+          "id": "form_2",
+          "name": "乙表单",
+          "provider": "form-create/element-plus",
+          "rules": "[{\"type\":\"datePicker\",\"field\":\"b_date\",\"title\":\"乙日期\",\"props\":{\"type\":\"date\",\"valueFormat\":\"YYYY-MM-DD\"},\"value\":\"2026-10-15\"}]",
+          "options": "{}"
+        }
+      ],
+      "views": [
+        {
+          "id": "C-A:1",
+          "target": {
+            "controllerId": "C-A",
+            "documentEpoch": 1,
+            "kind": "form",
+            "id": "form_1",
+            "lifetime": 7
+          },
+          "live": true,
+          "provisional": false,
+          "composing": false,
+          "dragging": false
+        }
+      ],
+      "conflicts": [],
+      "recovery": {
+        "pending": false,
+        "temporary": 0
+      },
+      "result": {
+        "ok": true,
+        "value": {
+          "active": {
+            "ref": {
+              "controllerId": "C-A",
+              "documentEpoch": 1,
+              "kind": "form",
+              "id": "form_1",
+              "lifetime": 7
+            },
+            "facet": "form-content"
+          },
+          "actual": "kept"
+        }
+      },
+      "resultSequence": 1
+    },
+    "after": {
+      "owner": "C-A",
+      "sameSession": true,
+      "sameModel": true,
+      "sameForms": true,
+      "sameGraph": true,
+      "activeId": "C-A:1",
+      "phase": "forms",
+      "persistCalls": 0,
+      "generation": 5,
+      "dirty": true,
+      "validationCurrent": false,
+      "forms": [
+        {
+          "id": "form_1",
+          "name": "甲表单",
+          "provider": "form-create/element-plus",
+          "rules": "[{\"type\":\"datePicker\",\"field\":\"a_date\",\"title\":\"甲日期\",\"props\":{\"type\":\"date\",\"valueFormat\":\"YYYY-MM-DD\"},\"value\":\"2026-10-15\"}]",
+          "options": "{}"
+        },
+        {
+          "id": "form_2",
+          "name": "乙表单",
+          "provider": "form-create/element-plus",
+          "rules": "[{\"type\":\"datePicker\",\"field\":\"b_date\",\"title\":\"乙日期\",\"props\":{\"type\":\"date\",\"valueFormat\":\"YYYY-MM-DD\"},\"value\":\"2026-10-15\"}]",
+          "options": "{}"
+        }
+      ],
+      "views": [
+        {
+          "id": "C-A:1",
+          "target": {
+            "controllerId": "C-A",
+            "documentEpoch": 1,
+            "kind": "form",
+            "id": "form_1",
+            "lifetime": 7
+          },
+          "live": true,
+          "provisional": false,
+          "composing": false,
+          "dragging": false
+        },
+        {
+          "id": "C-A:2",
+          "target": {
+            "controllerId": "C-A",
+            "documentEpoch": 1,
+            "kind": "form",
+            "id": "form_2",
+            "lifetime": 8
+          },
+          "live": true,
+          "provisional": false,
+          "composing": false,
+          "dragging": false
+        }
+      ],
+      "conflicts": [],
+      "recovery": {
+        "pending": false,
+        "temporary": 0
+      },
+      "result": {
+        "ok": true,
+        "value": {
+          "active": {
+            "ref": {
+              "controllerId": "C-A",
+              "documentEpoch": 1,
+              "kind": "form",
+              "id": "form_1",
+              "lifetime": 7
+            },
+            "facet": "form-content"
+          },
+          "actual": "kept"
+        }
+      },
+      "resultSequence": 3
+    },
+    "pass": false
+  },
+  {
+    "field": "F03",
+    "layout": "grid",
+    "run": 3,
+    "case": "public_default_editor_preserves_pending_number",
+    "actualMode": "legacy",
+    "before": {
+      "text": "",
+      "badInput": true,
+      "focused": true
+    },
+    "returned": {
+      "text": "",
+      "badInput": false,
+      "focused": false
+    },
+    "original": {
+      "owner": "C-A",
+      "sameSession": true,
+      "sameModel": true,
+      "sameForms": true,
+      "sameGraph": true,
+      "activeId": "C-A:1",
+      "phase": "forms",
+      "persistCalls": 0,
+      "generation": 5,
+      "dirty": true,
+      "validationCurrent": false,
+      "forms": [
+        {
+          "id": "form_1",
+          "name": "甲表单",
+          "provider": "form-create/element-plus",
+          "rules": "[{\"type\":\"fcRow\",\"children\":[{\"type\":\"col\",\"props\":{\"span\":12},\"children\":[{\"type\":\"inputNumber\",\"field\":\"a_amount\",\"title\":\"甲数字\",\"value\":0}]},{\"type\":\"col\",\"props\":{\"span\":12},\"children\":[]}]}]",
+          "options": "{}"
+        },
+        {
+          "id": "form_2",
+          "name": "乙表单",
+          "provider": "form-create/element-plus",
+          "rules": "[{\"type\":\"fcRow\",\"children\":[{\"type\":\"col\",\"props\":{\"span\":12},\"children\":[{\"type\":\"inputNumber\",\"field\":\"b_amount\",\"title\":\"乙数字\",\"value\":0}]},{\"type\":\"col\",\"props\":{\"span\":12},\"children\":[]}]}]",
+          "options": "{}"
+        }
+      ],
+      "views": [
+        {
+          "id": "C-A:1",
+          "target": {
+            "controllerId": "C-A",
+            "documentEpoch": 1,
+            "kind": "form",
+            "id": "form_1",
+            "lifetime": 7
+          },
+          "live": true,
+          "provisional": false,
+          "composing": false,
+          "dragging": false
+        }
+      ],
+      "conflicts": [],
+      "recovery": {
+        "pending": false,
+        "temporary": 0
+      },
+      "result": {
+        "ok": true,
+        "value": {
+          "active": {
+            "ref": {
+              "controllerId": "C-A",
+              "documentEpoch": 1,
+              "kind": "form",
+              "id": "form_1",
+              "lifetime": 7
+            },
+            "facet": "form-content"
+          },
+          "actual": "kept"
+        }
+      },
+      "resultSequence": 1
+    },
+    "after": {
+      "owner": "C-A",
+      "sameSession": true,
+      "sameModel": true,
+      "sameForms": true,
+      "sameGraph": true,
+      "activeId": "C-A:1",
+      "phase": "forms",
+      "persistCalls": 0,
+      "generation": 6,
+      "dirty": true,
+      "validationCurrent": false,
+      "forms": [
+        {
+          "id": "form_1",
+          "name": "甲表单",
+          "provider": "form-create/element-plus",
+          "rules": "[{\"type\":\"fcRow\",\"children\":[{\"type\":\"col\",\"props\":{\"span\":12},\"children\":[{\"type\":\"inputNumber\",\"field\":\"a_amount\",\"title\":\"甲数字\",\"value\":0}]},{\"type\":\"col\",\"props\":{\"span\":12},\"children\":[]}]}]",
+          "options": "{}"
+        },
+        {
+          "id": "form_2",
+          "name": "乙表单",
+          "provider": "form-create/element-plus",
+          "rules": "[{\"type\":\"fcRow\",\"children\":[{\"type\":\"col\",\"props\":{\"span\":12},\"children\":[{\"type\":\"inputNumber\",\"field\":\"b_amount\",\"title\":\"乙数字\",\"value\":0}]},{\"type\":\"col\",\"props\":{\"span\":12},\"children\":[]}]}]",
+          "options": "{}"
+        }
+      ],
+      "views": [
+        {
+          "id": "C-A:1",
+          "target": {
+            "controllerId": "C-A",
+            "documentEpoch": 1,
+            "kind": "form",
+            "id": "form_1",
+            "lifetime": 7
+          },
+          "live": true,
+          "provisional": false,
+          "composing": false,
+          "dragging": false
+        },
+        {
+          "id": "C-A:2",
+          "target": {
+            "controllerId": "C-A",
+            "documentEpoch": 1,
+            "kind": "form",
+            "id": "form_2",
+            "lifetime": 8
+          },
+          "live": true,
+          "provisional": false,
+          "composing": false,
+          "dragging": false
+        }
+      ],
+      "conflicts": [],
+      "recovery": {
+        "pending": false,
+        "temporary": 0
+      },
+      "result": {
+        "ok": true,
+        "value": {
+          "active": {
+            "ref": {
+              "controllerId": "C-A",
+              "documentEpoch": 1,
+              "kind": "form",
+              "id": "form_1",
+              "lifetime": 7
+            },
+            "facet": "form-content"
+          },
+          "actual": "kept"
+        }
+      },
+      "resultSequence": 3
+    },
+    "pass": false
+  },
+  {
+    "field": "F07",
+    "layout": "grid",
+    "run": 3,
+    "case": "public_default_editor_preserves_pending_date",
+    "actualMode": "legacy",
+    "before": {
+      "text": "2026-",
+      "badInput": false,
+      "focused": true
+    },
+    "returned": {
+      "text": "2026-01-01",
+      "badInput": false,
+      "focused": false
+    },
+    "original": {
+      "owner": "C-A",
+      "sameSession": true,
+      "sameModel": true,
+      "sameForms": true,
+      "sameGraph": true,
+      "activeId": "C-A:1",
+      "phase": "forms",
+      "persistCalls": 0,
+      "generation": 4,
+      "dirty": true,
+      "validationCurrent": false,
+      "forms": [
+        {
+          "id": "form_1",
+          "name": "甲表单",
+          "provider": "form-create/element-plus",
+          "rules": "[{\"type\":\"fcRow\",\"children\":[{\"type\":\"col\",\"props\":{\"span\":12},\"children\":[{\"type\":\"datePicker\",\"field\":\"a_date\",\"title\":\"甲日期\",\"props\":{\"type\":\"date\",\"valueFormat\":\"YYYY-MM-DD\"},\"value\":\"2026-10-15\"}]},{\"type\":\"col\",\"props\":{\"span\":12},\"children\":[]}]}]",
+          "options": "{}"
+        },
+        {
+          "id": "form_2",
+          "name": "乙表单",
+          "provider": "form-create/element-plus",
+          "rules": "[{\"type\":\"fcRow\",\"children\":[{\"type\":\"col\",\"props\":{\"span\":12},\"children\":[{\"type\":\"datePicker\",\"field\":\"b_date\",\"title\":\"乙日期\",\"props\":{\"type\":\"date\",\"valueFormat\":\"YYYY-MM-DD\"},\"value\":\"2026-10-15\"}]},{\"type\":\"col\",\"props\":{\"span\":12},\"children\":[]}]}]",
+          "options": "{}"
+        }
+      ],
+      "views": [
+        {
+          "id": "C-A:1",
+          "target": {
+            "controllerId": "C-A",
+            "documentEpoch": 1,
+            "kind": "form",
+            "id": "form_1",
+            "lifetime": 7
+          },
+          "live": true,
+          "provisional": false,
+          "composing": false,
+          "dragging": false
+        }
+      ],
+      "conflicts": [],
+      "recovery": {
+        "pending": false,
+        "temporary": 0
+      },
+      "result": {
+        "ok": true,
+        "value": {
+          "active": {
+            "ref": {
+              "controllerId": "C-A",
+              "documentEpoch": 1,
+              "kind": "form",
+              "id": "form_1",
+              "lifetime": 7
+            },
+            "facet": "form-content"
+          },
+          "actual": "kept"
+        }
+      },
+      "resultSequence": 1
+    },
+    "after": {
+      "owner": "C-A",
+      "sameSession": true,
+      "sameModel": true,
+      "sameForms": true,
+      "sameGraph": true,
+      "activeId": "C-A:1",
+      "phase": "forms",
+      "persistCalls": 0,
+      "generation": 5,
+      "dirty": true,
+      "validationCurrent": false,
+      "forms": [
+        {
+          "id": "form_1",
+          "name": "甲表单",
+          "provider": "form-create/element-plus",
+          "rules": "[{\"type\":\"fcRow\",\"children\":[{\"type\":\"col\",\"props\":{\"span\":12},\"children\":[{\"type\":\"datePicker\",\"field\":\"a_date\",\"title\":\"甲日期\",\"props\":{\"type\":\"date\",\"valueFormat\":\"YYYY-MM-DD\"},\"value\":\"2026-10-15\"}]},{\"type\":\"col\",\"props\":{\"span\":12},\"children\":[]}]}]",
+          "options": "{}"
+        },
+        {
+          "id": "form_2",
+          "name": "乙表单",
+          "provider": "form-create/element-plus",
+          "rules": "[{\"type\":\"fcRow\",\"children\":[{\"type\":\"col\",\"props\":{\"span\":12},\"children\":[{\"type\":\"datePicker\",\"field\":\"b_date\",\"title\":\"乙日期\",\"props\":{\"type\":\"date\",\"valueFormat\":\"YYYY-MM-DD\"},\"value\":\"2026-10-15\"}]},{\"type\":\"col\",\"props\":{\"span\":12},\"children\":[]}]}]",
+          "options": "{}"
+        }
+      ],
+      "views": [
+        {
+          "id": "C-A:1",
+          "target": {
+            "controllerId": "C-A",
+            "documentEpoch": 1,
+            "kind": "form",
+            "id": "form_1",
+            "lifetime": 7
+          },
+          "live": true,
+          "provisional": false,
+          "composing": false,
+          "dragging": false
+        },
+        {
+          "id": "C-A:2",
+          "target": {
+            "controllerId": "C-A",
+            "documentEpoch": 1,
+            "kind": "form",
+            "id": "form_2",
+            "lifetime": 8
+          },
+          "live": true,
+          "provisional": false,
+          "composing": false,
+          "dragging": false
+        }
+      ],
+      "conflicts": [],
+      "recovery": {
+        "pending": false,
+        "temporary": 0
+      },
+      "result": {
+        "ok": true,
+        "value": {
+          "active": {
+            "ref": {
+              "controllerId": "C-A",
+              "documentEpoch": 1,
+              "kind": "form",
+              "id": "form_1",
+              "lifetime": 7
+            },
+            "facet": "form-content"
+          },
+          "actual": "kept"
+        }
+      },
+      "resultSequence": 3
+    },
+    "pass": false
+  }
+]

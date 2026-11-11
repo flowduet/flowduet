@@ -1,6 +1,6 @@
 {
   "name": "@flowduet/core",
-  "version": "0.0.0",
+  "version": "0.4.0",
   "description": "FlowDuet 内核：BPMN 模型树 + Parser/Compiler + 引擎适配器",
   "license": "Apache-2.0",
   "type": "module",
@@ -10,8 +10,17 @@
     ".": {
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
-    }
+    },
+    "./package.json": "./package.json"
   },
+  "keywords": [
+    "bpmn",
+    "bpmn20",
+    "flowable",
+    "workflow",
+    "workflow-engine",
+    "process-modeling"
+  ],
   "files": [
     "dist"
   ],
@@ -24,10 +33,11 @@
     "node": ">=22"
   },
   "publishConfig": {
+    "access": "public",
     "registry": "https://registry.npmjs.org/"
   },
   "scripts": {
-    "build": "tsc -p tsconfig.build.json",
+    "build": "tsc -p tsconfig.build.json && node scripts/pack-declarations.mjs",
     "test": "vitest run"
   },
   "dependencies": {

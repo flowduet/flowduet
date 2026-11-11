@@ -1,0 +1,122 @@
+{
+  "base": "74c02b46e7b8a13bb40354105f63145c386e051e",
+  "patchSha256": "d173210c3f64a4f61c9e7c8d543762b1071f12d3855e575f4c50e34bd3619442",
+  "files": {
+    ".changeset/form-designer-host-events.md": {
+      "sha256": "0810bd7aeaa48783ca22fd20e2768299386da2b3a7eeceae74cad822b0987b72",
+      "bytes": 362
+    },
+    ".prettierignore": {
+      "sha256": "c8378dcc8b9a08b1a24186dd36e486fa21ee604c7660f078cbf279599540435f",
+      "bytes": 1607
+    },
+    "docs/design/reviews/2026-11-09-form-designer-host-events.md": {
+      "sha256": "ebecad66ad509a58ffcb46ba5ac2c5aaeadbdd77ec792168e381d89fc558da85",
+      "bytes": 9992
+    },
+    "docs/design/reviews/evidence/2026-11-09-form-designer-host-events/changeset-status.json": {
+      "sha256": "7d7293db970bd66c486535ff08d5e4e1f435a9729aa7aeec796f4a70af3f4a72",
+      "bytes": 7978
+    },
+    "docs/design/reviews/evidence/2026-11-09-form-designer-host-events/changeset-status.txt": {
+      "sha256": "6a402aade7d369b8d68e1203158c860a6d88679e56588eefcf7c7e297589adc4",
+      "bytes": 177
+    },
+    "docs/design/reviews/evidence/2026-11-09-form-designer-host-events/consumer-host-main.js.txt": {
+      "sha256": "1c2f54f52959e9e3e699fba6b5a9cb49bdd494a4e6f4f921ab2a6ef43da4a6a9",
+      "bytes": 2217
+    },
+    "docs/design/reviews/evidence/2026-11-09-form-designer-host-events/consumer-location.json": {
+      "sha256": "8e6a57c58292c1696488704badbdddf3644f2bc888e93e0c09323923997dd108",
+      "bytes": 556
+    },
+    "docs/design/reviews/evidence/2026-11-09-form-designer-host-events/consumer-preparation.txt": {
+      "sha256": "9d483cc48179959cb87b768faa9faae1bec6b33d239103dec26532f0f3a1f4d8",
+      "bytes": 11690
+    },
+    "docs/design/reviews/evidence/2026-11-09-form-designer-host-events/consumer-vite.config.ts.txt": {
+      "sha256": "5d6c4169391e586b769e0c1bfeffbf17307607325b0dc1ab03cc239a0a49f340",
+      "bytes": 348
+    },
+    "docs/design/reviews/evidence/2026-11-09-form-designer-host-events/final.png": {
+      "sha256": "c5dcd1d117ba9519d6d2a5b7ca7f41f7eadb44bc342a74f019c1d61acb029541",
+      "bytes": 23344
+    },
+    "docs/design/reviews/evidence/2026-11-09-form-designer-host-events/host-consumer-build.txt": {
+      "sha256": "bf4234d37c614e449de19cf1a6243cc8ae394ea339e420e71245380b2d03d3a7",
+      "bytes": 1040
+    },
+    "docs/design/reviews/evidence/2026-11-09-form-designer-host-events/host-events-second.txt": {
+      "sha256": "2aeef3eff36d556e342d5d5cb40389054de4ba66ef953a1b29a5ad9338320282",
+      "bytes": 222
+    },
+    "docs/design/reviews/evidence/2026-11-09-form-designer-host-events/host-events.txt": {
+      "sha256": "33b2d64030bc9dfab1f17fea75a8efa7ecc1771b88b821d6a648e8ca304650b3",
+      "bytes": 1464
+    },
+    "docs/design/reviews/evidence/2026-11-09-form-designer-host-events/host.html.txt": {
+      "sha256": "5da962e341858846b4208b2d74440a18c5a50d4217a3d167a66a35550eb26387",
+      "bytes": 537
+    },
+    "docs/design/reviews/evidence/2026-11-09-form-designer-host-events/independent-app.png": {
+      "sha256": "f1e18aa5dacb55d4bfde6c503f56af76e7b55921bf5ddeb14b9ae64d31dae0ee",
+      "bytes": 80770
+    },
+    "docs/design/reviews/evidence/2026-11-09-form-designer-host-events/lint-first.txt": {
+      "sha256": "a56676fc0bd623c3fbb66680a0cf7adf29f527d394840d034829a3a2269ae7c9",
+      "bytes": 626
+    },
+    "docs/design/reviews/evidence/2026-11-09-form-designer-host-events/npm-ls.txt": {
+      "sha256": "997f6ef164f8bc5defd2dbe6d57f0027d0bb32d456a59e08e42d1e3d950d08eb",
+      "bytes": 2377
+    },
+    "docs/design/reviews/evidence/2026-11-09-form-designer-host-events/pnpm-lint.txt": {
+      "sha256": "b245bc45561a8c51ff8e798a51515f0afe1f96cd19976d8c3feb89ffd3f4ab9f",
+      "bytes": 169
+    },
+    "docs/design/reviews/evidence/2026-11-09-form-designer-host-events/pnpm-test.txt": {
+      "sha256": "d864aa13adf368c8553ef09a2dcd818abe223d6dc3462fa7e0f18536502f345e",
+      "bytes": 2293
+    },
+    "docs/design/reviews/evidence/2026-11-09-form-designer-host-events/result.json": {
+      "sha256": "f9e766dee8f40e0ce33652273a27f6cb106f5f9a6bec7b0398f5d4f9000bd925",
+      "bytes": 8163
+    },
+    "docs/design/reviews/evidence/2026-11-09-form-designer-host-events/source-manifest.json": {
+      "sha256": "831fb6f58583f6f85b46ab73becf728351fcb6fdf6dd862ec33a802b35bb5749",
+      "bytes": 390
+    },
+    "docs/design/reviews/evidence/2026-11-09-form-designer-host-events/static-verification.json": {
+      "sha256": "662d1e26e6d203282ce3b47b9051a8f265661b0f86365f5310caae0f5f2a92e8",
+      "bytes": 4559
+    },
+    "docs/design/reviews/evidence/2026-11-09-form-designer-host-events/tdd-green.txt": {
+      "sha256": "20bf6eb1076bf56f18a20c4ebe6138ab2190bcd06f5b6aefaaf8d61e9ff48a5f",
+      "bytes": 224
+    },
+    "docs/design/reviews/evidence/2026-11-09-form-designer-host-events/tdd-red.txt": {
+      "sha256": "dd7d547024cb99765ef1c74ca2dd6ffa0182e6655df591e958f3336a65c8ff52",
+      "bytes": 1298
+    },
+    "docs/design/reviews/evidence/2026-11-09-form-designer-host-events/verify-host-browser.mjs.txt": {
+      "sha256": "1f1e2c0c374d0b58e93ee462b62545dd10bd72bb3439872fb86304539eb9b019",
+      "bytes": 5587
+    },
+    "packages/form-create/README.md": {
+      "sha256": "89bcdb3392fa0900eb1c6ae43f99809a7e7ba7902f7be6e7b2f5efeb27fe19de",
+      "bytes": 27600
+    },
+    "packages/form-create/src/components/FormDesigner.vue": {
+      "sha256": "aac2086dbf1813f7627051a0fffb1984d5bede9f1f37cef9995a53c444902f49",
+      "bytes": 15655
+    },
+    "packages/form-create/src/components/designer-host-events.ts": {
+      "sha256": "c925826539a68f74d4c11c3e28c311d2c954ab9b6c4c8227efaa5c07430235d5",
+      "bytes": 1339
+    },
+    "packages/form-create/src/components/host-events.test.ts": {
+      "sha256": "1691979534960d1099bb999022334915b988ae776afdc047a2c1af8d6352863d",
+      "bytes": 7501
+    }
+  }
+}

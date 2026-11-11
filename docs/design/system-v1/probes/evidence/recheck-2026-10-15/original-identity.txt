@@ -1,0 +1,8 @@
+
+ RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/designer
+
+
+ Test Files  1 passed (1)
+      Tests  11 passed (11)
+   Start at  23:42:32
+   Duration  372ms (transform 71%, import 18%, tests 8%, worker 3%)

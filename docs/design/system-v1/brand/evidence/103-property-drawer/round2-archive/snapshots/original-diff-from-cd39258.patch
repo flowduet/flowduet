@@ -1,0 +1,3780 @@
+diff --git a/.changeset/property-drawer-appearance.md b/.changeset/property-drawer-appearance.md
+new file mode 100644
+index 0000000..80c566c
+--- /dev/null
++++ b/.changeset/property-drawer-appearance.md
+@@ -0,0 +1,7 @@
++---
++"@flowduet/designer": minor
++---
++
++新增 `DingtalkDesigner` 的显式实例外观配置与共享外观类型／解析合同。合法 `appearance` 支持跟随宿主或品牌预设、浅深主题及舒适／紧凑密度，仅作用于节点属性抽屉；运行中切换和启停保留未提交输入、焦点与输入法组合，非法配置整份回退并给出字段级告警。省略配置保持旧路径，模型、BPMN XML、画布和外置属性编辑合同不变。
++
++跟随宿主时在 DOM 补丁完成后读取计算样式，支持短十六进制、HSL、OKLCH 等合法 CSS 颜色并按表面合成透明角色，跨明度背景下保证焦点环变量有效；抽屉样式权重覆盖宿主深色与不同引入顺序，不回写宿主变量。
+diff --git a/apps/playground/src/App.vue b/apps/playground/src/App.vue
+index 3919177..b0e7ff7 100644
+--- a/apps/playground/src/App.vue
++++ b/apps/playground/src/App.vue
+@@ -17,6 +17,7 @@ import {
+   FormPreview,
+ } from "@flowduet/form-create";
+ import type { FormDefinition, SaveDesignDocumentResult } from "@flowduet/form-create";
++import NodeAppearanceScene from "./NodeAppearanceScene.vue";
+ 
+ /**
+  * Playground 编辑区（#23）：挂 designer 组件的最小验收宿主。
+@@ -93,6 +94,7 @@ const session = new FlowDesignSession(demoModel);
+ const model = shallowRef<BpmnModel>(demoModel);
+ 
+ const view = ref<"dingtalk" | "bpmn">("dingtalk");
++const appearanceSceneVisible = ref(false);
+ const viewSwitchKey = ref(0);
+ const xml = ref("");
+ const error = ref("");
+@@ -605,6 +607,12 @@ onUnmounted(() => {
+         />
+         <ElButton data-test="form-manager-btn" @click="openFormManager">表单管理</ElButton>
+         <ElButton data-test="form-preview-btn" @click="previewVisible = true">预览表单</ElButton>
++        <ElButton
++          data-test="appearance-scene-btn"
++          @click="appearanceSceneVisible = !appearanceSceneVisible"
++        >
++          外观验收
++        </ElButton>
+         <ElButton plain type="primary" data-test="save-local-btn" @click="onSaveLocalDraft">
+           保存草稿
+         </ElButton>
+@@ -649,6 +657,8 @@ onUnmounted(() => {
+       </section>
+     </main>
+ 
++    <NodeAppearanceScene v-if="appearanceSceneVisible" />
++
+     <ElDialog
+       v-model="discardVisible"
+       title="放弃未保存的修改？"
+diff --git a/apps/playground/src/NodeAppearanceScene.vue b/apps/playground/src/NodeAppearanceScene.vue
+new file mode 100644
+index 0000000..8c9584d
+--- /dev/null
++++ b/apps/playground/src/NodeAppearanceScene.vue
+@@ -0,0 +1,395 @@
++<script setup lang="ts">
++import { computed, onBeforeUnmount, reactive, ref } from "vue";
++import { ElButton, ElInput } from "element-plus";
++import { BpmnModel, flowableAdapter } from "@flowduet/core";
++import {
++  DingtalkDesigner,
++  type AppearanceColorSource,
++  type AppearanceDensity,
++  type AppearanceMode,
++  type ComponentAppearance,
++  type DesignerFormOption,
++} from "@flowduet/designer";
++
++interface InstanceControls {
++  enabled: boolean;
++  mounted: boolean;
++  colorSource: AppearanceColorSource;
++  mode: AppearanceMode;
++  density: AppearanceDensity;
++}
++
++const FORM_OPTIONS: readonly DesignerFormOption[] = [
++  { id: "form_apply", name: "申请单" },
++  { id: "form_review", name: "复核单" },
++];
++
++function buildModel(processId: string, longName = false): BpmnModel {
++  const model = BpmnModel.create({ processId, adapter: flowableAdapter })
++    .addStartEvent({ id: "start", name: "发起" })
++    .addUserTask({
++      id: "approval",
++      name: longName ? "经理审批：用于核对较长中文节点名称与属性输入" : "经理审批",
++      assignee: "${manager}",
++    })
++    .addApprovalTask({ id: "countersign", name: "合同会签", collection: "approvers", mode: "all" })
++    .addTask("cc", { id: "cc", name: "抄送法务备案", recipients: "张三,李四" })
++    .addExclusiveGateway({ id: "fork", name: "金额判断" })
++    .addUserTask({ id: "regular", name: "总监审批", assignee: "${director}" })
++    .addUserTask({ id: "large", name: "财务复核", assignee: "${finance}" })
++    .addExclusiveGateway({ id: "join", name: "汇聚" })
++    .addEndEvent({ id: "end", name: "结束" })
++    .addSequenceFlow({ id: "f_start", sourceRef: "start", targetRef: "approval" })
++    .addSequenceFlow({ id: "f_approval", sourceRef: "approval", targetRef: "countersign" })
++    .addSequenceFlow({ id: "f_cc", sourceRef: "countersign", targetRef: "cc" })
++    .addSequenceFlow({ id: "f_fork", sourceRef: "cc", targetRef: "fork" })
++    .addSequenceFlow({
++      id: "fa",
++      name: "常规审批",
++      sourceRef: "fork",
++      targetRef: "regular",
++      default: true,
++    })
++    .addSequenceFlow({
++      id: "fb",
++      name: "大额复核",
++      sourceRef: "fork",
++      targetRef: "large",
++      condition: "${amount > 1000}",
++    })
++    .addSequenceFlow({ id: "fa_join", sourceRef: "regular", targetRef: "join" })
++    .addSequenceFlow({ id: "fb_join", sourceRef: "large", targetRef: "join" })
++    .addSequenceFlow({ id: "f_end", sourceRef: "join", targetRef: "end" });
++  model.setDefaultFormKey("form_apply");
++  return model;
++}
++
++const firstModel = buildModel("appearance_first", true);
++const secondModel = buildModel("appearance_second");
++const first = reactive<InstanceControls>({
++  enabled: true,
++  mounted: true,
++  colorSource: "host",
++  mode: "light",
++  density: "comfortable",
++});
++const second = reactive<InstanceControls>({
++  enabled: true,
++  mounted: true,
++  colorSource: "brand",
++  mode: "light",
++  density: "compact",
++});
++const firstInvalid = ref(false);
++const hostDark = ref(document.documentElement.classList.contains("dark"));
++const declarativeScopedDark = ref(false);
++const originallyDark = hostDark.value;
++const firstChanges = ref(0);
++const firstDraftChanges = ref(0);
++
++function toAppearance(controls: InstanceControls): ComponentAppearance | undefined {
++  if (!controls.enabled) return undefined;
++  return {
++    colorSource: controls.colorSource,
++    mode: controls.mode,
++    density: controls.density,
++  };
++}
++
++const firstAppearance = computed<ComponentAppearance | undefined>(() => {
++  if (firstInvalid.value && first.enabled)
++    return { mode: first.mode, density: "invalid-density" } as unknown as ComponentAppearance;
++  return toAppearance(first);
++});
++const secondAppearance = computed(() => toAppearance(second));
++
++function syncFirstHostMode(): void {
++  if (first.colorSource === "host")
++    first.mode = hostDark.value || declarativeScopedDark.value ? "dark" : "light";
++}
++
++function onFirstValidChange(): void {
++  firstInvalid.value = false;
++}
++
++function onFirstSourceChange(): void {
++  onFirstValidChange();
++  syncFirstHostMode();
++}
++
++function onDeclarativeDarkChange(): void {
++  onFirstValidChange();
++  syncFirstHostMode();
++}
++
++function onHostThemeChange(event: Event): void {
++  const dark = (event.target as HTMLInputElement).checked;
++  hostDark.value = dark;
++  // 这是宿主主动切换自己的 EP 深色环境，不是组件 appearance 的副作用。
++  document.documentElement.classList.toggle("dark", dark);
++  syncFirstHostMode();
++}
++
++onBeforeUnmount(() => {
++  document.documentElement.classList.toggle("dark", originallyDark);
++});
++</script>
++
++<template>
++  <section class="appearance-scene" data-test="appearance-scene">
++    <header class="appearance-scene-header">
++      <div>
++        <h2>节点属性抽屉外观验收</h2>
++        <p>两个公开 DingtalkDesigner 实例共享同一 Vue app，模型与编辑缓冲各自独立。</p>
++      </div>
++      <div class="appearance-controls">
++        <label>
++          <input
++            type="checkbox"
++            :checked="hostDark"
++            data-test="appearance-host-dark"
++            @change="onHostThemeChange"
++          />
++          宿主启用 EP 深色
++        </label>
++        <label>
++          <input
++            v-model="declarativeScopedDark"
++            type="checkbox"
++            data-test="appearance-declarative-dark"
++            @change="onDeclarativeDarkChange"
++          />
++          声明式局部深色宿主
++        </label>
++      </div>
++    </header>
++
++    <div class="appearance-host-control" data-test="appearance-host-control">
++      <span>无关宿主控件</span>
++      <ElInput data-test="appearance-host-input" model-value="宿主原值" />
++      <ElButton type="primary" data-test="appearance-host-button">宿主主按钮</ElButton>
++    </div>
++
++    <div class="appearance-instance-grid">
++      <section class="appearance-instance" data-test="appearance-first-instance">
++        <h3>实例一：目录选择器路径</h3>
++        <div class="appearance-controls">
++          <label
++            ><input
++              v-model="first.enabled"
++              type="checkbox"
++              data-test="appearance-first-enabled"
++            />启用适配</label
++          >
++          <label
++            ><input
++              v-model="first.mounted"
++              type="checkbox"
++              data-test="appearance-first-mounted"
++            />挂载实例</label
++          >
++          <label
++            >配色
++            <select
++              v-model="first.colorSource"
++              data-test="appearance-first-source"
++              @change="onFirstSourceChange"
++            >
++              <option value="host">跟随宿主</option>
++              <option value="brand">品牌预设</option>
++            </select>
++          </label>
++          <label
++            >主题
++            <select
++              v-model="first.mode"
++              data-test="appearance-first-mode"
++              :disabled="first.colorSource === 'host'"
++              @change="onFirstValidChange"
++            >
++              <option value="light">浅色</option>
++              <option value="dark">深色</option>
++            </select>
++          </label>
++          <label
++            >密度
++            <select
++              v-model="first.density"
++              data-test="appearance-first-density"
++              @change="onFirstValidChange"
++            >
++              <option value="comfortable">舒适</option>
++              <option value="compact">紧凑</option>
++            </select>
++          </label>
++          <button type="button" data-test="appearance-first-invalid" @click="firstInvalid = true">
++            发送非法密度
++          </button>
++          <span data-test="appearance-first-change-count">change {{ firstChanges }}</span>
++          <span data-test="appearance-first-draft-count">draft {{ firstDraftChanges }}</span>
++        </div>
++        <div
++          class="appearance-designer-viewport"
++          :class="{ 'appearance-scoped-dark': declarativeScopedDark }"
++        >
++          <DingtalkDesigner
++            v-if="first.mounted"
++            data-test="appearance-first-designer"
++            :model="firstModel"
++            :form-options="FORM_OPTIONS"
++            :appearance="firstAppearance"
++            @change="firstChanges += 1"
++            @draft-change="firstDraftChanges += 1"
++          />
++        </div>
++      </section>
++
++      <section class="appearance-instance" data-test="appearance-second-instance">
++        <h3>实例二：手写 formKey 路径</h3>
++        <div class="appearance-controls">
++          <label
++            ><input
++              v-model="second.enabled"
++              type="checkbox"
++              data-test="appearance-second-enabled"
++            />启用适配</label
++          >
++          <label
++            ><input
++              v-model="second.mounted"
++              type="checkbox"
++              data-test="appearance-second-mounted"
++            />挂载实例</label
++          >
++          <label
++            >配色
++            <select v-model="second.colorSource" data-test="appearance-second-source">
++              <option value="host">跟随宿主</option>
++              <option value="brand">品牌预设</option>
++            </select>
++          </label>
++          <label
++            >主题
++            <select
++              v-model="second.mode"
++              data-test="appearance-second-mode"
++              :disabled="second.colorSource === 'host'"
++            >
++              <option value="light">浅色</option>
++              <option value="dark">深色</option>
++            </select>
++          </label>
++          <label
++            >密度
++            <select v-model="second.density" data-test="appearance-second-density">
++              <option value="comfortable">舒适</option>
++              <option value="compact">紧凑</option>
++            </select>
++          </label>
++        </div>
++        <div class="appearance-designer-viewport">
++          <DingtalkDesigner
++            v-if="second.mounted"
++            data-test="appearance-second-designer"
++            :model="secondModel"
++            :appearance="secondAppearance"
++          />
++        </div>
++      </section>
++    </div>
++  </section>
++</template>
++
++<style scoped>
++.appearance-scene {
++  padding: 24px;
++  border-top: 1px solid var(--el-border-color-light);
++  background: var(--el-bg-color-page);
++  color: var(--el-text-color-primary);
++}
++
++.appearance-scene-header,
++.appearance-host-control,
++.appearance-controls {
++  display: flex;
++  align-items: center;
++  gap: 12px;
++  flex-wrap: wrap;
++}
++
++.appearance-scene-header {
++  justify-content: space-between;
++  margin-bottom: 16px;
++}
++
++.appearance-scene-header h2,
++.appearance-instance h3 {
++  margin: 0 0 4px;
++}
++
++.appearance-scene-header p {
++  margin: 0;
++  color: var(--el-text-color-regular);
++}
++
++.appearance-host-control {
++  margin-bottom: 16px;
++  padding: 12px;
++  border: 1px solid var(--el-border-color);
++  border-radius: 8px;
++  background: var(--el-bg-color);
++}
++
++.appearance-host-control .el-input {
++  width: 180px;
++}
++
++.appearance-instance-grid {
++  display: grid;
++  grid-template-columns: repeat(2, minmax(0, 1fr));
++  gap: 16px;
++}
++
++.appearance-instance {
++  min-width: 0;
++}
++
++.appearance-controls {
++  margin-bottom: 12px;
++  font-size: 13px;
++}
++
++.appearance-controls label {
++  display: inline-flex;
++  align-items: center;
++  gap: 4px;
++}
++
++.appearance-designer-viewport {
++  max-height: 760px;
++  overflow: auto;
++  border: 1px solid var(--el-border-color-light);
++  border-radius: 8px;
++}
++
++.appearance-scoped-dark {
++  --el-bg-color-page: #101817;
++  --el-bg-color: #162220;
++  --el-fill-color-light: #1f302d;
++  --el-text-color-primary: #e6f2f0;
++  --el-text-color-regular: #b8ceca;
++  --el-border-color-light: #2d4440;
++  --el-disabled-text-color: #7d9692;
++  --el-disabled-bg-color: #1f302d;
++  --el-color-primary: #7fcfc7;
++  --el-color-primary-light-3: #99dad3;
++  --el-color-primary-dark-2: #5fb3aa;
++  --el-color-white: #0c1f1d;
++}
++
++@media (max-width: 1100px) {
++  .appearance-instance-grid {
++    grid-template-columns: minmax(0, 1fr);
++  }
++}
++</style>
+diff --git a/apps/playground/src/main.ts b/apps/playground/src/main.ts
+index 6e7c057..d2fd393 100644
+--- a/apps/playground/src/main.ts
++++ b/apps/playground/src/main.ts
+@@ -1,6 +1,7 @@
+ import { createApp } from "vue";
+ import App from "./App.vue";
+ import "element-plus/dist/index.css";
++import "element-plus/theme-chalk/dark/css-vars.css";
+ // vite 库模式不自动注入样式：宿主经 style.css 子路径显式引入 designer 与
+ // form-create 的 CSS（后者内联了 FormCreate 设计器样式）
+ import "@flowduet/designer/style.css";
+diff --git a/docs/design/system-v1/brand/103-property-drawer-verification.md b/docs/design/system-v1/brand/103-property-drawer-verification.md
+new file mode 100644
+index 0000000..9c93347
+--- /dev/null
++++ b/docs/design/system-v1/brand/103-property-drawer-verification.md
+@@ -0,0 +1,119 @@
++# #103 节点属性抽屉实例外观：Chromium 验收记录
++
++日期：2026-11-03。范围：仅 `DingtalkDesigner` 的节点属性抽屉及共享外观合同；不代表父规格 #102 的 FormPreview 切片或 #108 的完整安装包浏览器验收已完成。
++
++## 接口与环境
++
++- 用户在实施前通过问题卡片明确选择“批准并开工”，确认 `appearance`、`ComponentAppearance`、`ResolvedComponentAppearance`、三类枚举和包根 `resolveComponentAppearance(value, previous?)`，以及非法配置整份回退合同。
++- 浏览器：HeadlessChrome 156.0.0.0（本机 Playwright `chromium-1248`），驱动 `playwright-core 1.64.1` 临时安装在 `/tmp`，未修改仓库依赖或锁文件。
++- 实际消费：单份 Element Plus 2.14.6、Vue 3.5.43；Playground 消费本分支构建后的 `@flowduet/designer/dist`，不是源码内部测试导出。
++- 公开场景：启动 Playground 后点击“外观验收”。同一 Vue app 中有两个 `DingtalkDesigner`、无关宿主 EP 输入／按钮、八组外观控制、合法启停、非法配置与卸载控制。
++- 矩阵视口为 1440×1100、deviceScaleFactor 1；行为验收另以 1024×900 + CSS zoom 200% 检查布局。
++
++## 八组外观矩阵
++
++[完整计算结果](evidence/103-property-drawer/matrix.json)的 `failures` 为空。每组均断言：输入／确定按钮／原生选择器实际高度，控件字号，面板内边距，字段标签字号／颜色与字段间距，选中卡 2px 边框与“已选中”文字，主按钮底色和前景，原生选择器表面，标题字号，抽屉完整位于视口内，未提交输入与焦点保持，模型 `change=0`。跟随宿主实例的内联样式不含任何 `--el-*`；品牌实例只在自己的抽屉内写入局部 EP 变量。
++
++| 配色来源 | 主题 | 舒适                                                             | 紧凑                                                         |
++| -------- | ---- | ---------------------------------------------------------------- | ------------------------------------------------------------ |
++| 跟随宿主 | 浅色 | [截图](evidence/103-property-drawer/host-light-comfortable.png)  | [截图](evidence/103-property-drawer/host-light-compact.png)  |
++| 跟随宿主 | 深色 | [截图](evidence/103-property-drawer/host-dark-comfortable.png)   | [截图](evidence/103-property-drawer/host-dark-compact.png)   |
++| 品牌预设 | 浅色 | [截图](evidence/103-property-drawer/brand-light-comfortable.png) | [截图](evidence/103-property-drawer/brand-light-compact.png) |
++| 品牌预设 | 深色 | [截图](evidence/103-property-drawer/brand-dark-comfortable.png)  | [截图](evidence/103-property-drawer/brand-dark-compact.png)  |
++
++舒适档实测输入和按钮 32px、控件文字 14px、面板内边距 24px；紧凑档为 24px、12px、16px。品牌深色主按钮为 `#A5BBFF` 底与 `#171F3E` 前景，没有改写全局 `--el-color-white`。
++
++跟随宿主深色在宿主明确启用 `html.dark` 的 EP 深色环境中验证；品牌浅色实例在该宿主深色页面仍保持自己的浅色变量。宿主原值例外：EP 默认主按钮白字、次要说明、占位色和输入边界沿用宿主，不计为 FlowDuet 自有角色通过；矩阵另记录浅色输入边框 `rgb(220, 223, 230)`、深色 `rgb(76, 77, 79)`。
++
++## 真实行为
++
++[行为结果](evidence/103-property-drawer/behavior.json)的 `failures` 为空，实际通过：
++
++1. 目录原生 `select` 选择覆盖、确定写模型、取消还原；手写 `formKey` 保存后重开值保持。
++2. 单签、会签、或签、依次审批均经真实点击与确定；抄送收件人、条件表达式写模型；发起／结束显示中性标题与空状态，可取消关闭。
++3. 运行中切换配色／主题／密度与启停保留同一输入 DOM、未提交中文和焦点；非法密度保持完整上次有效内联呈现并给出字段级告警，不触发模型 `change`。非模态覆盖层未开启穿透，宿主控制经公开事件或键盘操作，节点切换与提交行为保持旧合同。
++4. 合成 `CompositionEvent` / `InputEvent` 期间切换不丢字、不自动提交，显式确定仍被“输入法尚未完成”保护，组合结束后可保存。
++5. 双实例同时打开，宿主深色不污染品牌浅色实例；卸载一个实例只清理自己的抽屉；Escape 关闭后焦点恢复到节点卡片，条件分支按钮可用 Enter 打开并在 Escape 后恢复焦点。
++6. 长非法集合表达式触发既有集合变量错误，多行错误无横向溢出；200% 缩放下抽屉仍完整位于视口内，底部确定／取消可达，[缩放截图](evidence/103-property-drawer/long-error-zoom-200.png)。
++
++[矩阵脚本只读副本](evidence/103-property-drawer/matrix.mjs.txt)与[行为脚本只读副本](evidence/103-property-drawer/behavior.mjs.txt)记录实际操作和断言。副本用 `.txt` 保存，不是新增仓库测试框架或内部产品 API；复测时按本机驱动与 Chromium 路径调整参数。
++
++## 原实施时的工程检查（e43f64f）
++
++- `pnpm lint`：通过（ESLint 与 Prettier）。
++- 标准 `pnpm test`：最终通过，core 148、designer 199、form-create 312、Playground 306，共 62 个文件／965 条测试。一次并发运行曾使既有 `retained-manager.test.ts` 的 6 条用例触发 5 秒超时；未修改超时或产品代码，单 worker 312 条全过后，标准命令在空闲环境重跑也全过。
++- `pnpm build`：core、designer、form-create、Playground 全通过；Playground 保留既有大 chunk 提示，无新增依赖或锁文件变更。
++- changeset：`.changeset/property-drawer-appearance.md`，`@flowduet/designer` minor。
++
++## 实际包消费
++
++最终 core＋designer tarball 在临时空消费项目内安装成功，[依赖树](evidence/103-property-drawer/npm-ls.txt)确认单份 `element-plus@2.14.6`（designer 依赖为 deduped）。[公开 JS／声明／CSS 输出](evidence/103-property-drawer/consumer-output.json)通过：
++
++- 从 `@flowduet/designer` 包根导入 `DingtalkDesigner` 与 `resolveComponentAppearance`，创建 core 模型，验证默认值、非法回退、合法停用和字段级告警。
++- 严格 TypeScript 校验 `ComponentAppearance` / `ResolvedComponentAppearance`，非法枚举与缺少 `mode` 均由 `@ts-expect-error` 捕获。
++- 经公开 `@flowduet/designer/style.css` 子路径读取样式，确认品牌作用域与自有卡片规则存在，无 `:deep` 残留；类型路径取自公开 `package.json#types`，未使用内部导出。
++- [JS 复测脚本](evidence/103-property-drawer/consumer.mjs.txt)、[TS 复测脚本](evidence/103-property-drawer/consumer.ts.txt)与[严格 tsconfig](evidence/103-property-drawer/consumer-tsconfig.json)已归档。安装与 `npm ls` 在消费项目自身目录执行，避免 monorepo 工作区上下文影响本地 tarball 解析。
++
++## 限制与未测项
++
++- 两次非法密度告警分别来自非法配置，以及合法停用后在仍处于非法输入时重新启用；随后通过合法密度修改恢复，均符合回退合同。
++- 页面有既有 `favicon.ico` 404 资源错误，与本次外观样式和模型行为无关；未据此宣称页面资源零错误。无 `pageerror`。
++- 组合输入是合成事件，**未执行真实 macOS 中文输入法**。
++- 缩放证据使用 CSS zoom 200%，不冒充操作系统或浏览器原生缩放的全套验证。
++- 原生 `select` 的系统选项弹层由浏览器／操作系统绘制，只能有限控制；未替换成 `ElSelect`，未宣称像素级主题一致。
++- Firefox、Safari／WebKit、移动端与完整可访问性认证未验证；Chromium 通过不等于其他环境已兼容。
++- 本票未执行 #108 的完整三包 tarball 浏览器矩阵；上述 core＋designer 入口消费不替代该后续验收。
++
++## 2026-11-03 补充审查：宿主颜色修复
++
++对 `cd39258` → `e43f64f` 的补充审查确认一项 P2：跟随宿主只解析六位 hex 和部分 rgb，导致等价的 `#f00`、HSL、OKLCH 被误读为默认蓝。发现及用户授权的修复安排已[回复 #103](https://github.com/flowduet/flowduet/issues/103#issuecomment-6600452845)。此前 965 条通过属于原实施时的结果，不能覆盖本节之后的测试状态。
++
++修复保留已有六位 hex／rgb 路径，补短 hex，并用离屏 Canvas 将其他浏览器合法颜色规范化为 sRGB。透明角色在对应表面合成，`currentColor` 读取宿主实际文字色；非法色或无法使用浏览器解析时保留原有默认回退。Canvas 不挂载到文档，没有新增监听、依赖、公开 API 或宿主变量写入。
++
++- 公开 `DingtalkDesigner` 的短 hex 回归先失败：期望 `#FF0000`，实际 `#409EFF`；修复后通过。见[失败日志](evidence/103-property-drawer/color-unit-red.txt)、[通过日志](evidence/103-property-drawer/color-unit-green.txt)。完整 `appearance.test.ts` 的 16 条随后全部通过。
++- [Chromium 12 组结果](evidence/103-property-drawer/host-colors.json)均通过：六位／短 hex、八位 opaque hex、命名色、百分比 RGB、HSL、OKLCH、P3、两类透明色、`currentColor` 与非法值。每组同时读取 HSL 中性色，并确认同一输入节点、草稿、焦点、模型 change=0、无 EP 回写或遗留解析节点。
++- [浏览器回归脚本](evidence/103-property-drawer/host-colors.mjs.txt)沿用原验收驱动与公开场景。复测先将 `.mjs.txt` 复制为临时 `.mjs`，依次传入 playwright-core 入口、Playground URL、输出目录；必要时通过 `FLOWDUET_CHROMIUM_PATH` 指定浏览器。未以 happy-dom 的颜色支持替代真实浏览器证据。
++- 双轴独立复审审查完整 `cd39258` 基线补丁及含新增文件的快照，SHA-256 为 `fe3e30da90a83f93167e02b3b5745882d666ac6c09470af63ae82a4900a73b8f`：Standards 重要 0／细节 0／既有 0；Spec 重要 0／细节 0／既有 0，原 P2 已关闭。角色映射重复的 smell 保持“不值得改”，没有为此扩大补丁。快照后仅追加结果说明、接入文案及 changeset，产品和回归代码保持相同。
++
++## form-create 测试失败诊断
++
++本轮标准 `pnpm test` 的[完整错误摘要](evidence/103-property-drawer/form-create-default-timeouts.txt)已完成：core 148、designer 200 条通过；form-create 为 309 条通过、3 条失败，均为 `Test timed out in 5000ms`，没有业务断言失败或未处理异常。递归任务据此退出，未继续执行 Playground，不能宣称默认全量门槛通过。
++
++三条超时分别为 `retained-inputs.test.ts` 的未完成日期原文、删除后同名字段复用，以及 `retained-manager.test.ts` 的旧页头关闭按钮迟到点击；耗时为 6150、5459、8325ms。与上一轮被中止的 7 条失败用例不完全相同，不能把上一轮未取得的错误堆栈补写为已验证事实。
++
++[诊断汇总](evidence/103-property-drawer/test-diagnosis.json)与对照结果：
++
++| 对照                                               | 结果                                                                                                   | 能支持的结论                                                                              |
++| -------------------------------------------------- | ------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------- |
++| 颜色修复前，分支单独运行 `retained-inputs.test.ts` | 40 条通过，55.38 秒                                                                                    | 原先 7 项失败不是在该分支上持续复现的业务断言失败                                         |
++| 固定基线 `cd39258` 单独运行同文件                  | 40 条通过，55.16 秒                                                                                    | 未观察到 #103 使该文件整体明显变慢                                                        |
++| 基线运行相同两组重组件文件                         | [109 条通过，198.45 秒](evidence/103-property-drawer/form-create-baseline-pair.txt)                    | 基线本身也有秒级重组件用例；同一日期用例约 3.3 秒、旧页头关闭约 3.8 秒，距离 5 秒上限较近 |
++| 修复分支隔离复测本次 3 个超时用例                  | [3 条断言通过](evidence/103-property-drawer/form-create-isolated-diagnostic.txt)，命令临时设 15 秒时限 | 用于观察完整断言，不作为标准门槛通过；仓库 5 秒时限未改                                   |
++
++已确认失败机制是重组件测试的执行耗时波动越过默认 5 秒上限；没有颜色解析进入这些失败路径或新业务断言回归的证据。form-create 的产品和测试代码相对基线没有改动，既有 `fileParallelism: false` 已使有效 worker 数为 1，因此不能将再次指定单 worker 记为修复。并发、系统调度和 GC 可能放大耗时，但本轮未定位到具体一次停顿；Node worker 采样尝试未产出 profile，不作热点归因依据。不能断言历史失败都来自同一种机器负载。
++
++本轮没有抬高仓库测试时限、删减测试、改业务代码或关闭该失败信号。默认全量门槛仍未通过；后续应单独优化并验证这些重组件测试的稳定性，不能仅凭隔离复测通过就推送或宣称 CI 已绿。
++
++## 本轮最终工程结果与交付边界
++
++- `pnpm lint`：通过；`pnpm build`：四包通过，保留原有 Playground 大 chunk 提示。
++- `pnpm test`：core 148、designer 200 条通过，form-create 309 条通过／3 条默认 5 秒超时，命令失败；随后单独运行 `pnpm --filter @flowduet/playground test`，306 条全部通过。没有把不同命令的结果拼成一次标准全量通过。
++- 颜色修复及回归代码与独立复审快照的哈希逐文件一致；之后只补充文档、changeset 和诊断证据。已有 designer minor changeset 覆盖本次修复，无新增依赖或公开入口。
++- 未重跑本次修复后的完整三包 tarball 浏览器矩阵、Node 22、Firefox、WebKit 或真实操作系统输入法；原有限制继续有效。不推送、不关票、不开 PR、不合并、不发布。
++- 修复不涉及数据迁移，可通过撤回本次修复提交恢复到 `e43f64f`；未执行回退实测。form-create 默认门槛未过的事实另行保留，不以回退颜色补丁冒充测试稳定性修复。
++
++## 2026-11-04 第二轮复审与集中收口
++
++对 `cd39258` → `79bbea9` 的复审确认两项重要缺陷与两项细节问题（已[回复 #103](https://github.com/flowduet/flowduet/issues/103#issuecomment-6620383681) 并获批按选项 A 集中收口）：
++
++1. **声明式宿主同周期换肤采样时机（Spec 重要）**：`DingtalkDesigner` 将 `appearance` 监听调整为 `{ immediate: true, flush: "post" }` 并加上卸载守卫，确保父模板同一响应式周期切换主题类／样式后才采样宿主计算样式，保留首次非法告警与“非法回退不重新采样”行为。
++2. **`--fd-focus` 跨明度回退（Standards 重要）**：`hostVariables` 对齐 R2 `derive-palette.mjs:189-191` 补回 `?? primaryInk`，消除非空断言 `!`，避免深底画布＋浅色抽屉等跨明度宿主下省略 `--fd-focus` 导致 `:focus-visible` 焦点轮廓失效。
++3. **抽屉样式选择器权重与接入顺序（Spec 细节）**：`NodeDrawer.vue` 与 `NodePropertyFields.vue` 覆盖 EP 抽屉、表单项、输入框与按钮的选择器复合 `.flowduet-node-drawer`，使权重提升至 `(0, 3, 0)`，既高于宿主 `html.dark .el-button` `(0, 2, 1)`，也不依赖宿主引入 `@flowduet/designer/style.css` 与 `element-plus/dist/index.css` 的先后顺序；同时将 `packages/designer/README.md` 示例统一为先引 EP 样式。
++4. **颜色快路径分隔符与文档口径（Spec 细节）**：`cssColorToRgb` 拆分为严格的逗号语法与现代空格 `/` 语法，拒绝 `rgb(255, 0 0)` 等混用分隔符输入；`README.md` 明确收窄 `light-dark()` 与系统色关键字依赖宿主 `color-scheme`、回退默认值的边界。
++
++验证证据：
++
++- 公开组件单测 TDD 先红后绿（`packages/designer/src/appearance.test.ts` 共 18 条通过，designer 包共 202 条通过）：覆盖声明式宿主同一响应式周期切换深浅色、跨明度宿主 `--fd-focus` 回退、空格 `rgb()` 与非法混用分隔符回退。
++- Headless Chromium 端到端新增验证（[结果](evidence/103-property-drawer/round2-fixes.json)、[脚本副本](evidence/103-property-drawer/round2-fixes.mjs.txt)）全部 `failures: []`：声明式局部深色宿主往返切换（选中卡文字对比度 `10.47:1`，保留草稿与焦点，`change 0`）、跨明度宿主真实键盘 `Tab` 触发 `:focus-visible` `2px solid` 轮廓（对比度 `12.58:1`）、`html.dark` 宿主下品牌浅色抽屉禁用按钮文字保持 `#8B92A4`（`rgb(139, 146, 164)`）、将完整 `element-plus/dist/index.css` 追加到 `<head>` 末尾仍保持标签行高 `20.8px` 与错误上内边距 `4px`。
++- 既有浏览器套件与包消费回归重跑全绿：[host-colors.json](evidence/103-property-drawer/host-colors.json)（12 组）、[matrix.json](evidence/103-property-drawer/matrix.json)（8 组）、[behavior.json](evidence/103-property-drawer/behavior.json)、临时隔离目录 core＋designer tarball 安装与严格 TS 校验（[consumer-output.json](evidence/103-property-drawer/consumer-output.json)、[npm-ls.txt](evidence/103-property-drawer/npm-ls.txt)）。
++- 标准工程门禁全绿：`pnpm lint` 通过，`pnpm build` 四包通过；空闲环境下标准 `pnpm test` 一次全过（61 个测试文件／968 条测试：core 148、designer 202、form-create 312、Playground 306，未修改 5 秒超时配置；此前并发负载下 `form-create` 重组件测试靠近 5 秒上限的波动事实仍保留备查）。
+diff --git a/docs/design/system-v1/brand/evidence/103-property-drawer/behavior.json b/docs/design/system-v1/brand/evidence/103-property-drawer/behavior.json
+new file mode 100644
+index 0000000..4cb105f
+--- /dev/null
++++ b/docs/design/system-v1/brand/evidence/103-property-drawer/behavior.json
+@@ -0,0 +1,42 @@
++{
++  "browser": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
++  "viewport": "1440×1100；缩放段改为 1024×900 + CSS zoom 200%",
++  "results": {
++    "formSelectAndCommit": "通过",
++    "approvalKinds": "单签、会签、或签、依次审批均通过公开点击与确定",
++    "ccAndBranch": "通过",
++    "emptyStates": "通过",
++    "handwrittenFormKey": "通过",
++    "runtimeAndInvalid": "通过",
++    "syntheticComposition": "通过（不冒充真实 OS IME）",
++    "dualInstance": "通过",
++    "keyboard": "通过",
++    "longErrorAndZoom": {
++      "errorLayout": {
++        "height": 33,
++        "scrollWidth": 646,
++        "clientWidth": 646
++      },
++      "zoomLayout": {
++        "x": 304,
++        "right": 1024,
++        "saveBottom": 868,
++        "viewport": 900
++      }
++    }
++  },
++  "errors": [
++    "console: Failed to load resource: the server responded with a status of 404 (Not Found)"
++  ],
++  "warnings": [
++    "[FlowDuet] appearance.density 只支持 \"comfortable\" 或 \"compact\"；已整份拒绝本次 appearance 配置。",
++    "[FlowDuet] appearance.density 只支持 \"comfortable\" 或 \"compact\"；已整份拒绝本次 appearance 配置。"
++  ],
++  "failures": [],
++  "limitations": [
++    "组合输入使用合成 CompositionEvent/InputEvent，未执行真实 macOS 中文输入法。",
++    "缩放使用 CSS zoom 200% 验证布局，不冒充操作系统或浏览器原生缩放全套测试。",
++    "原生 select 系统选项弹层的外观只能有限控制，未记录为像素级一致。",
++    "Firefox、Safari/WebKit、移动端与完整可访问性认证未验证。"
++  ]
++}
+diff --git a/docs/design/system-v1/brand/evidence/103-property-drawer/behavior.mjs.txt b/docs/design/system-v1/brand/evidence/103-property-drawer/behavior.mjs.txt
+new file mode 100644
+index 0000000..a57a6a4
+--- /dev/null
++++ b/docs/design/system-v1/brand/evidence/103-property-drawer/behavior.mjs.txt
+@@ -0,0 +1,240 @@
++import { mkdir, writeFile } from 'node:fs/promises';
++import { resolve } from 'node:path';
++import { pathToFileURL } from 'node:url';
++
++const [driverPath, baseUrl, outputDir] = process.argv.slice(2);
++if (!driverPath || !baseUrl || !outputDir) throw new Error('需要驱动、URL 和输出目录参数');
++const { chromium } = await import(pathToFileURL(resolve(driverPath)).href);
++await mkdir(outputDir, { recursive: true });
++const browser = await chromium.launch({
++  headless: true,
++  executablePath: '/Users/l/Library/Caches/ms-playwright/chromium-1248/chrome-mac-x64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing',
++});
++const page = await browser.newPage({ viewport: { width: 1440, height: 1100 }, deviceScaleFactor: 1 });
++const errors = [];
++const warnings = [];
++const failures = [];
++const results = {};
++page.on('pageerror', (error) => errors.push(`pageerror: ${error.message}`));
++page.on('console', (message) => {
++  if (message.type() === 'error') errors.push(`console: ${message.text()}`);
++  if (message.type() === 'warning') warnings.push(message.text());
++});
++page.on('response', (response) => {
++  if (response.status() >= 400) errors.push(`${response.status()} ${response.url()}`);
++});
++const check = (condition, message) => {
++  if (!condition) failures.push(message);
++};
++const drawer = () => page.locator('[data-test="node-drawer"]:visible');
++const designer = (id) => page.locator(`[data-test="${id}"]`);
++const openEntity = async (id, entity) => {
++  await designer(id).locator(`[data-entity-id="${entity}"]`).click();
++  await designer(id).locator('[data-test="node-drawer"]').waitFor({ state: 'visible' });
++  await page.waitForTimeout(350);
++};
++const save = async () => {
++  await drawer().locator('[data-test="drawer-save"]').click();
++  await drawer().waitFor({ state: 'hidden' });
++};
++const cancel = async () => {
++  await drawer().locator('[data-test="drawer-cancel"]').click();
++  await drawer().waitFor({ state: 'hidden' });
++};
++const setSelect = async (test, value) => {
++  await page.evaluate(({ test, value }) => {
++    const select = document.querySelector(`[data-test="${test}"]`);
++    select.value = value;
++    select.dispatchEvent(new Event('change', { bubbles: true }));
++  }, { test, value });
++};
++const changeCount = async () => Number((await page.locator('[data-test="appearance-first-change-count"]').textContent()).replace('change ', ''));
++try {
++  await page.goto(baseUrl, { waitUntil: 'networkidle' });
++  await page.locator('[data-test="appearance-scene-btn"]').click();
++
++  await openEntity('appearance-first-designer', 'approval');
++  await drawer().locator('[data-test="drawer-form-select"]').selectOption('form_review');
++  await drawer().locator('[data-test="drawer-name"]').fill('总监审批（已确认）');
++  await save();
++  check((await changeCount()) === 1, '原生目录选择器确定后 change 不是 1');
++  check((await designer('appearance-first-designer').locator('[data-entity-id="approval"]').textContent()).includes('复核单'), '确定后节点表单未写模型');
++  check((await designer('appearance-first-designer').locator('[data-entity-id="approval"]').textContent()).includes('总监审批（已确认）'), '确定后节点名称未写模型');
++  await openEntity('appearance-first-designer', 'approval');
++  await drawer().locator('[data-test="drawer-name"]').fill('取消的名字');
++  await drawer().locator('[data-test="drawer-form-select"]').selectOption('');
++  await cancel();
++  check((await changeCount()) === 1, '取消修改触发模型 change');
++  await openEntity('appearance-first-designer', 'approval');
++  check((await drawer().locator('[data-test="drawer-name"]').inputValue()) === '总监审批（已确认）', '取消后名称缓冲未还原');
++  check((await drawer().locator('[data-test="drawer-form-select"]').inputValue()) === 'form_review', '取消后表单选择未还原');
++  await cancel();
++  results.formSelectAndCommit = '通过';
++
++  for (const kind of ['any', 'sequential', 'all', 'single']) {
++    await openEntity('appearance-first-designer', 'countersign');
++    await drawer().locator(`[data-test="kind-${kind}"]`).click();
++    check((await drawer().locator(`[data-test="kind-${kind}"]`).getAttribute('aria-pressed')) === 'true', `${kind}: 未选中`);
++    await save();
++  }
++  check((await changeCount()) === 5, '四种完成方式保存次数不正确');
++  results.approvalKinds = '单签、会签、或签、依次审批均通过公开点击与确定';
++
++  await openEntity('appearance-first-designer', 'cc');
++  await drawer().locator('[data-test="drawer-recipients"]').fill('王五,赵六');
++  await save();
++  check((await designer('appearance-first-designer').locator('[data-entity-id="cc"]').textContent()).includes('王五,赵六'), '抄送收件人未写模型');
++  await designer('appearance-first-designer').locator('[data-test="branch-head-fork-1"]').click();
++  await drawer().waitFor({ state: 'visible' });
++  await drawer().locator('[data-test="drawer-condition"]').fill('${amount > 2000}');
++  await save();
++  check((await designer('appearance-first-designer').locator('[data-test="branch-head-fork-1"]').textContent()).includes('${amount > 2000}'), '条件表达式未写模型');
++  results.ccAndBranch = '通过';
++
++  for (const entity of ['start', 'end']) {
++    await openEntity('appearance-first-designer', entity);
++    check((await drawer().locator('.el-drawer__title').textContent()) === '节点属性', `${entity}: 空状态标题错误`);
++    check((await drawer().locator('.drawer-empty').textContent()) === '该元素无可配置字段', `${entity}: 空状态正文错误`);
++    await cancel();
++  }
++  results.emptyStates = '通过';
++
++  await openEntity('appearance-second-designer', 'approval');
++  check((await drawer().locator('[data-test="drawer-form-select"]').count()) === 0, '纯流程实例不应出现目录选择器');
++  await drawer().locator('[data-test="drawer-formkey"]').fill('handwritten_form_v1');
++  await save();
++  await openEntity('appearance-second-designer', 'approval');
++  check((await drawer().locator('[data-test="drawer-formkey"]').inputValue()) === 'handwritten_form_v1', '手写 formKey 未写模型');
++  await cancel();
++  results.handwrittenFormKey = '通过';
++
++  await openEntity('appearance-first-designer', 'approval');
++  const runtimeInput = await drawer().locator('[data-test="drawer-name"]').elementHandle();
++  await runtimeInput.fill('浏览器未提交');
++  await runtimeInput.focus();
++  const beforeRuntimeChanges = await changeCount();
++  await setSelect('appearance-first-source', 'brand');
++  await setSelect('appearance-first-mode', 'dark');
++  await setSelect('appearance-first-density', 'compact');
++  check((await runtimeInput.inputValue()) === '浏览器未提交', '运行中切换丢失输入');
++  check(await runtimeInput.evaluate((input) => document.activeElement === input && input.isConnected), '运行中切换丢失焦点或 DOM');
++  const validStyle = await drawer().getAttribute('style');
++  await page.locator('[data-test="appearance-first-invalid"]').focus();
++  await page.keyboard.press('Enter');
++  check((await drawer().getAttribute('style')) === validStyle, '非法密度改变上次有效呈现');
++  check((await runtimeInput.inputValue()) === '浏览器未提交', '非法密度丢失输入');
++  check(warnings.some((warning) => warning.includes('appearance.density')), '非法密度缺少字段级告警');
++  await page.locator('[data-test="appearance-first-enabled"]').focus();
++  await page.keyboard.press('Space');
++  check(!(await drawer().getAttribute('class')).includes('flowduet-appearance'), '合法停用未回旧路径');
++  check((await runtimeInput.inputValue()) === '浏览器未提交', '合法停用丢失输入');
++  await page.locator('[data-test="appearance-first-enabled"]').focus();
++  await page.keyboard.press('Space');
++  await setSelect('appearance-first-density', 'comfortable');
++  check((await drawer().getAttribute('class')).includes('flowduet-appearance--comfortable'), '重新启用有效配置失败');
++  check((await changeCount()) === beforeRuntimeChanges, '外观与非法配置触发模型 change');
++  results.runtimeAndInvalid = '通过';
++
++  await runtimeInput.evaluate((input) => {
++    input.focus();
++    input.dispatchEvent(new CompositionEvent('compositionstart', { bubbles: true }));
++    input.value = '浏览器组合中文';
++    input.dispatchEvent(new InputEvent('input', { bubbles: true, isComposing: true }));
++  });
++  await setSelect('appearance-first-density', 'compact');
++  check((await runtimeInput.inputValue()) === '浏览器组合中文', '组合期间切换丢字');
++  check((await changeCount()) === beforeRuntimeChanges, '组合期间切换自动提交');
++  await drawer().locator('[data-test="drawer-save"]').click();
++  check((await designer('appearance-first-designer').locator('[data-test="action-error"]').textContent()).includes('输入法尚未完成'), '组合期间确定未被保护');
++  await runtimeInput.evaluate((input) => input.dispatchEvent(new CompositionEvent('compositionend', { bubbles: true })));
++  await page.waitForTimeout(80);
++  await save();
++  results.syntheticComposition = '通过（不冒充真实 OS IME）';
++
++  await openEntity('appearance-first-designer', 'approval');
++  await designer('appearance-second-designer').locator('[data-entity-id="approval"]').evaluate((element) => {
++    element.focus();
++    element.click();
++  });
++  await designer('appearance-second-designer').locator('[data-test="node-drawer"]').waitFor({ state: 'visible' });
++  await page.waitForTimeout(350);
++  check((await drawer().count()) === 2, '同 app 双抽屉未同时打开');
++  await page.locator('[data-test="appearance-host-dark"]').focus();
++  await page.keyboard.press('Space');
++  const dual = await page.evaluate(() => {
++    const visible = [...document.querySelectorAll('[data-test="node-drawer"]')].filter((element) => element.getBoundingClientRect().width > 0);
++    const light = visible.find((element) => element.classList.contains('flowduet-appearance--light'));
++    const host = document.querySelector('[data-test="appearance-host-input"]')?.closest('.el-input')?.querySelector('.el-input__wrapper');
++    return {
++      lightBackground: light ? getComputedStyle(light).backgroundColor : null,
++      lightInline: light?.getAttribute('style'),
++      hostBorder: host ? getComputedStyle(host).boxShadow : null,
++      htmlClass: document.documentElement.className,
++    };
++  });
++  check(dual.htmlClass.includes('dark'), '双实例宿主深色未启用');
++  check(dual.lightBackground === 'rgb(255, 255, 255)', `宿主深色污染品牌浅色抽屉：${dual.lightBackground}`);
++  check(dual.lightInline.includes('#2D3E97'), '另一品牌实例局部变量被改写');
++  await page.locator('[data-test="appearance-first-mounted"]').focus();
++  await page.keyboard.press('Space');
++  check((await drawer().count()) === 1, '卸载一个实例未清理所属抽屉');
++  check((await page.locator('[data-test="appearance-host-dark"]').isChecked()), '卸载实例改写宿主深色');
++  results.dualInstance = '通过';
++
++  await drawer().locator('[data-test="drawer-name"]').focus();
++  await page.keyboard.press('Escape');
++  await drawer().waitFor({ state: 'hidden' });
++  const restoredEntity = await page.evaluate(() => document.activeElement?.getAttribute('data-entity-id'));
++  check(restoredEntity === 'approval', `Escape 后焦点未恢复到节点卡片：${restoredEntity}`);
++  const branchButton = designer('appearance-second-designer').locator('[data-test="branch-head-fork-1"]');
++  await branchButton.focus();
++  await page.keyboard.press('Enter');
++  await drawer().waitFor({ state: 'visible' });
++  await page.keyboard.press('Escape');
++  await drawer().waitFor({ state: 'hidden' });
++  check(await branchButton.evaluate((button) => document.activeElement === button), '分支键盘打开并关闭后焦点未恢复');
++  results.keyboard = '通过';
++
++  await page.locator('[data-test="appearance-first-mounted"]').focus();
++  await page.keyboard.press('Space');
++  await openEntity('appearance-first-designer', 'countersign');
++  await drawer().locator('[data-test="kind-all"]').click();
++  await drawer().locator('[data-test="drawer-assignee"]').fill('${this_is_a_very_long_invalid_collection_expression_for_multiline_error}');
++  await drawer().locator('[data-test="drawer-save"]').click();
++  const error = designer('appearance-first-designer').locator('[data-test="action-error"]');
++  check((await error.textContent()).includes('集合变量名'), '长非法集合未触发既有错误');
++  const errorLayout = await error.evaluate((element) => ({ height: element.getBoundingClientRect().height, scrollWidth: element.scrollWidth, clientWidth: element.clientWidth }));
++  check(errorLayout.height > 20 && errorLayout.scrollWidth <= errorLayout.clientWidth + 1, `多行错误布局异常：${JSON.stringify(errorLayout)}`);
++  await page.setViewportSize({ width: 1024, height: 900 });
++  await page.evaluate(() => { document.body.style.zoom = '200%'; });
++  await page.waitForTimeout(200);
++  const zoomLayout = await drawer().evaluate((element) => {
++    const rect = element.getBoundingClientRect();
++    const save = element.querySelector('[data-test="drawer-save"]').getBoundingClientRect();
++    return { x: rect.x, right: rect.right, saveBottom: save.bottom, viewport: innerHeight };
++  });
++  check(zoomLayout.x >= 0 && zoomLayout.right <= 1025 && zoomLayout.saveBottom <= 901, `200% 缩放抽屉不可达：${JSON.stringify(zoomLayout)}`);
++  await page.screenshot({ path: resolve(outputDir, 'long-error-zoom-200.png') });
++  await page.evaluate(() => { document.body.style.zoom = ''; });
++  results.longErrorAndZoom = { errorLayout, zoomLayout };
++
++  const summary = {
++    browser: await page.evaluate(() => navigator.userAgent),
++    viewport: '1440×1100；缩放段改为 1024×900 + CSS zoom 200%',
++    results,
++    errors,
++    warnings,
++    failures,
++    limitations: [
++      '组合输入使用合成 CompositionEvent/InputEvent，未执行真实 macOS 中文输入法。',
++      '缩放使用 CSS zoom 200% 验证布局，不冒充操作系统或浏览器原生缩放全套测试。',
++      '原生 select 系统选项弹层的外观只能有限控制，未记录为像素级一致。',
++      'Firefox、Safari/WebKit、移动端与完整可访问性认证未验证。',
++    ],
++  };
++  await writeFile(resolve(outputDir, 'behavior.json'), JSON.stringify(summary, null, 2));
++  console.log(JSON.stringify({ results, errors, warnings, failures }, null, 2));
++  if (failures.length > 0) process.exitCode = 1;
++} finally {
++  await browser.close();
++}
+diff --git a/docs/design/system-v1/brand/evidence/103-property-drawer/color-unit-green.txt b/docs/design/system-v1/brand/evidence/103-property-drawer/color-unit-green.txt
+new file mode 100644
+index 0000000..540146a
+--- /dev/null
++++ b/docs/design/system-v1/brand/evidence/103-property-drawer/color-unit-green.txt
+@@ -0,0 +1,9 @@
++
++ RUN  v5.0.1 /Users/l/Documents/projects/flowduet-103-property-appearance/packages/designer
++
++
++ Test Files  1 passed (1)
++      Tests  1 passed | 15 skipped (16)
++   Start at  17:54:01
++   Duration  2.44s (import 43%, transform 31%, environment 16%, tests 10%)
++
+diff --git a/docs/design/system-v1/brand/evidence/103-property-drawer/color-unit-red.txt b/docs/design/system-v1/brand/evidence/103-property-drawer/color-unit-red.txt
+new file mode 100644
+index 0000000..a7ff4ab
+--- /dev/null
++++ b/docs/design/system-v1/brand/evidence/103-property-drawer/color-unit-red.txt
+@@ -0,0 +1,34 @@
++
++ RUN  v5.0.1 /Users/l/Documents/projects/flowduet-103-property-appearance/packages/designer
++
++ ❯ src/appearance.test.ts (16 tests | 1 failed | 15 skipped) 223ms
++   ❯ 公开实例外观配置（#103） (16)
++     × 宿主短十六进制颜色与等价六位颜色产生相同的自有角色 222ms
++
++⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
++
++ FAIL  src/appearance.test.ts > 公开实例外观配置（#103） > 宿主短十六进制颜色与等价六位颜色产生相同的自有角色
++AssertionError: expected '#409EFF' to be '#FF0000' // Object.is equality
++
++Expected: "#FF0000"
++Received: "#409EFF"
++
++ ❯ src/appearance.test.ts:174:59
++    172|
++    173|     const drawer = document.querySelector<HTMLElement>('[data-test="no…
++    174|     expect(drawer.style.getPropertyValue("--fd-primary")).toBe("#FF000…
++       |                                                           ^
++    175|     const shortStyle = drawer.getAttribute("style");
++    176|     (wrapper.element as HTMLElement).style.setProperty("--el-color-pri…
++
++⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
++
++
++ Test Files  1 failed (1)
++      Tests  1 failed | 15 skipped (16)
++   Start at  17:53:21
++   Duration  2.86s (import 47%, transform 24%, environment 20%, tests 8%)
++
++undefined
++/Users/l/Documents/projects/flowduet-103-property-appearance/packages/designer:
++ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run src/appearance.test.ts -t 短十六进制
+diff --git a/docs/design/system-v1/brand/evidence/103-property-drawer/consumer-output.json b/docs/design/system-v1/brand/evidence/103-property-drawer/consumer-output.json
+new file mode 100644
+index 0000000..9f714df
+--- /dev/null
++++ b/docs/design/system-v1/brand/evidence/103-property-drawer/consumer-output.json
+@@ -0,0 +1,12 @@
++{
++  "designer": "0.1.0",
++  "elementPlus": "2.14.6",
++  "module": "/private/tmp/flowduet-103-consumer-r2.38uSuj/node_modules/@flowduet/designer/dist/index.js",
++  "declarations": "/private/tmp/flowduet-103-consumer-r2.38uSuj/node_modules/@flowduet/designer/dist/index.d.ts",
++  "css": "/private/tmp/flowduet-103-consumer-r2.38uSuj/node_modules/@flowduet/designer/dist/designer.css",
++  "warnings": [
++    "[FlowDuet] appearance.density 只支持 \"comfortable\" 或 \"compact\"；已整份拒绝本次 appearance 配置。",
++    "[FlowDuet] appearance.mode 必填，且只支持 \"light\" 或 \"dark\"；已整份拒绝本次 appearance 配置。"
++  ],
++  "result": "JS / declaration / CSS / model 均通过"
++}
+diff --git a/docs/design/system-v1/brand/evidence/103-property-drawer/consumer-tsconfig.json b/docs/design/system-v1/brand/evidence/103-property-drawer/consumer-tsconfig.json
+new file mode 100644
+index 0000000..6af32c4
+--- /dev/null
++++ b/docs/design/system-v1/brand/evidence/103-property-drawer/consumer-tsconfig.json
+@@ -0,0 +1,14 @@
++{
++  "compilerOptions": {
++    "target": "ES2022",
++    "module": "ESNext",
++    "moduleResolution": "Bundler",
++    "lib": ["ES2022", "DOM", "DOM.Iterable"],
++    "strict": true,
++    "exactOptionalPropertyTypes": true,
++    "noUncheckedIndexedAccess": true,
++    "noEmit": true,
++    "skipLibCheck": false
++  },
++  "include": ["./consumer.ts"]
++}
+diff --git a/docs/design/system-v1/brand/evidence/103-property-drawer/consumer.mjs.txt b/docs/design/system-v1/brand/evidence/103-property-drawer/consumer.mjs.txt
+new file mode 100644
+index 0000000..50a8966
+--- /dev/null
++++ b/docs/design/system-v1/brand/evidence/103-property-drawer/consumer.mjs.txt
+@@ -0,0 +1,52 @@
++import { readFile } from 'node:fs/promises';
++import { fileURLToPath } from 'node:url';
++import { BpmnModel, flowableAdapter } from '@flowduet/core';
++import {
++  DingtalkDesigner,
++  resolveComponentAppearance,
++} from '@flowduet/designer';
++
++const assert = (condition, message) => {
++  if (!condition) throw new Error(message);
++};
++assert(typeof BpmnModel === 'function' && typeof flowableAdapter === 'object', 'core 公开导出缺失');
++assert(typeof DingtalkDesigner === 'object', 'DingtalkDesigner 公开导出缺失');
++assert(typeof resolveComponentAppearance === 'function', '外观解析公开导出缺失');
++const resolved = resolveComponentAppearance({ mode: 'light' });
++assert(JSON.stringify(resolved) === JSON.stringify({ colorSource: 'host', mode: 'light', density: 'comfortable' }), '默认外观归一化错误');
++const previous = { colorSource: 'brand', mode: 'dark', density: 'compact' };
++const warnings = [];
++const originalWarn = console.warn;
++console.warn = (message) => warnings.push(message);
++try {
++  assert(resolveComponentAppearance({ mode: 'light', density: 'invalid' }, previous) === previous, '非法配置未保留上次有效对象');
++  assert(resolveComponentAppearance({ density: 'compact' }) === undefined, '首次非法配置未保持旧路径');
++  assert(resolveComponentAppearance(undefined, previous) === undefined, '合法停用未返回 undefined');
++} finally {
++  console.warn = originalWarn;
++}
++assert(warnings.length === 2 && warnings.every((message) => message.includes('appearance.')), '非法配置告警不可定位');
++
++const packageUrl = import.meta.resolve('@flowduet/designer/package.json');
++const packagePath = fileURLToPath(packageUrl);
++const packageJson = JSON.parse(await readFile(packagePath, 'utf8'));
++const cssPath = fileURLToPath(import.meta.resolve('@flowduet/designer/style.css'));
++const css = await readFile(cssPath, 'utf8');
++assert(css.includes('.flowduet-appearance--brand'), 'CSS 缺少品牌作用域');
++assert(css.includes('.flowduet-appearance .kind-card'), 'CSS 缺少自有卡片适配');
++assert(!css.includes(':deep('), 'CSS 残留未编译 deep 选择器');
++const declarationsPath = fileURLToPath(new URL(packageJson.types, packageUrl));
++const declarations = await readFile(declarationsPath, 'utf8');
++assert(declarations.includes('ComponentAppearance'), '包根声明缺少 ComponentAppearance');
++assert(declarations.includes('resolveComponentAppearance'), '包根声明缺少 resolveComponentAppearance');
++const model = BpmnModel.create({ processId: 'tarball_consumer', adapter: flowableAdapter });
++assert(model.process.get('id') === 'tarball_consumer', 'core 模型无法通过公开包创建');
++console.log(JSON.stringify({
++  designer: packageJson.version,
++  elementPlus: JSON.parse(await readFile(fileURLToPath(import.meta.resolve('element-plus/package.json')), 'utf8')).version,
++  module: fileURLToPath(import.meta.resolve('@flowduet/designer')),
++  declarations: declarationsPath,
++  css: cssPath,
++  warnings,
++  result: 'JS / declaration / CSS / model 均通过',
++}, null, 2));
+diff --git a/docs/design/system-v1/brand/evidence/103-property-drawer/consumer.ts.txt b/docs/design/system-v1/brand/evidence/103-property-drawer/consumer.ts.txt
+new file mode 100644
+index 0000000..82e846f
+--- /dev/null
++++ b/docs/design/system-v1/brand/evidence/103-property-drawer/consumer.ts.txt
+@@ -0,0 +1,23 @@
++import {
++  DingtalkDesigner,
++  resolveComponentAppearance,
++  type ComponentAppearance,
++  type ResolvedComponentAppearance,
++} from "@flowduet/designer";
++
++const appearance: ComponentAppearance = { mode: "light" };
++const resolved: ResolvedComponentAppearance | undefined = resolveComponentAppearance(appearance);
++if (resolved) {
++  const source: "host" | "brand" = resolved.colorSource;
++  const density: "comfortable" | "compact" = resolved.density;
++  void source;
++  void density;
++}
++
++// @ts-expect-error mode 仅允许 light / dark
++const invalidMode: ComponentAppearance = { mode: "sepia" };
++// @ts-expect-error 启用新适配时 mode 必填
++const missingMode: ComponentAppearance = { density: "compact" };
++void invalidMode;
++void missingMode;
++void DingtalkDesigner;
+diff --git a/docs/design/system-v1/brand/evidence/103-property-drawer/form-create-baseline-pair.txt b/docs/design/system-v1/brand/evidence/103-property-drawer/form-create-baseline-pair.txt
+new file mode 100644
+index 0000000..1ae6fb3
+--- /dev/null
++++ b/docs/design/system-v1/brand/evidence/103-property-drawer/form-create-baseline-pair.txt
+@@ -0,0 +1,118 @@
++
++ RUN  v5.0.1 /Users/l/Documents/projects/flowduet/packages/form-create
++
++ ✓ src/components/retained-manager.test.ts > retained FormManager状态与关闭 > manager_retained_query_and_forward 1699ms
++ ✓ src/components/retained-manager.test.ts > retained FormManager状态与关闭 > manager_suspend_is_not_discard，取消确认保留实例和raw 1447ms
++ ✓ src/components/retained-manager.test.ts > retained FormManager状态与关闭 > manager_dismiss_requires_discard，明确放弃后重开不复活raw 2998ms
++ ✓ src/components/retained-manager.test.ts > retained FormManager状态与关闭 > manager_late_discard_rejected，确认期间新输入使旧肯定答复过期 1618ms
++ ✓ src/components/retained-manager.test.ts > retained FormManager状态与关闭 > manager_ime_escape_keeps_editor，组合中的关闭手势不先blur 1764ms
++ ✓ src/components/retained-manager.test.ts > retained FormManager状态与关闭 > manager_old_editor_state_dropped，保存/取消/旧状态不可影响重开 3048ms
++ ✓ src/components/retained-manager.test.ts > retained 关闭与旧回调补充边界 > 请求x并不授权销毁，确认拒绝/异常都保持raw 2715ms
++ ✓ src/components/retained-manager.test.ts > retained 关闭与旧回调补充边界 > 请求mask并不授权销毁，确认拒绝/异常都保持raw 2959ms
++ ✓ src/components/retained-manager.test.ts > retained 关闭与旧回调补充边界 > 请求cancel并不授权销毁，确认拒绝/异常都保持raw 1870ms
++ ✓ src/components/retained-manager.test.ts > retained 关闭与旧回调补充边界 > manager_old_close_request_cannot_target_reopened_editor，旧closed不发新null 3547ms
++ ✓ src/components/retained-manager.test.ts > retained 关闭与旧回调补充边界 > manager_busy_close_gesture_cannot_blur_then_close，正常输入不被拒绝手势吞掉 2791ms
++ ✓ src/components/retained-manager.test.ts > retained 关闭与旧回调补充边界 > retained序列化异常不关闭，修正后成功提交一次 2742ms
++ ✓ src/components/retained-manager.test.ts > retained 关闭与旧回调补充边界 > legacy_dialog_dismiss_unchanged mode=undefined 992ms
++ ✓ src/components/retained-manager.test.ts > retained 关闭与旧回调补充边界 > legacy_dialog_dismiss_unchanged mode=legacy 863ms
++ ✓ src/components/retained-manager.test.ts > retained 多实例与捕获版本 > 同ID两个真实FormManager，busy保护不拦另一实例的Enter或输入 3888ms
++ ✓ src/components/retained-manager.test.ts > retained 多实例与捕获版本 > 捕获中同步新输入使候选失效，下一次仍可收集最新值 2638ms
++ ✓ src/components/retained-manager.test.ts > 确认期间宿主替换同ID同内容表单，旧肯定答复与保存均拒绝且保留输入 2110ms
++ ✓ src/components/retained-manager.test.ts > 授权关闭的真实Dialog closed事件完成收尾并转发null 2280ms
++ ✓ src/components/retained-manager.test.ts > 同一表单对象被宿主原位改写也不覆盖当前输入 2874ms
++ ✓ src/components/retained-manager.test.ts > 旧Dialog迟到modelValue回调不能关闭同ID重开的编辑器 2455ms
++ ✓ src/components/retained-manager.test.ts > 当前Dialog modelValue=false只请求关闭，未经明确放弃不销毁 2266ms
++ ✓ src/components/retained-manager.test.ts > 同ID新会话尚未挂载时不读取或收集旧子ref 4263ms
++ ✓ src/components/retained-manager.test.ts > 旧页头关闭按钮的迟到click不取得新会话的放弃授权 3800ms
++ ✓ src/components/retained-manager.test.ts > P1复审P2：模式冲突后打开与重开 > legacy挂载后改变模式不切换子实现，也不经旧出口提交 1412ms
++ ✓ src/components/retained-manager.test.ts > P1复审P2：模式冲突后打开与重开 > retained挂载后改变模式不切换子实现，也不经旧出口提交 1822ms
++ ✓ src/components/retained-manager.test.ts > P1复审P2：模式冲突后打开与重开 > legacy成功关闭后改模式重开，拒绝新模式且旧内容不再提交 1320ms
++ ✓ src/components/retained-manager.test.ts > P1复审P2：模式冲突后打开与重开 > retained成功关闭后改模式重开，拒绝新模式且旧内容不再提交 2299ms
++ ✓ src/components/retained-manager.test.ts > Manager owner回归：结束后旧续体与finally不改写后例的值或spy 1373ms
++ ✓ src/components/retained-manager.test.ts > Manager owner回归：登记后由真实afterEach关闭并恢复兼容描述符 7ms
++ ✓ src/components/retained-manager.test.ts > Manager owner回归：体异常=false仍关闭真实root且只恢复自有spy一次 5ms
++ ✓ src/components/retained-manager.test.ts > Manager owner回归：体异常=true仍关闭真实root且只恢复自有spy一次 5ms
++ ✓ src/components/retained-manager.test.ts > Manager owner回归：失效后拒绝迟到mount、spy、输入和清理登记 6ms
++ ✓ src/components/retained-manager.test.ts > Manager owner回归：等待中的旧轮询恢复后不执行迟到动作 1001ms
++ ✓ src/components/retained-manager.test.ts > Manager owner回归：活动真实组件意外断开必须失败 10ms
++ ✓ src/components/retained-manager.test.ts > Manager owner回归：全部先失效并逆序清理，卸载后抛错仍关闭其余root 11ms
++ ✓ src/components/retained-manager.test.ts > Manager style回归：同一节点文本属性及顺序原样恢复，重复close幂等 5ms
++ ✓ src/components/retained-manager.test.ts > Manager style回归：体异常后真实root和样式均清理 8ms
++ ✓ src/components/retained-manager.test.ts > Manager style回归：卸载真实root后抛错仍恢复样式 8ms
++ ✓ src/components/retained-manager.test.ts > Manager style回归：真实afterEach关闭已登记scope并恢复兼容环境 14ms
++ ✓ src/components/retained-manager.test.ts > Manager style回归：A结束后旧续体及finally不恢复B临时移离的样式 12ms
++ ✓ src/components/retained-manager.test.ts > Manager style回归：missing识别失败不改变现有样式 1ms
++ ✓ src/components/retained-manager.test.ts > Manager style回归：duplicate识别失败不改变现有样式 1ms
++ ✓ src/components/retained-manager.test.ts > Manager style回归：移离动作完成后异常也有已登记恢复 2ms
++ ✓ src/components/retained-manager.test.ts > 文字style回归：真实afterEach先卸载目标再恢复样式和兼容环境 1455ms
++ ✓ src/components/retained-manager.test.ts > 文字style回归：已关闭owner拒绝挂载且不覆盖后例wrapper 5ms
++ ✓ src/components/retained-manager.test.ts > 文字style回归：body异常仍卸载真实目标并恢复样式 2237ms
++ ✓ src/components/retained-manager.test.ts > 文字style回归：unmount异常仍卸载真实目标并恢复样式 1831ms
++ ✓ src/components/retained-manager.test.ts > 文字style回归：目标仍连接也不能用已关闭owner激活 1509ms
++ ✓ src/components/retained-manager.test.ts > 文字style回归：选中等待结束后旧续体与finally不改B的样式输入和spy 2423ms
++ ✓ src/components/retained-manager.test.ts > 文字style回归：装载前序列化异常不覆盖现有目标且仍恢复样式 7ms
++ ✓ src/components/retained-manager.test.ts > Manager旧状态style回归：显式选项在挂载前移离主样式且先卸载再恢复 1214ms
++ ✓ src/components/retained-manager.test.ts > Manager旧状态style回归：未传选项保持主CSS在场并正常清理 2004ms
++ ✓ src/components/retained-manager.test.ts > Manager旧状态style回归：body异常仍关闭真实编辑器并恢复样式 1464ms
++ ✓ src/components/retained-manager.test.ts > Manager旧状态style回归：unmount异常仍关闭真实编辑器并恢复样式 1534ms
++ ✓ src/components/retained-manager.test.ts > Manager旧状态style回归：结束后旧续体和finally不改B的样式输入或spy 2771ms
++ ✓ src/components/retained-manager.test.ts > Manager协议夹具回归：挂载前移离并由原owner先卸载后恢复 1568ms
++ ✓ src/components/retained-manager.test.ts > Manager协议夹具回归：body异常仍关闭真实组件并恢复自有样式和spy 1969ms
++ ✓ src/components/retained-manager.test.ts > Manager协议夹具回归：unmount异常仍关闭真实组件并恢复自有样式和spy 1969ms
++ ✓ src/components/retained-manager.test.ts > Manager协议夹具回归：旧续体及finally不触碰后例输入样式或spy 3899ms
++ ✓ src/components/retained-manager.test.ts > 共享设计器生命周期回归：initial-flush/resolve结束后不查询后例或点击旧菜单 599ms
++ ✓ src/components/retained-manager.test.ts > 共享设计器生命周期回归：initial-flush/reject结束后不查询后例或点击旧菜单 702ms
++ ✓ src/components/retained-manager.test.ts > 共享设计器生命周期回归：field-switch/resolve结束后不查询后例或点击旧菜单 1277ms
++ ✓ src/components/retained-manager.test.ts > 共享设计器生命周期回归：field-switch/reject结束后不查询后例或点击旧菜单 1176ms
++ ✓ src/components/retained-manager.test.ts > 共享设计器生命周期回归：after-delete/resolve结束后不查询后例或点击旧菜单 1637ms
++ ✓ src/components/retained-manager.test.ts > 共享设计器生命周期回归：after-delete/reject结束后不查询后例或点击旧菜单 3139ms
++ ✓ src/components/retained-manager.test.ts > 共享设计器生命周期回归：真实afterEach关闭根与原owner，恢复样式和描述符 721ms
++ ✓ src/components/retained-manager.test.ts > 共享协议选项回归：isolateMainStyle=undefined在挂载前生效并恢复原节点 9ms
++ ✓ src/components/retained-manager.test.ts > 共享协议选项回归：isolateMainStyle=false在挂载前生效并恢复原节点 7ms
++ ✓ src/components/retained-manager.test.ts > 共享协议选项回归：isolateMainStyle=true在挂载前生效并恢复原节点 12ms
++ ✓ src/components/retained-inputs.test.ts > retained 数值日期与同步捕获 > pending_number_text_survives_navigation 1770ms
++ ✓ src/components/retained-inputs.test.ts > retained 真实数值日期回归 > partial_date_does_not_normalize_on_blur 3345ms
++ ✓ src/components/retained-inputs.test.ts > retained 真实数值日期回归 > valid_echo_pending_blocks_capture，回显后仍保留字形 3918ms
++ ✓ src/components/retained-inputs.test.ts > retained 真实数值日期回归 > composition_end_same_tick_is_blocked 1327ms
++ ✓ src/components/retained-inputs.test.ts > retained 真实数值日期回归 > foreign_editor_keeps_focus；只读查询不编辑、不blur 595ms
++ ✓ src/components/retained-inputs.test.ts > retained 真实数值日期回归 > 删除公开source立即撤销旧缓冲，同名field不复用 2335ms
++ ✓ src/components/retained-inputs.test.ts > retained 真实数值日期回归 > mode固定且未知文档替换保持原文并阻断 1682ms
++ ✓ src/components/retained-inputs.test.ts > retained Tab前置保护 > busy时Tab前往自有取消按钮被拒绝，正常输入之间Tab不吞键 2662ms
++ ✓ src/components/retained-inputs.test.ts > retained I01导入边界 > I01 undefined未编辑原样往返，非普通date编辑明确阻断 1943ms
++ ✓ src/components/retained-inputs.test.ts > retained I01导入边界 > I01 date未编辑原样往返，非普通date编辑明确阻断 1367ms
++ ✓ src/components/retained-inputs.test.ts > retained I01导入边界 > I01 datetime未编辑原样往返，非普通date编辑明确阻断 1595ms
++ ✓ src/components/retained-inputs.test.ts > retained I01导入边界 > I01 week未编辑原样往返，非普通date编辑明确阻断 1761ms
++ ✓ src/components/retained-inputs.test.ts > retained I01导入边界 > I01 month未编辑原样往返，非普通date编辑明确阻断 1964ms
++ ✓ src/components/retained-inputs.test.ts > retained I01导入边界 > I01 year未编辑原样往返，非普通date编辑明确阻断 1748ms
++ ✓ src/components/retained-inputs.test.ts > retained 真实字段删除复用 > 公开delete时点撤销缓存，菜单新建后同名field不复用旧raw 1771ms
++ ✓ src/components/retained-inputs.test.ts > 日历动画开始后即阻断捕获，关闭后恢复 2163ms
++ ✓ src/components/retained-inputs.test.ts > 缓存原文后的原生change/失焦不制造新的编辑版本 1872ms
++ ✓ src/components/retained-inputs.test.ts > 缺少secure-context randomUUID时legacy仍可装载和收集 1964ms
++ ✓ src/components/retained-inputs.test.ts > 缺少secure-context randomUUID时retained仍可装载和收集 1602ms
++ ✓ src/components/retained-inputs.test.ts > P1复审P2：属性控件确认与删除生命期 > 恢复原值且没有change时，刷新后可捕获；同步阶段仍阻断 1910ms
++ ✓ src/components/retained-inputs.test.ts > P1复审P2：属性控件确认与删除生命期 > delete撤销已移除控件的等待，不要求change 2381ms
++ ✓ src/components/retained-inputs.test.ts > P1复审P2：属性控件确认与删除生命期 > clear撤销已移除控件的等待，不要求change 2481ms
++ ✓ src/components/retained-inputs.test.ts > P1复审P2：属性控件确认与删除生命期 > 旧change的下一tick不能清除同控件更新后的未确认输入 2086ms
++ ✓ src/components/retained-inputs.test.ts > P1复审P2：同步捕获重入 > inputNumber的等价原文1000→1e3在公开回显前也必须阻断 1734ms
++ ✓ src/components/retained-inputs.test.ts > P1复审P2：同步捕获重入 > inputNumber的等价原文1→01在公开回显前也必须阻断 1553ms
++ ✓ src/components/retained-inputs.test.ts > P1复审P2：同步捕获重入 > datePicker的等价原文2024-02-29→2024-02-29在公开回显前也必须阻断 1757ms
++ ✓ src/components/retained-inputs.test.ts > P1复审P2：删除其他字段不会清除仍在场的属性输入等待 1800ms
++ ✓ src/components/retained-inputs.test.ts > P1复审P2：原生number的badInput空串不能冒充恢复初始空值 1723ms
++ ✓ src/components/retained-inputs.test.ts > P1复审P2：同次change和blur的合法number归一后解除等待 1897ms
++ ✓ src/components/retained-inputs.test.ts > P2 retained文字存在性 > text/grid=false清空仍是显式空串，未设置字段不补值 1955ms
++ ✓ src/components/retained-inputs.test.ts > P2 retained文字存在性 > textarea/grid=false清空仍是显式空串，未设置字段不补值 1506ms
++ ✓ src/components/retained-inputs.test.ts > P2 retained文字存在性 > text/grid=true清空仍是显式空串，未设置字段不补值 887ms
++ ✓ src/components/retained-inputs.test.ts > P2 retained文字存在性 > textarea/grid=true清空仍是显式空串，未设置字段不补值 2081ms
++ ✓ src/components/retained-inputs.test.ts > P2 retained文字存在性 > 开关关闭才未设置，再开启为空串；切字段保持存在性 3932ms
++ ✓ src/components/retained-inputs.test.ts > P2 retained文字存在性 > 显式空串与未设置保存重开保持存在性 4269ms
++ ✓ src/components/retained-inputs.test.ts > P2 retained文字存在性 > clear明确删除文字字段后释放组合与存在性状态 3188ms
++ ✓ src/components/retained-inputs.test.ts > P2 retained文字存在性 > 同步draftChange重入不捕获旧值，文本组合结束同tick阻断 2045ms
++ ✓ src/components/retained-inputs.test.ts > P2 retained文字存在性 > 文字显式空串经FormManager提交成对输出一次并关闭 1381ms
++ ✓ src/components/retained-inputs.test.ts > P2 retained文字存在性 > undefined不启用文本存在性入口 816ms
++ ✓ src/components/retained-inputs.test.ts > P2 retained文字存在性 > legacy不启用文本存在性入口 728ms
++
++ Test Files  2 passed (2)
++      Tests  109 passed (109)
++   Start at  18:01:36
++   Duration  198.45s (tests 93%, import 5%, environment 2%, transform 1%)
++
+diff --git a/docs/design/system-v1/brand/evidence/103-property-drawer/form-create-default-timeouts.txt b/docs/design/system-v1/brand/evidence/103-property-drawer/form-create-default-timeouts.txt
+new file mode 100644
+index 0000000..61d1185
+--- /dev/null
++++ b/docs/design/system-v1/brand/evidence/103-property-drawer/form-create-default-timeouts.txt
+@@ -0,0 +1,73 @@
++
++> flowduet-monorepo@0.0.0 test /Users/l/Documents/projects/flowduet-103-property-appearance
++> pnpm -r test
++
++Scope: 4 of 5 workspace projects
++packages/core test$ vitest run
++packages/core test:  RUN  v5.0.1 /Users/l/Documents/projects/flowduet-103-property-appearance/packages/core
++packages/core test:  Test Files  14 passed (14)
++packages/core test:       Tests  148 passed (148)
++packages/core test:    Start at  17:57:02
++packages/core test:    Duration  1.24s (tests 44%, transform 38%, import 15%, worker 2%)
++packages/core test:   Transform  transforming modules took 2.19s · 38% of tracked time, re-done on every run
++packages/core test:              persist transforms across runs with fsModuleCache: true
++packages/core test:              learn more: https://vitest.dev/guide/improving-performance#caching-between-reruns
++packages/core test: Done
++packages/designer test$ vitest run
++packages/designer test:  RUN  v5.0.1 /Users/l/Documents/projects/flowduet-103-property-appearance/packages/designer
++packages/designer test:  Test Files  15 passed (15)
++packages/designer test:       Tests  200 passed (200)
++packages/designer test:    Start at  17:57:04
++packages/designer test:    Duration  12.17s (tests 44%, import 21%, environment 19%, transform 15%)
++packages/designer test: Done
++packages/form-create test$ vitest run
++packages/form-create test:  RUN  v5.0.1 /Users/l/Documents/projects/flowduet-103-property-appearance/packages/form-create
++packages/form-create test:  ❯ src/components/retained-manager.test.ts (69 tests | 1 failed) 85643ms
++packages/form-create test:    × 旧页头关闭按钮的迟到click不取得新会话的放弃授权 8325ms
++packages/form-create test:  ❯ src/components/retained-inputs.test.ts (40 tests | 2 failed) 77638ms
++packages/form-create test:    ❯ retained 真实数值日期回归 (6)
++packages/form-create test:      × partial_date_does_not_normalize_on_blur 6150ms
++packages/form-create test:      × 删除公开source立即撤销旧缓冲，同名field不复用 5459ms
++packages/form-create test: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
++packages/form-create test:  FAIL  src/components/retained-inputs.test.ts > retained 真实数值日期回归 > partial_date_does_not_normalize_on_blur
++packages/form-create test: Error: Test timed out in 5000ms.
++packages/form-create test: If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
++packages/form-create test:  ❯ src/components/retained-inputs.test.ts:91:3
++packages/form-create test:      89|
++packages/form-create test:      90| describe("retained 真实数值日期回归", () => {
++packages/form-create test:      91|   it("partial_date_does_not_normalize_on_blur", async () => {
++packages/form-create test:        |   ^
++packages/form-create test:      92|     const {
++packages/form-create test:      93|       owner,
++packages/form-create test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
++packages/form-create test:  FAIL  src/components/retained-inputs.test.ts > retained 真实数值日期回归 > 删除公开source立即撤销旧缓冲，同名field不复用
++packages/form-create test: Error: Test timed out in 5000ms.
++packages/form-create test: If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
++packages/form-create test:  ❯ src/components/retained-inputs.test.ts:156:3
++packages/form-create test:     154|     expect(wrapper!.emitted("draftChange")?.length).toBe(count);
++packages/form-create test:     155|   });
++packages/form-create test:     156|   it("删除公开source立即撤销旧缓冲，同名field不复用", async () => {
++packages/form-create test:        |   ^
++packages/form-create test:     157|     const { owner, target: wrapper, vm } = await retainedEditor();
++packages/form-create test:     158|     await owner.step(async () =>
++packages/form-create test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
++packages/form-create test:  FAIL  src/components/retained-manager.test.ts > 旧页头关闭按钮的迟到click不取得新会话的放弃授权
++packages/form-create test: Error: Test timed out in 5000ms.
++packages/form-create test: If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
++packages/form-create test:  ❯ src/components/retained-manager.test.ts:506:1
++packages/form-create test:     504| });
++packages/form-create test:     505|
++packages/form-create test:     506| it("旧页头关闭按钮的迟到click不取得新会话的放弃授权", async () => {
++packages/form-create test:        | ^
++packages/form-create test:     507|   const manager = await retainedProtocolManager();
++packages/form-create test:     508|   const { vm, target: wrapper } = manager;
++packages/form-create test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
++packages/form-create test:  Test Files  2 failed | 13 passed (15)
++packages/form-create test:       Tests  3 failed | 309 passed (312)
++packages/form-create test:    Start at  17:57:16
++packages/form-create test:    Duration  222.02s (tests 88%, import 8%, environment 3%, transform 1%)
++packages/form-create test: Failed
++/Users/l/Documents/projects/flowduet-103-property-appearance/packages/form-create:
++ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @flowduet/form-create@0.1.0 test: `vitest run`
++Exit status 1
++ ELIFECYCLE  Test failed. See above for more details.
+diff --git a/docs/design/system-v1/brand/evidence/103-property-drawer/form-create-isolated-diagnostic.txt b/docs/design/system-v1/brand/evidence/103-property-drawer/form-create-isolated-diagnostic.txt
+new file mode 100644
+index 0000000..0d90984
+--- /dev/null
++++ b/docs/design/system-v1/brand/evidence/103-property-drawer/form-create-isolated-diagnostic.txt
+@@ -0,0 +1,121 @@
++
++ RUN  v5.0.1 /Users/l/Documents/projects/flowduet-103-property-appearance/packages/form-create
++
++ ↓ src/components/retained-manager.test.ts > retained FormManager状态与关闭 > manager_retained_query_and_forward
++ ↓ src/components/retained-manager.test.ts > retained FormManager状态与关闭 > manager_suspend_is_not_discard，取消确认保留实例和raw
++ ↓ src/components/retained-manager.test.ts > retained FormManager状态与关闭 > manager_dismiss_requires_discard，明确放弃后重开不复活raw
++ ↓ src/components/retained-manager.test.ts > retained FormManager状态与关闭 > manager_late_discard_rejected，确认期间新输入使旧肯定答复过期
++ ↓ src/components/retained-manager.test.ts > retained FormManager状态与关闭 > manager_ime_escape_keeps_editor，组合中的关闭手势不先blur
++ ↓ src/components/retained-manager.test.ts > retained FormManager状态与关闭 > manager_old_editor_state_dropped，保存/取消/旧状态不可影响重开
++ ↓ src/components/retained-manager.test.ts > retained 关闭与旧回调补充边界 > 请求x并不授权销毁，确认拒绝/异常都保持raw
++ ↓ src/components/retained-manager.test.ts > retained 关闭与旧回调补充边界 > 请求mask并不授权销毁，确认拒绝/异常都保持raw
++ ↓ src/components/retained-manager.test.ts > retained 关闭与旧回调补充边界 > 请求cancel并不授权销毁，确认拒绝/异常都保持raw
++ ↓ src/components/retained-manager.test.ts > retained 关闭与旧回调补充边界 > manager_old_close_request_cannot_target_reopened_editor，旧closed不发新null
++ ↓ src/components/retained-manager.test.ts > retained 关闭与旧回调补充边界 > manager_busy_close_gesture_cannot_blur_then_close，正常输入不被拒绝手势吞掉
++ ↓ src/components/retained-manager.test.ts > retained 关闭与旧回调补充边界 > retained序列化异常不关闭，修正后成功提交一次
++ ↓ src/components/retained-manager.test.ts > retained 关闭与旧回调补充边界 > legacy_dialog_dismiss_unchanged mode=undefined
++ ↓ src/components/retained-manager.test.ts > retained 关闭与旧回调补充边界 > legacy_dialog_dismiss_unchanged mode=legacy
++ ↓ src/components/retained-manager.test.ts > retained 多实例与捕获版本 > 同ID两个真实FormManager，busy保护不拦另一实例的Enter或输入
++ ↓ src/components/retained-manager.test.ts > retained 多实例与捕获版本 > 捕获中同步新输入使候选失效，下一次仍可收集最新值
++ ↓ src/components/retained-manager.test.ts > 确认期间宿主替换同ID同内容表单，旧肯定答复与保存均拒绝且保留输入
++ ↓ src/components/retained-manager.test.ts > 授权关闭的真实Dialog closed事件完成收尾并转发null
++ ↓ src/components/retained-manager.test.ts > 同一表单对象被宿主原位改写也不覆盖当前输入
++ ↓ src/components/retained-manager.test.ts > 旧Dialog迟到modelValue回调不能关闭同ID重开的编辑器
++ ↓ src/components/retained-manager.test.ts > 当前Dialog modelValue=false只请求关闭，未经明确放弃不销毁
++ ↓ src/components/retained-manager.test.ts > 同ID新会话尚未挂载时不读取或收集旧子ref
++ ✓ src/components/retained-manager.test.ts > 旧页头关闭按钮的迟到click不取得新会话的放弃授权 3298ms
++ ↓ src/components/retained-manager.test.ts > P1复审P2：模式冲突后打开与重开 > legacy挂载后改变模式不切换子实现，也不经旧出口提交
++ ↓ src/components/retained-manager.test.ts > P1复审P2：模式冲突后打开与重开 > retained挂载后改变模式不切换子实现，也不经旧出口提交
++ ↓ src/components/retained-manager.test.ts > P1复审P2：模式冲突后打开与重开 > legacy成功关闭后改模式重开，拒绝新模式且旧内容不再提交
++ ↓ src/components/retained-manager.test.ts > P1复审P2：模式冲突后打开与重开 > retained成功关闭后改模式重开，拒绝新模式且旧内容不再提交
++ ↓ src/components/retained-manager.test.ts > Manager owner回归：结束后旧续体与finally不改写后例的值或spy
++ ↓ src/components/retained-manager.test.ts > Manager owner回归：登记后由真实afterEach关闭并恢复兼容描述符
++ ↓ src/components/retained-manager.test.ts > Manager owner回归：体异常=false仍关闭真实root且只恢复自有spy一次
++ ↓ src/components/retained-manager.test.ts > Manager owner回归：体异常=true仍关闭真实root且只恢复自有spy一次
++ ↓ src/components/retained-manager.test.ts > Manager owner回归：失效后拒绝迟到mount、spy、输入和清理登记
++ ↓ src/components/retained-manager.test.ts > Manager owner回归：等待中的旧轮询恢复后不执行迟到动作
++ ↓ src/components/retained-manager.test.ts > Manager owner回归：活动真实组件意外断开必须失败
++ ↓ src/components/retained-manager.test.ts > Manager owner回归：全部先失效并逆序清理，卸载后抛错仍关闭其余root
++ ↓ src/components/retained-manager.test.ts > Manager style回归：同一节点文本属性及顺序原样恢复，重复close幂等
++ ↓ src/components/retained-manager.test.ts > Manager style回归：体异常后真实root和样式均清理
++ ↓ src/components/retained-manager.test.ts > Manager style回归：卸载真实root后抛错仍恢复样式
++ ↓ src/components/retained-manager.test.ts > Manager style回归：真实afterEach关闭已登记scope并恢复兼容环境
++ ↓ src/components/retained-manager.test.ts > Manager style回归：A结束后旧续体及finally不恢复B临时移离的样式
++ ↓ src/components/retained-manager.test.ts > Manager style回归：missing识别失败不改变现有样式
++ ↓ src/components/retained-manager.test.ts > Manager style回归：duplicate识别失败不改变现有样式
++ ↓ src/components/retained-manager.test.ts > Manager style回归：移离动作完成后异常也有已登记恢复
++ ↓ src/components/retained-manager.test.ts > 文字style回归：真实afterEach先卸载目标再恢复样式和兼容环境
++ ↓ src/components/retained-manager.test.ts > 文字style回归：已关闭owner拒绝挂载且不覆盖后例wrapper
++ ↓ src/components/retained-manager.test.ts > 文字style回归：body异常仍卸载真实目标并恢复样式
++ ↓ src/components/retained-manager.test.ts > 文字style回归：unmount异常仍卸载真实目标并恢复样式
++ ↓ src/components/retained-manager.test.ts > 文字style回归：目标仍连接也不能用已关闭owner激活
++ ↓ src/components/retained-manager.test.ts > 文字style回归：选中等待结束后旧续体与finally不改B的样式输入和spy
++ ↓ src/components/retained-manager.test.ts > 文字style回归：装载前序列化异常不覆盖现有目标且仍恢复样式
++ ↓ src/components/retained-manager.test.ts > Manager旧状态style回归：显式选项在挂载前移离主样式且先卸载再恢复
++ ↓ src/components/retained-manager.test.ts > Manager旧状态style回归：未传选项保持主CSS在场并正常清理
++ ↓ src/components/retained-manager.test.ts > Manager旧状态style回归：body异常仍关闭真实编辑器并恢复样式
++ ↓ src/components/retained-manager.test.ts > Manager旧状态style回归：unmount异常仍关闭真实编辑器并恢复样式
++ ↓ src/components/retained-manager.test.ts > Manager旧状态style回归：结束后旧续体和finally不改B的样式输入或spy
++ ↓ src/components/retained-manager.test.ts > Manager协议夹具回归：挂载前移离并由原owner先卸载后恢复
++ ↓ src/components/retained-manager.test.ts > Manager协议夹具回归：body异常仍关闭真实组件并恢复自有样式和spy
++ ↓ src/components/retained-manager.test.ts > Manager协议夹具回归：unmount异常仍关闭真实组件并恢复自有样式和spy
++ ↓ src/components/retained-manager.test.ts > Manager协议夹具回归：旧续体及finally不触碰后例输入样式或spy
++ ↓ src/components/retained-manager.test.ts > 共享设计器生命周期回归：initial-flush/resolve结束后不查询后例或点击旧菜单
++ ↓ src/components/retained-manager.test.ts > 共享设计器生命周期回归：initial-flush/reject结束后不查询后例或点击旧菜单
++ ↓ src/components/retained-manager.test.ts > 共享设计器生命周期回归：field-switch/resolve结束后不查询后例或点击旧菜单
++ ↓ src/components/retained-manager.test.ts > 共享设计器生命周期回归：field-switch/reject结束后不查询后例或点击旧菜单
++ ↓ src/components/retained-manager.test.ts > 共享设计器生命周期回归：after-delete/resolve结束后不查询后例或点击旧菜单
++ ↓ src/components/retained-manager.test.ts > 共享设计器生命周期回归：after-delete/reject结束后不查询后例或点击旧菜单
++ ↓ src/components/retained-manager.test.ts > 共享设计器生命周期回归：真实afterEach关闭根与原owner，恢复样式和描述符
++ ↓ src/components/retained-manager.test.ts > 共享协议选项回归：isolateMainStyle=undefined在挂载前生效并恢复原节点
++ ↓ src/components/retained-manager.test.ts > 共享协议选项回归：isolateMainStyle=false在挂载前生效并恢复原节点
++ ↓ src/components/retained-manager.test.ts > 共享协议选项回归：isolateMainStyle=true在挂载前生效并恢复原节点
++ ↓ src/components/retained-inputs.test.ts > retained 数值日期与同步捕获 > pending_number_text_survives_navigation
++ ✓ src/components/retained-inputs.test.ts > retained 真实数值日期回归 > partial_date_does_not_normalize_on_blur 3581ms
++ ↓ src/components/retained-inputs.test.ts > retained 真实数值日期回归 > valid_echo_pending_blocks_capture，回显后仍保留字形
++ ↓ src/components/retained-inputs.test.ts > retained 真实数值日期回归 > composition_end_same_tick_is_blocked
++ ↓ src/components/retained-inputs.test.ts > retained 真实数值日期回归 > foreign_editor_keeps_focus；只读查询不编辑、不blur
++ ✓ src/components/retained-inputs.test.ts > retained 真实数值日期回归 > 删除公开source立即撤销旧缓冲，同名field不复用 2942ms
++ ↓ src/components/retained-inputs.test.ts > retained 真实数值日期回归 > mode固定且未知文档替换保持原文并阻断
++ ↓ src/components/retained-inputs.test.ts > retained Tab前置保护 > busy时Tab前往自有取消按钮被拒绝，正常输入之间Tab不吞键
++ ↓ src/components/retained-inputs.test.ts > retained I01导入边界 > I01 undefined未编辑原样往返，非普通date编辑明确阻断
++ ↓ src/components/retained-inputs.test.ts > retained I01导入边界 > I01 date未编辑原样往返，非普通date编辑明确阻断
++ ↓ src/components/retained-inputs.test.ts > retained I01导入边界 > I01 datetime未编辑原样往返，非普通date编辑明确阻断
++ ↓ src/components/retained-inputs.test.ts > retained I01导入边界 > I01 week未编辑原样往返，非普通date编辑明确阻断
++ ↓ src/components/retained-inputs.test.ts > retained I01导入边界 > I01 month未编辑原样往返，非普通date编辑明确阻断
++ ↓ src/components/retained-inputs.test.ts > retained I01导入边界 > I01 year未编辑原样往返，非普通date编辑明确阻断
++ ↓ src/components/retained-inputs.test.ts > retained 真实字段删除复用 > 公开delete时点撤销缓存，菜单新建后同名field不复用旧raw
++ ↓ src/components/retained-inputs.test.ts > 日历动画开始后即阻断捕获，关闭后恢复
++ ↓ src/components/retained-inputs.test.ts > 缓存原文后的原生change/失焦不制造新的编辑版本
++ ↓ src/components/retained-inputs.test.ts > 缺少secure-context randomUUID时legacy仍可装载和收集
++ ↓ src/components/retained-inputs.test.ts > 缺少secure-context randomUUID时retained仍可装载和收集
++ ↓ src/components/retained-inputs.test.ts > P1复审P2：属性控件确认与删除生命期 > 恢复原值且没有change时，刷新后可捕获；同步阶段仍阻断
++ ↓ src/components/retained-inputs.test.ts > P1复审P2：属性控件确认与删除生命期 > delete撤销已移除控件的等待，不要求change
++ ↓ src/components/retained-inputs.test.ts > P1复审P2：属性控件确认与删除生命期 > clear撤销已移除控件的等待，不要求change
++ ↓ src/components/retained-inputs.test.ts > P1复审P2：属性控件确认与删除生命期 > 旧change的下一tick不能清除同控件更新后的未确认输入
++ ↓ src/components/retained-inputs.test.ts > P1复审P2：同步捕获重入 > inputNumber的等价原文1000→1e3在公开回显前也必须阻断
++ ↓ src/components/retained-inputs.test.ts > P1复审P2：同步捕获重入 > inputNumber的等价原文1→01在公开回显前也必须阻断
++ ↓ src/components/retained-inputs.test.ts > P1复审P2：同步捕获重入 > datePicker的等价原文2024-02-29→2024-02-29在公开回显前也必须阻断
++ ↓ src/components/retained-inputs.test.ts > P1复审P2：删除其他字段不会清除仍在场的属性输入等待
++ ↓ src/components/retained-inputs.test.ts > P1复审P2：原生number的badInput空串不能冒充恢复初始空值
++ ↓ src/components/retained-inputs.test.ts > P1复审P2：同次change和blur的合法number归一后解除等待
++ ↓ src/components/retained-inputs.test.ts > P2 retained文字存在性 > text/grid=false清空仍是显式空串，未设置字段不补值
++ ↓ src/components/retained-inputs.test.ts > P2 retained文字存在性 > textarea/grid=false清空仍是显式空串，未设置字段不补值
++ ↓ src/components/retained-inputs.test.ts > P2 retained文字存在性 > text/grid=true清空仍是显式空串，未设置字段不补值
++ ↓ src/components/retained-inputs.test.ts > P2 retained文字存在性 > textarea/grid=true清空仍是显式空串，未设置字段不补值
++ ↓ src/components/retained-inputs.test.ts > P2 retained文字存在性 > 开关关闭才未设置，再开启为空串；切字段保持存在性
++ ↓ src/components/retained-inputs.test.ts > P2 retained文字存在性 > 显式空串与未设置保存重开保持存在性
++ ↓ src/components/retained-inputs.test.ts > P2 retained文字存在性 > clear明确删除文字字段后释放组合与存在性状态
++ ↓ src/components/retained-inputs.test.ts > P2 retained文字存在性 > 同步draftChange重入不捕获旧值，文本组合结束同tick阻断
++ ↓ src/components/retained-inputs.test.ts > P2 retained文字存在性 > 文字显式空串经FormManager提交成对输出一次并关闭
++ ↓ src/components/retained-inputs.test.ts > P2 retained文字存在性 > undefined不启用文本存在性入口
++ ↓ src/components/retained-inputs.test.ts > P2 retained文字存在性 > legacy不启用文本存在性入口
++
++ Test Files  2 passed (2)
++      Tests  3 passed | 106 skipped (109)
++   Start at  18:05:07
++   Duration  18.03s (tests 56%, import 28%, environment 8%, transform 7%)
++
++    Isolate  2 workers spawned · ~936ms startup each (spawn + environment, per file)
++             at least ~936ms faster with isolate: false — reuses workers across files instead of one per file
++
+diff --git a/docs/design/system-v1/brand/evidence/103-property-drawer/host-colors.json b/docs/design/system-v1/brand/evidence/103-property-drawer/host-colors.json
+new file mode 100644
+index 0000000..05eda52
+--- /dev/null
++++ b/docs/design/system-v1/brand/evidence/103-property-drawer/host-colors.json
+@@ -0,0 +1,163 @@
++{
++  "browser": "156.0.8078.4",
++  "results": [
++    {
++      "value": "#ff0000",
++      "expected": "#FF0000",
++      "actual": {
++        "primary": "#FF0000",
++        "secondary": "#666666",
++        "hasEpWrites": false,
++        "value": "颜色切换后保留的草稿",
++        "focused": true,
++        "children": 3,
++        "canvases": 0
++      }
++    },
++    {
++      "value": "#f00",
++      "expected": "#FF0000",
++      "actual": {
++        "primary": "#FF0000",
++        "secondary": "#666666",
++        "hasEpWrites": false,
++        "value": "颜色切换后保留的草稿",
++        "focused": true,
++        "children": 3,
++        "canvases": 0
++      }
++    },
++    {
++      "value": "#ff0000ff",
++      "expected": "#FF0000",
++      "actual": {
++        "primary": "#FF0000",
++        "secondary": "#666666",
++        "hasEpWrites": false,
++        "value": "颜色切换后保留的草稿",
++        "focused": true,
++        "children": 3,
++        "canvases": 0
++      }
++    },
++    {
++      "value": "red",
++      "expected": "#FF0000",
++      "actual": {
++        "primary": "#FF0000",
++        "secondary": "#666666",
++        "hasEpWrites": false,
++        "value": "颜色切换后保留的草稿",
++        "focused": true,
++        "children": 3,
++        "canvases": 0
++      }
++    },
++    {
++      "value": "rgb(100% 0% 0%)",
++      "expected": "#FF0000",
++      "actual": {
++        "primary": "#FF0000",
++        "secondary": "#666666",
++        "hasEpWrites": false,
++        "value": "颜色切换后保留的草稿",
++        "focused": true,
++        "children": 3,
++        "canvases": 0
++      }
++    },
++    {
++      "value": "hsl(0 100% 50%)",
++      "expected": "#FF0000",
++      "actual": {
++        "primary": "#FF0000",
++        "secondary": "#666666",
++        "hasEpWrites": false,
++        "value": "颜色切换后保留的草稿",
++        "focused": true,
++        "children": 3,
++        "canvases": 0
++      }
++    },
++    {
++      "value": "oklch(0.62795536 0.25768331 29.233885)",
++      "expected": "#FF0000",
++      "actual": {
++        "primary": "#FF0000",
++        "secondary": "#666666",
++        "hasEpWrites": false,
++        "value": "颜色切换后保留的草稿",
++        "focused": true,
++        "children": 3,
++        "canvases": 0
++      }
++    },
++    {
++      "value": "color(display-p3 1 0 0)",
++      "expected": "#FF0000",
++      "actual": {
++        "primary": "#FF0000",
++        "secondary": "#666666",
++        "hasEpWrites": false,
++        "value": "颜色切换后保留的草稿",
++        "focused": true,
++        "children": 3,
++        "canvases": 0
++      }
++    },
++    {
++      "value": "rgb(255 0 0 / 50%)",
++      "expected": "#FF8080",
++      "actual": {
++        "primary": "#FF8080",
++        "secondary": "#666666",
++        "hasEpWrites": false,
++        "value": "颜色切换后保留的草稿",
++        "focused": true,
++        "children": 3,
++        "canvases": 0
++      }
++    },
++    {
++      "value": "#f008",
++      "expected": "#FF7777",
++      "actual": {
++        "primary": "#FF7777",
++        "secondary": "#666666",
++        "hasEpWrites": false,
++        "value": "颜色切换后保留的草稿",
++        "focused": true,
++        "children": 3,
++        "canvases": 0
++      }
++    },
++    {
++      "value": "currentColor",
++      "expected": "#0F6B65",
++      "actual": {
++        "primary": "#0F6B65",
++        "secondary": "#666666",
++        "hasEpWrites": false,
++        "value": "颜色切换后保留的草稿",
++        "focused": true,
++        "children": 3,
++        "canvases": 0
++      }
++    },
++    {
++      "value": "invalid-color",
++      "expected": "#409EFF",
++      "actual": {
++        "primary": "#409EFF",
++        "secondary": "#666666",
++        "hasEpWrites": false,
++        "value": "颜色切换后保留的草稿",
++        "focused": true,
++        "children": 3,
++        "canvases": 0
++      }
++    }
++  ],
++  "errors": [],
++  "failures": []
++}
+diff --git a/docs/design/system-v1/brand/evidence/103-property-drawer/host-colors.mjs.txt b/docs/design/system-v1/brand/evidence/103-property-drawer/host-colors.mjs.txt
+new file mode 100644
+index 0000000..f5cc257
+--- /dev/null
++++ b/docs/design/system-v1/brand/evidence/103-property-drawer/host-colors.mjs.txt
+@@ -0,0 +1,80 @@
++import { mkdir, writeFile } from 'node:fs/promises';
++import { resolve } from 'node:path';
++import { pathToFileURL } from 'node:url';
++
++const [driverPath, baseUrl, outputDir] = process.argv.slice(2);
++if (!driverPath || !baseUrl || !outputDir) throw new Error('需要驱动、URL 和输出目录参数');
++const { chromium } = await import(pathToFileURL(resolve(driverPath)).href);
++await mkdir(outputDir, { recursive: true });
++const browser = await chromium.launch({
++  headless: true,
++  executablePath: process.env.FLOWDUET_CHROMIUM_PATH || '/Users/l/Library/Caches/ms-playwright/chromium-1248/chrome-mac-x64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing',
++});
++const page = await browser.newPage({ viewport: { width: 1440, height: 1100 } });
++const failures = [];
++const errors = [];
++const results = [];
++page.on('pageerror', error => errors.push(error.message));
++const check = (condition, message) => { if (!condition) failures.push(message); };
++const cases = [
++  { value: '#ff0000', expected: '#FF0000' },
++  { value: '#f00', expected: '#FF0000' },
++  { value: '#ff0000ff', expected: '#FF0000' },
++  { value: 'red', expected: '#FF0000' },
++  { value: 'rgb(100% 0% 0%)', expected: '#FF0000' },
++  { value: 'hsl(0 100% 50%)', expected: '#FF0000' },
++  { value: 'oklch(0.62795536 0.25768331 29.233885)', expected: '#FF0000' },
++  { value: 'color(display-p3 1 0 0)', expected: '#FF0000' },
++  { value: 'rgb(255 0 0 / 50%)', expected: '#FF8080' },
++  { value: '#f008', expected: '#FF7777' },
++  { value: 'currentColor', expected: '#0F6B65' },
++  { value: 'invalid-color', expected: '#409EFF' },
++];
++try {
++  await page.goto(baseUrl, { waitUntil: 'networkidle' });
++  await page.locator('[data-test="appearance-scene-btn"]').click();
++  await page.locator('[data-test="appearance-first-designer"] [data-entity-id="approval"]').click();
++  const drawer = page.locator('[data-test="node-drawer"]:visible');
++  await drawer.waitFor();
++  const input = await drawer.locator('[data-test="drawer-name"]').elementHandle();
++  await input.fill('颜色切换后保留的草稿');
++  const initial = await page.evaluate(() => ({
++    children: document.querySelector('[data-test="appearance-first-designer"]').childElementCount,
++    canvases: document.querySelectorAll('canvas').length,
++  }));
++  for (const item of cases) {
++    await page.evaluate(value => {
++      const host = document.querySelector('[data-test="appearance-first-designer"]');
++      host.style.setProperty('--el-color-primary', value);
++      host.style.setProperty('--el-bg-color', '#fff');
++      host.style.setProperty('--el-text-color-regular', 'hsl(0 0% 40%)');
++      host.style.color = '#0f6b65';
++    }, item.value);
++    await page.selectOption('[data-test="appearance-first-density"]', 'compact');
++    await input.focus();
++    await page.selectOption('[data-test="appearance-first-density"]', 'comfortable');
++    const actual = await drawer.evaluate(element => ({
++      primary: element.style.getPropertyValue('--fd-primary'),
++      secondary: element.style.getPropertyValue('--fd-secondary'),
++      hasEpWrites: element.getAttribute('style').includes('--el-'),
++      value: element.querySelector('[data-test="drawer-name"]').value,
++      focused: document.activeElement === element.querySelector('[data-test="drawer-name"]'),
++      children: document.querySelector('[data-test="appearance-first-designer"]').childElementCount,
++      canvases: document.querySelectorAll('canvas').length,
++    }));
++    results.push({ ...item, actual });
++    check(actual.primary === item.expected, `${item.value}: ${actual.primary} !== ${item.expected}`);
++    check(actual.secondary === '#666666', `${item.value}: 次要文字未跟随宿主`);
++    check(!actual.hasEpWrites, `${item.value}: 回写了 EP 变量`);
++    check(actual.value === '颜色切换后保留的草稿' && actual.focused, `${item.value}: 输入或焦点丢失`);
++    check(actual.children === initial.children && actual.canvases === initial.canvases, `${item.value}: 遗留解析节点`);
++  }
++  check(await input.evaluate(element => element === document.querySelector('[data-test="node-drawer"]:not([aria-hidden="true"]) [data-test="drawer-name"]')), '输入节点被替换');
++  check((await page.locator('[data-test="appearance-first-change-count"]').textContent()).trim() === 'change 0', '主题更新写入模型');
++  check(errors.length === 0, `pageerror: ${errors.join('; ')}`);
++  await writeFile(resolve(outputDir, 'host-colors.json'), JSON.stringify({ browser: await browser.version(), results, errors, failures }, null, 2) + '\n');
++  console.log(JSON.stringify({ cases: results.length, errors, failures }));
++  if (failures.length) process.exitCode = 1;
++} finally {
++  await browser.close();
++}
+diff --git a/docs/design/system-v1/brand/evidence/103-property-drawer/matrix.json b/docs/design/system-v1/brand/evidence/103-property-drawer/matrix.json
+new file mode 100644
+index 0000000..ba50c63
+--- /dev/null
++++ b/docs/design/system-v1/brand/evidence/103-property-drawer/matrix.json
+@@ -0,0 +1,292 @@
++{
++  "browser": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
++  "viewport": {
++    "width": 1440,
++    "height": 1100,
++    "deviceScaleFactor": 1
++  },
++  "results": [
++    {
++      "id": "host-light-comfortable",
++      "className": "flowduet-node-drawer flowduet-appearance flowduet-appearance--host flowduet-appearance--light flowduet-appearance--comfortable el-drawer rtl open",
++      "inlineStyle": "--fd-control-height: 32px; --fd-control-font-size: 14px; --fd-field-gap: 16px; --fd-panel-padding: 24px; --fd-node-padding: 16px; --fd-row-gap: 12px; --fd-canvas: #F2F3F5; --fd-surface: #FFFFFF; --fd-inset: #F5F7FA; --fd-text: #303133; --fd-secondary: #606266; --fd-muted: #6E6F70; --fd-border: #E4E7ED; --fd-control-border: #8B8C8D; --fd-primary: #409EFF; --fd-primary-hover: #79BBFF; --fd-primary-pressed: #337ECC; --fd-on-primary: #FFFFFF; --fd-primary-soft: #E6F2FF; --fd-primary-ink: #006EC6; --fd-focus: #006EC6; --fd-danger: #B4233A; --fd-danger-soft: #FFF0F2; --fd-success: #23714D; --fd-warning: #8C5C12; --fd-disabled-text: #A8ABB2; --fd-disabled-surface: #F5F7FA; --fd-font-family: \"Helvetica Neue\", Helvetica, \"PingFang SC\", \"Hiragino Sans GB\", \"Microsoft YaHei\", \"微软雅黑\", Arial, sans-serif; --fd-font-size-base: 14px; --fd-radius: 4px; width: 360px;",
++      "drawer": {
++        "x": 1080,
++        "right": 1440,
++        "width": 360,
++        "height": 1100
++      },
++      "inputHeight": 32,
++      "inputFontSize": "14px",
++      "saveHeight": 32,
++      "saveFontSize": "14px",
++      "saveColor": "rgb(255, 255, 255)",
++      "saveBackground": "rgb(64, 158, 255)",
++      "cardBorderColor": "rgb(0, 110, 198)",
++      "cardBorderWidth": "2px",
++      "cardBackground": "rgb(230, 242, 255)",
++      "cardText": "单签一人审批已选中",
++      "selectHeight": 32,
++      "selectBackground": "rgb(255, 255, 255)",
++      "bodyPadding": "24px",
++      "fieldMarginBottom": "16px",
++      "labelFontSize": "13px",
++      "labelColor": "rgb(96, 98, 102)",
++      "titleFontSize": "20px",
++      "hostInputBorder": "rgb(220, 223, 230) 0px 0px 0px 1px inset",
++      "activeValue": "未提交：八组外观矩阵",
++      "activeFocused": true,
++      "inputConnected": true,
++      "changeCount": "change 0",
++      "htmlClass": ""
++    },
++    {
++      "id": "host-light-compact",
++      "className": "flowduet-node-drawer flowduet-appearance flowduet-appearance--host flowduet-appearance--light flowduet-appearance--compact el-drawer rtl open",
++      "inlineStyle": "--fd-control-height: 24px; --fd-control-font-size: 12px; --fd-field-gap: 12px; --fd-panel-padding: 16px; --fd-node-padding: 12px; --fd-row-gap: 8px; --fd-canvas: #F2F3F5; --fd-surface: #FFFFFF; --fd-inset: #F5F7FA; --fd-text: #303133; --fd-secondary: #606266; --fd-muted: #6E6F70; --fd-border: #E4E7ED; --fd-control-border: #8B8C8D; --fd-primary: #409EFF; --fd-primary-hover: #79BBFF; --fd-primary-pressed: #337ECC; --fd-on-primary: #FFFFFF; --fd-primary-soft: #E6F2FF; --fd-primary-ink: #006EC6; --fd-focus: #006EC6; --fd-danger: #B4233A; --fd-danger-soft: #FFF0F2; --fd-success: #23714D; --fd-warning: #8C5C12; --fd-disabled-text: #A8ABB2; --fd-disabled-surface: #F5F7FA; --fd-font-family: \"Helvetica Neue\", Helvetica, \"PingFang SC\", \"Hiragino Sans GB\", \"Microsoft YaHei\", \"微软雅黑\", Arial, sans-serif; --fd-font-size-base: 14px; --fd-radius: 4px; width: 360px;",
++      "drawer": {
++        "x": 1080,
++        "right": 1440,
++        "width": 360,
++        "height": 1100
++      },
++      "inputHeight": 24,
++      "inputFontSize": "12px",
++      "saveHeight": 24,
++      "saveFontSize": "12px",
++      "saveColor": "rgb(255, 255, 255)",
++      "saveBackground": "rgb(64, 158, 255)",
++      "cardBorderColor": "rgb(0, 110, 198)",
++      "cardBorderWidth": "2px",
++      "cardBackground": "rgb(230, 242, 255)",
++      "cardText": "单签一人审批已选中",
++      "selectHeight": 24,
++      "selectBackground": "rgb(255, 255, 255)",
++      "bodyPadding": "16px",
++      "fieldMarginBottom": "12px",
++      "labelFontSize": "13px",
++      "labelColor": "rgb(96, 98, 102)",
++      "titleFontSize": "20px",
++      "hostInputBorder": "rgb(220, 223, 230) 0px 0px 0px 1px inset",
++      "activeValue": "未提交：八组外观矩阵",
++      "activeFocused": true,
++      "inputConnected": true,
++      "changeCount": "change 0",
++      "htmlClass": ""
++    },
++    {
++      "id": "host-dark-comfortable",
++      "className": "flowduet-node-drawer flowduet-appearance flowduet-appearance--host flowduet-appearance--dark flowduet-appearance--comfortable el-drawer rtl open",
++      "inlineStyle": "--fd-control-height: 32px; --fd-control-font-size: 14px; --fd-field-gap: 16px; --fd-panel-padding: 24px; --fd-node-padding: 16px; --fd-row-gap: 12px; --fd-canvas: #0A0A0A; --fd-surface: #141414; --fd-inset: #262727; --fd-text: #E5EAF3; --fd-secondary: #CFD3DC; --fd-muted: #8B8E93; --fd-border: #414243; --fd-control-border: #6E7074; --fd-primary: #409EFF; --fd-primary-hover: #3375B9; --fd-primary-pressed: #66B1FF; --fd-on-primary: #FFFFFF; --fd-primary-soft: #1D3753; --fd-primary-ink: #48A1FF; --fd-focus: #409EFF; --fd-danger: #FF9DAE; --fd-danger-soft: #422835; --fd-success: #81D5A6; --fd-warning: #F0C46B; --fd-disabled-text: #8D9095; --fd-disabled-surface: #262727; --fd-font-family: \"Helvetica Neue\", Helvetica, \"PingFang SC\", \"Hiragino Sans GB\", \"Microsoft YaHei\", \"微软雅黑\", Arial, sans-serif; --fd-font-size-base: 14px; --fd-radius: 4px; width: 360px;",
++      "drawer": {
++        "x": 1080,
++        "right": 1440,
++        "width": 360,
++        "height": 1100
++      },
++      "inputHeight": 32,
++      "inputFontSize": "14px",
++      "saveHeight": 32,
++      "saveFontSize": "14px",
++      "saveColor": "rgb(255, 255, 255)",
++      "saveBackground": "rgb(64, 158, 255)",
++      "cardBorderColor": "rgb(72, 161, 255)",
++      "cardBorderWidth": "2px",
++      "cardBackground": "rgb(29, 55, 83)",
++      "cardText": "单签一人审批已选中",
++      "selectHeight": 32,
++      "selectBackground": "rgb(20, 20, 20)",
++      "bodyPadding": "24px",
++      "fieldMarginBottom": "16px",
++      "labelFontSize": "13px",
++      "labelColor": "rgb(207, 211, 220)",
++      "titleFontSize": "20px",
++      "hostInputBorder": "rgb(76, 77, 79) 0px 0px 0px 1px inset",
++      "activeValue": "未提交：八组外观矩阵",
++      "activeFocused": true,
++      "inputConnected": true,
++      "changeCount": "change 0",
++      "htmlClass": "dark"
++    },
++    {
++      "id": "host-dark-compact",
++      "className": "flowduet-node-drawer flowduet-appearance flowduet-appearance--host flowduet-appearance--dark flowduet-appearance--compact el-drawer rtl open",
++      "inlineStyle": "--fd-control-height: 24px; --fd-control-font-size: 12px; --fd-field-gap: 12px; --fd-panel-padding: 16px; --fd-node-padding: 12px; --fd-row-gap: 8px; --fd-canvas: #0A0A0A; --fd-surface: #141414; --fd-inset: #262727; --fd-text: #E5EAF3; --fd-secondary: #CFD3DC; --fd-muted: #8B8E93; --fd-border: #414243; --fd-control-border: #6E7074; --fd-primary: #409EFF; --fd-primary-hover: #3375B9; --fd-primary-pressed: #66B1FF; --fd-on-primary: #FFFFFF; --fd-primary-soft: #1D3753; --fd-primary-ink: #48A1FF; --fd-focus: #409EFF; --fd-danger: #FF9DAE; --fd-danger-soft: #422835; --fd-success: #81D5A6; --fd-warning: #F0C46B; --fd-disabled-text: #8D9095; --fd-disabled-surface: #262727; --fd-font-family: \"Helvetica Neue\", Helvetica, \"PingFang SC\", \"Hiragino Sans GB\", \"Microsoft YaHei\", \"微软雅黑\", Arial, sans-serif; --fd-font-size-base: 14px; --fd-radius: 4px; width: 360px;",
++      "drawer": {
++        "x": 1080,
++        "right": 1440,
++        "width": 360,
++        "height": 1100
++      },
++      "inputHeight": 24,
++      "inputFontSize": "12px",
++      "saveHeight": 24,
++      "saveFontSize": "12px",
++      "saveColor": "rgb(255, 255, 255)",
++      "saveBackground": "rgb(64, 158, 255)",
++      "cardBorderColor": "rgb(72, 161, 255)",
++      "cardBorderWidth": "2px",
++      "cardBackground": "rgb(29, 55, 83)",
++      "cardText": "单签一人审批已选中",
++      "selectHeight": 24,
++      "selectBackground": "rgb(20, 20, 20)",
++      "bodyPadding": "16px",
++      "fieldMarginBottom": "12px",
++      "labelFontSize": "13px",
++      "labelColor": "rgb(207, 211, 220)",
++      "titleFontSize": "20px",
++      "hostInputBorder": "rgb(76, 77, 79) 0px 0px 0px 1px inset",
++      "activeValue": "未提交：八组外观矩阵",
++      "activeFocused": true,
++      "inputConnected": true,
++      "changeCount": "change 0",
++      "htmlClass": "dark"
++    },
++    {
++      "id": "brand-light-comfortable",
++      "className": "flowduet-node-drawer flowduet-appearance flowduet-appearance--brand flowduet-appearance--light flowduet-appearance--comfortable el-drawer rtl open",
++      "inlineStyle": "--fd-control-height: 32px; --fd-control-font-size: 14px; --fd-field-gap: 16px; --fd-panel-padding: 24px; --fd-node-padding: 16px; --fd-row-gap: 12px; --fd-canvas: #F5F6FA; --fd-surface: #FFFFFF; --fd-inset: #F0F2F8; --fd-text: #20263D; --fd-secondary: #565F76; --fd-muted: #626D86; --fd-border: #CDD2E0; --fd-control-border: #7A859E; --fd-primary: #2D3E97; --fd-primary-hover: #222F87; --fd-primary-pressed: #181F77; --fd-on-primary: #FFFFFF; --fd-primary-soft: #EAF0FF; --fd-primary-ink: #2D3E97; --fd-focus: #2D3E97; --fd-danger: #B4233A; --fd-danger-soft: #FFF0F2; --fd-success: #23714D; --fd-warning: #8C5C12; --fd-disabled-text: #8B92A4; --fd-disabled-surface: #EDF0F5; --fd-font-family: system-ui, -apple-system, \"PingFang SC\", \"Microsoft YaHei\", sans-serif; --fd-font-size-base: 14px; --fd-radius: 8px; width: 360px; --el-color-primary: #2D3E97; --el-color-primary-light-3: #6C78B6; --el-color-primary-light-5: #969FCB; --el-color-primary-light-7: #C0C5E0; --el-color-primary-light-8: #D5D8EA; --el-color-primary-light-9: #EAECF5; --el-color-primary-dark-2: #243279; --el-bg-color-page: #F5F6FA; --el-bg-color: #FFFFFF; --el-bg-color-overlay: #FFFFFF; --el-fill-color-blank: #FFFFFF; --el-fill-color-light: #F0F2F8; --el-text-color-primary: #20263D; --el-text-color-regular: #565F76; --el-text-color-secondary: #626D86; --el-text-color-placeholder: #626D86; --el-border-color: #7A859E; --el-border-color-hover: #7A859E; --el-border-color-light: #CDD2E0; --el-border-color-lighter: #CDD2E0; --el-disabled-text-color: #8B92A4; --el-disabled-bg-color: #EDF0F5; --el-disabled-border-color: #CDD2E0; --el-color-danger: #B4233A; --el-color-success: #23714D; --el-color-warning: #8C5C12; --el-font-family: system-ui, -apple-system, \"PingFang SC\", \"Microsoft YaHei\", sans-serif; --el-font-size-base: 14px; --el-form-label-font-size: 13px; --el-border-radius-base: 8px;",
++      "drawer": {
++        "x": 1080,
++        "right": 1440,
++        "width": 360,
++        "height": 1100
++      },
++      "inputHeight": 32,
++      "inputFontSize": "14px",
++      "saveHeight": 32,
++      "saveFontSize": "14px",
++      "saveColor": "rgb(255, 255, 255)",
++      "saveBackground": "rgb(45, 62, 151)",
++      "cardBorderColor": "rgb(45, 62, 151)",
++      "cardBorderWidth": "2px",
++      "cardBackground": "rgb(234, 240, 255)",
++      "cardText": "单签一人审批已选中",
++      "selectHeight": 32,
++      "selectBackground": "rgb(255, 255, 255)",
++      "bodyPadding": "24px",
++      "fieldMarginBottom": "16px",
++      "labelFontSize": "13px",
++      "labelColor": "rgb(86, 95, 118)",
++      "titleFontSize": "20px",
++      "hostInputBorder": "rgb(220, 223, 230) 0px 0px 0px 1px inset",
++      "activeValue": "未提交：八组外观矩阵",
++      "activeFocused": true,
++      "inputConnected": true,
++      "changeCount": "change 0",
++      "htmlClass": ""
++    },
++    {
++      "id": "brand-light-compact",
++      "className": "flowduet-node-drawer flowduet-appearance flowduet-appearance--brand flowduet-appearance--light flowduet-appearance--compact el-drawer rtl open",
++      "inlineStyle": "--fd-control-height: 24px; --fd-control-font-size: 12px; --fd-field-gap: 12px; --fd-panel-padding: 16px; --fd-node-padding: 12px; --fd-row-gap: 8px; --fd-canvas: #F5F6FA; --fd-surface: #FFFFFF; --fd-inset: #F0F2F8; --fd-text: #20263D; --fd-secondary: #565F76; --fd-muted: #626D86; --fd-border: #CDD2E0; --fd-control-border: #7A859E; --fd-primary: #2D3E97; --fd-primary-hover: #222F87; --fd-primary-pressed: #181F77; --fd-on-primary: #FFFFFF; --fd-primary-soft: #EAF0FF; --fd-primary-ink: #2D3E97; --fd-focus: #2D3E97; --fd-danger: #B4233A; --fd-danger-soft: #FFF0F2; --fd-success: #23714D; --fd-warning: #8C5C12; --fd-disabled-text: #8B92A4; --fd-disabled-surface: #EDF0F5; --fd-font-family: system-ui, -apple-system, \"PingFang SC\", \"Microsoft YaHei\", sans-serif; --fd-font-size-base: 14px; --fd-radius: 8px; width: 360px; --el-color-primary: #2D3E97; --el-color-primary-light-3: #6C78B6; --el-color-primary-light-5: #969FCB; --el-color-primary-light-7: #C0C5E0; --el-color-primary-light-8: #D5D8EA; --el-color-primary-light-9: #EAECF5; --el-color-primary-dark-2: #243279; --el-bg-color-page: #F5F6FA; --el-bg-color: #FFFFFF; --el-bg-color-overlay: #FFFFFF; --el-fill-color-blank: #FFFFFF; --el-fill-color-light: #F0F2F8; --el-text-color-primary: #20263D; --el-text-color-regular: #565F76; --el-text-color-secondary: #626D86; --el-text-color-placeholder: #626D86; --el-border-color: #7A859E; --el-border-color-hover: #7A859E; --el-border-color-light: #CDD2E0; --el-border-color-lighter: #CDD2E0; --el-disabled-text-color: #8B92A4; --el-disabled-bg-color: #EDF0F5; --el-disabled-border-color: #CDD2E0; --el-color-danger: #B4233A; --el-color-success: #23714D; --el-color-warning: #8C5C12; --el-font-family: system-ui, -apple-system, \"PingFang SC\", \"Microsoft YaHei\", sans-serif; --el-font-size-base: 14px; --el-form-label-font-size: 13px; --el-border-radius-base: 8px;",
++      "drawer": {
++        "x": 1080,
++        "right": 1440,
++        "width": 360,
++        "height": 1100
++      },
++      "inputHeight": 24,
++      "inputFontSize": "12px",
++      "saveHeight": 24,
++      "saveFontSize": "12px",
++      "saveColor": "rgb(255, 255, 255)",
++      "saveBackground": "rgb(45, 62, 151)",
++      "cardBorderColor": "rgb(45, 62, 151)",
++      "cardBorderWidth": "2px",
++      "cardBackground": "rgb(234, 240, 255)",
++      "cardText": "单签一人审批已选中",
++      "selectHeight": 24,
++      "selectBackground": "rgb(255, 255, 255)",
++      "bodyPadding": "16px",
++      "fieldMarginBottom": "12px",
++      "labelFontSize": "13px",
++      "labelColor": "rgb(86, 95, 118)",
++      "titleFontSize": "20px",
++      "hostInputBorder": "rgb(220, 223, 230) 0px 0px 0px 1px inset",
++      "activeValue": "未提交：八组外观矩阵",
++      "activeFocused": true,
++      "inputConnected": true,
++      "changeCount": "change 0",
++      "htmlClass": ""
++    },
++    {
++      "id": "brand-dark-comfortable",
++      "className": "flowduet-node-drawer flowduet-appearance flowduet-appearance--brand flowduet-appearance--dark flowduet-appearance--comfortable el-drawer rtl open",
++      "inlineStyle": "--fd-control-height: 32px; --fd-control-font-size: 14px; --fd-field-gap: 16px; --fd-panel-padding: 24px; --fd-node-padding: 16px; --fd-row-gap: 12px; --fd-canvas: #141925; --fd-surface: #1D2435; --fd-inset: #252E43; --fd-text: #E9EDF7; --fd-secondary: #B7C0D5; --fd-muted: #A3AFC9; --fd-border: #3C4864; --fd-control-border: #75839F; --fd-primary: #A5BBFF; --fd-primary-hover: #BBCCFF; --fd-primary-pressed: #93A8EB; --fd-on-primary: #171F3E; --fd-primary-soft: #2A3354; --fd-primary-ink: #A5BBFF; --fd-focus: #A5BBFF; --fd-danger: #FF9DAE; --fd-danger-soft: #422835; --fd-success: #81D5A6; --fd-warning: #F0C46B; --fd-disabled-text: #7F8AA2; --fd-disabled-surface: #252D40; --fd-font-family: system-ui, -apple-system, \"PingFang SC\", \"Microsoft YaHei\", sans-serif; --fd-font-size-base: 14px; --fd-radius: 8px; width: 360px; --el-color-primary: #A5BBFF; --el-color-primary-light-3: #7C8EC2; --el-color-primary-light-5: #61709A; --el-color-primary-light-7: #465172; --el-color-primary-light-8: #38425D; --el-color-primary-light-9: #2B3349; --el-color-primary-dark-2: #B7C9FF; --el-bg-color-page: #141925; --el-bg-color: #1D2435; --el-bg-color-overlay: #1D2435; --el-fill-color-blank: #1D2435; --el-fill-color-light: #252E43; --el-text-color-primary: #E9EDF7; --el-text-color-regular: #B7C0D5; --el-text-color-secondary: #A3AFC9; --el-text-color-placeholder: #A3AFC9; --el-border-color: #75839F; --el-border-color-hover: #75839F; --el-border-color-light: #3C4864; --el-border-color-lighter: #3C4864; --el-disabled-text-color: #7F8AA2; --el-disabled-bg-color: #252D40; --el-disabled-border-color: #3C4864; --el-color-danger: #FF9DAE; --el-color-success: #81D5A6; --el-color-warning: #F0C46B; --el-font-family: system-ui, -apple-system, \"PingFang SC\", \"Microsoft YaHei\", sans-serif; --el-font-size-base: 14px; --el-form-label-font-size: 13px; --el-border-radius-base: 8px;",
++      "drawer": {
++        "x": 1080,
++        "right": 1440,
++        "width": 360,
++        "height": 1100
++      },
++      "inputHeight": 32,
++      "inputFontSize": "14px",
++      "saveHeight": 32,
++      "saveFontSize": "14px",
++      "saveColor": "rgb(23, 31, 62)",
++      "saveBackground": "rgb(165, 187, 255)",
++      "cardBorderColor": "rgb(165, 187, 255)",
++      "cardBorderWidth": "2px",
++      "cardBackground": "rgb(42, 51, 84)",
++      "cardText": "单签一人审批已选中",
++      "selectHeight": 32,
++      "selectBackground": "rgb(29, 36, 53)",
++      "bodyPadding": "24px",
++      "fieldMarginBottom": "16px",
++      "labelFontSize": "13px",
++      "labelColor": "rgb(183, 192, 213)",
++      "titleFontSize": "20px",
++      "hostInputBorder": "rgb(220, 223, 230) 0px 0px 0px 1px inset",
++      "activeValue": "未提交：八组外观矩阵",
++      "activeFocused": true,
++      "inputConnected": true,
++      "changeCount": "change 0",
++      "htmlClass": ""
++    },
++    {
++      "id": "brand-dark-compact",
++      "className": "flowduet-node-drawer flowduet-appearance flowduet-appearance--brand flowduet-appearance--dark flowduet-appearance--compact el-drawer rtl open",
++      "inlineStyle": "--fd-control-height: 24px; --fd-control-font-size: 12px; --fd-field-gap: 12px; --fd-panel-padding: 16px; --fd-node-padding: 12px; --fd-row-gap: 8px; --fd-canvas: #141925; --fd-surface: #1D2435; --fd-inset: #252E43; --fd-text: #E9EDF7; --fd-secondary: #B7C0D5; --fd-muted: #A3AFC9; --fd-border: #3C4864; --fd-control-border: #75839F; --fd-primary: #A5BBFF; --fd-primary-hover: #BBCCFF; --fd-primary-pressed: #93A8EB; --fd-on-primary: #171F3E; --fd-primary-soft: #2A3354; --fd-primary-ink: #A5BBFF; --fd-focus: #A5BBFF; --fd-danger: #FF9DAE; --fd-danger-soft: #422835; --fd-success: #81D5A6; --fd-warning: #F0C46B; --fd-disabled-text: #7F8AA2; --fd-disabled-surface: #252D40; --fd-font-family: system-ui, -apple-system, \"PingFang SC\", \"Microsoft YaHei\", sans-serif; --fd-font-size-base: 14px; --fd-radius: 8px; width: 360px; --el-color-primary: #A5BBFF; --el-color-primary-light-3: #7C8EC2; --el-color-primary-light-5: #61709A; --el-color-primary-light-7: #465172; --el-color-primary-light-8: #38425D; --el-color-primary-light-9: #2B3349; --el-color-primary-dark-2: #B7C9FF; --el-bg-color-page: #141925; --el-bg-color: #1D2435; --el-bg-color-overlay: #1D2435; --el-fill-color-blank: #1D2435; --el-fill-color-light: #252E43; --el-text-color-primary: #E9EDF7; --el-text-color-regular: #B7C0D5; --el-text-color-secondary: #A3AFC9; --el-text-color-placeholder: #A3AFC9; --el-border-color: #75839F; --el-border-color-hover: #75839F; --el-border-color-light: #3C4864; --el-border-color-lighter: #3C4864; --el-disabled-text-color: #7F8AA2; --el-disabled-bg-color: #252D40; --el-disabled-border-color: #3C4864; --el-color-danger: #FF9DAE; --el-color-success: #81D5A6; --el-color-warning: #F0C46B; --el-font-family: system-ui, -apple-system, \"PingFang SC\", \"Microsoft YaHei\", sans-serif; --el-font-size-base: 14px; --el-form-label-font-size: 13px; --el-border-radius-base: 8px;",
++      "drawer": {
++        "x": 1080,
++        "right": 1440,
++        "width": 360,
++        "height": 1100
++      },
++      "inputHeight": 24,
++      "inputFontSize": "12px",
++      "saveHeight": 24,
++      "saveFontSize": "12px",
++      "saveColor": "rgb(23, 31, 62)",
++      "saveBackground": "rgb(165, 187, 255)",
++      "cardBorderColor": "rgb(165, 187, 255)",
++      "cardBorderWidth": "2px",
++      "cardBackground": "rgb(42, 51, 84)",
++      "cardText": "单签一人审批已选中",
++      "selectHeight": 24,
++      "selectBackground": "rgb(29, 36, 53)",
++      "bodyPadding": "16px",
++      "fieldMarginBottom": "12px",
++      "labelFontSize": "13px",
++      "labelColor": "rgb(183, 192, 213)",
++      "titleFontSize": "20px",
++      "hostInputBorder": "rgb(220, 223, 230) 0px 0px 0px 1px inset",
++      "activeValue": "未提交：八组外观矩阵",
++      "activeFocused": true,
++      "inputConnected": true,
++      "changeCount": "change 0",
++      "htmlClass": ""
++    }
++  ],
++  "errors": [
++    "console: Failed to load resource: the server responded with a status of 404 (Not Found)"
++  ],
++  "warnings": [],
++  "failures": [],
++  "limitations": [
++    "合成 DOM 事件用于外观配置切换；未冒充真实 OS 中文输入法验收。",
++    "原生 select 的系统选项弹层由 macOS/Chromium 绘制，只能记录有限 CSS 控制，不能承诺像素级主题一致。",
++    "本轮仅桌面 Chromium；Firefox、Safari/WebKit、移动端与完整可访问性认证未验证。"
++  ]
++}
+diff --git a/docs/design/system-v1/brand/evidence/103-property-drawer/matrix.mjs.txt b/docs/design/system-v1/brand/evidence/103-property-drawer/matrix.mjs.txt
+new file mode 100644
+index 0000000..5920ae5
+--- /dev/null
++++ b/docs/design/system-v1/brand/evidence/103-property-drawer/matrix.mjs.txt
+@@ -0,0 +1,176 @@
++import { mkdir, writeFile } from 'node:fs/promises';
++import { resolve } from 'node:path';
++import { pathToFileURL } from 'node:url';
++
++const [driverPath, baseUrl, outputDir] = process.argv.slice(2);
++if (!driverPath || !baseUrl || !outputDir) throw new Error('需要驱动、URL 和输出目录参数');
++const { chromium } = await import(pathToFileURL(resolve(driverPath)).href);
++await mkdir(outputDir, { recursive: true });
++const browser = await chromium.launch({
++  headless: true,
++  executablePath: '/Users/l/Library/Caches/ms-playwright/chromium-1248/chrome-mac-x64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing',
++});
++const page = await browser.newPage({ viewport: { width: 1440, height: 1100 }, deviceScaleFactor: 1 });
++const errors = [];
++const warnings = [];
++const failures = [];
++page.on('pageerror', (error) => errors.push(`pageerror: ${error.message}`));
++page.on('console', (message) => {
++  if (message.type() === 'error') errors.push(`console: ${message.text()}`);
++  if (message.type() === 'warning') warnings.push(message.text());
++});
++page.on('response', (response) => {
++  if (response.status() >= 400) errors.push(`${response.status()} ${response.url()}`);
++});
++const check = (condition, message) => {
++  if (!condition) failures.push(message);
++};
++const setSelect = async (test, value) => {
++  await page.evaluate(({ test, value }) => {
++    const select = document.querySelector(`[data-test="${test}"]`);
++    select.value = value;
++    select.dispatchEvent(new Event('change', { bubbles: true }));
++  }, { test, value });
++};
++const setHostDark = async (dark) => {
++  await page.evaluate((dark) => {
++    const input = document.querySelector('[data-test="appearance-host-dark"]');
++    if (input.checked !== dark) {
++      input.checked = dark;
++      input.dispatchEvent(new Event('change', { bubbles: true }));
++    }
++  }, dark);
++};
++const activeDrawer = () => page.locator('[data-test="node-drawer"]:visible');
++const combinations = [
++  { colorSource: 'host', mode: 'light', density: 'comfortable', primaryInk: 'rgb(0, 110, 198)', primarySoft: 'rgb(230, 242, 255)', surface: 'rgb(255, 255, 255)', primary: 'rgb(64, 158, 255)', onPrimary: 'rgb(255, 255, 255)' },
++  { colorSource: 'host', mode: 'light', density: 'compact', primaryInk: 'rgb(0, 110, 198)', primarySoft: 'rgb(230, 242, 255)', surface: 'rgb(255, 255, 255)', primary: 'rgb(64, 158, 255)', onPrimary: 'rgb(255, 255, 255)' },
++  { colorSource: 'host', mode: 'dark', density: 'comfortable', primaryInk: 'rgb(72, 161, 255)', primarySoft: 'rgb(29, 55, 83)', surface: 'rgb(20, 20, 20)', primary: 'rgb(64, 158, 255)', onPrimary: 'rgb(255, 255, 255)' },
++  { colorSource: 'host', mode: 'dark', density: 'compact', primaryInk: 'rgb(72, 161, 255)', primarySoft: 'rgb(29, 55, 83)', surface: 'rgb(20, 20, 20)', primary: 'rgb(64, 158, 255)', onPrimary: 'rgb(255, 255, 255)' },
++  { colorSource: 'brand', mode: 'light', density: 'comfortable', primaryInk: 'rgb(45, 62, 151)', primarySoft: 'rgb(234, 240, 255)', surface: 'rgb(255, 255, 255)', primary: 'rgb(45, 62, 151)', onPrimary: 'rgb(255, 255, 255)' },
++  { colorSource: 'brand', mode: 'light', density: 'compact', primaryInk: 'rgb(45, 62, 151)', primarySoft: 'rgb(234, 240, 255)', surface: 'rgb(255, 255, 255)', primary: 'rgb(45, 62, 151)', onPrimary: 'rgb(255, 255, 255)' },
++  { colorSource: 'brand', mode: 'dark', density: 'comfortable', primaryInk: 'rgb(165, 187, 255)', primarySoft: 'rgb(42, 51, 84)', surface: 'rgb(29, 36, 53)', primary: 'rgb(165, 187, 255)', onPrimary: 'rgb(23, 31, 62)' },
++  { colorSource: 'brand', mode: 'dark', density: 'compact', primaryInk: 'rgb(165, 187, 255)', primarySoft: 'rgb(42, 51, 84)', surface: 'rgb(29, 36, 53)', primary: 'rgb(165, 187, 255)', onPrimary: 'rgb(23, 31, 62)' },
++];
++const expectedSecondary = {
++  'host-light': 'rgb(96, 98, 102)',
++  'host-dark': 'rgb(207, 211, 220)',
++  'brand-light': 'rgb(86, 95, 118)',
++  'brand-dark': 'rgb(183, 192, 213)',
++};
++const results = [];
++try {
++  await page.goto(baseUrl, { waitUntil: 'networkidle' });
++  await page.locator('[data-test="appearance-scene-btn"]').click();
++  await page.locator('[data-test="appearance-first-designer"] [data-entity-id="approval"]').click();
++  await activeDrawer().waitFor({ state: 'visible' });
++  await page.waitForTimeout(400);
++  const inputHandle = await activeDrawer().locator('[data-test="drawer-name"]').elementHandle();
++  await inputHandle.fill('未提交：八组外观矩阵');
++  await inputHandle.focus();
++
++  for (const combination of combinations) {
++    const { colorSource, mode, density } = combination;
++    await setHostDark(colorSource === 'host' && mode === 'dark');
++    await setSelect('appearance-first-source', colorSource);
++    if (colorSource === 'brand') await setSelect('appearance-first-mode', mode);
++    await setSelect('appearance-first-density', density);
++    await inputHandle.focus();
++    await page.waitForTimeout(350);
++    const id = `${colorSource}-${mode}-${density}`;
++    const actual = await activeDrawer().evaluate((drawer) => {
++      const input = drawer.querySelector('[data-test="drawer-name"]');
++      const save = drawer.querySelector('[data-test="drawer-save"]');
++      const card = drawer.querySelector('[data-test="kind-single"]');
++      const select = drawer.querySelector('[data-test="drawer-form-select"]');
++      const body = drawer.querySelector('.el-drawer__body');
++      const formItem = drawer.querySelector('.el-form-item');
++      const label = drawer.querySelector('.el-form-item__label');
++      const hostInput = document.querySelector('[data-test="appearance-host-input"]');
++      const hostWrapper = hostInput?.closest('.el-input')?.querySelector('.el-input__wrapper');
++      const box = (element) => {
++        const rect = element.getBoundingClientRect();
++        return { x: rect.x, right: rect.right, width: rect.width, height: rect.height };
++      };
++      return {
++        className: drawer.className,
++        inlineStyle: drawer.getAttribute('style'),
++        drawer: box(drawer),
++        inputHeight: box(input.closest('.el-input')).height,
++        inputFontSize: getComputedStyle(input).fontSize,
++        saveHeight: box(save).height,
++        saveFontSize: getComputedStyle(save).fontSize,
++        saveColor: getComputedStyle(save).color,
++        saveBackground: getComputedStyle(save).backgroundColor,
++        cardBorderColor: getComputedStyle(card).borderTopColor,
++        cardBorderWidth: getComputedStyle(card).borderTopWidth,
++        cardBackground: getComputedStyle(card).backgroundColor,
++        cardText: card.textContent,
++        selectHeight: box(select).height,
++        selectBackground: getComputedStyle(select).backgroundColor,
++        bodyPadding: getComputedStyle(body).padding,
++        fieldMarginBottom: getComputedStyle(formItem).marginBottom,
++        labelFontSize: getComputedStyle(label).fontSize,
++        labelColor: getComputedStyle(label).color,
++        titleFontSize: getComputedStyle(drawer.querySelector('.el-drawer__title')).fontSize,
++        hostInputBorder: hostWrapper ? getComputedStyle(hostWrapper).boxShadow : null,
++        activeValue: input.value,
++        activeFocused: document.activeElement === input,
++        inputConnected: input.isConnected,
++        changeCount: document.querySelector('[data-test="appearance-first-change-count"]').textContent,
++        htmlClass: document.documentElement.className,
++      };
++    });
++    check(actual.className.includes(`flowduet-appearance--${colorSource}`), `${id}: 配色 class 错误`);
++    check(actual.className.includes(`flowduet-appearance--${mode}`), `${id}: 主题 class 错误`);
++    check(actual.className.includes(`flowduet-appearance--${density}`), `${id}: 密度 class 错误`);
++    const expectedHeight = density === 'compact' ? 24 : 32;
++    const expectedFont = density === 'compact' ? '12px' : '14px';
++    const expectedPadding = density === 'compact' ? '16px' : '24px';
++    check(actual.inputHeight === expectedHeight, `${id}: 输入高度 ${actual.inputHeight}`);
++    check(actual.saveHeight === expectedHeight, `${id}: 确定按钮高度 ${actual.saveHeight}`);
++    check(actual.selectHeight === expectedHeight, `${id}: 原生选择器高度 ${actual.selectHeight}`);
++    check(actual.inputFontSize === expectedFont, `${id}: 输入字号 ${actual.inputFontSize}`);
++    check(actual.saveFontSize === expectedFont, `${id}: 按钮字号 ${actual.saveFontSize}`);
++    check(actual.bodyPadding === expectedPadding, `${id}: 面板内边距 ${actual.bodyPadding}`);
++    check(actual.fieldMarginBottom === (density === 'compact' ? '12px' : '16px'), `${id}: 字段间距 ${actual.fieldMarginBottom}`);
++    check(actual.labelFontSize === '13px', `${id}: 字段标签字号 ${actual.labelFontSize}`);
++    check(actual.labelColor === expectedSecondary[`${colorSource}-${mode}`], `${id}: 字段标签颜色 ${actual.labelColor}`);
++    check(actual.cardBorderWidth === '2px', `${id}: 选中卡边框 ${actual.cardBorderWidth}`);
++    check(actual.cardText.includes('已选中'), `${id}: 缺少已选中文字`);
++    check(actual.cardBorderColor === combination.primaryInk, `${id}: 选中边框 ${actual.cardBorderColor}`);
++    check(actual.cardBackground === combination.primarySoft, `${id}: 选中底 ${actual.cardBackground}`);
++    check(actual.saveBackground === combination.primary, `${id}: 主按钮底 ${actual.saveBackground}`);
++    check(actual.saveColor === combination.onPrimary, `${id}: 主按钮前景 ${actual.saveColor}`);
++    check(actual.selectBackground === combination.surface, `${id}: 原生选择器表面 ${actual.selectBackground}`);
++    check(actual.titleFontSize === '20px', `${id}: 标题字号 ${actual.titleFontSize}`);
++    check(actual.drawer.x >= 0 && actual.drawer.right <= 1441, `${id}: 抽屉超出视口 ${JSON.stringify(actual.drawer)}`);
++    check(actual.activeValue === '未提交：八组外观矩阵', `${id}: 未提交输入丢失`);
++    check(actual.activeFocused && actual.inputConnected, `${id}: 输入焦点或 DOM 未保留`);
++    check(actual.changeCount === 'change 0', `${id}: 外观切换触发模型 change`);
++    if (colorSource === 'host') check(!actual.inlineStyle.includes('--el-'), `${id}: host 写入 EP 变量`);
++    else check(actual.inlineStyle.includes('--el-color-primary'), `${id}: brand 缺少局部 EP 主色`);
++    if (colorSource === 'host' && mode === 'dark') check(actual.htmlClass.includes('dark'), `${id}: 宿主深色环境未启用`);
++    if (colorSource === 'brand') check(!actual.htmlClass.includes('dark'), `${id}: 品牌实例错误切换宿主深色`);
++    await activeDrawer().screenshot({ path: resolve(outputDir, `${id}.png`) });
++    results.push({ id, ...actual });
++  }
++  const summary = {
++    browser: await page.evaluate(() => navigator.userAgent),
++    viewport: { width: 1440, height: 1100, deviceScaleFactor: 1 },
++    results,
++    errors,
++    warnings,
++    failures,
++    limitations: [
++      '合成 DOM 事件用于外观配置切换；未冒充真实 OS 中文输入法验收。',
++      '原生 select 的系统选项弹层由 macOS/Chromium 绘制，只能记录有限 CSS 控制，不能承诺像素级主题一致。',
++      '本轮仅桌面 Chromium；Firefox、Safari/WebKit、移动端与完整可访问性认证未验证。',
++    ],
++  };
++  await writeFile(resolve(outputDir, 'matrix.json'), JSON.stringify(summary, null, 2));
++  console.log(JSON.stringify({ combinations: results.length, errors, warnings, failures }, null, 2));
++  if (failures.length > 0) process.exitCode = 1;
++} finally {
++  await browser.close();
++}
+diff --git a/docs/design/system-v1/brand/evidence/103-property-drawer/npm-ls.txt b/docs/design/system-v1/brand/evidence/103-property-drawer/npm-ls.txt
+new file mode 100644
+index 0000000..66db30e
+--- /dev/null
++++ b/docs/design/system-v1/brand/evidence/103-property-drawer/npm-ls.txt
+@@ -0,0 +1,13 @@
++flowduet-103-consumer@1.0.0 /private/tmp/flowduet-103-consumer-r2.38uSuj
+++-- @flowduet/core@0.3.0
+++-- @flowduet/designer@0.1.0
+++-- element-plus@2.14.6
+++-- typescript@5.9.3
++`-- vue@3.5.43
++
++
++flowduet-103-consumer@1.0.0 /private/tmp/flowduet-103-consumer-r2.38uSuj
+++-- @flowduet/designer@0.1.0
++| `-- element-plus@2.14.6 deduped
++`-- element-plus@2.14.6
++
+diff --git a/docs/design/system-v1/brand/evidence/103-property-drawer/test-diagnosis.json b/docs/design/system-v1/brand/evidence/103-property-drawer/test-diagnosis.json
+new file mode 100644
+index 0000000..a018c3a
+--- /dev/null
++++ b/docs/design/system-v1/brand/evidence/103-property-drawer/test-diagnosis.json
+@@ -0,0 +1,41 @@
++{
++  "node": "24.18.0",
++  "base": "cd39258b3ab4d3b77f20994e85b58a4519746b4e",
++  "original_head": "e43f64fa01d2e1347c75a11b9b93f35805d11422",
++  "form_create_product_diff_from_base": false,
++  "fileParallelism": false,
++  "effective_maxWorkers": 1,
++  "default_testTimeout_ms": 5000,
++  "single_retained_inputs_before_color_fix": {
++    "branch": {
++      "passed": 40,
++      "duration_seconds": 55.38
++    },
++    "base": {
++      "passed": 40,
++      "duration_seconds": 55.16
++    }
++  },
++  "default_root_run": {
++    "core_passed": 148,
++    "designer_passed": 200,
++    "form_create_passed": 309,
++    "form_create_failed": 3,
++    "failure_kind": "Test timed out in 5000ms",
++    "playground": "not run (recursive bail)"
++  },
++  "base_same_two_files": {
++    "passed": 109,
++    "failed": 0,
++    "duration_seconds": 198.45
++  },
++  "isolated_failed_cases_diagnostic": {
++    "passed": 3,
++    "failed": 0,
++    "testTimeout_ms": 15000,
++    "duration_seconds": 18.03,
++    "standard_gate": false
++  },
++  "conclusion": "已确认失败机制为默认5秒时限触发，重组件测试存在耗时波动；本轮没有业务断言失败证据，也没有颜色解析参与失败路径的证据。基线对照不能证明历史失败都由同一种系统负载导致，未定位到某次具体调度或GC停顿。默认全量测试仍未通过。",
++  "cpu_profile": "尝试Node worker CPU采样未产出profile文件，不作热点或GC归因依据；未为此修改仓库配置或新增工具。"
++}
+diff --git a/packages/designer/README.md b/packages/designer/README.md
+index 666eb7f..c9b72f9 100644
+--- a/packages/designer/README.md
++++ b/packages/designer/README.md
+@@ -13,8 +13,8 @@ pnpm add @flowduet/designer @flowduet/core element-plus vue
+ 样式（vite 库模式不自动注入，宿主须显式引入）：
+ 
+ ```ts
+-import "@flowduet/designer/style.css";
+ import "element-plus/dist/index.css";
++import "@flowduet/designer/style.css";
+ ```
+ 
+ 若使用 `BpmnCanvas`，宿主还需显式安装 Vue Flow 的样式提供包，并引入其基础样式；`@flowduet/designer/style.css` 提供本包样式，不代替 Vue Flow 基础样式。只使用 `DingtalkDesigner` 时不需要这一步。
+@@ -66,6 +66,52 @@ async function doExport(): Promise<string> {
+ - 表单集成接缝（#72）：`DingtalkDesigner` 接收中立的 `formOptions`（`{ id, name }[]`，不依赖任何表单实现）——传入即展示「流程默认表单」选择条与审批节点的有效表单摘要（继承默认 / 节点指定 / 引用失效），不传则纯流程形态完全不变；`isCcServiceTask(element)` 公开抄送形态判定。默认引用经 `BpmnModel.setDefaultFormKey()` 读写（`flowduet:defaultFormKey`，由 core 统一注册）。
+ - 未提交内容收集（#76）：抽屉里的字段缓冲点「确定」才写模型。宿主在保存设计前可调用组件方法 `DingtalkDesigner#commitPendingChanges(options?)`——抽屉打开时执行与「确定」同一套守卫并把当前输入写入模型（成功后关闭抽屉、触发 `change`），守卫拦截（如多人集合变量格式非法）返回 `false` 且抽屉保持打开，宿主应中止保存而不是绕过守卫；抽屉未打开时为无操作。抽屉字段被编辑时组件上抛 `draft-change` 事件，未提交输入同样计入宿主的「未保存修改」判定（如替换当前设计前的确认提示）。宿主保存业务草稿时可显式传入 `{ allowIncomplete: true }`，允许空集合变量、空抄送收件人及插入占位收件人落盘，由草稿诊断报告待修复项；非空非法集合格式仍拒绝。默认调用与普通「确定」保持严格。抽屉为非模态展示：切换目标前提交当前缓冲，格式校验失败则停留原节点；提供 `formOptions` 的集成宿主按草稿路径收集，纯流程宿主保持严格校验。
+ 
++## 节点属性抽屉的实例外观（#103）
++
++省略 `appearance` 时保持原有抽屉外观和行为。传入合法对象才显式启用新适配：
++
++```vue
++<script setup lang="ts">
++import { ref } from "vue";
++import { DingtalkDesigner, type ComponentAppearance } from "@flowduet/designer";
++import "element-plus/dist/index.css";
++import "@flowduet/designer/style.css";
++
++// 跟随宿主时必须声明宿主当前的 EP 主题；本组件不会切换宿主 html/body 深色类。
++const appearance = ref<ComponentAppearance | undefined>({ mode: "light" });
++
++function useCompactBrand(): void {
++  appearance.value = { colorSource: "brand", mode: "dark", density: "compact" };
++}
++
++function useLegacyAppearance(): void {
++  appearance.value = undefined;
++}
++</script>
++
++<template>
++  <DingtalkDesigner :model="model" :appearance="appearance" />
++</template>
++```
++
++| 配置项        | 取值                         | 默认值        | 说明                                                                 |
++| ------------- | ---------------------------- | ------------- | -------------------------------------------------------------------- |
++| `colorSource` | `host` / `brand`             | `host`        | 跟随宿主或 FlowDuet 品牌预设；首批不开放任意种子或 token 覆盖 API    |
++| `mode`        | `light` / `dark`             | 必填          | `host` 时须与宿主当前 EP 主题一致；`brand` 可按实例独立于宿主主题    |
++| `density`     | `comfortable` / `compact`    | `comfortable` | 分别对应 EP `default` / `small`，实测控件高度为 32px / 24px          |
++
++跟随宿主只读取宿主当前 EP 主色、中性色、字体与圆角，为抽屉自有卡片和原生选择器派生 `--fd-*` 角色，**不写入任何 `--el-*` 变量（含实例范围）**。品牌预设只在所选抽屉内写入局部 EP 变量，不影响画布、节点卡片、流程默认表单条、其他实例或无关宿主控件。抽屉的非模态、覆盖层、节点切换与提交行为保持既有合同。
++
++宿主颜色支持与配色方案无关的常规 CSS 颜色格式，包括短十六进制、RGB、命名色、HSL、OKLCH 与 `currentColor`；透明角色按所属表面合成后计算派生颜色，依赖宿主 `color-scheme` 的 `light-dark()`／系统色关键字及非法颜色仍使用既有默认值。
++
++运行中修改配色、主题、密度以及启用／停用都保留未提交输入、焦点和输入法组合，不自动确定／取消，也不修改模型或 BPMN XML。更新时请替换整个 `appearance` 对象引用，不依赖对原对象字段的深度变更侦测。JavaScript 传入非法对象或枚举时会整份拒绝：已有合法配置则保持上次有效呈现，首次非法则保持旧路径，并通过 `console.warn` 报告具体字段和原因。合法停用与非法回退是两条不同路径。
++
++`@flowduet/designer` 包根同时导出 `ComponentAppearance`、`ResolvedComponentAppearance` 及其枚举类型，以及供其他 FlowDuet 组件复用的 `resolveComponentAppearance(value, previous?)`。后者补全合法配置；`previous` 传入当前有效结果时用于非法回退，合法省略返回 `undefined`，调用方应在合法停用后清空自己的 `previous`，避免后续非法输入复活旧主题。
++
++当前仅 **DingtalkDesigner 的节点属性抽屉**完成本适配；`FormPreview` 由后续切片交付。`propertyEditing="external"` 不渲染抽屉，合法 `appearance` 没有可见效果，也不影响宿主自有属性面板。原生 `select` 的系统选项弹层外观受浏览器和操作系统限制，不为像素一致替换成 `ElSelect`。
++
++首批验证环境为单份 Element Plus 2.14.6 与桌面 Chromium；其他 EP 版本、Firefox、Safari／WebKit、移动端、真实操作系统中文输入法及完整可访问性认证尚未验证。
++
+ ## License
+ 
+ Apache-2.0（见 [LICENSE](./LICENSE)）
+diff --git a/packages/designer/src/appearance-style.ts b/packages/designer/src/appearance-style.ts
+new file mode 100644
+index 0000000..d391454
+--- /dev/null
++++ b/packages/designer/src/appearance-style.ts
+@@ -0,0 +1,488 @@
++import type { AppearanceMode, ResolvedComponentAppearance } from "./appearance.js";
++
++type Rgb = [number, number, number];
++
++export interface HostAppearanceContext {
++  canvas: string;
++  surface: string;
++  inset: string;
++  text: string;
++  secondary: string;
++  border: string;
++  disabledText: string;
++  disabledSurface: string;
++  primary: string;
++  primaryHover: string;
++  primaryPressed: string;
++  onPrimary: string;
++  fontFamily: string;
++  fontSizeBase: string;
++  radius: string;
++}
++
++const HOST_DEFAULTS: Record<AppearanceMode, HostAppearanceContext> = {
++  light: {
++    canvas: "#F2F3F5",
++    surface: "#FFFFFF",
++    inset: "#F5F7FA",
++    text: "#303133",
++    secondary: "#606266",
++    border: "#E4E7ED",
++    disabledText: "#A8ABB2",
++    disabledSurface: "#F5F7FA",
++    primary: "#409EFF",
++    primaryHover: "#79BBFF",
++    primaryPressed: "#337ECC",
++    onPrimary: "#FFFFFF",
++    fontFamily:
++      '"Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif',
++    fontSizeBase: "14px",
++    radius: "4px",
++  },
++  dark: {
++    canvas: "#0A0A0A",
++    surface: "#141414",
++    inset: "#262727",
++    text: "#E5EAF3",
++    secondary: "#CFD3DC",
++    border: "#414243",
++    disabledText: "#8D9095",
++    disabledSurface: "#262727",
++    primary: "#409EFF",
++    primaryHover: "#3375B9",
++    primaryPressed: "#66B1FF",
++    onPrimary: "#FFFFFF",
++    fontFamily:
++      '"Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif',
++    fontSizeBase: "14px",
++    radius: "4px",
++  },
++};
++
++const BRAND_ROLES = {
++  light: {
++    canvas: "#F5F6FA",
++    surface: "#FFFFFF",
++    inset: "#F0F2F8",
++    text: "#20263D",
++    secondary: "#565F76",
++    muted: "#626D86",
++    border: "#CDD2E0",
++    controlBorder: "#7A859E",
++    primary: "#2D3E97",
++    primaryHover: "#222F87",
++    primaryPressed: "#181F77",
++    onPrimary: "#FFFFFF",
++    primarySoft: "#EAF0FF",
++    primaryInk: "#2D3E97",
++    focus: "#2D3E97",
++    disabledText: "#8B92A4",
++    disabledSurface: "#EDF0F5",
++  },
++  dark: {
++    canvas: "#141925",
++    surface: "#1D2435",
++    inset: "#252E43",
++    text: "#E9EDF7",
++    secondary: "#B7C0D5",
++    muted: "#A3AFC9",
++    border: "#3C4864",
++    controlBorder: "#75839F",
++    primary: "#A5BBFF",
++    primaryHover: "#BBCCFF",
++    primaryPressed: "#93A8EB",
++    onPrimary: "#171F3E",
++    primarySoft: "#2A3354",
++    primaryInk: "#A5BBFF",
++    focus: "#A5BBFF",
++    disabledText: "#7F8AA2",
++    disabledSurface: "#252D40",
++  },
++} as const;
++
++const BRAND_EP_SCALE = {
++  light: {
++    "light-3": "#6C78B6",
++    "light-5": "#969FCB",
++    "light-7": "#C0C5E0",
++    "light-8": "#D5D8EA",
++    "light-9": "#EAECF5",
++    "dark-2": "#243279",
++  },
++  dark: {
++    "light-3": "#7C8EC2",
++    "light-5": "#61709A",
++    "light-7": "#465172",
++    "light-8": "#38425D",
++    "light-9": "#2B3349",
++    "dark-2": "#B7C9FF",
++  },
++} as const;
++
++const STATUS_ROLES = {
++  light: {
++    danger: "#B4233A",
++    dangerSoft: "#FFF0F2",
++    success: "#23714D",
++    warning: "#8C5C12",
++    approvalSoft: "#ECF1F5",
++  },
++  dark: {
++    danger: "#FF9DAE",
++    dangerSoft: "#422835",
++    success: "#81D5A6",
++    warning: "#F0C46B",
++    approvalSoft: "#282F35",
++  },
++} as const;
++
++const toLinear = (channel: number) =>
++  channel <= 0.04045 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4;
++const fromLinear = (channel: number) =>
++  channel <= 0.0031308 ? 12.92 * channel : 1.055 * channel ** (1 / 2.4) - 0.055;
++
++function hexToRgb(hex: string): Rgb {
++  const value = hex.replace("#", "");
++  if (!/^[\da-fA-F]{6}$/.test(value)) throw new Error(`无法读取颜色：${hex}`);
++  return [0, 2, 4].map((index) => parseInt(value.slice(index, index + 2), 16) / 255) as Rgb;
++}
++
++function rgbToHex(rgb: Rgb): string {
++  return (
++    "#" +
++    rgb
++      .map((channel) =>
++        Math.round(Math.min(1, Math.max(0, channel)) * 255)
++          .toString(16)
++          .padStart(2, "0"),
++      )
++      .join("")
++      .toUpperCase()
++  );
++}
++
++function linearToOklab([r, g, b]: Rgb): Rgb {
++  const l = Math.cbrt(0.4122214708 * r + 0.5363325363 * g + 0.0514459929 * b);
++  const m = Math.cbrt(0.2119034982 * r + 0.6806995451 * g + 0.1073969566 * b);
++  const s = Math.cbrt(0.0883024619 * r + 0.2817188376 * g + 0.6299787005 * b);
++  return [
++    0.2104542553 * l + 0.793617785 * m - 0.0040720468 * s,
++    1.9779984951 * l - 2.428592205 * m + 0.4505937099 * s,
++    0.0259040371 * l + 0.7827717662 * m - 0.808675766 * s,
++  ];
++}
++
++function oklabToLinear([L, a, b]: Rgb): Rgb {
++  const l = (L + 0.3963377774 * a + 0.2158037573 * b) ** 3;
++  const m = (L - 0.1055613458 * a - 0.0638541728 * b) ** 3;
++  const s = (L - 0.0894841775 * a - 1.291485548 * b) ** 3;
++  return [
++    4.0767416621 * l - 3.3077115913 * m + 0.2309699292 * s,
++    -1.2684380046 * l + 2.6097574011 * m - 0.3413193965 * s,
++    -0.0041960863 * l - 0.7034186147 * m + 1.707614701 * s,
++  ];
++}
++
++function hexToOklch(hex: string) {
++  const [L, a, b] = linearToOklab(hexToRgb(hex).map(toLinear) as Rgb);
++  return { L, C: Math.hypot(a, b), h: (Math.atan2(b, a) * 180) / Math.PI };
++}
++
++// 与已批准的 R2 派生脚本一致：超出色域时保持明度和色相，二分降低彩度。
++function oklchToHex(L: number, C: number, h: number): string {
++  const clampedL = Math.min(1, Math.max(0, L));
++  const radians = (h * Math.PI) / 180;
++  const inGamut = (chroma: number) =>
++    oklabToLinear([clampedL, chroma * Math.cos(radians), chroma * Math.sin(radians)]).every(
++      (channel) => channel >= -1e-6 && channel <= 1 + 1e-6,
++    );
++  let chroma = Math.max(0, C);
++  if (!inGamut(chroma)) {
++    let low = 0;
++    let high = chroma;
++    for (let index = 0; index < 30; index += 1) {
++      const middle = (low + high) / 2;
++      if (inGamut(middle)) low = middle;
++      else high = middle;
++    }
++    chroma = low;
++  }
++  const linear = oklabToLinear([clampedL, chroma * Math.cos(radians), chroma * Math.sin(radians)]);
++  return rgbToHex(linear.map((channel) => fromLinear(Math.min(1, Math.max(0, channel)))) as Rgb);
++}
++
++function luminance(hex: string): number {
++  const [r, g, b] = hexToRgb(hex).map(toLinear) as Rgb;
++  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
++}
++
++function contrast(a: string, b: string): number {
++  const high = Math.max(luminance(a), luminance(b));
++  const low = Math.min(luminance(a), luminance(b));
++  return (high + 0.05) / (low + 0.05);
++}
++
++function mix(a: string, b: string, weight: number): string {
++  const left = hexToRgb(a);
++  const right = hexToRgb(b);
++  return rgbToHex(
++    left.map((channel, index) => channel * weight + right[index]! * (1 - weight)) as Rgb,
++  );
++}
++
++function neutralToward(text: string, surface: string, backgrounds: string[], target: number) {
++  for (let weight = 0; weight <= 1.0001; weight += 0.01) {
++    const color = mix(text, surface, weight);
++    if (backgrounds.every((background) => contrast(color, background) >= target)) return color;
++  }
++  return text;
++}
++
++function searchPrimaryInk(primary: string, backgrounds: string[], mode: AppearanceMode) {
++  const seed = hexToOklch(primary);
++  const step = mode === "light" ? -0.005 : 0.005;
++  for (let L = seed.L; L >= 0 && L <= 1; L += step) {
++    const color = oklchToHex(L, seed.C, seed.h);
++    if (backgrounds.every((background) => contrast(color, background) >= 4.5)) return color;
++  }
++  // 极端宿主色无法达标时不改宿主 EP；自有角色至少保持宿主正文可读性。
++  return null;
++}
++
++function densityVariables(density: "comfortable" | "compact"): Record<string, string> {
++  const compact = density === "compact";
++  return {
++    "--fd-control-height": compact ? "24px" : "32px",
++    "--fd-control-font-size": compact ? "12px" : "14px",
++    "--fd-field-gap": compact ? "12px" : "16px",
++    "--fd-panel-padding": compact ? "16px" : "24px",
++    "--fd-node-padding": compact ? "12px" : "16px",
++    "--fd-row-gap": compact ? "8px" : "12px",
++  };
++}
++
++function hostVariables(
++  appearance: ResolvedComponentAppearance,
++  context: HostAppearanceContext,
++): Record<string, string> {
++  const { mode } = appearance;
++  const status = STATUS_ROLES[mode];
++  const backgrounds = [context.surface, context.inset, context.canvas];
++  const muted = neutralToward(context.text, context.surface, backgrounds, 4.5);
++  const controlBorder = neutralToward(context.text, context.surface, backgrounds, 3);
++  const seed = hexToOklch(context.primary);
++  const primarySoft = oklchToHex(
++    mode === "light" ? 0.955 : 0.33,
++    Math.min(seed.C * (mode === "light" ? 0.3 : 0.5), mode === "light" ? 0.035 : 0.06),
++    seed.h,
++  );
++  const primaryInk =
++    searchPrimaryInk(context.primary, [...backgrounds, primarySoft, status.approvalSoft], mode) ??
++    context.text;
++  // 与 R2 派生口径一致：跨明度宿主背景使 3:1 搜索落空时回退 primaryInk，避免省略 --fd-focus 使焦点环失效。
++  const focus =
++    [context.primary, primaryInk].find((color) =>
++      backgrounds.every((background) => contrast(color, background) >= 3),
++    ) ?? primaryInk;
++  return {
++    ...densityVariables(appearance.density),
++    "--fd-canvas": context.canvas,
++    "--fd-surface": context.surface,
++    "--fd-inset": context.inset,
++    "--fd-text": context.text,
++    "--fd-secondary": context.secondary,
++    "--fd-muted": muted,
++    "--fd-border": context.border,
++    "--fd-control-border": controlBorder,
++    "--fd-primary": context.primary,
++    "--fd-primary-hover": context.primaryHover,
++    "--fd-primary-pressed": context.primaryPressed,
++    "--fd-on-primary": context.onPrimary,
++    "--fd-primary-soft": primarySoft,
++    "--fd-primary-ink": primaryInk,
++    "--fd-focus": focus,
++    "--fd-danger": status.danger,
++    "--fd-danger-soft": status.dangerSoft,
++    "--fd-success": status.success,
++    "--fd-warning": status.warning,
++    "--fd-disabled-text": context.disabledText,
++    "--fd-disabled-surface": context.disabledSurface,
++    "--fd-font-family": context.fontFamily,
++    "--fd-font-size-base": context.fontSizeBase,
++    "--fd-radius": context.radius,
++  };
++}
++
++function brandVariables(appearance: ResolvedComponentAppearance): Record<string, string> {
++  const roles = BRAND_ROLES[appearance.mode];
++  const status = STATUS_ROLES[appearance.mode];
++  const scale = BRAND_EP_SCALE[appearance.mode];
++  return {
++    ...densityVariables(appearance.density),
++    "--fd-canvas": roles.canvas,
++    "--fd-surface": roles.surface,
++    "--fd-inset": roles.inset,
++    "--fd-text": roles.text,
++    "--fd-secondary": roles.secondary,
++    "--fd-muted": roles.muted,
++    "--fd-border": roles.border,
++    "--fd-control-border": roles.controlBorder,
++    "--fd-primary": roles.primary,
++    "--fd-primary-hover": roles.primaryHover,
++    "--fd-primary-pressed": roles.primaryPressed,
++    "--fd-on-primary": roles.onPrimary,
++    "--fd-primary-soft": roles.primarySoft,
++    "--fd-primary-ink": roles.primaryInk,
++    "--fd-focus": roles.focus,
++    "--fd-danger": status.danger,
++    "--fd-danger-soft": status.dangerSoft,
++    "--fd-success": status.success,
++    "--fd-warning": status.warning,
++    "--fd-disabled-text": roles.disabledText,
++    "--fd-disabled-surface": roles.disabledSurface,
++    "--fd-font-family": 'system-ui, -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif',
++    "--fd-font-size-base": "14px",
++    "--fd-radius": "8px",
++    "--el-color-primary": roles.primary,
++    "--el-color-primary-light-3": scale["light-3"],
++    "--el-color-primary-light-5": scale["light-5"],
++    "--el-color-primary-light-7": scale["light-7"],
++    "--el-color-primary-light-8": scale["light-8"],
++    "--el-color-primary-light-9": scale["light-9"],
++    "--el-color-primary-dark-2": scale["dark-2"],
++    "--el-bg-color-page": roles.canvas,
++    "--el-bg-color": roles.surface,
++    "--el-bg-color-overlay": roles.surface,
++    "--el-fill-color-blank": roles.surface,
++    "--el-fill-color-light": roles.inset,
++    "--el-text-color-primary": roles.text,
++    "--el-text-color-regular": roles.secondary,
++    "--el-text-color-secondary": roles.muted,
++    "--el-text-color-placeholder": roles.muted,
++    "--el-border-color": roles.controlBorder,
++    "--el-border-color-hover": roles.controlBorder,
++    "--el-border-color-light": roles.border,
++    "--el-border-color-lighter": roles.border,
++    "--el-disabled-text-color": roles.disabledText,
++    "--el-disabled-bg-color": roles.disabledSurface,
++    "--el-disabled-border-color": roles.border,
++    "--el-color-danger": status.danger,
++    "--el-color-success": status.success,
++    "--el-color-warning": status.warning,
++    "--el-font-family": 'system-ui, -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif',
++    "--el-font-size-base": "14px",
++    "--el-form-label-font-size": "13px",
++    "--el-border-radius-base": "8px",
++  };
++}
++
++export function createAppearanceVariables(
++  appearance: ResolvedComponentAppearance | undefined,
++  host: HostAppearanceContext | undefined,
++): Record<string, string> | undefined {
++  if (appearance === undefined) return undefined;
++  if (appearance.colorSource === "host")
++    return hostVariables(appearance, host ?? HOST_DEFAULTS[appearance.mode]);
++  return brandVariables(appearance);
++}
++
++const RGB_CHANNEL = String.raw`(\d+(?:\.\d+)?|\.\d+)`;
++const COMMA_RGB_RE = new RegExp(
++  String.raw`^rgba?\(\s*${RGB_CHANNEL}\s*,\s*${RGB_CHANNEL}\s*,\s*${RGB_CHANNEL}(?:\s*,\s*(?:1(?:\.0+)?|100%))?\s*\)$`,
++  "i",
++);
++const SPACE_RGB_RE = new RegExp(
++  String.raw`^rgba?\(\s*${RGB_CHANNEL}\s+${RGB_CHANNEL}\s+${RGB_CHANNEL}(?:\s*\/\s*(?:1(?:\.0+)?|100%))?\s*\)$`,
++  "i",
++);
++
++function cssColorToRgb(value: string): Rgb {
++  if (value.startsWith("#"))
++    return hexToRgb(
++      /^#[\da-f]{3}$/i.test(value)
++        ? "#" + [...value.slice(1)].map((channel) => channel + channel).join("")
++        : value,
++    );
++  const match = value.match(COMMA_RGB_RE) ?? value.match(SPACE_RGB_RE);
++  if (match !== null) {
++    const channels = match.slice(1, 4).map(Number);
++    if (channels.every((channel) => channel >= 0 && channel <= 255))
++      return channels.map((channel) => channel / 255) as Rgb;
++  }
++  throw new Error(`无法读取颜色：${value}`);
++}
++
++function readBrowserColor(value: string, element: HTMLElement, background: string): string {
++  const canvas = element.ownerDocument.createElement("canvas");
++  canvas.width = canvas.height = 1;
++  const context = canvas.getContext("2d");
++  if (context === null) throw new Error("当前环境不支持浏览器颜色解析");
++  const currentColor = element.ownerDocument.defaultView?.getComputedStyle(element).color;
++  const color = value.replace(/\bcurrentcolor\b/gi, currentColor || "black");
++  // 非法 fillStyle 会保留旧值；两个不同哨兵可区分非法值与恰好等于哨兵的合法色。
++  context.fillStyle = "#010203";
++  context.fillStyle = color;
++  const first = context.fillStyle;
++  context.fillStyle = "#040506";
++  context.fillStyle = color;
++  if (context.fillStyle !== first) throw new Error(`无法读取颜色：${value}`);
++  // CSS Color 4 由浏览器转为 sRGB；透明角色在其实际表面上合成后再用于对比度派生。
++  context.fillStyle = background;
++  context.fillRect(0, 0, 1, 1);
++  context.fillStyle = color;
++  context.fillRect(0, 0, 1, 1);
++  const [r, g, b] = context.getImageData(0, 0, 1, 1).data;
++  return rgbToHex([r! / 255, g! / 255, b! / 255]);
++}
++
++function readColor(
++  styles: CSSStyleDeclaration,
++  name: string,
++  fallback: string,
++  element: HTMLElement | undefined,
++  background: string,
++): string {
++  const value = styles.getPropertyValue(name).trim();
++  if (value === "") return fallback;
++  try {
++    return rgbToHex(cssColorToRgb(value));
++  } catch {
++    try {
++      return element === undefined ? fallback : readBrowserColor(value, element, background);
++    } catch {
++      return fallback;
++    }
++  }
++}
++
++/** 抽屉 Teleport 前读取宿主上下文；不做通用 CSSOM 侦测，也不回写宿主变量。 */
++export function readHostAppearance(
++  element: HTMLElement | undefined,
++  mode: AppearanceMode,
++): HostAppearanceContext {
++  const fallback = HOST_DEFAULTS[mode];
++  const styles = element?.ownerDocument.defaultView?.getComputedStyle(element);
++  if (styles === undefined) return { ...fallback };
++  const color = (name: string, key: keyof HostAppearanceContext, background: string) =>
++    readColor(styles, name, fallback[key], element, background);
++  const canvas = color("--el-bg-color-page", "canvas", fallback.canvas);
++  const surface = color("--el-bg-color", "surface", canvas);
++  const primary = color("--el-color-primary", "primary", surface);
++  return {
++    canvas,
++    surface,
++    inset: color("--el-fill-color-light", "inset", surface),
++    text: color("--el-text-color-primary", "text", surface),
++    secondary: color("--el-text-color-regular", "secondary", surface),
++    border: color("--el-border-color-light", "border", surface),
++    disabledText: color("--el-disabled-text-color", "disabledText", surface),
++    disabledSurface: color("--el-disabled-bg-color", "disabledSurface", surface),
++    primary,
++    primaryHover: color("--el-color-primary-light-3", "primaryHover", surface),
++    primaryPressed: color("--el-color-primary-dark-2", "primaryPressed", surface),
++    onPrimary: color("--el-color-white", "onPrimary", primary),
++    fontFamily: styles.getPropertyValue("--el-font-family").trim() || fallback.fontFamily,
++    fontSizeBase: styles.getPropertyValue("--el-font-size-base").trim() || fallback.fontSizeBase,
++    radius: styles.getPropertyValue("--el-border-radius-base").trim() || fallback.radius,
++  };
++}
+diff --git a/packages/designer/src/appearance.test.ts b/packages/designer/src/appearance.test.ts
+new file mode 100644
+index 0000000..4bb8083
+--- /dev/null
++++ b/packages/designer/src/appearance.test.ts
+@@ -0,0 +1,514 @@
++// @vitest-environment happy-dom
++import { afterEach, describe, expect, it, vi } from "vitest";
++import { flushPromises, mount } from "@vue/test-utils";
++import { defineComponent, reactive } from "vue";
++import { ElButton } from "element-plus";
++import { BpmnModel, flowableAdapter } from "@flowduet/core";
++import { DingtalkDesigner, resolveComponentAppearance, type ComponentAppearance } from "./index.js";
++
++const wrappers: { unmount(): void }[] = [];
++
++afterEach(() => {
++  vi.restoreAllMocks();
++  wrappers.splice(0).forEach((wrapper) => wrapper.unmount());
++  document.body.innerHTML = "";
++});
++
++function buildModel(): BpmnModel {
++  return BpmnModel.create({ processId: "appearance_flow", adapter: flowableAdapter })
++    .addStartEvent({ id: "start", name: "开始" })
++    .addUserTask({ id: "approval", name: "经理审批", assignee: "${manager}" })
++    .addEndEvent({ id: "end", name: "结束" })
++    .addSequenceFlow({ id: "f1", sourceRef: "start", targetRef: "approval" })
++    .addSequenceFlow({ id: "f2", sourceRef: "approval", targetRef: "end" });
++}
++
++function mountDesigner(model: BpmnModel, appearance?: unknown) {
++  const wrapper = mount(DingtalkDesigner, {
++    props: { model, appearance: appearance as ComponentAppearance },
++    attachTo: document.body,
++  });
++  wrappers.push(wrapper);
++  return wrapper;
++}
++
++async function openApproval(wrapper: ReturnType<typeof mount>): Promise<void> {
++  await wrapper.findAll('[data-test="node-card"]')[1]!.trigger("click");
++  await flushPromises();
++}
++
++describe("公开实例外观配置（#103）", () => {
++  it("合法对象省略配色与密度时补为跟随宿主和舒适档", () => {
++    expect(resolveComponentAppearance({ mode: "light" })).toEqual({
++      colorSource: "host",
++      mode: "light",
++      density: "comfortable",
++    });
++  });
++
++  it("非法配置整份拒绝并保留上次有效值，同时报告字段原因", () => {
++    const previous = {
++      colorSource: "brand",
++      mode: "dark",
++      density: "compact",
++    } as const;
++    const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
++
++    expect(
++      resolveComponentAppearance(
++        { colorSource: "host", mode: "light", density: "large" },
++        previous,
++      ),
++    ).toBe(previous);
++    expect(warn).toHaveBeenCalledWith(expect.stringContaining("appearance.density"));
++    expect(warn).toHaveBeenCalledWith(expect.stringContaining("comfortable"));
++  });
++
++  it("null 不是省略配置，任一字段为 null 都整份拒绝", () => {
++    const previous = resolveComponentAppearance({ colorSource: "brand", mode: "dark" });
++    const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
++
++    expect(resolveComponentAppearance({ colorSource: null, mode: "light" }, previous)).toBe(
++      previous,
++    );
++    expect(resolveComponentAppearance({ mode: "light", density: null }, previous)).toBe(previous);
++    expect(warn).toHaveBeenCalledWith(expect.stringContaining("appearance.colorSource"));
++    expect(warn).toHaveBeenCalledWith(expect.stringContaining("appearance.density"));
++  });
++
++  it("配置属性 getter 抛错时整份拒绝并告警，不向集成方逸出异常", () => {
++    const previous = resolveComponentAppearance({ colorSource: "brand", mode: "dark" });
++    const invalid = Object.defineProperty({}, "mode", {
++      get() {
++        throw new Error("getter exploded");
++      },
++    });
++    const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
++
++    expect(() => resolveComponentAppearance(invalid, previous)).not.toThrow();
++    expect(resolveComponentAppearance(invalid, previous)).toBe(previous);
++    expect(warn).toHaveBeenCalledWith(expect.stringContaining("appearance"));
++    expect(warn).toHaveBeenCalledWith(expect.stringContaining("getter exploded"));
++  });
++
++  it("公开组件传合法紧凑配置后，抽屉与真实 EP 控件使用 small", async () => {
++    const wrapper = mountDesigner(buildModel(), {
++      colorSource: "brand",
++      mode: "dark",
++      density: "compact",
++    });
++    await openApproval(wrapper);
++
++    const drawer = document.querySelector<HTMLElement>('[data-test="node-drawer"]');
++    expect(drawer?.classList.contains("flowduet-appearance")).toBe(true);
++    expect(drawer?.classList.contains("flowduet-appearance--brand")).toBe(true);
++    expect(drawer?.style.getPropertyValue("--fd-control-height")).toBe("24px");
++    expect(drawer?.style.getPropertyValue("--el-color-primary")).toBe("#A5BBFF");
++    expect(drawer?.style.getPropertyValue("--fd-on-primary")).toBe("#171F3E");
++    expect(drawer?.style.getPropertyValue("--fd-surface")).toBe("#1D2435");
++    expect(drawer?.style.getPropertyValue("--fd-primary-soft")).toBe("#2A3354");
++    expect(drawer?.style.getPropertyValue("--fd-radius")).toBe("8px");
++    expect(
++      document
++        .querySelector('[data-test="drawer-name"]')
++        ?.closest(".el-input")
++        ?.classList.contains("el-input--small"),
++    ).toBe(true);
++    expect(document.querySelector('[data-test="drawer-save"]')?.classList).toContain(
++      "el-button--small",
++    );
++  });
++
++  it("跟随宿主时读取当前 EP 角色派生自有变量，实例范围不写任何 EP 变量", async () => {
++    const wrapper = mountDesigner(buildModel());
++    const host = wrapper.element as HTMLElement;
++    const hostValues: Record<string, string> = {
++      "--el-color-primary": "#409EFF",
++      "--el-color-primary-light-3": "#79BBFF",
++      "--el-color-primary-dark-2": "#337ECC",
++      "--el-color-white": "#FFFFFF",
++      "--el-bg-color-page": "#F2F3F5",
++      "--el-bg-color": "#FFFFFF",
++      "--el-fill-color-light": "#F5F7FA",
++      "--el-text-color-primary": "#303133",
++      "--el-text-color-regular": "#606266",
++      "--el-border-color-light": "#E4E7ED",
++      "--el-disabled-text-color": "#A8ABB2",
++      "--el-disabled-bg-color": "#F5F7FA",
++      "--el-font-family": "Host Sans, sans-serif",
++      "--el-font-size-base": "14px",
++      "--el-border-radius-base": "4px",
++    };
++    for (const [name, value] of Object.entries(hostValues)) host.style.setProperty(name, value);
++    await wrapper.setProps({ appearance: { mode: "light" } });
++    await openApproval(wrapper);
++
++    const drawer = document.querySelector<HTMLElement>('[data-test="node-drawer"]')!;
++    expect(drawer.style.getPropertyValue("--fd-primary-ink")).toBe("#006EC6");
++    expect(drawer.style.getPropertyValue("--fd-primary-soft")).toBe("#E6F2FF");
++    expect(drawer.style.getPropertyValue("--fd-muted")).toBe("#6E6F70");
++    expect(drawer.style.getPropertyValue("--fd-control-border")).toBe("#8B8C8D");
++    expect(drawer.style.getPropertyValue("--fd-font-family")).toBe("Host Sans, sans-serif");
++    expect(drawer.getAttribute("style")).not.toContain("--el-");
++  });
++
++  it("声明式模板同一响应式周期切换宿主主题与 appearance 时消费更新后的宿主样式", async () => {
++    const lightHostStyle = {
++      "--el-bg-color-page": "#F2F7F6",
++      "--el-bg-color": "#FAFCFC",
++      "--el-fill-color-light": "#EEF5F4",
++      "--el-text-color-primary": "#182625",
++      "--el-text-color-regular": "#4A5A58",
++      "--el-color-primary": "#0F6B65",
++    };
++    const darkHostStyle = {
++      "--el-bg-color-page": "#101817",
++      "--el-bg-color": "#162220",
++      "--el-fill-color-light": "#1F302D",
++      "--el-text-color-primary": "#E6F2F0",
++      "--el-text-color-regular": "#B8CECA",
++      "--el-color-primary": "#7FCFC7",
++    };
++    const state = reactive({ isDark: false });
++    const model = buildModel();
++    const DeclarativeHost = defineComponent({
++      components: { DingtalkDesigner },
++      setup() {
++        return { state, model, lightHostStyle, darkHostStyle };
++      },
++      template: `
++        <div>
++          <button type="button" data-test="toggle-host-theme" @click="state.isDark = !state.isDark">切换主题</button>
++          <DingtalkDesigner
++            :model="model"
++            :style="state.isDark ? darkHostStyle : lightHostStyle"
++            :appearance="{ colorSource: 'host', mode: state.isDark ? 'dark' : 'light' }"
++          />
++        </div>
++      `,
++    });
++    const wrapper = mount(DeclarativeHost, { attachTo: document.body });
++    wrappers.push(wrapper);
++    await openApproval(wrapper);
++
++    const drawer = document.querySelector<HTMLElement>('[data-test="node-drawer"]')!;
++    const input = document.querySelector<HTMLInputElement>('[data-test="drawer-name"]')!;
++    input.value = "声明式换肤保留的草稿";
++    input.dispatchEvent(new Event("input", { bubbles: true }));
++    input.focus();
++    expect(drawer.style.getPropertyValue("--fd-surface")).toBe("#FAFCFC");
++    expect(drawer.style.getPropertyValue("--fd-primary")).toBe("#0F6B65");
++
++    await wrapper.find('[data-test="toggle-host-theme"]').trigger("click");
++
++    expect(drawer.style.getPropertyValue("--fd-surface")).toBe("#162220");
++    expect(drawer.style.getPropertyValue("--fd-secondary")).toBe("#B8CECA");
++    expect(drawer.style.getPropertyValue("--fd-primary")).toBe("#7FCFC7");
++    expect(drawer.getAttribute("style")).not.toContain("--el-");
++    expect(document.querySelector('[data-test="drawer-name"]')).toBe(input);
++    expect(input.value).toBe("声明式换肤保留的草稿");
++    expect(document.activeElement).toBe(input);
++  });
++
++  it("宿主以 rgb() 声明主色时按同一 R2 规则派生，混用分隔符的非法 rgb() 回退默认值", async () => {
++    const wrapper = mountDesigner(buildModel());
++    const host = wrapper.element as HTMLElement;
++    host.style.setProperty("--el-color-primary", "rgb(15, 107, 101)");
++    await wrapper.setProps({ appearance: { mode: "light" } });
++    await openApproval(wrapper);
++
++    const drawer = document.querySelector<HTMLElement>('[data-test="node-drawer"]')!;
++    expect(drawer.style.getPropertyValue("--fd-primary")).toBe("#0F6B65");
++    expect(drawer.style.getPropertyValue("--fd-primary-soft")).toBe("#DFF6F3");
++    expect(drawer.style.getPropertyValue("--fd-primary-ink")).toBe("#0F6B65");
++
++    host.style.setProperty("--el-color-primary", "rgb(15 107 101 / 100%)");
++    await wrapper.setProps({ appearance: { mode: "light" } });
++    expect(drawer.style.getPropertyValue("--fd-primary")).toBe("#0F6B65");
++
++    host.style.setProperty("--el-color-primary", "rgb(255, 0 0)");
++    await wrapper.setProps({ appearance: { mode: "light" } });
++    expect(drawer.style.getPropertyValue("--fd-primary")).toBe("#409EFF");
++  });
++
++  it("宿主画布与抽屉表面跨明度时 --fd-focus 回退 primaryInk，不输出空值", async () => {
++    const wrapper = mountDesigner(buildModel());
++    const host = wrapper.element as HTMLElement;
++    host.style.setProperty("--el-bg-color-page", "#141414");
++    host.style.setProperty("--el-bg-color", "#FFFFFF");
++    host.style.setProperty("--el-fill-color-light", "#F5F7FA");
++    host.style.setProperty("--el-text-color-primary", "#303133");
++    host.style.setProperty("--el-color-primary", "#2D3E97");
++    await wrapper.setProps({ appearance: { mode: "light" } });
++    await openApproval(wrapper);
++
++    const drawer = document.querySelector<HTMLElement>('[data-test="node-drawer"]')!;
++    expect(drawer.style.getPropertyValue("--fd-primary-ink")).toBe("#303133");
++    expect(drawer.style.getPropertyValue("--fd-focus")).toBe("#303133");
++    expect(drawer.getAttribute("style")).not.toContain("--el-");
++  });
++
++  it("宿主短十六进制颜色与等价六位颜色产生相同的自有角色", async () => {
++    const wrapper = mountDesigner(buildModel());
++    (wrapper.element as HTMLElement).style.setProperty("--el-color-primary", "#f00");
++    await wrapper.setProps({ appearance: { mode: "light" } });
++    await openApproval(wrapper);
++
++    const drawer = document.querySelector<HTMLElement>('[data-test="node-drawer"]')!;
++    expect(drawer.style.getPropertyValue("--fd-primary")).toBe("#FF0000");
++    const shortStyle = drawer.getAttribute("style");
++    (wrapper.element as HTMLElement).style.setProperty("--el-color-primary", "#ff0000");
++    await wrapper.setProps({ appearance: { mode: "light" } });
++    expect(drawer.getAttribute("style")).toBe(shortStyle);
++    expect(drawer.getAttribute("style")).not.toContain("--el-");
++  });
++
++  it("完成方式在新外观下同时用文字和边框表达选中，不只换颜色", async () => {
++    const wrapper = mountDesigner(buildModel(), { mode: "light" });
++    await openApproval(wrapper);
++    const countersign = document.querySelector<HTMLButtonElement>('[data-test="kind-all"]')!;
++    countersign.click();
++    await flushPromises();
++
++    expect(countersign.getAttribute("aria-pressed")).toBe("true");
++    expect(countersign.textContent).toContain("已选中");
++    const single = document.querySelector<HTMLButtonElement>('[data-test="kind-single"]')!;
++    expect(single.getAttribute("aria-pressed")).toBe("false");
++    expect(single.textContent).not.toContain("已选中");
++  });
++
++  it("运行中切换外观和启停适配保留输入 DOM、焦点与草稿，不改 BPMN XML", async () => {
++    const model = buildModel();
++    const beforeXml = (await model.toXML()).xml;
++    const wrapper = mountDesigner(model, { mode: "light" });
++    await openApproval(wrapper);
++    const input = document.querySelector<HTMLInputElement>('[data-test="drawer-name"]')!;
++    input.value = "尚未提交的中文名称";
++    input.dispatchEvent(new Event("input", { bubbles: true }));
++    input.focus();
++    await flushPromises();
++
++    await wrapper.setProps({
++      appearance: { colorSource: "brand", mode: "dark", density: "compact" },
++    });
++    expect(document.querySelector('[data-test="drawer-name"]')).toBe(input);
++    expect(input.value).toBe("尚未提交的中文名称");
++    expect(document.activeElement).toBe(input);
++    expect(document.querySelector('[data-test="node-drawer"]')?.classList).toContain(
++      "flowduet-appearance--dark",
++    );
++
++    await wrapper.setProps({ appearance: undefined });
++    expect(document.querySelector('[data-test="node-drawer"]')?.classList).not.toContain(
++      "flowduet-appearance",
++    );
++    expect(document.querySelector('[data-test="drawer-name"]')).toBe(input);
++    expect(input.value).toBe("尚未提交的中文名称");
++    expect(document.activeElement).toBe(input);
++
++    await wrapper.setProps({ appearance: { mode: "light" } });
++    expect(document.querySelector('[data-test="node-drawer"]')?.classList).toContain(
++      "flowduet-appearance",
++    );
++    expect(document.querySelector('[data-test="drawer-name"]')).toBe(input);
++    expect(input.value).toBe("尚未提交的中文名称");
++    expect(document.activeElement).toBe(input);
++    expect((await model.toXML()).xml).toBe(beforeXml);
++    expect(wrapper.emitted("change")).toBeUndefined();
++  });
++
++  it("非法配置保留上次有效呈现；合法停用后的非法输入不会复活旧主题", async () => {
++    const model = buildModel();
++    const beforeXml = (await model.toXML()).xml;
++    const wrapper = mountDesigner(model, { mode: "light" });
++    await openApproval(wrapper);
++    const input = document.querySelector<HTMLInputElement>('[data-test="drawer-name"]')!;
++    input.value = "保留这份草稿";
++    input.dispatchEvent(new Event("input", { bubbles: true }));
++    input.focus();
++    const drawer = document.querySelector<HTMLElement>('[data-test="node-drawer"]')!;
++    const originalPrimary = drawer.style.getPropertyValue("--fd-primary");
++    const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
++
++    (wrapper.element as HTMLElement).style.setProperty("--el-color-primary", "#000000");
++    await wrapper.setProps({
++      appearance: { mode: "dark", density: "large" } as unknown as ComponentAppearance,
++    });
++    expect(warn).toHaveBeenCalledWith(expect.stringContaining("appearance.density"));
++    expect(drawer.style.getPropertyValue("--fd-primary")).toBe(originalPrimary);
++    expect(drawer.classList).toContain("flowduet-appearance--light");
++    expect(document.querySelector('[data-test="drawer-name"]')).toBe(input);
++    expect(input.value).toBe("保留这份草稿");
++    expect(document.activeElement).toBe(input);
++
++    await wrapper.setProps({ appearance: undefined });
++    expect(drawer.classList).not.toContain("flowduet-appearance");
++    await wrapper.setProps({ appearance: { mode: "not-theme" } as unknown as ComponentAppearance });
++    expect(warn).toHaveBeenCalledWith(expect.stringContaining("appearance.mode"));
++    expect(drawer.classList).not.toContain("flowduet-appearance");
++    expect(input.value).toBe("保留这份草稿");
++    expect((await model.toXML()).xml).toBe(beforeXml);
++  });
++
++  it("公开组件消费 getter 异常配置时不炸渲染，并保留有效呈现与草稿", async () => {
++    const errors: unknown[] = [];
++    const wrapper = mount(DingtalkDesigner, {
++      props: { model: buildModel(), appearance: { colorSource: "brand", mode: "dark" } },
++      global: { config: { errorHandler: (error) => errors.push(error) } },
++      attachTo: document.body,
++    });
++    wrappers.push(wrapper);
++    await openApproval(wrapper);
++    const input = document.querySelector<HTMLInputElement>('[data-test="drawer-name"]')!;
++    input.value = "getter 前的草稿";
++    input.dispatchEvent(new Event("input", { bubbles: true }));
++    const invalid = reactive(
++      Object.defineProperty({}, "mode", {
++        enumerable: true,
++        get() {
++          throw new Error("component getter exploded");
++        },
++      }),
++    );
++    const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
++
++    await wrapper.setProps({ appearance: invalid as ComponentAppearance });
++    expect(errors).toEqual([]);
++    expect(warn).toHaveBeenCalledWith(expect.stringContaining("component getter exploded"));
++    expect(document.querySelector('[data-test="node-drawer"]')?.classList).toContain(
++      "flowduet-appearance--dark",
++    );
++    expect(input.value).toBe("getter 前的草稿");
++  });
++
++  it("输入法组合期间切换外观不丢字、不自动提交，显式确定仍受既有保护", async () => {
++    const model = buildModel();
++    const beforeXml = (await model.toXML()).xml;
++    const wrapper = mountDesigner(model, { colorSource: "brand", mode: "light" });
++    await openApproval(wrapper);
++    const input = document.querySelector<HTMLInputElement>('[data-test="drawer-name"]')!;
++    input.focus();
++    input.dispatchEvent(new CompositionEvent("compositionstart", { bubbles: true }));
++    input.value = "组合中的中文";
++    input.dispatchEvent(new InputEvent("input", { bubbles: true, isComposing: true }));
++    await flushPromises();
++
++    await wrapper.setProps({
++      appearance: { colorSource: "brand", mode: "dark", density: "compact" },
++    });
++    expect(document.querySelector('[data-test="drawer-name"]')).toBe(input);
++    expect(input.value).toBe("组合中的中文");
++    expect(document.activeElement).toBe(input);
++    expect((await model.toXML()).xml).toBe(beforeXml);
++    expect(wrapper.emitted("change")).toBeUndefined();
++
++    (document.querySelector('[data-test="drawer-save"]') as HTMLElement).click();
++    await flushPromises();
++    expect(wrapper.find('[data-test="action-error"]').text()).toContain("输入法尚未完成");
++    expect(input.value).toBe("组合中的中文");
++    expect((await model.toXML()).xml).toBe(beforeXml);
++  });
++
++  it("同一 Vue app 双实例独立切换和卸载，不污染另一实例或无关宿主控件", async () => {
++    const firstModel = buildModel();
++    const secondModel = buildModel();
++    const Host = defineComponent({
++      components: { DingtalkDesigner, ElButton },
++      data() {
++        return {
++          firstModel,
++          secondModel,
++          showFirst: true,
++          firstAppearance: { mode: "light" } as ComponentAppearance | undefined,
++          secondAppearance: {
++            colorSource: "brand",
++            mode: "dark",
++            density: "compact",
++          } as ComponentAppearance,
++        };
++      },
++      template: `
++        <div>
++          <ElButton data-test="host-control">无关宿主控件</ElButton>
++          <button data-test="switch-first" @click="firstAppearance = { colorSource: 'brand', mode: 'light', density: 'compact' }">切换第一个</button>
++          <button data-test="unmount-first" @click="showFirst = false">卸载第一个</button>
++          <DingtalkDesigner v-if="showFirst" data-test="first-designer" :model="firstModel" :appearance="firstAppearance" />
++          <DingtalkDesigner data-test="second-designer" :model="secondModel" :appearance="secondAppearance" />
++        </div>
++      `,
++    });
++    const wrapper = mount(Host, { attachTo: document.body });
++    wrappers.push(wrapper);
++    const htmlClass = document.documentElement.className;
++    const open = async (id: string) => {
++      const cards = document.querySelectorAll(`[data-test="${id}"] [data-test="node-card"]`);
++      (cards[1] as HTMLElement).click();
++      await flushPromises();
++    };
++    await open("first-designer");
++    await open("second-designer");
++
++    const firstDrawer = document.querySelector<HTMLElement>(".flowduet-appearance--host")!;
++    const secondDrawer = document.querySelector<HTMLElement>(".flowduet-appearance--brand")!;
++    expect(firstDrawer.getAttribute("style")).not.toContain("--el-");
++    expect(secondDrawer.style.getPropertyValue("--el-color-primary")).toBe("#A5BBFF");
++    const secondStyle = secondDrawer.getAttribute("style");
++    const hostControl = document.querySelector<HTMLElement>('[data-test="host-control"]')!;
++    const hostControlStyle = hostControl.getAttribute("style");
++
++    (document.querySelector('[data-test="switch-first"]') as HTMLElement).click();
++    await flushPromises();
++    expect(firstDrawer.classList).toContain("flowduet-appearance--light");
++    expect(firstDrawer.style.getPropertyValue("--el-color-primary")).toBe("#2D3E97");
++    expect(secondDrawer.getAttribute("style")).toBe(secondStyle);
++    expect(hostControl.getAttribute("style")).toBe(hostControlStyle);
++    expect(hostControl.classList).not.toContain("flowduet-appearance");
++    expect(document.documentElement.className).toBe(htmlClass);
++
++    (document.querySelector('[data-test="unmount-first"]') as HTMLElement).click();
++    await flushPromises();
++    expect(firstDrawer.isConnected).toBe(false);
++    expect(secondDrawer.isConnected).toBe(true);
++    expect(secondDrawer.getAttribute("style")).toBe(secondStyle);
++    expect(hostControl.getAttribute("style")).toBe(hostControlStyle);
++  });
++
++  it("外置属性编辑接受合法外观配置但不渲染抽屉，首次非法配置保持旧路径", async () => {
++    const model = buildModel();
++    const external = mount(DingtalkDesigner, {
++      props: {
++        model,
++        propertyEditing: "external",
++        appearance: { colorSource: "brand", mode: "dark" },
++      },
++      attachTo: document.body,
++    });
++    wrappers.push(external);
++    await external.findAll('[data-test="node-card"]')[1]!.trigger("click");
++    await flushPromises();
++    expect(external.emitted("selection-request")).toBeTruthy();
++    expect(document.querySelector('[data-test="node-drawer"]')).toBeNull();
++    expect(document.querySelector(".flowduet-appearance")).toBeNull();
++    external.unmount();
++
++    const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
++    const invalid = mountDesigner(buildModel(), { density: "compact" });
++    await openApproval(invalid);
++    expect(warn).toHaveBeenCalledWith(expect.stringContaining("appearance.mode"));
++    const drawer = document.querySelector<HTMLElement>('[data-test="node-drawer"]')!;
++    expect(drawer.classList).not.toContain("flowduet-appearance");
++    expect(drawer.getAttribute("style")).not.toContain("--fd-");
++  });
++
++  it("发起与结束节点的新外观空状态使用中性标题，并可取消关闭", async () => {
++    const wrapper = mountDesigner(buildModel(), { mode: "light" });
++    for (const index of [0, 2]) {
++      await wrapper.findAll('[data-test="node-card"]')[index]!.trigger("click");
++      await flushPromises();
++      expect(document.querySelector(".el-drawer__title")?.textContent).toBe("节点属性");
++      expect(document.querySelector(".drawer-empty")?.textContent).toBe("该元素无可配置字段");
++      (document.querySelector('[data-test="drawer-cancel"]') as HTMLElement).click();
++      await flushPromises();
++    }
++  });
++});
+diff --git a/packages/designer/src/appearance.ts b/packages/designer/src/appearance.ts
+new file mode 100644
+index 0000000..81fd5a2
+--- /dev/null
++++ b/packages/designer/src/appearance.ts
+@@ -0,0 +1,55 @@
++export type AppearanceColorSource = "host" | "brand";
++export type AppearanceMode = "light" | "dark";
++export type AppearanceDensity = "comfortable" | "compact";
++
++/** 组件实例的显式外观配置；省略整个对象才表示沿用旧路径。 */
++export interface ComponentAppearance {
++  colorSource?: AppearanceColorSource;
++  mode: AppearanceMode;
++  density?: AppearanceDensity;
++}
++
++/** 补齐默认值后的有效外观配置，可安全传给具体组件消费。 */
++export interface ResolvedComponentAppearance {
++  colorSource: AppearanceColorSource;
++  mode: AppearanceMode;
++  density: AppearanceDensity;
++}
++
++function reject(
++  field: string,
++  reason: string,
++  previous?: ResolvedComponentAppearance,
++): ResolvedComponentAppearance | undefined {
++  console.warn(`[FlowDuet] ${field} ${reason}；已整份拒绝本次 appearance 配置。`);
++  return previous;
++}
++
++/** 归一化公开配置；后续表单预览复用同一合同，不另建一套默认值。 */
++export function resolveComponentAppearance(
++  value: unknown,
++  previous?: ResolvedComponentAppearance,
++): ResolvedComponentAppearance | undefined {
++  if (value === undefined) return undefined;
++  if (typeof value !== "object" || value === null)
++    return reject("appearance", "必须是一个配置对象", previous);
++
++  try {
++    if (Array.isArray(value)) return reject("appearance", "必须是一个配置对象", previous);
++    const appearance = value as Record<string, unknown>;
++    const colorSource = appearance.colorSource === undefined ? "host" : appearance.colorSource;
++    const mode = appearance.mode;
++    const density = appearance.density === undefined ? "comfortable" : appearance.density;
++    if (colorSource !== "host" && colorSource !== "brand")
++      return reject("appearance.colorSource", '只支持 "host" 或 "brand"', previous);
++    if (mode !== "light" && mode !== "dark")
++      return reject("appearance.mode", '必填，且只支持 "light" 或 "dark"', previous);
++    if (density !== "comfortable" && density !== "compact")
++      return reject("appearance.density", '只支持 "comfortable" 或 "compact"', previous);
++
++    return { colorSource, mode, density };
++  } catch (error) {
++    const reason = error instanceof Error ? error.message : String(error);
++    return reject("appearance", `无法读取配置属性（${reason}）`, previous);
++  }
++}
+diff --git a/packages/designer/src/components/DingtalkDesigner.vue b/packages/designer/src/components/DingtalkDesigner.vue
+index ff76b6b..394a5bc 100644
+--- a/packages/designer/src/components/DingtalkDesigner.vue
++++ b/packages/designer/src/components/DingtalkDesigner.vue
+@@ -1,7 +1,17 @@
+ <script setup lang="ts">
+-import { computed, ref, toRaw, watch, nextTick, onBeforeUnmount } from "vue";
++import { computed, ref, shallowRef, toRaw, watch, nextTick, onBeforeUnmount, onMounted } from "vue";
+ import type { ApprovalDraftOptions, BpmnModel, BlockTreeNode } from "@flowduet/core";
+ import { deriveBlockTree, resolveEffectiveForm } from "@flowduet/core";
++import {
++  resolveComponentAppearance,
++  type ComponentAppearance,
++  type ResolvedComponentAppearance,
++} from "../appearance.js";
++import {
++  createAppearanceVariables,
++  readHostAppearance,
++  type HostAppearanceContext,
++} from "../appearance-style.js";
+ import BlockNodeList from "./BlockNodeList.vue";
+ import NodeDrawer from "./NodeDrawer.vue";
+ import type {
+@@ -47,6 +57,8 @@ const props = withDefaults(
+      */
+     formOptions?: readonly DesignerFormOption[];
+     propertyEditing?: "drawer" | "external";
++    /** 显式启用的实例外观；省略时保持既有抽屉路径。 */
++    appearance?: ComponentAppearance | undefined;
+     selectedId?: string | undefined;
+     showDefaultForm?: boolean;
+     /** 外置控制器提交版本，驱动同一模型引用的重投影及请求核对。 */
+@@ -74,6 +86,34 @@ onBeforeUnmount(() => {
+ });
+ const drawerRef = ref<InstanceType<typeof NodeDrawer> | null>(null);
+ 
++// 解析结果同时就是“上次有效值”：合法停用会清空它，之后的非法输入不会复活旧主题。
++const drawerAppearance = shallowRef<ResolvedComponentAppearance>();
++const hostAppearance = shallowRef<HostAppearanceContext>();
++function refreshHostAppearance(): void {
++  if (disposed) return;
++  hostAppearance.value =
++    drawerAppearance.value?.colorSource === "host"
++      ? readHostAppearance(hostRef.value, drawerAppearance.value.mode)
++      : undefined;
++}
++watch(
++  () => props.appearance,
++  (value) => {
++    if (disposed) return;
++    const previous = drawerAppearance.value;
++    const resolved = resolveComponentAppearance(value, previous);
++    drawerAppearance.value = resolved;
++    // 非法输入返回同一个上次有效对象；此时连宿主快照也保持，避免“拒绝配置却换色”。
++    if (resolved !== previous) refreshHostAppearance();
++  },
++  // 后置冲刷确保宿主在同一响应式周期切换主题类或样式后，DOM 已完成补丁再读取计算样式。
++  { immediate: true, flush: "post" },
++);
++onMounted(refreshHostAppearance);
++const drawerStyle = computed(() =>
++  createAppearanceVariables(drawerAppearance.value, hostAppearance.value),
++);
++
+ const version = ref(0);
+ const activeId = ref<string>();
+ const drawerVisible = ref(false);
+@@ -435,6 +475,8 @@ defineExpose({
+       :model="model"
+       :node-id="activeId"
+       :form-options="formOptions"
++      :appearance="drawerAppearance"
++      :appearance-style="drawerStyle"
+       @saved="onDrawerSaved"
+       @error="onDrawerError"
+       @draft-modified="onDrawerDraftModified"
+diff --git a/packages/designer/src/components/NodeDrawer.vue b/packages/designer/src/components/NodeDrawer.vue
+index 0032cd0..19634f8 100644
+--- a/packages/designer/src/components/NodeDrawer.vue
++++ b/packages/designer/src/components/NodeDrawer.vue
+@@ -3,6 +3,7 @@ import { computed, ref, toRaw, watch } from "vue";
+ import { ElButton, ElDrawer } from "element-plus";
+ import type { ApprovalDraftOptions, BpmnModel } from "@flowduet/core";
+ import type { DesignerFormOption } from "../form-options.js";
++import type { ResolvedComponentAppearance } from "../appearance.js";
+ import {
+   readPropertyDraft,
+   applyPropertyDraft,
+@@ -13,11 +14,34 @@ const props = defineProps<{
+   model: BpmnModel;
+   nodeId?: string | undefined;
+   formOptions?: readonly DesignerFormOption[] | undefined;
++  appearance?: ResolvedComponentAppearance | undefined;
++  appearanceStyle?: Record<string, string> | undefined;
+ }>();
+ const emit = defineEmits<{ saved: []; error: [message: string]; draftModified: [] }>();
+ const visible = defineModel<boolean>({ default: false });
+ const model = computed(() => toRaw(props.model));
++const epSize = computed(() => {
++  if (props.appearance === undefined) return "";
++  return props.appearance.density === "compact" ? "small" : "default";
++});
++const drawerClass = computed(() => {
++  const appearance = props.appearance;
++  if (appearance === undefined) return "flowduet-node-drawer";
++  return [
++    "flowduet-node-drawer",
++    "flowduet-appearance",
++    `flowduet-appearance--${appearance.colorSource}`,
++    `flowduet-appearance--${appearance.mode}`,
++    `flowduet-appearance--${appearance.density}`,
++  ];
++});
+ const draft = ref<FlowPropertyDraft>();
++const drawerTitle = computed(() => {
++  if (draft.value?.kind === "branch") return "分支条件";
++  if (draft.value?.kind === "cc") return "抄送节点";
++  if (draft.value === undefined && props.appearance !== undefined) return "节点属性";
++  return "审批节点";
++});
+ const fieldsRef = ref<InstanceType<typeof NodePropertyFields>>();
+ watch(
+   () => [props.nodeId, visible.value, props.model] as const,
+@@ -86,10 +110,12 @@ defineExpose({ commit });
+ <template>
+   <ElDrawer
+     v-model="visible"
+-    :title="draft?.kind === 'branch' ? '分支条件' : draft?.kind === 'cc' ? '抄送节点' : '审批节点'"
++    :title="drawerTitle"
+     size="360px"
+     data-test="node-drawer"
+     :modal="false"
++    :class="drawerClass"
++    :style="appearanceStyle"
+   >
+     <NodePropertyFields
+       ref="fieldsRef"
+@@ -97,20 +123,125 @@ defineExpose({ commit });
+       :draft="draft"
+       :form-options="formOptions"
+       :default-form-key="model.defaultFormKey"
++      :size="epSize"
+       @update:draft="update"
+       @unserialized-input="emit('draftModified')"
+     />
+     <div v-else class="drawer-empty">该元素无可配置字段</div>
+     <template #footer
+-      ><ElButton data-test="drawer-cancel" @click="visible = false">取消</ElButton
+-      ><ElButton type="primary" data-test="drawer-save" @click="commit()">确定</ElButton></template
++      ><ElButton :size="epSize" data-test="drawer-cancel" @click="visible = false">取消</ElButton
++      ><ElButton :size="epSize" type="primary" data-test="drawer-save" @click="commit()"
++        >确定</ElButton
++      ></template
+     >
+   </ElDrawer>
+ </template>
+-<style scoped>
+-.drawer-empty {
++<style>
++.flowduet-node-drawer .drawer-empty {
+   color: #909399;
+   font-size: 13px;
+   padding: 12px 0;
+ }
++
++.flowduet-node-drawer.flowduet-appearance {
++  font-family: var(--fd-font-family);
++}
++
++.flowduet-node-drawer.flowduet-appearance .el-drawer__header {
++  margin-bottom: 0;
++  padding: var(--fd-panel-padding);
++}
++
++.flowduet-node-drawer.flowduet-appearance .el-drawer__title {
++  font-size: 20px;
++  line-height: 1.6;
++  overflow-wrap: anywhere;
++}
++
++.flowduet-node-drawer.flowduet-appearance .el-drawer__body {
++  padding: var(--fd-panel-padding);
++}
++
++.flowduet-node-drawer.flowduet-appearance .el-drawer__footer {
++  padding: var(--fd-panel-padding);
++  padding-top: 0;
++}
++
++.flowduet-node-drawer.flowduet-appearance .drawer-empty {
++  color: var(--fd-muted);
++  line-height: 1.6;
++}
++
++/* 品牌预设只改当前抽屉的 EP 本体变量，复合抽屉类使权重高于宿主 html.dark 派生规则；跟随宿主不命中。 */
++.flowduet-node-drawer.flowduet-appearance--brand {
++  background: var(--fd-surface);
++  color: var(--fd-text);
++}
++
++.flowduet-node-drawer.flowduet-appearance--brand .el-drawer__header {
++  border-bottom: 1px solid var(--fd-border);
++  color: var(--fd-text);
++}
++
++.flowduet-node-drawer.flowduet-appearance--brand .el-drawer__close-btn {
++  color: var(--fd-secondary);
++}
++
++.flowduet-node-drawer.flowduet-appearance--brand .el-drawer__close-btn:focus-visible {
++  outline: 2px solid var(--fd-focus);
++  outline-offset: 3px;
++}
++
++.flowduet-node-drawer.flowduet-appearance--brand .el-drawer__footer {
++  border-top: 1px solid var(--fd-border);
++  padding-top: var(--fd-panel-padding);
++}
++
++.flowduet-node-drawer.flowduet-appearance--brand .el-input {
++  --el-input-text-color: var(--fd-text);
++  --el-input-bg-color: var(--fd-surface);
++  --el-input-border-color: var(--fd-control-border);
++  --el-input-placeholder-color: var(--fd-muted);
++  --el-input-focus-border-color: var(--fd-focus);
++  --el-input-hover-border-color: var(--fd-control-border);
++  --el-input-border-radius: var(--fd-radius);
++}
++
++.flowduet-node-drawer.flowduet-appearance--brand .el-input__wrapper:focus-within {
++  outline: 2px solid var(--fd-focus);
++  outline-offset: 3px;
++}
++
++.flowduet-node-drawer.flowduet-appearance--brand .el-button {
++  --el-button-text-color: var(--fd-text);
++  --el-button-bg-color: var(--fd-surface);
++  --el-button-border-color: var(--fd-control-border);
++  --el-button-hover-text-color: var(--fd-text);
++  --el-button-hover-bg-color: var(--fd-inset);
++  --el-button-hover-border-color: var(--fd-control-border);
++  --el-button-active-text-color: var(--fd-text);
++  --el-button-active-bg-color: var(--fd-inset);
++  --el-button-active-border-color: var(--fd-control-border);
++  --el-button-disabled-text-color: var(--fd-disabled-text);
++  --el-button-disabled-bg-color: var(--fd-disabled-surface);
++  --el-button-disabled-border-color: var(--fd-border);
++  --el-button-outline-color: var(--fd-focus);
++}
++
++.flowduet-node-drawer.flowduet-appearance--brand .el-button--primary {
++  --el-button-text-color: var(--fd-on-primary);
++  --el-button-bg-color: var(--fd-primary);
++  --el-button-border-color: var(--fd-primary);
++  --el-button-hover-text-color: var(--fd-on-primary);
++  --el-button-hover-bg-color: var(--fd-primary-hover);
++  --el-button-hover-border-color: var(--fd-primary-hover);
++  --el-button-active-text-color: var(--fd-on-primary);
++  --el-button-active-bg-color: var(--fd-primary-pressed);
++  --el-button-active-border-color: var(--fd-primary-pressed);
++}
++
++.flowduet-node-drawer.flowduet-appearance--brand .el-button:focus-visible {
++  outline: 2px solid var(--fd-focus);
++  outline-offset: 3px;
++}
+ </style>
+diff --git a/packages/designer/src/components/NodePropertyFields.vue b/packages/designer/src/components/NodePropertyFields.vue
+index 64a33e6..8639ad6 100644
+--- a/packages/designer/src/components/NodePropertyFields.vue
++++ b/packages/designer/src/components/NodePropertyFields.vue
+@@ -3,11 +3,15 @@ import { computed, shallowRef, watch, ref, nextTick } from "vue";
+ import { ElForm, ElFormItem, ElInput } from "element-plus";
+ import { labelFormOptions, type DesignerFormOption } from "../form-options.js";
+ import { KIND_OPTIONS, switchApprovalKind, type FlowPropertyDraft } from "../property-editing.js";
+-const props = defineProps<{
+-  draft: FlowPropertyDraft;
+-  formOptions?: readonly DesignerFormOption[] | undefined;
+-  defaultFormKey?: string | undefined;
+-}>();
++const props = withDefaults(
++  defineProps<{
++    draft: FlowPropertyDraft;
++    formOptions?: readonly DesignerFormOption[] | undefined;
++    defaultFormKey?: string | undefined;
++    size?: "" | "default" | "small" | undefined;
++  }>(),
++  { size: "" },
++);
+ const formRef = ref<InstanceType<typeof ElForm>>();
+ const draft = shallowRef(props.draft);
+ watch(
+@@ -84,6 +88,7 @@ defineExpose({ flush, capture });
+     @compositionstart.capture="compositionStart"
+     @compositionend.capture="compositionEnd"
+     ref="formRef"
++    :size="size"
+     label-position="top"
+     data-test="node-property-fields"
+   >
+@@ -116,11 +121,15 @@ defineExpose({ flush, capture });
+             class="kind-card"
+             :class="{ 'kind-card--on': draft.approvalKind === option.key }"
+             :data-test="`kind-${option.key}`"
++            :aria-pressed="draft.approvalKind === option.key"
+             type="button"
+             @click="selectKind(option.key)"
+           >
+             <span class="kind-card-label">{{ option.label }}</span
+-            ><span class="kind-card-hint">{{ option.hint }}</span>
++            ><span class="kind-card-hint">{{ option.hint }}</span
++            ><span v-if="size" class="kind-card-state">{{
++              draft.approvalKind === option.key ? "已选中" : ""
++            }}</span>
+           </button>
+         </div></ElFormItem
+       >
+@@ -222,4 +231,104 @@ defineExpose({ flush, capture });
+   color: #303133;
+   font-size: 13px;
+ }
++
++/* 新适配只覆盖当前属性抽屉内的排版与自有控件，复合抽屉类使权重不依赖宿主引入 EP 样式的先后顺序。 */
++:global(.flowduet-node-drawer.flowduet-appearance .el-form-item) {
++  margin-bottom: var(--fd-field-gap);
++}
++
++:global(.flowduet-node-drawer.flowduet-appearance .el-form-item__label) {
++  color: var(--fd-secondary);
++  font-family: var(--fd-font-family);
++  font-size: 13px;
++  line-height: 1.6;
++}
++
++:global(.flowduet-node-drawer.flowduet-appearance .el-form-item__error) {
++  position: static;
++  padding-top: 4px;
++  line-height: 1.6;
++  white-space: normal;
++  overflow-wrap: anywhere;
++}
++
++.flowduet-appearance .kind-cards {
++  gap: var(--fd-row-gap);
++}
++
++.flowduet-appearance .kind-card {
++  min-width: 0;
++  gap: 2px;
++  padding: 8px 4px;
++  border: 2px solid var(--fd-control-border);
++  border-radius: var(--fd-radius);
++  background: var(--fd-surface);
++  color: var(--fd-text);
++  font-family: var(--fd-font-family);
++  transition:
++    border-color 120ms,
++    background-color 120ms;
++}
++
++.flowduet-appearance--compact .kind-card {
++  padding: 4px 2px;
++}
++
++.flowduet-appearance .kind-card--on {
++  border-color: var(--fd-primary-ink);
++  background: var(--fd-primary-soft);
++  outline: none;
++}
++
++.flowduet-appearance .kind-card:focus-visible {
++  outline: 2px solid var(--fd-focus);
++  outline-offset: 3px;
++}
++
++.flowduet-appearance .kind-card-label {
++  color: var(--fd-text);
++  font-size: 13px;
++  line-height: 1.6;
++  overflow-wrap: anywhere;
++}
++
++.flowduet-appearance .kind-card-hint {
++  color: var(--fd-muted);
++  font-size: 12px;
++  line-height: 1.4;
++  overflow-wrap: anywhere;
++}
++
++.kind-card-state {
++  min-height: 16px;
++  color: var(--fd-primary-ink);
++  font-size: 10px;
++  line-height: 16px;
++}
++
++.flowduet-appearance .drawer-form-select {
++  height: var(--fd-control-height);
++  border-color: var(--fd-control-border);
++  border-radius: var(--fd-radius);
++  background: var(--fd-surface);
++  color: var(--fd-text);
++  font-family: var(--fd-font-family);
++  font-size: var(--fd-control-font-size);
++}
++
++.flowduet-appearance .drawer-form-select:focus-visible {
++  outline: 2px solid var(--fd-focus);
++  outline-offset: 3px;
++}
++
++.flowduet-appearance .drawer-form-select option {
++  background: var(--fd-surface);
++  color: var(--fd-text);
++}
++
++@media (prefers-reduced-motion: reduce) {
++  .flowduet-appearance .kind-card {
++    transition: none;
++  }
++}
+ </style>
+diff --git a/packages/designer/src/index.ts b/packages/designer/src/index.ts
+index a312953..cc2b115 100644
+--- a/packages/designer/src/index.ts
++++ b/packages/designer/src/index.ts
+@@ -1,5 +1,13 @@
+ export { default as DingtalkDesigner } from "./components/DingtalkDesigner.vue";
+ export { default as BpmnCanvas } from "./components/BpmnCanvas.vue";
++export { resolveComponentAppearance } from "./appearance.js";
++export type {
++  AppearanceColorSource,
++  AppearanceDensity,
++  AppearanceMode,
++  ComponentAppearance,
++  ResolvedComponentAppearance,
++} from "./appearance.js";
+ /**
+  * 草稿待修复项收集器与抄送形态判定（#71 起公开）：与 exportXml 共用同一
+  * 扫描口径，设计文档保存侧据此「保存成功 + 报告待修复项」、打开侧据此做

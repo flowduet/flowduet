@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:flowduet="urn:flowduet:bpmn" xmlns:flowable="http://flowable.org/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="form_override_flow_defs" targetNamespace="http://flowduet.dev/bpmn">
+  <bpmn:process id="form_override_flow" name="多表单覆盖审批" isExecutable="true" flowduet:defaultFormKey="form_apply_v1">
+    <bpmn:startEvent id="start" name="开始">
+      <bpmn:outgoing>f_start_apply</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:userTask id="solo_apply" name="提交复核" flowable:assignee="${submitter}">
+      <bpmn:incoming>f_start_apply</bpmn:incoming>
+      <bpmn:outgoing>f_apply_fork</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="amount_fork" name="金额判断" default="f_fork_review">
+      <bpmn:incoming>f_apply_fork</bpmn:incoming>
+      <bpmn:outgoing>f_fork_review</bpmn:outgoing>
+      <bpmn:outgoing>f_fork_audit</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="mi_review" name="部门复核" flowable:assignee="${assignee}" flowable:formKey="form_review_v1">
+      <bpmn:incoming>f_fork_review</bpmn:incoming>
+      <bpmn:outgoing>f_review_join</bpmn:outgoing>
+      <bpmn:multiInstanceLoopCharacteristics flowable:collection="approvers" flowable:elementVariable="assignee">
+        <bpmn:completionCondition xsi:type="bpmn:tFormalExpression">${nrOfCompletedInstances == nrOfInstances}</bpmn:completionCondition>
+      </bpmn:multiInstanceLoopCharacteristics>
+    </bpmn:userTask>
+    <bpmn:userTask id="any_audit" name="总监抽审" flowable:assignee="${assignee}">
+      <bpmn:incoming>f_fork_audit</bpmn:incoming>
+      <bpmn:outgoing>f_audit_join</bpmn:outgoing>
+      <bpmn:multiInstanceLoopCharacteristics flowable:collection="directors" flowable:elementVariable="assignee">
+        <bpmn:completionCondition xsi:type="bpmn:tFormalExpression">${nrOfCompletedInstances &gt;= 1}</bpmn:completionCondition>
+      </bpmn:multiInstanceLoopCharacteristics>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="merge_join" name="汇聚">
+      <bpmn:incoming>f_review_join</bpmn:incoming>
+      <bpmn:incoming>f_audit_join</bpmn:incoming>
+      <bpmn:outgoing>f_join_seq</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="seq_sign" name="依次确认" flowable:assignee="${assignee}" flowable:formKey="form_review_v1">
+      <bpmn:incoming>f_join_seq</bpmn:incoming>
+      <bpmn:outgoing>f_seq_cc</bpmn:outgoing>
+      <bpmn:multiInstanceLoopCharacteristics isSequential="true" flowable:collection="chains" flowable:elementVariable="assignee" />
+    </bpmn:userTask>
+    <bpmn:serviceTask id="cc_record" name="抄送备案" flowable:delegateExpression="${flowduetCcTask}" flowable:ccTo="张三,李四">
+      <bpmn:incoming>f_seq_cc</bpmn:incoming>
+      <bpmn:outgoing>f_cc_end</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="end" name="结束">
+      <bpmn:incoming>f_cc_end</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="f_start_apply" sourceRef="start" targetRef="solo_apply" />
+    <bpmn:sequenceFlow id="f_apply_fork" sourceRef="solo_apply" targetRef="amount_fork" />
+    <bpmn:sequenceFlow id="f_fork_review" name="常规复核" sourceRef="amount_fork" targetRef="mi_review" />
+    <bpmn:sequenceFlow id="f_fork_audit" name="大额抽审" sourceRef="amount_fork" targetRef="any_audit">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${amount &gt; 1000}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="f_review_join" sourceRef="mi_review" targetRef="merge_join" />
+    <bpmn:sequenceFlow id="f_audit_join" sourceRef="any_audit" targetRef="merge_join" />
+    <bpmn:sequenceFlow id="f_join_seq" sourceRef="merge_join" targetRef="seq_sign" />
+    <bpmn:sequenceFlow id="f_seq_cc" sourceRef="seq_sign" targetRef="cc_record" />
+    <bpmn:sequenceFlow id="f_cc_end" sourceRef="cc_record" targetRef="end" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="form_override_flow_di">
+    <bpmndi:BPMNPlane id="form_override_flow_plane" bpmnElement="form_override_flow">
+      <bpmndi:BPMNShape id="start_di" bpmnElement="start">
+        <dc:Bounds x="160" y="60" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="solo_apply_di" bpmnElement="solo_apply">
+        <dc:Bounds x="140" y="150" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="amount_fork_di" bpmnElement="amount_fork">
+        <dc:Bounds x="165" y="280" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="mi_review_di" bpmnElement="mi_review">
+        <dc:Bounds x="40" y="390" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="any_audit_di" bpmnElement="any_audit">
+        <dc:Bounds x="230" y="390" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="merge_join_di" bpmnElement="merge_join">
+        <dc:Bounds x="165" y="520" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="seq_sign_di" bpmnElement="seq_sign">
+        <dc:Bounds x="140" y="630" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="cc_record_di" bpmnElement="cc_record">
+        <dc:Bounds x="140" y="770" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="end_di" bpmnElement="end">
+        <dc:Bounds x="172" y="910" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="f_start_apply_di" bpmnElement="f_start_apply">
+        <di:waypoint x="178" y="96" />
+        <di:waypoint x="178" y="150" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f_apply_fork_di" bpmnElement="f_apply_fork">
+        <di:waypoint x="190" y="230" />
+        <di:waypoint x="190" y="280" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f_fork_review_di" bpmnElement="f_fork_review">
+        <di:waypoint x="165" y="305" />
+        <di:waypoint x="90" y="390" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f_fork_audit_di" bpmnElement="f_fork_audit">
+        <di:waypoint x="215" y="305" />
+        <di:waypoint x="280" y="390" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f_review_join_di" bpmnElement="f_review_join">
+        <di:waypoint x="90" y="470" />
+        <di:waypoint x="165" y="545" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f_audit_join_di" bpmnElement="f_audit_join">
+        <di:waypoint x="280" y="470" />
+        <di:waypoint x="215" y="545" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f_join_seq_di" bpmnElement="f_join_seq">
+        <di:waypoint x="190" y="570" />
+        <di:waypoint x="190" y="630" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f_seq_cc_di" bpmnElement="f_seq_cc">
+        <di:waypoint x="190" y="710" />
+        <di:waypoint x="190" y="770" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f_cc_end_di" bpmnElement="f_cc_end">
+        <di:waypoint x="190" y="850" />
+        <di:waypoint x="190" y="910" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

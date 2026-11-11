@@ -1,5 +1,5 @@
-import { flowableAdapter } from "../../adapter/flowable-adapter";
-import { BpmnModel } from "../../model/bpmn-model";
+import { flowableAdapter } from "../../adapter/flowable-adapter.js";
+import { BpmnModel } from "../../model/bpmn-model.js";
 
 /**
  * 编译合同的最小流程输入（ROADMAP Step 1 测试链 1 与 2 共用）：

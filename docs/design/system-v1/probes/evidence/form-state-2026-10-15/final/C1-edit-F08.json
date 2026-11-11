@@ -1,0 +1,76 @@
+[
+  {
+    "field": "F08",
+    "layout": "top",
+    "fieldReadonly": true,
+    "action": "edit",
+    "status": "passed",
+    "actual": {
+      "type": "switch",
+      "field": "a_urgent",
+      "title": "配置F08",
+      "value": true,
+      "_fc_id": "id_Fe56mv9p7u7sypc",
+      "name": "ref_Fxxgmv9p7u7syqc",
+      "display": true,
+      "hidden": false,
+      "_fc_drag_tag": "switch",
+      "$required": true
+    },
+    "sessionUnchanged": true
+  },
+  {
+    "field": "F08",
+    "layout": "top",
+    "action": "clear",
+    "status": "passed",
+    "actual": {
+      "type": "switch",
+      "field": "a_urgent",
+      "title": "配置F08",
+      "_fc_id": "id_Fe56mv9p7u7sypc",
+      "name": "ref_Fxxgmv9p7u7syqc",
+      "display": true,
+      "hidden": false,
+      "_fc_drag_tag": "switch",
+      "$required": true
+    }
+  },
+  {
+    "field": "F08",
+    "layout": "grid",
+    "fieldReadonly": true,
+    "action": "edit",
+    "status": "passed",
+    "actual": {
+      "type": "switch",
+      "field": "a_urgent",
+      "title": "配置F08",
+      "value": true,
+      "_fc_id": "id_Fxrcmv9p7v61ytc",
+      "name": "ref_Fsu9mv9p7v61yuc",
+      "display": true,
+      "hidden": false,
+      "_fc_drag_tag": "switch",
+      "$required": true
+    },
+    "sessionUnchanged": true
+  },
+  {
+    "field": "F08",
+    "layout": "grid",
+    "action": "clear",
+    "status": "passed",
+    "actual": {
+      "type": "switch",
+      "field": "a_urgent",
+      "title": "配置F08",
+      "_fc_id": "id_Fxrcmv9p7v61ytc",
+      "name": "ref_Fsu9mv9p7v61yuc",
+      "display": true,
+      "hidden": false,
+      "_fc_drag_tag": "switch",
+      "$required": true
+    }
+  }
+]

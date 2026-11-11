@@ -1,0 +1,94 @@
+
+  VITE v8.3.0  ready in 538 ms
+
+  ➜  Local:   http://127.0.0.1:5178/
+12:58:02 AM [vite] (client) Failed to load source map for /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/@form-create+designer@3.5.0_vue@3.5.43_typescript@5.9.3_/node_modules/@form-create/designer/dist/index.es.js.
+SyntaxError: Unexpected token '�', "��r��y�" is not valid JSON
+12:59:11 AM [vite] (client) hmr update /@fs/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/form-create/src/components/FormDesigner.vue
+1:08:59 AM [vite] (client) [console.warn] [BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+1:08:59 AM [vite] (client) [console.warn] [BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+1:09:00 AM [vite] (client) [console.warn] [BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+1:09:00 AM [vite] (client) [console.warn] [BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+1:09:00 AM [vite] (client) [console.warn] [BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+1:09:00 AM [vite] (client) [console.warn] [BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+1:09:00 AM [vite] (client) [console.warn] [BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+1:09:00 AM [vite] (client) [console.warn] [BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+1:09:00 AM [vite] (client) [console.warn] [BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+1:09:01 AM [vite] (client) [console.warn] [BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+1:09:01 AM [vite] (client) [console.warn] [BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+1:09:01 AM [vite] (client) [console.warn] [BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+1:09:01 AM [vite] (client) [console.warn] [BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+1:09:01 AM [vite] (client) [console.warn] [BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+1:09:02 AM [vite] (client) [console.warn] [BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+1:09:02 AM [vite] (client) [console.warn] [BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+1:09:02 AM [vite] (client) [console.warn] [BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+1:09:02 AM [vite] (client) [console.warn] [BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+1:09:04 AM [vite] (client) [console.warn] [BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+1:09:04 AM [vite] (client) [console.warn] [BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+1:09:04 AM [vite] (client) [console.warn] [BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+1:09:04 AM [vite] (client) [console.warn] [BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+1:09:04 AM [vite] (client) [console.warn] [BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+1:09:05 AM [vite] (client) [console.warn] [BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+1:09:05 AM [vite] (client) [console.warn] [BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+1:09:05 AM [vite] (client) [console.warn] [BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+1:09:05 AM [vite] (client) [console.warn] [BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+1:09:05 AM [vite] (client) [console.warn] [BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+1:09:06 AM [vite] (client) [console.warn] [BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+1:09:06 AM [vite] (client) [console.warn] [BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+1:09:06 AM [vite] (client) [console.warn] [BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+1:09:06 AM [vite] (client) [console.warn] [BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+1:09:06 AM [vite] (client) [console.warn] [BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+1:09:06 AM [vite] (client) [console.warn] [BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+1:09:06 AM [vite] (client) [console.warn] [BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+1:09:06 AM [vite] (client) [console.warn] [BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+1:09:07 AM [vite] (client) [console.warn] [BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+1:09:55 AM [vite] (client) [console.warn] [BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+1:09:57 AM [vite] (client) [console.warn] [BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+1:09:59 AM [vite] (client) [console.warn] [BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+1:10:02 AM [vite] (client) [console.warn] [BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+1:10:04 AM [vite] (client) [console.warn] [BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+1:10:06 AM [vite] (client) [console.warn] [BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+1:10:54 AM [vite] (client) hmr update /@fs/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/form-create/src/components/FormDesigner.vue
+1:14:27 AM [vite] (client) [console.warn] [BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+1:14:27 AM [vite] (client) [console.warn] [BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+1:14:27 AM [vite] (client) [console.warn] [BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+1:14:27 AM [vite] (client) [console.warn] [BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+1:14:27 AM [vite] (client) [console.warn] [BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+1:14:28 AM [vite] (client) [console.warn] [BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+1:14:28 AM [vite] (client) [console.warn] [BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+1:14:28 AM [vite] (client) [console.warn] [BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+1:14:28 AM [vite] (client) [console.warn] [BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+1:14:28 AM [vite] (client) [console.warn] [BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+1:14:29 AM [vite] (client) [console.warn] [BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+1:14:29 AM [vite] (client) [console.warn] [BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+1:14:29 AM [vite] (client) [console.warn] [BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+1:14:29 AM [vite] (client) [console.warn] [BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+1:14:29 AM [vite] (client) [console.warn] [BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+1:14:30 AM [vite] (client) [console.warn] [BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+1:14:30 AM [vite] (client) [console.warn] [BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+1:14:30 AM [vite] (client) [console.warn] [BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+1:14:32 AM [vite] (client) [console.warn] [BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+1:14:32 AM [vite] (client) [console.warn] [BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+1:14:32 AM [vite] (client) [console.warn] [BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+1:14:32 AM [vite] (client) [console.warn] [BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+1:14:32 AM [vite] (client) [console.warn] [BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+1:14:32 AM [vite] (client) [console.warn] [BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+1:14:33 AM [vite] (client) [console.warn] [BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+1:14:33 AM [vite] (client) [console.warn] [BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+1:14:33 AM [vite] (client) [console.warn] [BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+1:14:33 AM [vite] (client) [console.warn] [BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+1:14:33 AM [vite] (client) [console.warn] [BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+1:14:33 AM [vite] (client) [console.warn] [BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+1:14:33 AM [vite] (client) [console.warn] [BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+1:14:34 AM [vite] (client) [console.warn] [BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+1:14:34 AM [vite] (client) [console.warn] [BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+1:14:34 AM [vite] (client) [console.warn] [BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+1:14:34 AM [vite] (client) [console.warn] [BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+1:14:34 AM [vite] (client) [console.warn] [BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+1:14:34 AM [vite] (client) [console.warn] [BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+1:15:22 AM [vite] (client) [console.warn] [BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+1:15:24 AM [vite] (client) [console.warn] [BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+1:15:27 AM [vite] (client) [console.warn] [BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+1:15:29 AM [vite] (client) [console.warn] [BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+1:15:31 AM [vite] (client) [console.warn] [BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+1:15:33 AM [vite] (client) [console.warn] [BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process

@@ -1,0 +1,15 @@
+<script setup lang="ts">
+import { ref } from "vue";
+import FormPreviewAppearanceScene from "./FormPreviewAppearanceScene.vue";
+const visible = ref(false);
+</script>
+
+<template>
+  <main>
+    <h1>FlowDuet 公开 tarball 日期消费</h1>
+    <button type="button" data-test="form-appearance-scene-btn" @click="visible = !visible">
+      日期外观场景
+    </button>
+    <FormPreviewAppearanceScene v-if="visible" />
+  </main>
+</template>

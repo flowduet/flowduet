@@ -1,0 +1,47 @@
+from pathlib import Path
+import subprocess,json,hashlib,re
+root=Path.cwd();p=root/'docs/design/system-v1/probes/evidence/b03-p1-p2-2026-10-17'
+specs=[('runtime-sources.json','978e957'),('runtime-final-sources.json','78a7a78'),('test-final-sources.json','78a7a78'),('test-after-harness-sources.json','2bb34ee'),('test-final-minimal-sources.json','9aadac4'),('test-delivery-sources.json','0851e17'),('replay/runtime-sources.json','978e957'),('replay-final/runtime-sources.json','78a7a78')]
+trees={}
+for _,rev in specs:
+ if rev not in trees:
+  entries=subprocess.check_output(['git','ls-tree','-rz',rev]).split(b'\0');trees[rev]={e.split(b'\t',1)[1].decode():e.split(b'\t',1)[0].split()[2].decode() for e in entries if e}
+checks=[];oids=set()
+for fn,rev in specs:
+ obj=json.loads((p/fn).read_text())
+ for row in obj['sources']:
+  oid=trees[rev][row['path']];assert 'gitBlob' not in row or row['gitBlob']==oid
+  checks.append((row,oid));oids.add(oid)
+ordered=sorted(oids);raw=subprocess.check_output(['git','cat-file','--batch'],input=('\n'.join(ordered)+'\n').encode());data={};pos=0
+for oid in ordered:
+ end=raw.index(b'\n',pos);header=raw[pos:end].split();assert header[0].decode()==oid and header[1]==b'blob';size=int(header[2]);start=end+1;data[oid]=raw[start:start+size];pos=start+size+1
+for row,oid in checks:
+ content=data[oid];assert len(content)==row['bytes'] and hashlib.sha256(content).hexdigest()==row['sha256'],row['path']
+final=json.loads((p/'runtime-final-sources.json').read_text())['sources']
+for row in final:
+ b=(root/row['path']).read_bytes();assert len(b)==row['bytes'] and hashlib.sha256(b).hexdigest()==row['sha256'];assert trees['78a7a78'][row['path']]==trees['0851e17'][row['path']]
+for row in json.loads((p/'test-delivery-sources.json').read_text())['sources']:
+ b=(root/row['path']).read_bytes();assert len(b)==row['bytes'] and hashlib.sha256(b).hexdigest()==row['sha256']
+for folder in ['replay','replay-final']:
+ total=0
+ for name,n in [('numbers-dates',68),('candidates',21),('dialogs',21),('calendar-shortcuts',6),('dialog-boundaries',9)]:
+  rows=json.loads((p/folder/(name+'.json')).read_text())['rows'];assert len(rows)==n and all(r['pass'] for r in rows);total+=len(rows)
+ assert total==125
+assert len(json.loads((p/'recovery-78.json').read_text())['rows'])==12
+for f in p.rglob('*.json'):json.loads(f.read_text())
+for f in p.rglob('*.jsonl'):
+ for line in f.read_text().splitlines():json.loads(line)
+log=(p/'verification'/'full-delivery.log').read_text()
+for pkg,n in [('packages/core',148),('packages/designer',184),('packages/form-create',216)]:
+ assert re.search(re.escape(pkg)+r' test:.*Tests\s+'+str(n)+r' passed \('+str(n)+r'\)',log),pkg
+assert re.search(r'apps/playground test:.*Tests\s+4 failed \| 293 passed \(297\)',log)
+result={'snapshotEntriesChecked':len(checks),'uniqueGitBlobsChecked':len(oids),'currentRuntimeFilesMatched':len(final),'currentTestFilesMatched':2,'browser125ByCohort':{'978e957':125,'78a7a78':125},'finalRecoveryRows':12,'finalNormalizationRows':1,'defaultFullResult':{'passed':841,'failed':4,'total':845,'exitCode':1},'acceptanceRestored':False}
+(p/'verification'/'integrity.json').write_text(json.dumps(result,indent=2)+'\n')
+manifest=[]
+for f in sorted(p.rglob('*')):
+ if f.is_file() and f.name!='manifest.json':
+  b=f.read_bytes();manifest.append({'path':str(f.relative_to(p)),'sha256':hashlib.sha256(b).hexdigest(),'bytes':len(b)})
+(p/'manifest.json').write_text(json.dumps({'runtimeCommit':'78a7a786e5657647104fb35144f44d65ec6759f3','testsCommit':'0851e175e81b676492f40a3da6f1010587352e11','files':manifest},indent=2)+'\n')
+for row in manifest:
+ b=(p/row['path']).read_bytes();assert len(b)==row['bytes'] and hashlib.sha256(b).hexdigest()==row['sha256']
+print(json.dumps(result));print('Manifest verified',len(manifest),'files',sum(r['bytes'] for r in manifest),'bytes')

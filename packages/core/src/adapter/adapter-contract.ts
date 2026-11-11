@@ -1,7 +1,7 @@
-import type { EngineAdapter, TaskKind } from "./engine-adapter";
-import { TASK_KINDS } from "./engine-adapter";
-import { BpmnModel } from "../model/bpmn-model";
-import { compile } from "../compile/compiler";
+import type { EngineAdapter, TaskKind } from "./engine-adapter.js";
+import { TASK_KINDS } from "./engine-adapter.js";
+import { BpmnModel } from "../model/bpmn-model.js";
+import { compile } from "../compile/compiler.js";
 
 const SAMPLE_SHAPE = { x: 160, y: 160, width: 100, height: 80 };
 

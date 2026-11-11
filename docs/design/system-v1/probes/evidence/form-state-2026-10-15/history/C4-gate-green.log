@@ -1,0 +1,13 @@
+
+ RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground
+
+
+ Test Files  3 passed (3)
+      Tests  36 passed (36)
+   Start at  22:47:10
+   Duration  3.67s (import 51%, transform 26%, environment 14%, tests 9%)
+
+  Transform  transforming modules took 2.63s · 26% of tracked time, re-done on every run
+             persist transforms across runs with fsModuleCache: true
+             learn more: https://vitest.dev/guide/improving-performance#caching-between-reruns
+

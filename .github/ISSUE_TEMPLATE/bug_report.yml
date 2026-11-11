@@ -1,0 +1,61 @@
+name: 缺陷报告
+description: 提供复现步骤、版本和实际表现，帮助定位问题。
+labels: ["bug", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        请使用中文填写标题和说明，代码、日志和专有名称可保留原文。
+        请提供可公开的最小复现，便于维护者确认问题。
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: 复现步骤
+      description: 从什么流程或配置开始，依次做哪些操作会出现问题？
+      placeholder: |
+        1. 打开……
+        2. 配置或操作……
+        3. 出现……
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: 预期结果
+      description: 你期望看到什么行为？
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: 实际结果
+      description: 实际发生了什么？如有错误，请附完整错误信息。
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: 使用版本
+      description: 填写相关 FlowDuet 包名和版本；本地构建请填写提交哈希。
+      placeholder: "@flowduet/core：版本；@flowduet/designer：版本；或本地提交哈希"
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: 运行环境
+      description: 填写与问题相关的环境和版本，例如操作系统、浏览器、Node.js、Vue、流程引擎。
+      placeholder: |
+        操作系统：
+        浏览器 / Node.js：
+        Vue / Element Plus：
+        流程引擎（如涉及）：
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: 最小复现文件或截图
+      description: 可粘贴最小 BPMN XML、流程设计文档，或附上复现仓库链接、截图和附件；暂时无法提供时请说明。
+    validations:
+      required: false

@@ -1,0 +1,83 @@
+{
+  "case": "two-real-probe-dialogs-native-Enter-isolation",
+  "setup": "mount unmodified Probe twice through public Vue createApp; A guarded busy while its Dialog closed; B idle Dialog open",
+  "source": "owned-state-protocol-plus-native-Enter",
+  "pass": false,
+  "blockedByOther": 1,
+  "afterDisableForeignGuardClosed": true,
+  "firstEvents": [
+    {
+      "sequence": 3,
+      "event": "dialog-preflight",
+      "detail": {
+        "type": "keydown",
+        "key": "Enter",
+        "busy": true,
+        "active": "dialog-x"
+      }
+    }
+  ],
+  "peerEvents": [
+    {
+      "sequence": 3,
+      "event": "dialog-open",
+      "detail": {
+        "dialogSerial": 1
+      }
+    },
+    {
+      "sequence": 4,
+      "event": "dialog-preflight",
+      "detail": {
+        "type": "keydown",
+        "key": "Enter",
+        "busy": false,
+        "active": "dialog-x"
+      }
+    }
+  ],
+  "control": [
+    {
+      "sequence": 3,
+      "event": "dialog-open",
+      "detail": {
+        "dialogSerial": 1
+      }
+    },
+    {
+      "sequence": 4,
+      "event": "dialog-preflight",
+      "detail": {
+        "type": "keydown",
+        "key": "Enter",
+        "busy": false,
+        "active": "dialog-x"
+      }
+    },
+    {
+      "sequence": 5,
+      "event": "dialog-preflight",
+      "detail": {
+        "type": "keydown",
+        "key": "Enter",
+        "busy": false,
+        "active": "dialog-x"
+      }
+    },
+    {
+      "sequence": 6,
+      "event": "dialog-before-close",
+      "detail": {
+        "busy": false,
+        "refusedGesture": false
+      }
+    },
+    {
+      "sequence": 7,
+      "event": "dialog-closed",
+      "detail": {
+        "dialogSerial": 1
+      }
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "format": "flowduet.design",
+  "version": 1,
+  "engine": "flowable",
+  "xml": "broken xml",
+  "forms": [
+    {
+      "id": "f_apply",
+      "name": "验收申请单76",
+      "provider": "form-create/element-plus",
+      "rules": "[{\"type\": \"input\", \"field\": \"reason76\", \"title\": \"申请事由76\", \"value\": \"原始默认值76\", \"$required\": true}]",
+      "options": "{\"form\": {\"labelWidth\": \"130px\"}, \"submitBtn\": {\"show\": false}}"
+    }
+  ]
+}

@@ -1,0 +1,50 @@
+### Result
+{"rows":[{"id":"N07/M03","round":1,"source":"protocol double-open/composition + native peer Enter","peerConfirmationOpened":true,"pass":true},{"id":"M03","round":1,"source":"composition protocol + native pointer/Tab","focusKept":true,"pass":true},{"id":"N07/M03","round":2,"source":"protocol double-open/composition + native peer Enter","peerConfirmationOpened":true,"pass":true},{"id":"M03","round":2,"source":"composition protocol + native pointer/Tab","focusKept":true,"pass":true},{"id":"N07/M03","round":3,"source":"protocol double-open/composition + native peer Enter","peerConfirmationOpened":true,"pass":true},{"id":"M03","round":3,"source":"composition protocol + native pointer/Tab","focusKept":true,"pass":true},{"id":"M05-P1","round":1,"source":"native drag/Escape","during":{"mode":"retained","revision":4,"canSuspend":false,"canCapture":false,"blockers":[{"code":"pending-input","field":"a_amount","message":"默认值尚未完成，请补全数值或有效日期"},{"code":"dragging","message":"拖动尚未确认结束，P3取消能力尚未提供"}]},"outerKept":true,"raw":"-","cancellationNotClaimed":true,"pass":true},{"id":"M05-P1","round":2,"source":"native drag/Escape","during":{"mode":"retained","revision":4,"canSuspend":false,"canCapture":false,"blockers":[{"code":"pending-input","field":"a_amount","message":"默认值尚未完成，请补全数值或有效日期"},{"code":"dragging","message":"拖动尚未确认结束，P3取消能力尚未提供"}]},"outerKept":true,"raw":"-","cancellationNotClaimed":true,"pass":true},{"id":"M05-P1","round":3,"source":"native drag/Escape","during":{"mode":"retained","revision":4,"canSuspend":false,"canCapture":false,"blockers":[{"code":"pending-input","field":"a_amount","message":"默认值尚未完成，请补全数值或有效日期"},{"code":"dragging","message":"拖动尚未确认结束，P3取消能力尚未提供"}]},"outerKept":true,"raw":"-","cancellationNotClaimed":true,"pass":true}]}
+### Ran Playwright code
+```js
+await (async page => {
+ await page.getByRole('button',{name:'B03 P1 修复'}).click();
+ const rows=[],assert=(ok,x)=>{if(!ok)throw Error(JSON.stringify(x));};
+ const states=async()=>JSON.parse(await page.locator('[data-test="repair-manager-states"]').textContent());
+ const closeConfirm=async()=>{const c=page.getByRole('dialog',{name:'关闭表单',exact:true});await c.waitFor({state:'visible'});await c.getByRole('button',{name:'放弃并关闭'}).click();await c.waitFor({state:'hidden'});};
+ await page.locator('[data-test="repair-peer"]').check();
+ for(let round=1;round<=3;round++){
+  await page.locator('[data-repair-manager="0"] [data-test="form-edit-btn-form_1"]').click();
+  const all=page.getByRole('dialog',{name:'编辑表单：甲表单',exact:true});await all.waitFor({state:'visible'});
+  const key=await all.locator('[data-test="form-manager-close"]').getAttribute('data-form-close-owner');
+  const first=all.filter({has:page.locator(`[data-form-close-owner="${key}"]`)});
+  await first.locator('._fc-m-drag ._fd-drag-mask').nth(2).click();const raw=first.locator('[data-retained-input="number"]');await raw.fill('-');
+  await raw.evaluate(el=>el.dispatchEvent(new CompositionEvent('compositionstart',{bubbles:true})));
+  // 双开为宿主协议设置；后续使用浏览器原生键盘/指针，不冒称用户能点穿模态遮罩。
+  await page.locator('[data-repair-manager="1"] [data-test="form-edit-btn-form_1"]').evaluate(el=>el.click());
+  await page.waitForFunction(()=>document.querySelectorAll('[data-test="form-manager-close"]').length===2);
+  const second=all.filter({has:page.locator(`[data-test="form-manager-close"]:not([data-form-close-owner="${key}"])`)});
+  await second.locator('[data-test="form-manager-close"]').focus();await page.keyboard.press('Enter');
+  const confirm=page.getByRole('dialog',{name:'关闭表单',exact:true});await confirm.waitFor({state:'visible'});await confirm.getByRole('button',{name:'继续编辑'}).click();await confirm.waitFor({state:'hidden'});
+  assert((await states())[0].canSuspend===false&&await second.isVisible()&&await first.isVisible(),await states());
+  rows.push({id:'N07/M03',round,source:'protocol double-open/composition + native peer Enter',peerConfirmationOpened:true,pass:true});
+  await second.locator('[data-test="form-manager-close"]').click();await closeConfirm();await second.waitFor({state:'hidden'});
+  await raw.focus();await first.locator('[data-test="form-manager-close"]').click();assert(await raw.evaluate(el=>document.activeElement===el),'busy close blurred');
+  const save=first.locator('[data-test="form-designer-save"]');await save.focus();await page.keyboard.press('Shift+Tab');assert(await save.evaluate(el=>document.activeElement===el),'Tab entered close control while busy');
+  rows.push({id:'M03',round,source:'composition protocol + native pointer/Tab',focusKept:true,pass:true});
+  await raw.evaluate(el=>el.dispatchEvent(new CompositionEvent('compositionend',{bubbles:true})));
+  await first.locator('[data-test="form-designer-cancel"]').click();await closeConfirm();await first.waitFor({state:'hidden'});
+  await page.waitForFunction(()=>JSON.parse(document.querySelector('[data-test="repair-manager-states"]').textContent).every(s=>s===null));
+ }
+ for(let round=1;round<=3;round++){
+  await page.locator('[data-repair-manager="0"] [data-test="form-edit-btn-form_1"]').click();const d=page.getByRole('dialog',{name:'编辑表单：甲表单',exact:true});
+  await d.locator('._fc-m-drag ._fd-drag-mask').nth(2).click();const raw=d.locator('[data-retained-input="number"]');await raw.fill('-');
+  const menu=d.locator('._fc-l-item').filter({hasText:'计数器'});const start=await menu.boundingBox();const canvas=await d.locator('._fc-m-drag').boundingBox();
+  await page.mouse.move(start.x+start.width/2,start.y+start.height/2);await page.mouse.down();await page.mouse.move(canvas.x+canvas.width/2,canvas.y+80,{steps:12});
+  const during=await states();assert(during[0].blockers.some(b=>b.code==='dragging'),during);
+  await page.keyboard.press('Escape');assert(await d.isVisible(),'drag Escape closed Dialog');
+  await page.mouse.move(10,10,{steps:3});await page.mouse.up();
+  await d.locator('._fc-m-drag ._fd-drag-item').filter({hasText:'甲数字'}).last().locator('._fd-drag-mask').first().click();
+  const originalRaw=d.locator('[data-retained-input="number"][data-field="a_amount"]');await originalRaw.waitFor({state:'visible'});assert((await originalRaw.inputValue())==='-',{reason:'original field raw lost',raw:await originalRaw.inputValue(),states:await states()});
+  rows.push({id:'M05-P1',round,source:'native drag/Escape',during:during[0],outerKept:true,raw:'-',cancellationNotClaimed:true,pass:true});
+  await d.locator('[data-test="form-designer-cancel"]').click();await closeConfirm();await d.waitFor({state:'hidden'});
+ }
+ return {rows};
+}
+)(page);
+```

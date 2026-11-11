@@ -1,0 +1,9 @@
+
+  VITE v8.3.0  ready in 229 ms
+
+  ➜  Local:   http://127.0.0.1:5178/
+7:42:51 PM [vite] (client) Failed to load source map for /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/@form-create+designer@3.5.0_vue@3.5.43_typescript@5.9.3_/node_modules/@form-create/designer/dist/index.es.js.
+SyntaxError: Unexpected token '�', "��r��y�" is not valid JSON
+undefined
+/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 143: vite --config probes/stage-zero/vite.config.ts --port 5178

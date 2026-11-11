@@ -1,0 +1,461 @@
+import { mkdir, writeFile } from "node:fs/promises";
+import { resolve } from "node:path";
+import { pathToFileURL } from "node:url";
+
+const [driverPath, baseUrl, outputDir] = process.argv.slice(2);
+if (!driverPath || !baseUrl || !outputDir) throw new Error("需要驱动、URL 和输出目录参数");
+const { chromium } = await import(pathToFileURL(resolve(driverPath)).href);
+await mkdir(outputDir, { recursive: true });
+const browser = await chromium.launch({
+  headless: true,
+  executablePath:
+    process.env.FLOWDUET_CHROMIUM_PATH ||
+    "/Users/l/Library/Caches/ms-playwright/chromium-1248/chrome-mac-x64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing",
+});
+const page = await browser.newPage({ viewport: { width: 1440, height: 1800 }, deviceScaleFactor: 1 });
+const errors = [];
+const resourceErrors = [];
+const warnings = [];
+const failures = [];
+const results = {};
+page.on("pageerror", (error) => errors.push(`pageerror: ${error.message}`));
+page.on("console", (message) => {
+  if (message.type() === "error") errors.push(`console: ${message.text()}`);
+  if (message.type() === "warning") warnings.push(message.text());
+});
+page.on("response", (response) => {
+  if (response.status() >= 400) resourceErrors.push(`${response.status()} ${response.url()}`);
+});
+await page.addInitScript(() => {
+  window.__fdUnhandledRejections = [];
+  window.addEventListener("unhandledrejection", (event) => {
+    window.__fdUnhandledRejections.push(String(event.reason));
+  });
+});
+const check = (condition, message) => {
+  if (!condition) failures.push(message);
+};
+const firstInstance = () => page.locator('[data-test="form-appearance-first-instance"]');
+const secondInstance = () => page.locator('[data-test="form-appearance-second-instance"]');
+const first = () => firstInstance().locator('[data-test="form-preview"]');
+const second = () => secondInstance().locator('[data-test="form-preview"]');
+const firstNumber = () => first().locator(".el-input-number").first();
+const firstNumberInput = () => firstNumber().locator("input");
+const validateFirst = () => first().locator('[data-test="form-preview-validate"]');
+const trialValues = async () => JSON.parse(await first().locator('[data-test="form-preview-values"]').textContent());
+const setSelect = async (test, value) => {
+  await page.evaluate(
+    ({ test, value }) => {
+      const select = document.querySelector(`[data-test="${test}"]`);
+      select.value = value;
+      select.dispatchEvent(new Event("change", { bubbles: true }));
+    },
+    { test, value },
+  );
+  await page.waitForTimeout(140);
+};
+const setCheckbox = async (test, checked) => {
+  await page.evaluate(
+    ({ test, checked }) => {
+      const input = document.querySelector(`[data-test="${test}"]`);
+      if (input.checked !== checked) {
+        input.checked = checked;
+        input.dispatchEvent(new Event("change", { bubbles: true }));
+      }
+    },
+    { test, checked },
+  );
+  await page.waitForTimeout(140);
+};
+const setHostDark = (dark) => setCheckbox("form-appearance-host-dark", dark);
+const unhandled = () => page.evaluate(() => window.__fdUnhandledRejections.slice());
+const clickRadio = (index) => first().locator(".el-radio").nth(index).locator(".el-radio__inner").click();
+const clickCheckbox = (index) => first().locator(".el-checkbox").nth(index).locator(".el-checkbox__inner").click();
+const clickSwitch = (index) => first().locator(".el-switch").nth(index).locator(".el-switch__core").click();
+try {
+  await page.goto(baseUrl, { waitUntil: "networkidle" });
+  await page.evaluate(() => {
+    window.__fdHostBeforeUnload = () => "host";
+    window.__fdHostDrop = () => undefined;
+    window.onbeforeunload = window.__fdHostBeforeUnload;
+    document.body.ondrop = window.__fdHostDrop;
+  });
+  await page.locator('[data-test="form-appearance-scene-btn"]').click();
+  await page.locator('[data-test="form-appearance-first-controls"]').click();
+  await first().waitFor({ state: "visible" });
+  await second().waitFor({ state: "visible" });
+
+  const legacyNumber = await firstNumberInput().elementHandle();
+  await legacyNumber.focus();
+  await setCheckbox("form-appearance-first-enabled", false);
+  // 启停会分批更新 EP 的尺寸 class；等待公开几何收敛，避免并行运行时读到中间帧。
+  await page.waitForFunction(() => document.querySelector('[data-test="form-appearance-first-instance"] [data-test="form-preview-validate"]').getBoundingClientRect().height === 24);
+  let legacy = await first().evaluate((root) => ({
+    className: root.className,
+    formClass: root.querySelector(".el-form").className,
+    buttonHeight: root.querySelector('[data-test="form-preview-validate"]').getBoundingClientRect().height,
+    value: root.querySelector(".el-input-number input").value,
+    focused: document.activeElement === root.querySelector(".el-input-number input"),
+  }));
+  check(!legacy.className.includes("flowduet-appearance"), "旧路径出现新外观 class");
+  check(legacy.formClass.includes("el-form--label-right"), "旧路径标签默认值改变");
+  check(legacy.buttonHeight === 24, `旧路径自有按钮不是 small：${legacy.buttonHeight}`);
+  check(legacy.value === "1" && legacy.focused, "停用外观丢失数字或焦点");
+  await firstNumber().locator(".el-input-number__increase").click();
+  await clickRadio(0);
+  await clickCheckbox(1);
+  await clickSwitch(0);
+  await page.waitForTimeout(150);
+  const legacyValues = await trialValues();
+  check(legacyValues.amount === 2 && legacyValues.decision === "yes" && legacyValues.tags.includes("beta") && legacyValues.notify === true, `旧路径四类试填异常 ${JSON.stringify(legacyValues)}`);
+  await legacyNumber.focus();
+  await setCheckbox("form-appearance-first-enabled", true);
+  await page.waitForFunction(() => document.querySelector('[data-test="form-appearance-first-instance"] [data-test="form-preview-validate"]').getBoundingClientRect().height === 32);
+  check((await validateFirst().boundingBox()).height === 32, "舒适档自有按钮不是 32px");
+  check((await legacyNumber.inputValue()) === "2", "重新启用丢失数字");
+  check(await legacyNumber.evaluate((input) => document.activeElement === input), "重新启用丢失焦点");
+  results.legacyToggle = { legacy, values: legacyValues };
+
+  await setHostDark(false);
+  await setSelect("form-appearance-first-source", "brand");
+  await setSelect("form-appearance-first-mode", "dark");
+  await setSelect("form-appearance-first-density", "compact");
+  await firstNumberInput().fill("5");
+  await firstNumberInput().press("Tab");
+  await page.waitForTimeout(120);
+  check((await firstNumberInput().inputValue()) === "3", `数字超过 max 未收束到 3：${await firstNumberInput().inputValue()}`);
+  await firstNumberInput().fill("-1");
+  await firstNumberInput().press("Tab");
+  await page.waitForTimeout(120);
+  check((await firstNumberInput().inputValue()) === "0", `数字低于 min 未收束到 0：${await firstNumberInput().inputValue()}`);
+  await firstNumberInput().fill("");
+  await firstNumberInput().press("Tab");
+  await page.waitForTimeout(120);
+  check((await firstNumberInput().inputValue()) === "" && (await trialValues()).amount === null, "数字清空未保留空值语义");
+  await firstNumberInput().focus();
+  await firstNumberInput().press("ArrowUp");
+  await page.waitForTimeout(120);
+  check((await firstNumberInput().inputValue()) === "1", "空值后键盘增加未得到 1");
+  await firstNumber().locator(".el-input-number__increase").click();
+  await page.waitForTimeout(120);
+  check((await firstNumberInput().inputValue()) === "2", "数字增加按钮未得到 2");
+  const disabledNumber = first().locator(".el-input-number").nth(1);
+  await disabledNumber.locator(".el-input-number__increase").click();
+  await page.waitForTimeout(120);
+  check((await disabledNumber.locator("input").inputValue()) === "2" && (await disabledNumber.locator("input").isDisabled()), "禁用数字被增减操作改变");
+  results.number = "键盘与按钮增减、min/max、清空 null、禁用均保持";
+
+  check(await first().locator(".el-radio").nth(0).locator("input").isChecked(), "单选同意未选中");
+  const disabledRadioClick = await first().locator(".el-radio").nth(2).locator(".el-radio__inner").click({ timeout: 1000 }).then(() => "performed").catch(() => "blocked");
+  check(disabledRadioClick === "blocked" && (await trialValues()).decision === "yes", "禁用单选改变当前值");
+  check(await first().locator(".el-checkbox").nth(2).locator("input").evaluate((input) => input.indeterminate), "真实半选初始状态缺失");
+  await clickCheckbox(0);
+  await clickCheckbox(2);
+  await page.waitForTimeout(150);
+  const selectedValues = await trialValues();
+  check(!selectedValues.tags.includes("alpha") && selectedValues.tags.includes("beta") && selectedValues.tags.includes("mixed") && selectedValues.tags.includes("disabledChecked"), `多选数组值错误 ${JSON.stringify(selectedValues.tags)}`);
+  const disabledBoxClick = await first().locator(".el-checkbox").nth(3).locator(".el-checkbox__inner").click({ timeout: 1000 }).then(() => "performed").catch(() => "blocked");
+  check(disabledBoxClick === "blocked" && !(await first().locator(".el-checkbox").nth(3).locator("input").isChecked()), "禁用多选被选中");
+  await clickSwitch(0);
+  await page.waitForTimeout(120);
+  check((await trialValues()).notify === false, "开关未关闭为 false");
+  await clickSwitch(0);
+  await clickSwitch(1);
+  await page.waitForTimeout(150);
+  check((await trialValues()).notify === true && (await trialValues()).disabledNotify === true, "开关开启或禁用语义改变");
+  results.selection = "单选、多选、真实初始半选、开关与各项禁用操作保持";
+
+  await first().locator("input").first().fill("运行时中文事由");
+  await first().locator("textarea").fill("运行时多行说明");
+  await validateFirst().click();
+  await first().locator('[data-test="form-preview-validation"]').filter({ hasText: "校验通过" }).waitFor();
+  const runtimeNumber = await firstNumberInput().elementHandle();
+  const runtimeRadio = await first().locator(".el-radio").nth(0).locator("input").elementHandle();
+  const runtimeBox = await first().locator(".el-checkbox").nth(2).locator("input").elementHandle();
+  const runtimeSwitch = await first().locator(".el-switch").nth(0).locator("input").elementHandle();
+  await runtimeNumber.focus();
+  for (const action of [
+    () => setSelect("form-appearance-first-density", "comfortable"),
+    () => setHostDark(true),
+    () => setSelect("form-appearance-first-source", "host"),
+    () => setSelect("form-appearance-first-source", "brand"),
+    () => setSelect("form-appearance-first-mode", "light"),
+    () => setSelect("form-appearance-first-density", "compact"),
+  ]) {
+    await action();
+    const values = await trialValues();
+    check(values.amount === 2 && values.decision === "yes" && values.tags.includes("mixed") && values.notify === true, `换肤丢失四类值 ${JSON.stringify(values)}`);
+    check(await runtimeNumber.evaluate((input) => input.isConnected && document.activeElement === input), "换肤重建数字或丢失焦点");
+    check(await runtimeRadio.evaluate((input) => input.isConnected && input.checked), "换肤重建单选或丢失选中");
+    check(await runtimeBox.evaluate((input) => input.isConnected && input.checked), "换肤重建多选或丢失选中");
+    check(await runtimeSwitch.evaluate((input) => input.isConnected && input.checked), "换肤重建开关或丢失选中");
+    check((await first().locator('[data-test="form-preview-validation"]').textContent()).includes("校验通过"), "换肤清除有效反馈");
+  }
+  const validStyle = await first().getAttribute("style");
+  await page.locator('[data-test="form-appearance-first-invalid"]').click();
+  check((await first().getAttribute("style")) === validStyle, "非法配置改变上次有效呈现");
+  check((await trialValues()).amount === 2, "非法配置丢失数字");
+  check(warnings.some((warning) => warning.includes("appearance.density")), "非法配置缺少字段级告警");
+  await runtimeNumber.focus();
+  await setCheckbox("form-appearance-first-enabled", false);
+  check(!(await first().getAttribute("class")).includes("flowduet-appearance"), "合法停用未回旧路径");
+  check(await runtimeNumber.evaluate((input) => document.activeElement === input), "合法停用丢失焦点");
+  await setCheckbox("form-appearance-first-enabled", true);
+  check((await trialValues()).decision === "yes" && (await trialValues()).notify === true, "合法启停丢失选择值");
+  results.runtimeAndInvalid = "来源／主题／密度、启停与非法回退保留四类值、DOM、焦点和反馈";
+
+  await page.locator('[data-test="form-appearance-first-reopen-controls"]').click();
+  await page.waitForTimeout(250);
+  check((await firstNumberInput().inputValue()) === "1", "同 ID 重开未恢复数字默认值");
+  check(await first().locator(".el-radio").nth(1).locator("input").isChecked(), "同 ID 重开未恢复单选默认值");
+  const reopenedBoxes = await first().locator(".el-checkbox input").evaluateAll((inputs) => inputs.map((input) => input.checked));
+  const reopenedSwitches = await first().locator(".el-switch input").evaluateAll((inputs) => inputs.map((input) => input.checked));
+  check(JSON.stringify(reopenedBoxes) === JSON.stringify([true, false, false, false, true, true]), `同 ID 重开多选默认值错误 ${reopenedBoxes}`);
+  check(JSON.stringify(reopenedSwitches) === JSON.stringify([false, true]), `同 ID 重开开关默认值错误 ${reopenedSwitches}`);
+  check((await first().locator('[data-test="form-preview-validation"]').count()) === 0, "同 ID 重开未清除反馈");
+  results.definitionLifecycle = "同 ID 定义换代恢复数字、单选、多选和开关默认值并清除反馈";
+
+  await setHostDark(false);
+  await setSelect("form-appearance-first-source", "brand");
+  await setSelect("form-appearance-first-mode", "light");
+  await setSelect("form-appearance-first-density", "comfortable");
+  await firstNumberInput().focus();
+  await firstNumberInput().press("ArrowUp");
+  await page.waitForTimeout(350);
+  let focusStyle = await firstNumber().locator(".el-input__wrapper").evaluate((element) => ({
+    width: getComputedStyle(element).outlineWidth,
+    color: getComputedStyle(element).outlineColor,
+    offset: getComputedStyle(element).outlineOffset,
+  }));
+  check((await firstNumberInput().inputValue()) === "2" && focusStyle.width === "2px" && focusStyle.color === "rgb(45, 62, 151)" && focusStyle.offset === "3px", `数字键盘或焦点 ${JSON.stringify(focusStyle)}`);
+  const keyboardRadio = first().locator(".el-radio").nth(0).locator("input");
+  await keyboardRadio.focus();
+  await keyboardRadio.press("Space");
+  await page.waitForTimeout(350);
+  focusStyle = await first().locator(".el-radio").nth(0).locator(".el-radio__inner").evaluate((element) => ({
+    width: getComputedStyle(element).outlineWidth,
+    color: getComputedStyle(element).outlineColor,
+    offset: getComputedStyle(element).outlineOffset,
+  }));
+  check(await keyboardRadio.isChecked() && focusStyle.width === "2px" && focusStyle.color === "rgb(45, 62, 151)" && focusStyle.offset === "3px", `单选键盘或焦点 ${JSON.stringify(focusStyle)}`);
+  const keyboardBox = first().locator(".el-checkbox").nth(2).locator("input");
+  await keyboardBox.focus();
+  await keyboardBox.press("Space");
+  await page.waitForTimeout(350);
+  focusStyle = await first().locator(".el-checkbox").nth(2).locator(".el-checkbox__inner").evaluate((element) => ({
+    width: getComputedStyle(element).outlineWidth,
+    color: getComputedStyle(element).outlineColor,
+    offset: getComputedStyle(element).outlineOffset,
+  }));
+  check(await keyboardBox.isChecked() && focusStyle.width === "2px" && focusStyle.color === "rgb(45, 62, 151)" && focusStyle.offset === "3px", `多选键盘或焦点 ${JSON.stringify(focusStyle)}`);
+  const keyboardSwitch = first().locator(".el-switch").nth(0).locator("input");
+  await keyboardSwitch.focus();
+  await keyboardSwitch.press("Enter");
+  await page.waitForTimeout(350);
+  focusStyle = await first().locator(".el-switch").nth(0).locator(".el-switch__core").evaluate((element) => ({
+    width: getComputedStyle(element).outlineWidth,
+    color: getComputedStyle(element).outlineColor,
+    offset: getComputedStyle(element).outlineOffset,
+  }));
+  check(await keyboardSwitch.isChecked() && focusStyle.width === "2px" && focusStyle.color === "rgb(45, 62, 151)" && focusStyle.offset === "3px", `开关键盘或焦点 ${JSON.stringify(focusStyle)}`);
+  results.keyboard = "数字 ArrowUp、单选 Space、多选 Space、开关 Enter 及四类 2px/3px 焦点环通过";
+
+  await page.mouse.move(0, 0);
+  await page.waitForTimeout(350);
+  const explicit = await second().evaluate((root) => {
+    const form = root.querySelector(".el-form");
+    const number = root.querySelector(".el-input-number");
+    const radio = root.querySelector(".el-radio");
+    const radioInner = radio.querySelector(".el-radio__inner");
+    const checkbox = root.querySelector(".el-checkbox");
+    const switchRoot = root.querySelector(".el-switch");
+    const switchCore = switchRoot.querySelector(".el-switch__core");
+    const switchAction = switchRoot.querySelector(".el-switch__action");
+    const boxInner = checkbox.querySelector(".el-checkbox__inner");
+    return {
+      formClass: form.className,
+      formPadding: getComputedStyle(form).padding,
+      inputHeight: root.querySelector(".el-input").getBoundingClientRect().height,
+      numberClass: number.className,
+      numberHeight: number.getBoundingClientRect().height,
+      radioHeight: radio.getBoundingClientRect().height,
+      radioBackground: getComputedStyle(radioInner).backgroundColor,
+      radioBorder: getComputedStyle(radioInner).borderTopColor,
+      radioDot: getComputedStyle(radioInner, "::after").backgroundColor,
+      radioLabelColor: getComputedStyle(radio.querySelector(".el-radio__label")).color,
+      checkboxHeight: checkbox.getBoundingClientRect().height,
+      checkboxLabelColor: getComputedStyle(checkbox.querySelector(".el-checkbox__label")).color,
+      checkboxMarkColor: getComputedStyle(boxInner, "::after").borderRightColor,
+      switchClass: switchRoot.className,
+      switchWidth: switchCore.getBoundingClientRect().width,
+      switchHeight: switchCore.getBoundingClientRect().height,
+      switchActionWidth: switchAction.getBoundingClientRect().width,
+      switchTrack: getComputedStyle(switchCore).backgroundColor,
+      switchActionBackground: getComputedStyle(switchAction).backgroundColor,
+      buttonHeight: root.querySelector('[data-test="form-preview-validate"]').getBoundingClientRect().height,
+    };
+  });
+  check(explicit.formClass.includes("el-form--label-right") && explicit.formClass.includes("el-form--large"), "显式表单标签／size 被覆盖");
+  check(explicit.formPadding === "7px" && explicit.inputHeight === 40, "显式表单 style／文本 large 被覆盖");
+  check(explicit.numberClass.includes("is-controls-right") && explicit.numberClass.includes("el-input-number--large") && explicit.numberHeight === 40, `显式数字配置被覆盖 ${JSON.stringify(explicit)}`);
+  check(explicit.radioHeight === 20 && explicit.checkboxHeight === 20, `显式选项 height 被覆盖 ${explicit.radioHeight}/${explicit.checkboxHeight}`);
+  check(explicit.radioBackground === "rgb(18, 52, 86)" && explicit.radioBorder === "rgb(18, 52, 86)" && explicit.radioDot === "rgb(1, 2, 3)" && explicit.radioLabelColor === "rgb(18, 52, 86)", `显式单选颜色被覆盖 ${JSON.stringify(explicit)}`);
+  check(explicit.checkboxLabelColor === "rgb(18, 52, 86)" && explicit.checkboxMarkColor === "rgb(1, 2, 3)", `显式多选颜色被覆盖 ${explicit.checkboxLabelColor}/${explicit.checkboxMarkColor}`);
+  check(explicit.switchClass.includes("el-switch--large") && explicit.switchWidth === 56 && explicit.switchHeight === 24 && explicit.switchActionWidth === 20, `显式开关宽度／尺寸被覆盖 ${JSON.stringify(explicit)}`);
+  check(explicit.switchTrack === "rgb(18, 52, 86)" && explicit.switchActionBackground === "rgb(1, 2, 3)", `显式开关颜色被覆盖 ${explicit.switchTrack}/${explicit.switchActionBackground}`);
+  check(explicit.buttonHeight === 24, "显式字段尺寸错误改变自有 compact 按钮");
+  results.explicitConfiguration = explicit;
+  await second().screenshot({ path: resolve(outputDir, "explicit-configuration.png") });
+
+  const secondStyle = await second().getAttribute("style");
+  const hostBefore = await page.evaluate(() => ({
+    inputStyle: document.querySelector('[data-test="form-appearance-host-input"]').getAttribute("style"),
+    buttonStyle: document.querySelector('[data-test="form-appearance-host-button"]').getAttribute("style"),
+    htmlClass: document.documentElement.className,
+    styleCount: document.head.querySelectorAll("style").length,
+  }));
+  await setSelect("form-appearance-first-source", "host");
+  await setSelect("form-appearance-first-density", "compact");
+  check((await second().getAttribute("style")) === secondStyle, "切换第一实例污染第二实例变量");
+  await setCheckbox("form-appearance-first-mounted", false);
+  check((await first().count()) === 0, "卸载第一实例后预览仍残留");
+  check((await second().getAttribute("style")) === secondStyle, "卸载第一实例污染第二实例");
+  check(await page.evaluate(() => window.onbeforeunload === window.__fdHostBeforeUnload && document.body.ondrop === window.__fdHostDrop), "卸载覆盖宿主处理器");
+  await setCheckbox("form-appearance-first-mounted", true);
+  await first().waitFor({ state: "visible" });
+  const hostAfter = await page.evaluate(() => ({
+    inputStyle: document.querySelector('[data-test="form-appearance-host-input"]').getAttribute("style"),
+    buttonStyle: document.querySelector('[data-test="form-appearance-host-button"]').getAttribute("style"),
+    htmlClass: document.documentElement.className,
+    styleCount: document.head.querySelectorAll("style").length,
+  }));
+  check(JSON.stringify(hostAfter) === JSON.stringify(hostBefore), `卸载／重挂资源或宿主状态变化：${JSON.stringify(hostBefore)} → ${JSON.stringify(hostAfter)}`);
+  check((await second().getAttribute("style")) === secondStyle, "重挂第一实例污染第二实例");
+  results.instanceIsolation = "双实例异色异密度、显式控件、卸载／重挂、宿主控件与处理器均保持";
+
+  await first().locator("input").first().fill("");
+  await validateFirst().click();
+  await first().locator('[data-test="form-preview-validation"]').filter({ hasText: "校验未通过" }).waitFor();
+  await first().locator(".el-form-item__error").waitFor({ state: "visible" });
+  const failureState = await first().evaluate((root) => {
+    const error = root.querySelector(".el-form-item__error");
+    const feedback = root.querySelector('[data-test="form-preview-validation"]');
+    return {
+      errorText: error.textContent,
+      errorPosition: getComputedStyle(error).position,
+      feedbackText: feedback.textContent,
+      feedbackColor: getComputedStyle(feedback).color,
+    };
+  });
+  check(failureState.errorText.includes("请填写申请事由") && failureState.errorPosition === "static", `真实必填错误缺失 ${JSON.stringify(failureState)}`);
+  check(failureState.feedbackText.includes("校验未通过"), "自有失败反馈缺失");
+  check((await unhandled()).length === 0, `必填拒绝泄漏未处理异常：${await unhandled()}`);
+  results.requiredFailure = failureState;
+  await first().screenshot({ path: resolve(outputDir, "required-failure.png") });
+
+  await page.setViewportSize({ width: 1024, height: 900 });
+  await firstInstance().evaluate((instance) => {
+    instance.style.width = "360px";
+  });
+  await first().evaluate((root) => {
+    root.style.zoom = "200%";
+  });
+  const layoutResults = [];
+  for (const combination of [
+    { colorSource: "host", mode: "light", density: "comfortable" },
+    { colorSource: "host", mode: "light", density: "compact" },
+    { colorSource: "host", mode: "dark", density: "comfortable" },
+    { colorSource: "host", mode: "dark", density: "compact" },
+    { colorSource: "brand", mode: "light", density: "comfortable" },
+    { colorSource: "brand", mode: "light", density: "compact" },
+    { colorSource: "brand", mode: "dark", density: "comfortable" },
+    { colorSource: "brand", mode: "dark", density: "compact" },
+  ]) {
+    await setHostDark(combination.colorSource === "host" && combination.mode === "dark");
+    await setSelect("form-appearance-first-source", combination.colorSource);
+    if (combination.colorSource === "brand") await setSelect("form-appearance-first-mode", combination.mode);
+    await setSelect("form-appearance-first-density", combination.density);
+    await page.waitForTimeout(350);
+    const id = `${combination.colorSource}-${combination.mode}-${combination.density}`;
+    const layout = await first().evaluate((root) => {
+      const readOption = (selector, last = false) => {
+        const controls = root.querySelectorAll(selector);
+        const control = last ? controls[controls.length - 1] : controls[0];
+        const label = control.querySelector(".el-radio__label, .el-checkbox__label");
+        const controlRect = control.getBoundingClientRect();
+        const labelRect = label.getBoundingClientRect();
+        return {
+          controlWidth: controlRect.width,
+          controlHeight: controlRect.height,
+          controlBottom: controlRect.bottom,
+          controlScrollWidth: control.scrollWidth * 2,
+          labelHeight: labelRect.height,
+          labelBottom: labelRect.bottom,
+          labelLineHeight: parseFloat(getComputedStyle(label).lineHeight),
+          labelWhiteSpace: getComputedStyle(label).whiteSpace,
+        };
+      };
+      const error = root.querySelector(".el-form-item__error");
+      const button = root.querySelector('[data-test="form-preview-validate"]');
+      const rootRect = root.getBoundingClientRect();
+      const buttonRect = button.getBoundingClientRect();
+      return {
+        rootWidth: rootRect.width,
+        rootScrollWidth: root.scrollWidth * 2,
+        radio: readOption(".el-radio"),
+        checkbox: readOption(".el-checkbox"),
+        styledRadio: readOption(".el-radio", true),
+        styledCheckbox: readOption(".el-checkbox", true),
+        errorHeight: error.getBoundingClientRect().height,
+        errorLineHeight: parseFloat(getComputedStyle(error).lineHeight),
+        errorText: error.textContent,
+        buttonLeft: buttonRect.left,
+        buttonRight: buttonRect.right,
+        rootLeft: rootRect.left,
+        rootRight: rootRect.right,
+        documentScrollWidth: document.documentElement.scrollWidth,
+        viewportWidth: window.innerWidth,
+      };
+    });
+    check(layout.rootScrollWidth <= layout.rootWidth + 2, `${id}: 缩放预览横向溢出 ${layout.rootScrollWidth}/${layout.rootWidth}`);
+    check(layout.documentScrollWidth <= layout.viewportWidth + 1, `${id}: 缩放页面横向溢出 ${layout.documentScrollWidth}/${layout.viewportWidth}`);
+    for (const [name, control] of [["单选", layout.radio], ["多选", layout.checkbox]]) {
+      check(control.labelWhiteSpace === "normal" && control.labelHeight > control.labelLineHeight * 1.5, `${id}: ${name}长中文未多行换行`);
+      check(control.controlScrollWidth <= control.controlWidth + 2, `${id}: ${name}控件横向溢出`);
+    }
+    for (const [name, control] of [["inline 颜色单选", layout.styledRadio], ["inline 颜色多选", layout.styledCheckbox]]) {
+      check(control.labelWhiteSpace === "normal", `${id}: ${name}未换行`);
+      check(control.controlHeight >= control.labelHeight && control.labelBottom <= control.controlBottom + 1, `${id}: ${name}标签与后续内容重叠 ${control.labelHeight}/${control.controlHeight}`);
+    }
+    check(layout.errorHeight > layout.errorLineHeight * 1.5 && layout.errorText.includes("长中文必填错误"), `${id}: 长错误未多行`);
+    check(layout.buttonLeft >= layout.rootLeft && layout.buttonRight <= layout.rootRight + 2, `${id}: 缩放后校验按钮被裁切`);
+    layoutResults.push({ id, ...layout });
+    if (id === "brand-light-comfortable" || id === "brand-dark-compact") {
+      await first().screenshot({ path: resolve(outputDir, `long-options-${id}-zoom-200.png`) });
+    }
+  }
+  results.longOptionsAndErrorZoom = layoutResults;
+
+  check(!errors.some((error) => error.startsWith("pageerror:")), `页面错误：${errors.join("；")}`);
+  check((await unhandled()).length === 0, `最终仍有未处理拒绝：${await unhandled()}`);
+  const summary = {
+    browser: await page.evaluate(() => navigator.userAgent),
+    viewport: { initial: { width: 1440, height: 1800 }, zoom: { width: 1024, height: 900, cssZoom: "200%", containerWidth: "360px" } },
+    results,
+    errors,
+    resourceErrors,
+    warnings,
+    unhandledRejections: await unhandled(),
+    failures,
+    limitations: [
+      "半选按 EP 既有语义验证初始真实状态与点击后的值变化，不把半选改为持久状态。",
+      "缩放证据使用 CSS zoom 200%，不冒充浏览器或操作系统完整缩放矩阵。",
+      "本轮仅桌面 Chromium；Firefox、Safari/WebKit、移动端与完整可访问性认证未验证。",
+    ],
+  };
+  await writeFile(resolve(outputDir, "behavior.json"), JSON.stringify(summary, null, 2));
+  console.log(JSON.stringify({ resultKeys: Object.keys(results), errors, resourceErrors, warnings, failures }, null, 2));
+  if (failures.length > 0) process.exitCode = 1;
+} finally {
+  await browser.close();
+}

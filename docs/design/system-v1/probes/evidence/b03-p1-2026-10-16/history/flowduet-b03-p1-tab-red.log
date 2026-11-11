@@ -1,0 +1,37 @@
+
+ RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/form-create
+
+ ❯ src/components.test.ts (56 tests | 1 failed | 55 skipped) 1628ms
+   ❯ retained Tab前置保护 (1)
+     × busy时Tab前往自有取消按钮被拒绝，正常输入之间Tab不吞键 1626ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/components.test.ts > retained Tab前置保护 > busy时Tab前往自有取消按钮被拒绝，正常输入之间Tab不吞键
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ src/components.test.ts:1289:34
+    1287|     const save = wrapper!.get('[data-test="form-designer-save"]'); sav…
+    1288|     const key = new KeyboardEvent("keydown", { key: "Tab", shiftKey: t…
+    1289|     expect(key.defaultPrevented).toBe(true);
+       |                                  ^
+    1290|     expect(document.activeElement).toBe(save.element);
+    1291|     const normal = new KeyboardEvent("keydown", { key: "Tab", bubbles:…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 55 skipped (56)
+   Start at  18:30:26
+   Duration  3.98s (tests 42%, import 36%, transform 13%, environment 8%)
+
+undefined
+/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/form-create:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run src/components.test.ts -t Tab前往

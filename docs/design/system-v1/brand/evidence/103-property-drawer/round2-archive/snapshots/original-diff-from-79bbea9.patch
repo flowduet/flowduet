@@ -1,0 +1,551 @@
+diff --git a/.changeset/property-drawer-appearance.md b/.changeset/property-drawer-appearance.md
+index 518ca73..80c566c 100644
+--- a/.changeset/property-drawer-appearance.md
++++ b/.changeset/property-drawer-appearance.md
+@@ -4,4 +4,4 @@
+ 
+ 新增 `DingtalkDesigner` 的显式实例外观配置与共享外观类型／解析合同。合法 `appearance` 支持跟随宿主或品牌预设、浅深主题及舒适／紧凑密度，仅作用于节点属性抽屉；运行中切换和启停保留未提交输入、焦点与输入法组合，非法配置整份回退并给出字段级告警。省略配置保持旧路径，模型、BPMN XML、画布和外置属性编辑合同不变。
+ 
+-跟随宿主时正确读取短十六进制、HSL、OKLCH 等合法 CSS 颜色，避免自有角色静默回退默认蓝；透明角色按所属表面合成，不回写宿主变量。
++跟随宿主时在 DOM 补丁完成后读取计算样式，支持短十六进制、HSL、OKLCH 等合法 CSS 颜色并按表面合成透明角色，跨明度背景下保证焦点环变量有效；抽屉样式权重覆盖宿主深色与不同引入顺序，不回写宿主变量。
+diff --git a/apps/playground/src/NodeAppearanceScene.vue b/apps/playground/src/NodeAppearanceScene.vue
+index ae96f5f..8c9584d 100644
+--- a/apps/playground/src/NodeAppearanceScene.vue
++++ b/apps/playground/src/NodeAppearanceScene.vue
+@@ -82,6 +82,7 @@ const second = reactive<InstanceControls>({
+ });
+ const firstInvalid = ref(false);
+ const hostDark = ref(document.documentElement.classList.contains("dark"));
++const declarativeScopedDark = ref(false);
+ const originallyDark = hostDark.value;
+ const firstChanges = ref(0);
+ const firstDraftChanges = ref(0);
+@@ -102,13 +103,23 @@ const firstAppearance = computed<ComponentAppearance | undefined>(() => {
+ });
+ const secondAppearance = computed(() => toAppearance(second));
+ 
++function syncFirstHostMode(): void {
++  if (first.colorSource === "host")
++    first.mode = hostDark.value || declarativeScopedDark.value ? "dark" : "light";
++}
++
+ function onFirstValidChange(): void {
+   firstInvalid.value = false;
+ }
+ 
+ function onFirstSourceChange(): void {
+   onFirstValidChange();
+-  if (first.colorSource === "host") first.mode = hostDark.value ? "dark" : "light";
++  syncFirstHostMode();
++}
++
++function onDeclarativeDarkChange(): void {
++  onFirstValidChange();
++  syncFirstHostMode();
+ }
+ 
+ function onHostThemeChange(event: Event): void {
+@@ -116,7 +127,7 @@ function onHostThemeChange(event: Event): void {
+   hostDark.value = dark;
+   // 这是宿主主动切换自己的 EP 深色环境，不是组件 appearance 的副作用。
+   document.documentElement.classList.toggle("dark", dark);
+-  if (first.colorSource === "host") first.mode = dark ? "dark" : "light";
++  syncFirstHostMode();
+ }
+ 
+ onBeforeUnmount(() => {
+@@ -131,15 +142,26 @@ onBeforeUnmount(() => {
+         <h2>节点属性抽屉外观验收</h2>
+         <p>两个公开 DingtalkDesigner 实例共享同一 Vue app，模型与编辑缓冲各自独立。</p>
+       </div>
+-      <label>
+-        <input
+-          type="checkbox"
+-          :checked="hostDark"
+-          data-test="appearance-host-dark"
+-          @change="onHostThemeChange"
+-        />
+-        宿主启用 EP 深色
+-      </label>
++      <div class="appearance-controls">
++        <label>
++          <input
++            type="checkbox"
++            :checked="hostDark"
++            data-test="appearance-host-dark"
++            @change="onHostThemeChange"
++          />
++          宿主启用 EP 深色
++        </label>
++        <label>
++          <input
++            v-model="declarativeScopedDark"
++            type="checkbox"
++            data-test="appearance-declarative-dark"
++            @change="onDeclarativeDarkChange"
++          />
++          声明式局部深色宿主
++        </label>
++      </div>
+     </header>
+ 
+     <div class="appearance-host-control" data-test="appearance-host-control">
+@@ -206,7 +228,10 @@ onBeforeUnmount(() => {
+           <span data-test="appearance-first-change-count">change {{ firstChanges }}</span>
+           <span data-test="appearance-first-draft-count">draft {{ firstDraftChanges }}</span>
+         </div>
+-        <div class="appearance-designer-viewport">
++        <div
++          class="appearance-designer-viewport"
++          :class="{ 'appearance-scoped-dark': declarativeScopedDark }"
++        >
+           <DingtalkDesigner
+             v-if="first.mounted"
+             data-test="appearance-first-designer"
+@@ -347,6 +372,21 @@ onBeforeUnmount(() => {
+   border-radius: 8px;
+ }
+ 
++.appearance-scoped-dark {
++  --el-bg-color-page: #101817;
++  --el-bg-color: #162220;
++  --el-fill-color-light: #1f302d;
++  --el-text-color-primary: #e6f2f0;
++  --el-text-color-regular: #b8ceca;
++  --el-border-color-light: #2d4440;
++  --el-disabled-text-color: #7d9692;
++  --el-disabled-bg-color: #1f302d;
++  --el-color-primary: #7fcfc7;
++  --el-color-primary-light-3: #99dad3;
++  --el-color-primary-dark-2: #5fb3aa;
++  --el-color-white: #0c1f1d;
++}
++
+ @media (max-width: 1100px) {
+   .appearance-instance-grid {
+     grid-template-columns: minmax(0, 1fr);
+diff --git a/docs/design/system-v1/brand/103-property-drawer-verification.md b/docs/design/system-v1/brand/103-property-drawer-verification.md
+index d95713a..9c93347 100644
+--- a/docs/design/system-v1/brand/103-property-drawer-verification.md
++++ b/docs/design/system-v1/brand/103-property-drawer-verification.md
+@@ -101,3 +101,19 @@
+ - 颜色修复及回归代码与独立复审快照的哈希逐文件一致；之后只补充文档、changeset 和诊断证据。已有 designer minor changeset 覆盖本次修复，无新增依赖或公开入口。
+ - 未重跑本次修复后的完整三包 tarball 浏览器矩阵、Node 22、Firefox、WebKit 或真实操作系统输入法；原有限制继续有效。不推送、不关票、不开 PR、不合并、不发布。
+ - 修复不涉及数据迁移，可通过撤回本次修复提交恢复到 `e43f64f`；未执行回退实测。form-create 默认门槛未过的事实另行保留，不以回退颜色补丁冒充测试稳定性修复。
++
++## 2026-11-04 第二轮复审与集中收口
++
++对 `cd39258` → `79bbea9` 的复审确认两项重要缺陷与两项细节问题（已[回复 #103](https://github.com/flowduet/flowduet/issues/103#issuecomment-6620383681) 并获批按选项 A 集中收口）：
++
++1. **声明式宿主同周期换肤采样时机（Spec 重要）**：`DingtalkDesigner` 将 `appearance` 监听调整为 `{ immediate: true, flush: "post" }` 并加上卸载守卫，确保父模板同一响应式周期切换主题类／样式后才采样宿主计算样式，保留首次非法告警与“非法回退不重新采样”行为。
++2. **`--fd-focus` 跨明度回退（Standards 重要）**：`hostVariables` 对齐 R2 `derive-palette.mjs:189-191` 补回 `?? primaryInk`，消除非空断言 `!`，避免深底画布＋浅色抽屉等跨明度宿主下省略 `--fd-focus` 导致 `:focus-visible` 焦点轮廓失效。
++3. **抽屉样式选择器权重与接入顺序（Spec 细节）**：`NodeDrawer.vue` 与 `NodePropertyFields.vue` 覆盖 EP 抽屉、表单项、输入框与按钮的选择器复合 `.flowduet-node-drawer`，使权重提升至 `(0, 3, 0)`，既高于宿主 `html.dark .el-button` `(0, 2, 1)`，也不依赖宿主引入 `@flowduet/designer/style.css` 与 `element-plus/dist/index.css` 的先后顺序；同时将 `packages/designer/README.md` 示例统一为先引 EP 样式。
++4. **颜色快路径分隔符与文档口径（Spec 细节）**：`cssColorToRgb` 拆分为严格的逗号语法与现代空格 `/` 语法，拒绝 `rgb(255, 0 0)` 等混用分隔符输入；`README.md` 明确收窄 `light-dark()` 与系统色关键字依赖宿主 `color-scheme`、回退默认值的边界。
++
++验证证据：
++
++- 公开组件单测 TDD 先红后绿（`packages/designer/src/appearance.test.ts` 共 18 条通过，designer 包共 202 条通过）：覆盖声明式宿主同一响应式周期切换深浅色、跨明度宿主 `--fd-focus` 回退、空格 `rgb()` 与非法混用分隔符回退。
++- Headless Chromium 端到端新增验证（[结果](evidence/103-property-drawer/round2-fixes.json)、[脚本副本](evidence/103-property-drawer/round2-fixes.mjs.txt)）全部 `failures: []`：声明式局部深色宿主往返切换（选中卡文字对比度 `10.47:1`，保留草稿与焦点，`change 0`）、跨明度宿主真实键盘 `Tab` 触发 `:focus-visible` `2px solid` 轮廓（对比度 `12.58:1`）、`html.dark` 宿主下品牌浅色抽屉禁用按钮文字保持 `#8B92A4`（`rgb(139, 146, 164)`）、将完整 `element-plus/dist/index.css` 追加到 `<head>` 末尾仍保持标签行高 `20.8px` 与错误上内边距 `4px`。
++- 既有浏览器套件与包消费回归重跑全绿：[host-colors.json](evidence/103-property-drawer/host-colors.json)（12 组）、[matrix.json](evidence/103-property-drawer/matrix.json)（8 组）、[behavior.json](evidence/103-property-drawer/behavior.json)、临时隔离目录 core＋designer tarball 安装与严格 TS 校验（[consumer-output.json](evidence/103-property-drawer/consumer-output.json)、[npm-ls.txt](evidence/103-property-drawer/npm-ls.txt)）。
++- 标准工程门禁全绿：`pnpm lint` 通过，`pnpm build` 四包通过；空闲环境下标准 `pnpm test` 一次全过（61 个测试文件／968 条测试：core 148、designer 202、form-create 312、Playground 306，未修改 5 秒超时配置；此前并发负载下 `form-create` 重组件测试靠近 5 秒上限的波动事实仍保留备查）。
+diff --git a/docs/design/system-v1/brand/evidence/103-property-drawer/consumer-output.json b/docs/design/system-v1/brand/evidence/103-property-drawer/consumer-output.json
+index 8c3e00f..9f714df 100644
+--- a/docs/design/system-v1/brand/evidence/103-property-drawer/consumer-output.json
++++ b/docs/design/system-v1/brand/evidence/103-property-drawer/consumer-output.json
+@@ -1,9 +1,9 @@
+ {
+   "designer": "0.1.0",
+   "elementPlus": "2.14.6",
+-  "module": "/private/tmp/flowduet-103-consumer-clean.Q3kjJw/node_modules/@flowduet/designer/dist/index.js",
+-  "declarations": "/private/tmp/flowduet-103-consumer-clean.Q3kjJw/node_modules/@flowduet/designer/dist/index.d.ts",
+-  "css": "/private/tmp/flowduet-103-consumer-clean.Q3kjJw/node_modules/@flowduet/designer/dist/designer.css",
++  "module": "/private/tmp/flowduet-103-consumer-r2.38uSuj/node_modules/@flowduet/designer/dist/index.js",
++  "declarations": "/private/tmp/flowduet-103-consumer-r2.38uSuj/node_modules/@flowduet/designer/dist/index.d.ts",
++  "css": "/private/tmp/flowduet-103-consumer-r2.38uSuj/node_modules/@flowduet/designer/dist/designer.css",
+   "warnings": [
+     "[FlowDuet] appearance.density 只支持 \"comfortable\" 或 \"compact\"；已整份拒绝本次 appearance 配置。",
+     "[FlowDuet] appearance.mode 必填，且只支持 \"light\" 或 \"dark\"；已整份拒绝本次 appearance 配置。"
+diff --git a/docs/design/system-v1/brand/evidence/103-property-drawer/npm-ls.txt b/docs/design/system-v1/brand/evidence/103-property-drawer/npm-ls.txt
+index 200c0ca..66db30e 100644
+--- a/docs/design/system-v1/brand/evidence/103-property-drawer/npm-ls.txt
++++ b/docs/design/system-v1/brand/evidence/103-property-drawer/npm-ls.txt
+@@ -1,11 +1,13 @@
+-flowduet-103-consumer@1.0.0 /private/tmp/flowduet-103-consumer-clean.Q3kjJw
+-├── @flowduet/core@0.3.0
+-├── @flowduet/designer@0.1.0
+-├── element-plus@2.14.6
+-├── typescript@5.9.3
+-└── vue@3.5.43
++flowduet-103-consumer@1.0.0 /private/tmp/flowduet-103-consumer-r2.38uSuj
+++-- @flowduet/core@0.3.0
+++-- @flowduet/designer@0.1.0
+++-- element-plus@2.14.6
+++-- typescript@5.9.3
++`-- vue@3.5.43
++
++
++flowduet-103-consumer@1.0.0 /private/tmp/flowduet-103-consumer-r2.38uSuj
+++-- @flowduet/designer@0.1.0
++| `-- element-plus@2.14.6 deduped
++`-- element-plus@2.14.6
+ 
+-flowduet-103-consumer@1.0.0 /private/tmp/flowduet-103-consumer-clean.Q3kjJw
+-├─┬ @flowduet/designer@0.1.0
+-│ └── element-plus@2.14.6 deduped
+-└── element-plus@2.14.6
+diff --git a/packages/designer/README.md b/packages/designer/README.md
+index c6da372..c9b72f9 100644
+--- a/packages/designer/README.md
++++ b/packages/designer/README.md
+@@ -13,8 +13,8 @@ pnpm add @flowduet/designer @flowduet/core element-plus vue
+ 样式（vite 库模式不自动注入，宿主须显式引入）：
+ 
+ ```ts
+-import "@flowduet/designer/style.css";
+ import "element-plus/dist/index.css";
++import "@flowduet/designer/style.css";
+ ```
+ 
+ 若使用 `BpmnCanvas`，宿主还需显式安装 Vue Flow 的样式提供包，并引入其基础样式；`@flowduet/designer/style.css` 提供本包样式，不代替 Vue Flow 基础样式。只使用 `DingtalkDesigner` 时不需要这一步。
+@@ -74,8 +74,8 @@ async function doExport(): Promise<string> {
+ <script setup lang="ts">
+ import { ref } from "vue";
+ import { DingtalkDesigner, type ComponentAppearance } from "@flowduet/designer";
+-import "@flowduet/designer/style.css";
+ import "element-plus/dist/index.css";
++import "@flowduet/designer/style.css";
+ 
+ // 跟随宿主时必须声明宿主当前的 EP 主题；本组件不会切换宿主 html/body 深色类。
+ const appearance = ref<ComponentAppearance | undefined>({ mode: "light" });
+@@ -102,7 +102,7 @@ function useLegacyAppearance(): void {
+ 
+ 跟随宿主只读取宿主当前 EP 主色、中性色、字体与圆角，为抽屉自有卡片和原生选择器派生 `--fd-*` 角色，**不写入任何 `--el-*` 变量（含实例范围）**。品牌预设只在所选抽屉内写入局部 EP 变量，不影响画布、节点卡片、流程默认表单条、其他实例或无关宿主控件。抽屉的非模态、覆盖层、节点切换与提交行为保持既有合同。
+ 
+-宿主颜色支持浏览器可解析的 CSS 颜色格式，包括短十六进制、命名色、HSL 与 OKLCH；透明角色按所属表面合成后计算派生颜色，非法颜色仍使用既有默认值。
++宿主颜色支持与配色方案无关的常规 CSS 颜色格式，包括短十六进制、RGB、命名色、HSL、OKLCH 与 `currentColor`；透明角色按所属表面合成后计算派生颜色，依赖宿主 `color-scheme` 的 `light-dark()`／系统色关键字及非法颜色仍使用既有默认值。
+ 
+ 运行中修改配色、主题、密度以及启用／停用都保留未提交输入、焦点和输入法组合，不自动确定／取消，也不修改模型或 BPMN XML。更新时请替换整个 `appearance` 对象引用，不依赖对原对象字段的深度变更侦测。JavaScript 传入非法对象或枚举时会整份拒绝：已有合法配置则保持上次有效呈现，首次非法则保持旧路径，并通过 `console.warn` 报告具体字段和原因。合法停用与非法回退是两条不同路径。
+ 
+diff --git a/packages/designer/src/appearance-style.ts b/packages/designer/src/appearance-style.ts
+index 58b268b..d391454 100644
+--- a/packages/designer/src/appearance-style.ts
++++ b/packages/designer/src/appearance-style.ts
+@@ -279,9 +279,11 @@ function hostVariables(
+   const primaryInk =
+     searchPrimaryInk(context.primary, [...backgrounds, primarySoft, status.approvalSoft], mode) ??
+     context.text;
+-  const focus = [context.primary, primaryInk].find((color) =>
+-    backgrounds.every((background) => contrast(color, background) >= 3),
+-  )!;
++  // 与 R2 派生口径一致：跨明度宿主背景使 3:1 搜索落空时回退 primaryInk，避免省略 --fd-focus 使焦点环失效。
++  const focus =
++    [context.primary, primaryInk].find((color) =>
++      backgrounds.every((background) => contrast(color, background) >= 3),
++    ) ?? primaryInk;
+   return {
+     ...densityVariables(appearance.density),
+     "--fd-canvas": context.canvas,
+@@ -384,6 +386,16 @@ export function createAppearanceVariables(
+   return brandVariables(appearance);
+ }
+ 
++const RGB_CHANNEL = String.raw`(\d+(?:\.\d+)?|\.\d+)`;
++const COMMA_RGB_RE = new RegExp(
++  String.raw`^rgba?\(\s*${RGB_CHANNEL}\s*,\s*${RGB_CHANNEL}\s*,\s*${RGB_CHANNEL}(?:\s*,\s*(?:1(?:\.0+)?|100%))?\s*\)$`,
++  "i",
++);
++const SPACE_RGB_RE = new RegExp(
++  String.raw`^rgba?\(\s*${RGB_CHANNEL}\s+${RGB_CHANNEL}\s+${RGB_CHANNEL}(?:\s*\/\s*(?:1(?:\.0+)?|100%))?\s*\)$`,
++  "i",
++);
++
+ function cssColorToRgb(value: string): Rgb {
+   if (value.startsWith("#"))
+     return hexToRgb(
+@@ -391,9 +403,7 @@ function cssColorToRgb(value: string): Rgb {
+         ? "#" + [...value.slice(1)].map((channel) => channel + channel).join("")
+         : value,
+     );
+-  const match = value.match(
+-    /^rgba?\(\s*([\d.]+)(?:\s*,\s*|\s+)([\d.]+)(?:\s*,\s*|\s+)([\d.]+)(?:\s*(?:,|\/)\s*(?:1|1\.0|100%))?\s*\)$/,
+-  );
++  const match = value.match(COMMA_RGB_RE) ?? value.match(SPACE_RGB_RE);
+   if (match !== null) {
+     const channels = match.slice(1, 4).map(Number);
+     if (channels.every((channel) => channel >= 0 && channel <= 255))
+diff --git a/packages/designer/src/appearance.test.ts b/packages/designer/src/appearance.test.ts
+index 29b2a57..4bb8083 100644
+--- a/packages/designer/src/appearance.test.ts
++++ b/packages/designer/src/appearance.test.ts
+@@ -152,9 +152,68 @@ describe("公开实例外观配置（#103）", () => {
+     expect(drawer.getAttribute("style")).not.toContain("--el-");
+   });
+ 
+-  it("宿主以 rgb() 声明主色时按同一 R2 规则派生，不回退默认蓝", async () => {
++  it("声明式模板同一响应式周期切换宿主主题与 appearance 时消费更新后的宿主样式", async () => {
++    const lightHostStyle = {
++      "--el-bg-color-page": "#F2F7F6",
++      "--el-bg-color": "#FAFCFC",
++      "--el-fill-color-light": "#EEF5F4",
++      "--el-text-color-primary": "#182625",
++      "--el-text-color-regular": "#4A5A58",
++      "--el-color-primary": "#0F6B65",
++    };
++    const darkHostStyle = {
++      "--el-bg-color-page": "#101817",
++      "--el-bg-color": "#162220",
++      "--el-fill-color-light": "#1F302D",
++      "--el-text-color-primary": "#E6F2F0",
++      "--el-text-color-regular": "#B8CECA",
++      "--el-color-primary": "#7FCFC7",
++    };
++    const state = reactive({ isDark: false });
++    const model = buildModel();
++    const DeclarativeHost = defineComponent({
++      components: { DingtalkDesigner },
++      setup() {
++        return { state, model, lightHostStyle, darkHostStyle };
++      },
++      template: `
++        <div>
++          <button type="button" data-test="toggle-host-theme" @click="state.isDark = !state.isDark">切换主题</button>
++          <DingtalkDesigner
++            :model="model"
++            :style="state.isDark ? darkHostStyle : lightHostStyle"
++            :appearance="{ colorSource: 'host', mode: state.isDark ? 'dark' : 'light' }"
++          />
++        </div>
++      `,
++    });
++    const wrapper = mount(DeclarativeHost, { attachTo: document.body });
++    wrappers.push(wrapper);
++    await openApproval(wrapper);
++
++    const drawer = document.querySelector<HTMLElement>('[data-test="node-drawer"]')!;
++    const input = document.querySelector<HTMLInputElement>('[data-test="drawer-name"]')!;
++    input.value = "声明式换肤保留的草稿";
++    input.dispatchEvent(new Event("input", { bubbles: true }));
++    input.focus();
++    expect(drawer.style.getPropertyValue("--fd-surface")).toBe("#FAFCFC");
++    expect(drawer.style.getPropertyValue("--fd-primary")).toBe("#0F6B65");
++
++    await wrapper.find('[data-test="toggle-host-theme"]').trigger("click");
++
++    expect(drawer.style.getPropertyValue("--fd-surface")).toBe("#162220");
++    expect(drawer.style.getPropertyValue("--fd-secondary")).toBe("#B8CECA");
++    expect(drawer.style.getPropertyValue("--fd-primary")).toBe("#7FCFC7");
++    expect(drawer.getAttribute("style")).not.toContain("--el-");
++    expect(document.querySelector('[data-test="drawer-name"]')).toBe(input);
++    expect(input.value).toBe("声明式换肤保留的草稿");
++    expect(document.activeElement).toBe(input);
++  });
++
++  it("宿主以 rgb() 声明主色时按同一 R2 规则派生，混用分隔符的非法 rgb() 回退默认值", async () => {
+     const wrapper = mountDesigner(buildModel());
+-    (wrapper.element as HTMLElement).style.setProperty("--el-color-primary", "rgb(15, 107, 101)");
++    const host = wrapper.element as HTMLElement;
++    host.style.setProperty("--el-color-primary", "rgb(15, 107, 101)");
+     await wrapper.setProps({ appearance: { mode: "light" } });
+     await openApproval(wrapper);
+ 
+@@ -162,6 +221,31 @@ describe("公开实例外观配置（#103）", () => {
+     expect(drawer.style.getPropertyValue("--fd-primary")).toBe("#0F6B65");
+     expect(drawer.style.getPropertyValue("--fd-primary-soft")).toBe("#DFF6F3");
+     expect(drawer.style.getPropertyValue("--fd-primary-ink")).toBe("#0F6B65");
++
++    host.style.setProperty("--el-color-primary", "rgb(15 107 101 / 100%)");
++    await wrapper.setProps({ appearance: { mode: "light" } });
++    expect(drawer.style.getPropertyValue("--fd-primary")).toBe("#0F6B65");
++
++    host.style.setProperty("--el-color-primary", "rgb(255, 0 0)");
++    await wrapper.setProps({ appearance: { mode: "light" } });
++    expect(drawer.style.getPropertyValue("--fd-primary")).toBe("#409EFF");
++  });
++
++  it("宿主画布与抽屉表面跨明度时 --fd-focus 回退 primaryInk，不输出空值", async () => {
++    const wrapper = mountDesigner(buildModel());
++    const host = wrapper.element as HTMLElement;
++    host.style.setProperty("--el-bg-color-page", "#141414");
++    host.style.setProperty("--el-bg-color", "#FFFFFF");
++    host.style.setProperty("--el-fill-color-light", "#F5F7FA");
++    host.style.setProperty("--el-text-color-primary", "#303133");
++    host.style.setProperty("--el-color-primary", "#2D3E97");
++    await wrapper.setProps({ appearance: { mode: "light" } });
++    await openApproval(wrapper);
++
++    const drawer = document.querySelector<HTMLElement>('[data-test="node-drawer"]')!;
++    expect(drawer.style.getPropertyValue("--fd-primary-ink")).toBe("#303133");
++    expect(drawer.style.getPropertyValue("--fd-focus")).toBe("#303133");
++    expect(drawer.getAttribute("style")).not.toContain("--el-");
+   });
+ 
+   it("宿主短十六进制颜色与等价六位颜色产生相同的自有角色", async () => {
+diff --git a/packages/designer/src/components/DingtalkDesigner.vue b/packages/designer/src/components/DingtalkDesigner.vue
+index 95ca625..394a5bc 100644
+--- a/packages/designer/src/components/DingtalkDesigner.vue
++++ b/packages/designer/src/components/DingtalkDesigner.vue
+@@ -90,6 +90,7 @@ const drawerRef = ref<InstanceType<typeof NodeDrawer> | null>(null);
+ const drawerAppearance = shallowRef<ResolvedComponentAppearance>();
+ const hostAppearance = shallowRef<HostAppearanceContext>();
+ function refreshHostAppearance(): void {
++  if (disposed) return;
+   hostAppearance.value =
+     drawerAppearance.value?.colorSource === "host"
+       ? readHostAppearance(hostRef.value, drawerAppearance.value.mode)
+@@ -98,13 +99,15 @@ function refreshHostAppearance(): void {
+ watch(
+   () => props.appearance,
+   (value) => {
++    if (disposed) return;
+     const previous = drawerAppearance.value;
+     const resolved = resolveComponentAppearance(value, previous);
+     drawerAppearance.value = resolved;
+     // 非法输入返回同一个上次有效对象；此时连宿主快照也保持，避免“拒绝配置却换色”。
+     if (resolved !== previous) refreshHostAppearance();
+   },
+-  { immediate: true },
++  // 后置冲刷确保宿主在同一响应式周期切换主题类或样式后，DOM 已完成补丁再读取计算样式。
++  { immediate: true, flush: "post" },
+ );
+ onMounted(refreshHostAppearance);
+ const drawerStyle = computed(() =>
+diff --git a/packages/designer/src/components/NodeDrawer.vue b/packages/designer/src/components/NodeDrawer.vue
+index d28b203..19634f8 100644
+--- a/packages/designer/src/components/NodeDrawer.vue
++++ b/packages/designer/src/components/NodeDrawer.vue
+@@ -143,61 +143,61 @@ defineExpose({ commit });
+   padding: 12px 0;
+ }
+ 
+-.flowduet-appearance {
++.flowduet-node-drawer.flowduet-appearance {
+   font-family: var(--fd-font-family);
+ }
+ 
+-.flowduet-appearance .el-drawer__header {
++.flowduet-node-drawer.flowduet-appearance .el-drawer__header {
+   margin-bottom: 0;
+   padding: var(--fd-panel-padding);
+ }
+ 
+-.flowduet-appearance .el-drawer__title {
++.flowduet-node-drawer.flowduet-appearance .el-drawer__title {
+   font-size: 20px;
+   line-height: 1.6;
+   overflow-wrap: anywhere;
+ }
+ 
+-.flowduet-appearance .el-drawer__body {
++.flowduet-node-drawer.flowduet-appearance .el-drawer__body {
+   padding: var(--fd-panel-padding);
+ }
+ 
+-.flowduet-appearance .el-drawer__footer {
++.flowduet-node-drawer.flowduet-appearance .el-drawer__footer {
+   padding: var(--fd-panel-padding);
+   padding-top: 0;
+ }
+ 
+-.flowduet-appearance .drawer-empty {
++.flowduet-node-drawer.flowduet-appearance .drawer-empty {
+   color: var(--fd-muted);
+   line-height: 1.6;
+ }
+ 
+-/* 品牌预设只改当前抽屉的 EP 本体变量；跟随宿主路径不命中这些规则。 */
+-.flowduet-appearance--brand {
++/* 品牌预设只改当前抽屉的 EP 本体变量，复合抽屉类使权重高于宿主 html.dark 派生规则；跟随宿主不命中。 */
++.flowduet-node-drawer.flowduet-appearance--brand {
+   background: var(--fd-surface);
+   color: var(--fd-text);
+ }
+ 
+-.flowduet-appearance--brand .el-drawer__header {
++.flowduet-node-drawer.flowduet-appearance--brand .el-drawer__header {
+   border-bottom: 1px solid var(--fd-border);
+   color: var(--fd-text);
+ }
+ 
+-.flowduet-appearance--brand .el-drawer__close-btn {
++.flowduet-node-drawer.flowduet-appearance--brand .el-drawer__close-btn {
+   color: var(--fd-secondary);
+ }
+ 
+-.flowduet-appearance--brand .el-drawer__close-btn:focus-visible {
++.flowduet-node-drawer.flowduet-appearance--brand .el-drawer__close-btn:focus-visible {
+   outline: 2px solid var(--fd-focus);
+   outline-offset: 3px;
+ }
+ 
+-.flowduet-appearance--brand .el-drawer__footer {
++.flowduet-node-drawer.flowduet-appearance--brand .el-drawer__footer {
+   border-top: 1px solid var(--fd-border);
+   padding-top: var(--fd-panel-padding);
+ }
+ 
+-.flowduet-appearance--brand .el-input {
++.flowduet-node-drawer.flowduet-appearance--brand .el-input {
+   --el-input-text-color: var(--fd-text);
+   --el-input-bg-color: var(--fd-surface);
+   --el-input-border-color: var(--fd-control-border);
+@@ -207,12 +207,12 @@ defineExpose({ commit });
+   --el-input-border-radius: var(--fd-radius);
+ }
+ 
+-.flowduet-appearance--brand .el-input__wrapper:focus-within {
++.flowduet-node-drawer.flowduet-appearance--brand .el-input__wrapper:focus-within {
+   outline: 2px solid var(--fd-focus);
+   outline-offset: 3px;
+ }
+ 
+-.flowduet-appearance--brand .el-button {
++.flowduet-node-drawer.flowduet-appearance--brand .el-button {
+   --el-button-text-color: var(--fd-text);
+   --el-button-bg-color: var(--fd-surface);
+   --el-button-border-color: var(--fd-control-border);
+@@ -228,7 +228,7 @@ defineExpose({ commit });
+   --el-button-outline-color: var(--fd-focus);
+ }
+ 
+-.flowduet-appearance--brand .el-button--primary {
++.flowduet-node-drawer.flowduet-appearance--brand .el-button--primary {
+   --el-button-text-color: var(--fd-on-primary);
+   --el-button-bg-color: var(--fd-primary);
+   --el-button-border-color: var(--fd-primary);
+@@ -240,7 +240,7 @@ defineExpose({ commit });
+   --el-button-active-border-color: var(--fd-primary-pressed);
+ }
+ 
+-.flowduet-appearance--brand .el-button:focus-visible {
++.flowduet-node-drawer.flowduet-appearance--brand .el-button:focus-visible {
+   outline: 2px solid var(--fd-focus);
+   outline-offset: 3px;
+ }
+diff --git a/packages/designer/src/components/NodePropertyFields.vue b/packages/designer/src/components/NodePropertyFields.vue
+index 118c6d4..8639ad6 100644
+--- a/packages/designer/src/components/NodePropertyFields.vue
++++ b/packages/designer/src/components/NodePropertyFields.vue
+@@ -232,19 +232,19 @@ defineExpose({ flush, capture });
+   font-size: 13px;
+ }
+ 
+-/* 新适配只覆盖自有卡片与原生选择器；旧路径继续使用上方的原始值。 */
+-:global(.flowduet-appearance .el-form-item) {
++/* 新适配只覆盖当前属性抽屉内的排版与自有控件，复合抽屉类使权重不依赖宿主引入 EP 样式的先后顺序。 */
++:global(.flowduet-node-drawer.flowduet-appearance .el-form-item) {
+   margin-bottom: var(--fd-field-gap);
+ }
+ 
+-:global(.flowduet-appearance .el-form-item__label) {
++:global(.flowduet-node-drawer.flowduet-appearance .el-form-item__label) {
+   color: var(--fd-secondary);
+   font-family: var(--fd-font-family);
+   font-size: 13px;
+   line-height: 1.6;
+ }
+ 
+-:global(.flowduet-appearance .el-form-item__error) {
++:global(.flowduet-node-drawer.flowduet-appearance .el-form-item__error) {
+   position: static;
+   padding-top: 4px;
+   line-height: 1.6;

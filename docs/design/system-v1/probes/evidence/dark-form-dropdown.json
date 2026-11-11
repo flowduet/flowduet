@@ -1,0 +1,51 @@
+[
+  {
+    "bg": "rgba(0, 0, 0, 0)",
+    "cls": "el-scrollbar__view el-select-dropdown__list",
+    "primary": "#409eff",
+    "tag": "UL",
+    "theme": null
+  },
+  {
+    "bg": "rgba(0, 0, 0, 0)",
+    "cls": "el-select-dropdown__wrap el-scrollbar__wrap el-scrollbar__wrap--hidden-default",
+    "primary": "#409eff",
+    "tag": "DIV",
+    "theme": null
+  },
+  {
+    "bg": "rgba(0, 0, 0, 0)",
+    "cls": "el-scrollbar",
+    "primary": "#409eff",
+    "tag": "DIV",
+    "theme": null
+  },
+  {
+    "bg": "rgba(0, 0, 0, 0)",
+    "cls": "el-select-dropdown",
+    "primary": "#409eff",
+    "tag": "DIV",
+    "theme": null
+  },
+  {
+    "bg": "rgb(255, 255, 255)",
+    "cls": "el-popper is-pure is-light el-tooltip el-select__popper",
+    "primary": "#409eff",
+    "tag": "DIV",
+    "theme": null
+  },
+  {
+    "bg": "rgba(0, 0, 0, 0)",
+    "cls": "",
+    "primary": "#409eff",
+    "tag": "DIV",
+    "theme": null
+  },
+  {
+    "bg": "rgba(0, 0, 0, 0)",
+    "cls": "",
+    "primary": "#409eff",
+    "tag": "BODY",
+    "theme": null
+  }
+]

@@ -1,0 +1,44 @@
+
+ RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground
+
+ ↓ probes/stage-zero/form-state.test.ts > C0 表单状态观察 > value_presence_and_types_are_distinct：{}
+ ↓ probes/stage-zero/form-state.test.ts > C0 表单状态观察 > value_presence_and_types_are_distinct：{"value":0}
+ ↓ probes/stage-zero/form-state.test.ts > C0 表单状态观察 > value_presence_and_types_are_distinct：{"value":false}
+ ↓ probes/stage-zero/form-state.test.ts > C0 表单状态观察 > value_presence_and_types_are_distinct：{"value":[]}
+ ↓ probes/stage-zero/form-state.test.ts > C0 表单状态观察 > value_presence_and_types_are_distinct：{"value":""}
+ ↓ probes/stage-zero/form-state.test.ts > C0 表单状态观察 > value_presence_and_types_are_distinct：{"value":null}
+ ↓ probes/stage-zero/form-state.test.ts > C0 表单状态观察 > 不把不同默认值归一：0 / "0"
+ ↓ probes/stage-zero/form-state.test.ts > C0 表单状态观察 > 不把不同默认值归一：false / undefined
+ ↓ probes/stage-zero/form-state.test.ts > C0 表单状态观察 > 不把不同默认值归一：[] / undefined
+ ↓ probes/stage-zero/form-state.test.ts > C0 表单状态观察 > 不把不同默认值归一："" / undefined
+ ↓ probes/stage-zero/form-state.test.ts > C0 表单状态观察 > 允许运行态元数据变化，但字段/选项/列顺序变化不等价
+ ↓ probes/stage-zero/form-state.test.ts > C0 表单状态观察 > observe_does_not_flush_focused_input：读取原生文字/选区不失焦
+ ↓ probes/stage-zero/form-state.test.ts > C0 表单状态观察 > 真实FormDesigner装载与菜单仍在，不用组件桩证明观察
+ ↓ probes/stage-zero/form-state.test.ts > C1 typed_defaults_roundtrip 夹具与既有守卫 > typed_defaults_roundtrip F01/empty
+ ↓ probes/stage-zero/form-state.test.ts > C1 typed_defaults_roundtrip 夹具与既有守卫 > typed_defaults_roundtrip F02/normal-default
+ ↓ probes/stage-zero/form-state.test.ts > C1 typed_defaults_roundtrip 夹具与既有守卫 > typed_defaults_roundtrip F03/zero
+ ↓ probes/stage-zero/form-state.test.ts > C1 typed_defaults_roundtrip 夹具与既有守卫 > typed_defaults_roundtrip F03/negative
+ ↓ probes/stage-zero/form-state.test.ts > C1 typed_defaults_roundtrip 夹具与既有守卫 > typed_defaults_roundtrip F03/decimal
+ ↓ probes/stage-zero/form-state.test.ts > C1 typed_defaults_roundtrip 夹具与既有守卫 > typed_defaults_roundtrip F04/zero
+ ↓ probes/stage-zero/form-state.test.ts > C1 typed_defaults_roundtrip 夹具与既有守卫 > typed_defaults_roundtrip F04/string-zero
+ ↓ probes/stage-zero/form-state.test.ts > C1 typed_defaults_roundtrip 夹具与既有守卫 > typed_defaults_roundtrip F05/empty-array
+ ↓ probes/stage-zero/form-state.test.ts > C1 typed_defaults_roundtrip 夹具与既有守卫 > typed_defaults_roundtrip F05/selected-array
+ ↓ probes/stage-zero/form-state.test.ts > C1 typed_defaults_roundtrip 夹具与既有守卫 > typed_defaults_roundtrip F06/zero
+ ↓ probes/stage-zero/form-state.test.ts > C1 typed_defaults_roundtrip 夹具与既有守卫 > typed_defaults_roundtrip F06/string-zero
+ ↓ probes/stage-zero/form-state.test.ts > C1 typed_defaults_roundtrip 夹具与既有守卫 > typed_defaults_roundtrip F08/false
+ ↓ probes/stage-zero/form-state.test.ts > C1 typed_defaults_roundtrip 夹具与既有守卫 > typed_defaults_roundtrip F08/true
+ ↓ probes/stage-zero/form-state.test.ts > C1 typed_defaults_roundtrip 夹具与既有守卫 > checkbox_empty_array_vs_absent；textarea_newline_and_grid_order
+ ↓ probes/stage-zero/form-state.test.ts > C1 typed_defaults_roundtrip 夹具与既有守卫 > imported_single_date_shapes_keep_type 
+ ↓ probes/stage-zero/form-state.test.ts > C1 typed_defaults_roundtrip 夹具与既有守卫 > imported_single_date_shapes_keep_type date
+ ↓ probes/stage-zero/form-state.test.ts > C1 typed_defaults_roundtrip 夹具与既有守卫 > imported_single_date_shapes_keep_type datetime
+ ↓ probes/stage-zero/form-state.test.ts > C1 typed_defaults_roundtrip 夹具与既有守卫 > imported_single_date_shapes_keep_type week
+ ↓ probes/stage-zero/form-state.test.ts > C1 typed_defaults_roundtrip 夹具与既有守卫 > imported_single_date_shapes_keep_type month
+ ↓ probes/stage-zero/form-state.test.ts > C1 typed_defaults_roundtrip 夹具与既有守卫 > imported_single_date_shapes_keep_type year
+ ↓ probes/stage-zero/form-state.test.ts > C1 typed_defaults_roundtrip 夹具与既有守卫 > 同ID双控制器不共享当前定义或编辑目标
+ ✓ probes/stage-zero/form-state.test.ts > 逻辑已关闭的弹层退场动画不能误判为未确认输入 8ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed | 34 skipped (35)
+   Start at  18:13:01
+   Duration  3.47s (import 62%, transform 22%, environment 15%)
+

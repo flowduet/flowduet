@@ -1,0 +1,17 @@
+async(page)=>{
+ page.setDefaultTimeout(6000);await page.goto('http://127.0.0.1:5173/probes/stage-zero/index.html');await page.getByRole('button',{name:'表单状态 C',exact:true}).click();
+ const rows=[],errors=[];page.on('pageerror',e=>errors.push(String(e)));const root=page.locator('[data-c-owner="C-A"]');const state=async()=>JSON.parse(await root.locator('[data-test=c-state]').textContent());
+ for(const strategy of ['keep-mounted','rebuild-verified'])for(const layout of ['top','grid'])for(let i=1;i<=8;i++){
+  const field='F0'+i;await page.locator('[data-test=c-field]').selectOption(field);await page.locator('[data-test=c-layout]').selectOption(layout);await page.locator('[data-test=c-variant]').selectOption('normal-default');await page.locator('[data-test=c-reset]').click();
+  await root.locator('[data-test=c-strategy]').selectOption(strategy);await root.locator('[data-c-view]:visible ._fc-m-drag ._fd-drag-tool').last().click();
+  const before=await state();await root.locator('[data-test=c-select-1]').click();await page.waitForFunction(n=>JSON.parse(document.querySelector('[data-c-owner="C-A"] [data-test=c-state]').textContent).resultSequence>n,before.resultSequence);const switched=await state();
+  await root.locator('[data-test=c-select-0]').click();await page.waitForFunction(n=>JSON.parse(document.querySelector('[data-c-owner="C-A"] [data-test=c-state]').textContent).resultSequence>n,switched.resultSequence);const after=await state();
+  rows.push({field,layout,strategy,before,switched,after,pass:after.activeId===before.activeId&&after.sameForms&&after.sameGraph&&after.persistCalls===0,actual:switched.result.ok?switched.result.value.actual:switched.result});
+ }
+ for(let run=1;run<=3;run++){
+  await page.locator('[data-test=c-field]').selectOption('F03');await page.locator('[data-test=c-layout]').selectOption('top');await page.locator('[data-test=c-reset]').click();await root.locator('[data-c-view]:visible ._fc-m-drag ._fd-drag-tool').first().click();const input=root.locator('._fc-r-config .el-form-item').filter({has:page.locator('.el-form-item__label',{hasText:/^默认值$/})}).locator('input');await input.fill('');await input.press('-');
+  const pre=await state();await input.press('Alt+s');await page.waitForFunction(n=>JSON.parse(document.querySelector('[data-c-owner="C-A"] [data-test=c-state]').textContent).resultSequence>n,pre.resultSequence);const bad=await state();
+  await input.fill('1.5');await input.press('Alt+s');await page.waitForFunction(n=>JSON.parse(document.querySelector('[data-c-owner="C-A"] [data-test=c-state]').textContent).resultSequence>n,bad.resultSequence);const good=await state();rows.push({case:'ERR06-native-correction',run,bad:bad.result,good:good.result,pass:!bad.result.ok&&good.result.ok&&JSON.parse(JSON.parse(good.result.value.json).forms[0].rules)[0].value===1.5});
+ }
+ return {rows,errors,naturalFailure:'not-reproduced'};
+}

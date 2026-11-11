@@ -1,0 +1,19 @@
+async page => {
+ page.setDefaultTimeout(7000);const rows=[];
+ const events=async()=>JSON.parse(await page.locator('[data-test=seam-events]').textContent());
+ for(const layout of ['top','grid']) for(let run=1;run<=3;run++) {
+  await page.locator('[data-test=seam-layout]').selectOption(layout);await page.locator('[data-test=seam-load]').click();
+  const root=page.locator('[data-seam-owner=A]');
+  await root.locator('._fc-m-drag ._fd-drag-tool').filter({has:page.locator('.el-form-item__label',{hasText:'甲数字'})}).last().click();
+  await page.locator('[data-test=seam-clear]').click();
+  const source=root.locator('._fc-l-item').first(),dest=root.locator(layout==='top'?'._fc-m-drag':'._fd-col-drag').first();
+  await source.scrollIntoViewIfNeeded(); const a=await source.boundingBox(),b=await dest.boundingBox();
+  await page.mouse.move(a.x+a.width/2,a.y+a.height/2);await page.mouse.down();
+  await page.mouse.move(a.x+a.width/2+15,a.y+a.height/2+15,{steps:5});await page.mouse.move(b.x+30,b.y+30,{steps:10});
+  const during=await events();await page.mouse.up();
+  await page.locator('[data-test=seam-clone-A]').click();const after=await events();
+  rows.push({case:'native-menu-drag-busy-order',layout,run,source:'native-pointer-drag',during,after,
+   pass:during.some(e=>e.event==='native-dragstart'&&e.detail.owner==='A'&&e.detail.trusted)&&!during.some(e=>e.event==='public-drag')&&after.some(e=>e.event==='native-dragend'&&e.detail.trusted)&&after.some(e=>e.event==='public-drag')&&!after.some(e=>e.detail?.owner==='B'&&e.event.startsWith('native-drag'))});
+ }
+ return rows;
+}

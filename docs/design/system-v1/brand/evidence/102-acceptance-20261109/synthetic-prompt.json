@@ -1,0 +1,25 @@
+{
+  "after": {
+    "counter": "change 1",
+    "drawerVisible": true,
+    "error": "输入法尚未完成本次输入，请完成后重试",
+    "errorDisplay": "block",
+    "errorRect": {
+      "bottom": 320.390625,
+      "height": 33,
+      "left": 49,
+      "right": 1112.5,
+      "top": 287.390625,
+      "width": 1063.5,
+      "x": 49,
+      "y": 287.390625
+    },
+    "name": "提示路径验证（合成事件）"
+  },
+  "before": {
+    "counter": "change 1",
+    "name": "shen qing"
+  },
+  "method": "synthetic CompositionEvent/InputEvent and HTMLElement.click; NOT OS IME",
+  "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Safari/537.36"
+}

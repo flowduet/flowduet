@@ -1,17 +1,118 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import { compile } from "./compiler";
-import { buildMinimalFlow } from "./__fixtures__/minimal-flow";
+import { compile } from "./compiler.js";
+import { buildMinimalFlow } from "./__fixtures__/minimal-flow.js";
+import { buildMiFlow } from "./__fixtures__/mi-flow.js";
+import { buildDefaultBranchFlow, buildParallelFlow } from "./__fixtures__/branching-flows.js";
+import { buildCcFlow } from "./__fixtures__/cc-flow.js";
+import { buildDefaultFormFlow } from "./__fixtures__/default-form.js";
+import { buildFormOverrideFlow } from "./__fixtures__/form-override.js";
+import { APPROVAL_MODES } from "../model/bpmn-model.js";
+import type { ApprovalMode } from "../model/bpmn-model.js";
 
 /** 基准文件：手写意图，合法性由部署冒烟（ci issue）兜底 */
-const baseline = readFileSync(
-  new URL("./__fixtures__/minimal-flow.flowable68.baseline.xml", import.meta.url),
-  "utf8",
-);
+function readBaseline(name: string): string {
+  return readFileSync(new URL(`./__fixtures__/${name}`, import.meta.url), "utf8");
+}
+
+/** 多实例三档基准（形态与原型 6.8 实测产物对应，含 DI） */
+const MI_BASELINES = Object.fromEntries(
+  APPROVAL_MODES.map((mode) => [
+    mode,
+    readFileSync(
+      new URL(`./__fixtures__/mi-${mode}.flowable68.baseline.xml`, import.meta.url),
+      "utf8",
+    ),
+  ]),
+) as Readonly<Record<ApprovalMode, string>>;
 
 describe("编译合同（Flowable 6.8 方言）", () => {
   it("最小流程输出与基准文件逐字一致", async () => {
     const xml = await compile(buildMinimalFlow());
-    expect(xml).toBe(baseline);
+    expect(xml).toBe(readBaseline("minimal-flow.flowable68.baseline.xml"));
+  });
+
+  it("并行分裂-汇合输出与基准文件逐字一致", async () => {
+    const xml = await compile(buildParallelFlow());
+    expect(xml).toContain('<bpmn:parallelGateway id="fork"');
+    expect(xml).toContain('<bpmn:parallelGateway id="join"');
+    expect(xml).toBe(readBaseline("parallel-flow.flowable68.baseline.xml"));
+  });
+
+  it("带默认分支的排他网关输出与基准文件逐字一致", async () => {
+    const xml = await compile(buildDefaultBranchFlow());
+    // 默认流转落网关 default 引用属性（无条件的「其余情况」分支）
+    expect(xml).toContain(
+      '<bpmn:exclusiveGateway id="decision" name="是否同意" default="flow_rejected">',
+    );
+    expect(xml).toBe(readBaseline("default-branch.flowable68.baseline.xml"));
+  });
+
+  it("抄送任务输出与基准文件逐字一致", async () => {
+    const xml = await compile(buildCcFlow());
+    // 抄送 = ServiceTask + 扩展属性收件人 + 占位 delegate 引用（R3 决策）
+    expect(xml).toContain('flowable:ccTo="张三,李四"');
+    expect(xml).toContain('flowable:delegateExpression="${flowduetCcTask}"');
+    expect(xml).toBe(readBaseline("cc-flow.flowable68.baseline.xml"));
+  });
+
+  describe("多实例审批三档", () => {
+    it("会签（all）：非串行 + 全员完成条件，与基准逐字一致", async () => {
+      const xml = await compile(buildMiFlow("all"));
+      expect(xml).toContain("nrOfCompletedInstances == nrOfInstances");
+      expect(xml).not.toContain("isSequential");
+      expect(xml).toBe(MI_BASELINES.all);
+    });
+
+    it("或签（any）：非串行 + 任一完成条件，与基准逐字一致", async () => {
+      const xml = await compile(buildMiFlow("any"));
+      expect(xml).toContain("nrOfCompletedInstances &gt;= 1");
+      expect(xml).not.toContain("isSequential");
+      expect(xml).toBe(MI_BASELINES.any);
+    });
+
+    it("依次审批（sequential）：串行标记且无完成条件，与基准逐字一致", async () => {
+      const xml = await compile(buildMiFlow("sequential"));
+      expect(xml).toContain('isSequential="true"');
+      expect(xml).not.toContain("completionCondition");
+      expect(xml).toBe(MI_BASELINES.sequential);
+    });
+  });
+
+  it("默认表单绑定输出与基准逐字一致（flowduet:defaultFormKey + 显式 formKey）", async () => {
+    const xml = await compile(buildDefaultFormFlow());
+    // 默认引用落 process；继承节点（counter_sign）不固化 formKey
+    expect(xml).toContain('flowduet:defaultFormKey="leave_form_v1"');
+    expect(xml).toContain('flowable:formKey="manager_form_v1"');
+    expect(xml).not.toContain('bpmn:userTask id="counter_sign" name="部门会签" flowable:formKey');
+    expect(xml).toBe(readBaseline("default-form.flowable68.baseline.xml"));
+  });
+
+  it("多表单覆盖输出与基准逐字一致（四形态混布 + 多节点复用同一覆盖 key）", async () => {
+    const xml = await compile(buildFormOverrideFlow());
+    // 默认落 process；覆盖仅在显式节点（会签 + 依次复用 form_review_v1）；
+    // 继承节点（单签 solo_apply、或签 any_audit）不固化 formKey
+    expect(xml).toContain('flowduet:defaultFormKey="form_apply_v1"');
+    expect(xml).toContain(
+      '<bpmn:userTask id="mi_review" name="部门复核" flowable:assignee="${assignee}" flowable:formKey="form_review_v1">',
+    );
+    expect(xml).toContain(
+      '<bpmn:userTask id="seq_sign" name="依次确认" flowable:assignee="${assignee}" flowable:formKey="form_review_v1">',
+    );
+    expect(xml).toContain(
+      '<bpmn:userTask id="solo_apply" name="提交复核" flowable:assignee="${submitter}">',
+    );
+    expect(xml).toContain(
+      '<bpmn:userTask id="any_audit" name="总监抽审" flowable:assignee="${assignee}">',
+    );
+    // 网关与抄送在场但整行无任何表单引用（A19）
+    expect(xml).toContain(
+      '<bpmn:exclusiveGateway id="amount_fork" name="金额判断" default="f_fork_review">',
+    );
+    expect(xml).toContain(
+      '<bpmn:serviceTask id="cc_record" name="抄送备案" flowable:delegateExpression="${flowduetCcTask}" flowable:ccTo="张三,李四">',
+    );
+    expect(xml.match(/flowable:formKey/g)).toHaveLength(2);
+    expect(xml).toBe(readBaseline("form-override.flowable68.baseline.xml"));
   });
 });

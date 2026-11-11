@@ -1,0 +1,24 @@
+async(page)=>{
+ page.setDefaultTimeout(6000); await page.goto('http://127.0.0.1:5173/probes/stage-zero/index.html'); await page.getByRole('button',{name:'表单状态 C',exact:true}).click();
+ const rows=[]; const root=page.locator('[data-c-owner="C-A"]');
+ const state=async()=>JSON.parse(await root.locator('[data-test=c-state]').textContent());
+ const select=async(i)=>{const pre=await state();await root.locator(`[data-test=c-select-${i}]`).click();await page.waitForFunction(seq=>JSON.parse(document.querySelector('[data-c-owner="C-A"] [data-test=c-state]').textContent).resultSequence>seq,pre.resultSequence)};
+ const pane=()=>root.locator('[data-c-view]:visible ._fc-r-config .el-form-item').filter({has:page.locator('.el-form-item__label',{hasText:/^默认值$/})}).locator('input,textarea').first();
+ for(let run=1;run<=3;run++){
+  await page.locator('[data-test=c-field]').selectOption('F01');await page.locator('[data-test=c-variant]').selectOption('normal-default');await page.locator('[data-test=c-reset]').click();
+  await root.locator('[data-c-view]:visible ._fc-m-drag ._fd-drag-tool').first().click();await pane().fill('甲未失焦'+run);await pane().evaluate(el=>el.setSelectionRange(1,3));const a=(await state()).activeId;
+  await select(1);await root.locator('[data-c-view]:visible ._fc-m-drag ._fd-drag-tool').first().click();await pane().fill('乙未失焦'+run);const b=(await state()).activeId;
+  await select(0);const returned=await pane().inputValue();await pane().focus();await root.locator('[data-test=c-phase]').click();await root.locator('[data-test=c-phase]').click();await pane().focus();const before=await state();await pane().press('Alt+o');const obs=JSON.parse(await root.locator('[data-test=c-observation]').textContent());const post=await state();
+  await pane().press('Alt+s');await page.waitForFunction(seq=>JSON.parse(document.querySelector('[data-c-owner="C-A"] [data-test=c-state]').textContent).resultSequence>seq,post.resultSequence);const captured=await state();
+  await select(1);const returnedB=await pane().inputValue();
+  rows.push({case:'X01-X04-X09',run,a,b,returned,returnedB,observationVersionUnchanged:before.generation===post.generation,obs,captured,pass:returned==='甲未失焦'+run&&returnedB==='乙未失焦'+run&&captured.result.ok&&captured.sameSession&&captured.sameForms&&captured.sameGraph&&captured.persistCalls===0&&captured.views.length===2&&captured.views.every(v=>v.live)});
+  await select(0);await pane().focus();const seq=(await state()).resultSequence;
+  await pane().evaluate(el=>{el.dispatchEvent(new CompositionEvent('compositionstart',{bubbles:true,data:'中'}));el.value='协议组合'+el.value;el.dispatchEvent(new Event('input',{bubbles:true}));document.querySelector('[data-c-owner="C-A"] [data-test=c-collect]').click()});
+  await page.waitForFunction(seq=>JSON.parse(document.querySelector('[data-c-owner="C-A"] [data-test=c-state]').textContent).resultSequence>seq,seq);const during=await state();
+  const seq2=during.resultSequence;await pane().evaluate(el=>{el.dispatchEvent(new CompositionEvent('compositionend',{bubbles:true,data:'文'}));document.querySelector('[data-c-owner="C-A"] [data-test=c-collect]').click()});
+  await page.waitForFunction(seq=>JSON.parse(document.querySelector('[data-c-owner="C-A"] [data-test=c-state]').textContent).resultSequence>seq,seq2);const beforeTick=await state();
+  await root.locator('[data-test=c-collect]').click();await page.waitForFunction(seq=>JSON.parse(document.querySelector('[data-c-owner="C-A"] [data-test=c-state]').textContent).resultSequence>seq,beforeTick.resultSequence);const ended=await state();
+  rows.push({case:'CompositionEvent-protocol-not-OS-IME',run,during:during.result,beforeTick:beforeTick.result,ended:ended.result,pass:!during.result.ok&&!beforeTick.result.ok&&ended.result.ok});
+ }
+ return rows;
+}

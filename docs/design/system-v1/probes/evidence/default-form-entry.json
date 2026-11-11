@@ -1,0 +1,14 @@
+[
+  {
+    "display": "none",
+    "embedded": true,
+    "text": "流程默认表单无表单1表单2",
+    "visible": false
+  },
+  {
+    "display": "flex",
+    "embedded": false,
+    "text": "流程默认表单无表单1表单2",
+    "visible": true
+  }
+]

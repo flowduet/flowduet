@@ -1,0 +1,14 @@
+{
+  "title": "下拉单选默认",
+  "source": "A10",
+  "method": "Codex内置浏览器真实UI",
+  "startedUTC": "2026-10-12T10:11:00.651Z",
+  "status": "待诊断",
+  "attempts": [],
+  "error": "Timed out after 8000ms waiting for file chooser.",
+  "completedUTC": "2026-10-12T10:11:08.914Z",
+  "evidence": [
+    "U12.ax.txt",
+    "U12.jpg"
+  ]
+}

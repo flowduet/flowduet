@@ -1,0 +1,31 @@
+
+ RUN  v5.0.1 /private/tmp/b03-scope-lifetime-fix-2026-10-17/timeout-control
+
+ ❯ scope.diag.test.ts (8 tests | 1 failed | 6 skipped) 5397ms
+   ❯ 浏览器测试作用域 (8)
+     × 正常仍恢复真实组件、DOM、存储、spy和描述符 5025ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  scope.diag.test.ts > 浏览器测试作用域 > 正常仍恢复真实组件、DOM、存储、spy和描述符
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ scope.diag.test.ts:132:27
+    130|   });
+    131|
+    132|   it.each(["正常", "测试体抛错"])(
+       |                           ^
+    133|     "%s仍恢复真实组件、DOM、存储、spy和描述符",
+    134|     async (failure) => {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 1 passed | 6 skipped (8)
+   Start at  12:19:39
+   Duration  9.45s (tests 59%, import 24%, transform 13%, environment 5%)
+
+undefined
+/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run --config /tmp/b03-scope-lifetime-fix-2026-10-17/timeout-control/vitest.config.mts -t 仍恢复真实组件

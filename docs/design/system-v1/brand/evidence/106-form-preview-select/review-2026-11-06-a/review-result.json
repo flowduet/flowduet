@@ -1,0 +1,31 @@
+{
+  "snapshot_sha256": "f9be1955e3723618bdf09da9afe72237eec12500a3f8343a09bb862ef2c67351",
+  "batch": "A: one concentrated correction and one dual-axis review",
+  "power_loss": "same snapshot reconstructed; interrupted reviews restarted in same round",
+  "standards": {
+    "important": 0,
+    "details": 0,
+    "preexisting": 0,
+    "independent_validation": "select-appearance.test.ts 20/20 passed"
+  },
+  "spec": {
+    "important": 0,
+    "details": 0,
+    "preexisting": 0,
+    "independent_validation": "Chromium font counterexample and 9-case style/density regression passed"
+  },
+  "closed": [
+    "global popperClass priority",
+    "scoped host popup theme",
+    "brand explicit EP colors",
+    "explicit EP option/empty font sizes",
+    "explicit option geometry and whitespace priority"
+  ],
+  "status": "local fix and review complete; uncommitted/unpushed; no PR/merge/release",
+  "unverified": [
+    "Node 22/24 CI",
+    "Firefox/Safari/WebKit/mobile",
+    "real OS Chinese IME",
+    "parent spec and #108 complete delivery"
+  ]
+}

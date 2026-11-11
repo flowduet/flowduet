@@ -1,0 +1,382 @@
+Scope: 4 of 5 workspace projects
+packages/core test$ vitest run
+packages/core test:  RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/core
+packages/core test:  Test Files  12 passed (12)
+packages/core test:       Tests  125 passed (125)
+packages/core test:    Start at  19:43:45
+packages/core test:    Duration  686ms (transform 50%, tests 34%, import 14%, worker 2%)
+packages/core test: Done
+packages/designer test$ vitest run
+packages/designer test:  RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/designer
+packages/designer test:  ❯ probes/stage-zero/branch-preservation.test.ts (8 tests | 7 failed) 82ms
+packages/designer test:    ❯ 阶段零：支路身份的红色基线 (8)
+packages/designer test:      × preserves_branch_head_on_conversion single-to-multi condition 35ms
+packages/designer test:      × preserves_branch_head_on_conversion multi-to-single condition 7ms
+packages/designer test:      × preserves_branch_head_when_removing_first condition 7ms
+packages/designer test:      × preserves_branch_head_on_conversion single-to-multi default 8ms
+packages/designer test:      × preserves_branch_head_on_conversion multi-to-single default 6ms
+packages/designer test:      × preserves_branch_head_when_removing_first default 7ms
+packages/designer test:      × preserves_branch_head_when_removing_nested_block 5ms
+packages/designer test: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 7 ⎯⎯⎯⎯⎯⎯⎯
+packages/designer test:  FAIL  probes/stage-zero/branch-preservation.test.ts > 阶段零：支路身份的红色基线 > preserves_branch_head_on_conversion single-to-multi condition
+packages/designer test:  FAIL  probes/stage-zero/branch-preservation.test.ts > 阶段零：支路身份的红色基线 > preserves_branch_head_on_conversion single-to-multi default
+packages/designer test: AssertionError: expected 'flow_conv_in_1' to be 'fa' // Object.is equality
+packages/designer test: Expected: "fa"
+packages/designer test: Received: "flow_conv_in_1"
+packages/designer test:  ❯ assertHead probes/stage-zero/branch-preservation.test.ts:40:31
+packages/designer test:      38|   const outs = fork.get("outgoing") as ModdleElement[];
+packages/designer test:      39|   const head = outs.find((f) => (f.get("targetRef") as ModdleElement).…
+packages/designer test:      40|   expect.soft(head.get("id")).toBe("fa");
+packages/designer test:        |                               ^
+packages/designer test:      41|   expect.soft(head.get("name")).toBe("采购条件");
+packages/designer test:      42|   expect.soft(outs.map((f) => f.get("id"))).toEqual(["fa", "fb"]);
+packages/designer test:  ❯ probes/stage-zero/branch-preservation.test.ts:54:7
+packages/designer test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/32]⎯
+packages/designer test:  FAIL  probes/stage-zero/branch-preservation.test.ts > 阶段零：支路身份的红色基线 > preserves_branch_head_on_conversion single-to-multi condition
+packages/designer test:  FAIL  probes/stage-zero/branch-preservation.test.ts > 阶段零：支路身份的红色基线 > preserves_branch_head_on_conversion single-to-multi default
+packages/designer test: AssertionError: expected undefined to be '采购条件' // Object.is equality
+packages/designer test: - Expected:
+packages/designer test: "采购条件"
+packages/designer test: + Received:
+packages/designer test: undefined
+packages/designer test:  ❯ assertHead probes/stage-zero/branch-preservation.test.ts:41:33
+packages/designer test:      39|   const head = outs.find((f) => (f.get("targetRef") as ModdleElement).…
+packages/designer test:      40|   expect.soft(head.get("id")).toBe("fa");
+packages/designer test:      41|   expect.soft(head.get("name")).toBe("采购条件");
+packages/designer test:        |                                 ^
+packages/designer test:      42|   expect.soft(outs.map((f) => f.get("id"))).toEqual(["fa", "fb"]);
+packages/designer test:      43|   if (mode === "condition")
+packages/designer test:  ❯ probes/stage-zero/branch-preservation.test.ts:54:7
+packages/designer test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/32]⎯
+packages/designer test:  FAIL  probes/stage-zero/branch-preservation.test.ts > 阶段零：支路身份的红色基线 > preserves_branch_head_on_conversion single-to-multi condition
+packages/designer test:  FAIL  probes/stage-zero/branch-preservation.test.ts > 阶段零：支路身份的红色基线 > preserves_branch_head_on_conversion single-to-multi default
+packages/designer test: AssertionError: expected [ 'fb', 'flow_conv_in_1' ] to deeply equal [ 'fa', 'fb' ]
+packages/designer test: - Expected
+packages/designer test: + Received
+packages/designer test:   [
+packages/designer test: -   "fa",
+packages/designer test:     "fb",
+packages/designer test: +   "flow_conv_in_1",
+packages/designer test:   ]
+packages/designer test:  ❯ assertHead probes/stage-zero/branch-preservation.test.ts:42:45
+packages/designer test:      40|   expect.soft(head.get("id")).toBe("fa");
+packages/designer test:      41|   expect.soft(head.get("name")).toBe("采购条件");
+packages/designer test:      42|   expect.soft(outs.map((f) => f.get("id"))).toEqual(["fa", "fb"]);
+packages/designer test:        |                                             ^
+packages/designer test:      43|   if (mode === "condition")
+packages/designer test:      44|     expect
+packages/designer test:  ❯ probes/stage-zero/branch-preservation.test.ts:54:7
+packages/designer test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/32]⎯
+packages/designer test:  FAIL  probes/stage-zero/branch-preservation.test.ts > 阶段零：支路身份的红色基线 > preserves_branch_head_on_conversion single-to-multi condition
+packages/designer test: AssertionError: expected undefined to be '${amount > 100}' // Object.is equality
+packages/designer test: - Expected:
+packages/designer test: "${amount > 100}"
+packages/designer test: + Received:
+packages/designer test: undefined
+packages/designer test:  ❯ assertHead probes/stage-zero/branch-preservation.test.ts:46:8
+packages/designer test:      44|     expect
+packages/designer test:      45|       .soft((head.get("conditionExpression") as ModdleElement | undefi…
+packages/designer test:      46|       .toBe("${amount > 100}");
+packages/designer test:        |        ^
+packages/designer test:      47|   else expect.soft(fork.get("default")).toBe(head);
+packages/designer test:      48| }
+packages/designer test:  ❯ probes/stage-zero/branch-preservation.test.ts:54:7
+packages/designer test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/32]⎯
+packages/designer test:  FAIL  probes/stage-zero/branch-preservation.test.ts > 阶段零：支路身份的红色基线 > preserves_branch_head_on_conversion single-to-multi condition
+packages/designer test:  FAIL  probes/stage-zero/branch-preservation.test.ts > 阶段零：支路身份的红色基线 > preserves_branch_head_on_conversion single-to-multi default
+packages/designer test: AssertionError: expected 'flow_conv_out_1' to be 'at' // Object.is equality
+packages/designer test: Expected: "at"
+packages/designer test: Received: "flow_conv_out_1"
+packages/designer test:  ❯ probes/stage-zero/branch-preservation.test.ts:56:34
+packages/designer test:      54|       assertHead(m, "a", mode);
+packages/designer test:      55|       const out = (m.elementOf("a").get("outgoing") as ModdleElement[]…
+packages/designer test:      56|       expect.soft(out.get("id")).toBe("at");
+packages/designer test:        |                                  ^
+packages/designer test:      57|       expect.soft(out.get("name")).toBe("保留出边");
+packages/designer test:      58|     });
+packages/designer test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/32]⎯
+packages/designer test:  FAIL  probes/stage-zero/branch-preservation.test.ts > 阶段零：支路身份的红色基线 > preserves_branch_head_on_conversion single-to-multi condition
+packages/designer test:  FAIL  probes/stage-zero/branch-preservation.test.ts > 阶段零：支路身份的红色基线 > preserves_branch_head_on_conversion single-to-multi default
+packages/designer test: AssertionError: expected undefined to be '保留出边' // Object.is equality
+packages/designer test: - Expected:
+packages/designer test: "保留出边"
+packages/designer test: + Received:
+packages/designer test: undefined
+packages/designer test:  ❯ probes/stage-zero/branch-preservation.test.ts:57:36
+packages/designer test:      55|       const out = (m.elementOf("a").get("outgoing") as ModdleElement[]…
+packages/designer test:      56|       expect.soft(out.get("id")).toBe("at");
+packages/designer test:      57|       expect.soft(out.get("name")).toBe("保留出边");
+packages/designer test:        |                                    ^
+packages/designer test:      58|     });
+packages/designer test:      59|     it(`preserves_branch_head_on_conversion multi-to-single ${mode}`, …
+packages/designer test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/32]⎯
+packages/designer test:  FAIL  probes/stage-zero/branch-preservation.test.ts > 阶段零：支路身份的红色基线 > preserves_branch_head_on_conversion multi-to-single condition
+packages/designer test:  FAIL  probes/stage-zero/branch-preservation.test.ts > 阶段零：支路身份的红色基线 > preserves_branch_head_on_conversion multi-to-single default
+packages/designer test: AssertionError: expected 'flow_conv_in_1' to be 'fa' // Object.is equality
+packages/designer test: Expected: "fa"
+packages/designer test: Received: "flow_conv_in_1"
+packages/designer test:  ❯ assertHead probes/stage-zero/branch-preservation.test.ts:40:31
+packages/designer test:      38|   const outs = fork.get("outgoing") as ModdleElement[];
+packages/designer test:      39|   const head = outs.find((f) => (f.get("targetRef") as ModdleElement).…
+packages/designer test:      40|   expect.soft(head.get("id")).toBe("fa");
+packages/designer test:        |                               ^
+packages/designer test:      41|   expect.soft(head.get("name")).toBe("采购条件");
+packages/designer test:      42|   expect.soft(outs.map((f) => f.get("id"))).toEqual(["fa", "fb"]);
+packages/designer test:  ❯ probes/stage-zero/branch-preservation.test.ts:62:7
+packages/designer test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/32]⎯
+packages/designer test:  FAIL  probes/stage-zero/branch-preservation.test.ts > 阶段零：支路身份的红色基线 > preserves_branch_head_on_conversion multi-to-single condition
+packages/designer test:  FAIL  probes/stage-zero/branch-preservation.test.ts > 阶段零：支路身份的红色基线 > preserves_branch_head_on_conversion multi-to-single default
+packages/designer test: AssertionError: expected undefined to be '采购条件' // Object.is equality
+packages/designer test: - Expected:
+packages/designer test: "采购条件"
+packages/designer test: + Received:
+packages/designer test: undefined
+packages/designer test:  ❯ assertHead probes/stage-zero/branch-preservation.test.ts:41:33
+packages/designer test:      39|   const head = outs.find((f) => (f.get("targetRef") as ModdleElement).…
+packages/designer test:      40|   expect.soft(head.get("id")).toBe("fa");
+packages/designer test:      41|   expect.soft(head.get("name")).toBe("采购条件");
+packages/designer test:        |                                 ^
+packages/designer test:      42|   expect.soft(outs.map((f) => f.get("id"))).toEqual(["fa", "fb"]);
+packages/designer test:      43|   if (mode === "condition")
+packages/designer test:  ❯ probes/stage-zero/branch-preservation.test.ts:62:7
+packages/designer test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/32]⎯
+packages/designer test:  FAIL  probes/stage-zero/branch-preservation.test.ts > 阶段零：支路身份的红色基线 > preserves_branch_head_on_conversion multi-to-single condition
+packages/designer test:  FAIL  probes/stage-zero/branch-preservation.test.ts > 阶段零：支路身份的红色基线 > preserves_branch_head_on_conversion multi-to-single default
+packages/designer test: AssertionError: expected [ 'fb', 'flow_conv_in_1' ] to deeply equal [ 'fa', 'fb' ]
+packages/designer test: - Expected
+packages/designer test: + Received
+packages/designer test:   [
+packages/designer test: -   "fa",
+packages/designer test:     "fb",
+packages/designer test: +   "flow_conv_in_1",
+packages/designer test:   ]
+packages/designer test:  ❯ assertHead probes/stage-zero/branch-preservation.test.ts:42:45
+packages/designer test:      40|   expect.soft(head.get("id")).toBe("fa");
+packages/designer test:      41|   expect.soft(head.get("name")).toBe("采购条件");
+packages/designer test:      42|   expect.soft(outs.map((f) => f.get("id"))).toEqual(["fa", "fb"]);
+packages/designer test:        |                                             ^
+packages/designer test:      43|   if (mode === "condition")
+packages/designer test:      44|     expect
+packages/designer test:  ❯ probes/stage-zero/branch-preservation.test.ts:62:7
+packages/designer test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/32]⎯
+packages/designer test:  FAIL  probes/stage-zero/branch-preservation.test.ts > 阶段零：支路身份的红色基线 > preserves_branch_head_on_conversion multi-to-single condition
+packages/designer test: AssertionError: expected undefined to be '${amount > 100}' // Object.is equality
+packages/designer test: - Expected:
+packages/designer test: "${amount > 100}"
+packages/designer test: + Received:
+packages/designer test: undefined
+packages/designer test:  ❯ assertHead probes/stage-zero/branch-preservation.test.ts:46:8
+packages/designer test:      44|     expect
+packages/designer test:      45|       .soft((head.get("conditionExpression") as ModdleElement | undefi…
+packages/designer test:      46|       .toBe("${amount > 100}");
+packages/designer test:        |        ^
+packages/designer test:      47|   else expect.soft(fork.get("default")).toBe(head);
+packages/designer test:      48| }
+packages/designer test:  ❯ probes/stage-zero/branch-preservation.test.ts:62:7
+packages/designer test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/32]⎯
+packages/designer test:  FAIL  probes/stage-zero/branch-preservation.test.ts > 阶段零：支路身份的红色基线 > preserves_branch_head_when_removing_first condition
+packages/designer test:  FAIL  probes/stage-zero/branch-preservation.test.ts > 阶段零：支路身份的红色基线 > preserves_branch_head_when_removing_first default
+packages/designer test: AssertionError: expected 'flow_relay_1' to be 'fa' // Object.is equality
+packages/designer test: Expected: "fa"
+packages/designer test: Received: "flow_relay_1"
+packages/designer test:  ❯ assertHead probes/stage-zero/branch-preservation.test.ts:40:31
+packages/designer test:      38|   const outs = fork.get("outgoing") as ModdleElement[];
+packages/designer test:      39|   const head = outs.find((f) => (f.get("targetRef") as ModdleElement).…
+packages/designer test:      40|   expect.soft(head.get("id")).toBe("fa");
+packages/designer test:        |                               ^
+packages/designer test:      41|   expect.soft(head.get("name")).toBe("采购条件");
+packages/designer test:      42|   expect.soft(outs.map((f) => f.get("id"))).toEqual(["fa", "fb"]);
+packages/designer test:  ❯ probes/stage-zero/branch-preservation.test.ts:67:7
+packages/designer test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/32]⎯
+packages/designer test:  FAIL  probes/stage-zero/branch-preservation.test.ts > 阶段零：支路身份的红色基线 > preserves_branch_head_when_removing_first condition
+packages/designer test:  FAIL  probes/stage-zero/branch-preservation.test.ts > 阶段零：支路身份的红色基线 > preserves_branch_head_when_removing_first default
+packages/designer test: AssertionError: expected undefined to be '采购条件' // Object.is equality
+packages/designer test: - Expected:
+packages/designer test: "采购条件"
+packages/designer test: + Received:
+packages/designer test: undefined
+packages/designer test:  ❯ assertHead probes/stage-zero/branch-preservation.test.ts:41:33
+packages/designer test:      39|   const head = outs.find((f) => (f.get("targetRef") as ModdleElement).…
+packages/designer test:      40|   expect.soft(head.get("id")).toBe("fa");
+packages/designer test:      41|   expect.soft(head.get("name")).toBe("采购条件");
+packages/designer test:        |                                 ^
+packages/designer test:      42|   expect.soft(outs.map((f) => f.get("id"))).toEqual(["fa", "fb"]);
+packages/designer test:      43|   if (mode === "condition")
+packages/designer test:  ❯ probes/stage-zero/branch-preservation.test.ts:67:7
+packages/designer test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/32]⎯
+packages/designer test:  FAIL  probes/stage-zero/branch-preservation.test.ts > 阶段零：支路身份的红色基线 > preserves_branch_head_when_removing_first condition
+packages/designer test:  FAIL  probes/stage-zero/branch-preservation.test.ts > 阶段零：支路身份的红色基线 > preserves_branch_head_when_removing_first default
+packages/designer test: AssertionError: expected [ 'fb', 'flow_relay_1' ] to deeply equal [ 'fa', 'fb' ]
+packages/designer test: - Expected
+packages/designer test: + Received
+packages/designer test:   [
+packages/designer test: -   "fa",
+packages/designer test:     "fb",
+packages/designer test: +   "flow_relay_1",
+packages/designer test:   ]
+packages/designer test:  ❯ assertHead probes/stage-zero/branch-preservation.test.ts:42:45
+packages/designer test:      40|   expect.soft(head.get("id")).toBe("fa");
+packages/designer test:      41|   expect.soft(head.get("name")).toBe("采购条件");
+packages/designer test:      42|   expect.soft(outs.map((f) => f.get("id"))).toEqual(["fa", "fb"]);
+packages/designer test:        |                                             ^
+packages/designer test:      43|   if (mode === "condition")
+packages/designer test:      44|     expect
+packages/designer test:  ❯ probes/stage-zero/branch-preservation.test.ts:67:7
+packages/designer test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[13/32]⎯
+packages/designer test:  FAIL  probes/stage-zero/branch-preservation.test.ts > 阶段零：支路身份的红色基线 > preserves_branch_head_when_removing_first condition
+packages/designer test: AssertionError: expected undefined to be '${amount > 100}' // Object.is equality
+packages/designer test: - Expected:
+packages/designer test: "${amount > 100}"
+packages/designer test: + Received:
+packages/designer test: undefined
+packages/designer test:  ❯ assertHead probes/stage-zero/branch-preservation.test.ts:46:8
+packages/designer test:      44|     expect
+packages/designer test:      45|       .soft((head.get("conditionExpression") as ModdleElement | undefi…
+packages/designer test:      46|       .toBe("${amount > 100}");
+packages/designer test:        |        ^
+packages/designer test:      47|   else expect.soft(fork.get("default")).toBe(head);
+packages/designer test:      48| }
+packages/designer test:  ❯ probes/stage-zero/branch-preservation.test.ts:67:7
+packages/designer test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[14/32]⎯
+packages/designer test:  FAIL  probes/stage-zero/branch-preservation.test.ts > 阶段零：支路身份的红色基线 > preserves_branch_head_on_conversion single-to-multi default
+packages/designer test: AssertionError: expected undefined to be Base{ …(6) } // Object.is equality
+packages/designer test: - Expected:
+packages/designer test: Base {
+packages/designer test:   "$type": "bpmn:SequenceFlow",
+packages/designer test:   "id": "flow_conv_in_1",
+packages/designer test: }
+packages/designer test: + Received:
+packages/designer test: undefined
+packages/designer test:  ❯ assertHead probes/stage-zero/branch-preservation.test.ts:47:41
+packages/designer test:      45|       .soft((head.get("conditionExpression") as ModdleElement | undefi…
+packages/designer test:      46|       .toBe("${amount > 100}");
+packages/designer test:      47|   else expect.soft(fork.get("default")).toBe(head);
+packages/designer test:        |                                         ^
+packages/designer test:      48| }
+packages/designer test:      49| describe("阶段零：支路身份的红色基线", () => {
+packages/designer test:  ❯ probes/stage-zero/branch-preservation.test.ts:54:7
+packages/designer test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[15/32]⎯
+packages/designer test:  FAIL  probes/stage-zero/branch-preservation.test.ts > 阶段零：支路身份的红色基线 > preserves_branch_head_on_conversion multi-to-single default
+packages/designer test: AssertionError: expected undefined to be Base{ …(6) } // Object.is equality
+packages/designer test: - Expected:
+packages/designer test: Base {
+packages/designer test:   "$type": "bpmn:SequenceFlow",
+packages/designer test:   "id": "flow_conv_in_1",
+packages/designer test: }
+packages/designer test: + Received:
+packages/designer test: undefined
+packages/designer test:  ❯ assertHead probes/stage-zero/branch-preservation.test.ts:47:41
+packages/designer test:      45|       .soft((head.get("conditionExpression") as ModdleElement | undefi…
+packages/designer test:      46|       .toBe("${amount > 100}");
+packages/designer test:      47|   else expect.soft(fork.get("default")).toBe(head);
+packages/designer test:        |                                         ^
+packages/designer test:      48| }
+packages/designer test:      49| describe("阶段零：支路身份的红色基线", () => {
+packages/designer test:  ❯ probes/stage-zero/branch-preservation.test.ts:62:7
+packages/designer test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[16/32]⎯
+packages/designer test:  FAIL  probes/stage-zero/branch-preservation.test.ts > 阶段零：支路身份的红色基线 > preserves_branch_head_when_removing_first default
+packages/designer test: AssertionError: expected undefined to be Base{ …(6) } // Object.is equality
+packages/designer test: - Expected:
+packages/designer test: Base {
+packages/designer test:   "$type": "bpmn:SequenceFlow",
+packages/designer test:   "id": "flow_relay_1",
+packages/designer test: }
+packages/designer test: + Received:
+packages/designer test: undefined
+packages/designer test:  ❯ assertHead probes/stage-zero/branch-preservation.test.ts:47:41
+packages/designer test:      45|       .soft((head.get("conditionExpression") as ModdleElement | undefi…
+packages/designer test:      46|       .toBe("${amount > 100}");
+packages/designer test:      47|   else expect.soft(fork.get("default")).toBe(head);
+packages/designer test:        |                                         ^
+packages/designer test:      48| }
+packages/designer test:      49| describe("阶段零：支路身份的红色基线", () => {
+packages/designer test:  ❯ probes/stage-zero/branch-preservation.test.ts:67:7
+packages/designer test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[17/32]⎯
+packages/designer test:  FAIL  probes/stage-zero/branch-preservation.test.ts > 阶段零：支路身份的红色基线 > preserves_branch_head_when_removing_nested_block
+packages/designer test: AssertionError: expected 'flow_block_relay_1' to be 'fa' // Object.is equality
+packages/designer test: Expected: "fa"
+packages/designer test: Received: "flow_block_relay_1"
+packages/designer test:  ❯ assertHead probes/stage-zero/branch-preservation.test.ts:40:31
+packages/designer test:      38|   const outs = fork.get("outgoing") as ModdleElement[];
+packages/designer test:      39|   const head = outs.find((f) => (f.get("targetRef") as ModdleElement).…
+packages/designer test:      40|   expect.soft(head.get("id")).toBe("fa");
+packages/designer test:        |                               ^
+packages/designer test:      41|   expect.soft(head.get("name")).toBe("采购条件");
+packages/designer test:      42|   expect.soft(outs.map((f) => f.get("id"))).toEqual(["fa", "fb"]);
+packages/designer test:  ❯ probes/stage-zero/branch-preservation.test.ts:98:5
+packages/designer test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[18/32]⎯
+packages/designer test:  FAIL  probes/stage-zero/branch-preservation.test.ts > 阶段零：支路身份的红色基线 > preserves_branch_head_when_removing_nested_block
+packages/designer test: AssertionError: expected undefined to be '采购条件' // Object.is equality
+packages/designer test: - Expected:
+packages/designer test: "采购条件"
+packages/designer test: + Received:
+packages/designer test: undefined
+packages/designer test:  ❯ assertHead probes/stage-zero/branch-preservation.test.ts:41:33
+packages/designer test:      39|   const head = outs.find((f) => (f.get("targetRef") as ModdleElement).…
+packages/designer test:      40|   expect.soft(head.get("id")).toBe("fa");
+packages/designer test:      41|   expect.soft(head.get("name")).toBe("采购条件");
+packages/designer test:        |                                 ^
+packages/designer test:      42|   expect.soft(outs.map((f) => f.get("id"))).toEqual(["fa", "fb"]);
+packages/designer test:      43|   if (mode === "condition")
+packages/designer test:  ❯ probes/stage-zero/branch-preservation.test.ts:98:5
+packages/designer test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[19/32]⎯
+packages/designer test:  FAIL  probes/stage-zero/branch-preservation.test.ts > 阶段零：支路身份的红色基线 > preserves_branch_head_when_removing_nested_block
+packages/designer test: AssertionError: expected [ 'fb', 'flow_block_relay_1' ] to deeply equal [ 'fa', 'fb' ]
+packages/designer test: - Expected
+packages/designer test: + Received
+packages/designer test:   [
+packages/designer test: -   "fa",
+packages/designer test:     "fb",
+packages/designer test: +   "flow_block_relay_1",
+packages/designer test:   ]
+packages/designer test:  ❯ assertHead probes/stage-zero/branch-preservation.test.ts:42:45
+packages/designer test:      40|   expect.soft(head.get("id")).toBe("fa");
+packages/designer test:      41|   expect.soft(head.get("name")).toBe("采购条件");
+packages/designer test:      42|   expect.soft(outs.map((f) => f.get("id"))).toEqual(["fa", "fb"]);
+packages/designer test:        |                                             ^
+packages/designer test:      43|   if (mode === "condition")
+packages/designer test:      44|     expect
+packages/designer test:  ❯ probes/stage-zero/branch-preservation.test.ts:98:5
+packages/designer test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[20/32]⎯
+packages/designer test:  FAIL  probes/stage-zero/branch-preservation.test.ts > 阶段零：支路身份的红色基线 > preserves_branch_head_when_removing_nested_block
+packages/designer test: AssertionError: expected undefined to be '${amount > 100}' // Object.is equality
+packages/designer test: - Expected:
+packages/designer test: "${amount > 100}"
+packages/designer test: + Received:
+packages/designer test: undefined
+packages/designer test:  ❯ assertHead probes/stage-zero/branch-preservation.test.ts:46:8
+packages/designer test:      44|     expect
+packages/designer test:      45|       .soft((head.get("conditionExpression") as ModdleElement | undefi…
+packages/designer test:      46|       .toBe("${amount > 100}");
+packages/designer test:        |        ^
+packages/designer test:      47|   else expect.soft(fork.get("default")).toBe(head);
+packages/designer test:      48| }
+packages/designer test:  ❯ probes/stage-zero/branch-preservation.test.ts:98:5
+packages/designer test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[21/32]⎯
+packages/designer test:  Test Files  1 failed | 10 passed (11)
+packages/designer test:       Tests  7 failed | 141 passed (148)
+packages/designer test:    Start at  19:43:46
+packages/designer test:    Duration  6.65s (tests 43%, import 23%, transform 18%, environment 16%)
+packages/designer test: Failed
+packages/form-create test$ vitest run
+packages/form-create test:  RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/form-create
+packages/form-create test:  Test Files  7 passed (7)
+packages/form-create test:       Tests  121 passed (121)
+packages/form-create test:    Start at  19:43:53
+packages/form-create test:    Duration  39.21s (tests 77%, import 11%, environment 6%, transform 5%)
+packages/form-create test: Done
+apps/playground test$ vitest run
+apps/playground test:  RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground
+apps/playground test:  Test Files  3 passed (3)
+apps/playground test:       Tests  64 passed (64)
+apps/playground test:    Start at  19:44:33
+apps/playground test:    Duration  35.43s (tests 84%, import 9%, transform 5%, environment 2%)
+apps/playground test: Done
+ ERR_PNPM_RECURSIVE_FAIL  
+
+
+Summary: 1 fails, 3 passes
+
+/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/designer:
+ ERROR  @flowduet/designer@0.1.0 test: `vitest run`
+Exit status 1

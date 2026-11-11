@@ -1,0 +1,70 @@
+{
+  "browser": "156.0.8078.4",
+  "actual": {
+    "trigger": {
+      "width": 632,
+      "height": 32,
+      "color": "rgb(32, 38, 61)",
+      "background": "rgb(255, 255, 255)",
+      "outlineWidth": "2px",
+      "outlineOffset": "3px",
+      "fontSize": "14px",
+      "lineHeight": "24px",
+      "whiteSpace": "normal",
+      "focused": true
+    },
+    "caret": {
+      "color": "rgb(32, 38, 61)",
+      "background": "rgba(0, 0, 0, 0)",
+      "outlineWidth": "3px",
+      "outlineOffset": "0px",
+      "fontSize": "14px",
+      "lineHeight": "14px",
+      "whiteSpace": "normal"
+    },
+    "panel": {
+      "color": "rgb(0, 0, 0)",
+      "background": "rgb(255, 255, 255)",
+      "outlineWidth": "3px",
+      "outlineOffset": "0px",
+      "fontSize": "12px",
+      "lineHeight": "20px",
+      "whiteSpace": "normal"
+    },
+    "selected": {
+      "width": 630,
+      "height": 32,
+      "color": "rgb(45, 62, 151)",
+      "background": "rgb(234, 240, 255)",
+      "outlineWidth": "3px",
+      "outlineOffset": "0px",
+      "fontSize": "14px",
+      "lineHeight": "22.4px",
+      "whiteSpace": "normal"
+    },
+    "hovering": {
+      "width": 630,
+      "height": 32,
+      "color": "rgb(86, 95, 118)",
+      "background": "rgb(240, 242, 248)",
+      "outlineWidth": "3px",
+      "outlineOffset": "0px",
+      "fontSize": "14px",
+      "lineHeight": "22.4px",
+      "whiteSpace": "normal"
+    },
+    "disabled": {
+      "color": "rgb(139, 146, 164)",
+      "background": "rgba(0, 0, 0, 0)",
+      "outlineWidth": "3px",
+      "outlineOffset": "0px",
+      "fontSize": "14px",
+      "lineHeight": "22.4px",
+      "whiteSpace": "normal"
+    },
+    "ownerClasses": ["flowduet-form-preview-select-v-0"],
+    "panelVariables": "z-index: 2017; position: absolute; inset: 1551px auto auto 56px;"
+  },
+  "errors": [],
+  "failures": []
+}

@@ -1,0 +1,20 @@
+async page => {
+ page.setDefaultTimeout(7000);const rows=[],a=page.locator('#app [data-test=seam-probe]');
+ const host=a.locator('[data-dialog-probe=A]');await host.locator('[data-test=dialog-busy]').check();
+ for(let run=1;run<=3;run++){
+  await a.locator('[data-test=seam-clear]').click();
+  const vueUrl=await page.evaluate(async()=>{
+   const module=await (await fetch('/probes/stage-zero/form-repair/DefaultEditorSeamProbe.vue')).text();
+   const match=module.match(/from "([^"]*\/vue\.js[^"]*)"/);if(!match)throw new Error('公开Vue入口未找到');return match[1];
+  });
+  await page.evaluate(async vueUrl=>{const {createApp}=await import(vueUrl);const {default:Probe}=await import('/probes/stage-zero/form-repair/DefaultEditorSeamProbe.vue');const root=document.createElement('div');root.id='p0-peer-app';document.body.append(root);window.__p0PeerApp=createApp(Probe);window.__p0PeerApp.mount(root);},vueUrl);
+  try{
+   const b=page.locator('#p0-peer-app'),peer=b.locator('[data-dialog-probe=A]');await peer.locator('[data-test=dialog-open]').click();
+   const owner=await host.getAttribute('data-owner-key'),peerOwner=await peer.getAttribute('data-owner-key'),d=page.locator('.'+await peer.getAttribute('data-content-class'));
+   await d.locator('[data-test=dialog-x]').focus();await d.locator('[data-test=dialog-x]').press('Enter');await d.waitFor({state:'hidden'});
+   const trace=JSON.parse(await a.locator('[data-test=seam-events]').textContent());
+   rows.push({case:'same-label-cross-app-hidden-busy',run,source:'owned-mount-busy-protocol-plus-native-Enter',vueUrl,owner,peerOwner,peerClosed:!(await d.isVisible()),trace,pass:owner!==peerOwner&&!trace.some(e=>e.event==='dialog-preflight')&&await peer.getAttribute('data-dialog-open')==='false'});
+  }finally{await page.evaluate(()=>{window.__p0PeerApp.unmount();document.querySelector('#p0-peer-app').remove();delete window.__p0PeerApp;});}
+ }
+ await host.locator('[data-test=dialog-busy]').uncheck();return rows;
+}

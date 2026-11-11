@@ -1,0 +1,28 @@
+from pathlib import Path
+import subprocess,json,hashlib
+root=Path.cwd(); out=root/'docs/design/system-v1/probes/evidence/b03-p1-2026-10-16'
+(out/'final').mkdir(parents=True,exist_ok=True);(out/'scripts').mkdir(exist_ok=True)
+sources=[]
+for folder in ['packages/core/src','packages/designer/src','packages/form-create/src','apps/playground/probes/stage-zero']:
+ for p in sorted((root/folder).rglob('*')):
+  if p.is_file() and p.suffix in ['.ts','.vue'] and not p.name.endswith(('.test.ts','.cases.ts')):
+   raw=p.read_bytes();sources.append({'path':str(p.relative_to(root)), 'sha256':hashlib.sha256(raw).hexdigest(),'bytes':len(raw)})
+(out/'runtime-sources.json').write_text(json.dumps({'note':'运行时源码的保守超集（排除test/cases）；不是逐请求模块追踪。冻结后所有浏览器批次使用此源码。','base':'56d9e07841f11b50aef4f0fcccc3c6c3b9ce132f','sources':sources},ensure_ascii=False,indent=2)+'\n')
+for name in ['numbers-dates','candidates','dialogs','calendar-shortcuts','dialog-boundaries']:
+ for action in [['close'],['open','http://127.0.0.1:5178/probes/stage-zero/index.html','--headed'],['resize','1440','1000']]:
+  setup=subprocess.run(['/Users/l/.codex/skills/playwright/scripts/playwright_cli.sh','-s=b03-p1',*action],capture_output=True,text=True)
+  (out/'final'/f'{name}.{action[0]}.log').write_text(setup.stdout+setup.stderr)
+  if setup.returncode:raise RuntimeError(str(action)+setup.stdout+setup.stderr)
+ script=root/'output/playwright/b03-p1'/f'{name}.js' 
+ (out/'scripts'/f'{name}.js.txt').write_bytes(script.read_bytes())
+ cp=subprocess.run(['/Users/l/.codex/skills/playwright/scripts/playwright_cli.sh','-s=b03-p1','run-code','--filename',str(script)],capture_output=True,text=True)
+ (out/'final'/f'{name}.cli.log').write_text(cp.stdout+cp.stderr)
+ if cp.returncode or '### Result\n' not in cp.stdout:
+  print(name,'FAILED',cp.returncode,cp.stdout[:600],flush=True);raise SystemExit(1)
+ payload=json.loads(cp.stdout.split('### Result\n',1)[1].split('\n### Ran Playwright code',1)[0])
+ if not all(row.get('pass') is True for row in payload['rows']):raise RuntimeError(name)
+ (out/'final'/f'{name}.json').write_text(json.dumps(payload,ensure_ascii=False,indent=2)+'\n')
+ print(name,len(payload['rows']),'PASS',flush=True)
+for row in sources:
+ if hashlib.sha256((root/row['path']).read_bytes()).hexdigest()!=row['sha256']:raise RuntimeError('源码在重放期间变化:'+row['path'])
+print('sources unchanged:',len(sources),flush=True)

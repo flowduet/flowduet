@@ -1,0 +1,9 @@
+{
+  "url": "http://127.0.0.1:5173/probes/stage-zero/index.html",
+  "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36",
+  "viewport": {
+    "width": 1440,
+    "height": 1000
+  },
+  "dpr": 1
+}

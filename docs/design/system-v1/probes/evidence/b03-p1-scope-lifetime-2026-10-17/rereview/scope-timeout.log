@@ -1,0 +1,31 @@
+
+ RUN  v5.0.1 /private/tmp/b03-fourfile-rereview-2026-10-17
+
+ ❯ scope-timeout.diag.test.ts (5 tests | 1 failed | 3 skipped) 5462ms
+   ❯ 浏览器测试作用域 (5)
+     × 正常仍恢复真实组件、DOM、存储、spy和描述符 5010ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  scope-timeout.diag.test.ts > 浏览器测试作用域 > 正常仍恢复真实组件、DOM、存储、spy和描述符
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ scope-timeout.diag.test.ts:78:27
+     76|   });
+     77|
+     78|   it.each(["正常", "测试体抛错"])(
+       |                           ^
+     79|     "%s仍恢复真实组件、DOM、存储、spy和描述符",
+     80|     async (failure) => {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 1 passed | 3 skipped (5)
+   Start at  12:09:53
+   Duration  10.25s (tests 55%, import 25%, transform 15%, environment 5%)
+
+undefined
+/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run --config /tmp/b03-fourfile-rereview-2026-10-17/vitest.config.mts -t 仍恢复真实组件

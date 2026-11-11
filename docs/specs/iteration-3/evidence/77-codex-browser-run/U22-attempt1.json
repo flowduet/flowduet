@@ -1,0 +1,14 @@
+{
+  "title": "开关false有效",
+  "source": "A09",
+  "method": "Codex内置浏览器真实UI",
+  "startedUTC": "2026-10-12T10:16:10.639Z",
+  "status": "待诊断",
+  "attempts": [],
+  "error": "Error: Playwright selector deadline exceeded\nlocator.waitFor(visible) timed out for selector [data-test=\"form-preview-validation\"] >> internal:has-text=\"校验通过\"i\nLocator diagnostics: {\"kind\":\"no_matches\",\"action\":\"waitFor\",\"locator\":\"[data-test=\\\"form-preview-validation\\\"] >> internal:has-text=\\\"校验通过\\\"i\",\"matchCount\":0,\"matches\":[],\"visibleCount\":0,\"truncated\":false}",
+  "completedUTC": "2026-10-12T10:16:15.979Z",
+  "evidence": [
+    "U22.ax.txt",
+    "U22.jpg"
+  ]
+}

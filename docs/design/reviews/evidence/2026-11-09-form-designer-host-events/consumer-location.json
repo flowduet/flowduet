@@ -1,0 +1,10 @@
+{
+  "result": "静态安装包消费检查通过；浏览器渲染尚待单独验证",
+  "temporaryRoot": "/private/var/folders/47/jtpz279529q04_3hhr6t7ptr0000gn/T/flowduet-appearance-108-QnJsHa",
+  "consumerDir": "/private/var/folders/47/jtpz279529q04_3hhr6t7ptr0000gn/T/flowduet-appearance-108-QnJsHa/consumer",
+  "elementPlus": "2.14.6",
+  "elementPlusCopies": 1,
+  "renderer": "3.3.4",
+  "vue": "3.5.43",
+  "next": "cd /private/var/folders/47/jtpz279529q04_3hhr6t7ptr0000gn/T/flowduet-appearance-108-QnJsHa/consumer && npm run preview -- --port 4174"
+}

@@ -1,0 +1,9 @@
+### Result
+[{"owner":"A","dirty":false,"generation":0,"selected":{"ref":{"controllerId":"A","documentEpoch":1,"kind":"node","id":"approval_1","lifetime":4},"facet":"properties"},"actual":"approval_1","mounted":3},{"owner":"B","dirty":false,"generation":0,"selected":{"ref":{"controllerId":"B","documentEpoch":1,"kind":"node","id":"approval_1","lifetime":4},"facet":"properties"},"actual":"approval_1","mounted":3}]
+### Ran Playwright code
+```js
+await (async (page) => { await page.reload(); const a = page.locator("[data-contract-owner=A]"); await a.getByRole("button", {name:"定位同名后继",exact:true}).waitFor(); const states = await page.locator("[data-test=contract-state]").allTextContents(); return states.map(s => { const x=JSON.parse(s); return {owner:x.owner,dirty:x.dirty,generation:x.generation,selected:x.selected,actual:x.actualSelectedId,mounted:x.mountedEditors}; }); })(page);
+```
+### Page
+- Page URL: http://127.0.0.1:5175/probes/stage-zero/index.html
+- Page Title: FlowDuet 阶段零探针

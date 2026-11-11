@@ -1,0 +1,87 @@
+
+> flowduet-monorepo@0.0.0 test /Users/l/.codex/worktrees/design-system-stage-zero/flowduet
+> pnpm -r test
+
+Scope: 4 of 5 workspace projects
+packages/core test$ vitest run
+packages/core test:  RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/core
+packages/core test:  Test Files  14 passed (14)
+packages/core test:       Tests  148 passed (148)
+packages/core test:    Start at  00:19:41
+packages/core test:    Duration  1.77s (transform 60%, tests 31%, import 8%, worker 1%)
+packages/core test:   Transform  transforming modules took 6.91s · 60% of tracked time, re-done on every run
+packages/core test:              persist transforms across runs with fsModuleCache: true
+packages/core test:              learn more: https://vitest.dev/guide/improving-performance#caching-between-reruns
+packages/core test: Done
+packages/designer test$ vitest run
+packages/designer test:  RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/designer
+packages/designer test:  Test Files  14 passed (14)
+packages/designer test:       Tests  184 passed (184)
+packages/designer test:    Start at  00:19:43
+packages/designer test:    Duration  10.27s (tests 44%, import 20%, environment 18%, transform 17%)
+packages/designer test: Done
+packages/form-create test$ vitest run
+packages/form-create test:  RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/form-create
+packages/form-create test:  Test Files  9 passed (9)
+packages/form-create test:       Tests  137 passed (137)
+packages/form-create test:    Start at  00:19:54
+packages/form-create test:    Duration  17.32s (tests 36%, import 33%, environment 19%, transform 13%)
+packages/form-create test: Done
+apps/playground test$ vitest run
+apps/playground test:  RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground
+apps/playground test: stderr | probes/stage-zero/location.test.ts > 真实视图定位确认 > 单↔多转换后原分支诊断仍定位fa，条件与顺序保留
+apps/playground test: [Vue Flow]: The Vue Flow parent container needs a width and a height to render the graph
+apps/playground test: [Vue Flow]: It seems that you haven't loaded the necessary styles. Please import '@vue-flow/core/dist/style.css' to ensure that the graph is rendered correctly
+apps/playground test: stderr | src/App.integration.test.ts > Playground 设计文档闭环（#71：保存 → 打开 → 继续编辑） > 打开省略节点连线标记的标准 BPMN 后，可通过设计器继续增删节点
+apps/playground test: [BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+apps/playground test:  ❯ probes/stage-zero/location.test.ts (9 tests | 1 failed) 16970ms
+apps/playground test:    ❯ 真实视图定位确认 (9)
+apps/playground test:      × 单↔多转换后原分支诊断仍定位fa，条件与顺序保留 5311ms
+apps/playground test:  ❯ src/App.integration.test.ts (45 tests | 2 failed) 56725ms
+apps/playground test:    ❯ Playground 与 designer 的导出链路 (1)
+apps/playground test:      × 插入抄送草稿后自动与手动导出均报错，配置收件人后自动恢复 XML 5128ms
+apps/playground test:    ❯ Playground 设计文档闭环（#71：保存 → 打开 → 继续编辑） (3)
+apps/playground test:      × 打开省略节点连线标记的标准 BPMN 后，可通过设计器继续增删节点 5201ms
+apps/playground test: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+apps/playground test:  FAIL  src/App.integration.test.ts > Playground 与 designer 的导出链路 > 插入抄送草稿后自动与手动导出均报错，配置收件人后自动恢复 XML
+apps/playground test: Error: Test timed out in 5000ms.
+apps/playground test: If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+apps/playground test:  ❯ src/App.integration.test.ts:68:3
+apps/playground test:      66|
+apps/playground test:      67| describe("Playground 与 designer 的导出链路", () => {
+apps/playground test:      68|   it("插入抄送草稿后自动与手动导出均报错，配置收件人后自动恢复 XML", async () => {
+apps/playground test:        |   ^
+apps/playground test:      69|     wrapper = mount(App, { attachTo: document.body });
+apps/playground test:      70|     await wrapper.find('[data-test="export-btn"]').trigger("click");
+apps/playground test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+apps/playground test:  FAIL  src/App.integration.test.ts > Playground 设计文档闭环（#71：保存 → 打开 → 继续编辑） > 打开省略节点连线标记的标准 BPMN 后，可通过设计器继续增删节点
+apps/playground test: Error: Test timed out in 5000ms.
+apps/playground test: If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+apps/playground test:  ❯ src/App.integration.test.ts:118:3
+apps/playground test:     116|
+apps/playground test:     117| describe("Playground 设计文档闭环（#71：保存 → 打开 → 继续编辑）", () => {
+apps/playground test:     118|   it("打开省略节点连线标记的标准 BPMN 后，可通过设计器继续增删节点", async () => {
+apps/playground test:        |   ^
+apps/playground test:     119|     wrapper = mount(App, { attachTo: document.body });
+apps/playground test:     120|     const xml = `<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec…
+apps/playground test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+apps/playground test:  FAIL  probes/stage-zero/location.test.ts > 真实视图定位确认 > 单↔多转换后原分支诊断仍定位fa，条件与顺序保留
+apps/playground test: Error: Test timed out in 5000ms.
+apps/playground test: If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+apps/playground test:  ❯ probes/stage-zero/location.test.ts:42:3
+apps/playground test:      40|     expect(wrapper!.find('[data-test="location-result"]').text()).toCo…
+apps/playground test:      41|   });
+apps/playground test:      42|   it("单↔多转换后原分支诊断仍定位fa，条件与顺序保留", async () => {
+apps/playground test:        |   ^
+apps/playground test:      43|     await setup();
+apps/playground test:      44|     await click("切为会签");
+apps/playground test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+apps/playground test:  Test Files  2 failed | 21 passed (23)
+apps/playground test:       Tests  3 failed | 276 passed (279)
+apps/playground test:    Start at  00:20:12
+apps/playground test:    Duration  64.24s (tests 52%, import 33%, environment 10%, transform 5%)
+apps/playground test: Failed
+/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @flowduet/playground@0.0.0 test: `vitest run`
+Exit status 1
+ ELIFECYCLE  Test failed. See above for more details.

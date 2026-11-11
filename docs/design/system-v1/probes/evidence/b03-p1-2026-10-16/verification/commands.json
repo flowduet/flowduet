@@ -1,0 +1,48 @@
+{
+  "sourceCommit": "23fb82653aa0f7119622186a2bc72733e6ed439e",
+  "runtimeSourceCount": 96,
+  "environment": {
+    "node": "v24.16.0",
+    "pnpm": "10.26.1",
+    "macOS": "15.6",
+    "viewport": "1440x1000 DPR1",
+    "browser": "见final/browser-environment.log"
+  },
+  "checks": [
+    {
+      "command": "pnpm test",
+      "exitCode": 0,
+      "counts": {
+        "core": 148,
+        "designer": 184,
+        "form-create": 195,
+        "playground": 297
+      },
+      "total": 824,
+      "log": "flowduet-b03-p1-full-final.log"
+    },
+    {
+      "command": "pnpm build",
+      "exitCode": 0,
+      "log": "flowduet-b03-p1-build-final.log"
+    },
+    {
+      "command": "pnpm lint",
+      "exitCode": 0,
+      "log": "flowduet-b03-p1-lint-final.log"
+    },
+    {
+      "command": "pnpm --filter @flowduet/form-create exec vue-tsc -p ../../apps/playground/probes/stage-zero/tsconfig.json --noEmit",
+      "exitCode": 0,
+      "log": "flowduet-b03-p1-strict-final.log"
+    },
+    {
+      "command": "node --input-type=module -e \"import('./packages/core/dist/index.js').then(m => { if (!m.CORE_VERSION) throw new Error('CORE_VERSION 缺失'); console.log('dist 导入 OK', m.CORE_VERSION); })\"",
+      "exitCode": 0,
+      "stdout": "dist 导入 OK 0.3.0",
+      "origin": "根代理工具返回；未单独保存stdout文件"
+    }
+  ],
+  "ci": "未推送，未运行远端Node22/24 CI；本地使用Node24，不等同双矩阵。",
+  "APP-T": "基线756/756与最终824/824均默认通过；历史超时仍单列，未做根因修改。"
+}

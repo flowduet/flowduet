@@ -1,0 +1,78 @@
+# 迭代二 · 钉钉式视图 MVP —— Spec 总纲
+
+- 状态：已收敛（2026-09-20 grilling 会话，九项决策无遗留分歧）
+- 时间盒：2026-10-08 → 10-22（两周）
+- 里程碑：GitHub `iteration-2`
+- 上游依据：ROADMAP「迭代二」章节、ADR-0003（双视图架构）、ADR-0004（钉钉式边界）、GLOSSARY.md「审批节点」节
+
+## 目标
+
+把 ADR-0003「双视图共享同一棵模型树」的立项主张第一次落成代码证据：钉钉式视图五类节点可编辑、BPMN 画布只读投影、导出 XML 经 Flowable 6.8 真实部署成功。
+
+## 范围
+
+- **内核三扩展**（`packages/core`）：多实例用户任务（会签/或签/依次三档）、并行网关 + 排他网关默认分支、抄送节点（服务任务 + 适配器扩展属性）。
+- **视图层**（`packages/designer`）：钉钉式五类节点递归组件 + 抽屉配置（Element Plus）。
+- **只读投影**：Vue-Flow 只读画布，与钉钉式读写同一棵模型树。
+- **验收宿主**（`apps/playground`）：最小页面挂载 designer，含 XML 导出预览。
+- **冒烟扩展**：新元素基准文件全谱过 Flowable 6.8 部署冒烟。
+
+## Spec 索引（2026-09-20 全部成稿）
+
+| Spec | 内容 | 状态 |
+| --- | --- | --- |
+| [multi-instance-user-task.md](./multi-instance-user-task.md) | 内核：多实例用户任务三档（会签/或签/依次） | 成稿 |
+| [parallel-gateway.md](./parallel-gateway.md) | 内核：并行网关 + 排他网关默认分支 | 成稿 |
+| [cc-task.md](./cc-task.md) | 内核：抄送 = 服务任务 + 适配器扩展属性 | 成稿 |
+| [dingtalk-view-mvp.md](./dingtalk-view-mvp.md) | 钉钉式视图：递归组件 + 抽屉 + playground 宿主 | 成稿 |
+| [bpmn-readonly-projection.md](./bpmn-readonly-projection.md) | Vue-Flow 只读投影 | 成稿 |
+
+### 原型与决策折回注记（2026-09-20）
+
+- **原型收官**：分支 `prototype/iter2-vertical-layout-mi`（primary source）。竖排布局 = `DiLayout` 第二实现（`verticalDiLayout()` + `deriveBlockTree` 公开导出，内核仅 `shape`/`waypoints` 可选化）；多实例 = `addApprovalTask` 语义 API、三档固化（原型实测 6.8 部署 + 启动 + assignee 逐人全过）。
+- **命名空间缺陷已结案**：flowable URI 修正为 `http://flowable.org/bpmn`，core 0.1.2 已发，冒烟已带运行时断言（PR #18）——迭代二干净起步。
+- **成稿补充决策**（grilling R1–R5）：默认流转 = 分支侧标记 + 三重守卫；抄送 = `addTask("cc")` 中立映射 + `flowable:ccTo` 单属性 + 占位 delegate bean；designer = 直接读写模型树 + 块树重推导；接缝 = 内核扩既有四面 + designer 仅一条顶层组件接缝。
+
+### 票索引（GitHub Issues，2026-09-20 拆定，挂本里程碑）
+
+| 票 | 内容 | 被阻塞于 |
+| --- | --- | --- |
+| [#19](https://github.com/flowduet/flowduet/issues/19) | core：多实例用户任务三档 | — |
+| [#20](https://github.com/flowduet/flowduet/issues/20) | core：并行网关与默认流转 | — |
+| [#21](https://github.com/flowduet/flowduet/issues/21) | core：抄送任务 | — |
+| [#22](https://github.com/flowduet/flowduet/issues/22) | core：竖排布局器与可选几何 | — |
+| [#23](https://github.com/flowduet/flowduet/issues/23) | designer：包骨架与审批节点闭环 | #22 |
+| [#24](https://github.com/flowduet/flowduet/issues/24) | designer：分支块交互（条件/并行） | #20 #23 |
+| [#25](https://github.com/flowduet/flowduet/issues/25) | designer：多人审批与抄送抽屉 | #19 #21 #23 |
+| [#26](https://github.com/flowduet/flowduet/issues/26) | designer：BPMN 只读投影（砍序第一位） | #22 #23 |
+| [#27](https://github.com/flowduet/flowduet/issues/27) | 收官：宿主三区 + core 0.2.0 / designer alpha | #24 #25 #26 |
+
+流程纪律（v1 起）：每票新会话 `/implement` → feature 分支 → PR → develop；frontier = #19 #20 #21 #22 四张可并行开工。
+
+## 出口标准
+
+1. playground 五类节点编辑 → 导出 XML → Flowable 6.8 REST **真实部署成功**（冒烟扩到新元素全谱）；
+2. 只读投影与钉钉式读写**同一棵模型树**，互切零转换；
+3. 三条测试链（编译合同 / 往返保真 / 适配器合同）覆盖五类节点全谱；
+4. `pnpm test` 全绿 + CI 绿；
+5. `@flowduet/core` 0.2.0 + `@flowduet/designer` 0.0.x alpha 发布完成。
+
+## 砍序
+
+超期时按序砍：**只读投影 → 依次审批 → 抄送**。前两项砍任一项，出口标准第 2/3 条相应收缩并在里程碑收尾时明示。
+
+## 显式不做
+
+节点拒绝语义（运行时话题）、依次审批之外的完成策略细化、监听器 / 扩展属性高级面板、表单绑定协议（本迭代仅 formKey 占位字段）、BPMN 可编辑画布、7.2 / 8.0 部署冒烟。
+
+## 九项决策
+
+1. 主线 = 钉钉式视图 MVP + 内核最小配套；
+2. 节点边界 = 五类（审批、条件分支、会签、抄送、并行分支）；
+3. BPMN 视图 = Vue-Flow 只读投影进本迭代，可编辑画布留后；
+4. 多实例形态 = 会签 / 或签 / 依次三档全上；
+5. 抄送方言 = `bpmn:ServiceTask` + 适配器扩展属性（收件人）；
+6. UI 组件库 = Element Plus；
+7. 抽屉字段面 = 最小集 + 默认分支 + formKey 占位；
+8. 时间盒 = 10-08 → 10-22 两周，砍序如上；
+9. 发布 = core 0.2.0 + designer 公开 alpha，CI 自动发包不上。

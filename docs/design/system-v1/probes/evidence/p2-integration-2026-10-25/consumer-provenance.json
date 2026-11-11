@@ -1,0 +1,23 @@
+[
+  {
+    "package": "@flowduet/core",
+    "installedPath": "/private/var/folders/47/jtpz279529q04_3hhr6t7ptr0000gn/T/flowduet-p2-consumer-kxhdgtx2/node_modules/.pnpm/@flowduet+core@file+..+..+..+..+..+..+..+var+folders+47+jtpz279529q04_3hhr6t7ptr0000gn+_4dfbe2b5bd4fd0fb47006f573b7625b0/node_modules/@flowduet/core",
+    "distSha256": "a98991090bc033a41c2a8900182ea1b435501210ad761a27d4314a5aacc7ad54",
+    "matchesTarballAndBuild": true,
+    "insideConsumer": true
+  },
+  {
+    "package": "@flowduet/designer",
+    "installedPath": "/private/var/folders/47/jtpz279529q04_3hhr6t7ptr0000gn/T/flowduet-p2-consumer-kxhdgtx2/node_modules/.pnpm/@flowduet+designer@file+..+..+..+..+..+..+..+var+folders+47+jtpz279529q04_3hhr6t7ptr000_8a568edd777acd9755b41efc0f6af9fe/node_modules/@flowduet/designer",
+    "distSha256": "eae019d15d58e3a03a4adce34e50eff905acb6395b27d012fb807430c12517aa",
+    "matchesTarballAndBuild": true,
+    "insideConsumer": true
+  },
+  {
+    "package": "@flowduet/form-create",
+    "installedPath": "/private/var/folders/47/jtpz279529q04_3hhr6t7ptr0000gn/T/flowduet-p2-consumer-kxhdgtx2/node_modules/.pnpm/@flowduet+form-create@file+..+..+..+..+..+..+..+var+folders+47+jtpz279529q04_3hhr6t7ptr_ff4dcbd45db27fff6a8200fefa8603bb/node_modules/@flowduet/form-create",
+    "distSha256": "4537752e3cf8015feb9320f8c6dd818b793828890979095135890708ae0d8cb3",
+    "matchesTarballAndBuild": true,
+    "insideConsumer": true
+  }
+]

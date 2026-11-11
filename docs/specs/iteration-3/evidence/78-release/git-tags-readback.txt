@@ -1,0 +1,6 @@
+f61adc057fd947be4ac1a77bc4442cf7eb945954	refs/tags/@flowduet/core@0.3.0
+085802a470147b9f7cf322d217f7450fe1c4700e	refs/tags/@flowduet/core@0.3.0^{}
+79f58a9af0ecfdbe7d312813877ff39f7361e936	refs/tags/@flowduet/designer@0.1.0
+085802a470147b9f7cf322d217f7450fe1c4700e	refs/tags/@flowduet/designer@0.1.0^{}
+64f30fe13f8e099d38df3d42334e412417d062ea	refs/tags/@flowduet/form-create@0.1.0
+085802a470147b9f7cf322d217f7450fe1c4700e	refs/tags/@flowduet/form-create@0.1.0^{}

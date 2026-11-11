@@ -1,0 +1,11 @@
+{
+  "passed": true,
+  "forms": 2,
+  "refreshPreserved": true,
+  "sameIdReopen": true,
+  "defaults": {
+    "number": 0,
+    "switch": false
+  },
+  "xmlBindings": true
+}

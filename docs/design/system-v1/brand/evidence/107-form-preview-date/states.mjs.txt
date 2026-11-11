@@ -1,0 +1,153 @@
+import { mkdir, writeFile } from "node:fs/promises";
+import { resolve } from "node:path";
+import { pathToFileURL } from "node:url";
+
+const [driverPath, baseUrl, outputDir] = process.argv.slice(2);
+if (!driverPath || !baseUrl || !outputDir) throw new Error("需要驱动、URL 和输出目录参数");
+const { chromium } = await import(pathToFileURL(resolve(driverPath)).href);
+const browser = await chromium.launch({
+  headless: true,
+  executablePath:
+    process.env.FLOWDUET_CHROMIUM_PATH ||
+    "/Users/l/Library/Caches/ms-playwright/chromium-1248/chrome-mac-x64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing",
+});
+const errors = [];
+const failures = [];
+const results = [];
+try {
+  const page = await browser.newPage({ viewport: { width: 1440, height: 1800 } });
+  page.on("pageerror", (error) => errors.push(error.message));
+  page.on("console", (message) => {
+    if (message.type() === "error") errors.push(message.text());
+  });
+  page.on("response", (response) => {
+    if (response.status() >= 400) errors.push(`${response.status()} ${response.url()}`);
+  });
+  await page.route("**/favicon.ico", (route) => route.fulfill({ status: 204, body: "" }));
+  await page.goto(baseUrl, { waitUntil: "networkidle" });
+  await page.locator('[data-test="form-appearance-scene-btn"]').click();
+  await page.locator('[data-test="form-appearance-first-dates"]').click();
+  await page.locator('[data-test="form-appearance-second-mounted"]').uncheck();
+  const control = (name) => page.locator(`[data-test="form-appearance-${name}"]`);
+  for (const explicit of [false, true]) {
+    await control(explicit ? "first-explicit" : "first-dates").click();
+    for (const mode of ["light", "dark"]) {
+      await control("host-dark").setChecked(mode === "dark");
+      for (const density of ["comfortable", "compact"]) {
+        await control("first-density").selectOption(density);
+        for (const [index, type] of explicit
+          ? [
+              [2, "month"],
+              [3, "year"],
+            ]
+          : [
+              [3, "month"],
+              [4, "year"],
+            ]) {
+          const input = page
+            .locator(
+              '[data-test="form-appearance-first-instance"] .el-date-editor .el-input__inner',
+            )
+            .nth(index);
+          const panel = page.locator(`.${explicit ? "explicit" : "preview"}-${type}-panel`);
+          const measure = async () => {
+            await input.click();
+            await panel.waitFor({ state: "visible" });
+            const cell = panel
+              .locator("td:not(.current):not(.disabled):not(.today) .el-date-table-cell__text")
+              .first();
+            await cell.hover();
+            const value = await cell.evaluate((element) => {
+              const selected = element
+                .closest("table")
+                .querySelector("td.current .el-date-table-cell__text");
+              return {
+                hover: element.matches(":hover"),
+                color: getComputedStyle(element).color,
+                arrowColor: getComputedStyle(
+                  element.closest(".el-picker-panel").querySelector(".el-picker-panel__icon-btn"),
+                ).color,
+                selectedColor: getComputedStyle(selected).color,
+                selectedBackground: getComputedStyle(selected).backgroundColor,
+              };
+            });
+            await input.press("Escape");
+            await panel.waitFor({ state: "hidden" });
+            return value;
+          };
+          // 旧路径是独立参照，不能从待测样式映射计算期望。
+          await control("first-enabled").uncheck();
+          const legacy = await measure();
+          for (const colorSource of ["host", "brand"]) {
+            await control("first-source").selectOption(colorSource);
+            if (colorSource === "brand") await control("first-mode").selectOption(mode);
+            await control("first-enabled").check();
+            const actual = await measure();
+            const expected =
+              colorSource === "host"
+                ? legacy.color
+                : mode === "light"
+                  ? "rgb(45, 62, 151)"
+                  : "rgb(165, 187, 255)";
+            const id = `${explicit ? "explicit/" : ""}${colorSource}/${mode}/${density}/${type}`;
+            if (!actual.hover || actual.color !== expected)
+              failures.push(`${id}: 悬停 ${actual.color}，预期 ${expected}`);
+            if (
+              colorSource === "host" &&
+              (actual.selectedColor !== legacy.selectedColor ||
+                actual.selectedBackground !== legacy.selectedBackground)
+            )
+              failures.push(`${id}: 选中配对偏离旧路径`);
+            if (colorSource === "host" && actual.arrowColor !== legacy.arrowColor)
+              failures.push(`${id}: 箭头 ${actual.arrowColor}，预期 ${legacy.arrowColor}`);
+            results.push({ explicit, colorSource, mode, density, type, legacy, actual });
+          }
+        }
+      }
+    }
+  }
+  // 局部宿主变量不会随 Teleport 自动继承，按独立场景的原始配置检查映射。
+  await control("first-dates").click();
+  await control("host-dark").uncheck();
+  await control("scoped-dark").check();
+  await control("first-source").selectOption("host");
+  for (const [index, type] of [
+    [3, "month"],
+    [4, "year"],
+  ]) {
+    const input = page
+      .locator('[data-test="form-appearance-first-instance"] .el-date-editor .el-input__inner')
+      .nth(index);
+    const panel = page.locator(`.preview-${type}-panel`);
+    await input.click();
+    await panel.waitFor({ state: "visible" });
+    const cell = panel
+      .locator("td:not(.current):not(.disabled):not(.today) .el-date-table-cell__text")
+      .first();
+    await cell.hover();
+    const actual = await cell.evaluate((element) => ({
+      color: getComputedStyle(element).color,
+      arrowColor: getComputedStyle(
+        element.closest(".el-picker-panel").querySelector(".el-picker-panel__icon-btn"),
+      ).color,
+    }));
+    if (actual.color !== "rgb(127, 207, 199)" || actual.arrowColor !== "rgb(230, 242, 240)")
+      failures.push(`scoped-host/${type}: ${JSON.stringify(actual)}`);
+    results.push({ colorSource: "host", mode: "scoped-dark", type, actual });
+    await input.press("Escape");
+    await panel.waitFor({ state: "hidden" });
+  }
+  await mkdir(outputDir, { recursive: true });
+  const result = {
+    browser: await browser.version(),
+    viewport: "1440x1800@1",
+    results,
+    errors,
+    failures,
+  };
+  await writeFile(resolve(outputDir, "states.json"), JSON.stringify(result, null, 2));
+  console.log(JSON.stringify({ cases: results.length, errors, failures }, null, 2));
+  if (errors.length || failures.length) process.exitCode = 1;
+} finally {
+  await browser.close();
+}

@@ -7,12 +7,16 @@
 > 双视图流程设计器 —— 钉钉式审批视图与 BPMN 自由画布，共享同一棵流程模型树。
 > Dual-view workflow designer (DingTalk-style approval view + BPMN canvas) sharing one BPMN model tree. For Vue 3 & TypeScript.
 
-🚧 **设计阶段，v0 未发布。** 当前进展与计划见 [ROADMAP](docs/ROADMAP.md)。
+🚧 **预发布阶段。** `@flowduet/core`、`@flowduet/designer` 已发布 0.x 版本；`@flowduet/form-create`（表单集成）随迭代三交付首个公开版本。当前进展与计划见 [ROADMAP](docs/ROADMAP.md)，发版流程见 [贡献指南](CONTRIBUTING.md)。
+
+## 本地候选与当前交付范围
+
+阶段零已停止追加供应商实验，完整工作台和设计系统暂缓。当前优先整理已有修复，沿用现有组件与 Playground 获取真实使用反馈。P2 文字默认值修复位于本地整合候选，尚未推送或发布；具体来源、验证及剩余风险见[本地整合报告](docs/design/2026-10-25-stage-zero-p2-integration-result.md)。默认 Playground 仍使用 legacy 表单编辑模式，不代表 retained 保真能力已经启用。
 
 ## 核心理念
 
 - **一棵模型树，两种视图**：BPMN XML（moddle 模型树）是唯一事实源。钉钉式纵向审批视图与 Vue-Flow 画布只是它的两种投影，任何一种视图导出的都是合法可执行的 BPMN 2.0 XML。
-- **引擎无关内核 + 适配器**：内核只面向标准 BPMN；引擎差异（命名空间、扩展属性）做成可插拔适配器。首发 Flowable，验证矩阵覆盖 6.8 / 7.2 / 8.0。
+- **引擎无关内核 + 适配器**：内核只面向标准 BPMN；引擎差异（命名空间、扩展属性）做成可插拔适配器。首发 Flowable，目前以 6.8 部署冒烟验收；7.2 / 8.0 留待后续验证。
 - **TypeScript-first，Vue 3 原生**：画布与交互层完全自研（Vue-Flow），不封装 bpmn-js；XML 模型层站在 bpmn.io 的 MIT 库（bpmn-moddle）上——与 bpmn-js 同构的分层方式。
 
 ## 包结构规划（monorepo）
@@ -21,8 +25,10 @@
 |---|---|
 | `@flowduet/core` | 模型树 + Parser/Compiler + 引擎适配器 + DI 布局 |
 | `@flowduet/designer` | Vue 3 设计器（双视图、属性面板） |
-| `@flowduet/form-create` | FormCreate 深度集成（表单设计 + 多框架渲染绑定） |
+| `@flowduet/form-create` | FormCreate 深度集成（表单设计 + 流程设计文档 + 绑定） |
 | `apps/playground` | 可独立部署的演示应用（兼文档示例） |
+
+表单集成边界：core 与 designer 保持零 FormCreate 依赖；`@flowduet/form-create` 封装开源 FormCreate 设计器与 Element Plus 渲染器，承载流程设计文档（BPMN XML + 文档内表单定义）的编解码与组合编辑。接入说明见[各包 README](packages/form-create/README.md)。
 
 ## 文档
 

@@ -1,0 +1,22 @@
+async page => {
+ await page.getByRole('button',{name:'B03 P1 修复'}).click();
+ const rows=[],root=page.locator('[data-repair-instance="0"]');
+ const assert=(ok,x)=>{if(!ok)throw Error(JSON.stringify(x));};
+ const observe=async()=>{await page.locator('[data-test="repair-observe"]').click();return JSON.parse(await page.locator('[data-test="repair-result"]').textContent());};
+ for(const layout of ['top','grid'])for(let round=1;round<=3;round++) {
+  await page.locator('[data-test="repair-layout"]').selectOption(layout);await page.locator('[data-test="repair-reload"]').click();
+  await root.locator('._fc-m-drag ._fd-drag-mask').nth(6).click();
+  const raw=root.locator('[data-retained-input="date"]');await raw.fill('2026-');
+  await root.locator('[data-retained-date] .el-date-editor').click();
+  const popup=page.locator('[class*="flowduet-calendar-"][role="dialog"]:visible');await popup.waitFor({state:'visible'});
+  let o=await observe();assert(o.states[0].canCapture===false&&o.states[0].canSuspend===false,o);
+  await page.keyboard.press('Escape');await popup.waitFor({state:'hidden'});assert((await raw.inputValue())==='2026-','Escape changed raw');
+  await root.locator('[data-retained-date] .el-date-editor').click();await popup.waitFor({state:'visible'});await popup.getByText('20',{exact:true}).click();await popup.waitFor({state:'hidden'});
+  o=await observe();assert(o.captures[0].status==='captured'&&(await raw.inputValue())==='2026-10-20',o);
+  const revision=o.states[0].revision;await raw.focus();await raw.press('Alt+o');
+  const shortcut=JSON.parse(await page.locator('[data-test="repair-result"]').textContent());assert(shortcut.states[0].revision===revision&&await raw.evaluate(el=>document.activeElement===el),shortcut);
+  await raw.press('Alt+s');await page.waitForFunction(()=>JSON.parse(document.querySelector('[data-test="repair-result"]').textContent).prepared?.ok===true);
+  rows.push({id:'N04/H02/H03',layout,round,calendarOpenedAndClosed:true,raw:await raw.inputValue(),shortcutRevisionUnchanged:true,pass:true});
+ }
+ return {source:'native calendar/keyboard, explicit popup visible-hidden assertions; no OS IME claim',rows};
+}

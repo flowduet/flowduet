@@ -1,0 +1,21 @@
+async(page)=>{
+ page.setDefaultTimeout(6000);const rows=[],root=page.locator('[data-c-owner="C-A"]');const state=async()=>JSON.parse(await root.locator('[data-test=c-state]').textContent());
+ const names=['文本','多行文本','数字','单选','多选','下拉单选','日期','开关'];
+ for(let run=1;run<=3;run++)for(const layout of ['top','grid'])for(let i=1;i<=8;i++){
+  const field='F0'+i;try{
+   await page.locator('[data-test=c-field]').selectOption(field);await page.locator('[data-test=c-layout]').selectOption(layout);await page.locator('[data-test=c-date-type]').selectOption('date');await page.locator('[data-test=c-reset]').click();
+   await root.locator('._fc-m-drag ._fd-drag-tool').filter({has:page.locator('.el-form-item__label',{hasText:'甲'+names[i-1]})}).last().click();
+   const row=label=>root.locator('[data-c-view]:visible ._fc-r-config .el-form-item').filter({has:page.locator('.el-form-item__label',{hasText:new RegExp('^'+label+'$')})});
+   let input,text;
+   if([4,5,6].includes(i)){input=root.locator('._td-table-opt .el-table__row').first().locator('._fd-value-input input.el-input__inner');text='-';}
+   else if(i===8){input=row('字段名称').locator('input');text='开关焦点未失焦';}
+   else {input=row('默认值').locator('input,textarea').first();text=i===3?'-':i===7?'2026-':i===2?'第一行\n中文末尾':'中文末尾未失焦';}
+   await input.fill('');if(i===3)await input.press('-');else await input.fill(text);
+   const raw=el=>({text:el.value,badInput:el.validity.badInput,focused:el.ownerDocument.activeElement===el});const before=await input.evaluate(raw),original=await state();
+   await input.press('Alt+o');const observed=await state();await root.locator('[data-test=c-select-1]').click();await page.waitForFunction(n=>JSON.parse(document.querySelector('[data-c-owner="C-A"] [data-test=c-state]').textContent).resultSequence>n,observed.resultSequence);const b=await state();
+   await root.locator('[data-test=c-select-0]').click();await page.waitForFunction(n=>JSON.parse(document.querySelector('[data-c-owner="C-A"] [data-test=c-state]').textContent).resultSequence>n,b.resultSequence);const returned=await input.evaluate(raw),after=await state();
+   rows.push({field,layout,run,case:'X02-pending/K',before,returned,original,after,pass:before.text===returned.text&&before.badInput===returned.badInput&&original.activeId===after.activeId&&original.generation===observed.generation&&after.sameForms&&after.sameGraph&&after.persistCalls===0});
+  }catch(e){rows.push({field,layout,run,case:'X02-pending/K',pass:false,status:'tool-or-UI-failed',error:String(e)})}
+ }
+ return rows;
+}

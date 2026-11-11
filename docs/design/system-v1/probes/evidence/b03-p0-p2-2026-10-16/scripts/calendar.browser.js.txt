@@ -1,0 +1,31 @@
+async page => {
+ page.setDefaultTimeout(7000);const rows=[];
+ const events=async()=>JSON.parse(await page.locator('[data-test=seam-events]').textContent());
+ const flatten=rs=>rs.flatMap(r=>[r,...flatten(r.children||[])]);
+ for(const type of ['', 'date','datetime','week','month','year']) for(const layout of ['top','grid']) {
+  const format=type==='datetime'?'YYYY-MM-DD HH:mm:ss':type==='month'?'YYYY-MM':type==='year'?'YYYY':'YYYY-MM-DD';
+  await page.locator('[data-test=seam-date-type]').selectOption(type);await page.locator('[data-test=seam-format]').fill(format);
+  await page.locator('[data-test=seam-layout]').selectOption(layout);await page.locator('[data-test=seam-load]').click();
+  await page.locator('[data-seam-owner=A] ._fc-m-drag ._fd-drag-tool').filter({has:page.locator('.el-form-item__label',{hasText:'甲日期'})}).last().click();
+  await page.locator('[data-test=seam-clone-A]').click();
+  const trace=await events();const data=trace.filter(e=>e.event==='public-clone').at(-1);
+  const date=flatten(data.detail.rules).find(r=>r.field==='a_date');
+  const expected=type==='datetime'?'2026-10-15 10:30:00':type==='month'?'2026-10':type==='year'?'2026':'2026-10-15';
+  rows.push({case:'I01-no-edit-public-roundtrip',type,layout,actualMode:'public-seam-sample',date,pass:date.value===expected&&date.props.valueFormat===format&&(type?date.props.type===type:!Object.hasOwn(date.props,'type'))});
+ }
+ for(const format of ['YYYY-MM-DD','YYYY/MM/DD']) for(let run=1;run<=3;run++) {
+  await page.locator('[data-test=seam-date-type]').selectOption('date');await page.locator('[data-test=seam-format]').fill(format);
+  await page.locator('[data-test=seam-layout]').selectOption('top');await page.locator('[data-test=seam-load]').click();
+  await page.locator('[data-seam-owner=A] ._fc-m-drag ._fd-drag-tool').filter({has:page.locator('.el-form-item__label',{hasText:'甲日期'})}).last().click();
+  await page.locator('[data-test=seam-clear]').click();
+  const raw=page.locator('[data-seam-input=A] [data-test=seam-raw]');
+  await raw.fill('2026-');await page.locator('[data-seam-input=A] .el-date-editor input').click();
+  const before=await raw.inputValue();
+  await page.getByRole('gridcell',{name:'16',exact:true}).click();
+  await page.locator('[data-test=seam-clone-A]').click();
+  const trace=await events();const rules=trace.filter(e=>e.event==='public-clone').at(-1).detail.rules;
+  const date=flatten(rules).find(r=>r.field==='a_date'); const output=format==='YYYY/MM/DD'?'2026/10/16':'2026-10-16';
+  rows.push({case:'calendar-explicit-confirm-separated-from-text',format,run,before,date,trace,pass:before==='2026-'&&date.value===output&&trace.some(e=>e.event==='after-emit-nextTick'&&e.detail.publicValue===output)});
+ }
+ return rows;
+}

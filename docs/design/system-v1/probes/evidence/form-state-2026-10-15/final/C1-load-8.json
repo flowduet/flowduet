@@ -1,0 +1,122 @@
+[
+  {
+    "caseId": "F08/top/unset/K/load",
+    "field": "F08",
+    "layout": "top",
+    "variant": "unset",
+    "want": null,
+    "present": false,
+    "status": "passed",
+    "actual": {
+      "present": false,
+      "type": "switch",
+      "field": "a_urgent"
+    },
+    "unchanged": true,
+    "typePass": true,
+    "datePass": true,
+    "gridPass": true
+  },
+  {
+    "caseId": "F08/grid/false/K/load",
+    "field": "F08",
+    "layout": "grid",
+    "variant": "false",
+    "want": false,
+    "present": true,
+    "status": "passed",
+    "actual": {
+      "present": true,
+      "value": false,
+      "type": "switch",
+      "field": "a_urgent"
+    },
+    "unchanged": true,
+    "typePass": true,
+    "datePass": true,
+    "gridPass": true
+  },
+  {
+    "caseId": "F08/grid/true/K/load",
+    "field": "F08",
+    "layout": "grid",
+    "variant": "true",
+    "want": true,
+    "present": true,
+    "status": "passed",
+    "actual": {
+      "present": true,
+      "value": true,
+      "type": "switch",
+      "field": "a_urgent"
+    },
+    "unchanged": true,
+    "typePass": true,
+    "datePass": true,
+    "gridPass": true
+  },
+  {
+    "caseId": "F08/grid/unset/K/load",
+    "field": "F08",
+    "layout": "grid",
+    "variant": "unset",
+    "want": null,
+    "present": false,
+    "status": "passed",
+    "actual": {
+      "present": false,
+      "type": "switch",
+      "field": "a_urgent"
+    },
+    "unchanged": true,
+    "typePass": true,
+    "datePass": true,
+    "gridPass": true
+  },
+  {
+    "caseId": "I01/omitted/top/K/load",
+    "field": "I01",
+    "layout": "top",
+    "variant": "normal-default",
+    "dateType": "",
+    "want": "2026-10-15",
+    "present": true,
+    "status": "passed",
+    "actual": {
+      "present": true,
+      "value": "2026-10-15",
+      "type": "datePicker",
+      "field": "a_date",
+      "props": {
+        "valueFormat": "YYYY-MM-DD"
+      }
+    },
+    "unchanged": true,
+    "typePass": true,
+    "datePass": true,
+    "gridPass": true
+  },
+  {
+    "caseId": "I01/omitted/grid/K/load",
+    "field": "I01",
+    "layout": "grid",
+    "variant": "normal-default",
+    "dateType": "",
+    "want": "2026-10-15",
+    "present": true,
+    "status": "passed",
+    "actual": {
+      "present": true,
+      "value": "2026-10-15",
+      "type": "datePicker",
+      "field": "a_date",
+      "props": {
+        "valueFormat": "YYYY-MM-DD"
+      }
+    },
+    "unchanged": true,
+    "typePass": true,
+    "datePass": true,
+    "gridPass": true
+  }
+]

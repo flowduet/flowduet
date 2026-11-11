@@ -13,5 +13,7 @@
 | [0006](0006-formcreate-integration.md) | 表单集成：FormCreate 深度内置、分包落地 | Accepted | 2026-09-14 |
 | [0007](0007-delivery-and-naming.md) | 交付形态、工程约定与命名（FlowDuet / Apache-2.0） | Accepted | 2026-09-14 |
 | [0008](0008-logo-visual-identity.md) | 视觉标识（LOGO）：一树两冠 | Accepted | 2026-09-20 |
+| [0009](0009-design-document-and-form-binding.md) | 流程设计文档、默认表单与节点覆盖 | Proposed | 2026-09-24 |
+| [0012](0012-component-appearance-and-opt-in.md) | 组件默认配色跟随宿主，新适配显式启用 | Accepted | 2026-11-03 |
 
 来源：2026-09-14 的选型 grilling 会话（11 项决策全部收敛，无遗留分歧）。

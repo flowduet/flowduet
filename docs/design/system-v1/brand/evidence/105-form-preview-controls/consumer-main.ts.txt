@@ -1,0 +1,70 @@
+import { createApp, defineComponent, h } from "vue";
+import {
+  FormPreview,
+  type ComponentAppearance,
+  type FormDefinition,
+} from "@flowduet/form-create";
+import {
+  createAppearanceVariables,
+  resolveComponentAppearance,
+  type ResolvedComponentAppearance,
+} from "@flowduet/designer";
+import "element-plus/dist/index.css";
+import "@flowduet/form-create/style.css";
+
+const appearance: ComponentAppearance = {
+  colorSource: "brand",
+  mode: "dark",
+  density: "compact",
+};
+const resolved: ResolvedComponentAppearance | undefined = resolveComponentAppearance(appearance);
+if (!resolved) throw new Error("公开外观解析失败");
+const variables = createAppearanceVariables(resolved, undefined);
+if (variables?.["--fd-control-height"] !== "24px") throw new Error("公开共享色板导出失败");
+
+// @ts-expect-error mode 仅允许 light / dark
+const invalidMode: ComponentAppearance = { mode: "sepia" };
+// @ts-expect-error 启用新适配时 mode 必填
+const missingMode: ComponentAppearance = { density: "compact" };
+void invalidMode;
+void missingMode;
+
+const form: FormDefinition = {
+  id: "tarball_controls_preview",
+  name: "安装包四类控件预览",
+  provider: "form-create/element-plus",
+  rules: JSON.stringify([
+    { type: "input", field: "reason", title: "安装包事由", value: "tarball 默认文本", $required: true },
+    { type: "input", field: "detail", title: "安装包说明", value: "tarball 多行文本", props: { type: "textarea", rows: 3 } },
+    { type: "inputNumber", field: "amount", title: "安装包数字", value: 1, props: { min: 0, max: 3 } },
+    {
+      type: "radio",
+      field: "decision",
+      title: "安装包单选",
+      value: "no",
+      options: [
+        { label: "同意", value: "yes" },
+        { label: "拒绝", value: "no" },
+      ],
+    },
+    {
+      type: "checkbox",
+      field: "tags",
+      title: "安装包多选",
+      value: ["a"],
+      options: [
+        { label: "甲", value: "a" },
+        { label: "半选", value: "mixed", indeterminate: true },
+      ],
+    },
+    { type: "switch", field: "notify", title: "安装包开关", value: false },
+  ]),
+  options: "{}",
+};
+
+const App = defineComponent({
+  setup() {
+    return () => h(FormPreview, { form, appearance });
+  },
+});
+createApp(App).mount("#app");

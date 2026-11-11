@@ -1,0 +1,37 @@
+[
+  {
+    "name": "@flowduet/core",
+    "version": "0.3.0",
+    "tarball": "flowduet-core-0.3.0.tgz",
+    "runtimeDeclarationsCssByteEqualToBrowserTested": true,
+    "sha256": "34525e8342615aa99d645c200009121b7b0e1ec9af71e8a6fb8f9626fc3d0cf1",
+    "dependencies": {
+      "bpmn-moddle": "^10.2.0"
+    }
+  },
+  {
+    "name": "@flowduet/designer",
+    "version": "0.1.0",
+    "tarball": "flowduet-designer-0.1.0.tgz",
+    "runtimeDeclarationsCssByteEqualToBrowserTested": true,
+    "sha256": "9b30e38db352f5ee0a7912676501c4759cb0173e0c0e38d04a77aa6a1edefc2e",
+    "dependencies": {
+      "@vue-flow/core": "^1.48.2",
+      "element-plus": "^2.14.6",
+      "@flowduet/core": "0.3.0"
+    }
+  },
+  {
+    "name": "@flowduet/form-create",
+    "version": "0.1.0",
+    "tarball": "flowduet-form-create-0.1.0.tgz",
+    "runtimeDeclarationsCssByteEqualToBrowserTested": true,
+    "sha256": "b95ea68e2f73ab980353b93a734f7cbf725a1f83506ac0f6aeec44a0a50f7ee2",
+    "dependencies": {
+      "@form-create/designer": "3.5.0",
+      "@form-create/element-ui": "3.3.4",
+      "@flowduet/core": "0.3.0",
+      "@flowduet/designer": "0.1.0"
+    }
+  }
+]

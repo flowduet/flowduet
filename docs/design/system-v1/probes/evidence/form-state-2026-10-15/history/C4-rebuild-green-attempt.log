@@ -1,0 +1,94 @@
+
+ RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground
+
+stderr | probes/stage-zero/form-state/rebuild-policy.test.ts > C4 验证重建协议（宿主替身，不冒充FormCreate） > rebuild_preserves_source_identity_and_targets_destination
+[BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+
+stderr | probes/stage-zero/form-state/rebuild-policy.test.ts > C4 验证重建协议（宿主替身，不冒充FormCreate） > post_handoff_cleanup_failure_keeps_new_lease show
+[BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+
+stderr | probes/stage-zero/form-state/rebuild-policy.test.ts > C4 验证重建协议（宿主替身，不冒充FormCreate） > 取消/释放期间临时挂载清理，旧失败不能卸载新成功
+[BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+
+ ❯ probes/stage-zero/form-state/rebuild-policy.test.ts (28 tests | 3 failed) 339ms
+   ❯ C4 验证重建协议（宿主替身，不冒充FormCreate） (28)
+     × rebuild_preserves_source_identity_and_targets_destination 60ms
+     × post_handoff_cleanup_failure_keeps_new_lease show 14ms
+     × 取消/释放期间临时挂载清理，旧失败不能卸载新成功 15ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  probes/stage-zero/form-state/rebuild-policy.test.ts > C4 验证重建协议（宿主替身，不冒充FormCreate） > rebuild_preserves_source_identity_and_targets_destination
+AssertionError: expected { Object (ref, facet) } to be { Object (ref, facet) } // Object.is equality
+
+If it should pass with deep equality, replace "toBe" with "toStrictEqual"
+
+Expected: { Object (ref, facet) }
+Received: serializes to the same string
+
+
+Compared values have no visual difference.
+
+ ❯ probes/stage-zero/form-state/rebuild-policy.test.ts:17:35
+     15|       const before=f.c.session.current, xml=(await f.c.model.toXML()).…
+     16|       expect(await f.policy.select(b,"rebuild-verified")).toMatchObjec…
+     17|       expect(f.current()!.target).toBe(b);expect(f.entry(f.current()!)…
+       |                                   ^
+     18|       expect(f.c.store.editor(a)).toBeUndefined();expect(f.entry(old).…
+     19|       expect(f.c.drafts.input(a)).toMatchObject({rules:expect.stringCo…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  probes/stage-zero/form-state/rebuild-policy.test.ts > C4 验证重建协议（宿主替身，不冒充FormCreate） > post_handoff_cleanup_failure_keeps_new_lease show
+AssertionError: expected { ok: true, value: { …(2) } } to match object { ok: false, code: 'commit-failed' }
+(3 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "code": "commit-failed",
+-   "ok": false,
++   "ok": true,
+  }
+
+ ❯ probes/stage-zero/form-state/rebuild-policy.test.ts:73:59
+     71|       else if(fault==='show'){const show=f.host.show;f.host.show=e=>{i…
+     72|       else {const adopt=f.host.adopt;f.host.adopt=(e,l)=>{if(fail)thro…
+     73|       expect(await f.policy.select(b,'rebuild-verified')).toMatchObjec…
+       |                                                           ^
+     74|       const lease=f.c.store.editor(b)!.lease;expect(f.c.store.editor(a…
+     75|       const entry=f.entries.find(e=>e.editor.adapter===f.c.store.edito…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  probes/stage-zero/form-state/rebuild-policy.test.ts > C4 验证重建协议（宿主替身，不冒充FormCreate） > 取消/释放期间临时挂载清理，旧失败不能卸载新成功
+AssertionError: expected { Object (ref, facet) } to be { Object (ref, facet) } // Object.is equality
+
+If it should pass with deep equality, replace "toBe" with "toStrictEqual"
+
+Expected: { Object (ref, facet) }
+Received: serializes to the same string
+
+
+Compared values have no visual difference.
+
+ ❯ probes/stage-zero/form-state/rebuild-policy.test.ts:86:100
+     84|       const pending=f.policy.select(f.forms[1]!, 'rebuild-verified');
+     85|       await Promise.resolve();await f.policy.select(f.forms[0]!, 'keep…
+     86|       expect(await pending).toMatchObject({ok:false,code:'cancelled'})…
+       |                                                                                                    ^
+     87|       expect(f.entries.filter(e=>!e.unmounted)).toHaveLength(1);
+     88|     }finally{wait.resolve();finish(f)}
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  3 failed | 29 passed (32)
+   Start at  22:49:23
+   Duration  3.46s (import 53%, transform 28%, environment 12%, tests 6%)
+
+undefined
+/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run probes/stage-zero/form-state/rebuild-policy.test.ts probes/stage-zero/form-state/retention-policy.test.ts

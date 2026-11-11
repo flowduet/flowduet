@@ -1,0 +1,24 @@
+### Result
+[{"preventPopupOpen":false,"source":"native-actions","intercepted":0,"popupOpened":1,"popupStillOpen":1,"archivedPass":true,"pass":true},{"preventPopupOpen":true,"source":"injected-click-capture-plus-native-actions","intercepted":1,"popupOpened":0,"popupStillOpen":0,"archivedPass":true,"pass":false}]
+### Ran Playwright code
+```js
+await (async page => { await page.goto('http://127.0.0.1:5182/probes/stage-zero/index.html');
+ page.setDefaultTimeout(7000);await page.getByRole('button',{name:'B03 P0 接缝',exact:true}).click();const a=page.locator('#app [data-test=seam-probe]');const rows=[];
+ for(const inject of [false,true]) {
+  await a.locator('[data-test=seam-clear]').click();await a.locator('[data-test=dialog-open]').click();
+  const raw=page.locator('.b03-seam-dialog:visible [data-test=dialog-raw]');await raw.fill('popup-review');await raw.press('Escape');const idleEscapeKept=await page.locator('.b03-seam-dialog').isVisible();
+  if(inject)await page.evaluate(()=>{window.__reviewClicksIntercepted=0;window.__reviewNoPopup=e=>{if(e.target instanceof Element&&e.target.closest('.b03-seam-dialog .el-select')){window.__reviewClicksIntercepted++;e.preventDefault();e.stopImmediatePropagation();}};document.addEventListener('click',window.__reviewNoPopup,true);});
+  await page.locator('.b03-seam-dialog').getByText('内部弹层',{exact:true}).click();
+  if(!inject)await page.getByRole('listbox').waitFor();else await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
+  const intercepted=inject?await page.evaluate(()=>window.__reviewClicksIntercepted):0;
+  if(inject)await page.evaluate(()=>{document.removeEventListener('click',window.__reviewNoPopup,true);delete window.__reviewNoPopup;delete window.__reviewClicksIntercepted;});
+  const popupOpened=await page.getByRole('listbox').count();await page.keyboard.press('Escape');const popupStillOpen=await page.getByRole('listbox').count();
+  const popupEscapeKept=await page.locator('.b03-seam-dialog').isVisible();await page.locator('[data-test=dialog-normal]').click();
+  const trace=JSON.parse(await a.locator('[data-test=seam-events]').textContent());const archivedPass=idleEscapeKept&&popupEscapeKept&&trace.some(e=>e.event==='dialog-normal')&&!trace.some(e=>e.event==='dialog-before-close');
+  rows.push({preventPopupOpen:inject,source:inject?'injected-click-capture-plus-native-actions':'native-actions',intercepted,popupOpened,popupStillOpen,archivedPass,pass:!inject||!archivedPass});
+  await page.locator('.b03-seam-dialog [data-test=dialog-x]').click();await page.locator('.b03-seam-dialog').waitFor({state:'hidden'});
+ }
+ return rows;
+}
+)(page);
+```

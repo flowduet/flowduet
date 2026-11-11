@@ -1,0 +1,40 @@
+
+ RUN  v5.0.1 /private/tmp/b03-p1-p2-2026-10-17/harness-after
+
+ ❯ harness.test.ts (90 tests | 2 failed | 88 skipped) 4283ms
+   ❯ retained 真实数值日期回归 (6)
+     × partial_date_does_not_normalize_on_blur 2406ms
+   ❯ P1复审P2：属性控件确认与删除生命期 (4)
+     × delete撤销已移除控件的等待，不要求change 1875ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  harness.test.ts > retained 真实数值日期回归 > partial_date_does_not_normalize_on_blur
+ FAIL  harness.test.ts > P1复审P2：属性控件确认与删除生命期 > delete撤销已移除控件的等待，不要求change
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ harness.test.ts:1027:84
+    1025|   selects++; wrapper!.findComponent(FcDesigner).vm.triggerActive(field…
+    1026|   await vi.waitFor(() => {
+    1027|     expect(wrapper!.find(`[data-retained-input][data-field="${field}"]…
+       |                                                                                    ^
+    1028|   });
+    1029|   await flushPromises();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 88 skipped (90)
+   Start at  01:26:45
+   Duration  7.72s (tests 57%, import 27%, transform 10%, environment 6%)
+
+undefined
+/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/form-create:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run --config /tmp/b03-p1-p2-2026-10-17/harness-after/vitest.config.mts -t delete撤销|partial_date_does

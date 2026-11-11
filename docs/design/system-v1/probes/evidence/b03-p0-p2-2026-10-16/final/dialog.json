@@ -1,0 +1,560 @@
+[
+  {
+    "case": "guarded-idle-popup-normal",
+    "run": 1,
+    "source": "native-pointer-keyboard",
+    "idleEscapeKept": true,
+    "popupEscapeKept": true,
+    "popupProof": {
+      "opened": true,
+      "closed": true,
+      "dialogKept": true
+    },
+    "trace": [
+      {
+        "sequence": 1,
+        "event": "dialog-open",
+        "detail": {
+          "dialogSerial": 1,
+          "ownerKey": "704f7433-8477-4cfe-8132-eb8a6230c7cf",
+          "label": "A"
+        }
+      },
+      {
+        "sequence": 2,
+        "event": "dialog-blur",
+        "detail": {
+          "ownerKey": "704f7433-8477-4cfe-8132-eb8a6230c7cf",
+          "label": "A"
+        }
+      },
+      {
+        "sequence": 3,
+        "event": "dialog-normal",
+        "detail": {
+          "ownerKey": "704f7433-8477-4cfe-8132-eb8a6230c7cf",
+          "label": "A"
+        }
+      }
+    ],
+    "pass": true
+  },
+  {
+    "case": "busy-preblur-dialog-x",
+    "run": 1,
+    "source": "native-pointer-keyboard",
+    "stillFocused": true,
+    "trace": [
+      {
+        "sequence": 1,
+        "event": "dialog-open",
+        "detail": {
+          "dialogSerial": 2,
+          "ownerKey": "704f7433-8477-4cfe-8132-eb8a6230c7cf",
+          "label": "A"
+        }
+      },
+      {
+        "sequence": 2,
+        "event": "dialog-preflight",
+        "detail": {
+          "type": "pointerdown",
+          "key": null,
+          "busy": true,
+          "active": "dialog-raw",
+          "ownerKey": "704f7433-8477-4cfe-8132-eb8a6230c7cf",
+          "label": "A"
+        }
+      },
+      {
+        "sequence": 3,
+        "event": "dialog-before-close",
+        "detail": {
+          "busy": true,
+          "refusedGesture": true,
+          "ownerKey": "704f7433-8477-4cfe-8132-eb8a6230c7cf",
+          "label": "A"
+        }
+      }
+    ],
+    "pass": true
+  },
+  {
+    "case": "busy-preblur-dialog-cancel",
+    "run": 1,
+    "source": "native-pointer-keyboard",
+    "stillFocused": true,
+    "trace": [
+      {
+        "sequence": 1,
+        "event": "dialog-open",
+        "detail": {
+          "dialogSerial": 3,
+          "ownerKey": "704f7433-8477-4cfe-8132-eb8a6230c7cf",
+          "label": "A"
+        }
+      },
+      {
+        "sequence": 2,
+        "event": "dialog-preflight",
+        "detail": {
+          "type": "pointerdown",
+          "key": null,
+          "busy": true,
+          "active": "dialog-raw",
+          "ownerKey": "704f7433-8477-4cfe-8132-eb8a6230c7cf",
+          "label": "A"
+        }
+      },
+      {
+        "sequence": 3,
+        "event": "dialog-before-close",
+        "detail": {
+          "busy": true,
+          "refusedGesture": true,
+          "ownerKey": "704f7433-8477-4cfe-8132-eb8a6230c7cf",
+          "label": "A"
+        }
+      }
+    ],
+    "pass": true
+  },
+  {
+    "case": "busy-preblur-mask",
+    "run": 1,
+    "source": "native-pointer-keyboard",
+    "stillFocused": true,
+    "trace": [
+      {
+        "sequence": 1,
+        "event": "dialog-open",
+        "detail": {
+          "dialogSerial": 4,
+          "ownerKey": "704f7433-8477-4cfe-8132-eb8a6230c7cf",
+          "label": "A"
+        }
+      },
+      {
+        "sequence": 2,
+        "event": "dialog-preflight",
+        "detail": {
+          "type": "pointerdown",
+          "key": null,
+          "busy": true,
+          "active": "dialog-raw",
+          "ownerKey": "704f7433-8477-4cfe-8132-eb8a6230c7cf",
+          "label": "A"
+        }
+      }
+    ],
+    "pass": true
+  },
+  {
+    "case": "guarded-idle-popup-normal",
+    "run": 2,
+    "source": "native-pointer-keyboard",
+    "idleEscapeKept": true,
+    "popupEscapeKept": true,
+    "popupProof": {
+      "opened": true,
+      "closed": true,
+      "dialogKept": true
+    },
+    "trace": [
+      {
+        "sequence": 1,
+        "event": "dialog-open",
+        "detail": {
+          "dialogSerial": 5,
+          "ownerKey": "704f7433-8477-4cfe-8132-eb8a6230c7cf",
+          "label": "A"
+        }
+      },
+      {
+        "sequence": 2,
+        "event": "dialog-blur",
+        "detail": {
+          "ownerKey": "704f7433-8477-4cfe-8132-eb8a6230c7cf",
+          "label": "A"
+        }
+      },
+      {
+        "sequence": 3,
+        "event": "dialog-normal",
+        "detail": {
+          "ownerKey": "704f7433-8477-4cfe-8132-eb8a6230c7cf",
+          "label": "A"
+        }
+      }
+    ],
+    "pass": true
+  },
+  {
+    "case": "busy-preblur-dialog-x",
+    "run": 2,
+    "source": "native-pointer-keyboard",
+    "stillFocused": true,
+    "trace": [
+      {
+        "sequence": 1,
+        "event": "dialog-open",
+        "detail": {
+          "dialogSerial": 6,
+          "ownerKey": "704f7433-8477-4cfe-8132-eb8a6230c7cf",
+          "label": "A"
+        }
+      },
+      {
+        "sequence": 2,
+        "event": "dialog-preflight",
+        "detail": {
+          "type": "pointerdown",
+          "key": null,
+          "busy": true,
+          "active": "dialog-raw",
+          "ownerKey": "704f7433-8477-4cfe-8132-eb8a6230c7cf",
+          "label": "A"
+        }
+      },
+      {
+        "sequence": 3,
+        "event": "dialog-before-close",
+        "detail": {
+          "busy": true,
+          "refusedGesture": true,
+          "ownerKey": "704f7433-8477-4cfe-8132-eb8a6230c7cf",
+          "label": "A"
+        }
+      }
+    ],
+    "pass": true
+  },
+  {
+    "case": "busy-preblur-dialog-cancel",
+    "run": 2,
+    "source": "native-pointer-keyboard",
+    "stillFocused": true,
+    "trace": [
+      {
+        "sequence": 1,
+        "event": "dialog-open",
+        "detail": {
+          "dialogSerial": 7,
+          "ownerKey": "704f7433-8477-4cfe-8132-eb8a6230c7cf",
+          "label": "A"
+        }
+      },
+      {
+        "sequence": 2,
+        "event": "dialog-preflight",
+        "detail": {
+          "type": "pointerdown",
+          "key": null,
+          "busy": true,
+          "active": "dialog-raw",
+          "ownerKey": "704f7433-8477-4cfe-8132-eb8a6230c7cf",
+          "label": "A"
+        }
+      },
+      {
+        "sequence": 3,
+        "event": "dialog-before-close",
+        "detail": {
+          "busy": true,
+          "refusedGesture": true,
+          "ownerKey": "704f7433-8477-4cfe-8132-eb8a6230c7cf",
+          "label": "A"
+        }
+      }
+    ],
+    "pass": true
+  },
+  {
+    "case": "busy-preblur-mask",
+    "run": 2,
+    "source": "native-pointer-keyboard",
+    "stillFocused": true,
+    "trace": [
+      {
+        "sequence": 1,
+        "event": "dialog-open",
+        "detail": {
+          "dialogSerial": 8,
+          "ownerKey": "704f7433-8477-4cfe-8132-eb8a6230c7cf",
+          "label": "A"
+        }
+      },
+      {
+        "sequence": 2,
+        "event": "dialog-preflight",
+        "detail": {
+          "type": "pointerdown",
+          "key": null,
+          "busy": true,
+          "active": "dialog-raw",
+          "ownerKey": "704f7433-8477-4cfe-8132-eb8a6230c7cf",
+          "label": "A"
+        }
+      }
+    ],
+    "pass": true
+  },
+  {
+    "case": "guarded-idle-popup-normal",
+    "run": 3,
+    "source": "native-pointer-keyboard",
+    "idleEscapeKept": true,
+    "popupEscapeKept": true,
+    "popupProof": {
+      "opened": true,
+      "closed": true,
+      "dialogKept": true
+    },
+    "trace": [
+      {
+        "sequence": 1,
+        "event": "dialog-open",
+        "detail": {
+          "dialogSerial": 9,
+          "ownerKey": "704f7433-8477-4cfe-8132-eb8a6230c7cf",
+          "label": "A"
+        }
+      },
+      {
+        "sequence": 2,
+        "event": "dialog-blur",
+        "detail": {
+          "ownerKey": "704f7433-8477-4cfe-8132-eb8a6230c7cf",
+          "label": "A"
+        }
+      },
+      {
+        "sequence": 3,
+        "event": "dialog-normal",
+        "detail": {
+          "ownerKey": "704f7433-8477-4cfe-8132-eb8a6230c7cf",
+          "label": "A"
+        }
+      }
+    ],
+    "pass": true
+  },
+  {
+    "case": "busy-preblur-dialog-x",
+    "run": 3,
+    "source": "native-pointer-keyboard",
+    "stillFocused": true,
+    "trace": [
+      {
+        "sequence": 1,
+        "event": "dialog-open",
+        "detail": {
+          "dialogSerial": 10,
+          "ownerKey": "704f7433-8477-4cfe-8132-eb8a6230c7cf",
+          "label": "A"
+        }
+      },
+      {
+        "sequence": 2,
+        "event": "dialog-preflight",
+        "detail": {
+          "type": "pointerdown",
+          "key": null,
+          "busy": true,
+          "active": "dialog-raw",
+          "ownerKey": "704f7433-8477-4cfe-8132-eb8a6230c7cf",
+          "label": "A"
+        }
+      },
+      {
+        "sequence": 3,
+        "event": "dialog-before-close",
+        "detail": {
+          "busy": true,
+          "refusedGesture": true,
+          "ownerKey": "704f7433-8477-4cfe-8132-eb8a6230c7cf",
+          "label": "A"
+        }
+      }
+    ],
+    "pass": true
+  },
+  {
+    "case": "busy-preblur-dialog-cancel",
+    "run": 3,
+    "source": "native-pointer-keyboard",
+    "stillFocused": true,
+    "trace": [
+      {
+        "sequence": 1,
+        "event": "dialog-open",
+        "detail": {
+          "dialogSerial": 11,
+          "ownerKey": "704f7433-8477-4cfe-8132-eb8a6230c7cf",
+          "label": "A"
+        }
+      },
+      {
+        "sequence": 2,
+        "event": "dialog-preflight",
+        "detail": {
+          "type": "pointerdown",
+          "key": null,
+          "busy": true,
+          "active": "dialog-raw",
+          "ownerKey": "704f7433-8477-4cfe-8132-eb8a6230c7cf",
+          "label": "A"
+        }
+      },
+      {
+        "sequence": 3,
+        "event": "dialog-before-close",
+        "detail": {
+          "busy": true,
+          "refusedGesture": true,
+          "ownerKey": "704f7433-8477-4cfe-8132-eb8a6230c7cf",
+          "label": "A"
+        }
+      }
+    ],
+    "pass": true
+  },
+  {
+    "case": "busy-preblur-mask",
+    "run": 3,
+    "source": "native-pointer-keyboard",
+    "stillFocused": true,
+    "trace": [
+      {
+        "sequence": 1,
+        "event": "dialog-open",
+        "detail": {
+          "dialogSerial": 12,
+          "ownerKey": "704f7433-8477-4cfe-8132-eb8a6230c7cf",
+          "label": "A"
+        }
+      },
+      {
+        "sequence": 2,
+        "event": "dialog-preflight",
+        "detail": {
+          "type": "pointerdown",
+          "key": null,
+          "busy": true,
+          "active": "dialog-raw",
+          "ownerKey": "704f7433-8477-4cfe-8132-eb8a6230c7cf",
+          "label": "A"
+        }
+      }
+    ],
+    "pass": true
+  },
+  {
+    "case": "programmatic-close-bypasses-before-close",
+    "source": "owned-programmatic-control",
+    "trace": [
+      {
+        "sequence": 1,
+        "event": "dialog-open",
+        "detail": {
+          "dialogSerial": 13,
+          "ownerKey": "704f7433-8477-4cfe-8132-eb8a6230c7cf",
+          "label": "A"
+        }
+      },
+      {
+        "sequence": 2,
+        "event": "dialog-blur",
+        "detail": {
+          "ownerKey": "704f7433-8477-4cfe-8132-eb8a6230c7cf",
+          "label": "A"
+        }
+      },
+      {
+        "sequence": 3,
+        "event": "dialog-closed",
+        "detail": {
+          "dialogSerial": 13,
+          "ownerKey": "704f7433-8477-4cfe-8132-eb8a6230c7cf",
+          "label": "A"
+        }
+      }
+    ],
+    "pass": true
+  },
+  {
+    "case": "parent-unmount-bypasses-before-close",
+    "source": "owned-programmatic-control",
+    "trace": [
+      {
+        "sequence": 1,
+        "event": "dialog-open",
+        "detail": {
+          "dialogSerial": 14,
+          "ownerKey": "704f7433-8477-4cfe-8132-eb8a6230c7cf",
+          "label": "A"
+        }
+      }
+    ],
+    "pass": true
+  },
+  {
+    "case": "default-escape-close-control",
+    "source": "native-keyboard",
+    "trace": [
+      {
+        "sequence": 1,
+        "event": "dialog-before-close",
+        "detail": {
+          "busy": false,
+          "refusedGesture": false,
+          "ownerKey": "704f7433-8477-4cfe-8132-eb8a6230c7cf",
+          "label": "A"
+        }
+      },
+      {
+        "sequence": 2,
+        "event": "dialog-blur",
+        "detail": {
+          "ownerKey": "704f7433-8477-4cfe-8132-eb8a6230c7cf",
+          "label": "A"
+        }
+      },
+      {
+        "sequence": 3,
+        "event": "dialog-closed",
+        "detail": {
+          "dialogSerial": 15,
+          "ownerKey": "704f7433-8477-4cfe-8132-eb8a6230c7cf",
+          "label": "A"
+        }
+      }
+    ],
+    "pass": true
+  },
+  {
+    "case": "composition-escape-protocol",
+    "source": "synthetic-CompositionEvent-plus-native-Escape",
+    "trace": [
+      {
+        "sequence": 1,
+        "event": "dialog-open",
+        "detail": {
+          "dialogSerial": 16,
+          "ownerKey": "704f7433-8477-4cfe-8132-eb8a6230c7cf",
+          "label": "A"
+        }
+      },
+      {
+        "sequence": 2,
+        "event": "dialog-compositionstart",
+        "detail": {
+          "ownerKey": "704f7433-8477-4cfe-8132-eb8a6230c7cf",
+          "label": "A"
+        }
+      }
+    ],
+    "pass": true,
+    "OSVerified": false
+  }
+]

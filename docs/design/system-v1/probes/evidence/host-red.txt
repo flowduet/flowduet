@@ -1,0 +1,127 @@
+
+ RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground
+
+ ❯ probes/stage-zero/host-protocol.test.ts (7 tests | 6 failed) 39ms
+   ❯ 真实 session 与候选宿主控制层 (7)
+     × save_during_new_edit_remains_dirty 8ms
+     × save_before_new_document_is_stale 2ms
+     × load_out_of_order_keeps_latest 15ms
+     × input_during_load_prevents_replace 7ms
+     × failed_save_never_marks_clean 2ms
+     × exact_candidate_apply_keeps_validation_but_not_saved 2ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 6 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  probes/stage-zero/host-protocol.test.ts > 真实 session 与候选宿主控制层 > save_during_new_edit_remains_dirty
+Error: 探针待实现
+ ❯ ProbeHostController.save probes/stage-zero/host-protocol.ts:9:93
+      7|   edit(){this.generation++;}
+      8|   newDesign(id:string){this.session.newDesign({processId:id});this.epo…
+      9|   async save(_adapter:(json:string)=>Promise<void>):Promise<"saved"|"s…
+       |                                                                                             ^
+     10|   async load(_read:Promise<string>):Promise<"loaded"|"stale"|"failed">…
+     11| }
+ ❯ probes/stage-zero/host-protocol.test.ts:8:158
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/6]⎯
+
+ FAIL  probes/stage-zero/host-protocol.test.ts > 真实 session 与候选宿主控制层 > save_before_new_document_is_stale
+Error: 探针待实现
+ ❯ ProbeHostController.save probes/stage-zero/host-protocol.ts:9:93
+      7|   edit(){this.generation++;}
+      8|   newDesign(id:string){this.session.newDesign({processId:id});this.epo…
+      9|   async save(_adapter:(json:string)=>Promise<void>):Promise<"saved"|"s…
+       |                                                                                             ^
+     10|   async load(_read:Promise<string>):Promise<"loaded"|"stale"|"failed">…
+     11| }
+ ❯ probes/stage-zero/host-protocol.test.ts:9:157
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/6]⎯
+
+ FAIL  probes/stage-zero/host-protocol.test.ts > 真实 session 与候选宿主控制层 > load_out_of_order_keeps_latest
+Error: 探针待实现
+ ❯ ProbeHostController.load probes/stage-zero/host-protocol.ts:10:78
+      8|   newDesign(id:string){this.session.newDesign({processId:id});this.epo…
+      9|   async save(_adapter:(json:string)=>Promise<void>):Promise<"saved"|"s…
+     10|   async load(_read:Promise<string>):Promise<"loaded"|"stale"|"failed">…
+       |                                                                              ^
+     11| }
+     12|
+ ❯ probes/stage-zero/host-protocol.test.ts:10:161
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/6]⎯
+
+ FAIL  probes/stage-zero/host-protocol.test.ts > 真实 session 与候选宿主控制层 > input_during_load_prevents_replace
+Error: 探针待实现
+ ❯ ProbeHostController.load probes/stage-zero/host-protocol.ts:10:78
+      8|   newDesign(id:string){this.session.newDesign({processId:id});this.epo…
+      9|   async save(_adapter:(json:string)=>Promise<void>):Promise<"saved"|"s…
+     10|   async load(_read:Promise<string>):Promise<"loaded"|"stale"|"failed">…
+       |                                                                              ^
+     11| }
+     12|
+ ❯ probes/stage-zero/host-protocol.test.ts:11:126
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/6]⎯
+
+ FAIL  probes/stage-zero/host-protocol.test.ts > 真实 session 与候选宿主控制层 > failed_save_never_marks_clean
+Error: 探针待实现
+ ❯ ProbeHostController.save probes/stage-zero/host-protocol.ts:9:93
+      7|   edit(){this.generation++;}
+      8|   newDesign(id:string){this.session.newDesign({processId:id});this.epo…
+      9|   async save(_adapter:(json:string)=>Promise<void>):Promise<"saved"|"s…
+       |                                                                                             ^
+     10|   async load(_read:Promise<string>):Promise<"loaded"|"stale"|"failed">…
+     11| }
+ ❯ probes/stage-zero/host-protocol.test.ts:12:105
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/6]⎯
+
+ FAIL  probes/stage-zero/host-protocol.test.ts > 真实 session 与候选宿主控制层 > exact_candidate_apply_keeps_validation_but_not_saved
+Error: 探针待实现
+ ❯ ProbeHostController.save probes/stage-zero/host-protocol.ts:9:93
+      7|   edit(){this.generation++;}
+      8|   newDesign(id:string){this.session.newDesign({processId:id});this.epo…
+      9|   async save(_adapter:(json:string)=>Promise<void>):Promise<"saved"|"s…
+       |                                                                                             ^
+     10|   async load(_read:Promise<string>):Promise<"loaded"|"stale"|"failed">…
+     11| }
+ ❯ probes/stage-zero/host-protocol.test.ts:13:321
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/6]⎯
+
+⎯⎯⎯⎯⎯⎯ Unhandled Errors ⎯⎯⎯⎯⎯⎯
+
+Vitest caught 1 unhandled error during the test run.
+This might cause false positive tests. Resolve unhandled errors to make sure your tests are not affected.
+
+⎯⎯⎯⎯ Unhandled Rejection ⎯⎯⎯⎯⎯
+Error: 探针待实现
+ ❯ ProbeHostController.load probes/stage-zero/host-protocol.ts:10:78
+      8|   newDesign(id:string){this.session.newDesign({processId:id});this.epo…
+      9|   async save(_adapter:(json:string)=>Promise<void>):Promise<"saved"|"s…
+     10|   async load(_read:Promise<string>):Promise<"loaded"|"stale"|"failed">…
+       |                                                                              ^
+     11| }
+     12|
+ ❯ probes/stage-zero/host-protocol.test.ts:10:138
+ ❯ ../../node_modules/.pnpm/vitest@5.0.1_@types+node@22.20.4_happy-dom@20.14.5_vite@8.3.0_@types+node@22.20.4_yaml@2.9.1_/node_modules/vitest/dist/chunks/run.C5UmxDPh.js:1628:35
+ ❯ ../../node_modules/.pnpm/vitest@5.0.1_@types+node@22.20.4_happy-dom@20.14.5_vite@8.3.0_@types+node@22.20.4_yaml@2.9.1_/node_modules/vitest/dist/chunks/run.C5UmxDPh.js:2783:26
+ ❯ ../../node_modules/.pnpm/vitest@5.0.1_@types+node@22.20.4_happy-dom@20.14.5_vite@8.3.0_@types+node@22.20.4_yaml@2.9.1_/node_modules/vitest/dist/chunks/run.C5UmxDPh.js:3319:20
+ ❯ runWithCancel ../../node_modules/.pnpm/vitest@5.0.1_@types+node@22.20.4_happy-dom@20.14.5_vite@8.3.0_@types+node@22.20.4_yaml@2.9.1_/node_modules/vitest/dist/chunks/run.C5UmxDPh.js:3314:10
+ ❯ ../../node_modules/.pnpm/vitest@5.0.1_@types+node@22.20.4_happy-dom@20.14.5_vite@8.3.0_@types+node@22.20.4_yaml@2.9.1_/node_modules/vitest/dist/chunks/run.C5UmxDPh.js:3299:20
+ ❯ runWithTimeout ../../node_modules/.pnpm/vitest@5.0.1_@types+node@22.20.4_happy-dom@20.14.5_vite@8.3.0_@types+node@22.20.4_yaml@2.9.1_/node_modules/vitest/dist/chunks/run.C5UmxDPh.js:3257:10
+
+This error originated in "probes/stage-zero/host-protocol.test.ts" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+
+
+ Test Files  1 failed (1)
+      Tests  6 failed | 1 passed (7)
+     Errors  1 error
+   Start at  18:32:13
+   Duration  1.82s (import 48%, transform 32%, environment 18%, tests 2%)
+
+undefined
+/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run probes/stage-zero/host-protocol.test.ts

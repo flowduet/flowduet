@@ -1,0 +1,223 @@
+import { appendFileSync } from "node:fs";
+const trace = (x: unknown) => appendFileSync("/tmp/b03-fourfile-rereview-2026-10-17/timeout-overlap-trace.jsonl", JSON.stringify(x)+"\n");
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { flushPromises, mount } from "@vue/test-utils";
+import App from "/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground/src/App.vue";
+import { assertActiveTarget, createBrowserTestScope } from "/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground/src/test-utils/browser-test-scope";
+
+// 真实App使用VueFlow；与既有集成测试相同的DOM缺失API兼容。
+class ResizeObserverStub {
+  observe(): void {}
+  unobserve(): void {}
+  disconnect(): void {}
+}
+(globalThis as unknown as { ResizeObserver: typeof ResizeObserverStub }).ResizeObserver =
+  ResizeObserverStub;
+
+let releaseA!: () => void;
+const gateA = new Promise<void>((resolve) => { releaseA = resolve; });
+let finishA!: () => void;
+const closedA = new Promise<void>((resolve) => { finishA = resolve; });
+const originalSetItem = localStorage.setItem;
+const originalDescriptor = Object.getOwnPropertyDescriptor(Element.prototype, "toString");
+afterEach(() => {
+  if (originalDescriptor) Object.defineProperty(Element.prototype, "toString", originalDescriptor);
+  else Reflect.deleteProperty(Element.prototype, "toString");
+  vi.restoreAllMocks();
+  Object.defineProperty(localStorage, "setItem", {
+    configurable: true,
+    writable: true,
+    value: originalSetItem,
+  });
+  document.body.innerHTML = "";
+  localStorage.clear();
+});
+
+describe("浏览器测试作用域", () => {
+  it("兼容仅影响Element字符串，完整恢复安装时描述符且重复关闭无副作用", () => {
+    const prior = {
+      configurable: true,
+      enumerable: true,
+      writable: false,
+      value: () => "原字符串",
+    };
+    Object.defineProperty(Element.prototype, "toString", prior);
+    const objectString = Object.prototype.toString;
+    const windowString = window.toString;
+    const windowResult = window.toString();
+    const scope = createBrowserTestScope();
+    const element = document.createElement("div");
+    element.innerHTML = "<b>保留显式序列化</b>";
+    expect(element.toString()).toBe(Object.prototype.toString.call(element));
+    expect(element.outerHTML).toBe("<div><b>保留显式序列化</b></div>");
+    expect(Object.prototype.toString).toBe(objectString);
+    expect(window.toString).toBe(windowString);
+    expect(window.toString()).toBe(windowResult);
+    scope.close(
+      () => {},
+      () => {},
+    );
+    expect(Object.getOwnPropertyDescriptor(Element.prototype, "toString")).toEqual(prior);
+    scope.close(
+      () => {
+        throw new Error("不得重复卸载");
+      },
+      () => {},
+    );
+    expect(Object.getOwnPropertyDescriptor(Element.prototype, "toString")).toEqual(prior);
+  });
+  it("原型只有继承字符串方法时，关闭删除覆盖而非制造自有属性", () => {
+    Reflect.deleteProperty(Element.prototype, "toString");
+    const inherited = document.createElement("div").toString;
+    const scope = createBrowserTestScope();
+    expect(Object.hasOwn(Element.prototype, "toString")).toBe(true);
+    scope.close(
+      () => {},
+      () => {},
+    );
+    expect(Object.hasOwn(Element.prototype, "toString")).toBe(false);
+    expect(document.createElement("div").toString).toBe(inherited);
+  });
+
+  it.each(["正常", "测试体抛错"])(
+    "%s仍恢复真实组件、DOM、存储、spy和描述符",
+    async (failure) => {
+      trace({phase:"begin",failure});
+      const descriptor = Object.getOwnPropertyDescriptor(Element.prototype, "toString");
+      const url = URL.createObjectURL;
+      const setItem = localStorage.setItem;
+      const click = HTMLAnchorElement.prototype.click;
+      const scope = createBrowserTestScope();
+      const target = scope.own(mount(App, { attachTo: document.body }));
+      let caught: unknown;
+      try {
+        if (failure === "正常") await gateA;
+        await flushPromises();
+        assertActiveTarget(target);
+        if (failure === "测试体抛错") {
+          vi.spyOn(URL, "createObjectURL").mockReturnValue("blob:B-live");
+          trace({phase:"B-before",connected:target.element.isConnected,spy:vi.isMockFunction(URL.createObjectURL)});
+          releaseA();
+          await closedA;
+          trace({phase:"B-after",connected:target.element.isConnected,spy:vi.isMockFunction(URL.createObjectURL)});
+          expect(target.element.isConnected).toBe(true);
+          expect(vi.isMockFunction(URL.createObjectURL)).toBe(true);
+        }
+        localStorage.setItem("scope-fixture", "需清理");
+        vi.spyOn(localStorage, "setItem").mockImplementation(() => {
+          throw new DOMException("quota exceeded", "QuotaExceededError");
+        });
+        vi.spyOn(URL, "createObjectURL").mockReturnValue("blob:scope");
+        vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(() => {});
+        if (failure === "测试体抛错") throw new Error("协议注入：测试体失败");
+      } catch (error) {
+        trace({phase:"caught",failure,error:String(error)});
+        caught = error;
+      } finally {
+        try {
+          trace({phase:"closing",failure});
+          scope.close(
+            () => {
+              expect(() => assertActiveTarget(target)).toThrow("测试实例已失效");
+              target.unmount();
+              if (failure === "卸载后抛错") throw new Error("协议注入：真实卸载后失败");
+            },
+            () => {
+              document.body.innerHTML = "";
+              localStorage.clear();
+              vi.restoreAllMocks();
+            },
+          );
+          if (failure === "正常") finishA();
+        } catch (error) {
+          caught = error;
+        }
+      }
+      if (failure === "正常") expect(caught).toBeUndefined();
+      else
+        expect(caught).toEqual(
+          new Error(failure === "测试体抛错" ? "协议注入：测试体失败" : "协议注入：真实卸载后失败"),
+        );
+      expect(target.element.isConnected).toBe(false);
+      expect(document.body.innerHTML).toBe("");
+      expect(localStorage.length).toBe(0);
+      expect(localStorage.setItem).toBe(setItem);
+      localStorage.setItem("after-scope", "恢复后可写");
+      expect(localStorage.getItem("after-scope")).toBe("恢复后可写");
+      localStorage.clear();
+      expect(URL.createObjectURL).toBe(url);
+      expect(HTMLAnchorElement.prototype.click).toBe(click);
+      expect(Object.getOwnPropertyDescriptor(Element.prototype, "toString")).toEqual(descriptor);
+      expect(() => assertActiveTarget(target)).toThrow("测试实例已失效");
+    },
+  );
+
+  it("同例协议：A清理后释放迟到动作，不点击B抽屉、不改变B模型或spy", async () => {
+    const scopeA = createBrowserTestScope();
+    const a = scopeA.own(mount(App, { attachTo: document.body }));
+    let release!: () => void;
+    const gate = new Promise<void>((resolve) => {
+      release = resolve;
+    });
+    // 模拟已经启动、但直到A结束后才继续的测试动作；不在CI中制造真实超时。
+    const lateAction = (async () => {
+      await gate;
+      assertActiveTarget(a);
+      document.querySelector<HTMLElement>('[data-test="drawer-save"]')!.click();
+    })().catch((error: unknown) => error);
+    let b: ReturnType<typeof mount> | undefined;
+    let scopeB: ReturnType<typeof createBrowserTestScope> | undefined;
+    try {
+      await flushPromises();
+      scopeA.close(
+        () => a.unmount(),
+        () => {
+          document.body.innerHTML = "";
+          localStorage.clear();
+          vi.restoreAllMocks();
+        },
+      );
+      scopeB = createBrowserTestScope();
+      b = scopeB.own(mount(App, { attachTo: document.body }));
+      await b.find('[data-test="new-design-btn"]').trigger("click");
+      await b.findAll('[data-test="node-card"]')[1]!.trigger("click");
+      await flushPromises();
+      const drawer = b.find('[data-test="node-drawer"]');
+      const input = b.get<HTMLInputElement>('[data-test="drawer-assignee"]');
+      expect(input.element.value).toBe("");
+      const clickSpy = vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(() => {});
+      const urlSpy = vi.spyOn(URL, "createObjectURL").mockReturnValue("blob:B");
+      release();
+      expect(await lateAction).toEqual(new Error("测试实例已失效，拒绝迟到动作"));
+      await flushPromises();
+      expect(drawer.isVisible()).toBe(true);
+      expect(input.element.value).toBe("");
+      expect(clickSpy).not.toHaveBeenCalled();
+      expect(urlSpy).not.toHaveBeenCalled();
+      expect(URL.createObjectURL).toBe(urlSpy);
+      expect(HTMLAnchorElement.prototype.click).toBe(clickSpy);
+      await input.setValue("${boss}");
+      await b.get('[data-test="drawer-save"]').trigger("click");
+      await b.get('[data-test="save-local-btn"]').trigger("click");
+      await flushPromises();
+      expect(b.get('[data-test="doc-status"]').text()).toContain("无待修复项");
+      const saved = JSON.parse(localStorage.getItem("flowduet.playground.design")!);
+      expect(saved.xml).toContain('flowable:assignee="${boss}"');
+    } finally {
+      release();
+      await lateAction;
+      scopeA.close(
+        () => a.unmount(),
+        () => {},
+      );
+      scopeB?.close(
+        () => b?.unmount(),
+        () => {
+          document.body.innerHTML = "";
+          localStorage.clear();
+          vi.restoreAllMocks();
+        },
+      );
+    }
+  });
+});

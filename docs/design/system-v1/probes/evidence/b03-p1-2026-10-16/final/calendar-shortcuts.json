@@ -1,0 +1,59 @@
+{
+  "source": "native calendar/keyboard, explicit popup visible-hidden assertions; no OS IME claim",
+  "rows": [
+    {
+      "id": "N04/H02/H03",
+      "layout": "top",
+      "round": 1,
+      "calendarOpenedAndClosed": true,
+      "raw": "2026-10-20",
+      "shortcutRevisionUnchanged": true,
+      "pass": true
+    },
+    {
+      "id": "N04/H02/H03",
+      "layout": "top",
+      "round": 2,
+      "calendarOpenedAndClosed": true,
+      "raw": "2026-10-20",
+      "shortcutRevisionUnchanged": true,
+      "pass": true
+    },
+    {
+      "id": "N04/H02/H03",
+      "layout": "top",
+      "round": 3,
+      "calendarOpenedAndClosed": true,
+      "raw": "2026-10-20",
+      "shortcutRevisionUnchanged": true,
+      "pass": true
+    },
+    {
+      "id": "N04/H02/H03",
+      "layout": "grid",
+      "round": 1,
+      "calendarOpenedAndClosed": true,
+      "raw": "2026-10-20",
+      "shortcutRevisionUnchanged": true,
+      "pass": true
+    },
+    {
+      "id": "N04/H02/H03",
+      "layout": "grid",
+      "round": 2,
+      "calendarOpenedAndClosed": true,
+      "raw": "2026-10-20",
+      "shortcutRevisionUnchanged": true,
+      "pass": true
+    },
+    {
+      "id": "N04/H02/H03",
+      "layout": "grid",
+      "round": 3,
+      "calendarOpenedAndClosed": true,
+      "raw": "2026-10-20",
+      "shortcutRevisionUnchanged": true,
+      "pass": true
+    }
+  ]
+}

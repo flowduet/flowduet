@@ -1,0 +1,23 @@
+{
+  "status": "passed",
+  "checks": [
+    "invalid-two-buffers",
+    "full-candidate-equivalent-apply",
+    "save-edit-race",
+    "explicit-conflict-recovery",
+    "live-form-retention",
+    "branch-identity-condition-default-order",
+    "default-entry-and-staged-apply",
+    "actual-EP-selection",
+    "restore-retains-loaded-basis",
+    "same-lifetime-discard-renews-editor",
+    "flush-time-model-change-rejected"
+  ],
+  "limits": [
+    "injected export failure",
+    "no OS IME matrix",
+    "no remote CI or deployment",
+    "development-time browser captures",
+    "flush-race uses injected blur callback and programmatic DOM click; not ordinary pointer timing"
+  ]
+}

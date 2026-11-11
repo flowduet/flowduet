@@ -1,0 +1,452 @@
+[
+  {
+    "case": "guarded-idle-popup-normal",
+    "run": 1,
+    "source": "native-pointer-keyboard",
+    "idleEscapeKept": true,
+    "popupEscapeKept": true,
+    "trace": [
+      {
+        "sequence": 1,
+        "event": "dialog-open",
+        "detail": {
+          "dialogSerial": 1
+        }
+      },
+      {
+        "sequence": 2,
+        "event": "dialog-blur",
+        "detail": null
+      },
+      {
+        "sequence": 3,
+        "event": "dialog-normal",
+        "detail": null
+      }
+    ],
+    "pass": true
+  },
+  {
+    "case": "busy-preblur-dialog-x",
+    "run": 1,
+    "source": "native-pointer-keyboard",
+    "stillFocused": true,
+    "trace": [
+      {
+        "sequence": 1,
+        "event": "dialog-open",
+        "detail": {
+          "dialogSerial": 2
+        }
+      },
+      {
+        "sequence": 2,
+        "event": "dialog-preflight",
+        "detail": {
+          "type": "pointerdown",
+          "key": null,
+          "busy": true,
+          "active": "dialog-raw"
+        }
+      },
+      {
+        "sequence": 3,
+        "event": "dialog-before-close",
+        "detail": {
+          "busy": true,
+          "refusedGesture": true
+        }
+      }
+    ],
+    "pass": true
+  },
+  {
+    "case": "busy-preblur-dialog-cancel",
+    "run": 1,
+    "source": "native-pointer-keyboard",
+    "stillFocused": true,
+    "trace": [
+      {
+        "sequence": 1,
+        "event": "dialog-open",
+        "detail": {
+          "dialogSerial": 3
+        }
+      },
+      {
+        "sequence": 2,
+        "event": "dialog-preflight",
+        "detail": {
+          "type": "pointerdown",
+          "key": null,
+          "busy": true,
+          "active": "dialog-raw"
+        }
+      },
+      {
+        "sequence": 3,
+        "event": "dialog-before-close",
+        "detail": {
+          "busy": true,
+          "refusedGesture": true
+        }
+      }
+    ],
+    "pass": true
+  },
+  {
+    "case": "busy-preblur-mask",
+    "run": 1,
+    "source": "native-pointer-keyboard",
+    "stillFocused": true,
+    "trace": [
+      {
+        "sequence": 1,
+        "event": "dialog-open",
+        "detail": {
+          "dialogSerial": 4
+        }
+      },
+      {
+        "sequence": 2,
+        "event": "dialog-preflight",
+        "detail": {
+          "type": "pointerdown",
+          "key": null,
+          "busy": true,
+          "active": "dialog-raw"
+        }
+      }
+    ],
+    "pass": true
+  },
+  {
+    "case": "guarded-idle-popup-normal",
+    "run": 2,
+    "source": "native-pointer-keyboard",
+    "idleEscapeKept": true,
+    "popupEscapeKept": true,
+    "trace": [
+      {
+        "sequence": 1,
+        "event": "dialog-open",
+        "detail": {
+          "dialogSerial": 5
+        }
+      },
+      {
+        "sequence": 2,
+        "event": "dialog-blur",
+        "detail": null
+      },
+      {
+        "sequence": 3,
+        "event": "dialog-normal",
+        "detail": null
+      }
+    ],
+    "pass": true
+  },
+  {
+    "case": "busy-preblur-dialog-x",
+    "run": 2,
+    "source": "native-pointer-keyboard",
+    "stillFocused": true,
+    "trace": [
+      {
+        "sequence": 1,
+        "event": "dialog-open",
+        "detail": {
+          "dialogSerial": 6
+        }
+      },
+      {
+        "sequence": 2,
+        "event": "dialog-preflight",
+        "detail": {
+          "type": "pointerdown",
+          "key": null,
+          "busy": true,
+          "active": "dialog-raw"
+        }
+      },
+      {
+        "sequence": 3,
+        "event": "dialog-before-close",
+        "detail": {
+          "busy": true,
+          "refusedGesture": true
+        }
+      }
+    ],
+    "pass": true
+  },
+  {
+    "case": "busy-preblur-dialog-cancel",
+    "run": 2,
+    "source": "native-pointer-keyboard",
+    "stillFocused": true,
+    "trace": [
+      {
+        "sequence": 1,
+        "event": "dialog-open",
+        "detail": {
+          "dialogSerial": 7
+        }
+      },
+      {
+        "sequence": 2,
+        "event": "dialog-preflight",
+        "detail": {
+          "type": "pointerdown",
+          "key": null,
+          "busy": true,
+          "active": "dialog-raw"
+        }
+      },
+      {
+        "sequence": 3,
+        "event": "dialog-before-close",
+        "detail": {
+          "busy": true,
+          "refusedGesture": true
+        }
+      }
+    ],
+    "pass": true
+  },
+  {
+    "case": "busy-preblur-mask",
+    "run": 2,
+    "source": "native-pointer-keyboard",
+    "stillFocused": true,
+    "trace": [
+      {
+        "sequence": 1,
+        "event": "dialog-open",
+        "detail": {
+          "dialogSerial": 8
+        }
+      },
+      {
+        "sequence": 2,
+        "event": "dialog-preflight",
+        "detail": {
+          "type": "pointerdown",
+          "key": null,
+          "busy": true,
+          "active": "dialog-raw"
+        }
+      }
+    ],
+    "pass": true
+  },
+  {
+    "case": "guarded-idle-popup-normal",
+    "run": 3,
+    "source": "native-pointer-keyboard",
+    "idleEscapeKept": true,
+    "popupEscapeKept": true,
+    "trace": [
+      {
+        "sequence": 1,
+        "event": "dialog-open",
+        "detail": {
+          "dialogSerial": 9
+        }
+      },
+      {
+        "sequence": 2,
+        "event": "dialog-blur",
+        "detail": null
+      },
+      {
+        "sequence": 3,
+        "event": "dialog-normal",
+        "detail": null
+      }
+    ],
+    "pass": true
+  },
+  {
+    "case": "busy-preblur-dialog-x",
+    "run": 3,
+    "source": "native-pointer-keyboard",
+    "stillFocused": true,
+    "trace": [
+      {
+        "sequence": 1,
+        "event": "dialog-open",
+        "detail": {
+          "dialogSerial": 10
+        }
+      },
+      {
+        "sequence": 2,
+        "event": "dialog-preflight",
+        "detail": {
+          "type": "pointerdown",
+          "key": null,
+          "busy": true,
+          "active": "dialog-raw"
+        }
+      },
+      {
+        "sequence": 3,
+        "event": "dialog-before-close",
+        "detail": {
+          "busy": true,
+          "refusedGesture": true
+        }
+      }
+    ],
+    "pass": true
+  },
+  {
+    "case": "busy-preblur-dialog-cancel",
+    "run": 3,
+    "source": "native-pointer-keyboard",
+    "stillFocused": true,
+    "trace": [
+      {
+        "sequence": 1,
+        "event": "dialog-open",
+        "detail": {
+          "dialogSerial": 11
+        }
+      },
+      {
+        "sequence": 2,
+        "event": "dialog-preflight",
+        "detail": {
+          "type": "pointerdown",
+          "key": null,
+          "busy": true,
+          "active": "dialog-raw"
+        }
+      },
+      {
+        "sequence": 3,
+        "event": "dialog-before-close",
+        "detail": {
+          "busy": true,
+          "refusedGesture": true
+        }
+      }
+    ],
+    "pass": true
+  },
+  {
+    "case": "busy-preblur-mask",
+    "run": 3,
+    "source": "native-pointer-keyboard",
+    "stillFocused": true,
+    "trace": [
+      {
+        "sequence": 1,
+        "event": "dialog-open",
+        "detail": {
+          "dialogSerial": 12
+        }
+      },
+      {
+        "sequence": 2,
+        "event": "dialog-preflight",
+        "detail": {
+          "type": "pointerdown",
+          "key": null,
+          "busy": true,
+          "active": "dialog-raw"
+        }
+      }
+    ],
+    "pass": true
+  },
+  {
+    "case": "programmatic-close-bypasses-before-close",
+    "source": "owned-programmatic-control",
+    "trace": [
+      {
+        "sequence": 1,
+        "event": "dialog-open",
+        "detail": {
+          "dialogSerial": 13
+        }
+      },
+      {
+        "sequence": 2,
+        "event": "dialog-blur",
+        "detail": null
+      },
+      {
+        "sequence": 3,
+        "event": "dialog-closed",
+        "detail": {
+          "dialogSerial": 13
+        }
+      }
+    ],
+    "pass": true
+  },
+  {
+    "case": "parent-unmount-bypasses-before-close",
+    "source": "owned-programmatic-control",
+    "trace": [
+      {
+        "sequence": 1,
+        "event": "dialog-open",
+        "detail": {
+          "dialogSerial": 14
+        }
+      }
+    ],
+    "pass": true
+  },
+  {
+    "case": "default-escape-close-control",
+    "source": "native-keyboard",
+    "trace": [
+      {
+        "sequence": 1,
+        "event": "dialog-before-close",
+        "detail": {
+          "busy": false,
+          "refusedGesture": false
+        }
+      },
+      {
+        "sequence": 2,
+        "event": "dialog-blur",
+        "detail": null
+      },
+      {
+        "sequence": 3,
+        "event": "dialog-closed",
+        "detail": {
+          "dialogSerial": 15
+        }
+      }
+    ],
+    "pass": true
+  },
+  {
+    "case": "composition-escape-protocol",
+    "source": "synthetic-CompositionEvent-plus-native-Escape",
+    "trace": [
+      {
+        "sequence": 1,
+        "event": "dialog-open",
+        "detail": {
+          "dialogSerial": 16
+        }
+      },
+      {
+        "sequence": 2,
+        "event": "dialog-compositionstart",
+        "detail": null
+      }
+    ],
+    "pass": true,
+    "OSVerified": false
+  }
+]

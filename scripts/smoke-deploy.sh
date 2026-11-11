@@ -29,7 +29,8 @@ SMOKE_PASS="${SMOKE_PASS:-test}"
 SMOKE_TIMEOUT="${SMOKE_TIMEOUT:-180}"
 
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-BASELINE="$REPO_ROOT/packages/core/src/compile/__fixtures__/minimal-flow.flowable68.baseline.xml"
+FIXTURE_DIR="$REPO_ROOT/packages/core/src/compile/__fixtures__"
+BASELINE="$FIXTURE_DIR/minimal-flow.flowable68.baseline.xml"
 if [ ! -f "$BASELINE" ]; then
   echo "✗ 找不到基准文件：$BASELINE" >&2
   exit 1
@@ -48,6 +49,7 @@ case "$SMOKE_IMAGE" in
 esac
 SMOKE_USER="${SMOKE_USER:-$DEFAULT_USER}"
 API="http://localhost:$SMOKE_PORT$API_PATH/repository/deployments"
+RUNTIME_API="http://localhost:$SMOKE_PORT$API_PATH/runtime"
 
 CONTAINER="flowduet-smoke-$(date +%s)"
 cleanup() {
@@ -78,31 +80,314 @@ if [ "$ready" -ne 1 ]; then
 fi
 echo "✓ 引擎就绪（${i}s）"
 
-echo "▶ 部署基准 XML ..."
-RESP_FILE="$(mktemp)"
-HTTP_CODE=$(curl -s -o "$RESP_FILE" -w "%{http_code}" -u "$SMOKE_USER:$SMOKE_PASS" \
-  -F "file=@$BASELINE;filename=leave-approval.bpmn20.xml" \
-  "$API")
-if [ "$HTTP_CODE" != "201" ] && [ "$HTTP_CODE" != "200" ]; then
-  echo "✗ 部署失败 HTTP $HTTP_CODE：" >&2
-  cat "$RESP_FILE" >&2
-  exit 1
-fi
-DEPLOY_ID=$(python3 -c "import json,sys; print(json.load(open(sys.argv[1]))['id'])" "$RESP_FILE")
-rm -f "$RESP_FILE"
-echo "✓ 部署成功 id=$DEPLOY_ID"
+# ── 通用断言件（部署注册 / 启动实例 / 任务查询）──
 
-# 流程定义出现 = 引擎完成 XSD 解析与校验并注册（比部署本身更强的证据）
-DEFS=$(curl -sf -u "$SMOKE_USER:$SMOKE_PASS" "$API/../process-definitions?size=100")
-COUNT=$(python3 -c "
+# 部署一份 XML 并断言流程定义完成注册（比部署本身更强的证据：引擎完成了解析校验）
+deploy_and_check() { # $1=文件路径 $2=上传文件名（须以 .bpmn20.xml 结尾） $3=期望流程定义 key
+  local file="$1" upload_name="$2" defkey="$3" resp code defs count
+  resp="$(mktemp)"
+  # 引擎要求上传文件名以 .bpmn20.xml/.bpmn/.bar/.zip 结尾
+  code=$(curl -s -o "$resp" -w "%{http_code}" -u "$SMOKE_USER:$SMOKE_PASS" \
+    -F "file=@${file};filename=${upload_name}" \
+    "$API")
+  if [ "$code" != "201" ] && [ "$code" != "200" ]; then
+    echo "✗ ${upload_name} 部署失败 HTTP ${code}：" >&2
+    cat "$resp" >&2
+    rm -f "$resp"
+    exit 1
+  fi
+  rm -f "$resp"
+  # local 赋值会吞掉 curl 的非零退出码，必须拆开判断，否则引擎异常时静默退出
+  if ! defs="$(curl -sf -u "$SMOKE_USER:$SMOKE_PASS" "$API/../process-definitions?size=100")"; then
+    echo "✗ 查询流程定义列表失败（引擎异常？）：$API/../process-definitions" >&2
+    exit 1
+  fi
+  count=$(python3 -c "
 import json, sys
 data = json.loads(sys.argv[1])['data']
-print(sum(1 for d in data if d.get('key') == 'leave_approval'))
-" "$DEFS")
-if [ "$COUNT" -lt 1 ]; then
-  echo "✗ 部署已登记但流程定义 leave_approval 未注册" >&2
+print(sum(1 for d in data if d.get('key') == sys.argv[2]))
+" "$defs" "$defkey")
+  if [ "$count" -lt 1 ]; then
+    echo "✗ 部署已登记但流程定义 ${defkey} 未注册" >&2
+    exit 1
+  fi
+  echo "✓ ${defkey} 部署并注册"
+}
+
+# 启动实例并输出实例 id；$2 是 variables 的 JSON 数组字面量
+start_instance() { # $1=流程定义 key $2=variables JSON 数组
+  local start_file start_code
+  start_file="$(mktemp)"
+  start_code=$(curl -s -o "$start_file" -w "%{http_code}" -u "$SMOKE_USER:$SMOKE_PASS" \
+    -H "Content-Type: application/json" \
+    -d "{\"processDefinitionKey\":\"$1\",\"variables\":$2}" \
+    "$RUNTIME_API/process-instances")
+  if [ "$start_code" != "201" ]; then
+    echo "✗ 实例启动失败 HTTP ${start_code}（$1）:" >&2
+    cat "$start_file" >&2
+    rm -f "$start_file"
+    exit 1
+  fi
+  python3 -c "import json,sys; print(json.load(open(sys.argv[1]))['id'])" "$start_file"
+  rm -f "$start_file"
+}
+
+# 查询实例的活动任务（JSON），供后续 python 断言消费
+query_tasks() { # $1=实例 id
+  curl -sf -u "$SMOKE_USER:$SMOKE_PASS" "$RUNTIME_API/tasks?processInstanceId=$1&size=50"
+}
+
+# ── 基准主流程（单人审批）──
+
+echo "▶ 部署基准 XML ..."
+deploy_and_check "$BASELINE" "leave-approval.bpmn20.xml" "leave_approval"
+
+# 运行时断言：启动实例并核对 assignee——flowable: 属性只有真实执行才被验证。
+# 教训：命名空间 URI 写错时部署注册照常通过，assignee 静默为空（2026-09-20 原型实锤）。
+echo "▶ 运行时断言:启动实例(manager=王经理)并核对 assignee ..."
+PID="$(start_instance leave_approval '[{"name":"manager","type":"string","value":"王经理"}]')"
+# curl 失败时管道会把空输入喂给 python，报 JSON 解析错而掩盖真实原因——先落变量再判
+TASKS_JSON="$(query_tasks "$PID")" || {
+  echo "✗ 查询任务列表失败（引擎异常？）：$RUNTIME_API/tasks?processInstanceId=$PID" >&2
+  exit 1
+}
+if printf '%s' "$TASKS_JSON" | python3 -c "
+import json, sys
+tasks = json.load(sys.stdin)['data']
+ok = len(tasks) == 1 and tasks[0].get('assignee') == '王经理'
+print(f\"  任务 {tasks[0]['name'] if tasks else '-'} assignee={tasks[0].get('assignee') if tasks else '-'}\")
+sys.exit(0 if ok else 1)
+"; then
+  echo "✓ assignee 通道生效(王经理)"
+else
+  echo "✗ 运行时断言失败:flowable:assignee 未生效(命名空间/属性通道异常)" >&2
   exit 1
 fi
-echo "✓ 流程定义已注册（leave_approval × ${COUNT}）"
+
+# ── 多实例审批三档（issue #19）：三份基准部署 + 三档运行时断言 ──
+# 会签：集合展开为并行实例（3 任务逐人）；或签：任一完成即终止其余实例；
+# 依次：串行实例同一时刻只有队首审批人。
+# ⚠ 已知引擎行为：REST 以 type=json 数组注入集合时，元素变量是 JsonNode
+# 字符串元素的 toString()——assignee 会带字面引号（"刘备"）。宿主经 Java
+# API 传 Collection<String> 时为裸值；冒烟验证的是「集合展开 + 逐实例
+# 解析出互不相同的审批人」这一通道语义，引号是 REST 载荷形态的副作用。
+echo "▶ 多实例三档：部署三份基准 ..."
+deploy_and_check "$FIXTURE_DIR/mi-all.flowable68.baseline.xml" "mi-all.bpmn20.xml" "mi_all"
+deploy_and_check "$FIXTURE_DIR/mi-any.flowable68.baseline.xml" "mi-any.bpmn20.xml" "mi_any"
+deploy_and_check "$FIXTURE_DIR/mi-sequential.flowable68.baseline.xml" "mi-sequential.bpmn20.xml" "mi_sequential"
+
+APPROVERS_JSON='[{"name":"approvers","type":"json","value":["刘备","关羽","张飞"]}]'
+
+echo "▶ 运行时断言:会签展开为 3 个逐人任务 ..."
+MI_ALL_PID="$(start_instance mi_all "$APPROVERS_JSON")"
+if query_tasks "$MI_ALL_PID" | python3 -c "
+import json, sys
+tasks = json.load(sys.stdin)['data']
+assignees = sorted(t.get('assignee') or '' for t in tasks)
+print(f'  会签任务数 = {len(tasks)}, assignee = {assignees}')
+sys.exit(0 if len(tasks) == 3 and assignees == ['\"关羽\"', '\"刘备\"', '\"张飞\"'] else 1)
+"; then
+  echo "✓ 会签逐人 assignee 通道生效（刘备/关羽/张飞）"
+else
+  echo "✗ 会签运行时断言失败:集合未按 3 人展开或 assignee 丢失" >&2
+  exit 1
+fi
+
+echo "▶ 运行时断言:或签——完成任一任务即终止其余实例 ..."
+MI_ANY_PID="$(start_instance mi_any "$APPROVERS_JSON")"
+ANY_TASK_ID="$(query_tasks "$MI_ANY_PID" | python3 -c "
+import json, sys
+tasks = json.load(sys.stdin)['data']
+print(tasks[0]['id'] if tasks else '')
+")"
+if [ -z "$ANY_TASK_ID" ]; then
+  echo "✗ 或签实例未展开任务（集合解析异常）" >&2
+  exit 1
+fi
+COMPLETE_CODE=$(curl -s -o /dev/null -w "%{http_code}" -u "$SMOKE_USER:$SMOKE_PASS" \
+  -H "Content-Type: application/json" -d '{"action":"complete"}' \
+  "$RUNTIME_API/tasks/$ANY_TASK_ID")
+if [ "$COMPLETE_CODE" != "200" ]; then
+  echo "✗ 或签任务完成操作失败 HTTP ${COMPLETE_CODE}（task=${ANY_TASK_ID}）" >&2
+  exit 1
+fi
+if query_tasks "$MI_ANY_PID" | python3 -c "
+import json, sys
+tasks = json.load(sys.stdin)['data']
+print(f'  或签完成任务后剩余任务数 = {len(tasks)}（期望 0:任一完成即终止其余实例）')
+sys.exit(0 if len(tasks) == 0 else 1)
+"; then
+  echo "✓ 或签完成条件生效（任一同意即通过节点）"
+else
+  echo "✗ 或签运行时断言失败:完成一个任务后其余实例未被终止" >&2
+  exit 1
+fi
+
+echo "▶ 运行时断言:依次审批串行——同一时刻仅队首审批人 ..."
+MI_SEQ_PID="$(start_instance mi_sequential '[{"name":"chain","type":"json","value":["刘备","关羽","张飞"]}]')"
+if query_tasks "$MI_SEQ_PID" | python3 -c "
+import json, sys
+tasks = json.load(sys.stdin)['data']
+assignees = [t.get('assignee') or '' for t in tasks]
+print(f'  依次任务数 = {len(tasks)}, assignee = {assignees}')
+sys.exit(0 if len(tasks) == 1 and assignees == ['\"刘备\"'] else 1)
+"; then
+  echo "✓ 依次串行生效（当前仅刘备待办）"
+else
+  echo "✗ 依次运行时断言失败:串行语义未生效" >&2
+  exit 1
+fi
+
+# ── 分支结构基准（issue #20）：并行分裂-汇合 + 默认分支排他网关，部署注册 ──
+# 运行时语义（并行同时推进/默认分支兜底）属引擎行为，部署注册即本票验收口径
+echo "▶ 分支结构基准：部署两份 ..."
+deploy_and_check "$FIXTURE_DIR/parallel-flow.flowable68.baseline.xml" "parallel-flow.bpmn20.xml" "parallel_flow"
+deploy_and_check "$FIXTURE_DIR/default-branch.flowable68.baseline.xml" "default-branch.bpmn20.xml" "default_branch"
+
+# ── 抄送基准（issue #21）：ServiceTask + ccTo + 占位 delegate，部署注册 ──
+# 知会行为由宿主绑定 bean（flowduetCcTask）实现，本地无宿主 bean，
+# 执行语义文档化给宿主，冒烟只验部署合法性（占位 delegate 引用不阻止部署）
+#
+# 宿主集成手动验收清单（绑定 bean 后执行）：
+#   1. 宿主应用注册名为 flowduetCcTask 的 JavaDelegate / ActivityBehavior bean
+#   2. 部署 cc-flow 流程定义并启动流程实例
+#   3. 推进到抄送节点，验证 bean 被调用且 ccTo 属性正确传入
+#   4. 确认流程不因知会行为阻塞（知会不阻塞是 R3 决策核心语义）
+echo "▶ 抄送基准：部署 ..."
+deploy_and_check "$FIXTURE_DIR/cc-flow.flowable68.baseline.xml" "cc-flow.bpmn20.xml" "cc_flow"
+
+# ── 竖排布局场景（issue #22）：五类节点全谱 + 多层嵌套，零坐标建模经
+# verticalDiLayout 推导 DI——钉钉式导出形态的部署验证（产物与测试同步守卫）
+LAYOUT_FIXTURES="$REPO_ROOT/packages/core/src/layout/__fixtures__"
+echo "▶ 竖排布局场景：部署 ..."
+deploy_and_check "$LAYOUT_FIXTURES/vertical-scenario.xml" "vertical-scenario.bpmn20.xml" "vertical_scenario"
+
+# ── 默认表单绑定基准（#72）：flowduet:defaultFormKey 落 process（urn:flowduet:bpmn），
+# 单签节点显式 flowable:formKey、多实例节点继承不固化。引擎不识别项目命名空间属性，
+# 但部署解析与实例启动全链路在场是「该编码可被 6.8 接受」的物理证据；若引擎
+# schema 校验拒绝该属性，此处部署失败即触发「停止扩展并修订方案」（ADR-0009）。
+echo "▶ 默认表单绑定基准：部署 ..."
+deploy_and_check "$FIXTURE_DIR/default-form.flowable68.baseline.xml" "default-form.bpmn20.xml" "default_form_flow"
+
+echo "▶ 运行时断言:默认表单流程实例启动、显式 formKey 节点任务可达 ..."
+DF_PID="$(start_instance default_form_flow '[{"name":"manager","type":"string","value":"王经理"},{"name":"approvers","type":"json","value":["刘备","关羽"]}]')"
+if query_tasks "$DF_PID" | python3 -c "
+import json, sys
+tasks = json.load(sys.stdin)['data']
+ok = len(tasks) == 1 and tasks[0].get('assignee') == '王经理'
+print(f\"  首任务 {tasks[0]['name'] if tasks else '-'} assignee={tasks[0].get('assignee') if tasks else '-'}\")
+sys.exit(0 if ok else 1)
+"; then
+  echo "✓ 默认绑定流程运行时通道生效（经理审批可达）"
+else
+  echo "✗ 默认绑定流程运行时断言失败:首个任务未落在显式 formKey 节点" >&2
+  exit 1
+fi
+
+# ── 多表单覆盖基准（#73）：默认 + 四形态继承/覆盖混布 + 多节点复用同一覆盖 key。
+# 运行时断言覆盖语义通道：显式 formKey 经引擎任务查询可读（REST task.formKey），
+# 继承节点不落盘（formKey 为 null——默认继承是 FlowDuet 约定，引擎不自动填充）。
+echo "▶ 多表单覆盖基准：部署 ..."
+deploy_and_check "$FIXTURE_DIR/form-override.flowable68.baseline.xml" "form-override.bpmn20.xml" "form_override_flow"
+
+echo "▶ 运行时断言:覆盖节点的 formKey 经任务查询可读，继承节点不固化 ..."
+# 变量补齐四形态所需集合：approvers（会签）/ chains（依次）在此注入；
+# directors（或签）走大额条件支，amount=100 不经过但一并注入保持完整
+FO_PID="$(start_instance form_override_flow '[{"name":"submitter","type":"string","value":"张提交"},{"name":"approvers","type":"json","value":["刘备","关羽"]},{"name":"directors","type":"json","value":["曹操"]},{"name":"chains","type":"json","value":["赵六","钱七"]},{"name":"amount","type":"integer","value":100}]')"
+FO_TASKS_JSON="$(query_tasks "$FO_PID")" || {
+  echo "✗ 查询任务列表失败（引擎异常？）：$RUNTIME_API/tasks?processInstanceId=$FO_PID" >&2
+  exit 1
+}
+if printf '%s' "$FO_TASKS_JSON" | python3 -c "
+import json, sys
+tasks = json.load(sys.stdin)['data']
+ok = len(tasks) == 1 and tasks[0].get('assignee') == '张提交' and tasks[0].get('formKey') is None
+t = tasks[0] if tasks else {}
+print(f\"  首任务 {t.get('name','-')} assignee={t.get('assignee','-')} formKey={t.get('formKey','-')}\")
+sys.exit(0 if ok else 1)
+"; then
+  echo "✓ 继承节点无固化 formKey（默认继承不落节点属性）"
+else
+  echo "✗ 运行时断言失败:首任务应为继承形态（formKey=null）" >&2
+  exit 1
+fi
+# 推进：完成提交任务 → 默认支会签（amount=100 不走大额支）→ 会签节点 formKey=form_review_v1
+FO_SOLO_ID="$(printf '%s' "$FO_TASKS_JSON" | python3 -c "import json,sys; print(json.load(sys.stdin)['data'][0]['id'])")"
+if ! curl -sf -o /dev/null -u "$SMOKE_USER:$SMOKE_PASS" -H "Content-Type: application/json" \
+  -d '{"action":"complete"}' "$RUNTIME_API/tasks/$FO_SOLO_ID"; then
+  echo "✗ 完成提交任务失败（${FO_SOLO_ID}）" >&2
+  exit 1
+fi
+if query_tasks "$FO_PID" | python3 -c "
+import json, sys
+tasks = json.load(sys.stdin)['data']
+ok = len(tasks) == 2 and all(t.get('formKey') == 'form_review_v1' for t in tasks)
+names = [t.get('name') for t in tasks]
+print(f'  会签任务 {names} formKey 集合 = {sorted({t.get(\"formKey\") for t in tasks})}')
+sys.exit(0 if ok else 1)
+"; then
+  echo "✓ 显式覆盖 formKey 通道生效（部门复核 → form_review_v1）"
+else
+  echo "✗ 运行时断言失败:会签任务未读到覆盖 formKey" >&2
+  exit 1
+fi
+# 完成会签两任务 → 依次审批（与部门复用同一张覆盖表单）
+for tid in $(query_tasks "$FO_PID" | python3 -c "
+import json, sys
+for t in json.load(sys.stdin)['data']:
+    print(t['id'])
+"); do
+  COMPLETE_RESP="$(mktemp)"
+  if ! COMPLETE_HTTP=$(curl -sS -o "$COMPLETE_RESP" -w "%{http_code}" \
+    -u "$SMOKE_USER:$SMOKE_PASS" -H "Content-Type: application/json" \
+    -d '{"action":"complete"}' "$RUNTIME_API/tasks/$tid"); then
+    echo "✗ 完成会签任务请求失败（${tid}）" >&2
+    cat "$COMPLETE_RESP" >&2
+    rm -f "$COMPLETE_RESP"
+    exit 1
+  fi
+  if [ "$COMPLETE_HTTP" != "200" ]; then
+    echo "✗ 完成会签任务失败 HTTP ${COMPLETE_HTTP}（${tid}）：" >&2
+    cat "$COMPLETE_RESP" >&2
+    rm -f "$COMPLETE_RESP"
+    exit 1
+  fi
+  rm -f "$COMPLETE_RESP"
+done
+if query_tasks "$FO_PID" | python3 -c "
+import json, sys
+tasks = json.load(sys.stdin)['data']
+ok = len(tasks) == 1 and tasks[0].get('formKey') == 'form_review_v1'
+t = tasks[0] if tasks else {}
+print(f\"  依次任务 {t.get('name','-')} formKey={t.get('formKey','-')}\")
+sys.exit(0 if ok else 1)
+"; then
+  echo "✓ 多节点复用同一覆盖 key（依次确认 → form_review_v1）"
+else
+  echo "✗ 运行时断言失败:依次审批任务未读到复用的 formKey" >&2
+  exit 1
+fi
+
+
+# ── 附加导出物（可选，#72）：SMOKE_EXTRA_XML 提供则一并部署——用于把
+# Playground 当前有效导出物纳入同一次冒烟（process key 自动从 XML 提取）
+if [ -n "${SMOKE_EXTRA_XML:-}" ]; then
+  if [ ! -f "$SMOKE_EXTRA_XML" ]; then
+    echo "✗ SMOKE_EXTRA_XML 指向的文件不存在：$SMOKE_EXTRA_XML" >&2
+    exit 1
+  fi
+  EXTRA_KEY="$(python3 -c "
+import re, sys
+xml = open(sys.argv[1], encoding='utf-8').read()
+m = re.search(r'<bpmn:process id=\"([^\"]+)\"', xml)
+print(m.group(1) if m else '')
+" "$SMOKE_EXTRA_XML")"
+  if [ -z "$EXTRA_KEY" ]; then
+    echo "✗ 无法从 SMOKE_EXTRA_XML 提取 process id：$SMOKE_EXTRA_XML" >&2
+    exit 1
+  fi
+  echo "▶ 附加导出物：部署（process key=${EXTRA_KEY}）..."
+  deploy_and_check "$SMOKE_EXTRA_XML" "extra-export.bpmn20.xml" "$EXTRA_KEY"
+fi
 
 echo "✅ 冒烟通过：FlowDuet 编译产物被 Flowable 6.8 真实部署并解析（容器 $CONTAINER 已停止）"

@@ -1,0 +1,33 @@
+
+ RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/form-create
+
+ ❯ src/editor-input-state.test.ts (19 tests | 1 failed | 18 skipped) 11ms
+   × 尚未绑定字段的raw不允许捕获或导航 9ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/editor-input-state.test.ts > 尚未绑定字段的raw不允许捕获或导航
+AssertionError: expected 'pending-input' to be 'unknown-owner' // Object.is equality
+
+Expected: "unknown-owner"
+Received: "pending-input"
+
+ ❯ src/editor-input-state.test.ts:110:37
+    108|   const state = createEditorInputState(() => {});
+    109|   state.bind({ type: "inputNumber" }).input("-", () => {});
+    110|   expect(state.blockers()[0]?.code).toBe("unknown-owner");
+       |                                     ^
+    111| });
+    112|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 18 skipped (19)
+   Start at  18:28:29
+   Duration  680ms (environment 76%, import 11%, transform 9%, tests 2%, worker 2%)
+
+undefined
+/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/form-create:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run src/editor-input-state.test.ts -t 尚未绑定

@@ -1,0 +1,12 @@
+{
+  "baseline": "12806acd623aea3afc16ae3ea1a07e7fb7a32bd1",
+  "origin": "http://127.0.0.1:4187",
+  "preparedAt": "2026-11-09T07:32:12.705Z",
+  "observerSha256": "af06cc39ad170e1539c32af4fd7aed76927309da0dec78a113b5560f66af32ef",
+  "buildHashes": {
+    "assets/index-COyEt9A1.js": "1dcca1331547f933dad0052d89c39408eaabe95d7f43aac62a179d9e88a6f850",
+    "assets/index-DQAFhaf0.css": "1eeb44d17dc5c241829875d535082e4fba8d0102b1172417f4816e5a1bdb172a",
+    "index.html": "5a8556e654e6ab6fa2acbe392589ab287c8d81a5454fddc8527c15d828b9397a"
+  },
+  "method": "人工操作；无 CDP/WebDriver/CUA 控制；事件记录只读，isTrusted 本身不证明物理按键来源"
+}

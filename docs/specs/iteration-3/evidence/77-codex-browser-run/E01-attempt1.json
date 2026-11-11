@@ -1,0 +1,14 @@
+{
+  "title": "存储读拒绝",
+  "source": "A14/A15/A16/并发边界",
+  "method": "Codex内置浏览器UI + 明确记录的CDP临时故障/延迟注入",
+  "startedUTC": "2026-10-12T10:32:11.134Z",
+  "status": "待诊断",
+  "attempts": [],
+  "error": "This method is not supported through raw CDP.",
+  "completedUTC": "2026-10-12T10:32:11.972Z",
+  "evidence": [
+    "E01.ax.txt",
+    "E01.jpg"
+  ]
+}

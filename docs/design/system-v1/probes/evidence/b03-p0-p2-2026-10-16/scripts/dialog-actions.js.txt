@@ -1,0 +1,13 @@
+async function popupExercise(page, host) {
+ const contentClass=await host.getAttribute('data-content-class');
+ const popupClass=await host.getAttribute('data-popup-class');
+ const dialog=page.locator('.'+contentClass), popup=page.locator('[role=tooltip].'+popupClass);
+ await dialog.getByText('内部弹层',{exact:true}).click();
+ try{await popup.waitFor({state:'visible',timeout:2000});}catch(cause){throw Object.assign(new Error('弹层未证明打开',{cause}),{stage:'open'});}
+ const opened=await popup.isVisible();
+ await page.keyboard.press('Escape');
+ try{await popup.waitFor({state:'hidden',timeout:2000});}catch(cause){throw Object.assign(new Error('弹层未证明关闭',{cause}),{stage:'close'});}
+ const closed=!(await popup.isVisible()),dialogKept=await dialog.isVisible();
+ if(!opened||!closed||!dialogKept)throw Object.assign(new Error('弹层Escape证明不完整'),{stage:'incomplete'});
+ return {opened,closed,dialogKept};
+}

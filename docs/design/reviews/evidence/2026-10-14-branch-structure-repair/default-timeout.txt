@@ -1,0 +1,60 @@
+
+> flowduet-monorepo@0.0.0 test /Users/l/.codex/worktrees/design-system-stage-zero/flowduet
+> pnpm -r test
+
+Scope: 4 of 5 workspace projects
+packages/core test$ vitest run
+packages/core test:  RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/core
+packages/core test:  Test Files  14 passed (14)
+packages/core test:       Tests  140 passed (140)
+packages/core test:    Start at  22:18:33
+packages/core test:    Duration  1.30s (transform 44%, tests 40%, import 15%, worker 2%)
+packages/core test:   Transform  transforming modules took 2.73s · 44% of tracked time, re-done on every run
+packages/core test:              persist transforms across runs with fsModuleCache: true
+packages/core test:              learn more: https://vitest.dev/guide/improving-performance#caching-between-reruns
+packages/core test: Done
+packages/designer test$ vitest run
+packages/designer test:  RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/designer
+packages/designer test:  Test Files  11 passed (11)
+packages/designer test:       Tests  161 passed (161)
+packages/designer test:    Start at  22:18:35
+packages/designer test:    Duration  10.04s (tests 47%, transform 18%, environment 18%, import 17%)
+packages/designer test: Done
+packages/form-create test$ vitest run
+packages/form-create test:  RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/form-create
+packages/form-create test: stderr | src/components.test.ts > 设计器开放范围收口（A13，designer-config 与真实面板） > 选中字段后：联动与编辑数据入口不渲染，静态选项与必填配置在场
+packages/form-create test: ElementPlusError: [ElSwitch] model-value must be active-value or inactive-value
+packages/form-create test:     at debugWarn (file:///Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/element-plus@2.14.6_vue@3.5.43_typescript@5.9.3_/node_modules/element-plus/es/utils/error.mjs:14:35)
+packages/form-create test:     at setup (file:///Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/element-plus@2.14.6_vue@3.5.43_typescript@5.9.3_/node_modules/element-plus/es/components/switch/src/switch.vue_vue_type_script_setup_true_lang.mjs:72:4)
+packages/form-create test:     at callWithErrorHandling (/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/@vue+runtime-core@3.5.43/node_modules/@vue/runtime-core/dist/runtime-core.cjs.js:200:19)
+packages/form-create test:     at setupStatefulComponent (/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/@vue+runtime-core@3.5.43/node_modules/@vue/runtime-core/dist/runtime-core.cjs.js:8257:25)
+packages/form-create test:     at setupComponent (/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/@vue+runtime-core@3.5.43/node_modules/@vue/runtime-core/dist/runtime-core.cjs.js:8219:36)
+packages/form-create test:     at mountComponent (/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/@vue+runtime-core@3.5.43/node_modules/@vue/runtime-core/dist/runtime-core.cjs.js:6095:7)
+packages/form-create test:     at processComponent (/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/@vue+runtime-core@3.5.43/node_modules/@vue/runtime-core/dist/runtime-core.cjs.js:6061:9)
+packages/form-create test:     at patch (/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/@vue+runtime-core@3.5.43/node_modules/@vue/runtime-core/dist/runtime-core.cjs.js:5566:11)
+packages/form-create test:     at mountChildren (/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/@vue+runtime-core@3.5.43/node_modules/@vue/runtime-core/dist/runtime-core.cjs.js:5817:7)
+packages/form-create test:     at processFragment (/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/@vue+runtime-core@3.5.43/node_modules/@vue/runtime-core/dist/runtime-core.cjs.js:6004:7)
+packages/form-create test:  ❯ src/components.test.ts (34 tests | 1 failed) 61548ms
+packages/form-create test:    ❯ 设计器开放范围收口（A13，designer-config 与真实面板） (5)
+packages/form-create test:      × 选中字段后：联动与编辑数据入口不渲染，静态选项与必填配置在场 5900ms
+packages/form-create test: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+packages/form-create test:  FAIL  src/components.test.ts > 设计器开放范围收口（A13，designer-config 与真实面板） > 选中字段后：联动与编辑数据入口不渲染，静态选项与必填配置在场
+packages/form-create test: Error: Test timed out in 5000ms.
+packages/form-create test: If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+packages/form-create test:  ❯ src/components.test.ts:686:3
+packages/form-create test:     684|   });
+packages/form-create test:     685|
+packages/form-create test:     686|   it("选中字段后：联动与编辑数据入口不渲染，静态选项与必填配置在场", async () => {
+packages/form-create test:        |   ^
+packages/form-create test:     687|     // 未选中时配置面板是 v-show 预渲染（DOM 文案在场但不可达），
+packages/form-create test:     688|     // 入口收口的实际效果以选中字段后的面板为准
+packages/form-create test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+packages/form-create test:  Test Files  1 failed | 7 passed (8)
+packages/form-create test:       Tests  1 failed | 124 passed (125)
+packages/form-create test:    Start at  22:18:45
+packages/form-create test:    Duration  66.03s (tests 72%, import 14%, environment 8%, transform 6%)
+packages/form-create test: Failed
+/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/form-create:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @flowduet/form-create@0.1.0 test: `vitest run`
+Exit status 1
+ ELIFECYCLE  Test failed. See above for more details.

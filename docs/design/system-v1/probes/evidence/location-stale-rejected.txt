@@ -1,0 +1,108 @@
+Browser tab: 3, Title: "FlowDuet 阶段零探针", URL: "http://127.0.0.1:5173/probes/stage-zero/index.html".
+1 AXWebArea FlowDuet 阶段零探针, URL: 127.0.0.1:5173/probes/stage-zero/index.html
+	2 container app
+		3 heading FlowDuet 阶段零 · 真实组件探针, Value: 1
+			4 text FlowDuet 阶段零 · 真实组件探针
+		5 text 隔离的实验入口，不是正式工作台；只使用虚构样例。生产结构缺陷尚未修复。
+		6 container
+			7 button 编辑保留
+			8 button 主题隔离
+			9 button 宿主协议
+		177 container
+			178 checkbox (settable, integer) Description: 提供实验保存适配器, Value: 0
+			263 text 人工控制异步返回；不连接外部存储。保存请求数：2 宿主输入
+			180 text field (settable) 宿主输入
+			266 text 宿主快捷键次数：1
+			182 heading 实例 甲, Value: 3
+				183 text 实例 甲
+			184 container
+				185 text 候选名称
+				186 text field (settable) Description: 实例0候选名称, Value: 保存期间的新编辑
+			187 container
+				188 combo box (collapsed, settable) ID: el-id-1500-546, Secondary Actions: Expand
+				189 text 打开所属弹层
+				190 image
+			191 button 打开所属测试弹层
+			192 button 标记候选已校验（模拟）
+			193 button 原样应用
+			195 button 宿主确认成功
+			196 button 宿主确认失败
+			197 button 模拟新建替换
+			198 button 取消离开
+			199 heading 实例 乙, Value: 3
+				200 text 实例 乙
+			201 container
+				202 text 候选名称
+				203 text field (settable) Description: 实例1候选名称, Value: 候选乙
+			204 container
+				205 combo box (collapsed, settable) ID: el-id-1500-547, Secondary Actions: Expand
+				206 text 打开所属弹层
+				207 image
+			208 button 打开所属测试弹层
+			209 button 标记候选已校验（模拟）
+			210 button 原样应用
+			212 button 宿主确认成功
+			213 button 宿主确认失败
+			214 button 模拟新建替换
+			215 button 取消离开
+			264 text [
+  {
+    "instance": 0,
+    "epoch": 1,
+    "dirty": true,
+    "generation": 2,
+    "saved": 1,
+    "validation": false,
+    "pending": false
+  },
+  {
+    "instance": 1,
+    "epoch": 1,
+    "dirty": true,
+    "generation": 1,
+    "saved": 0,
+    "validation": false,
+    "pending": false
+  }
+]
+			217 heading 真实只读视图 → 编辑定位, Value: 3
+				218 text 真实只读视图 → 编辑定位
+			219 container
+				220 button 回到 BPMN 只读
+				221 button 定位采购审批
+				222 button 定位金额分支
+				223 button 定位默认表单问题
+				224 button 删除并复用节点 ID
+			365 text 定位目标生命期已失效，拒绝跳转
+			337 container
+				338 text 起
+				339 text s
+				340 pop up button (collapsed) +, Help: 在此后添加节点, ID: el-id-1500-577, Secondary Actions: Expand
+				341 container
+					342 text 条件分支
+					343 button 默认1, Help: 点击取消默认（其余情况无兜底支路）
+					344 button 默认2, Help: 把该支路设为默认（其余情况走此支路）
+					345 button + 分支, Help: 添加分支
+					346 button 删块, Help: 删除整块（前后直连）
+				347 container
+					348 button 支路 1 其他情况（默认）, Help: 支路 1：其他情况（默认）；点击配置此分支
+						349 text 支路 1
+						350 text 其他情况（默认）
+					351 container
+						352 text 审 其他审批 审批人 carol
+					353 pop up button (collapsed) +, Help: 在此后添加节点, ID: el-id-1500-581, Secondary Actions: Expand
+					354 button 支路 2 未设置条件, Help: 支路 2：未设置条件；点击配置此分支
+						355 text 支路 2
+						356 text 未设置条件
+					357 container
+						358 text 审 财务复核 审批人 bob
+					359 pop up button (collapsed) +, Help: 在此后添加节点, ID: el-id-1500-585, Secondary Actions: Expand
+					360 container
+						361 text 审 新对象 未配置审批人
+					362 pop up button (collapsed) +, Help: 在此后添加节点, ID: el-id-1500-589, Secondary Actions: Expand
+				363 text 终
+				364 text e
+		175 button (collapsed) 探针事件记录 7, Secondary Actions: Expand
+			366 text 探针事件记录 7
+
+The focused UI element is 221 button 定位采购审批

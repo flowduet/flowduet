@@ -1,0 +1,25 @@
+async(page)=>{
+ page.setDefaultTimeout(5000);const rows=[],root=page.locator('[data-c-owner="C-A"]');
+ const state=async()=>JSON.parse(await root.locator('[data-test=c-state]').textContent());
+ const capture=async()=>{const s=await state();await root.locator('[data-test=c-collect]').click();await page.waitForFunction(n=>JSON.parse(document.querySelector('[data-c-owner="C-A"] [data-test=c-state]').textContent).resultSequence>n,s.resultSequence);const t=await state();return {result:t.result,forms:t.result.ok?JSON.parse(t.result.value.json).forms:null,same:t.sameForms&&t.sameGraph&&t.sameSession,persist:t.persistCalls}};
+ const flatten=rs=>rs.flatMap(r=>[r,...flatten(r.children||[])]);
+ for(const layout of ['top','grid'])for(let i=0;i<8;i++){
+  const field='F0'+(i+1);try{
+  await page.locator('[data-test=c-field]').selectOption(field);await page.locator('[data-test=c-layout]').selectOption(layout);await page.locator('[data-test=c-reset]').click();
+  const before=await capture(),source=root.locator('._fc-l-item').nth(i),dest=root.locator(layout==='top'?'._fc-m-drag':'._fd-col-drag').first();
+  await source.dragTo(dest,{targetPosition:{x:25,y:25}});const after=await capture();
+  const old=flatten(JSON.parse(before.forms[0].rules)),next=after.forms?flatten(JSON.parse(after.forms[0].rules)):[];
+  rows.push({case:'menu-drop',field,layout,before,after,pass:next.filter(r=>r.field).length===old.filter(r=>r.field).length+1&&new Set(next.filter(r=>r.field).map(r=>r.field)).size===next.filter(r=>r.field).length&&after.same&&after.persist===0});
+  }catch(e){rows.push({case:'menu-drop',field,layout,status:'tool-or-UI-failed',error:String(e),pass:false});await page.mouse.up();}
+ }
+ for(let run=1;run<=3;run++){
+  try{
+  await page.locator('[data-test=c-field]').selectOption('F01');await page.locator('[data-test=c-layout]').selectOption('top');await page.locator('[data-test=c-reset]').click();const before=await capture();
+  const source=root.locator('._fc-l-item').first(),dest=root.locator('._fc-m-drag').first();await source.scrollIntoViewIfNeeded();const a=await source.boundingBox(),b=await dest.boundingBox();
+  await page.mouse.move(a.x+a.width/2,a.y+a.height/2);await page.mouse.down();await page.mouse.move(a.x+a.width/2+15,a.y+a.height/2+15,{steps:5});await page.mouse.move(b.x+30,b.y+30,{steps:10});
+  const during=await state();await root.locator('[data-test=c-collect]').evaluate(el=>el.click());await page.waitForFunction(n=>JSON.parse(document.querySelector('[data-c-owner="C-A"] [data-test=c-state]').textContent).resultSequence>n,during.resultSequence);const captured=await state();
+  await page.keyboard.press('Escape');await page.mouse.up();const after=await capture();rows.push({case:'native-drag-Escape',run,before,during,captured,after,observedBusy:during.views.some(v=>v.dragging),captureRefused:!captured.result.ok,layoutRestored:after.forms&&before.forms[0].rules===after.forms[0].rules});
+  }catch(e){rows.push({case:'native-drag-Escape',run,status:'tool-or-UI-failed',error:String(e)});await page.mouse.up();}
+ }
+ return rows;
+}

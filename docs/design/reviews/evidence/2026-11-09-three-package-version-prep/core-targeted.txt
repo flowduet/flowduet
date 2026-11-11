@@ -1,0 +1,9 @@
+
+ RUN  v5.0.1 /Users/l/Documents/projects/flowduet/packages/core
+
+
+ Test Files  3 passed (3)
+      Tests  25 passed (25)
+   Start at  17:45:35
+   Duration  370ms (transform 50%, tests 28%, import 19%, worker 3%)
+

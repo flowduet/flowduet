@@ -1,0 +1,6 @@
+### Result
+{"first":["","候选二"],"second":["","打开所属弹层"],"realSelectCount":2,"version":"155.0.8059.41","viewport":{"width":1440,"height":1000}}
+### Ran Playwright code
+```js
+await (async (page) => { const roots=page.locator("[data-host-instance]"); await roots.first().getByRole("combobox").click(); await page.getByRole("option",{name:"候选二",exact:true}).click(); await page.screenshot({path:"docs/design/system-v1/probes/evidence/contract-2026-10-15/browser-real-ep.png"}); return {first:await roots.first().locator(".el-select__selected-item").allTextContents(),second:await roots.nth(1).locator(".el-select__selected-item").allTextContents(),realSelectCount:await roots.locator(".el-select").count(),version:page.context().browser().version(),viewport:page.viewportSize()}; })(page);
+```

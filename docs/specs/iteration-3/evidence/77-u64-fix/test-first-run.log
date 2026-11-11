@@ -1,0 +1,54 @@
+
+> flowduet-monorepo@0.0.0 test /Users/l/Documents/projects/flowduet
+> pnpm -r test
+
+Scope: 4 of 5 workspace projects
+packages/core test$ vitest run
+packages/core test:  RUN  v5.0.1 /Users/l/Documents/projects/flowduet/packages/core
+packages/core test:  Test Files  12 passed (12)
+packages/core test:       Tests  125 passed (125)
+packages/core test:    Start at  09:02:02
+packages/core test:    Duration  834ms (transform 42%, tests 40%, import 15%, worker 2%)
+packages/core test: Done
+packages/designer test$ vitest run
+packages/designer test:  RUN  v5.0.1 /Users/l/Documents/projects/flowduet/packages/designer
+packages/designer test:  Test Files  8 passed (8)
+packages/designer test:       Tests  127 passed (127)
+packages/designer test:    Start at  09:02:04
+packages/designer test:    Duration  8.43s (tests 49%, import 22%, environment 15%, transform 15%)
+packages/designer test: Done
+packages/form-create test$ vitest run
+packages/form-create test:  RUN  v5.0.1 /Users/l/Documents/projects/flowduet/packages/form-create
+packages/form-create test:  Test Files  7 passed (7)
+packages/form-create test:       Tests  121 passed (121)
+packages/form-create test:    Start at  09:02:13
+packages/form-create test:    Duration  44.53s (tests 74%, import 12%, environment 8%, transform 6%)
+packages/form-create test: Done
+apps/playground test$ vitest run
+apps/playground test:  RUN  v5.0.1 /Users/l/Documents/projects/flowduet/apps/playground
+apps/playground test: stderr | src/App.integration.test.ts
+apps/playground test: [BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+apps/playground test:  ❯ src/App.integration.test.ts (45 tests | 1 failed) 40014ms
+apps/playground test:    ❯ E16 文件读取期间新编辑保护 (2)
+apps/playground test:      × 读取期间新打开表单编辑器也保持当前目录及编辑器 5191ms
+apps/playground test: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+apps/playground test:  FAIL  src/App.integration.test.ts > E16 文件读取期间新编辑保护 > 读取期间新打开表单编辑器也保持当前目录及编辑器
+apps/playground test: Error: Test timed out in 5000ms.
+apps/playground test: If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+apps/playground test:  ❯ src/App.integration.test.ts:1640:3
+apps/playground test:     1638|   });
+apps/playground test:     1639|
+apps/playground test:     1640|   it("读取期间新打开表单编辑器也保持当前目录及编辑器", async () => {
+apps/playground test:        |   ^
+apps/playground test:     1641|     wrapper = mount(App, { attachTo: document.body });
+apps/playground test:     1642|     await setupWithForms(["保留编辑器76"]);
+apps/playground test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+apps/playground test:  Test Files  1 failed | 1 passed (2)
+apps/playground test:       Tests  1 failed | 54 passed (55)
+apps/playground test:    Start at  09:02:58
+apps/playground test:    Duration  43.65s (tests 86%, import 9%, transform 3%, environment 2%)
+apps/playground test: Failed
+/Users/l/Documents/projects/flowduet/apps/playground:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @flowduet/playground@0.0.0 test: `vitest run`
+Exit status 1
+ ELIFECYCLE  Test failed. See above for more details.

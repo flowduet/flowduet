@@ -1,0 +1,9 @@
+### Browser `b03-element-semantics` opened with pid 97333.
+### Ran Playwright code
+```js
+await page.goto('about:blank');
+```
+### Page
+- Page URL: about:blank
+### Snapshot
+- [Snapshot](.playwright-cli/page-2026-10-17T01-01-03-407Z.yml)

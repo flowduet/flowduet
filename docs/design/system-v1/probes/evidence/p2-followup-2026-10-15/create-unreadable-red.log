@@ -1,0 +1,40 @@
+
+ RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground
+
+ ❯ probes/stage-zero/contracts/error-boundary.test.ts (11 tests | 1 failed | 10 skipped) 25ms
+   × 不可读状态下创建表单失败不留下半次创建 23ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  probes/stage-zero/contracts/error-boundary.test.ts > 不可读状态下创建表单失败不留下半次创建
+AssertionError: expected { ok: false, …(2) } to match object { ok: false, code: 'capture-failed' }
+(1 matching property omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "code": "capture-failed",
++   "code": "invalid-input",
+    "ok": false,
+  }
+
+ ❯ probes/stage-zero/contracts/error-boundary.test.ts:110:34
+    108|   const f = setup();
+    109|   f.model.elementOf(f.t.ref.id).set("extraFlag", 1n);
+    110|   expect(f.c.createForm("不应创建")).toMatchObject({ ok: false, code: "cap…
+       |                                  ^
+    111|   expect(f.session.current!.forms).toHaveLength(0);
+    112| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 10 skipped (11)
+   Start at  13:47:54
+   Duration  4.29s (import 65%, transform 23%, environment 11%, tests 1%)
+
+undefined
+/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run probes/stage-zero/contracts/error-boundary.test.ts -t 创建表单失败

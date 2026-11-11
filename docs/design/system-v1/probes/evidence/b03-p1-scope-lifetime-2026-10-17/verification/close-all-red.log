@@ -1,0 +1,39 @@
+
+ RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground
+
+ ❯ src/test-utils/browser-test-scope.test.ts (9 tests | 1 failed | 7 skipped) 2214ms
+   ❯ 浏览器测试作用域 (9)
+     × 用例关闭逆序处理全部scope且保留卸载异常：true 868ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/test-utils/browser-test-scope.test.ts > 浏览器测试作用域 > 用例关闭逆序处理全部scope且保留卸载异常：true
+AssertionError: expected [ 'B' ] to deeply equal [ 'B', 'A' ]
+
+- Expected
++ Received
+
+  [
+    "B",
+-   "A",
+  ]
+
+ ❯ src/test-utils/browser-test-scope.test.ts:391:22
+    389|       if (failUnmount) expect(() => closeCases([lifecycle])).toThrow("…
+    390|       else closeCases([lifecycle]);
+    391|       expect(closed).toEqual(["B", "A"]);
+       |                      ^
+    392|       expect(() => lifecycle.assertActive()).toThrow("测试用例已结束");
+    393|       expect(a.element.isConnected).toBe(false);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 1 passed | 7 skipped (9)
+   Start at  12:18:57
+   Duration  6.20s (tests 37%, import 32%, transform 23%, environment 8%)
+
+undefined
+/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run src/test-utils/browser-test-scope.test.ts -t 用例关闭

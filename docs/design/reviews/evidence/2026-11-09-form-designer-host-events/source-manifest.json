@@ -1,0 +1,5 @@
+{
+  "packages/form-create/src/components/FormDesigner.vue": "aac2086dbf1813f7627051a0fffb1984d5bede9f1f37cef9995a53c444902f49",
+  "packages/form-create/src/components/designer-host-events.ts": "c925826539a68f74d4c11c3e28c311d2c954ab9b6c4c8227efaa5c07430235d5",
+  "packages/form-create/src/components/host-events.test.ts": "1691979534960d1099bb999022334915b988ae776afdc047a2c1af8d6352863d"
+}

@@ -1,0 +1,33 @@
+
+ RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/form-create
+
+ ❯ src/components.test.ts (89 tests | 1 failed | 88 skipped) 2959ms
+   × P1复审P2：原生number的badInput空串不能冒充恢复初始空值 2957ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/components.test.ts > P1复审P2：原生number的badInput空串不能冒充恢复初始空值
+AssertionError: expected 'captured' to be 'blocked' // Object.is equality
+
+Expected: "blocked"
+Received: "captured"
+
+ ❯ src/components.test.ts:1893:40
+    1891|     typeNative(input.element, "");
+    1892|     await flushPromises();
+    1893|     expect(vm.captureContent().status).toBe("blocked");
+       |                                        ^
+    1894|   } finally {
+    1895|     guard.mockRestore();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 88 skipped (89)
+   Start at  00:58:39
+   Duration  6.38s (tests 48%, import 32%, transform 13%, environment 7%)
+
+undefined
+/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/form-create:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run src/components.test.ts -t badInput空串

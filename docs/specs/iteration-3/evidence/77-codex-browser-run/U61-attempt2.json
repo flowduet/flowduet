@@ -1,0 +1,21 @@
+{
+  "title": "确认文件替换",
+  "source": "A15",
+  "method": "Codex内置浏览器真实UI",
+  "startedUTC": "2026-10-12T10:26:37.470Z",
+  "status": "通过",
+  "attempts": [
+    {
+      "status": "失败",
+      "evidence": "U61-attempt1.json"
+    }
+  ],
+  "actual": {
+    "replacedWithB": true
+  },
+  "completedUTC": "2026-10-12T10:26:43.540Z",
+  "evidence": [
+    "U61.ax.txt",
+    "U61.jpg"
+  ]
+}

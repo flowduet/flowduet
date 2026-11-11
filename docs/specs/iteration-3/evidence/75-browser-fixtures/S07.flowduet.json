@@ -1,0 +1,15 @@
+{
+  "format": "flowduet.design",
+  "version": 1,
+  "engine": "flowable",
+  "xml": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<bpmn:definitions xmlns:bpmn=\"http://www.omg.org/spec/BPMN/20100524/MODEL\" xmlns:fa=\"http://flowable.org/bpmn\" id=\"defs75\" targetNamespace=\"urn:acceptance75\">\n  <bpmn:process id=\"flow75\" name=\"验收流程75\" isExecutable=\"true\" >\n    <bpmn:startEvent id=\"s\" name=\"开始\" />\n    <bpmn:userTask id=\"t\" name=\"验收审批75\" fa:assignee=\"john\" />\n    <bpmn:endEvent id=\"e\" name=\"结束\" />\n    <bpmn:sequenceFlow id=\"f1\" sourceRef=\"s\" targetRef=\"t\" />\n    <bpmn:sequenceFlow id=\"f2\" sourceRef=\"t\" targetRef=\"e\" />\n    \n  </bpmn:process>\n</bpmn:definitions>",
+  "forms": [
+    {
+      "id": "f_apply",
+      "name": "验收申请单75",
+      "provider": "form-create/element-plus",
+      "rules": "[{\"type\": \"select\", \"field\": \"remote75\", \"props\": {\"remote\": true}}]",
+      "options": "{\"form\": {\"labelWidth\": \"130px\"}, \"submitBtn\": {\"show\": false}}"
+    }
+  ]
+}

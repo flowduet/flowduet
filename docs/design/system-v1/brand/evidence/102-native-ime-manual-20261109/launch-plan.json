@@ -1,0 +1,17 @@
+{
+  "plannedCommand": [
+    "open",
+    "-na",
+    "Google Chrome",
+    "--args",
+    "--user-data-dir=/tmp/flowduet-102-native-chrome-76981144",
+    "--disable-extensions",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "http://127.0.0.1:4187/"
+  ],
+  "launcher": "/tmp/flowduet-102-native-start.command",
+  "chromeVersionFromInstalledInfoPlist": "157.0.8103.38",
+  "systemFromSwVers": "ProductName:\t\tmacOS\nProductVersion:\t\t15.6\nBuildVersion:\t\t24G84\n",
+  "status": "启动计划，只有用户运行命令后才构成人工环境；代理未启动或控制Chrome"
+}

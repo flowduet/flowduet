@@ -1,0 +1,325 @@
+{
+  "date": "2026-11-02",
+  "revision": "draft-01-doc-r1",
+  "method": "只读当前源码、安装包与官方文档；没有运行真实组件适配",
+  "installedVersions": {
+    "element-plus": "2.14.6",
+    "@form-create/designer": "3.5.0",
+    "@form-create/element-ui": "3.3.4"
+  },
+  "sourceFiles": [
+    {
+      "path": "packages/designer/package.json",
+      "sha256": "b079c71e9141d3a5f0dc5174fb3c1b7daeb007fb1c11f1ef33060197104c6e09"
+    },
+    {
+      "path": "packages/form-create/package.json",
+      "sha256": "1efe676ae065a86b4e40cb739b5558149c4e3072a8c41423c5436c96dfc059a3"
+    },
+    {
+      "path": "packages/designer/node_modules/element-plus/package.json",
+      "sha256": "c94a2148c5046a148edd703c4e02e483896be54604b928a1b370c3674d6f2778"
+    },
+    {
+      "path": "packages/designer/node_modules/element-plus/theme-chalk/src/common/var.scss",
+      "sha256": "b11244e5dff3d11462a6b0c66c4cb0d530b37c28746dd05f2bbfceb8fba39ca0"
+    },
+    {
+      "path": "packages/designer/node_modules/element-plus/theme-chalk/src/button.scss",
+      "sha256": "874a6bcf6365c48beb8e9c6b73c975f391c05749565b0d29857391add57a9ae1"
+    },
+    {
+      "path": "packages/designer/node_modules/element-plus/theme-chalk/src/input.scss",
+      "sha256": "f4b77f50dca7d7d227dab5c664e74dd38b59b1e2694b96274cb3d733f1d032a5"
+    },
+    {
+      "path": "packages/designer/node_modules/element-plus/theme-chalk/src/form-item.scss",
+      "sha256": "8d40f713da782bdcb730d4e252436378cac96d68228f1906d41518e5799cc500"
+    },
+    {
+      "path": "packages/designer/node_modules/element-plus/theme-chalk/src/mixins/_button.scss",
+      "sha256": "87a3597aa13670c0d6e0bfa1487d32ee7199891f77904d684fb798b13c6a4201"
+    },
+    {
+      "path": "packages/form-create/node_modules/@form-create/designer/package.json",
+      "sha256": "583ad0a9476b7a7852137ea63c170c78cbb2f1b0adf72411e883edc1dde17c23"
+    },
+    {
+      "path": "packages/form-create/node_modules/@form-create/designer/src/style/index.css",
+      "sha256": "6f9349da1af0d9a1efa8742fe5058b9db841d0e75684e0b7c770845f64928f56"
+    },
+    {
+      "path": "packages/form-create/node_modules/@form-create/designer/types/index.d.ts",
+      "sha256": "a0b2336f99d6cebd9129b5878bb571dc70b5b134fb4fe9349780be3ff37d09e1"
+    },
+    {
+      "path": "packages/form-create/node_modules/@form-create/element-ui/package.json",
+      "sha256": "93875122ee161855d029d535fb20115a243738a2a15172a18463e5c542e5647d"
+    },
+    {
+      "path": "packages/form-create/node_modules/@form-create/element-ui/src/core/alias.js",
+      "sha256": "b3c3a1b3ad7244b9a27f11eb878635093357d1fe40a7ba25c59e0258222a310a"
+    },
+    {
+      "path": "packages/form-create/node_modules/@form-create/element-ui/src/components/index.js",
+      "sha256": "1fc6e4f25a46bafc515034bca8488bd01ed2caacba8cf6a7cd00f9879c71de90"
+    },
+    {
+      "path": "packages/form-create/src/components/designer-config.ts",
+      "sha256": "d58dd02d36ba48f0ef360e87f134c35a31ef0a5b85f7ebf8da8d0bfac75253ff"
+    },
+    {
+      "path": "packages/form-create/src/form-create-setup.ts",
+      "sha256": "bbb46ff77e305d0550169851055bd3e77ca7bcec579a5a7d3ad8d1a8626de0d4"
+    },
+    {
+      "path": "packages/form-create/src/components/FormDesigner.vue",
+      "sha256": "09e683cab21c7c366acb0cd18e375048701d1e9f070a6440d10e34c3e89c42e5"
+    },
+    {
+      "path": "packages/form-create/src/components/FormPreview.vue",
+      "sha256": "8461af1619b255d1bf45f37722ac75a39eb594bf52ae0a80bcf10a26b494faa7"
+    },
+    {
+      "path": "packages/form-create/src/components/FormManager.vue",
+      "sha256": "718b89dededc20c526e008f6217d8052b84052132311abdebb0d8977bcc549b7"
+    },
+    {
+      "path": "packages/designer/src/components/NodeDrawer.vue",
+      "sha256": "e78b7c4f63feafce9e287d5ff0eab2891486da152bbef072510b622917710b3e"
+    },
+    {
+      "path": "packages/designer/src/components/NodePropertyFields.vue",
+      "sha256": "ce58ec7b70978d1be81fed03c745cee28cf21414de9a6069e3bebe8a75784e2f"
+    },
+    {
+      "path": "packages/form-create/src/form-schema.ts",
+      "sha256": "85f008f8f43a4087bae1995a3275152391dd9ba7c194ebb07f4815a36ddc7f53"
+    },
+    {
+      "path": "node_modules/.pnpm/@form-create+component-elm-radio@3.3.0_vue@3.5.43_typescript@5.9.3_/node_modules/@form-create/component-elm-radio/src/component.jsx",
+      "sha256": "2ae50d60d8da90b48d3721dd71ab9f8c217407c46b42bbcfabe90cff896273a8"
+    },
+    {
+      "path": "node_modules/.pnpm/@form-create+component-elm-checkbox@3.3.0_vue@3.5.43_typescript@5.9.3_/node_modules/@form-create/component-elm-checkbox/src/component.jsx",
+      "sha256": "b6b6e9122a8f2e91d3151a0ec79a4b94a7ae2d7f94a49e78bab134e4e1e48c00"
+    },
+    {
+      "path": "node_modules/.pnpm/@form-create+component-elm-select@3.3.0_vue@3.5.43_typescript@5.9.3_/node_modules/@form-create/component-elm-select/src/component.vue",
+      "sha256": "da54f36e80721648b8d3470b2f91ffd25a1823e46c84e9c6c05a206308566f8d"
+    }
+  ],
+  "elementPlusVariableNames": [
+    {
+      "variable": "--el-color-primary",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-button-bg-color",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-button-border-color",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-button-text-color",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-button-hover-bg-color",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-button-hover-border-color",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-button-hover-text-color",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-button-active-bg-color",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-button-active-border-color",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-button-active-text-color",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-text-color-primary",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-text-color-regular",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-text-color-secondary",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-text-color-placeholder",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-bg-color-page",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-bg-color",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-bg-color-overlay",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-fill-color-blank",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-fill-color-light",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-border-color",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-border-color-hover",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-border-color-light",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-border-color-lighter",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-input-text-color",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-input-bg-color",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-input-border-color",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-input-placeholder-color",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-input-focus-border-color",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-input-hover-border-color",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-disabled-text-color",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-disabled-bg-color",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-disabled-border-color",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-button-disabled-text-color",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-button-disabled-bg-color",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-button-disabled-border-color",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-color-danger",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-color-warning",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-color-success",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-font-family",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-font-size-base",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-form-label-font-size",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-border-radius-base",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-input-height",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-button-size",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-form-item-margin-bottom",
+      "presentInInstalledCss": true
+    },
+    {
+      "variable": "--el-button-outline-color",
+      "presentInInstalledCss": true
+    }
+  ],
+  "observedFacts": {
+    "elementPlusHeights": {
+      "default": 32,
+      "small": 24
+    },
+    "designHeights": {
+      "comfortable": 36,
+      "compact": 30
+    },
+    "designerHardcodedExamples": ["#FFF", "#2E73FF"],
+    "designerRootVariable": "--fc-tool-border-color",
+    "providerAccepted": "form-create/element-plus",
+    "wrapperAliases": ["fc-radio", "fc-checkbox", "fc-select"]
+  },
+  "runtimeThemeValidation": "not-executed",
+  "frozenExperimentsRestarted": false,
+  "documentIntegrityCheck": {
+    "adapterRecords": 10,
+    "validTokenReferences": 43,
+    "sourceHashesMatched": 25,
+    "elementPlusVariablesFound": 46,
+    "localMarkdownLinksChecked": 45,
+    "unchangedVisualAndEvidenceFiles": 11,
+    "runtimeDiffEmpty": true,
+    "whitespaceCheck": "passed",
+    "formatCheck": "passed"
+  }
+}

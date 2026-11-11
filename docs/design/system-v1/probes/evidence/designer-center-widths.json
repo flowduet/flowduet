@@ -1,0 +1,237 @@
+[
+  {
+    "width": "768",
+    "ancestors": [
+      {
+        "client": 49,
+        "cls": "el-col el-col-24 _fd-draggable-drag _fd-drag-box",
+        "scroll": 49,
+        "tag": "DIV",
+        "width": 64
+      },
+      {
+        "client": 64,
+        "cls": "el-row fc-form-row",
+        "scroll": 64,
+        "tag": "DIV",
+        "width": 64
+      },
+      {
+        "client": 64,
+        "cls": "el-form el-form--default el-form--label-right form-create",
+        "scroll": 64,
+        "tag": "FORM",
+        "width": 64
+      },
+      {
+        "client": 68,
+        "cls": "_fc-m-drag pc",
+        "scroll": 68,
+        "tag": "DIV",
+        "width": 68
+      },
+      {
+        "client": 108,
+        "cls": "el-main _fc-m-con",
+        "scroll": 134,
+        "tag": "MAIN",
+        "width": 108
+      },
+      {
+        "client": 108,
+        "cls": "el-container is-vertical _fc-m",
+        "scroll": 108,
+        "tag": "SECTION",
+        "width": 108
+      }
+    ]
+  },
+  {
+    "width": "900",
+    "ancestors": [
+      {
+        "client": 181,
+        "cls": "el-col el-col-24 _fd-draggable-drag _fd-drag-box",
+        "scroll": 181,
+        "tag": "DIV",
+        "width": 196
+      },
+      {
+        "client": 196,
+        "cls": "el-row fc-form-row",
+        "scroll": 196,
+        "tag": "DIV",
+        "width": 196
+      },
+      {
+        "client": 196,
+        "cls": "el-form el-form--default el-form--label-right form-create",
+        "scroll": 196,
+        "tag": "FORM",
+        "width": 196
+      },
+      {
+        "client": 200,
+        "cls": "_fc-m-drag pc",
+        "scroll": 200,
+        "tag": "DIV",
+        "width": 200
+      },
+      {
+        "client": 240,
+        "cls": "el-main _fc-m-con",
+        "scroll": 240,
+        "tag": "MAIN",
+        "width": 240
+      },
+      {
+        "client": 240,
+        "cls": "el-container is-vertical _fc-m",
+        "scroll": 240,
+        "tag": "SECTION",
+        "width": 240
+      }
+    ]
+  },
+  {
+    "width": "1024",
+    "ancestors": [
+      {
+        "client": 305,
+        "cls": "el-col el-col-24 _fd-draggable-drag _fd-drag-box",
+        "scroll": 305,
+        "tag": "DIV",
+        "width": 320
+      },
+      {
+        "client": 320,
+        "cls": "el-row fc-form-row",
+        "scroll": 320,
+        "tag": "DIV",
+        "width": 320
+      },
+      {
+        "client": 320,
+        "cls": "el-form el-form--default el-form--label-right form-create",
+        "scroll": 320,
+        "tag": "FORM",
+        "width": 320
+      },
+      {
+        "client": 324,
+        "cls": "_fc-m-drag pc",
+        "scroll": 324,
+        "tag": "DIV",
+        "width": 324
+      },
+      {
+        "client": 364,
+        "cls": "el-main _fc-m-con",
+        "scroll": 364,
+        "tag": "MAIN",
+        "width": 364
+      },
+      {
+        "client": 364,
+        "cls": "el-container is-vertical _fc-m",
+        "scroll": 364,
+        "tag": "SECTION",
+        "width": 364
+      }
+    ]
+  },
+  {
+    "width": "1280",
+    "ancestors": [
+      {
+        "client": 561,
+        "cls": "el-col el-col-24 _fd-draggable-drag _fd-drag-box",
+        "scroll": 561,
+        "tag": "DIV",
+        "width": 576
+      },
+      {
+        "client": 576,
+        "cls": "el-row fc-form-row",
+        "scroll": 576,
+        "tag": "DIV",
+        "width": 576
+      },
+      {
+        "client": 576,
+        "cls": "el-form el-form--default el-form--label-right form-create",
+        "scroll": 576,
+        "tag": "FORM",
+        "width": 576
+      },
+      {
+        "client": 580,
+        "cls": "_fc-m-drag pc",
+        "scroll": 580,
+        "tag": "DIV",
+        "width": 580
+      },
+      {
+        "client": 620,
+        "cls": "el-main _fc-m-con",
+        "scroll": 620,
+        "tag": "MAIN",
+        "width": 620
+      },
+      {
+        "client": 620,
+        "cls": "el-container is-vertical _fc-m",
+        "scroll": 620,
+        "tag": "SECTION",
+        "width": 620
+      }
+    ]
+  },
+  {
+    "width": "1440",
+    "ancestors": [
+      {
+        "client": 721,
+        "cls": "el-col el-col-24 _fd-draggable-drag _fd-drag-box",
+        "scroll": 721,
+        "tag": "DIV",
+        "width": 736
+      },
+      {
+        "client": 736,
+        "cls": "el-row fc-form-row",
+        "scroll": 736,
+        "tag": "DIV",
+        "width": 736
+      },
+      {
+        "client": 736,
+        "cls": "el-form el-form--default el-form--label-right form-create",
+        "scroll": 736,
+        "tag": "FORM",
+        "width": 736
+      },
+      {
+        "client": 740,
+        "cls": "_fc-m-drag pc",
+        "scroll": 740,
+        "tag": "DIV",
+        "width": 740
+      },
+      {
+        "client": 780,
+        "cls": "el-main _fc-m-con",
+        "scroll": 780,
+        "tag": "MAIN",
+        "width": 780
+      },
+      {
+        "client": 780,
+        "cls": "el-container is-vertical _fc-m",
+        "scroll": 780,
+        "tag": "SECTION",
+        "width": 780
+      }
+    ]
+  }
+]

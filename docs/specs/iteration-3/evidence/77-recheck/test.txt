@@ -1,0 +1,33 @@
+
+> flowduet-monorepo@0.0.0 test /Users/l/Documents/projects/flowduet
+> pnpm -r test
+
+Scope: 4 of 5 workspace projects
+packages/core test$ vitest run
+packages/core test:  RUN  v5.0.1 /Users/l/Documents/projects/flowduet/packages/core
+packages/core test:  Test Files  12 passed (12)
+packages/core test:       Tests  125 passed (125)
+packages/core test:    Start at  09:51:36
+packages/core test:    Duration  824ms (transform 46%, tests 38%, import 13%, worker 2%)
+packages/core test: Done
+packages/designer test$ vitest run
+packages/designer test:  RUN  v5.0.1 /Users/l/Documents/projects/flowduet/packages/designer
+packages/designer test:  Test Files  8 passed (8)
+packages/designer test:       Tests  127 passed (127)
+packages/designer test:    Start at  09:51:38
+packages/designer test:    Duration  7.69s (tests 43%, import 24%, environment 18%, transform 15%)
+packages/designer test: Done
+packages/form-create test$ vitest run
+packages/form-create test:  RUN  v5.0.1 /Users/l/Documents/projects/flowduet/packages/form-create
+packages/form-create test:  Test Files  7 passed (7)
+packages/form-create test:       Tests  119 passed (119)
+packages/form-create test:    Start at  09:51:46
+packages/form-create test:    Duration  43.45s (tests 76%, import 12%, environment 6%, transform 6%)
+packages/form-create test: Done
+apps/playground test$ vitest run
+apps/playground test:  RUN  v5.0.1 /Users/l/Documents/projects/flowduet/apps/playground
+apps/playground test:  Test Files  2 passed (2)
+apps/playground test:       Tests  55 passed (55)
+apps/playground test:    Start at  09:52:30
+apps/playground test:    Duration  39.08s (tests 85%, import 10%, transform 3%, environment 2%)
+apps/playground test: Done

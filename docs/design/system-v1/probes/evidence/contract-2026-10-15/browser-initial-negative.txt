@@ -1,0 +1,6 @@
+### Result
+[{"owner":"A","dirty":true,"generation":1,"selected":{"ref":{"controllerId":"A","documentEpoch":1,"kind":"node","id":"approval_1","lifetime":4},"facet":"properties"},"actual":"approval_1","mounted":3},{"owner":"B","dirty":true,"generation":1,"selected":{"ref":{"controllerId":"B","documentEpoch":1,"kind":"node","id":"approval_1","lifetime":4},"facet":"properties"},"actual":"approval_1","mounted":3}]
+### Ran Playwright code
+```js
+await (async (page) => { await page.setViewportSize({width:1440,height:1000}); const states = await page.locator("[data-test=contract-state]").allTextContents(); return states.map(s => { const x = JSON.parse(s); return {owner:x.owner,dirty:x.dirty,generation:x.generation,selected:x.selected,actual:x.actualSelectedId,mounted:x.mountedEditors}; }); })(page);
+```

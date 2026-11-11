@@ -1,0 +1,60 @@
+import { createApp, defineComponent, h } from "vue";
+import {
+  FormPreview,
+  type ComponentAppearance,
+  type FormDefinition,
+} from "@flowduet/form-create";
+import {
+  createAppearanceVariables,
+  resolveComponentAppearance,
+  type ResolvedComponentAppearance,
+} from "@flowduet/designer";
+import "element-plus/dist/index.css";
+import "@flowduet/form-create/style.css";
+
+const appearance: ComponentAppearance = {
+  colorSource: "brand",
+  mode: "dark",
+  density: "compact",
+};
+const resolved: ResolvedComponentAppearance | undefined = resolveComponentAppearance(appearance);
+if (!resolved) throw new Error("公开外观解析失败");
+const variables = createAppearanceVariables(resolved, undefined);
+if (variables?.["--fd-control-height"] !== "24px") throw new Error("公开共享色板导出失败");
+
+// @ts-expect-error mode 仅允许 light / dark
+const invalidMode: ComponentAppearance = { mode: "sepia" };
+// @ts-expect-error 启用新适配时 mode 必填
+const missingMode: ComponentAppearance = { density: "compact" };
+void invalidMode;
+void missingMode;
+
+const form: FormDefinition = {
+  id: "tarball_text_preview",
+  name: "安装包文本预览",
+  provider: "form-create/element-plus",
+  rules: JSON.stringify([
+    {
+      type: "input",
+      field: "reason",
+      title: "安装包事由",
+      value: "tarball 默认文本",
+      $required: true,
+    },
+    {
+      type: "input",
+      field: "detail",
+      title: "安装包说明",
+      value: "tarball 多行文本",
+      props: { type: "textarea", rows: 3 },
+    },
+  ]),
+  options: "{}",
+};
+
+const App = defineComponent({
+  setup() {
+    return () => h(FormPreview, { form, appearance });
+  },
+});
+createApp(App).mount("#app");

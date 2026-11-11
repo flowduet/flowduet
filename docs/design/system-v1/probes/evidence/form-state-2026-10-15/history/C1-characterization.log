@@ -1,0 +1,43 @@
+
+ RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground
+
+ ✓ probes/stage-zero/form-state.test.ts > C0 表单状态观察 > value_presence_and_types_are_distinct：{} 3ms
+ ✓ probes/stage-zero/form-state.test.ts > C0 表单状态观察 > value_presence_and_types_are_distinct：{"value":0} 0ms
+ ✓ probes/stage-zero/form-state.test.ts > C0 表单状态观察 > value_presence_and_types_are_distinct：{"value":false} 0ms
+ ✓ probes/stage-zero/form-state.test.ts > C0 表单状态观察 > value_presence_and_types_are_distinct：{"value":[]} 0ms
+ ✓ probes/stage-zero/form-state.test.ts > C0 表单状态观察 > value_presence_and_types_are_distinct：{"value":""} 0ms
+ ✓ probes/stage-zero/form-state.test.ts > C0 表单状态观察 > value_presence_and_types_are_distinct：{"value":null} 0ms
+ ✓ probes/stage-zero/form-state.test.ts > C0 表单状态观察 > 不把不同默认值归一：0 / "0" 13ms
+ ✓ probes/stage-zero/form-state.test.ts > C0 表单状态观察 > 不把不同默认值归一：false / undefined 0ms
+ ✓ probes/stage-zero/form-state.test.ts > C0 表单状态观察 > 不把不同默认值归一：[] / undefined 0ms
+ ✓ probes/stage-zero/form-state.test.ts > C0 表单状态观察 > 不把不同默认值归一："" / undefined 0ms
+ ✓ probes/stage-zero/form-state.test.ts > C0 表单状态观察 > 允许运行态元数据变化，但字段/选项/列顺序变化不等价 1ms
+ ✓ probes/stage-zero/form-state.test.ts > C0 表单状态观察 > observe_does_not_flush_focused_input：读取原生文字/选区不失焦 6ms
+ ✓ probes/stage-zero/form-state.test.ts > C0 表单状态观察 > 真实FormDesigner装载与菜单仍在，不用组件桩证明观察 2669ms
+ ✓ probes/stage-zero/form-state.test.ts > C1 typed_defaults_roundtrip 夹具与既有守卫 > typed_defaults_roundtrip F01/empty 1ms
+ ✓ probes/stage-zero/form-state.test.ts > C1 typed_defaults_roundtrip 夹具与既有守卫 > typed_defaults_roundtrip F02/normal-default 0ms
+ ✓ probes/stage-zero/form-state.test.ts > C1 typed_defaults_roundtrip 夹具与既有守卫 > typed_defaults_roundtrip F03/zero 0ms
+ ✓ probes/stage-zero/form-state.test.ts > C1 typed_defaults_roundtrip 夹具与既有守卫 > typed_defaults_roundtrip F03/negative 0ms
+ ✓ probes/stage-zero/form-state.test.ts > C1 typed_defaults_roundtrip 夹具与既有守卫 > typed_defaults_roundtrip F03/decimal 0ms
+ ✓ probes/stage-zero/form-state.test.ts > C1 typed_defaults_roundtrip 夹具与既有守卫 > typed_defaults_roundtrip F04/zero 0ms
+ ✓ probes/stage-zero/form-state.test.ts > C1 typed_defaults_roundtrip 夹具与既有守卫 > typed_defaults_roundtrip F04/string-zero 0ms
+ ✓ probes/stage-zero/form-state.test.ts > C1 typed_defaults_roundtrip 夹具与既有守卫 > typed_defaults_roundtrip F05/empty-array 0ms
+ ✓ probes/stage-zero/form-state.test.ts > C1 typed_defaults_roundtrip 夹具与既有守卫 > typed_defaults_roundtrip F05/selected-array 0ms
+ ✓ probes/stage-zero/form-state.test.ts > C1 typed_defaults_roundtrip 夹具与既有守卫 > typed_defaults_roundtrip F06/zero 0ms
+ ✓ probes/stage-zero/form-state.test.ts > C1 typed_defaults_roundtrip 夹具与既有守卫 > typed_defaults_roundtrip F06/string-zero 0ms
+ ✓ probes/stage-zero/form-state.test.ts > C1 typed_defaults_roundtrip 夹具与既有守卫 > typed_defaults_roundtrip F08/false 0ms
+ ✓ probes/stage-zero/form-state.test.ts > C1 typed_defaults_roundtrip 夹具与既有守卫 > typed_defaults_roundtrip F08/true 0ms
+ ✓ probes/stage-zero/form-state.test.ts > C1 typed_defaults_roundtrip 夹具与既有守卫 > checkbox_empty_array_vs_absent；textarea_newline_and_grid_order 0ms
+ ✓ probes/stage-zero/form-state.test.ts > C1 typed_defaults_roundtrip 夹具与既有守卫 > imported_single_date_shapes_keep_type  0ms
+ ✓ probes/stage-zero/form-state.test.ts > C1 typed_defaults_roundtrip 夹具与既有守卫 > imported_single_date_shapes_keep_type date 0ms
+ ✓ probes/stage-zero/form-state.test.ts > C1 typed_defaults_roundtrip 夹具与既有守卫 > imported_single_date_shapes_keep_type datetime 0ms
+ ✓ probes/stage-zero/form-state.test.ts > C1 typed_defaults_roundtrip 夹具与既有守卫 > imported_single_date_shapes_keep_type week 0ms
+ ✓ probes/stage-zero/form-state.test.ts > C1 typed_defaults_roundtrip 夹具与既有守卫 > imported_single_date_shapes_keep_type month 0ms
+ ✓ probes/stage-zero/form-state.test.ts > C1 typed_defaults_roundtrip 夹具与既有守卫 > imported_single_date_shapes_keep_type year 0ms
+ ✓ probes/stage-zero/form-state.test.ts > C1 typed_defaults_roundtrip 夹具与既有守卫 > 同ID双控制器不共享当前定义或编辑目标 13ms
+
+ Test Files  1 passed (1)
+      Tests  34 passed (34)
+   Start at  17:29:36
+   Duration  6.79s (tests 41%, import 35%, transform 16%, environment 8%)
+

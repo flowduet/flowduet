@@ -1,0 +1,11 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import {fileURLToPath} from 'node:url';
+import {BpmnModel,compile,parse,flowableAdapter,verticalDiLayout,CORE_VERSION} from '@flowduet/core';
+import {exportXml,DingtalkDesigner,BpmnCanvas} from '@flowduet/designer';
+const model=BpmnModel.create({processId:'release_consumer',adapter:flowableAdapter}).addStartEvent({id:'s'}).addUserTask({id:'u',assignee:'张三'}).addEndEvent({id:'e'}).addSequenceFlow({id:'a',sourceRef:'s',targetRef:'u'}).addSequenceFlow({id:'b',sourceRef:'u',targetRef:'e'});
+const xml=await compile(model,{diLayout:verticalDiLayout()});const restored=await parse(xml,{adapter:flowableAdapter,rejectWarnings:true,rejectUnregisteredNamespaces:true});assert((await exportXml(restored)).includes('release_consumer'));assert(DingtalkDesigner&&BpmnCanvas);assert.equal(CORE_VERSION,'0.3.0');
+for(const name of ['core','designer','form-create']){const meta=JSON.parse(fs.readFileSync(fileURLToPath(import.meta.resolve('@flowduet/'+name+'/package.json'))));assert.equal(meta.version,name==='core'?'0.3.0':'0.1.0');if(name!=='form-create')assert(!Object.keys(meta.dependencies??{}).some(n=>n.startsWith('@form-create/')));}
+for(const name of ['designer','form-create'])assert(fs.existsSync(fileURLToPath(import.meta.resolve('@flowduet/'+name+'/style.css'))));
+let boundary;try{await import('@flowduet/form-create');}catch(e){boundary=e.message;assert(boundary.includes('document is not defined'));}assert(boundary);
+console.log(JSON.stringify({coreVersion:CORE_VERSION,compileParse:true,publicDesigner:true,css:true,nodeFormCreateBoundary:boundary}));

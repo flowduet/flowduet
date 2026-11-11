@@ -1,0 +1,44 @@
+async page => {
+ await page.getByRole('button',{name:'B03 P1 修复'}).click();
+ const rows=[];const assert=(ok,x)=>{if(!ok)throw Error(JSON.stringify(x));};
+ const dialog=()=>page.getByRole('dialog',{name:'编辑表单：甲表单',exact:true});
+ const open=async()=>{await page.locator('[data-test="form-edit-btn-form_1"]').click();await dialog().waitFor({state:'visible'});await dialog().locator('._fc-m-drag ._fd-drag-mask').nth(2).click();return dialog().locator('[data-retained-input="number"]');};
+ for(let round=1;round<=3;round++) {
+  let input=await open();await input.fill('-');const element=await input.elementHandle();
+  await input.press('Escape');assert(await dialog().isVisible(),'idle Escape closed');
+  for(const method of ['x','mask','cancel']) {
+   if(method==='x')await dialog().locator('[data-test="form-manager-close"]').click();
+   else if(method==='cancel')await dialog().locator('[data-test="form-designer-cancel"]').click();
+   else {await page.locator(".el-overlay:visible").last().click({position:{x:5,y:5}});}
+   const confirm=page.getByRole('dialog',{name:'关闭表单',exact:true});await confirm.waitFor({state:'visible'});
+   await confirm.getByRole('button',{name:'继续编辑'}).click();await confirm.waitFor({state:'hidden'});
+   assert(await dialog().isVisible()&&(await input.inputValue())==='-'&&await input.evaluate((el,old)=>el===old,element),{method});
+   rows.push({id:'M02/M03',round,method,raw:await input.inputValue(),sameNativeInput:true,pass:true});
+  }
+  await input.evaluate(el=>el.dispatchEvent(new CompositionEvent('compositionstart',{bubbles:true})));
+  await input.focus();
+  for(const method of ['x','cancel']){
+   await dialog().locator(`[data-test="${method==='x'?'form-manager-close':'form-designer-cancel'}"]`).click();
+   assert(await dialog().isVisible()&&await input.evaluate(el=>document.activeElement===el),{method,busy:true});
+   assert(await page.getByRole('dialog',{name:'关闭表单',exact:true}).count()===0,'busy opened confirmation');
+   rows.push({id:'M03/M04',round,method,source:'composition protocol + native pointer',focusKept:true,pass:true});
+  }
+  await input.press('Escape');assert(await dialog().isVisible(),'IME protocol escape closed');
+  await input.evaluate(el=>el.dispatchEvent(new CompositionEvent('compositionend',{bubbles:true})));
+  await dialog().locator('[data-test="form-designer-cancel"]').click();
+  const confirm=page.getByRole('dialog',{name:'关闭表单',exact:true});await confirm.waitFor({state:'visible'});
+  await confirm.press('Escape');await confirm.waitFor({state:'hidden'});
+  assert(await dialog().isVisible()&&(await input.inputValue())==='-','confirmation Escape discarded');
+  await dialog().locator('[data-test="form-manager-close"]').click();await confirm.waitFor({state:'visible'});
+  // 异步确认的协议复现：原控件发新input，旧肯定答复必须过期。
+  await input.evaluate(el=>{el.value='1e';el.dispatchEvent(new InputEvent('input',{bubbles:true,inputType:'insertText',data:'e'}));});
+  await confirm.getByRole('button',{name:'放弃并关闭'}).click();await confirm.waitFor({state:'hidden'});
+  assert(await dialog().isVisible()&&(await input.inputValue())==='1e','stale confirmation closed');
+  rows.push({id:'M06',round,source:'protocol input during native confirmation',raw:await input.inputValue(),pass:true});
+  await dialog().locator('[data-test="form-designer-cancel"]').click();await confirm.waitFor({state:'visible'});await confirm.getByRole('button',{name:'放弃并关闭'}).click();await dialog().waitFor({state:'hidden'});
+  input=await open();assert((await input.inputValue())==='0','discarded raw revived');
+  await input.fill('37');await dialog().locator('[data-test="form-designer-save"]').click();await dialog().waitFor({state:'hidden'});
+  rows.push({id:'M07',round,reopenedRaw:'0',validCommitClosed:true,pass:true});
+ }
+ return {source:'real FormManager/Dialog/FormDesigner, protocol composition and in-confirmation input explicitly marked',rows};
+}

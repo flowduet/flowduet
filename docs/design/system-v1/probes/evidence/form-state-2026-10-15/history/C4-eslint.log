@@ -1,0 +1,7 @@
+
+/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground/probes/stage-zero/form-state.test.ts
+  24:61  error  Unnecessary escape character: \"  no-useless-escape
+  24:63  error  Unnecessary escape character: \"  no-useless-escape
+
+✖ 2 problems (2 errors, 0 warnings)
+

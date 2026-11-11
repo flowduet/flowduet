@@ -1,0 +1,45 @@
+
+ RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/form-create
+
+ ❯ src/components.test.ts (34 tests | 2 failed | 32 skipped) 34238ms
+   ❯ FormManager（目录管理面板） (6)
+     × 内容守卫前置：超范围字段不 emit 且编辑器保持打开供修正 12424ms
+     × 重复字段标识不能关闭编辑器或上报保存 21805ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/components.test.ts > FormManager（目录管理面板） > 内容守卫前置：超范围字段不 emit 且编辑器保持打开供修正
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ src/components.test.ts:212:3
+    210|   });
+    211|
+    212|   it("内容守卫前置：超范围字段不 emit 且编辑器保持打开供修正", async () => {
+       |   ^
+    213|     const manager = mount(FormManager, { props: { forms: [APPLY_FORM] …
+    214|     await manager.find('[data-test="form-edit-btn-form_apply"]').trigg…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/components.test.ts > FormManager（目录管理面板） > 重复字段标识不能关闭编辑器或上报保存
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ src/components.test.ts:234:3
+    232|   });
+    233|
+    234|   it("重复字段标识不能关闭编辑器或上报保存", async () => {
+       |   ^
+    235|     wrapper = mount(FormManager, { props: { forms: [APPLY_FORM] }, att…
+    236|     await wrapper.find('[data-test="form-edit-btn-form_apply"]').trigg…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 32 skipped (34)
+   Start at  14:04:18
+   Duration  41.75s (tests 83%, import 11%, environment 3%, transform 3%)
+
+undefined
+/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/form-create:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run src/components.test.ts -t 内容守卫前置|重复字段标识不能

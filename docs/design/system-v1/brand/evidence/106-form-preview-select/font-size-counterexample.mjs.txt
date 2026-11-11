@@ -1,0 +1,45 @@
+import { chromium } from '/Users/l/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright/index.mjs';
+import { writeFile } from 'node:fs/promises';
+const browser = await chromium.launch({ headless: true, executablePath: '/Users/l/Library/Caches/ms-playwright/chromium-1248/chrome-mac-x64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing' });
+const page = await browser.newPage({ viewport: { width: 1440, height: 2200 } });
+let injected = false;
+const results = [];
+const failures = [];
+try {
+  await page.route('**/assets/*.js', async route => {
+    const response = await route.fetch();
+    let source = await response.text();
+    const anchor = 'popperClass:`inline-select-panel`,popperStyle:{';
+    if (source.includes(anchor)) {
+      source = source.replace(anchor, anchor + '"--el-font-size-base":`28px`,');
+      injected = true;
+    }
+    await route.fulfill({ response, body: source });
+  });
+  await page.goto(process.argv[2] || 'http://127.0.0.1:4176/', { waitUntil: 'networkidle' });
+  await page.locator('[data-test="form-appearance-scene-btn"]').click();
+  const input = page.locator('[data-test="form-appearance-second-instance"] .el-select__input').nth(1);
+  const panel = page.locator('.el-select__popper.inline-select-panel');
+  for (const source of ['legacy', 'host', 'brand']) {
+    await page.locator('[data-test="form-appearance-second-enabled"]').setChecked(source !== 'legacy');
+    if (source !== 'legacy') await page.locator('[data-test="form-appearance-second-source"]').selectOption(source);
+    await input.focus();
+    if (!(await panel.isVisible())) await input.press('ArrowDown');
+    await panel.waitFor({ state: 'visible' });
+    const actual = await panel.evaluate(element => ({
+      configured: element.style.getPropertyValue('--el-font-size-base'),
+      actual: getComputedStyle(element.querySelector('.el-select-dropdown__item')).fontSize,
+      selected: getComputedStyle(element.querySelector('.is-selected')).color,
+    }));
+    results.push({ source, ...actual });
+    if (actual.actual !== '28px') failures.push(`${source}: 显式28px被覆盖为${actual.actual}`);
+    await input.press('Escape');
+  }
+} finally {
+  if (!injected) failures.push('公开样例注入未命中，不能作为有效反例');
+  const report = { browser: browser.version(), injected, results, failures };
+  if (process.argv[3]) await writeFile(process.argv[3], JSON.stringify(report, null, 2));
+  console.log(JSON.stringify(report, null, 2));
+  await browser.close();
+}
+if (failures.length) process.exitCode = 1;

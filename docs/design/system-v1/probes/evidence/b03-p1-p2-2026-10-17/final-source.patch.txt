@@ -1,0 +1,496 @@
+diff --git a/packages/form-create/README.md b/packages/form-create/README.md
+index 3d0767f..6848c24 100644
+--- a/packages/form-create/README.md
++++ b/packages/form-create/README.md
+@@ -148,6 +148,8 @@ Apache-2.0（见 [LICENSE](./LICENSE)）
+ 
+ `FormDesigner`、`FormManager` 可传 `editingMode="retained"`；缺省和显式 `legacy` 保持原有导出、保存、取消与 Dialog 行为。模式在挂载时固定，活动期间修改会报告 `unsupported-mode`；更换模式或文档前须由宿主确认放弃/替换，再创建新实例。相同字符串内容的文档替换也须由宿主管理生命期，组件不能仅凭两个 JSON 字符串识别文档身份。
+ 
++FormManager 尚未打开编辑器或两次打开之间修改模式，也不会改变之后子编辑器的实现；模式冲突后，保存按钮与 `commitPendingEdit()` 均拒绝提交，不能通过旧出口绕过。须由宿主处理当前输入并创建新的 FormManager 实例才能选择其他模式。
++
+ retained 使用自有文本入口保留数值 `-`、`1.`、`1e` 与日期 `2026-` 等中间原文；合法有限数值写入规则为 number，普通日期仅接受有效 `YYYY-MM-DD`，日历仍可明确确认日期。空输入表示未设置，`0` 是有效默认值。六类既有单值日期和自定义 `valueFormat` 未编辑时原样往返；非普通 date/自定义格式的手工编辑会保留原文并报告 `unsupported-input`。这些原文仅存于当前挂载的编辑器，不能序列化到设计文档。
+ 
+ 新增三种根导出 DTO：`FormDesignerBlocker`、`FormDesignerEditingState`、`FormDesignerCaptureResult`。`FormDesigner#readEditingState()` 只读返回本实例模式、编辑版本、`canSuspend`、`canCapture` 与原因；`captureContent()` 同步返回 `captured`（成对 rules/options）、`blocked` 或 `failed`。合法输入须经过公开 prop 回显与原规则确认；组合、拖动、弹层、未确认的第三方输入或捕获期间版本变化都会阻断。宿主 UI 可等待一次 `nextTick` 再重读，不能把同步适配器改为异步，也不能在失败时保存旧值。legacy 的新捕获接口返回 `unsupported-mode`，原 `exportContent()` 不变。
+diff --git a/packages/form-create/src/components.test.ts b/packages/form-create/src/components.test.ts
+index 67b009d..2b38e31 100644
+--- a/packages/form-create/src/components.test.ts
++++ b/packages/form-create/src/components.test.ts
+@@ -1700,3 +1700,227 @@ it("旧页头关闭按钮的迟到click不取得新会话的放弃授权", async
+     confirm.mockRestore();
+   }
+ });
++
++/** 原生input不等于change；测试不得用会额外派发change的setValue掩盖等待门。 */
++async function retainedTitle() {
++  await selectRetained("amount");
++  const item = wrapper!
++    .findComponent(FcDesigner)
++    .findAll("._fc-r-config .el-form-item")
++    .find((row) => row.text().includes("字段名称"));
++  expect(item).toBeDefined();
++  return item!.get<HTMLInputElement>("input");
++}
++function typeNative(input: HTMLInputElement, text: string) {
++  input.value = text;
++  input.dispatchEvent(new Event("input", { bubbles: true }));
++}
++
++describe("P1复审P2：属性控件确认与删除生命期", () => {
++  it("恢复原值且没有change时，刷新后可捕获；同步阶段仍阻断", async () => {
++    const vm = await retainedEditor();
++    const input = await retainedTitle();
++    input.element.focus();
++    const original = input.element.value;
++    typeNative(input.element, `${original}x`);
++    await flushPromises();
++    expect(vm.readEditingState().canCapture).toBe(false);
++    typeNative(input.element, original);
++    expect(vm.captureContent().status).toBe("blocked");
++    input.element.blur();
++    await flushPromises();
++    expect(vm.readEditingState().canSuspend).toBe(true);
++    const captured = vm.captureContent();
++    expect(captured.status).toBe("captured");
++    if (captured.status === "captured")
++      expect(JSON.parse(captured.content.rules)[0].title).toBe("金额");
++  });
++  it.each(["delete", "clear"] as const)(
++    "%s撤销已移除控件的等待，不要求change",
++    async (operation) => {
++      const vm = await retainedEditor();
++      const input = await retainedTitle();
++      input.element.focus();
++      typeNative(input.element, "未确认名称");
++      await flushPromises();
++      expect(vm.readEditingState().canCapture).toBe(false);
++      const fc = wrapper!.findComponent(FcDesigner).vm;
++      if (operation === "clear") fc.clearDragRule();
++      else
++        await wrapper!.findComponent(FcDesigner).get("._fc-m-drag .icon-delete").trigger("click");
++      await flushPromises();
++      expect(input.element.isConnected).toBe(false);
++      expect(vm.readEditingState().canSuspend).toBe(true);
++      const captured = vm.captureContent();
++      expect(captured.status).toBe("captured");
++      if (captured.status === "captured") {
++        const rules = JSON.parse(captured.content.rules);
++        expect(rules.some((r: { field: string }) => r.field === "amount")).toBe(false);
++        if (operation === "clear") expect(rules).toEqual([]);
++      }
++    },
++  );
++  it("旧change的下一tick不能清除同控件更新后的未确认输入", async () => {
++    const vm = await retainedEditor();
++    const input = await retainedTitle();
++    input.element.focus();
++    typeNative(input.element, "已确认");
++    input.element.dispatchEvent(new Event("change", { bubbles: true }));
++    typeNative(input.element, "更新但未确认");
++    await flushPromises();
++    expect(vm.captureContent().status).toBe("blocked");
++    input.element.dispatchEvent(new Event("change", { bubbles: true }));
++    await flushPromises();
++    expect(vm.captureContent().status).toBe("captured");
++  });
++});
++
++describe("P1复审P2：同步捕获重入", () => {
++  it.each([
++    ["inputNumber", 1000, "1e3"],
++    ["inputNumber", 1, "01"],
++    ["datePicker", "2024-02-29", "2024-02-29"],
++  ] as const)("%s的等价原文%s→%s在公开回显前也必须阻断", async (type, value, raw) => {
++    const seen: FormDesignerCaptureResult[] = [];
++    let armed = false;
++    wrapper = mount(FormDesigner, {
++      props: {
++        name: "同步重入",
++        rules: JSON.stringify([{ type, field: "amount", title: "值", value }]),
++        options: "{}",
++        editingMode: "retained",
++        onDraftChange: () => {
++          if (armed) seen.push((wrapper!.vm as unknown as RetainedVm).captureContent());
++        },
++      },
++      attachTo: document.body,
++    });
++    await flushPromises();
++    const input = await selectRetained("amount");
++    armed = true;
++    typeNative(input.element, raw);
++    armed = false;
++    expect(seen).toHaveLength(1);
++    expect(seen[0]).toMatchObject({ status: "blocked", blockers: [{ code: "pending-update" }] });
++    await flushPromises();
++    const captured = (wrapper.vm as unknown as RetainedVm).captureContent();
++    expect(captured.status).toBe("captured");
++    if (captured.status === "captured")
++      expect(JSON.parse(captured.content.rules)[0].value).toBe(value);
++    expect(input.element.value).toBe(raw);
++  });
++});
++
++describe("P1复审P2：模式冲突后打开与重开", () => {
++  it.each(["legacy", "retained"] as const)(
++    "%s挂载后改变模式不切换子实现，也不经旧出口提交",
++    async (initial) => {
++      wrapper = mount(FormManager, {
++        props: { forms: [{ ...APPLY_FORM, rules: numericDateRules }], editingMode: initial },
++        attachTo: document.body,
++      });
++      const vm = wrapper.vm as unknown as ManagerVm;
++      await wrapper.setProps({ editingMode: initial === "legacy" ? "retained" : "legacy" });
++      await wrapper.get('[data-test="form-edit-btn-form_apply"]').trigger("click");
++      await flushPromises();
++      expect(wrapper.findComponent(FormDesigner).props("editingMode")).toBe(initial);
++      expect(vm.readEditingState()?.blockers[0]?.code).toBe("unsupported-mode");
++      expect(vm.commitPendingEdit()).toBe(false);
++      wrapper.findComponent(FormDesigner).vm.$emit("save", "[]", "{}");
++      await flushPromises();
++      expect(vm.hasOpenEditor()).toBe(true);
++      expect(wrapper.emitted("updateContent")).toBeUndefined();
++    },
++  );
++  it.each(["legacy", "retained"] as const)(
++    "%s成功关闭后改模式重开，拒绝新模式且旧内容不再提交",
++    async (initial) => {
++      wrapper = mount(FormManager, {
++        props: { forms: [{ ...APPLY_FORM, rules: numericDateRules }], editingMode: initial },
++        attachTo: document.body,
++      });
++      const vm = wrapper.vm as unknown as ManagerVm;
++      await wrapper.get('[data-test="form-edit-btn-form_apply"]').trigger("click");
++      await flushPromises();
++      expect(vm.commitPendingEdit()).toBe(true);
++      await flushPromises();
++      await wrapper.setProps({ editingMode: initial === "legacy" ? "retained" : "legacy" });
++      await wrapper.get('[data-test="form-edit-btn-form_apply"]').trigger("click");
++      await flushPromises();
++      expect(wrapper.findComponent(FormDesigner).props("editingMode")).toBe(initial);
++      expect(vm.commitPendingEdit()).toBe(false);
++      expect(vm.hasOpenEditor()).toBe(true);
++      expect(wrapper.emitted("updateContent")).toHaveLength(1);
++    },
++  );
++});
++
++it("P1复审P2：删除其他字段不会清除仍在场的属性输入等待", async () => {
++  const vm = await retainedEditor();
++  const input = await retainedTitle();
++  input.element.focus();
++  typeNative(input.element, "等待确认的金额名称");
++  await flushPromises();
++  await wrapper!.findComponent(FcDesigner).findAll("._fc-m-drag .icon-delete")[1]!.trigger("click");
++  await flushPromises();
++  expect(input.element.isConnected).toBe(true);
++  expect(vm.captureContent().status).toBe("blocked");
++  input.element.dispatchEvent(new Event("change", { bubbles: true }));
++  await flushPromises();
++  const captured = vm.captureContent();
++  expect(captured.status).toBe("captured");
++  if (captured.status === "captured")
++    expect(JSON.parse(captured.content.rules)).toMatchObject([
++      { field: "amount", title: "等待确认的金额名称" },
++    ]);
++});
++
++it("P1复审P2：原生number的badInput空串不能冒充恢复初始空值", async () => {
++  const vm = await retainedEditor();
++  await selectRetained("amount");
++  const item = wrapper!
++    .findComponent(FcDesigner)
++    .findAll("._fc-r-config .el-form-item")
++    .find((row) => row.text().includes("设置计数器允许的最小值"))!;
++  const input = item.get<HTMLInputElement>('input[type="number"]');
++  input.element.focus();
++  // 模拟DOM不产生浏览器badInput；仅替换这个公开只读状态，输入与业务链路仍是真实组件。
++  const validity = input.element.validity;
++  const guard = vi
++    .spyOn(input.element, "validity", "get")
++    .mockReturnValue(Object.create(validity, { badInput: { value: true } }));
++  try {
++    typeNative(input.element, "");
++    await flushPromises();
++    expect(vm.captureContent().status).toBe("blocked");
++    input.element.dispatchEvent(new Event("change", { bubbles: true }));
++    await flushPromises();
++    expect(vm.captureContent().status).toBe("blocked");
++  } finally {
++    guard.mockRestore();
++  }
++  typeNative(input.element, "");
++  await flushPromises();
++  expect(vm.captureContent().status).toBe("captured");
++});
++
++it("P1复审P2：同次change和blur的合法number归一后解除等待", async () => {
++  const vm = await retainedEditor();
++  await selectRetained("amount");
++  const item = wrapper!
++    .findComponent(FcDesigner)
++    .findAll("._fc-r-config .el-form-item")
++    .find((row) => row.text().includes("设置计数器允许的最小值"))!;
++  const input = item.get<HTMLInputElement>('input[type="number"]');
++  input.element.focus();
++  typeNative(input.element, "01");
++  input.element.dispatchEvent(new Event("change", { bubbles: true }));
++  input.element.blur();
++  await flushPromises();
++  expect(input.element.value).toBe("1");
++  expect(vm.readEditingState().canSuspend).toBe(true);
++  const captured = vm.captureContent();
++  expect(captured.status).toBe("captured");
++  if (captured.status === "captured")
++    expect(JSON.parse(captured.content.rules)[0].props.min).toBe(1);
++});
+diff --git a/packages/form-create/src/components/FormDesigner.vue b/packages/form-create/src/components/FormDesigner.vue
+index 0c3f44b..3e87bdc 100644
+--- a/packages/form-create/src/components/FormDesigner.vue
++++ b/packages/form-create/src/components/FormDesigner.vue
+@@ -58,7 +58,8 @@ let revision = 0,
+   foreignComposition = false;
+ let changedMode = false,
+   replaced = false;
+-const pendingControls = new Set<EventTarget>();
++const pendingControls = new Map<Element, symbol>();
++const focusValues = new WeakMap<Element, string>();
+ const captureError = ref("");
+ const inputState = createEditorInputState((edited) => {
+   if (edited) {
+@@ -69,7 +70,11 @@ const inputState = createEditorInputState((edited) => {
+ });
+ const config =
+   mode === "retained"
+-    ? retainedDesignerConfig((source) => inputState.bind(source), owner)
++    ? {
++        ...retainedDesignerConfig((source) => inputState.bind(source), owner),
++        // 普通字段的delete事件晚于属性区移除；公开前置钩子先记录仍在场的控件。
++        beforeRemoveRule: releaseRemovedControls,
++      }
+     : DESIGNER_CONFIG;
+ function blockers(): FormDesignerBlocker[] {
+   if (disposed) return [{ code: "disposed", message: "编辑器已销毁" }];
+@@ -144,18 +149,67 @@ function nativeInput(event: Event) {
+     event.target instanceof Element &&
+     !event.target.matches("[data-retained-input]")
+   ) {
+-    if (event.type === "input") pendingControls.add(event.target);
+-    else {
+-      const target = event.target;
+-      void nextTick(() => {
+-        pendingControls.delete(target);
+-        notifyState();
+-      });
+-    }
++    const target = event.target;
++    const token = Symbol();
++    pendingControls.set(target, token);
++    // 恢复聚焦前原值时浏览器不会发change；仍须等本次公开输入回填完成。
++    if (
++      event.type === "change" ||
++      (controlValue(target) !== undefined && controlValue(target) === focusValues.get(target))
++    )
++      confirmControl(target, token);
+     notifyState();
+   }
+   notifyDraftChange();
+ }
++function controlValue(target: Element): string | undefined {
++  // 原生number的非法中间串也可能显示为空；不能把badInput误判成恢复空值。
++  if (hasBadInput(target)) return undefined;
++  return target instanceof HTMLInputElement ||
++    target instanceof HTMLTextAreaElement ||
++    target instanceof HTMLSelectElement
++    ? target.value
++    : undefined;
++}
++function hasBadInput(target: Element): boolean {
++  return target instanceof HTMLInputElement && target.validity.badInput;
++}
++function confirmControl(target: Element, token: symbol) {
++  void nextTick(() => {
++    // 旧change/恢复回调不能放行同一控件在该tick内更新后的输入。
++    if (disposed || hasBadInput(target) || pendingControls.get(target) !== token) return;
++    pendingControls.delete(target);
++    // 同次公开确认允许provider把01等合法字形归一；新输入由token判断，不能靠字符串相等。
++    const value = controlValue(target);
++    if (value !== undefined) focusValues.set(target, value);
++    notifyState();
++  });
++}
++function focusIn(event: FocusEvent) {
++  if (mode !== "retained") return;
++  const target = event.target;
++  if (target instanceof Element && !pendingControls.has(target)) {
++    const value = controlValue(target);
++    if (value !== undefined) focusValues.set(target, value);
++  }
++  void nextTick(notifyState);
++}
++function releaseRemovedControls() {
++  // 仅在已确认delete/clear的结构操作中回收其实际移除的控件；K隐藏、切字段不走此路。
++  const connected = [...pendingControls].filter(([target]) => hostRef.value?.contains(target));
++  queueMicrotask(() => {
++    // 前置钩子早于provider排入Vue更新；先让同步删除结束，再等待那一次刷新。
++    void nextTick(() => {
++      if (disposed) return;
++      for (const [target, token] of connected)
++        if (!hostRef.value?.contains(target) && pendingControls.get(target) === token) {
++          pendingControls.delete(target);
++          focusValues.delete(target);
++        }
++      notifyState();
++    });
++  });
++}
+ function composition(event: CompositionEvent) {
+   if (
+     mode !== "retained" ||
+@@ -188,11 +242,17 @@ function drag(event: DragEvent) {
+   }
+ }
+ function removeField(source: Parameters<typeof inputState.release>[0]) {
+-  if (mode === "retained") inputState.release(source);
++  if (mode === "retained") {
++    releaseRemovedControls();
++    inputState.release(source);
++  }
+   notifyDraftChange();
+ }
+ function clearFields() {
+-  if (mode === "retained") inputState.clear();
++  if (mode === "retained") {
++    releaseRemovedControls();
++    inputState.clear();
++  }
+   notifyDraftChange();
+ }
+ onBeforeUnmount(() => {
+@@ -316,7 +376,7 @@ function save(): void {
+     @change.capture="nativeInput"
+     @compositionstart.capture="composition"
+     @compositionend.capture="composition"
+-    @focusin.capture="mode === 'retained' && nextTick(notifyState)"
++    @focusin.capture="focusIn"
+     @dragstart.capture="drag"
+     @dragend.capture="drag"
+   >
+diff --git a/packages/form-create/src/components/FormManager.vue b/packages/form-create/src/components/FormManager.vue
+index b74def5..9f539e4 100644
+--- a/packages/form-create/src/components/FormManager.vue
++++ b/packages/form-create/src/components/FormManager.vue
+@@ -427,8 +427,9 @@ function beforeClose(done: () => void) {
+  */
+ function submitContent(rules: string, options: string, session = editorSession.value): boolean {
+   if (
+-    mode === "retained" &&
+-    (!current(session) || unsupportedMode || session.invalidated || !definitionMatches(session))
++    unsupportedMode ||
++    (mode === "retained" &&
++      (!current(session) || session.invalidated || !definitionMatches(session)))
+   ) {
+     editError.value = "表单编辑会话已变化，请由宿主确认处理后重开";
+     return false;
+@@ -462,6 +463,10 @@ function submitContent(rules: string, options: string, session = editorSession.v
+  */
+ function commitPendingEdit(): boolean {
+   if (!hasOpenEditor()) return true;
++  if (unsupportedMode) {
++    editError.value = "编辑模式不可在当前挂载中切换，请确认处理后另开实例";
++    return false;
++  }
+   try {
+     if (mode === "retained") {
+       const result = activeDesigner()?.captureContent();
+@@ -647,7 +652,7 @@ defineExpose({ commitPendingEdit, hasOpenEditor, readEditingState });
+         v-if="editing"
+         :ref="editorSession?.bindDesigner ?? (() => {})"
+         :key="editorSession?.key ?? 'closed'"
+-        :editing-mode="props.editingMode ?? 'legacy'"
++        :editing-mode="mode"
+         v-on="editorSession?.handlers ?? {}"
+         :name="editing.name"
+         :rules="editing.rules"
+diff --git a/packages/form-create/src/components/editor-input-state.ts b/packages/form-create/src/components/editor-input-state.ts
+index 774c0e2..b76e3cc 100644
+--- a/packages/form-create/src/components/editor-input-state.ts
++++ b/packages/form-create/src/components/editor-input-state.ts
+@@ -45,6 +45,7 @@ function createBinding(source: Source, notify: (edited: boolean) => void) {
+     waiting = false,
+     dirty = false,
+     conflict = false;
++  let inputVersion = 0;
+   const state = shallowReactive({
+     get field() {
+       return String(source.field ?? "");
+@@ -63,18 +64,15 @@ function createBinding(source: Source, notify: (edited: boolean) => void) {
+     },
+     input(raw: string, publish: Publish) {
+       if (!alive) return;
++      const version = ++inputVersion;
+       state.raw = raw;
+       dirty = true;
+-      waiting = false;
+-      notify(true);
+-      if (state.composing || !state.supported || conflict) return;
+       const parsed = parseRaw(raw, kind);
+-      if (!parsed.valid) return;
+-      expected = parsed.value;
+-      waiting = true;
+-      // 即使与原业务值相等，也要等公开prop的确认；组件在下一次Vue刷新核对。
+-      notify(false);
+-      publish(expected);
++      waiting = !state.composing && state.supported && !conflict && parsed.valid;
++      if (waiting) expected = parsed.value;
++      // draftChange订阅者可同步捕获；包括业务值相等的输入，也须先关闭回显前的捕获窗口。
++      notify(true);
++      if (alive && version === inputVersion && waiting) publish(parsed.value);
+     },
+     echo(value: unknown) {
+       if (!alive) return;
+diff --git a/packages/form-create/src/editor-input-state.test.ts b/packages/form-create/src/editor-input-state.test.ts
+index a5cda0e..20dfe01 100644
+--- a/packages/form-create/src/editor-input-state.test.ts
++++ b/packages/form-create/src/editor-input-state.test.ts
+@@ -108,3 +108,41 @@ it("尚未绑定字段的raw不允许捕获或导航", () => {
+   state.bind({ type: "inputNumber" }).input("-", () => {});
+   expect(state.blockers()[0]?.code).toBe("unknown-owner");
+ });
++
++it.each([
++  ["inputNumber", 1000, "1e3"],
++  ["datePicker", "2024-02-29", "2024-02-29"],
++] as const)("等价%s输入也先建立等待门再通知订阅者", (type, value, raw) => {
++  const observations: string[][] = [];
++  const state = createEditorInputState(() => {
++    observations.push(state.blockers().map((b) => b.code));
++  });
++  const source = { type, field: "value", value };
++  const input = state.bind(source);
++  input.input(raw, () => {
++    expect(observations.every((codes) => codes.includes("pending-update"))).toBe(true);
++  });
++  expect(observations[0]).toEqual(["pending-update"]);
++  expect(input.raw).toBe(raw);
++  input.echo(value);
++  expect(state.blockers()).toEqual([]);
++});
++
++it("同步订阅者重入输入后不发布旧原文", () => {
++  let reenter = true;
++  const source = { type: "inputNumber", field: "amount", value: 1000 };
++  const state = createEditorInputState(() => {
++    if (reenter) {
++      reenter = false;
++      input.input("-", () => {
++        throw new Error("非法重入不可发布");
++      });
++    }
++  });
++  const input = state.bind(source);
++  input.input("1e3", () => {
++    throw new Error("已被新输入替代，不可发布旧值");
++  });
++  expect(input.raw).toBe("-");
++  expect(state.blockers()[0]?.code).toBe("pending-input");
++});

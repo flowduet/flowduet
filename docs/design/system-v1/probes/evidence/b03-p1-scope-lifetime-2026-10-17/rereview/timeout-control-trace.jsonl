@@ -1,0 +1,8 @@
+{"phase":"begin","failure":"正常"}
+{"phase":"begin","failure":"测试体抛错"}
+{"phase":"B-before","connected":true,"spy":true}
+{"phase":"caught","failure":"正常","error":"Error: 测试实例已失效，拒绝迟到动作"}
+{"phase":"closing","failure":"正常"}
+{"phase":"B-after","connected":true,"spy":true}
+{"phase":"caught","failure":"测试体抛错","error":"Error: 协议注入：测试体失败"}
+{"phase":"closing","failure":"测试体抛错"}

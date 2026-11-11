@@ -1,0 +1,15 @@
+import { BpmnModel, flowableAdapter } from "@flowduet/core";
+import { exportXml } from "@flowduet/designer";
+import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
+const output=process.argv[2];mkdirSync(output,{recursive:true});
+const envelope=JSON.parse(readFileSync("/Users/l/Documents/projects/flowduet/docs/design/reviews/evidence/2026-10-14-branch-structure-repair/input.flowduet.json","utf8"));
+const forms=[{id:"form_release",name:"发布验收表单",provider:"form-create/element-plus",rules:JSON.stringify([{type:"input",field:"reason",title:"申请事由",value:"验收初始值"}]),options:"{}"}];
+for(const key of ["default","condition","nested-default","nested-condition"]) {
+ const nested=key.startsWith("nested");const isDefault=key.endsWith("default");
+ const m=BpmnModel.create({processId:`release_ui_${key.replaceAll("-","_")}`,processName:`发布验收-${key}`,adapter:flowableAdapter}).setDefaultFormKey("form_release").addStartEvent({id:"s",name:"开始"}).addExclusiveGateway({id:"fork",name:"金额分支"}).addUserTask({id:"a",name:"首审批",assignee:"alice"}).addUserTask({id:"tail",name:"后续审批",assignee:"bob",formKey:"form_release"}).addUserTask({id:"b",name:"另一支路审批",assignee:"carol"}).addExclusiveGateway({id:"join"}).addEndEvent({id:"e",name:"结束"});
+ if(nested)m.addExclusiveGateway({id:"inner",name:"内嵌分支"}).addUserTask({id:"i2",name:"内嵌另一审批",assignee:"dan"}).addExclusiveGateway({id:"ij"});
+ m.addSequenceFlow({id:"sf",sourceRef:"s",targetRef:"fork"}).addSequenceFlow({id:"fa",name:"支路甲",sourceRef:"fork",targetRef:nested?"inner":"a",...(isDefault?{default:true}:{condition:"${amount > 100}"})}).addSequenceFlow({id:"fb",sourceRef:"fork",targetRef:"b",...(isDefault?{condition:"${amount > 100}"}:{default:true})}).addSequenceFlow({id:"bj",sourceRef:"b",targetRef:"join"}).addSequenceFlow({id:"tj",sourceRef:"tail",targetRef:"join"}).addSequenceFlow({id:"je",sourceRef:"join",targetRef:"e"});
+ if(nested)m.addSequenceFlow({id:"ia",sourceRef:"inner",targetRef:"a",condition:"${department == 'sales'}"}).addSequenceFlow({id:"ib",sourceRef:"inner",targetRef:"i2",default:true}).addSequenceFlow({id:"ai",sourceRef:"a",targetRef:"ij"}).addSequenceFlow({id:"i2j",sourceRef:"i2",targetRef:"ij"}).addSequenceFlow({id:"it",sourceRef:"ij",targetRef:"tail"});
+ else m.addSequenceFlow({id:"at",sourceRef:"a",targetRef:"tail"});
+ const xml=await exportXml(m);writeFileSync(`${output}/${key}.flowduet.json`,JSON.stringify({...envelope,xml,forms},null,2));
+}

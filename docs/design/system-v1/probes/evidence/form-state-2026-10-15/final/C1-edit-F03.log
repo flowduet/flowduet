@@ -1,0 +1,71 @@
+### Result
+[{"field":"F03","layout":"top","fieldReadonly":true,"action":"edit","status":"passed","actual":{"type":"inputNumber","field":"a_amount","title":"配置F03","value":1.5,"_fc_id":"id_F024mv9p7df9vvc","name":"ref_F092mv9p7df9vwc","display":true,"hidden":false,"_fc_drag_tag":"inputNumber","$required":true},"sessionUnchanged":true},{"field":"F03","layout":"top","action":"clear","status":"passed","actual":{"type":"inputNumber","field":"a_amount","title":"配置F03","_fc_id":"id_F024mv9p7df9vvc","name":"ref_F092mv9p7df9vwc","display":true,"hidden":false,"_fc_drag_tag":"inputNumber","$required":true}},{"field":"F03","layout":"grid","fieldReadonly":true,"action":"edit","status":"passed","actual":{"type":"inputNumber","field":"a_amount","title":"配置F03","value":1.5,"_fc_id":"id_Fcx6mv9p7e63vzc","name":"ref_F44xmv9p7e63w0c","display":true,"hidden":false,"_fc_drag_tag":"inputNumber","$required":true},"sessionUnchanged":true},{"field":"F03","layout":"grid","action":"clear","status":"passed","actual":{"type":"inputNumber","field":"a_amount","title":"配置F03","_fc_id":"id_Fcx6mv9p7e63vzc","name":"ref_F44xmv9p7e63w0c","display":true,"hidden":false,"_fc_drag_tag":"inputNumber","$required":true}}]
+### Ran Playwright code
+```js
+await (async (page) => {
+  if(!page.url().includes('/probes/stage-zero/index.html'))await page.goto('http://127.0.0.1:5173/probes/stage-zero/index.html');
+  if(!(await page.locator('[data-test=form-state-probe]').count()))await page.getByRole('button',{name:'表单状态 C',exact:true}).click();
+  page.setDefaultTimeout(5000);
+  const cases=[{"field": "F03", "layout": "top"}, {"field": "F03", "layout": "grid"}],results=[];
+  const labels=['文本','多行文本','数字','单选','多选','下拉单选','日期','开关'];
+  const fieldNames=['subject','notes','amount','priority','areas','department','date','urgent'];
+  const leaves=rs=>rs.flatMap(r=>r.children?leaves(r.children):[r]);
+  for(const item of cases){
+    try{
+      await page.locator('[data-test=c-field]').selectOption(item.field);await page.locator('[data-test=c-layout]').selectOption(item.layout);await page.locator('[data-test=c-variant]').selectOption('normal-default');await page.locator('[data-test=c-date-type]').selectOption('date');await page.locator('[data-test=c-reset]').click();
+      const root=page.locator('[data-c-owner="C-A"]'),index=Number(item.field.slice(1))-1;
+      const title='甲'+labels[index];
+      await root.locator('._fc-m-drag .el-form-item__label').filter({hasText:title}).first().waitFor();
+      await root.locator('._fc-m-drag ._fd-drag-tool').filter({has:page.locator('.el-form-item__label',{hasText:title})}).last().click();
+      await page.waitForFunction(field=>[...document.querySelectorAll('[data-c-owner="C-A"] ._fc-r-config .el-form-item')].some(row=>/字段\s*ID/.test(row.querySelector('label')?.textContent??'')&&row.querySelector('input')?.value===field),'a_'+fieldNames[index]);
+      const originalForms=JSON.stringify(JSON.parse(await root.locator('[data-test=c-state]').textContent()).forms);
+      const row=label=>root.locator('._fc-r-config .el-form-item').filter({has:page.locator('.el-form-item__label',{hasText:new RegExp('^'+label+'$')})});
+      await row('字段名称').locator('input').fill('配置'+item.field);await row('字段名称').locator('input').press('Tab');
+      const fieldReadonly=await row('字段 ID').locator('input').isDisabled(); if(!fieldReadonly)throw new Error('field readonly inventory changed');
+      await row('是否必填').locator('.el-switch__core').click();
+      const valueRow=row(item.field==='F05'?'默认选项':'默认值');
+      let want;
+      if(['F01','F02','F03','F07'].includes(item.field)){
+        const input=valueRow.locator('input,textarea').first();
+        const text=item.field==='F03'?'1.5':item.field==='F07'?'2026-10-16':item.field==='F02'?'新第一行\n新第二行':'新事项甲';
+        await input.fill(text);await input.press('Tab');want=item.field==='F03'?1.5:text;
+      }else{
+        await valueRow.locator('.el-select__wrapper').click();
+        await page.getByRole('option',{name:item.field==='F08'?'开启':item.field==='F05'?'a广州':'a字符串零',exact:true}).click();
+        want=item.field==='F08'?true:item.field==='F05'?['gz']:'0';
+        await page.keyboard.press('Escape');await valueRow.getByRole('combobox').press('Tab');
+      }
+      const collect=async()=>{
+        const sequence=JSON.parse(await root.locator('[data-test=c-state]').textContent()).resultSequence;
+        await root.locator('[data-test=c-collect]').click();
+        await page.waitForFunction(seq=>JSON.parse(document.querySelector('[data-c-owner="C-A"] [data-test=c-state]').textContent).resultSequence>seq,sequence);
+        const state=JSON.parse(await root.locator('[data-test=c-state]').textContent());
+        if(!state.result.ok)throw new Error(JSON.stringify(state.result));
+        if(JSON.stringify(state.forms)!==originalForms||!state.sameSession||!state.sameModel||!state.sameForms||!state.sameGraph)throw new Error('candidate modified live session/model/DI');
+        return {state,rule:leaves(JSON.parse(JSON.parse(state.result.value.json).forms[0].rules))[0]};
+      };
+      const edited=await collect();
+      const pass=JSON.stringify(edited.rule.value)===JSON.stringify(want)&&edited.rule.field==='a_'+fieldNames[index]&&edited.rule.title==='配置'+item.field&&edited.rule.$required===true&&edited.state.persistCalls===0;
+      results.push({...item,fieldReadonly,action:'edit',status:pass?'passed':'failed',actual:edited.rule,sessionUnchanged:JSON.parse(edited.state.forms[0].rules)[0]?.field!=='a_edited_'+item.field});
+      if(['F01','F02','F03','F07'].includes(item.field)){
+        await valueRow.locator('input,textarea').first().fill('');await valueRow.locator('input,textarea').first().press('Tab');
+      }else{
+        const close=valueRow.locator('.el-tag__close');
+        if(item.field==='F05')await close.click();
+        else {await valueRow.locator('.el-select__wrapper').hover();await valueRow.locator('.el-select__clear').click();}
+      }
+      const cleared=await collect();const old=JSON.stringify(want),actual=JSON.stringify(cleared.rule.value);
+      results.push({...item,action:'clear',status:actual!==old&&(['F01','F02'].includes(item.field)?cleared.rule.value==='':item.field==='F05'?Array.isArray(cleared.rule.value)&&cleared.rule.value.length===0:true)?'passed':'failed',actual:cleared.rule});
+      if(item.field==='F05'){await row('设置默认值').locator('.el-switch__core').click();const unset=await collect();results.push({...item,action:'unset-checkbox',status:!Object.hasOwn(unset.rule,'value')?'passed':'failed',actual:unset.rule});}
+    }catch(error){results.push({...item,action:'edit-or-clear',status:'failed',reason:String(error)});}
+  }
+  return results;
+}
+)(page);
+```
+### Page
+- Page URL: http://127.0.0.1:5173/probes/stage-zero/index.html
+- Page Title: FlowDuet 阶段零探针
+- Console: 0 errors, 76 warnings
+### Events
+- New console entries: .playwright-cli/console-2026-10-15T14-11-52-064Z.log#L825-L828

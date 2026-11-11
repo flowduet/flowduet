@@ -1,0 +1,81 @@
+Browser tab: 2, Title: "FlowDuet Playground", URL: "http://127.0.0.1:5173/".
+1 AXWebArea FlowDuet Playground, URL: 127.0.0.1:5173/
+	2 container app
+		3 container
+			4 heading FlowDuet Playground, Value: 1
+				5 text FlowDuet Playground
+			6 Description: radio-group, ID: el-id-57-37
+				7 container
+					8 radio button (settable, integer) Description: 钉钉式, Value: 1
+					9 text 钉钉式
+				10 container
+					11 radio button (settable, integer) Description: BPMN 视图, Value: 0
+					12 text BPMN 视图
+			13 button 新建设计
+			14 button 打开文档
+			15 button 表单管理
+			16 button 预览表单
+			17 button 保存草稿
+			18 button 下载设计文档
+			19 button 导出 XML
+		20 container
+			21 text 流程默认表单
+			22 pop up button (collapsed, settable) Value: missing_default_form（目录外）, Secondary Actions: Expand
+				23 menu
+					24 无
+					25 申请单
+					26 复核单
+					27 (selected) missing_default_form（目录外）
+			28 text 引用失效：key 不在表单目录中，已保留原值供修复
+			29 container
+				30 text 起 开始
+			31 pop up button (collapsed) +, Help: 在此后添加节点, ID: el-id-57-501, Secondary Actions: Expand
+			32 container
+				33 text 审 经理审批 审批人 ${manager} 表单：missing_default_form（引用失效）
+			34 pop up button (collapsed) +, Help: 在此后添加节点, ID: el-id-57-505, Secondary Actions: Expand
+			35 container
+				36 text 审 合同会签 多人 · 集合 approvers 表单：复核单（节点指定）
+			37 pop up button (collapsed) +, Help: 在此后添加节点, ID: el-id-57-509, Secondary Actions: Expand
+			38 container
+				39 text 抄 抄送法务备案 抄送：张三,李四
+			40 pop up button (collapsed) +, Help: 在此后添加节点, ID: el-id-57-513, Secondary Actions: Expand
+			41 container
+				42 text 条件分支
+				43 button 默认1, Help: 点击取消默认（其余情况无兜底支路）
+				44 button 默认2, Help: 把该支路设为默认（其余情况走此支路）
+				45 button + 分支, Help: 添加分支
+				46 button 删块, Help: 删除整块（前后直连）
+				47 container
+					48 button 常规审批 其他情况（默认）, Help: 常规审批：其他情况（默认）；点击配置此分支
+						49 text 常规审批
+						50 text 其他情况（默认）
+					51 text 审
+					52 text 总监审批
+					53 text 审批人 ${director}
+					54 text 表单：missing_default_form（引用失效）
+					55 pop up button (collapsed) +, Help: 在此后添加节点, ID: el-id-57-517, Secondary Actions: Expand
+				56 container
+					57 button 大额复核 ${amount > 1000}, Help: 大额复核：${amount > 1000}；点击配置此分支
+						58 text 大额复核
+						59 text ${amount > 1000}
+					60 container
+						61 text 并行分支
+						62 button + 分支, Help: 添加分支
+						63 button 删块, Help: 删除整块（前后直连）
+					64 container
+						65 text 支路 1
+						66 container
+							67 text 审 财务复核 审批人 ${finance} 表单：复核单（节点指定）
+						68 pop up button (collapsed) +, Help: 在此后添加节点, ID: el-id-57-521, Secondary Actions: Expand
+						69 text 支路 2
+						70 container
+							71 text 审 法务复核 审批人 ${legal} 表单：missing_default_form（引用失效）
+						72 pop up button (collapsed) +, Help: 在此后添加节点, ID: el-id-57-525, Secondary Actions: Expand
+			73 container
+				74 text 终 结束
+			77 text 已保存到本地（刷新后可恢复）；待修复 1 项（部署导出仍会被拦截）：
+流程默认表单 key「missing_default_form」不在表单目录中（已保留原值，请修复引用或补建表单）
+			76 text  表单引用待修复 1 项（部署导出会拦截）： 流程默认表单 key「missing_default_form」不在表单目录中（已保留原值，请修复引用或补建表单）
+			78 text 流程默认表单 key「missing_default_form」不在表单目录中（已保留原值，请修复引用或补建表单）
+
+The focused UI element is 19 button 导出 XML

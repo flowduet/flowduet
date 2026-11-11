@@ -1,0 +1,32 @@
+
+ RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground
+
+ × probes/stage-zero/form-state/retention-policy.test.ts > C2 保持挂载导航 > two_forms_switch_without_session_write：忙碌和未捕获输入也不触发导出 48ms
+   → Cannot assign to read only property 'rules' of object '#<Object>'
+ ✓ probes/stage-zero/form-state/retention-policy.test.ts > C2 保持挂载导航 > 外来/错误facet在触碰宿主前拒绝 20ms
+ ✓ probes/stage-zero/form-state/retention-policy.test.ts > C2 保持挂载导航 > 后一次导航获胜，迟到挂载不能显示或卸载当前实例 9ms
+ ✓ probes/stage-zero/form-state/retention-policy.test.ts > C2 保持挂载导航 > 目标删除或dispose期间完成的挂载不再导航 5ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  probes/stage-zero/form-state/retention-policy.test.ts > C2 保持挂载导航 > two_forms_switch_without_session_write：忙碌和未捕获输入也不触发导出
+TypeError: Cannot assign to read only property 'rules' of object '#<Object>'
+ ❯ probes/stage-zero/form-state/retention-policy.test.ts:38:31
+     36|     const f=policyFixture(),[a,b]=f.forms;try{
+     37|       await f.policy.select(a!,"keep-mounted");const source=f.current(…
+     38|       f.entry(source).content.rules='[{"type":"input","field":"a_subje…
+       |                               ^
+     39|       const before=JSON.stringify(f.c.session.current!.forms);
+     40|       expect(await f.policy.select(b!,"keep-mounted")).toMatchObject({…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 3 passed (4)
+   Start at  17:46:10
+   Duration  4.45s (import 58%, transform 28%, environment 11%, tests 2%)
+
+undefined
+/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run probes/stage-zero/form-state/retention-policy.test.ts --reporter=verbose

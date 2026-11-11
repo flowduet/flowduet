@@ -1,0 +1,8 @@
+### Error
+Error: locator.waitFor: Error: strict mode violation: locator('.b03-popup-7ce5499e-270c-4a1a-ae7d-1dd747649ac3') resolved to 2 elements:
+    1) <div tabindex="-1" role="tooltip" id="el-id-332-799" aria-hidden="false" data-popper-escaped="false" data-popper-reference-hidden="false" data-popper-placement="bottom-start" class="el-popper is-pure is-light el-tooltip el-select__popper b03-dialog-popup b03-popup-7ce5499e-270c-4a1a-ae7d-1dd747649ac3 el-zoom-in-top-leave-from el-zoom-in-top-leave-active">…</div> aka locator('#el-id-332-799')
+    2) <div class="el-select-dropdown b03-dialog-popup b03-popup-7ce5499e-270c-4a1a-ae7d-1dd747649ac3">…</div> aka locator('div').filter({ hasText: '一二' }).nth(2)
+
+Call log:
+[2m  - waiting for locator('.b03-popup-7ce5499e-270c-4a1a-ae7d-1dd747649ac3') to be hidden[22m
+

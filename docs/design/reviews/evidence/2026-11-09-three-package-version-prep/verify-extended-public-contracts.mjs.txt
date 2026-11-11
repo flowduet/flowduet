@@ -1,0 +1,49 @@
+import { chromium, selectors } from "/Users/l/.npm/_npx/31e32ef8478fbf80/node_modules/playwright-core/index.mjs";
+import { mkdir, writeFile } from "node:fs/promises";
+selectors.setTestIdAttribute("data-test");
+const output=process.argv[2];await mkdir(output,{recursive:true});
+const browser=await chromium.launch({headless:true,executablePath:"/Users/l/Library/Caches/ms-playwright/chromium-1248/chrome-mac-x64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing"});
+const page=await browser.newPage({viewport:{width:1440,height:1100}});const report={browser:browser.version(),source:"C0.4.0 D/F0.2.0 实际tarball，仅公开props/事件/方法与DOM",errors:[],failures:[],checks:[]};page.on("pageerror",e=>report.errors.push(String(e)));
+const read=()=>page.evaluate(()=>window.contractHarness.read());
+const command=(name)=>page.evaluate(name=>window.contractHarness[name](),name);
+const check=(condition,message)=>{if(!condition){report.failures.push(message);throw new Error(message);}};
+async function selectAmount(scope) {
+ const label=scope.locator(".el-form-item__label").filter({hasText:/^金额$/}).first();await label.scrollIntoViewIfNeeded();const box=await label.boundingBox();check(Boolean(box),"金额字段不可见");await page.mouse.click(box.x+box.width/2,box.y+box.height/2);
+ const input=scope.locator('[data-retained-input="number"]').last();await input.waitFor({state:"visible"});return input;
+}
+async function readyManager() {await page.waitForFunction(()=>window.contractHarness.read().managerState?.canCapture===true);}
+try {
+ await page.goto("http://127.0.0.1:4192/contracts.html");await page.locator('[data-contract="external"] [data-entity-id="b"]').waitFor();
+ const xml=await page.evaluate(()=>window.contractHarness.xml());
+ await page.locator('[data-contract="external"] [data-entity-id="b"]').click();let state=await read();
+ check(state.selections.at(-1)?.id==="b"&&state.selections.at(-1)?.modelMatches&&state.selections.at(-1)?.renderRevision===7,"external选择请求合同错误");check(state.actualSelected==="a","external提前改变受控选择");
+ await command("applySelection");state=await read();check(state.focus?.status==="focused"&&state.actualSelected==="b","external实际聚焦失败");
+ check(await page.evaluate(()=>document.activeElement?.getAttribute("data-entity-id"))==="b","DOM焦点没有到达b");
+ await page.locator('[data-contract="external"] [data-entity-id="b"]').hover();await page.locator('[data-contract="external"] [data-test="node-delete-b"]').click();
+ await command("collectExternal");state=await read();check(state.operations.at(-1)?.type==="remove-node"&&state.operations.at(-1)?.nodeId==="b"&&state.operations.at(-1)?.modelMatches,"external结构请求丢失");
+ check(state.externalCollect===false&&state.changes===0,"external收集路径未拒绝或提前写模型");check((await page.evaluate(()=>window.contractHarness.xml()))===xml,"external选择/聚焦/请求改变了模型XML");check(await page.locator('[data-test="node-drawer"]:visible').count()===0,"external错误打开内置抽屉");
+ report.checks.push({name:"external受控选择/真实焦点/结构请求/零模型写入",state});
+ const probe=page.locator('[data-contract="probe"]');let raw=await selectAmount(probe);await page.waitForFunction(()=>window.contractHarness.read().editorState?.canCapture===true);
+ await command("arm");await raw.fill("01");await command("disarm");state=await read();check(state.reentrant.length>0&&state.reentrant.every(r=>r.status==="blocked")&&state.reentrant.some(r=>r.blockers?.some(b=>b.code==="pending-update")),"同步draft-change重入捕获了未回显旧值");
+ await page.waitForFunction(()=>window.contractHarness.read().editorState?.canCapture===true);let capture=await command("capture");check(capture.status==="captured"&&JSON.parse(capture.content.rules)[0].value===1&&await raw.inputValue()==="01","公开回显后捕获/原文不正确");report.checks.push({name:"同步捕获重入屏障",reentrant:state.reentrant,capture});
+ await raw.fill("-");await probe.locator("._fc-m-drag .icon-delete").first().locator("..").hover();await probe.locator("._fc-m-drag .icon-delete").first().click();await page.waitForFunction(()=>window.contractHarness.read().editorState?.canCapture===true);
+ capture=await command("capture");check(capture.status==="captured"&&JSON.parse(capture.content.rules).length===0,"删除字段未撤销原文阻断");
+ await probe.locator("._fc-l-item").filter({hasText:/^计数器$/}).click();await page.waitForFunction(()=>window.contractHarness.read().editorState?.canCapture===true);capture=await command("capture");
+ const newRules=JSON.parse(capture.content.rules);check(newRules.length===1&&newRules[0].field!=="amount","删除重建字段生命期未更新");check(await probe.locator('[data-retained-input="number"]').last().inputValue()!=="-","新字段继承旧原文");report.checks.push({name:"公开删除/菜单新建不继承旧输入",capture});
+ await command("switchEditorMode");state=await read();check(state.editorState.blockers.some(b=>b.code==="unsupported-mode")&&(await command("capture")).status==="blocked","FormDesigner挂载后模式变化未拒绝");report.checks.push({name:"FormDesigner模式固定",state:state.editorState});
+ await page.getByTestId("form-edit-btn-form_manager").click();await readyManager();let dialog=page.locator(".el-dialog:visible");raw=await selectAmount(dialog);await raw.fill("7");await raw.press("Tab");await readyManager();
+ const oldClose=await page.getByTestId("form-manager-close").elementHandle();check(await command("managerCommit"),"Manager初次提交失败");await command("managerReopen");await readyManager();dialog=page.locator(".el-dialog:visible").last();raw=await selectAmount(dialog);await raw.fill("8");await raw.press("Tab");await readyManager();
+ await oldClose.evaluate(el=>el.dispatchEvent(new MouseEvent("click",{bubbles:true})));await page.waitForTimeout(100);state=await read();check(state.managerOpen&&state.managerUpdates.length===1&&await raw.inputValue()==="8"&&await page.locator(".el-message-box:visible").count()===0,"旧页头迟到click影响了新会话");report.checks.push({name:"旧页头迟到DOM事件不关闭新会话",state:state.managerState});
+ await page.getByTestId("form-manager-close").click();await page.locator(".el-message-box:visible").waitFor();
+ const oldConfirm=await page.locator(".el-message-box:visible").getByRole("button",{name:"放弃并关闭"}).elementHandle();
+ check(await command("managerCommit"),"确认期间宿主公开提交失败");await command("managerReopen");await readyManager();dialog=page.locator(".el-dialog:visible").last();
+ raw=await selectAmount(dialog);await raw.fill("9");await raw.press("Tab");await readyManager();
+ // 旧确认已被新会话覆盖；受控派发其迟到DOM事件，模拟此前排队的确认，不冒充可见原生点击。
+ await oldConfirm.evaluate(el=>el.dispatchEvent(new MouseEvent("click",{bubbles:true})));await page.waitForTimeout(100);state=await read();check(state.managerOpen&&state.managerUpdates.length===2&&await raw.inputValue()==="9","旧确认Promise关闭或覆盖了新会话");report.checks.push({name:"旧关闭确认迟到不消费新会话授权",state:state.managerState});
+ await command("managerSwitchMode");state=await read();check(state.managerState.mode==="retained"&&state.managerState.blockers.some(b=>b.code==="unsupported-mode")&&await command("managerCommit")===false&&state.managerOpen,"retained→legacy模式冲突没有拒绝");
+ await command("managerRemountLegacy");await page.getByTestId("form-edit-btn-form_manager").click();await page.locator(".el-dialog:visible").waitFor();await page.waitForTimeout(200);
+ check(await command("managerCommit"),"legacy原提交合同失效");await command("managerReopen");await page.locator(".el-dialog:visible").waitFor();await command("managerSwitchMode");state=await read();check(state.managerState.mode==="legacy"&&state.managerState.blockers.some(b=>b.code==="unsupported-mode")&&await command("managerCommit")===false&&state.managerOpen,"legacy→retained模式冲突绕过旧出口");report.checks.push({name:"FormManager双向模式变更拒绝，legacy提交保持",state:state.managerState});
+ await page.screenshot({path:`${output}/final.png`,fullPage:true});
+} catch(e){if(!report.failures.includes(e.message))report.failures.push(String(e.stack||e));await page.screenshot({path:`${output}/failure.png`,fullPage:true}).catch(()=>{});}
+finally {await writeFile(`${output}/result.json`,JSON.stringify(report,null,2));await browser.close();}
+console.log(JSON.stringify(report,null,2));if(report.errors.length||report.failures.length)process.exitCode=1;

@@ -1,0 +1,6 @@
+### Result
+"{\"textAssertionsPassed\":true,\"boundaries\":{\"incompleteNumberBlocked\":true,\"savedDocumentUnchangedWhileBlocked\":true,\"rawPreserved\":true,\"legacyExport\":true,\"mountedHost\":{\"beforeUnload\":false,\"drop\":false},\"unmountedHost\":{\"beforeUnload\":false,\"drop\":false}},\"pageErrors\":[]}"
+### Ran Playwright code
+```js
+await page.evaluate('() => (document.body.dataset.p2FinalResult)');
+```

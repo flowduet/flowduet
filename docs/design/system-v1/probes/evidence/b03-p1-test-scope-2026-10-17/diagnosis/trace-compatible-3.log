@@ -1,0 +1,9 @@
+
+ RUN  v5.0.1 /private/tmp/b03-failures-diagnosis-2026-10-17/harness
+
+
+ Test Files  2 passed (2)
+      Tests  4 passed | 50 skipped (54)
+   Start at  09:04:57
+   Duration  8.45s (tests 42%, import 34%, transform 18%, environment 6%)
+

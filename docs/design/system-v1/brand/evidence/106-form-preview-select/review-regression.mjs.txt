@@ -1,0 +1,117 @@
+import { mkdir, writeFile } from "node:fs/promises";
+import { resolve } from "node:path";
+import { pathToFileURL } from "node:url";
+
+const [driverPath, baseUrl, outputDir] = process.argv.slice(2);
+if (!driverPath || !baseUrl || !outputDir) throw new Error("需要驱动、URL 和输出目录参数");
+const { chromium } = await import(pathToFileURL(resolve(driverPath)).href);
+await mkdir(outputDir, { recursive: true });
+const browser = await chromium.launch({
+  headless: true,
+  executablePath: process.env.FLOWDUET_CHROMIUM_PATH || "/Users/l/Library/Caches/ms-playwright/chromium-1248/chrome-mac-x64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing",
+});
+const page = await browser.newPage({ viewport: { width: 1440, height: 2200 } });
+const failures = [];
+const errors = [];
+const results = [];
+const check = (ok, message) => { if (!ok) failures.push(message); };
+page.on("pageerror", (error) => errors.push(error.message));
+try {
+  await page.goto(baseUrl, { waitUntil: "networkidle" });
+  await page.locator('[data-test="form-appearance-scene-btn"]').click();
+  await page.locator('[data-test="form-appearance-first-controls"]').click();
+  await page.locator('[data-test="form-appearance-first-source"]').selectOption("host");
+  // 宿主公开 CSS 上下文：使用与 body 不同的主色和中性色，不修改组件内部状态。
+  await page.locator('[data-test="form-appearance-scene"]').evaluate((element) => {
+    const values = {
+      "--el-color-primary": "#00685e",
+      "--el-bg-color-overlay": "#f8faf9",
+      "--el-text-color-regular": "#263b36",
+      "--el-text-color-placeholder": "#889988",
+      "--el-text-color-secondary": "#556655",
+      "--el-fill-color-light": "#e0eeec",
+      "--el-border-color-light": "#789988",
+    };
+    for (const [key, value] of Object.entries(values)) element.style.setProperty(key, value);
+  });
+  const root = page.locator('[data-test="form-appearance-first-instance"] [data-test="form-preview"]');
+  const input = root.locator(".el-select__input").first();
+  const panel = page.locator(".el-select__popper.preview-select-panel");
+  const inputHandle = await input.elementHandle();
+  for (const density of ["compact", "comfortable"]) {
+    await page.locator('[data-test="form-appearance-first-density"]').selectOption(density);
+    await input.focus();
+    if (!(await panel.isVisible())) await input.press("ArrowDown");
+    await panel.waitFor({ state: "visible" });
+    const actual = await panel.evaluate((element) => {
+      const item = (selector) => getComputedStyle(element.querySelector(selector));
+      const css = getComputedStyle(element);
+      return {
+        background: css.backgroundColor,
+        border: css.borderTopColor,
+        selected: item(".is-selected").color,
+        normal: item(".el-select-dropdown__item:not(.is-selected):not(.is-disabled)").color,
+        disabled: item(".is-disabled").color,
+        arrow: getComputedStyle(element.querySelector(".el-popper__arrow"), "::before").backgroundColor,
+      };
+    });
+    results.push({ density, ...actual });
+    check(actual.selected === "rgb(0, 104, 94)", `${density}: 局部宿主选中色丢失 ${actual.selected}`);
+    check(actual.background === "rgb(248, 250, 249)", `${density}: 面板表面丢失 ${actual.background}`);
+    check(actual.border === "rgb(120, 153, 136)", `${density}: 面板边框丢失 ${actual.border}`);
+    check(actual.normal === "rgb(38, 59, 54)", `${density}: 选项文字丢失 ${actual.normal}`);
+    check(actual.disabled === "rgb(136, 153, 136)", `${density}: 禁用文字丢失 ${actual.disabled}`);
+    check(actual.arrow === actual.background, `${density}: 箭头表面未继承`);
+    check(await inputHandle.evaluate((element) => document.activeElement === element), `${density}: 焦点丢失`);
+    const owner = await panel.evaluate((element) => [...element.classList].find((name) => name.startsWith("flowduet-form-preview-select-")));
+    const ownStyles = await root.evaluate((element, owner) => ({
+      inline: element.getAttribute("style") || "",
+      sheets: [...document.head.querySelectorAll("style")].filter((sheet) => sheet.textContent.includes(`.el-select__popper.${owner}`)).map((sheet) => sheet.textContent).join("\n"),
+    }), owner);
+    check(!/(?:^|[;{])\s*--el-[\w-]+\s*:/.test(ownStyles.inline + ownStyles.sheets), `${density}: 跟随宿主写入 EP 变量`);
+  }
+  await input.press("Escape");
+  await page.locator('[data-test="form-appearance-second-source"]').selectOption("host");
+  const explicitInput = page.locator('[data-test="form-appearance-second-instance"] .el-select__input').first();
+  await explicitInput.focus();
+  await explicitInput.press("ArrowDown");
+  const explicitPanel = page.locator(".el-select__popper.explicit-select-panel");
+  await explicitPanel.waitFor({ state: "visible" });
+  const configured = await explicitPanel.evaluate((element) => ({
+    selected: getComputedStyle(element.querySelector(".is-selected")).color,
+    normal: getComputedStyle(element.querySelector(".el-select-dropdown__item:not(.is-selected)")).color,
+    primary: element.style.getPropertyValue("--el-color-primary"),
+  }));
+  results.push({ configured });
+  check(configured.selected === "rgb(18, 52, 86)", `显式选中色失效 ${configured.selected}`);
+  check(configured.normal === "rgb(52, 66, 80)", `显式普通文字失效 ${configured.normal}`);
+  check(configured.primary === "rgb(18, 52, 86)", "业务 popperStyle 被改写");
+  await explicitInput.press("Escape");
+  await page.locator('[data-test="form-appearance-second-source"]').selectOption("brand");
+  const inlineInput = page.locator('[data-test="form-appearance-second-instance"] .el-select__input').nth(1);
+  const inlinePanel = page.locator(".el-select__popper.inline-select-panel");
+  for (const mode of ["dark", "light"]) {
+    await page.locator('[data-test="form-appearance-second-mode"]').selectOption(mode);
+    await inlineInput.focus();
+    if (!(await inlinePanel.isVisible())) await inlineInput.press("ArrowDown");
+    await inlinePanel.waitFor({ state: "visible" });
+    await inlinePanel.locator(".el-select-dropdown__item").nth(1).hover();
+    const onlyEp = await inlinePanel.evaluate((element) => ({
+      selected: getComputedStyle(element.querySelector(".is-selected")).color,
+      hovered: getComputedStyle(element.querySelector(".is-hovering")).backgroundColor,
+      disabled: getComputedStyle(element.querySelector(".is-disabled")).color,
+      hasFdConfig: /--fd-/.test(element.getAttribute("style") || ""),
+    }));
+    results.push({ brandMode: mode, onlyEp });
+    check(onlyEp.selected === "rgb(18, 52, 86)", `${mode}: 仅 EP 选中色被品牌覆盖 ${onlyEp.selected}`);
+    check(onlyEp.hovered === "rgb(224, 232, 240)", `${mode}: 仅 EP 悬停色被品牌覆盖 ${onlyEp.hovered}`);
+    check(onlyEp.disabled === "rgb(113, 130, 147)", `${mode}: 仅 EP 禁用色被品牌覆盖 ${onlyEp.disabled}`);
+    check(!onlyEp.hasFdConfig, `${mode}: 样例混入 FD 变量`);
+  }
+  await page.screenshot({ path: resolve(outputDir, "scoped-host.png"), fullPage: true });
+} finally {
+  await writeFile(resolve(outputDir, "review-regression.json"), JSON.stringify({ browser: browser.version(), results, errors, failures }, null, 2));
+  await browser.close();
+}
+console.log(JSON.stringify({ results, errors, failures }, null, 2));
+if (failures.length || errors.length) process.exitCode = 1;

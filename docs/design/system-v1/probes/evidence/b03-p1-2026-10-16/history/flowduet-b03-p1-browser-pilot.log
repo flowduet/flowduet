@@ -1,0 +1,23 @@
+### Result
+{"text":"-","observation":{"states":[{"mode":"retained","revision":0,"canSuspend":false,"canCapture":false,"blockers":[{"code":"disposed","message":"编辑器已销毁"}]},{"mode":"retained","revision":0,"canSuspend":false,"canCapture":false,"blockers":[{"code":"disposed","message":"编辑器已销毁"}]}],"captures":[{"status":"blocked","blockers":[{"code":"disposed","message":"编辑器已销毁"}]},{"status":"blocked","blockers":[{"code":"disposed","message":"编辑器已销毁"}]}],"calls":[],"liveUnchanged":true,"persistCalls":0}}
+### Ran Playwright code
+```js
+await (async page => {
+ const root=page.locator('[data-repair-instance="0"]');
+ await root.locator('._fc-m-drag ._fd-drag-mask').nth(2).click();
+ const raw=root.locator('[data-retained-input="number"]');
+ await raw.waitFor({state:'visible'});
+ await raw.fill('-');
+ await page.locator('[data-test="repair-nav-1"]').click();
+ await page.locator('[data-test="repair-nav-0"]').click();
+ const text=await raw.inputValue();
+ await page.locator('[data-test="repair-observe"]').click();
+ const observation=JSON.parse(await page.locator('[data-test="repair-result"]').textContent());
+ return {text,observation};
+}
+)(page);
+```
+### Page
+- Page URL: http://127.0.0.1:5178/probes/stage-zero/index.html
+- Page Title: FlowDuet 阶段零探针
+- Console: 1 errors, 0 warnings

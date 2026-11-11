@@ -1,0 +1,21 @@
+{
+  "happyDom": {
+    "file": "node_modules/.pnpm/happy-dom@20.14.5/node_modules/happy-dom/lib/nodes/element/Element.js",
+    "sha256": "7bf33de894f08f8de188bb74a9faaa4f7f67f97b04389d9472c127e09c458b2f",
+    "excerpts": [
+      {
+        "line": 366,
+        "excerpt": "    get outerHTML() {\n        return new HTMLSerializer().serializeToString(this);\n    }\n    /**\n     * Returns outer HTML.\n     *\n     * @param html HTML."
+      },
+      {
+        "line": 787,
+        "excerpt": "    toString() {\n        return this.outerHTML;\n    }\n    /**\n     * Returns the size of an element and its position relative to the viewport.\n     *\n     * @returns DOM rect."
+      }
+    ]
+  },
+  "popper": {
+    "file": "node_modules/.pnpm/@sxzz+popperjs-es@2.11.8/node_modules/@sxzz/popperjs-es/dist/index.mjs",
+    "sha256": "0d636a62d398cc2d8b81cdbf18a72e58eb4c5ebf0e2a22cb493527d51677e64c",
+    "getWindow": "function B(e){if(e==null)return window;if(e.toString()!==\"[object Window]\"){var t=e.ownerDocument;return t&&t.defaultView||window}"
+  }
+}

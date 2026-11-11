@@ -1,0 +1,15 @@
+import { BpmnModel, compile, parse, flowableAdapter, verticalDiLayout, CORE_VERSION } from '@flowduet/core';
+import type { ModdleElement } from '@flowduet/core';
+import { DingtalkDesigner, BpmnCanvas, exportXml } from '@flowduet/designer';
+import { FlowDesignSession, FormPreview, FormDesigner } from '@flowduet/form-create';
+import type { FormDefinition } from '@flowduet/form-create';
+const model = BpmnModel.create({processId:'consumer', adapter:flowableAdapter})
+.addStartEvent({id:'s'}).addUserTask({id:'u',assignee:'张三'}).addEndEvent({id:'e'})
+.addSequenceFlow({id:'a',sourceRef:'s',targetRef:'u'}).addSequenceFlow({id:'b',sourceRef:'u',targetRef:'e'});
+const xml = await compile(model,{diLayout:verticalDiLayout()});
+const restored = await parse(xml,{adapter:flowableAdapter,rejectWarnings:true,rejectUnregisteredNamespaces:true});
+const session = new FlowDesignSession(restored);
+const form: FormDefinition = session.createForm('申请单');
+const saved = await session.save(); await session.open(JSON.stringify(saved.document));
+const elementType = (element: ModdleElement): string => element.$type;
+void [DingtalkDesigner,BpmnCanvas,FormPreview,FormDesigner,exportXml,CORE_VERSION,form,elementType];

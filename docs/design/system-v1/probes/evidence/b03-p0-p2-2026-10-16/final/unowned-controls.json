@@ -1,0 +1,686 @@
+[
+  {
+    "case": "unowned-value-input-is-observably-pending",
+    "layout": "top",
+    "source": "native-keyboard-plus-readonly-owned-snapshot",
+    "before": {
+      "raw": "-",
+      "badInput": false,
+      "focused": true
+    },
+    "trace": [
+      {
+        "sequence": 1,
+        "event": "native-input",
+        "detail": {
+          "owner": "A",
+          "trusted": true,
+          "target": "INPUT",
+          "inputType": "text",
+          "raw": "",
+          "badInput": false,
+          "nativeControlToken": "P0:228"
+        }
+      },
+      {
+        "sequence": 2,
+        "event": "native-input",
+        "detail": {
+          "owner": "A",
+          "trusted": true,
+          "target": "INPUT",
+          "inputType": "text",
+          "raw": "-",
+          "badInput": false,
+          "nativeControlToken": "P0:228"
+        }
+      },
+      {
+        "sequence": 3,
+        "event": "public-clone",
+        "detail": {
+          "owner": "A",
+          "fields": [
+            {
+              "field": "a_priority",
+              "source": "P0:227",
+              "clone": "P0:229",
+              "sameReference": false
+            }
+          ],
+          "rules": [
+            {
+              "type": "input",
+              "field": "a_subject",
+              "title": "甲文本",
+              "value": "事项甲",
+              "props": {
+                "placeholder": "输入事项"
+              },
+              "_fc_id": "id_Fsfkmvaovydk1l3c",
+              "name": "ref_F9xumvaovydk1l4c",
+              "display": true,
+              "hidden": false,
+              "_fc_drag_tag": "input"
+            },
+            {
+              "type": "input",
+              "field": "a_notes",
+              "title": "甲多行文本",
+              "props": {
+                "type": "textarea",
+                "placeholder": "输入说明"
+              },
+              "value": "第一行\n第二行",
+              "_fc_id": "id_Fx1smvaovydk1l5c",
+              "name": "ref_Ftiomvaovydk1l6c",
+              "display": true,
+              "hidden": false,
+              "_fc_drag_tag": "input"
+            },
+            {
+              "type": "inputNumber",
+              "field": "a_amount",
+              "title": "甲数字",
+              "value": 0,
+              "_fc_id": "id_Fc1nmvaovydk1l7c",
+              "name": "ref_F7vxmvaovydk1l8c",
+              "display": true,
+              "hidden": false,
+              "_fc_drag_tag": "inputNumber"
+            },
+            {
+              "type": "radio",
+              "field": "a_priority",
+              "title": "甲单选",
+              "options": [
+                {
+                  "label": "a数值零",
+                  "value": 0
+                },
+                {
+                  "label": "a字符串零",
+                  "value": "0"
+                },
+                {
+                  "label": "a普通",
+                  "value": "normal"
+                },
+                {
+                  "label": "a广州",
+                  "value": "gz"
+                },
+                {
+                  "label": "a深圳",
+                  "value": "sz"
+                }
+              ],
+              "value": 0,
+              "_fc_id": "id_F9fbmvaovydk1l9c",
+              "name": "ref_Fckrmvaovydk1lac",
+              "display": true,
+              "hidden": false,
+              "_fc_drag_tag": "radio"
+            },
+            {
+              "type": "checkbox",
+              "field": "a_areas",
+              "title": "甲多选",
+              "options": [
+                {
+                  "label": "a数值零",
+                  "value": 0
+                },
+                {
+                  "label": "a字符串零",
+                  "value": "0"
+                },
+                {
+                  "label": "a普通",
+                  "value": "normal"
+                },
+                {
+                  "label": "a广州",
+                  "value": "gz"
+                },
+                {
+                  "label": "a深圳",
+                  "value": "sz"
+                }
+              ],
+              "_fc_id": "id_F1e9mvaovydk1lbc",
+              "name": "ref_Fhqomvaovydk1lcc",
+              "display": true,
+              "hidden": false,
+              "_fc_drag_tag": "checkbox"
+            },
+            {
+              "type": "select",
+              "field": "a_department",
+              "title": "甲下拉单选",
+              "options": [
+                {
+                  "label": "a数值零",
+                  "value": 0
+                },
+                {
+                  "label": "a字符串零",
+                  "value": "0"
+                },
+                {
+                  "label": "a普通",
+                  "value": "normal"
+                },
+                {
+                  "label": "a广州",
+                  "value": "gz"
+                },
+                {
+                  "label": "a深圳",
+                  "value": "sz"
+                }
+              ],
+              "value": 0,
+              "_fc_id": "id_F8pqmvaovydl1ldc",
+              "name": "ref_Frximvaovydl1lec",
+              "display": true,
+              "hidden": false,
+              "_fc_drag_tag": "select"
+            },
+            {
+              "type": "datePicker",
+              "field": "a_date",
+              "title": "甲日期",
+              "props": {
+                "type": "date",
+                "valueFormat": "YYYY-MM-DD"
+              },
+              "value": "2026-10-15",
+              "_fc_id": "id_Fvodmvaovydl1lfc",
+              "name": "ref_Fqz5mvaovydl1lgc",
+              "display": true,
+              "hidden": false,
+              "_fc_drag_tag": "datePicker"
+            },
+            {
+              "type": "switch",
+              "field": "a_urgent",
+              "title": "甲开关",
+              "value": false,
+              "_fc_id": "id_Fi2bmvaovydl1lhc",
+              "name": "ref_F1izmvaovydl1lic",
+              "display": true,
+              "hidden": false,
+              "_fc_drag_tag": "switch"
+            }
+          ]
+        }
+      }
+    ],
+    "pass": true
+  },
+  {
+    "case": "unowned-numeric-option-can-confirm-natively",
+    "layout": "top",
+    "source": "native-pointer-keyboard",
+    "value": 37,
+    "trace": [
+      {
+        "sequence": 1,
+        "event": "native-input",
+        "detail": {
+          "owner": "A",
+          "trusted": true,
+          "target": "INPUT",
+          "inputType": "text",
+          "raw": "",
+          "badInput": false,
+          "nativeControlToken": "P0:228"
+        }
+      },
+      {
+        "sequence": 2,
+        "event": "native-input",
+        "detail": {
+          "owner": "A",
+          "trusted": true,
+          "target": "INPUT",
+          "inputType": "text",
+          "raw": "-",
+          "badInput": false,
+          "nativeControlToken": "P0:228"
+        }
+      },
+      {
+        "sequence": 4,
+        "event": "native-input",
+        "detail": {
+          "owner": "A",
+          "trusted": true,
+          "target": "INPUT",
+          "inputType": "text",
+          "raw": "37",
+          "badInput": false,
+          "nativeControlToken": "P0:228"
+        }
+      },
+      {
+        "sequence": 5,
+        "event": "native-change",
+        "detail": {
+          "owner": "A",
+          "trusted": true,
+          "target": "INPUT",
+          "inputType": "text",
+          "raw": "37",
+          "badInput": false,
+          "nativeControlToken": "P0:228"
+        }
+      },
+      {
+        "sequence": 6,
+        "event": "native-focusout",
+        "detail": {
+          "owner": "A",
+          "trusted": true,
+          "target": "INPUT",
+          "inputType": "text",
+          "raw": "37",
+          "badInput": false,
+          "nativeControlToken": "P0:228"
+        }
+      },
+      {
+        "sequence": 7,
+        "event": "native-pointerdown",
+        "detail": {
+          "owner": "A",
+          "trusted": true,
+          "target": "BUTTON"
+        }
+      },
+      {
+        "sequence": 8,
+        "event": "native-focusout",
+        "detail": {
+          "owner": "A",
+          "trusted": true,
+          "target": "INPUT",
+          "inputType": "text",
+          "raw": "a字符串零",
+          "badInput": false,
+          "nativeControlToken": "P0:230"
+        }
+      },
+      {
+        "sequence": 9,
+        "event": "native-pointerup",
+        "detail": {
+          "owner": "A",
+          "trusted": true,
+          "target": "BUTTON"
+        }
+      }
+    ],
+    "pass": true
+  },
+  {
+    "case": "unowned-value-input-is-observably-pending",
+    "layout": "grid",
+    "source": "native-keyboard-plus-readonly-owned-snapshot",
+    "before": {
+      "raw": "-",
+      "badInput": false,
+      "focused": true
+    },
+    "trace": [
+      {
+        "sequence": 1,
+        "event": "native-input",
+        "detail": {
+          "owner": "A",
+          "trusted": true,
+          "target": "INPUT",
+          "inputType": "text",
+          "raw": "",
+          "badInput": false,
+          "nativeControlToken": "P0:233"
+        }
+      },
+      {
+        "sequence": 2,
+        "event": "native-input",
+        "detail": {
+          "owner": "A",
+          "trusted": true,
+          "target": "INPUT",
+          "inputType": "text",
+          "raw": "-",
+          "badInput": false,
+          "nativeControlToken": "P0:233"
+        }
+      },
+      {
+        "sequence": 3,
+        "event": "public-clone",
+        "detail": {
+          "owner": "A",
+          "fields": [
+            {
+              "field": "a_priority",
+              "source": "P0:232",
+              "clone": "P0:234",
+              "sameReference": false
+            }
+          ],
+          "rules": [
+            {
+              "type": "fcRow",
+              "children": [
+                {
+                  "type": "col",
+                  "props": {
+                    "span": 12
+                  },
+                  "children": [
+                    {
+                      "type": "input",
+                      "field": "a_subject",
+                      "title": "甲文本",
+                      "value": "事项甲",
+                      "props": {
+                        "placeholder": "输入事项"
+                      },
+                      "_fc_id": "id_Fsupmvaovyz61lzc",
+                      "name": "ref_Fvtpmvaovyz61m0c",
+                      "display": true,
+                      "hidden": false,
+                      "_fc_drag_tag": "input"
+                    },
+                    {
+                      "type": "input",
+                      "field": "a_notes",
+                      "title": "甲多行文本",
+                      "props": {
+                        "type": "textarea",
+                        "placeholder": "输入说明"
+                      },
+                      "value": "第一行\n第二行",
+                      "_fc_id": "id_Fwb3mvaovyz61m1c",
+                      "name": "ref_Fbb1mvaovyz61m2c",
+                      "display": true,
+                      "hidden": false,
+                      "_fc_drag_tag": "input"
+                    },
+                    {
+                      "type": "inputNumber",
+                      "field": "a_amount",
+                      "title": "甲数字",
+                      "value": 0,
+                      "_fc_id": "id_Ff7mmvaovyz61m3c",
+                      "name": "ref_F6pamvaovyz61m4c",
+                      "display": true,
+                      "hidden": false,
+                      "_fc_drag_tag": "inputNumber"
+                    },
+                    {
+                      "type": "radio",
+                      "field": "a_priority",
+                      "title": "甲单选",
+                      "options": [
+                        {
+                          "label": "a数值零",
+                          "value": 0
+                        },
+                        {
+                          "label": "a字符串零",
+                          "value": "0"
+                        },
+                        {
+                          "label": "a普通",
+                          "value": "normal"
+                        },
+                        {
+                          "label": "a广州",
+                          "value": "gz"
+                        },
+                        {
+                          "label": "a深圳",
+                          "value": "sz"
+                        }
+                      ],
+                      "value": 0,
+                      "_fc_id": "id_Fh3jmvaovyz61m5c",
+                      "name": "ref_F4fmmvaovyz61m6c",
+                      "display": true,
+                      "hidden": false,
+                      "_fc_drag_tag": "radio"
+                    },
+                    {
+                      "type": "checkbox",
+                      "field": "a_areas",
+                      "title": "甲多选",
+                      "options": [
+                        {
+                          "label": "a数值零",
+                          "value": 0
+                        },
+                        {
+                          "label": "a字符串零",
+                          "value": "0"
+                        },
+                        {
+                          "label": "a普通",
+                          "value": "normal"
+                        },
+                        {
+                          "label": "a广州",
+                          "value": "gz"
+                        },
+                        {
+                          "label": "a深圳",
+                          "value": "sz"
+                        }
+                      ],
+                      "_fc_id": "id_F03jmvaovyz61m7c",
+                      "name": "ref_Fmv4mvaovyz61m8c",
+                      "display": true,
+                      "hidden": false,
+                      "_fc_drag_tag": "checkbox"
+                    },
+                    {
+                      "type": "select",
+                      "field": "a_department",
+                      "title": "甲下拉单选",
+                      "options": [
+                        {
+                          "label": "a数值零",
+                          "value": 0
+                        },
+                        {
+                          "label": "a字符串零",
+                          "value": "0"
+                        },
+                        {
+                          "label": "a普通",
+                          "value": "normal"
+                        },
+                        {
+                          "label": "a广州",
+                          "value": "gz"
+                        },
+                        {
+                          "label": "a深圳",
+                          "value": "sz"
+                        }
+                      ],
+                      "value": 0,
+                      "_fc_id": "id_Foyrmvaovyz61m9c",
+                      "name": "ref_Fdzymvaovyz61mac",
+                      "display": true,
+                      "hidden": false,
+                      "_fc_drag_tag": "select"
+                    },
+                    {
+                      "type": "datePicker",
+                      "field": "a_date",
+                      "title": "甲日期",
+                      "props": {
+                        "type": "date",
+                        "valueFormat": "YYYY-MM-DD"
+                      },
+                      "value": "2026-10-15",
+                      "_fc_id": "id_F2cumvaovyz61mbc",
+                      "name": "ref_Ffnemvaovyz61mcc",
+                      "display": true,
+                      "hidden": false,
+                      "_fc_drag_tag": "datePicker"
+                    },
+                    {
+                      "type": "switch",
+                      "field": "a_urgent",
+                      "title": "甲开关",
+                      "value": false,
+                      "_fc_id": "id_Fif6mvaovyz61mdc",
+                      "name": "ref_Ffzsmvaovyz61mec",
+                      "display": true,
+                      "hidden": false,
+                      "_fc_drag_tag": "switch"
+                    }
+                  ],
+                  "_fc_id": "id_Fmycmvaovyz61mfc",
+                  "name": "ref_F50smvaovyz61mgc",
+                  "display": true,
+                  "hidden": false,
+                  "_fc_drag_tag": "col"
+                },
+                {
+                  "type": "col",
+                  "props": {
+                    "span": 12
+                  },
+                  "_fc_id": "id_Fjxhmvaovyz61mhc",
+                  "name": "ref_Fwcjmvaovyz61mic",
+                  "display": true,
+                  "hidden": false,
+                  "_fc_drag_tag": "col"
+                }
+              ],
+              "_fc_id": "id_Fta6mvaovyz61mjc",
+              "name": "ref_Fcesmvaovyz61mkc",
+              "display": true,
+              "hidden": false,
+              "_fc_drag_tag": "fcRow"
+            }
+          ]
+        }
+      }
+    ],
+    "pass": true
+  },
+  {
+    "case": "unowned-numeric-option-can-confirm-natively",
+    "layout": "grid",
+    "source": "native-pointer-keyboard",
+    "value": 37,
+    "trace": [
+      {
+        "sequence": 1,
+        "event": "native-input",
+        "detail": {
+          "owner": "A",
+          "trusted": true,
+          "target": "INPUT",
+          "inputType": "text",
+          "raw": "",
+          "badInput": false,
+          "nativeControlToken": "P0:233"
+        }
+      },
+      {
+        "sequence": 2,
+        "event": "native-input",
+        "detail": {
+          "owner": "A",
+          "trusted": true,
+          "target": "INPUT",
+          "inputType": "text",
+          "raw": "-",
+          "badInput": false,
+          "nativeControlToken": "P0:233"
+        }
+      },
+      {
+        "sequence": 4,
+        "event": "native-input",
+        "detail": {
+          "owner": "A",
+          "trusted": true,
+          "target": "INPUT",
+          "inputType": "text",
+          "raw": "37",
+          "badInput": false,
+          "nativeControlToken": "P0:233"
+        }
+      },
+      {
+        "sequence": 5,
+        "event": "native-change",
+        "detail": {
+          "owner": "A",
+          "trusted": true,
+          "target": "INPUT",
+          "inputType": "text",
+          "raw": "37",
+          "badInput": false,
+          "nativeControlToken": "P0:233"
+        }
+      },
+      {
+        "sequence": 6,
+        "event": "native-focusout",
+        "detail": {
+          "owner": "A",
+          "trusted": true,
+          "target": "INPUT",
+          "inputType": "text",
+          "raw": "37",
+          "badInput": false,
+          "nativeControlToken": "P0:233"
+        }
+      },
+      {
+        "sequence": 7,
+        "event": "native-pointerdown",
+        "detail": {
+          "owner": "A",
+          "trusted": true,
+          "target": "BUTTON"
+        }
+      },
+      {
+        "sequence": 8,
+        "event": "native-focusout",
+        "detail": {
+          "owner": "A",
+          "trusted": true,
+          "target": "INPUT",
+          "inputType": "text",
+          "raw": "a字符串零",
+          "badInput": false,
+          "nativeControlToken": "P0:235"
+        }
+      },
+      {
+        "sequence": 9,
+        "event": "native-pointerup",
+        "detail": {
+          "owner": "A",
+          "trusted": true,
+          "target": "BUTTON"
+        }
+      }
+    ],
+    "pass": true
+  }
+]

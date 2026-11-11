@@ -1,0 +1,9 @@
+
+ RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/form-create
+
+
+ Test Files  1 passed (1)
+      Tests  1 passed | 55 skipped (56)
+   Start at  18:30:47
+   Duration  4.02s (tests 43%, import 37%, transform 12%, environment 8%)
+

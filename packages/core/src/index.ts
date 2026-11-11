@@ -3,30 +3,56 @@
  *
  * 导出的都是 ROADMAP 声明的接缝：BpmnModel（moddle 树包装）/ Compiler /
  * DiLayout / 引擎适配器。冒烟版本号供集成方做健康检查。
+ *
+ * bpmn-moddle 未随 npm 包发布类型，src/types/bpmn-moddle.d.ts 提供 ambient 声明；
+ * 该声明经 scripts/pack-declarations.mjs 打进 dist 并挂上产物声明链（消费侧
+ * tsc 依赖它解析 `import type { ModdleElement }`，不会报 TS7016）。
  */
-export const CORE_VERSION = "0.0.0" as const;
+export const CORE_VERSION = "0.4.0" as const;
 
-export { BpmnModel } from "./model/bpmn-model";
+export {
+  APPROVAL_MODES,
+  COMPLETION_CONDITIONS,
+  DEFAULT_ELEMENT_VARIABLE,
+  BpmnModel,
+} from "./model/bpmn-model.js";
 export type {
+  ApprovalDraftOptions,
+  ApprovalMode,
+  ApprovalTaskSpec,
   BpmnModelSpec,
   CanvasShape,
+  CcTaskSpec,
   NodeSpec,
   Point,
   SequenceFlowSpec,
   TaskSpec,
   UserTaskSpec,
-} from "./model/bpmn-model";
+} from "./model/bpmn-model.js";
 
-export { IdentityDiLayout } from "./layout/di-layout";
-export type { DiLayout } from "./layout/di-layout";
+export { IdentityDiLayout } from "./layout/di-layout.js";
+export type { DiLayout } from "./layout/di-layout.js";
+export {
+  deriveBlockTree,
+  deriveVerticalGeometry,
+  verticalDiLayout,
+} from "./layout/vertical-layout.js";
+export type { BlockTreeNode, LayoutResult } from "./layout/vertical-layout.js";
 
-export { compile } from "./compile/compiler";
-export type { CompileOptions } from "./compile/compiler";
+export { compile } from "./compile/compiler.js";
+export type { CompileOptions } from "./compile/compiler.js";
 
-export { parse } from "./parse/parser";
-export type { ParseOptions } from "./parse/parser";
+export { parse, UnregisteredNamespaceError } from "./parse/parser.js";
+export type { ParseOptions } from "./parse/parser.js";
+export type { NamespaceUsageIssue } from "./parse/namespace-usage.js";
 
-export { flowableAdapter } from "./adapter/flowable-adapter";
-export { assertAdapterContract } from "./adapter/adapter-contract";
-export { TASK_KINDS } from "./adapter/engine-adapter";
-export type { EngineAdapter, TaskKind, TaskTypeMapping } from "./adapter/engine-adapter";
+export { resolveEffectiveForm, isApprovalTask } from "./model/form-binding.js";
+export type { EffectiveFormRef } from "./model/form-binding.js";
+export { FLOWDUET_PREFIX, FLOWDUET_NAMESPACE_URI } from "./adapter/flowduet-package.js";
+
+export { flowableAdapter } from "./adapter/flowable-adapter.js";
+export { assertAdapterContract } from "./adapter/adapter-contract.js";
+export { TASK_KINDS } from "./adapter/engine-adapter.js";
+export type { EngineAdapter, TaskKind, TaskTypeMapping } from "./adapter/engine-adapter.js";
+/** moddle 元素类型：elementOf 等编辑访问器的返回契约（见 bpmn-moddle） */
+export type { ModdleElement } from "bpmn-moddle";

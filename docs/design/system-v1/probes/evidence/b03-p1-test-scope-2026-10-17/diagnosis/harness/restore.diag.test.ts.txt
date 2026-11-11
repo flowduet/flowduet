@@ -1,0 +1,17 @@
+import {it,expect,vi} from 'vitest';
+import {mount} from '@vue/test-utils';
+import FormManager from '/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/form-create/src/components/FormManager.vue';
+function install(){const proto=Element.prototype;const before=Object.getOwnPropertyDescriptor(proto,'toString');let done=false;Object.defineProperty(proto,'toString',{configurable:true,writable:true,value:Object.prototype.toString});return ()=>{if(done)return;done=true;if(before)Object.defineProperty(proto,'toString',before);else Reflect.deleteProperty(proto,'toString');};}
+it.each(['normal','body-throws','unmount-throws'])('diagnostic restore %s with real FormManager',async mode=>{
+ const before=Object.getOwnPropertyDescriptor(Element.prototype,'toString'),url=URL.createObjectURL,anchor=HTMLAnchorElement.prototype.click;
+ const restore=install();const wrapper=mount(FormManager,{props:{forms:[]},attachTo:document.body});let error:any;
+ vi.spyOn(URL,'createObjectURL').mockReturnValue('blob:probe');vi.spyOn(HTMLAnchorElement.prototype,'click').mockImplementation(()=>{});
+ try{
+  try{expect(document.body.toString()).toBe('[object HTMLBodyElement]');expect(document.body.outerHTML).toContain('form-manager');if(mode==='body-throws')throw Error('body failure');}
+  finally{try{wrapper.unmount();if(mode==='unmount-throws')throw Error('unmount failure');}finally{try{document.body.innerHTML='';localStorage.clear();vi.restoreAllMocks();}finally{restore();}}}
+ }catch(e){error=e;}
+ expect(!!error).toBe(mode!=='normal');expect(Object.getOwnPropertyDescriptor(Element.prototype,'toString')).toEqual(before);expect(URL.createObjectURL).toBe(url);expect(HTMLAnchorElement.prototype.click).toBe(anchor);expect(document.body.childElementCount).toBe(0);restore();expect(Object.getOwnPropertyDescriptor(Element.prototype,'toString')).toEqual(before);
+});
+it('diagnostic inherited descriptor is restored without an own property',()=>{
+ const before=Object.getOwnPropertyDescriptor(Element.prototype,'toString');try{Reflect.deleteProperty(Element.prototype,'toString');const restore=install();restore();expect(Object.prototype.hasOwnProperty.call(Element.prototype,'toString')).toBe(false);}finally{if(before)Object.defineProperty(Element.prototype,'toString',before);}
+});

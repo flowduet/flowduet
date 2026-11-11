@@ -1,0 +1,19 @@
+{
+  "sourceCommit": "d9617b0a4f46a6699e4123bdf8ee1b9b70a250b3",
+  "command": "pnpm test",
+  "exitCode": 0,
+  "counts": {
+    "core": 148,
+    "designer": 184,
+    "form-create": 199,
+    "playground": 297
+  },
+  "total": 828,
+  "build": 0,
+  "lint": 0,
+  "strict": 0,
+  "coreESM": 0,
+  "browserReplayedSubset": 30,
+  "review": "Spec限定静态核对一行绑定及一项回归，0；未亲跑。",
+  "note": "这是同一Dialog子集的补修重放，不与原125累加为不同场景；本地Node24，未推送/运行远端CI。"
+}

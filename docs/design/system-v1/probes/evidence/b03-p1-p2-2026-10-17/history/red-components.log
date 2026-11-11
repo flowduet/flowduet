@@ -1,0 +1,189 @@
+
+ RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/form-create
+
+ ❯ src/components.test.ts (87 tests | 11 failed | 76 skipped) 18699ms
+   ❯ P1复审P2：属性控件确认与删除生命期 (4)
+     × 恢复原值且没有change时，刷新后可捕获；同步阶段仍阻断 2659ms
+     × delete撤销已移除控件的等待，不要求change 2218ms
+     × clear撤销已移除控件的等待，不要求change 2514ms
+     × 旧change的下一tick不能清除同控件更新后的未确认输入 1570ms
+   ❯ P1复审P2：同步捕获重入 (3)
+     × inputNumber的等价原文1000→1e3在公开回显前也必须阻断 1426ms
+     × inputNumber的等价原文1→01在公开回显前也必须阻断 1627ms
+     × datePicker的等价原文2024-02-29→2024-02-29在公开回显前也必须阻断 1949ms
+   ❯ P1复审P2：模式冲突后打开与重开 (4)
+     × legacy挂载后改变模式不切换子实现，也不经旧出口提交 840ms
+     × retained挂载后改变模式不切换子实现，也不经旧出口提交 778ms
+     × legacy成功关闭后改模式重开，拒绝新模式且旧内容不再提交 1493ms
+     × retained成功关闭后改模式重开，拒绝新模式且旧内容不再提交 1623ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 11 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/components.test.ts > P1复审P2：属性控件确认与删除生命期 > 恢复原值且没有change时，刷新后可捕获；同步阶段仍阻断
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ src/components.test.ts:1732:46
+    1730|     input.element.blur();
+    1731|     await flushPromises();
+    1732|     expect(vm.readEditingState().canSuspend).toBe(true);
+       |                                              ^
+    1733|     const captured = vm.captureContent();
+    1734|     expect(captured.status).toBe("captured");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/11]⎯
+
+ FAIL  src/components.test.ts > P1复审P2：属性控件确认与删除生命期 > delete撤销已移除控件的等待，不要求change
+TypeError: fc.deleteRule is not a function
+ ❯ src/components.test.ts:1747:13
+    1745|     const fc = wrapper!.findComponent(FcDesigner).vm;
+    1746|     if (operation === "clear") fc.clearDragRule();
+    1747|     else fc.deleteRule("amount");
+       |             ^
+    1748|     await flushPromises();
+    1749|     expect(input.element.isConnected).toBe(false);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/11]⎯
+
+ FAIL  src/components.test.ts > P1复审P2：属性控件确认与删除生命期 > clear撤销已移除控件的等待，不要求change
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ src/components.test.ts:1750:46
+    1748|     await flushPromises();
+    1749|     expect(input.element.isConnected).toBe(false);
+    1750|     expect(vm.readEditingState().canSuspend).toBe(true);
+       |                                              ^
+    1751|     const captured = vm.captureContent();
+    1752|     expect(captured.status).toBe("captured");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/11]⎯
+
+ FAIL  src/components.test.ts > P1复审P2：属性控件确认与删除生命期 > 旧change的下一tick不能清除同控件更新后的未确认输入
+AssertionError: expected 'captured' to be 'blocked' // Object.is equality
+
+Expected: "blocked"
+Received: "captured"
+
+ ❯ src/components.test.ts:1767:40
+    1765|     typeNative(input.element, "更新但未确认");
+    1766|     await flushPromises();
+    1767|     expect(vm.captureContent().status).toBe("blocked");
+       |                                        ^
+    1768|     input.element.dispatchEvent(new Event("change", { bubbles: true })…
+    1769|     await flushPromises();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/11]⎯
+
+ FAIL  src/components.test.ts > P1复审P2：同步捕获重入 > inputNumber的等价原文1000→1e3在公开回显前也必须阻断
+ FAIL  src/components.test.ts > P1复审P2：同步捕获重入 > inputNumber的等价原文1→01在公开回显前也必须阻断
+ FAIL  src/components.test.ts > P1复审P2：同步捕获重入 > datePicker的等价原文2024-02-29→2024-02-29在公开回显前也必须阻断
+AssertionError: expected { status: 'captured', …(2) } to match object { status: 'blocked', …(1) }
+(4 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "blockers": [
+-     {
+-       "code": "pending-update",
+-     },
+-   ],
+-   "status": "blocked",
++   "status": "captured",
+  }
+
+ ❯ src/components.test.ts:1800:21
+    1798|     armed = false;
+    1799|     expect(seen).toHaveLength(1);
+    1800|     expect(seen[0]).toMatchObject({ status: "blocked", blockers: [{ co…
+       |                     ^
+    1801|     await flushPromises();
+    1802|     const captured = (wrapper.vm as unknown as RetainedVm).captureCont…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/11]⎯
+
+ FAIL  src/components.test.ts > P1复审P2：模式冲突后打开与重开 > legacy挂载后改变模式不切换子实现，也不经旧出口提交
+AssertionError: expected 'retained' to be 'legacy' // Object.is equality
+
+Expected: "legacy"
+Received: "retained"
+
+ ❯ src/components.test.ts:1819:70
+    1817|     await wrapper.get('[data-test="form-edit-btn-form_apply"]').trigge…
+    1818|     await flushPromises();
+    1819|     expect(wrapper.findComponent(FormDesigner).props("editingMode")).t…
+       |                                                                      ^
+    1820|     expect(vm.readEditingState()?.blockers[0]?.code).toBe("unsupported…
+    1821|     expect(vm.commitPendingEdit()).toBe(false);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/11]⎯
+
+ FAIL  src/components.test.ts > P1复审P2：模式冲突后打开与重开 > retained挂载后改变模式不切换子实现，也不经旧出口提交
+AssertionError: expected 'legacy' to be 'retained' // Object.is equality
+
+Expected: "retained"
+Received: "legacy"
+
+ ❯ src/components.test.ts:1819:70
+    1817|     await wrapper.get('[data-test="form-edit-btn-form_apply"]').trigge…
+    1818|     await flushPromises();
+    1819|     expect(wrapper.findComponent(FormDesigner).props("editingMode")).t…
+       |                                                                      ^
+    1820|     expect(vm.readEditingState()?.blockers[0]?.code).toBe("unsupported…
+    1821|     expect(vm.commitPendingEdit()).toBe(false);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/11]⎯
+
+ FAIL  src/components.test.ts > P1复审P2：模式冲突后打开与重开 > legacy成功关闭后改模式重开，拒绝新模式且旧内容不再提交
+AssertionError: expected 'retained' to be 'legacy' // Object.is equality
+
+Expected: "legacy"
+Received: "retained"
+
+ ❯ src/components.test.ts:1840:70
+    1838|     await wrapper.get('[data-test="form-edit-btn-form_apply"]').trigge…
+    1839|     await flushPromises();
+    1840|     expect(wrapper.findComponent(FormDesigner).props("editingMode")).t…
+       |                                                                      ^
+    1841|     expect(vm.commitPendingEdit()).toBe(false);
+    1842|     expect(vm.hasOpenEditor()).toBe(true);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/11]⎯
+
+ FAIL  src/components.test.ts > P1复审P2：模式冲突后打开与重开 > retained成功关闭后改模式重开，拒绝新模式且旧内容不再提交
+AssertionError: expected 'legacy' to be 'retained' // Object.is equality
+
+Expected: "retained"
+Received: "legacy"
+
+ ❯ src/components.test.ts:1840:70
+    1838|     await wrapper.get('[data-test="form-edit-btn-form_apply"]').trigge…
+    1839|     await flushPromises();
+    1840|     expect(wrapper.findComponent(FormDesigner).props("editingMode")).t…
+       |                                                                      ^
+    1841|     expect(vm.commitPendingEdit()).toBe(false);
+    1842|     expect(vm.hasOpenEditor()).toBe(true);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/11]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  11 failed | 76 skipped (87)
+   Start at  00:52:52
+   Duration  22.30s (tests 85%, import 9%, transform 3%, environment 3%)
+
+undefined
+/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/form-create:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run src/components.test.ts -t P1复审P2

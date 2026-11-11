@@ -1,0 +1,139 @@
+[
+  {
+    "mode": "normal",
+    "command": [
+      "pnpm",
+      "--filter",
+      "@flowduet/form-create",
+      "exec",
+      "vitest",
+      "run",
+      "--config",
+      "/tmp/flowduet-formmanager-fix/cleanup.config.mts",
+      "-t",
+      "内容守卫前置|重复字段标识不能",
+      "--reporter=verbose"
+    ],
+    "exitCode": 0,
+    "expectedExitCode": 0,
+    "wallSeconds": 5.631,
+    "auditLines": [
+      "FM_AUDIT_START {\"mode\":\"normal\",\"case\":\"内容守卫前置：超范围字段不 emit 且编辑器保持打开供修正\",\"alive\":0}",
+      "FM_AUDIT_CLEAN {\"mode\":\"normal\",\"case\":\"内容守卫前置：超范围字段不 emit 且编辑器保持打开供修正\",\"alive\":0,\"wrapperCleared\":true,\"bodyEmpty\":true,\"descriptorRestored\":true}",
+      "FM_AUDIT_START {\"mode\":\"normal\",\"case\":\"重复字段标识不能关闭编辑器或上报保存\",\"alive\":0}",
+      "FM_AUDIT_CLEAN {\"mode\":\"normal\",\"case\":\"重复字段标识不能关闭编辑器或上报保存\",\"alive\":0,\"wrapperCleared\":true,\"bodyEmpty\":true,\"descriptorRestored\":true}",
+      "FM_AUDIT_SUITE {\"mode\":\"normal\",\"cases\":2,\"alive\":0,\"suiteDescriptorRestored\":true}"
+    ]
+  },
+  {
+    "mode": "assert-fails",
+    "command": [
+      "pnpm",
+      "--filter",
+      "@flowduet/form-create",
+      "exec",
+      "vitest",
+      "run",
+      "--config",
+      "/tmp/flowduet-formmanager-fix/cleanup.config.mts",
+      "-t",
+      "内容守卫前置|重复字段标识不能",
+      "--reporter=verbose"
+    ],
+    "exitCode": 1,
+    "expectedExitCode": 1,
+    "wallSeconds": 4.717,
+    "auditLines": [
+      "FM_AUDIT_START {\"mode\":\"assert-fails\",\"case\":\"内容守卫前置：超范围字段不 emit 且编辑器保持打开供修正\",\"alive\":0}",
+      "FM_AUDIT_CLEAN {\"mode\":\"assert-fails\",\"case\":\"内容守卫前置：超范围字段不 emit 且编辑器保持打开供修正\",\"alive\":0,\"wrapperCleared\":true,\"bodyEmpty\":true,\"descriptorRestored\":true}",
+      "FM_AUDIT_START {\"mode\":\"assert-fails\",\"case\":\"重复字段标识不能关闭编辑器或上报保存\",\"alive\":0}",
+      "   → expected 'FM_AUDIT_INTENTIONAL_ASSERT_FAILURE' to be 'pass' // Object.is equality",
+      "FM_AUDIT_CLEAN {\"mode\":\"assert-fails\",\"case\":\"重复字段标识不能关闭编辑器或上报保存\",\"alive\":0,\"wrapperCleared\":true,\"bodyEmpty\":true,\"descriptorRestored\":true}",
+      "FM_AUDIT_SUITE {\"mode\":\"assert-fails\",\"cases\":2,\"alive\":0,\"suiteDescriptorRestored\":true}",
+      "AssertionError: expected 'FM_AUDIT_INTENTIONAL_ASSERT_FAILURE' to be 'pass' // Object.is equality",
+      "Received: \"FM_AUDIT_INTENTIONAL_ASSERT_FAILURE\"",
+      "    289|     if (auditMode === \"assert-fails\") expect(\"FM_AUDIT_INTENTIONAL_ASS…"
+    ]
+  },
+  {
+    "mode": "timeout",
+    "command": [
+      "pnpm",
+      "--filter",
+      "@flowduet/form-create",
+      "exec",
+      "vitest",
+      "run",
+      "--config",
+      "/tmp/flowduet-formmanager-fix/cleanup.config.mts",
+      "-t",
+      "内容守卫前置|重复字段标识不能",
+      "--reporter=verbose"
+    ],
+    "exitCode": 1,
+    "expectedExitCode": 1,
+    "wallSeconds": 8.92,
+    "auditLines": [
+      "FM_AUDIT_START {\"mode\":\"timeout\",\"case\":\"内容守卫前置：超范围字段不 emit 且编辑器保持打开供修正\",\"alive\":0}",
+      "FM_AUDIT_CLEAN {\"mode\":\"timeout\",\"case\":\"内容守卫前置：超范围字段不 emit 且编辑器保持打开供修正\",\"alive\":0,\"wrapperCleared\":true,\"bodyEmpty\":true,\"descriptorRestored\":true}",
+      "FM_AUDIT_START {\"mode\":\"timeout\",\"case\":\"重复字段标识不能关闭编辑器或上报保存\",\"alive\":0}",
+      "FM_AUDIT_CLEAN {\"mode\":\"timeout\",\"case\":\"重复字段标识不能关闭编辑器或上报保存\",\"alive\":0,\"wrapperCleared\":true,\"bodyEmpty\":true,\"descriptorRestored\":true}",
+      "FM_AUDIT_SUITE {\"mode\":\"timeout\",\"cases\":2,\"alive\":0,\"suiteDescriptorRestored\":true}"
+    ]
+  },
+  {
+    "mode": "unmount-throws",
+    "command": [
+      "pnpm",
+      "--filter",
+      "@flowduet/form-create",
+      "exec",
+      "vitest",
+      "run",
+      "--config",
+      "/tmp/flowduet-formmanager-fix/cleanup.config.mts",
+      "-t",
+      "内容守卫前置|重复字段标识不能",
+      "--reporter=verbose"
+    ],
+    "exitCode": 1,
+    "expectedExitCode": 1,
+    "wallSeconds": 4.654,
+    "auditLines": [
+      "FM_AUDIT_START {\"mode\":\"unmount-throws\",\"case\":\"内容守卫前置：超范围字段不 emit 且编辑器保持打开供修正\",\"alive\":0}",
+      "FM_AUDIT_CLEAN {\"mode\":\"unmount-throws\",\"case\":\"内容守卫前置：超范围字段不 emit 且编辑器保持打开供修正\",\"alive\":0,\"wrapperCleared\":true,\"bodyEmpty\":true,\"descriptorRestored\":true}",
+      "FM_AUDIT_START {\"mode\":\"unmount-throws\",\"case\":\"重复字段标识不能关闭编辑器或上报保存\",\"alive\":0}",
+      "   → FM_AUDIT_INTENTIONAL_UNMOUNT_FAILURE",
+      "FM_AUDIT_CLEAN {\"mode\":\"unmount-throws\",\"case\":\"重复字段标识不能关闭编辑器或上报保存\",\"alive\":0,\"wrapperCleared\":true,\"bodyEmpty\":true,\"descriptorRestored\":true}",
+      "FM_AUDIT_SUITE {\"mode\":\"unmount-throws\",\"cases\":2,\"alive\":0,\"suiteDescriptorRestored\":true}",
+      "Error: FM_AUDIT_INTENTIONAL_UNMOUNT_FAILURE",
+      "     39|       throw new Error(\"FM_AUDIT_INTENTIONAL_UNMOUNT_FAILURE\");"
+    ]
+  },
+  {
+    "mode": "absent",
+    "command": [
+      "pnpm",
+      "--filter",
+      "@flowduet/form-create",
+      "exec",
+      "vitest",
+      "run",
+      "--config",
+      "/tmp/flowduet-formmanager-fix/cleanup.config.mts",
+      "-t",
+      "内容守卫前置|重复字段标识不能",
+      "--reporter=verbose"
+    ],
+    "exitCode": 0,
+    "expectedExitCode": 0,
+    "wallSeconds": 4.776,
+    "auditLines": [
+      "FM_AUDIT_START {\"mode\":\"absent\",\"case\":\"内容守卫前置：超范围字段不 emit 且编辑器保持打开供修正\",\"alive\":0}",
+      "FM_AUDIT_CLEAN {\"mode\":\"absent\",\"case\":\"内容守卫前置：超范围字段不 emit 且编辑器保持打开供修正\",\"alive\":0,\"wrapperCleared\":true,\"bodyEmpty\":true,\"descriptorRestored\":true}",
+      "FM_AUDIT_START {\"mode\":\"absent\",\"case\":\"重复字段标识不能关闭编辑器或上报保存\",\"alive\":0}",
+      "FM_AUDIT_CLEAN {\"mode\":\"absent\",\"case\":\"重复字段标识不能关闭编辑器或上报保存\",\"alive\":0,\"wrapperCleared\":true,\"bodyEmpty\":true,\"descriptorRestored\":true}",
+      "FM_AUDIT_SUITE {\"mode\":\"absent\",\"cases\":2,\"alive\":0,\"suiteDescriptorRestored\":true}"
+    ]
+  }
+]

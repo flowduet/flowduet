@@ -1,0 +1,7 @@
+{
+  "format": "flowduet.design",
+  "version": 1,
+  "engine": "flowable",
+  "xml": "<bpmn:broken",
+  "forms": []
+}

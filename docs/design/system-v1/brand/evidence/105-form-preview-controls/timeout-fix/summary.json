@@ -1,0 +1,72 @@
+{
+  "baseline": "99a18d49ed3e4eb41e9f10d5ca8a95e81018c632",
+  "node": "24.18.0",
+  "symptom": "原默认全量有5条retained-manager用例5000ms超时；本轮单独五条及整个69条文件均可通过，故不是稳定复现的业务断言错误。",
+  "cpuProfile": {
+    "originalSampleMs": 2392.2,
+    "vueRenderInclusiveMs": 1597.5,
+    "computedStyleInclusiveMs": 319.8,
+    "singleAmountSampleMs": 1970.6,
+    "rawFiles": [
+      "/private/tmp/flowduet-105-timeout-cpu-two-fields.json",
+      "/private/tmp/flowduet-105-timeout-cpu.json"
+    ],
+    "limitation": "一次控制实验；宿主负载与JIT/cache未固定，不将其当作稳定性能基准或所有负载根因的证明。"
+  },
+  "fiveBeforeMs": {
+    "retained 关闭与旧回调补充边界 > retained序列化异常不关闭，修正后成功提交一次": 1569,
+    "retained 多实例与捕获版本 > 捕获中同步新输入使候选失效，下一次仍可收集最新值": 1544,
+    "同一表单对象被宿主原位改写也不覆盖当前输入": 1392,
+    "旧Dialog迟到modelValue回调不能关闭同ID重开的编辑器": 1761,
+    "同ID新会话尚未挂载时不读取或收集旧子ref": 1769
+  },
+  "fiveAfterMs": {
+    "retained 关闭与旧回调补充边界 > retained序列化异常不关闭，修正后成功提交一次": 1316,
+    "retained 多实例与捕获版本 > 捕获中同步新输入使候选失效，下一次仍可收集最新值": 1027,
+    "同一表单对象被宿主原位改写也不覆盖当前输入": 1011,
+    "旧Dialog迟到modelValue回调不能关闭同ID重开的编辑器": 1372,
+    "同ID新会话尚未挂载时不读取或收集旧子ref": 1295
+  },
+  "fix": "仅5条金额/会话协议场景移除无关日期字段，同步捕获场景复用既有主样式隔离；夹具默认numericDateRules、原触发/断言、真实组件、清理和用例时限保持。",
+  "defaultFull": {
+    "command": "pnpm test",
+    "exitCode": 0,
+    "files": 63,
+    "tests": 986,
+    "counts": {
+      "core": 148,
+      "designer": 202,
+      "form-create": 330,
+      "playground": 306
+    },
+    "timeoutOverride": false
+  },
+  "fixtureTypecheck": {
+    "command": "pnpm --filter @flowduet/form-create exec vue-tsc --noEmit -p tsconfig.test-fixtures.json",
+    "exitCode": 0
+  },
+  "review": {
+    "patchSha256": "980bc11d9f10a249aacbc05cde1128ee471e0092b295c4bf7aece86b5e0a3a8c",
+    "standards": {
+      "important": 0,
+      "minor": 0,
+      "existing": 0
+    },
+    "spec": {
+      "important": 0,
+      "minor": 0,
+      "existing": 0
+    }
+  },
+  "cleanup": "临时node:inspector采样钩子和DEBUG-105-timeout代码已移除；测试配置、脚本、默认时限及生产代码未改动。",
+  "lint": {
+    "command": "pnpm lint",
+    "exitCode": 0
+  },
+  "build": {
+    "command": "pnpm build",
+    "exitCode": 0,
+    "packages": 4
+  },
+  "deliveryGate": "local-default-checks-passed"
+}

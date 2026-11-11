@@ -1,0 +1,998 @@
+// @vitest-environment happy-dom
+import { afterEach, beforeEach, afterAll, describe, expect, it, vi } from "vitest";
+import { defineComponent, h, ref } from "vue";
+import { ElSelect, ElOption } from "element-plus";
+import { flushPromises as rawFlush, mount as rawMount } from "@vue/test-utils";
+import { appendFileSync } from "node:fs";
+import FormPreview from "/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/form-create/src/components/FormPreview.vue";
+import FormManager from "/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/form-create/src/components/FormManager.vue";
+import FormDesigner from "/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/form-create/src/components/FormDesigner.vue";
+import { DESIGNER_CONFIG, FIELD_MENU } from "/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/form-create/src/components/designer-config.js";
+import type { FormDefinition } from "/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/form-create/src/document.js";
+import { rulesSemantics } from "/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/form-create/src/form-semantics.js";
+
+/**
+ * 真实组件链路（#72 / #74）：FormCreate 渲染器实际参与预览与试填校验，
+ * 设计器实际参与内容编辑——不 mock 序列化结果（迭代三测试决策）。
+ * #74 起覆盖八类字段与栅格布局的全字段矩阵（A09/A10）与开放范围收口（A13）。
+ */
+
+
+const fmSamples: object[] = [];
+const fmAlive = new Set<ReturnType<typeof rawMount>>();
+let fmCase = "unknown";
+let fmLastCpu = process.cpuUsage();
+let fmLastTime = performance.now();
+function fmMark(stage: string) {
+ const now=performance.now(),cpu=process.cpuUsage(fmLastCpu);
+ fmSamples.push({tag:"DEBUG-fm-61",case:fmCase,stage,at:now,delta:now-fmLastTime,cpuMs:(cpu.user+cpu.system)/1000,alive:fmAlive.size,bodyNodes:document.body.querySelectorAll('*').length});
+ fmLastTime=now;fmLastCpu=process.cpuUsage();
+}
+Reflect.set(globalThis, '__fmDiagMark', fmMark);
+const fmStub = defineComponent({name:'FormDesigner',props:['name','rules','options'],emits:['save','cancel','draftChange'],setup(){return()=>h('div',{'data-diagnostic-editor-stub':'true'});}});
+const mount: typeof rawMount = ((...args: Parameters<typeof rawMount>) => {
+ if(process.env.FM_STUB==='1' && ['内容守卫前置：超范围字段不 emit 且编辑器保持打开供修正','重复字段标识不能关闭编辑器或上报保存'].includes(fmCase)) {
+  const options=args[1]??{};
+  args[1]={...options,global:{...options.global,stubs:{...options.global?.stubs,FormDesigner:fmStub}}};
+ }
+ fmMark('mount.begin');const result=rawMount(...args);fmAlive.add(result);if(process.env.FM_CLEAN==='1' && fmCase==='内容守卫前置：超范围字段不 emit 且编辑器保持打开供修正')wrapper=result;fmMark('mount.end');
+ const unmount=result.unmount.bind(result);
+ result.unmount=()=>{fmMark('unmount.begin');try{return unmount();}finally{fmAlive.delete(result);fmMark('unmount.end');}};
+ return result;
+}) as typeof rawMount;
+async function flushPromises() {fmMark('flush.begin');await rawFlush();fmMark('flush.end');}
+let fmStringDescriptor: PropertyDescriptor | undefined;
+beforeEach((context)=>{
+ fmCase=context.task.name;fmMark('test.begin');
+ if(process.env.FM_NATIVE_STRING==='1' && ['内容守卫前置：超范围字段不 emit 且编辑器保持打开供修正','重复字段标识不能关闭编辑器或上报保存'].includes(fmCase)){
+  fmStringDescriptor=Object.getOwnPropertyDescriptor(Element.prototype,'toString');
+  Object.defineProperty(Element.prototype,'toString',{configurable:true,writable:true,value:function(){return Object.prototype.toString.call(this);}});
+ }
+});
+afterAll(()=>{fmMark('suite.end');appendFileSync('/tmp/flowduet-formmanager-diagnosis/trace.jsonl',JSON.stringify({mode:process.env.FM_MODE??'real',samples:fmSamples})+'\n');for(const w of fmAlive)w.unmount();});
+
+let wrapper: ReturnType<typeof mount> | undefined;
+
+afterEach(() => {
+  fmMark("afterEach.begin");
+  wrapper?.unmount();
+  wrapper = undefined;
+  document.body.innerHTML = "";
+  fmMark("afterEach.end");
+  if(fmStringDescriptor){Object.defineProperty(Element.prototype,'toString',fmStringDescriptor);fmStringDescriptor=undefined;}
+});
+
+const APPLY_FORM: FormDefinition = {
+  id: "form_apply",
+  name: "申请单",
+  provider: "form-create/element-plus",
+  rules: JSON.stringify([
+    {
+      type: "input",
+      field: "reason",
+      title: "申请事由",
+      value: "默认事由",
+      $required: true,
+    },
+  ]),
+  options: "{}",
+};
+
+describe("FormPreview（真实渲染器试填）", () => {
+  it("渲染真实输入框并回显设计默认值；试填值与设计定义隔离", async () => {
+    wrapper = mount(FormPreview, { props: { form: APPLY_FORM } });
+    await flushPromises();
+
+    const input = wrapper.find("input");
+    expect(input.exists()).toBe(true);
+    expect((input.element as HTMLInputElement).value).toBe("默认事由");
+
+    // 试填：改值只进试填状态，不回写设计默认值
+    await input.setValue("试用内容");
+    await flushPromises();
+    expect(wrapper.find('[data-test="form-preview-values"]').text()).toContain("试用内容");
+    expect(wrapper.props("form").rules).toContain("默认事由");
+    expect(wrapper.props("form").rules).not.toContain("试用内容");
+  });
+
+  it("必填标记与校验入口在场（成败语义经真机回归验证）", async () => {
+    // happy-dom 下 element-plus 表单校验对空必填不触发（is-required 规则已挂上，
+    // el-form 的 async-validator 不执行），此处断言环境可靠的部分：必填标记、
+    // 校验按钮可触发且不抛错；「清空→未通过、补填→通过」的语义在真机（CDP）
+    // 回归中验证——见 #72 交付记录。
+    wrapper = mount(FormPreview, { props: { form: APPLY_FORM }, attachTo: document.body });
+    await flushPromises();
+
+    expect(document.querySelector(".el-form-item.is-required")).not.toBeNull();
+    await wrapper.find("input").setValue("");
+    await flushPromises();
+    await wrapper.find('[data-test="form-preview-validate"]').trigger("click");
+    await flushPromises();
+    expect(wrapper.find('[data-test="form-preview-validate"]').exists()).toBe(true);
+
+    await wrapper.find("input").setValue("补填内容");
+    await flushPromises();
+    await wrapper.find('[data-test="form-preview-validate"]').trigger("click");
+    await vi.waitFor(
+      () => {
+        expect(wrapper!.find('[data-test="form-preview-validation"]').text()).toContain("校验通过");
+      },
+      { timeout: 3000 },
+    );
+  });
+
+  it("切换预览目标重置试填值，不同表单输入不混用", async () => {
+    const other: FormDefinition = {
+      id: "form_other",
+      name: "另一张",
+      provider: "form-create/element-plus",
+      rules: "[]",
+      options: "{}",
+    };
+    wrapper = mount(FormPreview, { props: { form: APPLY_FORM } });
+    await flushPromises();
+    await wrapper.find("input").setValue("试用内容");
+    await flushPromises();
+    expect(wrapper.find('[data-test="form-preview-values"]').text()).toContain("试用内容");
+
+    await wrapper.setProps({ form: other });
+    await flushPromises();
+    expect(wrapper.find("input").exists()).toBe(false);
+    expect(wrapper.find('[data-test="form-preview-values"]').text()).not.toContain("试用内容");
+  });
+
+  it("重新打开同 ID 的表单定义时清除旧试填并回显新默认值", async () => {
+    wrapper = mount(FormPreview, { props: { form: APPLY_FORM } });
+    await flushPromises();
+    await wrapper.find("input").setValue("试用内容");
+    await flushPromises();
+
+    const reopened: FormDefinition = {
+      ...APPLY_FORM,
+      rules: JSON.stringify([
+        { type: "input", field: "reason", title: "申请事由", value: "重开默认" },
+      ]),
+    };
+    await wrapper.setProps({ form: reopened });
+    await flushPromises();
+
+    expect(wrapper.find('[data-test="form-preview-values"]').text()).not.toContain("试用内容");
+    expect((wrapper.find("input").element as HTMLInputElement).value).toBe("重开默认");
+  });
+
+  it.each([false, true])(
+    "同 ID 相同定义重开后当前值与可见默认一致（已试填=%s）",
+    async (edited) => {
+      wrapper = mount(FormPreview, { props: { form: APPLY_FORM } });
+      await flushPromises();
+      if (edited) {
+        await wrapper.find("input").setValue("旧试填");
+        await flushPromises();
+      }
+
+      // 文件重开创建新的定义对象，序列化内容与旧定义相同。
+      await wrapper.setProps({ form: { ...APPLY_FORM } });
+      await flushPromises();
+      expect((wrapper.find("input").element as HTMLInputElement).value).toBe("默认事由");
+      expect(JSON.parse(wrapper.find('[data-test="form-preview-values"]').text())).toEqual({
+        reason: "默认事由",
+      });
+      expect(wrapper.props("form").rules).toBe(APPLY_FORM.rules);
+    },
+  );
+
+  it("内容无法解析时显示错误而非白屏", () => {
+    wrapper = mount(FormPreview, {
+      props: { form: { ...APPLY_FORM, rules: "{bad-json" } },
+    });
+    expect(wrapper.find('[data-test="form-preview-error"]').text()).toContain("无法解析");
+  });
+});
+
+describe("FormManager（目录管理面板）", () => {
+  it("新建与改名经事件上抛，操作归会话", async () => {
+    wrapper = mount(FormManager, { props: { forms: [APPLY_FORM] } });
+    await flushPromises();
+
+    await wrapper.find('[data-test="form-manager-new-name"]').setValue("复核单");
+    await wrapper.find('[data-test="form-manager-create-btn"]').trigger("click");
+    expect(wrapper.emitted("create")).toEqual([["复核单"]]);
+
+    await wrapper.find('[data-test="form-rename-btn-form_apply"]').trigger("click");
+    await wrapper.find('[data-test="form-rename-input-form_apply"]').setValue("报销单");
+    await wrapper.find('[data-test="form-manager-rename-ok"]').trigger("click");
+    expect(wrapper.emitted("rename")).toEqual([["form_apply", "报销单"]]);
+  });
+
+  it("删除经两段确认后上抛；取消不上抛（A06 的面板交互）", async () => {
+    wrapper = mount(FormManager, { props: { forms: [APPLY_FORM] } });
+    await flushPromises();
+
+    // 直接点删除只进入确认态，不上抛
+    await wrapper.find('[data-test="form-delete-btn-form_apply"]').trigger("click");
+    expect(wrapper.emitted("delete")).toBeUndefined();
+    expect(wrapper.find('[data-test="form-delete-confirm-form_apply"]').exists()).toBe(true);
+
+    // 取消回到常态
+    await wrapper.find('[data-test="form-delete-cancel-form_apply"]').trigger("click");
+    expect(wrapper.emitted("delete")).toBeUndefined();
+    expect(wrapper.find('[data-test="form-delete-confirm-form_apply"]').exists()).toBe(false);
+
+    // 再点删除并确认：上抛 id，操作归会话（引用守卫在会话侧）
+    await wrapper.find('[data-test="form-delete-btn-form_apply"]').trigger("click");
+    await wrapper.find('[data-test="form-delete-confirm-form_apply"]').trigger("click");
+    expect(wrapper.emitted("delete")).toEqual([["form_apply"]]);
+  });
+
+  it("空白名称留在管理面板供修正，不丢输入或退出改名", async () => {
+    wrapper = mount(FormManager, { props: { forms: [APPLY_FORM] } });
+    await wrapper.find('[data-test="form-manager-new-name"]').setValue("   ");
+    await wrapper.find('[data-test="form-manager-create-btn"]').trigger("click");
+    expect(wrapper.emitted("create")).toBeUndefined();
+    expect(wrapper.find('[data-test="form-manager-new-name"]').element).toHaveProperty(
+      "value",
+      "   ",
+    );
+    expect(wrapper.find('[data-test="form-manager-name-error"]').text()).toContain(
+      "名称不能为空白",
+    );
+
+    await wrapper.find('[data-test="form-rename-btn-form_apply"]').trigger("click");
+    await wrapper.find('[data-test="form-rename-input-form_apply"]').setValue("   ");
+    await wrapper.find('[data-test="form-manager-rename-ok"]').trigger("click");
+    expect(wrapper.emitted("rename")).toBeUndefined();
+    expect(wrapper.find('[data-test="form-rename-input-form_apply"]').exists()).toBe(true);
+    expect(wrapper.find('[data-test="form-rename-error-form_apply"]').text()).toContain(
+      "名称不能为空白",
+    );
+  });
+
+  it("内容守卫前置：超范围字段不 emit 且编辑器保持打开供修正", async () => {
+    const manager = mount(FormManager, { props: { forms: [APPLY_FORM] }, attachTo: document.body });
+    fmMark("edit.begin");
+    await manager.find('[data-test="form-edit-btn-form_apply"]').trigger("click");
+    fmMark("edit.end");
+    await flushPromises();
+
+    // Vue3 emit 不向调用方 rethrow 宿主异常——守卫必须在组件内前置，
+    // 否则坏内容会静默关闭编辑器。构造超范围内容经组件实例触发保存。
+    const designer = manager.findComponent({ name: "FormDesigner" });
+    expect(designer.exists()).toBe(true);
+    if(process.env.FM_FAIL==='1')throw new Error('[DEBUG-fm-61] intentional pre-unmount failure');
+    fmMark("emit.begin");
+    designer.vm.$emit(
+      "save",
+      JSON.stringify([{ type: "upload", field: "u1", title: "上传" }]),
+      "{}",
+    );
+    fmMark("emit.end");
+    await flushPromises();
+
+    fmMark("assert.begin");
+    expect(manager.emitted("updateContent")).toBeUndefined();
+    expect(manager.find('[data-test="form-manager-error"]').text()).toContain("支持的组件");
+    expect(manager.find('[data-test="form-manager-edit-dialog"]').exists()).toBe(true);
+    fmMark("assert.end");
+    manager.unmount();
+  });
+
+  it("重复字段标识不能关闭编辑器或上报保存", async () => {
+    wrapper = mount(FormManager, { props: { forms: [APPLY_FORM] }, attachTo: document.body });
+    fmMark("edit.begin");
+    await wrapper.find('[data-test="form-edit-btn-form_apply"]').trigger("click");
+    fmMark("edit.end");
+    await flushPromises();
+
+    fmMark("emit.begin");
+    wrapper.findComponent({ name: "FormDesigner" }).vm.$emit(
+      "save",
+      JSON.stringify([
+        { type: "input", field: "reason" },
+        { type: "input", field: "reason" },
+      ]),
+      "{}",
+    );
+    fmMark("emit.end");
+    await flushPromises();
+
+    expect(wrapper.emitted("updateContent")).toBeUndefined();
+    expect(wrapper.find('[data-test="form-manager-error"]').text()).toContain("字段标识重复");
+    expect(wrapper.find('[data-test="form-manager-edit-dialog"]').exists()).toBe(true);
+    fmMark("assert.end");
+  });
+
+  it("取消内容编辑时关闭弹窗，不留下空白编辑器", async () => {
+    wrapper = mount(FormManager, { props: { forms: [APPLY_FORM] }, attachTo: document.body });
+    fmMark("edit.begin");
+    await wrapper.find('[data-test="form-edit-btn-form_apply"]').trigger("click");
+    fmMark("edit.end");
+    await flushPromises();
+    expect(wrapper.find('[data-test="form-manager-edit-dialog"]').isVisible()).toBe(true);
+
+    await wrapper.find('[data-test="form-designer-cancel"]').trigger("click");
+    await flushPromises();
+
+    expect(wrapper.find('[data-test="form-manager-edit-dialog"]').isVisible()).toBe(false);
+    expect(wrapper.emitted("updateContent")).toBeUndefined();
+  });
+});
+
+describe("FormDesigner（真实 FcDesigner 装载）", () => {
+  it("装载既有规则并成对导出 rules/options 序列化串", async () => {
+    wrapper = mount(FormDesigner, {
+      props: { name: APPLY_FORM.name, rules: APPLY_FORM.rules, options: APPLY_FORM.options },
+    });
+    await flushPromises();
+
+    // 真实设计器在设计区回显字段标题
+    expect(wrapper.text()).toContain("申请事由");
+
+    await wrapper.find('[data-test="form-designer-save"]').trigger("click");
+    await flushPromises();
+    const saved = wrapper.emitted("save");
+    expect(saved).toBeTruthy();
+    const [rules, options] = saved![0] as [string, string];
+    // 导出物是可解析的成对 JSON，且文本字段语义保留
+    const parsed = JSON.parse(rules) as Array<{ type: string; field: string }>;
+    expect(parsed.some((rule) => rule.type === "input" && rule.field === "reason")).toBe(true);
+    expect(typeof JSON.parse(options)).toBe("object");
+  });
+
+  it("取消不产出内容", async () => {
+    wrapper = mount(FormDesigner, {
+      props: { name: APPLY_FORM.name, rules: "[]", options: "{}" },
+    });
+    await flushPromises();
+    await wrapper.find('[data-test="form-designer-cancel"]').trigger("click");
+    expect(wrapper.emitted("save")).toBeUndefined();
+    expect(wrapper.emitted("cancel")).toBeTruthy();
+  });
+});
+
+/**
+ * 八类字段 + 栅格布局矩阵（与真实设计器导出形态一致，含运行态元数据键）。
+ * 注意：与 form-schema.test.ts / document.test.ts 的矩阵 fixture 刻意同构，
+ * 新增字段类型时三处同步更新
+ */
+const MATRIX_RULES_JSON = JSON.stringify([
+  {
+    type: "input",
+    field: "reason",
+    title: "申请事由",
+    value: "默认事由",
+    $required: true,
+    _fc_drag_tag: "input",
+  },
+  { type: "input", field: "detail", title: "详细说明", props: { type: "textarea" } },
+  { type: "inputNumber", field: "amount", title: "金额", value: 0 },
+  {
+    type: "radio",
+    field: "urgent",
+    title: "是否加急",
+    options: [
+      { label: "是", value: "1" },
+      { label: "否", value: "0" },
+    ],
+    value: "0",
+    effect: { fetch: "" },
+  },
+  {
+    type: "checkbox",
+    field: "tags",
+    title: "标签",
+    options: [
+      { label: "甲", value: "a" },
+      { label: "乙", value: "b" },
+    ],
+  },
+  { type: "select", field: "level", title: "级别", options: [{ label: "普通", value: "1" }] },
+  { type: "datePicker", field: "applyDate", title: "申请日期" },
+  {
+    type: "switch",
+    field: "notify",
+    title: "通知",
+    value: false,
+    props: { activeValue: true, inactiveValue: false },
+  },
+  {
+    type: "fcRow",
+    children: [
+      {
+        type: "col",
+        props: { span: 12 },
+        children: [{ type: "input", field: "leftCol", title: "列甲" }],
+      },
+      {
+        type: "col",
+        props: { span: 12 },
+        children: [{ type: "datePicker", field: "rightCol", title: "列乙" }],
+      },
+    ],
+  },
+]);
+
+const MATRIX_FORM: FormDefinition = {
+  id: "form_matrix",
+  name: "矩阵表单",
+  provider: "form-create/element-plus",
+  rules: MATRIX_RULES_JSON,
+  options: "{}",
+};
+
+describe("FormPreview 全字段与布局矩阵（真实渲染器，A09/A10）", () => {
+  it("八类字段与栅格布局真实渲染；数字 0、开关 false、单选 0、空多选按组件语义回显", async () => {
+    wrapper = mount(FormPreview, { props: { form: MATRIX_FORM } });
+    await flushPromises();
+
+    // 文本与多行文本
+    const inputs = wrapper.findAll("input");
+    expect((inputs[0].element as HTMLInputElement).value).toBe("默认事由");
+    expect(wrapper.find("textarea").exists()).toBe(true);
+
+    // 数字 0：回显为 "0" 而非空（不能把 0 当空值吞掉）
+    const numberInput = wrapper.findAll(".el-input-number input");
+    expect(numberInput).toHaveLength(1);
+    expect((numberInput[0].element as HTMLInputElement).value).toBe("0");
+
+    // 单选：两个选项、默认值 "0"（字符串值类型）选中在「否」
+    const radios = wrapper.findAll('input[type="radio"]');
+    expect(radios).toHaveLength(2);
+    expect((radios[0].element as HTMLInputElement).checked).toBe(false);
+    expect((radios[1].element as HTMLInputElement).checked).toBe(true);
+
+    // 多选：默认未选（空数组），选项在场
+    const checkboxes = wrapper.findAll('input[type="checkbox"]');
+    expect(checkboxes.length).toBeGreaterThanOrEqual(2);
+    checkboxes.forEach((box) => expect((box.element as HTMLInputElement).checked).toBe(false));
+
+    // 下拉单选与日期
+    expect(wrapper.find(".el-select").exists()).toBe(true);
+    expect(wrapper.find(".el-date-editor").exists()).toBe(true);
+
+    // 开关：默认 false——未选中态而非丢失
+    const switchEl = wrapper.find(".el-switch");
+    expect(switchEl.exists()).toBe(true);
+    expect(switchEl.classes()).not.toContain("is-checked");
+
+    // 栅格布局：行列结构真实渲染，列内字段在场
+    expect(wrapper.find(".el-row").exists()).toBe(true);
+    expect(wrapper.findAll(".el-col").length).toBeGreaterThanOrEqual(2);
+    expect(wrapper.text()).toContain("列甲");
+    expect(wrapper.text()).toContain("列乙");
+  });
+
+  it("试填各类型字段只写试填状态，设计默认值不被污染（0/false 语义保持）", async () => {
+    wrapper = mount(FormPreview, { props: { form: MATRIX_FORM } });
+    await flushPromises();
+
+    const inputs = wrapper.findAll("input");
+    await inputs[0].setValue("试填事由");
+    await wrapper.find("textarea").setValue("试填说明");
+    // 单选改选「是」、开关打开
+    await wrapper.findAll('input[type="radio"]')[0].setValue(true);
+    await wrapper.findAll('input[type="checkbox"]')[0].setValue(true);
+    await wrapper.find(".el-switch input").setValue(true);
+    await flushPromises();
+
+    // 试填值可见
+    const valuesText = wrapper.find('[data-test="form-preview-values"]').text();
+    expect(valuesText).toContain("试填事由");
+    expect(valuesText).toContain("试填说明");
+    expect(valuesText).toContain("urgent");
+    expect(valuesText).toContain("notify");
+
+    // 设计定义不被污染：默认值、选项、必填原样保留
+    const rulesText = wrapper.props("form").rules;
+    expect(rulesText).toContain("默认事由");
+    expect(rulesText).toContain('"value":0');
+    expect(rulesText).toContain('"value":false');
+    expect(rulesText).toContain('"value":"0"');
+    expect(rulesText).not.toContain("试填事由");
+    expect(rulesText).not.toContain("试填说明");
+  });
+});
+
+describe("FormDesigner 全字段与布局矩阵（真实设计器，A10）", () => {
+  it("真实设计器重复保存保留显式空多选默认值，并区分未设置（含栅格列内）", async () => {
+    let rules = JSON.stringify([
+      { type: "checkbox", field: "empty", title: "空默认值", value: [] },
+      { type: "checkbox", field: "unset", title: "未设置" },
+      { type: "checkbox", field: "selected", title: "有选择", value: ["a"] },
+      {
+        type: "fcRow",
+        children: [
+          {
+            type: "col",
+            children: [{ type: "checkbox", field: "nested", title: "列内空值", value: [] }],
+          },
+        ],
+      },
+    ]);
+    for (let round = 0; round < 2; round++) {
+      wrapper = mount(FormDesigner, { props: { name: "默认值往返", rules, options: "{}" } });
+      await flushPromises();
+      await wrapper.find('[data-test="form-designer-save"]').trigger("click");
+      rules = wrapper.emitted("save")![0]![0] as string;
+      const output = JSON.parse(rules);
+      expect(output[0].value).toEqual([]);
+      expect(Object.hasOwn(output[1], "value")).toBe(false);
+      expect(output[2].value).toEqual(["a"]);
+      expect(output[3].children[0].children[0].value).toEqual([]);
+      expect(rules).not.toContain("__flowduet");
+      wrapper.unmount();
+      wrapper = undefined;
+    }
+  }, 15_000);
+
+  it("新建多选字段可显式设置空默认值，再恢复未设置", async () => {
+    wrapper = mount(FormDesigner, { props: { name: "新建默认值", rules: "[]", options: "{}" } });
+    await flushPromises();
+    const menu = wrapper.findAll("._fc-l-item").find((item) => item.text() === "多选框");
+    expect(menu).toBeDefined();
+    await menu!.trigger("click");
+    await flushPromises();
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    const mode = wrapper
+      .findAll("._fc-r-config .el-form-item")
+      .find((item) => item.text().includes("设置默认值"));
+    expect(mode, "多选需要区分未设置与显式空默认值").toBeDefined();
+    await mode!.find(".el-switch__core").trigger("click");
+    await flushPromises();
+    await wrapper.find('[data-test="form-designer-save"]').trigger("click");
+    expect(JSON.parse(wrapper.emitted("save")![0]![0] as string)[0].value).toEqual([]);
+    await mode!.find(".el-switch__core").trigger("click");
+    await flushPromises();
+    await wrapper.find('[data-test="form-designer-save"]').trigger("click");
+    const output = JSON.parse(wrapper.emitted("save")![1]![0] as string);
+    expect(Object.hasOwn(output[0], "value")).toBe(false);
+  }, 15_000);
+
+  it("清除多选默认项保存为显式空数组，关闭默认值设置才变为未设置", async () => {
+    wrapper = mount(FormDesigner, {
+      props: {
+        name: "清空默认项",
+        rules: JSON.stringify([
+          {
+            type: "checkbox",
+            field: "tags",
+            title: "标签",
+            value: ["a"],
+            options: [{ label: "甲", value: "a" }],
+          },
+        ]),
+        options: "{}",
+      },
+    });
+    await flushPromises();
+    await wrapper.find("._fc-m-drag .el-form-item").trigger("click");
+    await vi.waitFor(() => expect(wrapper!.text()).toContain("默认选项"));
+    const defaults = wrapper
+      .findAll("._fc-r-config .el-form-item")
+      .find((item) => item.text().includes("默认选项"));
+    await defaults!.find(".el-tag__close").trigger("click");
+    await flushPromises();
+    await wrapper.find('[data-test="form-designer-save"]').trigger("click");
+    expect(JSON.parse(wrapper.emitted("save")![0]![0] as string)[0].value).toEqual([]);
+    const mode = wrapper
+      .findAll("._fc-r-config .el-form-item")
+      .find((item) => item.text().includes("设置默认值"));
+    await mode!.find(".el-switch__core").trigger("click");
+    await flushPromises();
+    await wrapper.find('[data-test="form-designer-save"]').trigger("click");
+    expect(Object.hasOwn(JSON.parse(wrapper.emitted("save")![1]![0] as string)[0], "value")).toBe(
+      false,
+    );
+  }, 15_000);
+
+  it("装载八类字段与栅格布局后成对导出，语义与装载内容等价", async () => {
+    wrapper = mount(FormDesigner, {
+      props: { name: MATRIX_FORM.name, rules: MATRIX_RULES_JSON, options: "{}" },
+    });
+    await flushPromises();
+
+    // 设计区回显矩阵字段与列内字段
+    const text = wrapper.text();
+    for (const title of [
+      "申请事由",
+      "详细说明",
+      "金额",
+      "是否加急",
+      "标签",
+      "级别",
+      "申请日期",
+      "通知",
+      "列甲",
+      "列乙",
+    ]) {
+      expect(text).toContain(title);
+    }
+
+    await wrapper.find('[data-test="form-designer-save"]').trigger("click");
+    await flushPromises();
+    const saved = wrapper.emitted("save");
+    expect(saved).toBeTruthy();
+    const [rules, options] = saved![0] as [string, string];
+    expect(typeof JSON.parse(options)).toBe("object");
+    // 忽略设计器运行态元数据后的语义等价（字段顺序、布局、默认值、必填、选项）
+    expect(rulesSemantics(rules)).toEqual(rulesSemantics(MATRIX_RULES_JSON));
+  });
+
+  it("数字与开关字段可在真实配置面板编辑默认值", async () => {
+    wrapper = mount(FormDesigner, {
+      props: {
+        name: "默认值配置",
+        rules: JSON.stringify([
+          { type: "inputNumber", field: "amount", title: "金额", value: 0 },
+          {
+            type: "switch",
+            field: "notify",
+            title: "通知",
+            value: false,
+            props: { activeValue: true, inactiveValue: false },
+          },
+        ]),
+        options: "{}",
+      },
+    });
+    await flushPromises();
+
+    for (const title of ["金额", "通知"]) {
+      const canvasItem = wrapper
+        .findAll("._fc-m-drag .el-form-item")
+        .find((node) => node.text().includes(title));
+      expect(canvasItem).toBeDefined();
+      await canvasItem!.trigger("click");
+      await flushPromises();
+      await new Promise((resolve) => setTimeout(resolve, 100));
+      const defaultItem = wrapper
+        .findAll("._fc-r-config .el-form-item")
+        .find((node) => node.text().includes("默认值"));
+      expect(defaultItem, `${title} 缺少默认值配置入口`).toBeDefined();
+    }
+  }, 15_000);
+});
+
+describe("设计器开放范围收口（A13，designer-config 与真实面板）", () => {
+  it("下拉单选真实配置面板不能开启创建新条目", async () => {
+    wrapper = mount(FormDesigner, {
+      props: {
+        name: "静态下拉",
+        rules: JSON.stringify([
+          {
+            type: "select",
+            field: "level",
+            title: "级别",
+            options: [{ label: "普通", value: "1" }],
+          },
+        ]),
+        options: "{}",
+      },
+    });
+    await flushPromises();
+    const item = wrapper
+      .findAll("._fc-m-drag .el-form-item")
+      .find((node) => node.text().includes("级别"));
+    await item!.trigger("click");
+    await flushPromises();
+    await vi.waitFor(() => expect(wrapper!.text()).toContain("是否可搜索"));
+    expect(wrapper.text()).not.toContain("是否允许用户创建新条目");
+    expect(wrapper.text()).toContain("是否可搜索");
+  }, 15_000);
+
+  it("菜单只提供八类字段与栅格布局，范围外组件无拖拽入口", () => {
+    const names = FIELD_MENU.flatMap((group) => group.list.map((item) => item.name));
+    expect([...names]).toEqual([
+      "input",
+      "textarea",
+      "inputNumber",
+      "radio",
+      "checkbox",
+      "select",
+      "datePicker",
+      "switch",
+      "fcRow",
+    ]);
+  });
+
+  it("真实设计器面板不出现范围外组件与配置入口", async () => {
+    wrapper = mount(FormDesigner, {
+      props: { name: MATRIX_FORM.name, rules: MATRIX_RULES_JSON, options: "{}" },
+    });
+    await flushPromises();
+    const text = wrapper.text();
+    // 上传、滑块、评分、级联、富文本、子表单等不提供入口
+    // （菜单项 label 由 designer 内置 locale 渲染，按内置文案核对开放项）
+    for (const label of [
+      "上传",
+      "滑块",
+      "评分",
+      "级联",
+      "富文本",
+      "子表单",
+      "表格表单",
+      "穿梭框",
+      "颜色选择器",
+    ]) {
+      expect(text).not.toContain(label);
+    }
+    // 表单级事件（onSubmit 等脚本编辑）不提供
+    expect(text).not.toContain("表单事件");
+    // 开放的九个入口在场（内置文案：输入框/多行输入框/计数器/单选框/多选框/选择器/日期/开关/栅格布局）
+    for (const label of [
+      "输入框",
+      "多行输入框",
+      "计数器",
+      "单选框",
+      "多选框",
+      "选择器",
+      "日期",
+      "开关",
+      "栅格布局",
+    ]) {
+      expect(text).toContain(label);
+    }
+    // AI 助理入口按钮不在场（showAi 关闭；限定左侧菜单栏，面板本体是 v-show 挂载）
+    expect(wrapper.find("._fc-l-menu .icon-ai").exists()).toBe(false);
+  });
+
+  it("选中字段后：联动与编辑数据入口不渲染，静态选项与必填配置在场", async () => {
+    // 未选中时配置面板是 v-show 预渲染（DOM 文案在场但不可达），
+    // 入口收口的实际效果以选中字段后的面板为准
+    wrapper = mount(FormDesigner, {
+      props: {
+        name: "收口验证",
+        rules: JSON.stringify([
+          {
+            type: "radio",
+            field: "urgent",
+            title: "是否加急",
+            options: [{ label: "是", value: "1" }],
+          },
+        ]),
+        options: "{}",
+      },
+    });
+    await flushPromises();
+    const canvasItem = wrapper
+      .findAll("._fc-m-drag .el-form-item")
+      .find((node) => node.text().includes("是否加急"));
+    expect(canvasItem).toBeDefined();
+    await canvasItem!.trigger("click");
+    await flushPromises();
+    // 配置面板的隐藏项在选中后的 nextTick 才应用，补一个宏任务等待
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
+    const text = wrapper.text();
+    expect(text).not.toContain("组件联动");
+    expect(text).not.toContain("编辑数据");
+    expect(text).not.toContain("远程数据");
+    // 开放范围内的配置在场：静态选项表格编辑与「是否必填」
+    expect(text).toContain("是否必填");
+    expect(text).toContain("键名");
+  });
+
+  it("配置收口：选项类型/多选/范围日期/远程与脚本入口隐藏，栅格不可拖入容器", () => {
+    const hidden = DESIGNER_CONFIG.hiddenItemConfig!;
+    // 选项类型选择器隐藏：静态选项编辑默认在场，远程数据无从切换
+    expect(hidden.default).toContain("_optionType");
+    // 输入框仅保留文本形态，多行由独立菜单入口提供
+    expect(hidden.input).toContain("type");
+    // 下拉仅单选：multiple 及其衍生的远程搜索入口隐藏
+    expect(hidden.select).toContain("multiple");
+    expect(hidden.select).toContain("remote");
+    expect(hidden.select).toContain("remoteMethod");
+    // 日期仅单值：类型选择（含范围形态）隐藏
+    expect(hidden.datePicker).toContain("type");
+    // 事件（脚本）、联动、自定义组件面板关闭；表单级事件与数据录入入口关闭
+    expect(DESIGNER_CONFIG.showEventForm).toBe(false);
+    expect(DESIGNER_CONFIG.hiddenFormConfig).toContain("formCreate_event");
+    expect(DESIGNER_CONFIG.showInputData).toBe(false);
+    expect(DESIGNER_CONFIG.showControl).toBe(false);
+    expect(DESIGNER_CONFIG.showCustomProps).toBe(false);
+
+    // checkDrag：栅格布局拖入任何已有容器（含 col）被拒；字段不受影响
+    const checkDrag = DESIGNER_CONFIG.checkDrag!;
+    expect(checkDrag({ menu: { name: "fcRow" } } as never)).toBe(false);
+    expect(checkDrag({ menu: { name: "input" } } as never)).toBe(true);
+    expect(checkDrag({ menu: { name: "col" } } as never)).toBe(true);
+  });
+});
+
+describe("FormManager 未提交内容收集（#76：commitPendingEdit）", () => {
+  it("编辑器开着：commitPendingEdit 经真实设计器序列化上抛并关闭编辑器", async () => {
+    wrapper = mount(FormManager, { props: { forms: [APPLY_FORM] }, attachTo: document.body });
+    fmMark("edit.begin");
+    await wrapper.find('[data-test="form-edit-btn-form_apply"]').trigger("click");
+    fmMark("edit.end");
+    await flushPromises();
+
+    const vm = wrapper.vm as unknown as { commitPendingEdit: () => boolean };
+    expect(vm.commitPendingEdit()).toBe(true);
+    await flushPromises();
+
+    const events = wrapper.emitted("updateContent");
+    expect(events).toBeTruthy();
+    expect(events![0]![0]).toBe("form_apply");
+    expect(JSON.parse(events![0]![1] as string)[0]!.field).toBe("reason");
+    expect(wrapper.find('[data-test="form-manager-edit-dialog"]').isVisible()).toBe(false);
+  });
+
+  it("编辑器未打开：收集是 no-op，返回 true 且不上抛", async () => {
+    wrapper = mount(FormManager, { props: { forms: [APPLY_FORM] }, attachTo: document.body });
+    await flushPromises();
+
+    const vm = wrapper.vm as unknown as { commitPendingEdit: () => boolean };
+    expect(vm.commitPendingEdit()).toBe(true);
+    expect(wrapper.emitted("updateContent")).toBeUndefined();
+  });
+
+  it("超范围内容：返回 false、不上抛、编辑器保持打开供修正", async () => {
+    // 真实设计器无法产出范围外内容（菜单收口），坏内容路径经替身注入
+    const stub = defineComponent({
+      name: "FormDesigner",
+      props: ["name", "rules", "options"],
+      emits: ["save", "cancel"],
+      setup(_, { expose }) {
+        expose({
+          exportContent: () => ({
+            rules: JSON.stringify([{ type: "upload", field: "u1", title: "上传" }]),
+            options: "{}",
+          }),
+        });
+      },
+      render: () => null,
+    });
+    wrapper = mount(FormManager, {
+      props: { forms: [APPLY_FORM] },
+      attachTo: document.body,
+      global: { stubs: { FormDesigner: stub } },
+    });
+    fmMark("edit.begin");
+    await wrapper.find('[data-test="form-edit-btn-form_apply"]').trigger("click");
+    fmMark("edit.end");
+    await flushPromises();
+
+    const vm = wrapper.vm as unknown as { commitPendingEdit: () => boolean };
+    expect(vm.commitPendingEdit()).toBe(false);
+    await flushPromises();
+
+    expect(wrapper.emitted("updateContent")).toBeUndefined();
+    expect(wrapper.find('[data-test="form-manager-error"]').text()).toContain("支持的组件");
+    expect(wrapper.find('[data-test="form-manager-edit-dialog"]').isVisible()).toBe(true);
+  });
+});
+
+describe("PR88 序列化异常反馈", () => {
+  it("设计器序列化抛错时拒绝提交，保留编辑器与当前目录", async () => {
+    const stub = defineComponent({
+      name: "FormDesigner",
+      setup(_, { expose }) {
+        expose({
+          exportContent: () => {
+            throw new Error("序列化故障");
+          },
+        });
+      },
+      render: () => null,
+    });
+    wrapper = mount(FormManager, {
+      props: { forms: [APPLY_FORM] },
+      attachTo: document.body,
+      global: { stubs: { FormDesigner: stub } },
+    });
+    fmMark("edit.begin");
+    await wrapper.find('[data-test="form-edit-btn-form_apply"]').trigger("click");
+    fmMark("edit.end");
+    await flushPromises();
+    const vm = wrapper.vm as unknown as { commitPendingEdit: () => boolean };
+    expect(vm.commitPendingEdit()).toBe(false);
+    await flushPromises();
+    expect(wrapper.emitted("updateContent")).toBeUndefined();
+    expect(wrapper.find('[data-test="form-manager-error"]').text()).toContain("序列化故障");
+    expect(wrapper.find('[data-test="form-manager-edit-dialog"]').isVisible()).toBe(true);
+  });
+});
+
+describe("PR88 产品验收焦点与编辑通知回归", () => {
+  async function openDefaultEditor(): Promise<void> {
+    // 外部 ValueInput 的已核实合同：input 只改缓冲，blur 才更新规则。
+    // 这里保留真实 DOM 焦点行为；完整 FormCreate 链路由内置浏览器复验。
+    const delayedInput = defineComponent({
+      name: "FcDesigner",
+      setup(_, { expose }) {
+        const pending = ref("");
+        let rules: Record<string, unknown>[] = [];
+        let options: object = {};
+        expose({
+          setRule: (value: Record<string, unknown>[]) => {
+            rules = value;
+            pending.value = String(value[0]?.value ?? "");
+          },
+          setOption: (value: object) => {
+            options = value;
+          },
+          getJson: () => JSON.stringify(rules),
+          getOptionsJson: () => JSON.stringify(options),
+        });
+        return () =>
+          h("input", {
+            "data-test": "delayed-default-input",
+            value: pending.value,
+            onInput: (event: Event) => {
+              pending.value = (event.target as HTMLInputElement).value;
+            },
+            onBlur: () => {
+              rules[0]!.value = pending.value;
+            },
+          });
+      },
+    });
+    wrapper = mount(FormDesigner, {
+      props: { name: APPLY_FORM.name, rules: APPLY_FORM.rules, options: APPLY_FORM.options },
+      attachTo: document.body,
+      global: { stubs: { FcDesigner: delayedInput } },
+    });
+    await flushPromises();
+  }
+
+  it("P13 当前默认值未失焦时同步收集也包含已输入内容", async () => {
+    await openDefaultEditor();
+    const input = wrapper!.find<HTMLInputElement>('[data-test="delayed-default-input"]');
+    input.element.focus();
+    await input.setValue("焦点新默认值");
+    expect(document.activeElement).toBe(input.element);
+    const vm = wrapper!.vm as unknown as {
+      exportContent: () => { rules: string; options: string };
+    };
+    const content = vm.exportContent();
+    expect(JSON.parse(content.rules)[0].value).toBe("焦点新默认值");
+  });
+
+  it("E15 当前输入上抛编辑通知，宿主可识别尚未提交的新编辑", async () => {
+    await openDefaultEditor();
+    const input = wrapper!.find<HTMLInputElement>('[data-test="delayed-default-input"]');
+    await input.setValue("尚未提交的新默认值");
+    expect(wrapper!.emitted("draftChange")?.length).toBeGreaterThan(0);
+    expect(wrapper!.emitted("save")).toBeUndefined();
+  });
+  it("E15 仅发 Vue 事件的下拉交互也上抛潜在编辑", async () => {
+    const externalSelect = defineComponent({
+      name: "FcDesigner",
+      setup(_, { expose }) {
+        const value = ref("a");
+        expose({ setRule: () => {}, setOption: () => {} });
+        return () =>
+          h(
+            ElSelect,
+            {
+              modelValue: value.value,
+              "onUpdate:modelValue": (next: string) => {
+                value.value = next;
+              },
+            },
+            () => [
+              h(ElOption, { label: "选项A", value: "a" }),
+              h(ElOption, { label: "选项B", value: "b" }),
+            ],
+          );
+      },
+    });
+    wrapper = mount(FormDesigner, {
+      props: { name: "下拉编辑", rules: "[]", options: "{}" },
+      attachTo: document.body,
+      global: { stubs: { FcDesigner: externalSelect } },
+    });
+    await flushPromises();
+    await wrapper.find(".el-select__wrapper").trigger("click");
+    await flushPromises();
+    const option = Array.from(
+      document.querySelectorAll<HTMLElement>(".el-select-dropdown__item"),
+    ).find((node) => node.textContent === "选项B");
+    option!.click();
+    await flushPromises();
+    expect(wrapper.findAll(".el-select__selected-item").map((node) => node.text())).toContain(
+      "选项B",
+    );
+    expect((wrapper.emitted("draftChange") ?? []).length).toBeGreaterThan(0);
+  });
+});

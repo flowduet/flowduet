@@ -1,0 +1,27 @@
+#78 发布前本地验证记录（2026-10-13，分支 chore/78-release-iteration-3，基准提交 085802a）
+
+## 1. 发布前置核对
+- origin/develop HEAD = 085802a（PR #90 squash 合入），git diff 73ecb78..085802a 树完全一致（exit 0，无输出）——与 #77 交接声明吻合
+- 工作树 clean（git status --short 无输出）
+- .changeset/ 仅剩 config.json——changeset 已全部由版本 PR 消费
+- 发布前 git tag 与 npm registry 双端核对：core 0.3.0 / designer 0.1.0 / form-create 0.1.0 均不存在（form-create 为全新包，404），无版本复用
+- npm 官方源登录态：npm whoami → mackwan84
+- 三包 package.json 版本：core 0.3.0 / designer 0.1.0 / form-create 0.1.0，publishConfig 钉死 https://registry.npmjs.org/
+
+## 2. 重新构建与产物比对
+- pnpm install --frozen-lockfile → Done（667ms）
+- pnpm build → 全部成功（BUILD_EXIT=0）
+- pnpm pack 三包，SHA256 与 #77 验收基准 final-tarballs.json 逐字节一致：
+  - flowduet-core-0.3.0.tgz       34525e8342615aa99d645c200009121b7b0e1ec9af71e8a6fb8f9626fc3d0cf1
+  - flowduet-designer-0.1.0.tgz   9b30e38db352f5ee0a7912676501c4759cb0173e0c0e38d04a77aa6a1edefc2e
+  - flowduet-form-create-0.1.0.tgz b95ea68e2f73ab980353b93a734f7cbf725a1f83506ac0f6aeec44a0a50f7ee2
+
+## 3. 测试
+- 首轮 pnpm test：form-create 2 failed / 119 passed（flaky，涉及真实设计器面板的长时用例）
+- form-create 复跑：7 files / 121 tests 全过（Duration 51.05s）
+- core 独立跑：125 passed，CORE_EXIT=0
+- designer 独立跑：127 passed，DESIGNER_EXIT=0
+- 佐证：PR #90 CI Node 22/24 双矩阵全绿（428 通过，run 38343842665）
+
+## 4. 结论
+产物与外部验收（JS/类型/CSS/浏览器/Flowable 6.8）基准逐字节一致，测试全绿（flaky 已复跑排除），满足发布条件。

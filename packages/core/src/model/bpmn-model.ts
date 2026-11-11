@@ -1,7 +1,8 @@
 import { BpmnModdle } from "bpmn-moddle";
 import type { ModdleElement } from "bpmn-moddle";
-import type { EngineAdapter, TaskKind } from "../adapter/engine-adapter";
-import { pushMany } from "../util/moddle-utils";
+import type { EngineAdapter, TaskKind } from "../adapter/engine-adapter.js";
+import { packagesWithFlowduet } from "../adapter/flowduet-package.js";
+import { pushMany, removeFromArray } from "../util/moddle-utils.js";
 
 /** 画布形状（DI v0 恒等布局的坐标来源） */
 export interface CanvasShape {
@@ -32,16 +33,80 @@ export interface BpmnModelSpec {
 export interface NodeSpec {
   id: string;
   name?: string;
-  shape: CanvasShape;
+  /**
+   * 画布形状。钉钉式纵向编辑天然无坐标（#22 起可选）：
+   * 缺省时恒等布局在 compile 处诚实抛错，导出请用 verticalDiLayout 推导。
+   */
+  shape?: CanvasShape;
 }
 
 export interface UserTaskSpec extends NodeSpec {
   /** 审批人，Flowable 表达式（如 "${manager}"）或字面量 */
   assignee?: string;
+  /** 表单绑定占位（#25 抽屉字段面；Flowable 以 flowable:formKey 序列化） */
+  formKey?: string;
 }
 
-/** 通用任务建模参数（assignee 仅对用户类任务有意义） */
-export type TaskSpec = UserTaskSpec;
+/**
+ * 抄送任务建模参数（R3 决策：经引擎中立任务映射落 ServiceTask + 扩展属性）。
+ * 收件人是字面量逗号分隔（"张三,李四"）或运行时表达式（"${ccUsers}"），
+ * 单属性承载——XML 属性单值，多值不拆属性。
+ *
+ * 宿主合同：方言写占位 delegate 引用 ${flowduetCcTask}——部署合法不要求
+ * bean 在场，但执行到抄送节点需要宿主绑定该 bean 实现知会行为（ADR-0004）。
+ */
+export interface CcTaskSpec extends NodeSpec {
+  recipients: string;
+}
+
+/** addTask 的建模参数（用户任务与抄送任务的并集） */
+export type TaskSpec = UserTaskSpec | CcTaskSpec;
+
+/** 多实例审批的完成方式三档（GLOSSARY.md：会签 / 或签 / 依次审批） */
+export type ApprovalMode = "all" | "any" | "sequential";
+
+/** 完成方式三档全集（测试与工具枚举用） */
+export const APPROVAL_MODES: readonly ApprovalMode[] = ["all", "any", "sequential"];
+
+/** 内核按档固化的完成条件（Flowable 多实例内置变量；原型实测形态） */
+export const COMPLETION_CONDITIONS: Readonly<Record<Exclude<ApprovalMode, "sequential">, string>> =
+  {
+    all: "${nrOfCompletedInstances == nrOfInstances}",
+    any: "${nrOfCompletedInstances >= 1}",
+  };
+
+/**
+ * 单实例内引用"当前审批人"的元素变量默认名。
+ * 公开导出：designer 侧 setApprovalMode 直改档时须复用同一默认名，
+ * 避免本地复刻字面量导致内外核分叉（#25 评审 W1）。
+ */
+export const DEFAULT_ELEMENT_VARIABLE = "assignee";
+
+/** 显式草稿建模选项：仅容许未配置的业务集合，其他结构守卫保持严格。 */
+export interface ApprovalDraftOptions {
+  allowIncomplete?: boolean;
+}
+
+/**
+ * 多实例审批任务建模参数。完成方式是 BPMN 标准多实例语义（非方言差异），
+ * 故不经任务类型映射、直建用户任务；方言属性（collection/elementVariable）
+ * 由适配器描述符绑定前缀，与 assignee 同一机制。
+ */
+export interface ApprovalTaskSpec extends NodeSpec {
+  /** 审批人集合表达式，裸变量名（如 "approvers"，运行时流程变量注入） */
+  collection: string;
+  /** 完成方式：会签（全员同意）/ 或签（任一同意）/ 依次审批（按序逐人） */
+  mode: ApprovalMode;
+  /** 逐实例元素变量名（任务内引用当前审批人），默认 "assignee" */
+  elementVariable?: string;
+  /** 表单绑定占位（#25 抽屉字段面；Flowable 以 flowable:formKey 序列化） */
+  formKey?: string;
+  /**
+   * 不支持——三档完成条件由内核固化，传入即抛错。
+   * 字段保留在类型上是为了让误用的调用方在运行时得到明确报错而非静默忽略。
+   */
+  completionCondition?: string;
+}
 
 export interface SequenceFlowSpec {
   id: string;
@@ -49,10 +114,20 @@ export interface SequenceFlowSpec {
   /** 必须是已登记的流节点 id */
   sourceRef: string;
   targetRef: string;
-  /** 排他网关分支条件（FormalExpression 体）；无条件的默认流转不传 */
+  /** 排他网关分支条件（FormalExpression 体）；默认流转不传条件 */
   condition?: string;
-  /** 画布折线，至少 2 个点；DI v0 恒等布局直接采用 */
-  waypoints: [Point, Point, ...Point[]];
+  /**
+   * 标记本分支为源排他网关的默认流转（「其余情况」）。
+   * 调用面归分支（钉钉式抽屉心智），内核落 BPMN 语义：写源网关 default
+   * 引用属性。与 condition 互斥；源必须是排他网关；同网关至多一条。
+   */
+  default?: boolean;
+  /**
+   * 画布折线，至少 2 个点；恒等布局直接采用。
+   * 钉钉式纵向编辑不传（#22 起可选）：缺省时恒等布局在 compile 处
+   * 诚实抛错，导出请用 verticalDiLayout 推导。
+   */
+  waypoints?: [Point, Point, ...Point[]];
 }
 
 /** 模型树的全部可变状态；私有字段收敛于此，使"从解析树包装"成为可能 */
@@ -69,6 +144,20 @@ interface ModelState {
 }
 
 const DEFAULT_TARGET_NAMESPACE = "http://flowduet.dev/bpmn";
+
+/**
+ * formKey 字段归一化：空白拒绝 + trim 后落盘（与 assignee/ccTo 口径对齐）。
+ * 抽为纯函数便于 addTask/addApprovalTask 在 #addNode 之前前置校验（评审 S-1）：
+ * 抛错时不留半写节点，下游无需再写补偿型 fail-fast。
+ */
+function normalizeFormKey(id: string, formKey: string | undefined): string | undefined {
+  if (formKey === undefined) return undefined;
+  const trimmed = formKey.trim();
+  if (trimmed === "") {
+    throw new Error(`任务 ${id} 的 formKey 不能为空白`);
+  }
+  return trimmed;
+}
 
 /**
  * BPMN 模型树包装（ROADMAP 接缝之一）。
@@ -88,7 +177,7 @@ export class BpmnModel {
     if (spec.processId.trim() === "") {
       throw new Error("processId 不能为空");
     }
-    const moddle = new BpmnModdle(spec.adapter.additionalPackages);
+    const moddle = new BpmnModdle(packagesWithFlowduet(spec.adapter));
     const definitions = moddle.create("bpmn:Definitions", {
       id: spec.definitionsId ?? `${spec.processId}_defs`,
       targetNamespace: spec.targetNamespace ?? DEFAULT_TARGET_NAMESPACE,
@@ -214,6 +303,28 @@ export class BpmnModel {
     return this.#state.process;
   }
 
+  /**
+   * 流程默认表单引用（ADR-0009）：落在 bpmn:Process 的
+   * flowduet:defaultFormKey，供未单独指定表单的审批节点继承。
+   * XML 是事实源——本访问器只做读写收口与空白守卫。
+   */
+  get defaultFormKey(): string | undefined {
+    return this.#state.process.get("defaultFormKey") as string | undefined;
+  }
+
+  setDefaultFormKey(key: string | undefined): this {
+    if (key === undefined) {
+      this.#state.process.set("defaultFormKey", undefined);
+      return this;
+    }
+    const trimmed = key.trim();
+    if (trimmed === "") {
+      throw new Error("默认表单 key 不能为空白（传 undefined 清除引用）");
+    }
+    this.#state.process.set("defaultFormKey", trimmed);
+    return this;
+  }
+
   addStartEvent(spec: NodeSpec): this {
     this.#addNode("bpmn:StartEvent", spec);
     return this;
@@ -229,15 +340,82 @@ export class BpmnModel {
     return this;
   }
 
+  addParallelGateway(spec: NodeSpec): this {
+    this.#addNode("bpmn:ParallelGateway", spec);
+    return this;
+  }
+
   addUserTask(spec: UserTaskSpec): this {
     return this.addTask("user", spec);
   }
 
   /**
+   * 多实例审批任务（会签/或签/依次，GLOSSARY.md 三档术语）。
+   * 三档完成条件内核固化（依次档语义上无完成条件）；per-instance 指派用
+   * ${元素变量} 表达式，集合用裸变量名在运行时注入。
+   * XML 形态经 Flowable 6.8 部署 + 启动 + 逐人 assignee 实测
+   * （分支 prototype/iter2-vertical-layout-mi）。
+   */
+  addApprovalTask(spec: ApprovalTaskSpec, options: ApprovalDraftOptions = {}): this {
+    if (spec.completionCondition !== undefined) {
+      if (spec.mode === "sequential") {
+        throw new Error(`任务 ${spec.id}：依次审批没有完成条件（逐人跑完即通过），不允许覆盖`);
+      }
+      throw new Error(`任务 ${spec.id}：完成方式三档已固化完成条件，不开放覆盖`);
+    }
+    // ApprovalMode 仅靠 TS 类型约束；JS 调用方或 as any 绕过时，非法 mode 会静默
+    // 落出空 body 的 completionCondition——运行时守卫兜底，与下方空白校验同层
+    if (!APPROVAL_MODES.includes(spec.mode)) {
+      throw new Error(
+        `任务 ${spec.id} 的 mode 必须是 ${APPROVAL_MODES.join("/")} 之一，实际是 ${String(spec.mode)}`,
+      );
+    }
+    if (
+      typeof spec.collection !== "string" ||
+      (spec.collection.trim() === "" && options.allowIncomplete !== true)
+    ) {
+      throw new Error(`任务 ${spec.id} 的 collection 不能为空白`);
+    }
+    // 前后空白原样落盘会让引擎按带空格变量名解析集合、静默取不到值——统一 trim 后再用
+    const collection = spec.collection.trim();
+    const elementVariable = (spec.elementVariable ?? DEFAULT_ELEMENT_VARIABLE).trim();
+    if (elementVariable === "") {
+      throw new Error(`任务 ${spec.id} 的 elementVariable 不能为空白`);
+    }
+    // formKey 空白校验前置到 #addNode 之前：抛错时不留半写节点（评审 S-1）
+    const formKey = normalizeFormKey(spec.id, spec.formKey);
+    const task = this.#addNode("bpmn:UserTask", spec);
+    task.set("assignee", `\${${elementVariable}}`);
+    // addApprovalTask 直建 UserTask，元素类型天然合法，无需再做映射校验
+    if (formKey !== undefined) {
+      task.set("formKey", formKey);
+    }
+    // isSequential=false 是 XSD 缺省，moddle 序列化时省略（bpmn.io 同款）
+    const loop = this.#state.moddle.create("bpmn:MultiInstanceLoopCharacteristics", {
+      isSequential: spec.mode === "sequential",
+    });
+    loop.set("collection", collection);
+    loop.set("elementVariable", elementVariable);
+    if (spec.mode !== "sequential") {
+      loop.set(
+        "completionCondition",
+        this.#state.moddle.create("bpmn:FormalExpression", {
+          body: COMPLETION_CONDITIONS[spec.mode],
+        }),
+      );
+    }
+    task.set("loopCharacteristics", loop);
+    return this;
+  }
+
+  /**
    * 引擎中立的任务建模：经适配器的任务类型映射（合同点三）落成方言任务。
    * 这是"任务类型映射"的消费点——映射由适配器声明，而非写死在内核。
+   * 抄送（cc）的方言形态带占位 delegate 引用，执行需宿主绑定 bean（见 CcTaskSpec）。
    */
-  addTask(kind: TaskKind, spec: TaskSpec): this {
+  addTask(kind: "cc", spec: CcTaskSpec): this;
+  addTask(kind: Exclude<TaskKind, "cc">, spec: UserTaskSpec): this;
+  addTask(kind: TaskKind, spec: UserTaskSpec | CcTaskSpec): this {
     const adapter = this.#state.adapter;
     if (adapter === undefined) {
       throw new Error("模型未绑定引擎适配器（解析恢复的树请经 parse(xml, { adapter }) 包装）");
@@ -246,15 +424,50 @@ export class BpmnModel {
     if (mapping === undefined) {
       throw new Error(`适配器 ${adapter.id} 未定义任务类型映射：${kind}`);
     }
-    const element = this.#addNode(mapping.elementType, spec);
-    if (spec.assignee !== undefined) {
-      if (spec.assignee.trim() === "") {
+    // 所有校验前置到 #addNode 之前：任一守卫抛错时不留半写节点（评审 S-1）
+    const assignee = "assignee" in spec ? spec.assignee : undefined;
+    if (assignee !== undefined) {
+      if (assignee.trim() === "") {
         throw new Error(`任务 ${spec.id} 的 assignee 不能为空白`);
       }
       if (mapping.elementType !== "bpmn:UserTask") {
         throw new Error(`任务类型 ${kind} 的方言形态是 ${mapping.elementType}，不支持 assignee`);
       }
-      element.set("assignee", spec.assignee);
+    }
+    const formKey = normalizeFormKey(
+      spec.id,
+      "formKey" in spec ? (spec as UserTaskSpec).formKey : undefined,
+    );
+    // formKey 仅在适配器为其声明了扩展属性的元素类型上合法（当前只有 UserTask）：
+    // 未声明的类型上直写会落进 moddle $attrs、序列化时丢掉 flowable 前缀，
+    // 产出 schema 非法 XML——引擎侧静默忽略，严格校验器报未知属性（评审 C-2）
+    if (formKey !== undefined && mapping.elementType !== "bpmn:UserTask") {
+      throw new Error(`任务类型 ${kind} 的方言形态是 ${mapping.elementType}，不支持 formKey`);
+    }
+    let recipientsTrimmed: string | undefined;
+    if (kind === "cc") {
+      // 仅靠 TS 类型约束不够（JS 调用方可绕过）；收件人带空白落盘会让
+      // 引擎按带空格的表达式/名单解析，静默取不到人——统一校验并 trim
+      const recipients = "recipients" in spec ? spec.recipients : undefined;
+      if (typeof recipients !== "string" || recipients.trim() === "") {
+        throw new Error(`抄送任务 ${spec.id} 的 recipients 不能为空白`);
+      }
+      recipientsTrimmed = recipients.trim();
+    } else if ("recipients" in spec) {
+      // 对称守卫：JS 调用方可能绕过 TS 类型，把 recipients 传给非 cc 任务
+      throw new Error(`任务类型 ${kind} 不支持 recipients（仅抄送任务支持）`);
+    }
+    // 前置校验全通过后再动模型
+    const element = this.#addNode(mapping.elementType, spec);
+    if (assignee !== undefined) {
+      element.set("assignee", assignee);
+    }
+    if (formKey !== undefined) {
+      element.set("formKey", formKey);
+    }
+    if (recipientsTrimmed !== undefined) {
+      // ccTo 是语义名，方言前缀由适配器描述符绑定（与 assignee 同一机制）
+      element.set("ccTo", recipientsTrimmed);
     }
     for (const [attr, value] of Object.entries(mapping.attributes ?? {})) {
       element.set(attr, value);
@@ -263,7 +476,7 @@ export class BpmnModel {
   }
 
   addSequenceFlow(spec: SequenceFlowSpec): this {
-    if (spec.waypoints.length < 2) {
+    if (spec.waypoints !== undefined && spec.waypoints.length < 2) {
       throw new Error(`连线 ${spec.id} 的 waypoints 至少需要 2 个点`);
     }
     if (this.#state.flows.has(spec.id) || this.#state.nodes.has(spec.id)) {
@@ -275,6 +488,20 @@ export class BpmnModel {
       throw new Error(
         `连线 ${spec.id} 的端点不存在：sourceRef=${spec.sourceRef}, targetRef=${spec.targetRef}`,
       );
+    }
+    // 默认流转三重守卫：语义互斥、源限定排他网关、同网关唯一（R2 决策）
+    if (spec.default === true) {
+      if (spec.condition !== undefined) {
+        throw new Error(
+          `默认流转 ${spec.id} 不能同时携带条件表达式（默认分支是"其余情况"，语义互斥）`,
+        );
+      }
+      if (source.$type !== "bpmn:ExclusiveGateway") {
+        throw new Error(`默认流转 ${spec.id} 的源必须是排他网关，实际是 ${source.$type}`);
+      }
+      if (source.get("default") !== undefined) {
+        throw new Error(`排他网关 ${spec.sourceRef} 已有默认流转，连线 ${spec.id} 不得重复标记`);
+      }
     }
     if (spec.condition !== undefined && spec.condition.trim() === "") {
       throw new Error(`连线 ${spec.id} 的 condition 不能为空白`);
@@ -292,14 +519,112 @@ export class BpmnModel {
         this.#state.moddle.create("bpmn:FormalExpression", { body: spec.condition }),
       );
     }
+    if (spec.default === true) {
+      // default 是网关的 isReference 属性：存元素对象，序列化为连线 id 文本
+      source.set("default", flow);
+    }
     // BPMN 要求流节点维护 incoming/outgoing 双向引用；二者是 isReference 的
     // SequenceFlow 引用，必须存元素对象，moddle 序列化时才解析为连线 id 文本
     pushMany(source, "outgoing", flow);
     pushMany(target, "incoming", flow);
     pushMany(this.#state.process, "flowElements", flow);
     this.#state.flows.set(spec.id, flow);
-    this.#state.waypoints.set(spec.id, spec.waypoints);
+    if (spec.waypoints !== undefined) {
+      this.#state.waypoints.set(spec.id, spec.waypoints);
+    }
     return this;
+  }
+
+  /** 保留连线身份和源侧顺序，只修改目标；端点变化后旧折线必须失效。 */
+  retargetSequenceFlow(flowId: string, targetId: string): this {
+    const flow = this.#state.flows.get(flowId);
+    if (flow === undefined) throw new Error(`连线 ${flowId} 不存在`);
+    if (flow.get("id") !== flowId || this.#state.flows.get(flow.get("id") as string) !== flow) {
+      throw new Error(`连线 ${flowId} 的 ID 与登记引用不一致`);
+    }
+    const source = flow.get("sourceRef") as ModdleElement | undefined;
+    const oldTarget = flow.get("targetRef") as ModdleElement | undefined;
+    const target = this.#state.nodes.get(targetId);
+    const elements = (this.#state.process.get("flowElements") as ModdleElement[]) ?? [];
+    const registered = (node: ModdleElement | undefined): node is ModdleElement =>
+      node !== undefined &&
+      this.#state.nodes.get(node.get("id") as string) === node &&
+      elements.filter((el) => el === node).length === 1 &&
+      node.$instanceOf("bpmn:FlowNode");
+    if (!registered(source) || !registered(oldTarget) || !registered(target)) {
+      throw new Error(`连线 ${flowId} 的端点必须是当前模型登记的流节点`);
+    }
+    if (source === target) throw new Error(`连线 ${flowId} 不支持重接为自环`);
+    // 当前连线只能出现在源的 outgoing 和旧目标的 incoming。错误方向也要拒绝，
+    // 否则重接后同一节点可能在两个数组登记它，后续级联删除会重复删边并部分失败。
+    const referencesConsistent = [...new Set([source, oldTarget, target])].every((node) => {
+      const incoming = (node.get("incoming") as ModdleElement[]) ?? [];
+      const outgoing = (node.get("outgoing") as ModdleElement[]) ?? [];
+      return (
+        incoming.filter((el) => el === flow).length === (node === oldTarget ? 1 : 0) &&
+        outgoing.filter((el) => el === flow).length === (node === source ? 1 : 0)
+      );
+    });
+    if (elements.filter((el) => el === flow).length !== 1 || !referencesConsistent) {
+      throw new Error(`连线 ${flowId} 的双向引用与登记不一致`);
+    }
+    if (target === oldTarget) return this;
+    removeFromArray(oldTarget, "incoming", flow);
+    flow.set("targetRef", target);
+    pushMany(target, "incoming", flow);
+    this.#state.waypoints.delete(flowId);
+    this.#removeDiagramElements(flow);
+    return this;
+  }
+
+  /** 移除一条连线：流程元素、双向引用、网关 default 引用与登记表同步清理 */
+  removeSequenceFlow(id: string): this {
+    const flow = this.#state.flows.get(id);
+    if (flow === undefined) {
+      throw new Error(`连线 ${id} 不存在`);
+    }
+    removeFromArray(this.#state.process, "flowElements", flow);
+    const source = flow.get("sourceRef") as ModdleElement;
+    const target = flow.get("targetRef") as ModdleElement;
+    removeFromArray(source, "outgoing", flow);
+    removeFromArray(target, "incoming", flow);
+    if (source.get("default") === flow) {
+      source.set("default", undefined);
+    }
+    this.#state.flows.delete(id);
+    this.#state.waypoints.delete(id);
+    this.#removeDiagramElements(flow);
+    return this;
+  }
+
+  /** 移除一个节点及其全部关联连线（级联）；开始/结束事件的去留由调用方决定 */
+  removeNode(id: string): this {
+    const node = this.#state.nodes.get(id);
+    if (node === undefined) {
+      throw new Error(`节点 ${id} 不存在`);
+    }
+    const incoming = [...((node.get("incoming") as ModdleElement[] | undefined) ?? [])];
+    const outgoing = [...((node.get("outgoing") as ModdleElement[] | undefined) ?? [])];
+    for (const flow of [...incoming, ...outgoing]) {
+      this.removeSequenceFlow(flow.get("id") as string);
+    }
+    removeFromArray(this.#state.process, "flowElements", node);
+    this.#state.nodes.delete(id);
+    this.#state.shapes.delete(id);
+    this.#removeDiagramElements(node);
+    return this;
+  }
+
+  /**
+   * 语义元素读访问器（节点与连线）：抽屉等编辑面经此直接读写模型字段
+   * （R4 决策——视图无独立状态，字段变更直达模型树）。
+   */
+  elementOf(id: string): ModdleElement {
+    const element = this.#state.nodes.get(id) ?? this.#state.flows.get(id);
+    if (element === undefined) {
+      throw new Error(`元素 ${id} 不存在`);
+    }
+    return element;
   }
 
   shapeOf(id: string): CanvasShape {
@@ -323,6 +648,28 @@ export class BpmnModel {
     return this.#state.moddle.toXML(this.#state.definitions, options);
   }
 
+  /** DI id 可由外部工具任意命名，因此按语义引用清理所有已物化图。 */
+  #removeDiagramElements(semantic: ModdleElement): void {
+    const diagrams = (this.#state.definitions.get("diagrams") as ModdleElement[]) ?? [];
+    const roots = (this.#state.definitions.get("rootElements") as ModdleElement[]) ?? [];
+    for (const diagram of new Set([
+      ...diagrams,
+      ...roots.filter((el) => el.$type === "bpmndi:BPMNDiagram"),
+    ])) {
+      const plane = diagram.get("plane") as ModdleElement | undefined;
+      const elements = plane?.get("planeElement") as ModdleElement[] | undefined;
+      if (elements === undefined) continue;
+      for (let i = elements.length - 1; i >= 0; i--) {
+        const el = elements[i]!;
+        if (
+          (el.$type === "bpmndi:BPMNShape" || el.$type === "bpmndi:BPMNEdge") &&
+          el.get("bpmnElement") === semantic
+        )
+          elements.splice(i, 1);
+      }
+    }
+  }
+
   #addNode(type: string, spec: NodeSpec): ModdleElement {
     if (this.#state.nodes.has(spec.id) || this.#state.flows.has(spec.id)) {
       throw new Error(`重复的元素 id: ${spec.id}`);
@@ -330,7 +677,9 @@ export class BpmnModel {
     const element = this.#state.moddle.create(type, { id: spec.id, name: spec.name });
     pushMany(this.#state.process, "flowElements", element);
     this.#state.nodes.set(spec.id, element);
-    this.#state.shapes.set(spec.id, spec.shape);
+    if (spec.shape !== undefined) {
+      this.#state.shapes.set(spec.id, spec.shape);
+    }
     return element;
   }
 }

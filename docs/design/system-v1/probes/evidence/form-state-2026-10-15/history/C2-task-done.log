@@ -1,0 +1,6 @@
+ Test Files  3 passed (3)
+      Tests  47 passed (47)
+   Start at  22:13:36
+   Duration  4.77s (import 41%, tests 30%, environment 15%, transform 14%, worker 1%)
+
+ledger: Task 3: complete (commits c501789..48d890e, tests: pnpm --filter @flowduet/playground exec vitest run probes/stage-zero/form-state.test.ts probes/stage-zero/form-state/retention-policy.test.ts probes/stage-zero/form-state/input-boundary.test.ts --reporter=verbose →    Duration  4.77s (import 41%, tests 30%, environment 15%, transform 14%, worker 1%))

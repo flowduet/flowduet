@@ -2,6 +2,26 @@
   "name": "@flowduet/playground",
   "private": true,
   "version": "0.0.0",
-  "description": "可独立部署的演示应用（占位，v1 阶段建立）",
-  "scripts": {}
+  "description": "FlowDuet 演示宿主：挂载 designer 的最小验收页面",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@flowduet/core": "workspace:*",
+    "@flowduet/designer": "workspace:*",
+    "@flowduet/form-create": "workspace:*",
+    "@vue-flow/core": "^1.48.2",
+    "element-plus": "^2.14.6",
+    "vue": "^3.5.43"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^6.0.9",
+    "@vue/test-utils": "^2.5.1",
+    "happy-dom": "^20.14.5",
+    "vite": "^8.3.0",
+    "vitest": "^5.0.1"
+  }
 }

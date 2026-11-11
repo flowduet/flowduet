@@ -1,0 +1,264 @@
+
+ RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground
+
+ ❯ src/test-utils/browser-test-scope.test.ts (6 tests | 4 failed) 2147ms
+   ❯ 浏览器测试作用域 (6)
+     × 正常仍恢复真实组件、DOM、存储、spy和描述符 593ms
+     × 测试体抛错仍恢复真实组件、DOM、存储、spy和描述符 398ms
+     × 卸载后抛错仍恢复真实组件、DOM、存储、spy和描述符 429ms
+     × 同例协议：A清理后释放迟到动作，不点击B抽屉、不改变B模型或spy 718ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/test-utils/browser-test-scope.test.ts > 浏览器测试作用域 > 正常仍恢复真实组件、DOM、存储、spy和描述符
+AssertionError: expected [Function setItem] to be [Function bound setItem] // Object.is equality
+
+- Expected
++ Received
+
+- [Function bound setItem]
++ [Function setItem]
+
+ ❯ src/test-utils/browser-test-scope.test.ts:118:36
+    116|       expect(document.body.innerHTML).toBe("");
+    117|       expect(localStorage.length).toBe(0);
+    118|       expect(localStorage.setItem).toBe(setItem);
+       |                                    ^
+    119|       localStorage.setItem("after-scope", "恢复后可写");
+    120|       expect(localStorage.getItem("after-scope")).toBe("恢复后可写");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  src/test-utils/browser-test-scope.test.ts > 浏览器测试作用域 > 测试体抛错仍恢复真实组件、DOM、存储、spy和描述符
+AssertionError: expected QuotaExceededError: quota exceeded to deeply equal Error: 协议注入：测试体失败
+
+- Expected
++ Received
+
+- Error {
+-   "message": "协议注入：测试体失败",
++ QuotaExceededError {
++   "message": "quota exceeded",
++   "name": "QuotaExceededError",
+  }
+
+ ❯ src/test-utils/browser-test-scope.test.ts:112:24
+    110|       if (failure === "正常") expect(caught).toBeUndefined();
+    111|       else
+    112|         expect(caught).toEqual(
+       |                        ^
+    113|           new Error(failure === "测试体抛错" ? "协议注入：测试体失败" : "协议注入：真实卸载后失败…
+    114|         );
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  src/test-utils/browser-test-scope.test.ts > 浏览器测试作用域 > 卸载后抛错仍恢复真实组件、DOM、存储、spy和描述符
+QuotaExceededError: quota exceeded
+ ❯ Proxy.<anonymous> src/test-utils/browser-test-scope.test.ts:85:17
+     83|         localStorage.setItem("scope-fixture", "需清理");
+     84|         vi.spyOn(localStorage, "setItem").mockImplementation(() => {
+     85|           throw new DOMException("quota exceeded", "QuotaExceededError…
+       |                 ^
+     86|         });
+     87|         vi.spyOn(URL, "createObjectURL").mockReturnValue("blob:scope");
+ ❯ src/test-utils/browser-test-scope.test.ts:119:20
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+ FAIL  src/test-utils/browser-test-scope.test.ts > 浏览器测试作用域 > 同例协议：A清理后释放迟到动作，不点击B抽屉、不改变B模型或spy
+Error: Unable to get [data-test="doc-status"] within: <div data-v-7a7a37b1="" class="playground">
+  <header data-v-7a7a37b1="" class="playground-header">
+    <h1 data-v-7a7a37b1="">FlowDuet Playground</h1>
+    <div data-v-7a7a37b1="" class="playground-toolbar"><span data-v-7a7a37b1="" class="playground-dirty" data-test="dirty-badge">有未保存修改</span>
+      <div data-v-7a7a37b1="" class="el-radio-group" role="radiogroup" aria-label="radio-group" data-test="view-switch" id="el-id-4451-189"><label data-v-7a7a37b1="" class="el-radio-button is-active el-radio-button--small" data-test="view-dingtalk"><input class="el-radio-button__original-radio" type="radio" name="el-id-4451-152" value="dingtalk"><span class="el-radio-button__inner">钉钉式</span></label><label data-v-7a7a37b1="" class="el-radio-button el-radio-button--small" data-test="view-bpmn"><input class="el-radio-button__original-radio" type="radio" name="el-id-4451-152" value="bpmn"><span class="el-radio-button__inner">BPMN 视图</span></label></div><button data-v-7a7a37b1="" ariadisabled="false" autofocus="false" type="button" class="el-button" data-test="new-design-btn">
+        <!--v-if--><span class="">新建设计</span>
+      </button><button data-v-7a7a37b1="" ariadisabled="false" autofocus="false" type="button" class="el-button" data-test="open-doc-btn">
+        <!--v-if--><span class="">打开文档</span>
+      </button><!-- 真实文件选择器：隐藏但保留可编程点击，测试经 change 事件直接注入 File --><input data-v-7a7a37b1="" class="playground-file-input" type="file" accept=".json,application/json" data-test="open-doc-input"><button data-v-7a7a37b1="" ariadisabled="false" autofocus="false" type="button" class="el-button" data-test="form-manager-btn">
+        <!--v-if--><span class="">表单管理</span>
+      </button><button data-v-7a7a37b1="" ariadisabled="false" autofocus="false" type="button" class="el-button" data-test="form-preview-btn">
+        <!--v-if--><span class="">预览表单</span>
+      </button><button data-v-7a7a37b1="" ariadisabled="false" autofocus="false" type="button" class="el-button el-button--primary is-plain" data-test="save-local-btn">
+        <!--v-if--><span class=""> 保存草稿 </span>
+      </button><button data-v-7a7a37b1="" ariadisabled="false" autofocus="false" type="button" class="el-button el-button--primary" data-test="save-doc-btn">
+        <!--v-if--><span class=""> 下载设计文档 </span>
+      </button><button data-v-7a7a37b1="" ariadisabled="false" autofocus="false" type="button" class="el-button el-button--primary" data-test="export-btn">
+        <!--v-if--><span class="">导出 XML</span>
+      </button>
+    </div>
+  </header>
+  <main data-v-7a7a37b1="" class="playground-main">
+    <section data-v-7a7a37b1="" class="playground-editor">
+      <!-- 互切 = 同一模型实例换投影组件；v-if 挂卸即重挂，读视图总是最新 -->
+      <div data-v-28e0d7fa="" data-v-7a7a37b1="" class="dingtalk-designer" data-test="dingtalk-designer">
+        <!--v-if-->
+        <!-- 流程默认表单选择条（#72）：仅在表单集成模式（传入 formOptions）出现。
+         原生 select：与钉钉式视图的原生按钮语汇一致，也避开 ElSelect 泛型
+         组件在 vue-tsc 严格检查下的模板推断问题 -->
+        <div data-v-28e0d7fa="" class="default-form-bar" data-test="default-form-bar"><span data-v-28e0d7fa="" class="default-form-bar-label">流程默认表单</span><select data-v-28e0d7fa="" class="default-form-select" data-test="default-form-select" value="">
+            <option data-v-28e0d7fa="" data-test="default-form-option-none" value="">无</option><!-- key 不在目录中：追加只读项呈现原值，用户可见并可改选修复 -->
+            <!--v-if-->
+          </select>
+          <!--v-if-->
+        </div>
+        <div data-v-408883a4="" data-v-28e0d7fa="" class="block-node-list">
+          <div data-v-ea43bf3b="" data-v-408883a4="" class="node-card node-card--start" data-test="node-card" data-entity-id="start" tabindex="-1"><span data-v-ea43bf3b="" class="node-card-glyph" data-test="node-glyph">起</span><span data-v-ea43bf3b="" class="node-card-main"><span data-v-ea43bf3b="" class="node-card-name" title="开始">开始</span>
+            <!--v-if-->
+            <!--v-if--></span>
+            <!--v-if-->
+          </div>
+          <div data-v-408883a4="" class="insert-wrap">
+            <div data-v-408883a4="" class="el-dropdown" data-test="insert-after-start"><button data-v-408883a4="" class="insert-btn el-tooltip__trigger el-tooltip__trigger" data-test="insert-btn-start" title="在此后添加节点" id="el-id-4451-190" role="button" tabindex="0" aria-controls="el-id-4451-191" aria-expanded="false" aria-haspopup="menu"> + </button>
+              <!--teleport start-->
+              <!--teleport end-->
+              <!--v-if-->
+            </div>
+          </div>
+          <div data-v-ea43bf3b="" data-v-408883a4="" class="node-card node-card--task node-card--active" data-test="node-card" data-entity-id="approval_1" tabindex="-1"><span data-v-ea43bf3b="" class="node-card-glyph" data-test="node-glyph">审</span><span data-v-ea43bf3b="" class="node-card-main"><span data-v-ea43bf3b="" class="node-card-name" title="审批节点">审批节点</span><span data-v-ea43bf3b="" class="node-card-summary" title="审批人 ${boss}">审批人 ${boss}</span>
+            <!--v-if--></span><button data-v-ea43bf3b="" class="node-card-delete" data-test="node-delete-approval_1" title="删除节点"> × </button>
+          </div>
+          <div data-v-408883a4="" class="insert-wrap">
+            <div data-v-408883a4="" class="el-dropdown" data-test="insert-after-approval_1"><button data-v-408883a4="" class="insert-btn el-tooltip__trigger el-tooltip__trigger" data-test="insert-btn-approval_1" title="在此后添加节点" id="el-id-4451-194" role="button" tabindex="0" aria-controls="el-id-4451-195" aria-expanded="false" aria-haspopup="menu"> + </button>
+              <!--teleport start-->
+              <!--teleport end-->
+              <!--v-if-->
+            </div>
+          </div>
+          <div data-v-ea43bf3b="" data-v-408883a4="" class="node-card node-card--end" data-test="node-card" data-entity-id="end" tabindex="-1"><span data-v-ea43bf3b="" class="node-card-glyph" data-test="node-glyph">终</span><span data-v-ea43bf3b="" class="node-card-main"><span data-v-ea43bf3b="" class="node-card-name" title="结束">结束</span>
+            <!--v-if-->
+            <!--v-if--></span>
+            <!--v-if-->
+          </div>
+          <!--v-if-->
+        </div>
+        <!--teleport start-->
+        <transition-stub name="el-drawer-fade" appear="false" persisted="true" css="true">
+          <div class="is-drawer el-modal-drawer" style="z-index: 2059; position: fixed; top: 0px; right: 0px; bottom: 0px; left: 0px; display: none;">
+            <div aria-modal="true" aria-label="审批节点" aria-describedby="el-id-4451-199" data-test="node-drawer" class="el-drawer rtl" style="width: 360px;" role="dialog"><span class="el-drawer__sr-focus" tabindex="-1"></span>
+              <header class="el-drawer__header"><span id="el-id-4451-198" role="heading" aria-level="2" class="el-drawer__title">审批节点</span><button aria-label="Close this dialog" class="el-drawer__close-btn" type="button"><i class="el-icon el-drawer__close"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+                      <path fill="currentColor" d="M764.288 214.592 512 466.88 259.712 214.592a31.936 31.936 0 0 0-45.12 45.12L466.752 512 214.528 764.224a31.936 31.936 0 1 0 45.12 45.184L512 557.184l252.288 252.288a31.936 31.936 0 0 0 45.12-45.12L557.12 512.064l252.288-252.352a31.936 31.936 0 1 0-45.12-45.184z"></path>
+                    </svg></i></button></header>
+              <div id="el-id-4451-199" class="el-drawer__body">
+                <form data-v-0768f145="" data-v-6a06767c="" class="el-form el-form--default el-form--label-top" data-test="node-property-fields">
+                  <div data-v-0768f145="" class="el-form-item asterisk-left el-form-item--label-top"><label id="el-id-4451-200" for="el-id-4451-204" class="el-form-item__label">节点名称</label>
+                    <div class="el-form-item__content">
+                      <div data-v-0768f145="" class="el-input">
+                        <!-- input -->
+                        <!-- prepend slot -->
+                        <!--v-if-->
+                        <div class="el-input__wrapper" tabindex="-1">
+                          <!-- prefix slot -->
+                          <!--v-if--><input class="el-input__inner" data-test="drawer-name" type="text" autocomplete="off" tabindex="0" placeholder="如：经理审批" id="el-id-4451-204"><!-- suffix slot -->
+                          <!--v-if-->
+                        </div><!-- append slot -->
+                        <!--v-if-->
+                      </div>
+                      <transition-group-stub name="el-zoom-in-top" appear="false" persisted="false" css="true">
+                        <!--v-if-->
+                      </transition-group-stub>
+                    </div>
+                  </div>
+                  <div data-v-0768f145="" class="el-form-item asterisk-left el-form-item--label-top"><label id="el-id-4451-201" for="el-id-4451-205" class="el-form-item__label">审批人</label>
+                    <div class="el-form-item__content">
+                      <div data-v-0768f145="" class="el-input">
+                        <!-- input -->
+                        <!-- prepend slot -->
+                        <!--v-if-->
+                        <div class="el-input__wrapper" tabindex="-1">
+                          <!-- prefix slot -->
+                          <!--v-if--><input class="el-input__inner" data-test="drawer-assignee" type="text" autocomplete="off" tabindex="0" placeholder="如 ${manager} 或 张三" id="el-id-4451-205"><!-- suffix slot -->
+                          <!--v-if-->
+                        </div><!-- append slot -->
+                        <!--v-if-->
+                      </div>
+                      <transition-group-stub name="el-zoom-in-top" appear="false" persisted="false" css="true">
+                        <!--v-if-->
+                      </transition-group-stub>
+                    </div>
+                  </div>
+                  <div data-v-0768f145="" class="el-form-item asterisk-left el-form-item--label-top" role="group" aria-labelledby="el-id-4451-202">
+                    <div id="el-id-4451-202" class="el-form-item__label">完成方式</div>
+                    <div class="el-form-item__content">
+                      <div data-v-0768f145="" class="kind-cards" data-test="kind-cards"><button data-v-0768f145="" class="kind-card kind-card--on" data-test="kind-single" type="button"><span data-v-0768f145="" class="kind-card-label">单签</span><span data-v-0768f145="" class="kind-card-hint">一人审批</span></button><button data-v-0768f145="" class="kind-card" data-test="kind-all" type="button"><span data-v-0768f145="" class="kind-card-label">会签</span><span data-v-0768f145="" class="kind-card-hint">全员同意</span></button><button data-v-0768f145="" class="kind-card" data-test="kind-any" type="button"><span data-v-0768f145="" class="kind-card-label">或签</span><span data-v-0768f145="" class="kind-card-hint">任一同意</span></button><button data-v-0768f145="" class="kind-card" data-test="kind-sequential" type="button"><span data-v-0768f145="" class="kind-card-label">依次</span><span data-v-0768f145="" class="kind-card-hint">顺序逐人</span></button></div>
+                      <transition-group-stub name="el-zoom-in-top" appear="false" persisted="false" css="true">
+                        <!--v-if-->
+                      </transition-group-stub>
+                    </div>
+                  </div>
+                  <div data-v-0768f145="" class="el-form-item asterisk-left el-form-item--label-top" role="group" aria-labelledby="el-id-4451-203">
+                    <div id="el-id-4451-203" class="el-form-item__label">表单</div>
+                    <div class="el-form-item__content"><select data-v-0768f145="" class="drawer-form-select" data-test="drawer-form-select" value="">
+                        <option data-v-0768f145="" data-test="drawer-form-inherit" value="">继承默认（当前未设默认表单）</option>
+                        <!--v-if-->
+                      </select>
+                      <transition-group-stub name="el-zoom-in-top" appear="false" persisted="false" css="true">
+                        <!--v-if-->
+                      </transition-group-stub>
+                    </div>
+                  </div>
+                </form>
+              </div>
+              <div class="el-drawer__footer"><button data-v-6a06767c="" ariadisabled="false" autofocus="false" type="button" class="el-button" data-test="drawer-cancel">
+                  <!--v-if--><span class="">取消</span>
+                </button><button data-v-6a06767c="" ariadisabled="false" autofocus="false" type="button" class="el-button el-button--primary" data-test="drawer-save">
+                  <!--v-if--><span class="">确定</span>
+                </button></div>
+              <!--v-if-->
+            </div>
+          </div>
+        </transition-stub>
+        <!--teleport end-->
+      </div>
+    </section>
+    <section data-v-7a7a37b1="" class="playground-xml" data-test="xml-zone">
+      <div data-v-7a7a37b1="" class="playground-doc">
+        <!--v-if-->
+        <p data-v-7a7a37b1="" class="playground-error" data-test="doc-error">本地存储写入失败（可能被浏览器设置拒绝或容量已满）：quota exceeded</p>
+      </div>
+      <!--v-if-->
+      <!--v-if-->
+      <p data-v-7a7a37b1="" class="playground-hint" data-test="xml-hint"> 点击「导出 XML」或编辑流程后自动生成 </p>
+    </section>
+  </main>
+  <!--teleport start-->
+  <transition-stub name="dialog-fade" appear="false" persisted="true" css="true">
+    <div class="el-overlay el-modal-dialog" style="z-index: 2053; display: none;">
+      <div role="dialog" aria-modal="true" aria-label="放弃未保存的修改？" aria-describedby="el-id-4451-184" class="el-overlay-dialog"></div>
+    </div>
+  </transition-stub>
+  <!--teleport end-->
+  <!--teleport start-->
+  <transition-stub name="dialog-fade" appear="false" persisted="true" css="true">
+    <div class="el-overlay el-modal-dialog" style="z-index: 2054; display: none;">
+      <div role="dialog" aria-modal="true" aria-label="表单管理" aria-describedby="el-id-4451-186" class="el-overlay-dialog"></div>
+    </div>
+  </transition-stub>
+  <!--teleport end-->
+  <!--teleport start-->
+  <transition-stub name="dialog-fade" appear="false" persisted="true" css="true">
+    <div class="el-overlay el-modal-dialog" style="z-index: 2055; display: none;">
+      <div role="dialog" aria-modal="true" aria-label="按节点预览表单" aria-describedby="el-id-4451-188" class="el-overlay-dialog"></div>
+    </div>
+  </transition-stub>
+  <!--teleport end-->
+</div>
+ ❯ VueWrapper.get ../../node_modules/.pnpm/@vue+test-utils@2.5.1_@vue+compiler-dom@3.5.43_@vue+server-renderer@3.5.43_vue@3.5.43_typescript@5.9.3_/node_modules/@vue/test-utils/dist/vue-test-utils.cjs.js:7333:15
+ ❯ src/test-utils/browser-test-scope.test.ts:177:16
+    175|       await b.get('[data-test="save-local-btn"]').trigger("click");
+    176|       await flushPromises();
+    177|       expect(b.get('[data-test="doc-status"]').text()).toContain("无待修复…
+       |                ^
+    178|       const saved = JSON.parse(localStorage.getItem("flowduet.playgrou…
+    179|       expect(saved.xml).toContain('flowable:assignee="${boss}"');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/4]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  4 failed | 2 passed (6)
+   Start at  11:55:38
+   Duration  6.27s (tests 36%, import 32%, transform 21%, environment 11%)
+
+undefined
+/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run src/test-utils/browser-test-scope.test.ts

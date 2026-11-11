@@ -1,0 +1,136 @@
+
+ RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/designer
+
+ ❯ probes/stage-zero/identity-policy.test.ts (11 tests | 11 failed) 16ms
+   ❯ 对象生命期策略（非生产工作台） (5)
+     × reused_id_is_not_old_entity 11ms
+     × cascade_invalidates_all_descendants 1ms
+     × atomic_replace_requires_continuity_notice 0ms
+     × form_reuse_and_document_replace_do_not_reuse_buffers 0ms
+     × failed_delete_keeps_buffers_and_late_delete_does_not_remove_new_object 0ms
+   ❯ 有效候选状态 (6)
+     × exact_apply_preserves_validation_not_persistence 0ms
+     × changed_candidate_invalidates_validation new-input 0ms
+     × changed_candidate_invalidates_validation restore 0ms
+     × changed_candidate_invalidates_validation normalization 0ms
+     × changed_candidate_invalidates_validation replacement 0ms
+     × rule_or_document_change_invalidates_even_identical_content 0ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 11 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  probes/stage-zero/identity-policy.test.ts > 对象生命期策略（非生产工作台） > reused_id_is_not_old_entity
+Error: 探针待实现
+ ❯ EntityRegistry.sync ../../apps/playground/probes/stage-zero/identity-policy.ts:3:75
+      1| import type { EntityRef, LiveEntity } from "./probe-contracts";
+      2| export class EntityRegistry {
+      3|   sync(_live: LiveEntity[], _continued = new Set<string>()): void { th…
+       |                                                                           ^
+      4|   ref(_kind: EntityRef["kind"], _id: string): EntityRef { throw new Er…
+      5|   put(_ref: EntityRef, _value: unknown): void { throw new Error("探针待实现…
+ ❯ probes/stage-zero/identity-policy.test.ts:8:81
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/11]⎯
+
+ FAIL  probes/stage-zero/identity-policy.test.ts > 对象生命期策略（非生产工作台） > cascade_invalidates_all_descendants
+Error: 探针待实现
+ ❯ EntityRegistry.sync ../../apps/playground/probes/stage-zero/identity-policy.ts:3:75
+      1| import type { EntityRef, LiveEntity } from "./probe-contracts";
+      2| export class EntityRegistry {
+      3|   sync(_live: LiveEntity[], _continued = new Set<string>()): void { th…
+       |                                                                           ^
+      4|   ref(_kind: EntityRef["kind"], _id: string): EntityRef { throw new Er…
+      5|   put(_ref: EntityRef, _value: unknown): void { throw new Error("探针待实现…
+ ❯ probes/stage-zero/identity-policy.test.ts:9:108
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/11]⎯
+
+ FAIL  probes/stage-zero/identity-policy.test.ts > 对象生命期策略（非生产工作台） > atomic_replace_requires_continuity_notice
+Error: 探针待实现
+ ❯ EntityRegistry.sync ../../apps/playground/probes/stage-zero/identity-policy.ts:3:75
+      1| import type { EntityRef, LiveEntity } from "./probe-contracts";
+      2| export class EntityRegistry {
+      3|   sync(_live: LiveEntity[], _continued = new Set<string>()): void { th…
+       |                                                                           ^
+      4|   ref(_kind: EntityRef["kind"], _id: string): EntityRef { throw new Er…
+      5|   put(_ref: EntityRef, _value: unknown): void { throw new Error("探针待实现…
+ ❯ probes/stage-zero/identity-policy.test.ts:10:85
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/11]⎯
+
+ FAIL  probes/stage-zero/identity-policy.test.ts > 对象生命期策略（非生产工作台） > form_reuse_and_document_replace_do_not_reuse_buffers
+Error: 探针待实现
+ ❯ EntityRegistry.sync ../../apps/playground/probes/stage-zero/identity-policy.ts:3:75
+      1| import type { EntityRef, LiveEntity } from "./probe-contracts";
+      2| export class EntityRegistry {
+      3|   sync(_live: LiveEntity[], _continued = new Set<string>()): void { th…
+       |                                                                           ^
+      4|   ref(_kind: EntityRef["kind"], _id: string): EntityRef { throw new Er…
+      5|   put(_ref: EntityRef, _value: unknown): void { throw new Error("探针待实现…
+ ❯ probes/stage-zero/identity-policy.test.ts:11:96
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/11]⎯
+
+ FAIL  probes/stage-zero/identity-policy.test.ts > 对象生命期策略（非生产工作台） > failed_delete_keeps_buffers_and_late_delete_does_not_remove_new_object
+Error: 探针待实现
+ ❯ EntityRegistry.sync ../../apps/playground/probes/stage-zero/identity-policy.ts:3:75
+      1| import type { EntityRef, LiveEntity } from "./probe-contracts";
+      2| export class EntityRegistry {
+      3|   sync(_live: LiveEntity[], _continued = new Set<string>()): void { th…
+       |                                                                           ^
+      4|   ref(_kind: EntityRef["kind"], _id: string): EntityRef { throw new Er…
+      5|   put(_ref: EntityRef, _value: unknown): void { throw new Error("探针待实现…
+ ❯ probes/stage-zero/identity-policy.test.ts:12:124
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/11]⎯
+
+ FAIL  probes/stage-zero/identity-policy.test.ts > 有效候选状态 > exact_apply_preserves_validation_not_persistence
+Error: 探针待实现
+ ❯ ValidationTracker.update ../../apps/playground/probes/stage-zero/identity-policy.ts:12:65
+     10| }
+     11| export class ValidationTracker {
+     12|   update(_effective: string, _identities: string): void { throw new Er…
+       |                                                                 ^
+     13|   validate(): void { throw new Error("探针待实现"); }
+     14|   current(): boolean { throw new Error("探针待实现"); }
+ ❯ probes/stage-zero/identity-policy.test.ts:15:115
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/11]⎯
+
+ FAIL  probes/stage-zero/identity-policy.test.ts > 有效候选状态 > changed_candidate_invalidates_validation new-input
+ FAIL  probes/stage-zero/identity-policy.test.ts > 有效候选状态 > changed_candidate_invalidates_validation restore
+ FAIL  probes/stage-zero/identity-policy.test.ts > 有效候选状态 > changed_candidate_invalidates_validation normalization
+ FAIL  probes/stage-zero/identity-policy.test.ts > 有效候选状态 > changed_candidate_invalidates_validation replacement
+Error: 探针待实现
+ ❯ ValidationTracker.update ../../apps/playground/probes/stage-zero/identity-policy.ts:12:65
+     10| }
+     11| export class ValidationTracker {
+     12|   update(_effective: string, _identities: string): void { throw new Er…
+       |                                                                 ^
+     13|   validate(): void { throw new Error("探针待实现"); }
+     14|   current(): boolean { throw new Error("探针待实现"); }
+ ❯ probes/stage-zero/identity-policy.test.ts:16:271
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/11]⎯
+
+ FAIL  probes/stage-zero/identity-policy.test.ts > 有效候选状态 > rule_or_document_change_invalidates_even_identical_content
+Error: 探针待实现
+ ❯ ValidationTracker.update ../../apps/playground/probes/stage-zero/identity-policy.ts:12:65
+     10| }
+     11| export class ValidationTracker {
+     12|   update(_effective: string, _identities: string): void { throw new Er…
+       |                                                                 ^
+     13|   validate(): void { throw new Error("探针待实现"); }
+     14|   current(): boolean { throw new Error("探针待实现"); }
+ ❯ probes/stage-zero/identity-policy.test.ts:17:105
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/11]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  11 failed (11)
+   Start at  17:54:00
+   Duration  375ms (transform 69%, import 19%, tests 9%, worker 3%)
+
+undefined
+/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/designer:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run probes/stage-zero/identity-policy.test.ts

@@ -1,0 +1,28 @@
+diff --git a/packages/form-create/src/components.test.ts b/packages/form-create/src/components.test.ts
+index 2b38e31..fd3cdcc 100644
+--- a/packages/form-create/src/components.test.ts
++++ b/packages/form-create/src/components.test.ts
+@@ -1010,9 +1010,9 @@ const numericDateRules = JSON.stringify([
+     props: { type: "date", valueFormat: "YYYY-MM-DD" },
+   },
+ ]);
+-async function retainedEditor() {
++async function retainedEditor(rules = numericDateRules) {
+   wrapper = mount(FormDesigner, {
+-    props: { name: "原文", rules: numericDateRules, options: "{}", editingMode: "retained" },
++    props: { name: "原文", rules, options: "{}", editingMode: "retained" },
+     attachTo: document.body,
+   });
+   await flushPromises();
+@@ -1738,7 +1738,10 @@ describe("P1复审P2：属性控件确认与删除生命期", () => {
+   it.each(["delete", "clear"] as const)(
+     "%s撤销已移除控件的等待，不要求change",
+     async (operation) => {
+-      const vm = await retainedEditor();
++      // 此复现只依赖被删除的数字字段；其他字段存活由独立双字段用例覆盖。
++      const vm = await retainedEditor(
++        JSON.stringify([{ type: "inputNumber", field: "amount", title: "金额", value: 0 }]),
++      );
+       const input = await retainedTitle();
+       input.element.focus();
+       typeNative(input.element, "未确认名称");

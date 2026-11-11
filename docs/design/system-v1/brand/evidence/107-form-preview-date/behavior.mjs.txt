@@ -1,0 +1,321 @@
+import { mkdir, writeFile } from "node:fs/promises";
+import { resolve } from "node:path";
+import { pathToFileURL } from "node:url";
+
+const [driverPath, baseUrl, outputDir] = process.argv.slice(2);
+if (!driverPath || !baseUrl || !outputDir) throw new Error("需要驱动、URL 和输出目录参数");
+const { chromium } = await import(pathToFileURL(resolve(driverPath)).href);
+await mkdir(outputDir, { recursive: true });
+const browser = await chromium.launch({
+  headless: true,
+  executablePath:
+    process.env.FLOWDUET_CHROMIUM_PATH ||
+    "/Users/l/Library/Caches/ms-playwright/chromium-1248/chrome-mac-x64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing",
+});
+const page = await browser.newPage({ viewport: { width: 1440, height: 1800 }, deviceScaleFactor: 1 });
+const errors = [];
+const resourceErrors = [];
+const unhandled = [];
+const failures = [];
+const results = {};
+page.on("pageerror", (error) => errors.push(`pageerror: ${error.stack || error.message}`));
+page.on("console", (message) => {
+  if (message.type() === "error") errors.push(`console: ${message.text()}`);
+});
+page.on("response", (response) => {
+  if (response.status() >= 400) resourceErrors.push(`${response.status()} ${response.url()}`);
+});
+await page.addInitScript(() => {
+  window.__fd107Unhandled = [];
+  window.addEventListener("unhandledrejection", (event) => {
+    window.__fd107Unhandled.push(String(event.reason));
+  });
+});
+const check = (condition, message) => {
+  if (!condition) failures.push(message);
+};
+const firstInstance = () => page.locator('[data-test="form-appearance-first-instance"]');
+const secondInstance = () => page.locator('[data-test="form-appearance-second-instance"]');
+const first = () => firstInstance().locator('[data-test="form-preview"]');
+const second = () => secondInstance().locator('[data-test="form-preview"]');
+const inputs = () => first().locator(".el-date-editor .el-input__inner");
+const trialValues = async (root) => JSON.parse(await root.locator('[data-test="form-preview-values"]').textContent());
+const setSelect = async (test, value) => {
+  await page.evaluate(({ test, value }) => {
+    const select = document.querySelector(`[data-test="${test}"]`);
+    select.value = value;
+    select.dispatchEvent(new Event("change", { bubbles: true }));
+  }, { test, value });
+  await page.waitForTimeout(150);
+};
+const setCheckbox = async (test, checked) => {
+  await page.evaluate(({ test, checked }) => {
+    const input = document.querySelector(`[data-test="${test}"]`);
+    if (input.checked !== checked) {
+      input.checked = checked;
+      input.dispatchEvent(new Event("change", { bubbles: true }));
+    }
+  }, { test, checked });
+  await page.waitForTimeout(150);
+};
+const setAppearance = async ({ enabled = true, colorSource = "brand", mode = "light", density = "comfortable" }) => {
+  await setCheckbox("form-appearance-first-enabled", enabled);
+  if (!enabled) return;
+  await setCheckbox("form-appearance-host-dark", colorSource === "host" && mode === "dark");
+  await setSelect("form-appearance-first-source", colorSource);
+  if (colorSource === "brand") await setSelect("form-appearance-first-mode", mode);
+  await setSelect("form-appearance-first-density", density);
+};
+const ownerClass = (panel) => panel.evaluate((element) => [...element.classList].find((name) => name.startsWith("flowduet-form-preview-date-")));
+const instanceStyleCount = (owner) => page.evaluate((owner) => [...document.head.querySelectorAll("style")].filter((style) => style.textContent.includes(`.${owner}`)).length, owner);
+const dispatchOpen = (locator) => locator.evaluate((input) => {
+  input.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowDown", code: "ArrowDown", bubbles: false, cancelable: true }));
+});
+try {
+  await page.route("**/favicon.ico", (route) => route.fulfill({ status: 204, body: "" }));
+  await page.goto(baseUrl, { waitUntil: "networkidle" });
+  await page.locator('[data-test="form-appearance-scene-btn"]').click();
+  await page.locator('[data-test="form-appearance-first-dates"]').click();
+  await setCheckbox("form-appearance-second-mounted", false);
+  await first().waitFor({ state: "visible" });
+
+  // 旧路径、清空和必填失败。
+  await setAppearance({ enabled: false });
+  await inputs().nth(0).click();
+  const legacyPanel = page.locator(".preview-date-panel");
+  await legacyPanel.waitFor({ state: "visible" });
+  const legacyOwner = await ownerClass(legacyPanel);
+  check(!legacyOwner && (await instanceStyleCount("flowduet-form-preview-date-")) === 0, "旧路径追加日期实例标识或样式");
+  await inputs().nth(0).press("Escape");
+  await legacyPanel.waitFor({ state: "hidden" });
+  await first().locator(".el-date-editor").nth(0).hover();
+  await first().locator(".el-date-editor").nth(0).locator(".clear-icon").click();
+  check((await trialValues(first())).date === null, "清空日期未得到 EP 默认 null");
+  await first().locator('[data-test="form-preview-validate"]').click();
+  await first().locator('[data-test="form-preview-validation"]').filter({ hasText: "校验未通过" }).waitFor();
+  await first().locator(".el-form-item__error").filter({ hasText: "请选择申请日期" }).waitFor({ state: "visible" });
+  check(await inputs().nth(5).isDisabled(), "禁用日期输入仍可编辑");
+  await inputs().nth(5).click({ force: true });
+  check(!(await page.locator(".preview-disabled-date-panel").isVisible().catch(() => false)), "禁用日期打开了面板");
+  results.legacy = { owner: legacyOwner, cleared: null, validation: "必填失败", disabled: true };
+  await firstInstance().locator('[data-test="form-appearance-first-reopen-dates"]').click();
+  await page.waitForTimeout(200);
+  const legacyWeekInput = inputs().nth(2);
+  await legacyWeekInput.focus();
+  await legacyWeekInput.press("ArrowDown");
+  await page.locator(".preview-week-panel").waitFor({ state: "visible" });
+  await page.keyboard.press("ArrowRight");
+  await page.keyboard.press("Enter");
+  await page.waitForTimeout(300);
+  const legacyWeek = (await trialValues(first())).week;
+  await firstInstance().locator('[data-test="form-appearance-first-reopen-dates"]').click();
+  await page.waitForTimeout(200);
+
+  // 四种非 datetime 形态的真实键盘选择、焦点和格式。
+  await setAppearance({ colorSource: "brand", mode: "dark", density: "compact" });
+  const keyboardCases = [
+    { index: 0, type: "date", panel: ".preview-date-panel", expected: "2026-11-16" },
+    { index: 2, type: "week", panel: ".preview-week-panel", expected: "2026-48th" },
+    { index: 3, type: "month", panel: ".preview-month-panel", expected: "2026-12" },
+    { index: 4, type: "year", panel: ".preview-year-panel", expected: "2027" },
+  ];
+  results.keyboard = [];
+  for (const item of keyboardCases) {
+    const input = inputs().nth(item.index);
+    await input.focus();
+    await input.press("ArrowDown");
+    const panel = page.locator(item.panel);
+    await panel.waitFor({ state: "visible" });
+    await page.waitForTimeout(300);
+    await page.keyboard.press("ArrowRight");
+    const focus = await panel.evaluate((panel) => {
+      const active = document.activeElement;
+      const text = active?.querySelector(".el-date-table-cell__text") || active?.querySelector(".el-date-table-cell") || active;
+      const style = getComputedStyle(text);
+      return { tag: active?.tagName, inside: panel.contains(active), outlineWidth: style.outlineWidth, outlineStyle: style.outlineStyle, outlineColor: style.outlineColor, outlineOffset: style.outlineOffset };
+    });
+    check(focus.inside && focus.outlineWidth === "2px" && focus.outlineStyle === "solid", `${item.type}: 键盘焦点不可见 ${JSON.stringify(focus)}`);
+    await page.keyboard.press("Enter");
+    await panel.waitFor({ state: "hidden" });
+    const value = (await trialValues(first()))[item.type];
+    check(value === item.expected, `${item.type}: 键盘选择值／格式错误 ${value}，预期 ${item.expected}`);
+    if (item.type === "week") check(value === legacyWeek, `周键盘适配改变了旧路径结果 ${legacyWeek} → ${value}`);
+    check(await input.evaluate((element) => document.activeElement === element), `${item.type}: 键盘选择后焦点未恢复输入`);
+    results.keyboard.push({ type: item.type, value, ...(item.type === "week" ? { legacyValue: legacyWeek } : {}), focus });
+  }
+  await first().locator('[data-test="form-preview-validate"]').click();
+  await first().locator('[data-test="form-preview-validation"]').filter({ hasText: "校验通过" }).waitFor();
+  results.validationRecovery = "清空失败后重新选择并通过";
+
+  // 实际时间子面板进入、活动中换肤、选择与确认。
+  const datetimeInput = inputs().nth(1);
+  await datetimeInput.click();
+  const datetimePanel = page.locator(".preview-datetime-panel");
+  await datetimePanel.waitFor({ state: "visible" });
+  const timeInput = datetimePanel.locator(".el-date-picker__time-header .el-input__inner").nth(1);
+  await timeInput.click();
+  const timePanel = datetimePanel.locator(".el-time-panel");
+  await timePanel.waitFor({ state: "visible" });
+  await page.waitForTimeout(350);
+  await timeInput.evaluate((element) => { window.__fd107TimeInput = element; });
+  const variants = [
+    { colorSource: "brand", mode: "light", density: "comfortable" },
+    { colorSource: "host", mode: "light", density: "compact" },
+    { enabled: false },
+    { colorSource: "brand", mode: "dark", density: "compact" },
+  ];
+  results.timeVariants = [];
+  for (const variant of variants) {
+    await setAppearance(variant);
+    const state = await timeInput.evaluate((input) => ({ identity: input === window.__fd107TimeInput, focused: document.activeElement === input }));
+    const visible = await timePanel.isVisible();
+    const value = (await trialValues(first())).datetime;
+    check(state.identity && state.focused && visible && value === "2026-11-15 09:30:45", `时间面板活动中换肤破坏焦点／DOM／值 ${JSON.stringify({ variant, state, visible, value })}`);
+    results.timeVariants.push({ variant, state, visible, value });
+  }
+  const minute31 = timePanel.locator(".el-time-spinner__wrapper").nth(1).locator(".el-time-spinner__item").filter({ hasText: /^31$/ });
+  await minute31.click();
+  await timePanel.locator(".el-time-panel__btn.confirm").click();
+  await timePanel.waitFor({ state: "hidden" });
+  await datetimePanel.locator(".el-picker-panel__footer .el-button.is-plain").click();
+  await datetimePanel.waitFor({ state: "hidden" });
+  const confirmed = (await trialValues(first())).datetime;
+  check(confirmed === "2026-11-15 09:31:45", `时间选择确认值错误 ${confirmed}`);
+  check(await datetimeInput.evaluate((element) => document.activeElement === element), "日期时间确认后焦点未恢复");
+  results.timeSelection = confirmed;
+
+  // 打开和关闭状态下换肤，跟踪 EP 当前实际焦点而非假定总在输入。
+  const dateInput = inputs().nth(0);
+  await dateInput.click();
+  await legacyPanel.waitFor({ state: "visible" });
+  await dateInput.evaluate((element) => {
+    window.__fd107DateInput = element;
+    window.__fd107Active = document.activeElement;
+  });
+  results.openVariants = [];
+  for (const variant of variants) {
+    await setAppearance(variant);
+    const state = await dateInput.evaluate((input) => ({ identity: input === window.__fd107DateInput, focusIdentity: document.activeElement === window.__fd107Active }));
+    const value = (await trialValues(first())).date;
+    const visible = await legacyPanel.isVisible();
+    check(state.identity && state.focusIdentity && visible && value === "2026-11-16", `日期打开中换肤破坏输入／实际焦点／值 ${JSON.stringify({ variant, state, visible, value })}`);
+    results.openVariants.push({ variant, state, visible, value });
+  }
+  await page.keyboard.press("Escape");
+  await legacyPanel.waitFor({ state: "hidden" });
+  check(await dateInput.evaluate((element) => document.activeElement === element), "Escape 关闭日期面板后焦点未恢复");
+  for (const variant of variants) {
+    await setAppearance(variant);
+    check(await dateInput.evaluate((input) => input === window.__fd107DateInput && document.activeElement === input), "日期关闭后换肤丢失输入或焦点");
+  }
+  await setAppearance({ colorSource: "brand", mode: "dark", density: "compact" });
+  await firstInstance().locator('[data-test="form-appearance-first-reopen-dates"]').click();
+  await page.waitForTimeout(200);
+  const resetValues = await trialValues(first());
+  check(resetValues.date === "2026-11-15" && resetValues.datetime === "2026-11-15 09:30:45" && resetValues.week === "2026-46th" && resetValues.month === "2026-11" && resetValues.year === "2026", `同 ID 重开未恢复五种默认值 ${JSON.stringify(resetValues)}`);
+  check((await first().locator('[data-test="form-preview-validation"]').count()) === 0, "定义换代未清除校验反馈");
+  results.definitionReset = resetValues;
+
+  // 双实例、显式外部／原位面板、层级和清理。
+  await setAppearance({ colorSource: "host", mode: "light", density: "comfortable" });
+  await setCheckbox("form-appearance-second-mounted", true);
+  const secondDates = second().locator(".el-date-editor .el-input__inner");
+  await dispatchOpen(inputs().nth(0));
+  await dispatchOpen(secondDates.nth(0));
+  await legacyPanel.waitFor({ state: "visible" });
+  const externalPanel = page.locator(".el-picker__popper.explicit-date-panel");
+  await externalPanel.waitFor({ state: "visible" });
+  const firstOwner = await ownerClass(legacyPanel);
+  const secondOwner = await ownerClass(externalPanel);
+  const dual = await page.evaluate(() => {
+    const read = (selector) => {
+      const panel = document.querySelector(selector);
+      const selected = panel.querySelector("td.current .el-date-table-cell__text");
+      return { owner: [...panel.classList].find((name) => name.startsWith("flowduet-form-preview-date-")), zIndex: Number(getComputedStyle(panel).zIndex), selectedColor: getComputedStyle(selected).color, selectedBackground: getComputedStyle(selected).backgroundColor };
+    };
+    return {
+      first: read(".preview-date-panel"),
+      second: read(".explicit-date-panel"),
+      externalMounted: document.querySelector("#form-appearance-explicit-popper-target").contains(document.querySelector(".explicit-date-panel")),
+      explicitHeight: document.querySelectorAll('[data-test="form-appearance-second-instance"] .el-date-editor')[0].getBoundingClientRect().height,
+    };
+  });
+  check(firstOwner && secondOwner && firstOwner !== secondOwner, "双实例日期面板标识相同或缺失");
+  check(dual.second.zIndex > dual.first.zIndex, `双实例日期层级未递增 ${dual.first.zIndex}/${dual.second.zIndex}`);
+  check(dual.first.selectedBackground === "rgb(64, 158, 255)" && dual.second.selectedBackground === "rgb(18, 52, 86)", `双实例选中色串用或显式配置失效 ${JSON.stringify(dual)}`);
+  check(dual.externalMounted && Math.abs(dual.explicitHeight - 40) <= 0.1, "显式 appendTo 或 large 日期尺寸未保持");
+  results.dual = dual;
+  await page.waitForTimeout(350);
+  await page.screenshot({ path: resolve(outputDir, "dual-instances.png"), fullPage: true });
+
+  await dispatchOpen(secondDates.nth(1));
+  const inlinePanel = page.locator(".el-picker__popper.inline-date-panel");
+  await inlinePanel.waitFor({ state: "visible" });
+  check(await inlinePanel.evaluate((panel) => document.querySelector('[data-test="form-appearance-second-instance"] [data-test="form-preview"]').contains(panel)), "teleported=false 日期未留在所属预览");
+  await setCheckbox("form-appearance-first-mounted", false);
+  check((await legacyPanel.count()) === 0 && (await externalPanel.isVisible()), "卸载第一实例未清理其日期面板或影响第二实例");
+  check((await instanceStyleCount(firstOwner)) === 0 && (await instanceStyleCount(secondOwner)) === 1, "卸载后日期实例样式清理错误");
+  await setCheckbox("form-appearance-first-mounted", true);
+  await dispatchOpen(inputs().nth(0));
+  const remountedOwner = await ownerClass(legacyPanel);
+  check(remountedOwner && remountedOwner !== firstOwner, "重挂未生成新日期实例标识");
+  await setCheckbox("form-appearance-second-mounted", false);
+  check((await externalPanel.count()) === 0 && (await inlinePanel.count()) === 0, "卸载第二实例未清理外部／原位日期面板");
+  check((await instanceStyleCount(secondOwner)) === 0, "第二实例日期样式未清理");
+  results.unmountRemount = { firstOwner, remountedOwner, secondOwner, cleaned: true };
+
+  // 无关宿主日期在实例重建与换肤前后保持原值、选中样式和无实例归属。
+  await setCheckbox("form-appearance-host-dark", false);
+  const hostInput = page.locator('[data-test="form-appearance-host-date-control"] .el-input__inner');
+  await hostInput.click();
+  const hostPanel = page.locator(".host-date-panel");
+  await hostPanel.waitFor({ state: "visible" });
+  const hostBefore = await hostPanel.evaluate((panel) => {
+    const selected = panel.querySelector("td.current .el-date-table-cell__text");
+    return { color: getComputedStyle(selected).color, background: getComputedStyle(selected).backgroundColor, owner: [...panel.classList].some((name) => name.startsWith("flowduet-form-preview-date-")) };
+  });
+  await setCheckbox("form-appearance-second-mounted", true);
+  await setSelect("form-appearance-second-source", "brand");
+  await setSelect("form-appearance-second-mode", "light");
+  await setAppearance({ colorSource: "brand", mode: "dark", density: "compact" });
+  const hostAfter = await hostPanel.evaluate((panel) => {
+    const selected = panel.querySelector("td.current .el-date-table-cell__text");
+    return { color: getComputedStyle(selected).color, background: getComputedStyle(selected).backgroundColor, owner: [...panel.classList].some((name) => name.startsWith("flowduet-form-preview-date-")) };
+  });
+  check(JSON.stringify(hostBefore) === JSON.stringify(hostAfter) && !hostBefore.owner, `宿主日期被实例适配污染 ${JSON.stringify({ hostBefore, hostAfter })}`);
+  results.hostIsolation = { hostBefore, hostAfter };
+  await hostInput.press("Escape");
+  await hostPanel.waitFor({ state: "hidden" });
+
+  // 声明式局部宿主：body 弹层消费局部表面和主色，不写 EP 变量。
+  await setCheckbox("form-appearance-second-mounted", false);
+  await setCheckbox("form-appearance-scoped-dark", true);
+  await setAppearance({ colorSource: "host", mode: "dark", density: "compact" });
+  await setCheckbox("form-appearance-host-dark", false);
+  await inputs().nth(0).click();
+  await legacyPanel.waitFor({ state: "visible" });
+  const scoped = await legacyPanel.evaluate((panel) => {
+    const owner = [...panel.classList].find((name) => name.startsWith("flowduet-form-preview-date-"));
+    const style = [...document.head.querySelectorAll("style")].find((style) => style.textContent.includes(`.${owner}`));
+    const selected = panel.querySelector("td.current .el-date-table-cell__text");
+    return {
+      background: getComputedStyle(panel).backgroundColor,
+      selectedColor: getComputedStyle(selected).color,
+      selectedBackground: getComputedStyle(selected).backgroundColor,
+      epDeclarations: [...(style?.sheet?.cssRules || [])].flatMap((rule) => [...(rule.style || [])]).filter((name) => name.startsWith("--el-")),
+    };
+  });
+  check(scoped.background === "rgb(22, 34, 32)" && scoped.selectedBackground === "rgb(127, 207, 199)" && scoped.selectedColor === "rgb(255, 255, 255)" && scoped.epDeclarations.length === 0, `局部宿主日期面板未跟随或写入 EP 变量 ${JSON.stringify(scoped)}`);
+  results.scopedHost = scoped;
+  await page.waitForTimeout(350);
+  await page.screenshot({ path: resolve(outputDir, "scoped-host.png"), fullPage: true });
+
+  const pending = await page.evaluate(() => window.__fd107Unhandled.slice());
+  check(pending.length === 0, `存在未处理 Promise 拒绝：${pending}`);
+  const result = { browser: await browser.version(), viewport: "1440x1800@1", results, errors, resourceErrors, unhandled: pending, failures };
+  await writeFile(resolve(outputDir, "behavior.json"), JSON.stringify(result, null, 2));
+  console.log(JSON.stringify({ browser: result.browser, sections: Object.keys(results), errors, resourceErrors, unhandled: pending, failures }, null, 2));
+  if (errors.length || resourceErrors.length || pending.length || failures.length) process.exitCode = 1;
+} finally {
+  await browser.close();
+}

@@ -1,0 +1,2708 @@
+{
+  "targetCommit": "1f5bbffee51c076045aa5aad6f8c0793b321da96",
+  "browser": "Codex In-app Browser",
+  "results": {
+    "U01": {
+      "title": "无草稿启动",
+      "source": "A01",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T06:07:11.832Z",
+      "status": "通过",
+      "actual": {
+        "startup": "演示流程",
+        "restorationToast": false,
+        "setup": "临时清除已备份的草稿键，结束恢复"
+      },
+      "completedUTC": "2026-10-12T06:07:13.142Z",
+      "evidence": [
+        "U01.ax.txt",
+        "U01.jpg"
+      ]
+    },
+    "U02": {
+      "title": "新建无表单流程",
+      "source": "A01",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T06:23:01.324Z",
+      "status": "通过",
+      "actual": {
+        "forms": 0,
+        "refreshRestored": true,
+        "exported": true,
+        "initialTimingRetained": "U02-initial-attempt.json"
+      },
+      "completedUTC": "2026-10-12T06:23:02.851Z",
+      "evidence": [
+        "U02.ax.txt",
+        "U02.jpg"
+      ]
+    },
+    "U03": {
+      "title": "空白名称拒绝",
+      "source": "A05",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T06:25:53.536Z",
+      "status": "通过",
+      "actual": {
+        "emptyAndWhitespaceRejected": true
+      },
+      "completedUTC": "2026-10-12T06:25:54.355Z",
+      "evidence": [
+        "U03.ax.txt",
+        "U03.jpg"
+      ]
+    },
+    "U04": {
+      "title": "创建申请与复核",
+      "source": "A02",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T06:25:54.355Z",
+      "status": "通过",
+      "actual": {
+        "ids": [
+          "form_1",
+          "form_2"
+        ],
+        "names": [
+          "申请单",
+          "复核单"
+        ]
+      },
+      "completedUTC": "2026-10-12T06:25:55.146Z",
+      "evidence": [
+        "U04.ax.txt",
+        "U04.jpg"
+      ]
+    },
+    "U05": {
+      "title": "设计器菜单和配置范围",
+      "source": "A13",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T06:30:55.819Z",
+      "status": "通过",
+      "actual": {
+        "menu": [
+          "输入框",
+          "多行输入框",
+          "计数器",
+          "单选框",
+          "多选框",
+          "选择器",
+          "日期",
+          "开关",
+          "栅格布局"
+        ],
+        "forbiddenEntriesVisible": false
+      },
+      "completedUTC": "2026-10-12T06:30:56.212Z",
+      "evidence": [
+        "U05.ax.txt",
+        "U05.jpg"
+      ]
+    },
+    "U06": {
+      "title": "八字段与基础布局",
+      "source": "A10",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T10:42:18.480Z",
+      "status": "通过",
+      "attempts": [
+        {
+          "status": "失败",
+          "evidence": "U06-attempt1.json"
+        }
+      ],
+      "actual": {
+        "topTypes": [
+          "input",
+          "input",
+          "inputNumber",
+          "radio",
+          "checkbox",
+          "select",
+          "datePicker",
+          "switch",
+          "fcRow"
+        ],
+        "colCounts": [
+          1,
+          1
+        ],
+        "uniqueFieldCount": 10,
+        "pureUiCreation": true
+      },
+      "completedUTC": "2026-10-12T10:42:20.204Z",
+      "evidence": [
+        "U06.ax.txt",
+        "U06.jpg"
+      ]
+    },
+    "U07": {
+      "title": "文本中文默认",
+      "source": "A10",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T09:00:20.484Z",
+      "status": "通过",
+      "attempts": [],
+      "actual": {
+        "field": "apply_text",
+        "value": "中文验收默认",
+        "type": "string",
+        "previewCorrect": true
+      },
+      "completedUTC": "2026-10-12T09:00:27.016Z",
+      "evidence": [
+        "U07.ax.txt",
+        "U07.jpg"
+      ]
+    },
+    "U08": {
+      "title": "多行文本默认",
+      "source": "A10",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T09:04:53.623Z",
+      "status": "通过",
+      "attempts": [],
+      "actual": {
+        "field": "apply_textarea",
+        "value": "第一行验收\n第二行验收",
+        "type": "string",
+        "previewCorrect": true
+      },
+      "completedUTC": "2026-10-12T09:04:59.009Z",
+      "evidence": [
+        "U08.ax.txt",
+        "U08.jpg"
+      ]
+    },
+    "U09": {
+      "title": "数字零默认",
+      "source": "A10",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T10:10:08.021Z",
+      "status": "通过",
+      "attempts": [
+        {
+          "status": "失败",
+          "evidence": "U09-attempt1.json"
+        }
+      ],
+      "actual": {
+        "field": "apply_number",
+        "value": 0,
+        "type": "number",
+        "previewCorrect": true
+      },
+      "completedUTC": "2026-10-12T10:10:14.723Z",
+      "evidence": [
+        "U09.ax.txt",
+        "U09.jpg"
+      ]
+    },
+    "U10": {
+      "title": "单选默认与静态选项",
+      "source": "A10",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T10:10:34.823Z",
+      "status": "通过",
+      "attempts": [
+        {
+          "status": "待诊断",
+          "evidence": "U10-attempt1.json"
+        }
+      ],
+      "actual": {
+        "field": "apply_radio",
+        "value": "0",
+        "type": "string",
+        "previewCorrect": true
+      },
+      "completedUTC": "2026-10-12T10:10:44.673Z",
+      "evidence": [
+        "U10.ax.txt",
+        "U10.jpg"
+      ]
+    },
+    "U11": {
+      "title": "多选三态",
+      "source": "A10",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T10:12:51.460Z",
+      "status": "通过",
+      "attempts": [
+        {
+          "status": "待诊断",
+          "evidence": "U11-attempt1.json"
+        }
+      ],
+      "actual": {
+        "unsetAbsent": true,
+        "explicitEmptyPreserved": true,
+        "nonempty": [
+          "1"
+        ]
+      },
+      "completedUTC": "2026-10-12T10:13:06.085Z",
+      "evidence": [
+        "U11.ax.txt",
+        "U11.jpg"
+      ]
+    },
+    "U12": {
+      "title": "下拉单选默认",
+      "source": "A10",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T10:11:45.692Z",
+      "status": "通过",
+      "attempts": [
+        {
+          "status": "待诊断",
+          "evidence": "U12-attempt1.json"
+        }
+      ],
+      "actual": {
+        "field": "apply_select",
+        "value": "0",
+        "type": "string",
+        "previewCorrect": true
+      },
+      "completedUTC": "2026-10-12T10:11:55.774Z",
+      "evidence": [
+        "U12.ax.txt",
+        "U12.jpg"
+      ]
+    },
+    "U13": {
+      "title": "日期单值默认",
+      "source": "A10",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T10:11:55.777Z",
+      "status": "通过",
+      "attempts": [
+        {
+          "status": "待诊断",
+          "evidence": "U13-attempt1.json"
+        }
+      ],
+      "actual": {
+        "field": "apply_date",
+        "value": "2026-10-12",
+        "type": "string",
+        "previewCorrect": true
+      },
+      "completedUTC": "2026-10-12T10:12:02.516Z",
+      "evidence": [
+        "U13.ax.txt",
+        "U13.jpg"
+      ]
+    },
+    "U14": {
+      "title": "开关false默认",
+      "source": "A10",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T10:11:17.181Z",
+      "status": "通过",
+      "attempts": [],
+      "actual": {
+        "field": "apply_switch",
+        "value": false,
+        "type": "boolean",
+        "previewCorrect": true
+      },
+      "completedUTC": "2026-10-12T10:11:27.066Z",
+      "evidence": [
+        "U14.ax.txt",
+        "U14.jpg"
+      ]
+    },
+    "U15": {
+      "title": "文本必填",
+      "source": "A09",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T10:15:46.067Z",
+      "status": "通过",
+      "attempts": [
+        {
+          "status": "待诊断",
+          "evidence": "U15-attempt1.json"
+        },
+        {
+          "status": "待诊断",
+          "evidence": "U15-attempt2.json"
+        }
+      ],
+      "actual": {
+        "emptyRejected": true,
+        "validAccepted": true,
+        "falseAndZeroValid": false
+      },
+      "completedUTC": "2026-10-12T10:15:49.927Z",
+      "evidence": [
+        "U15.ax.txt",
+        "U15.jpg"
+      ]
+    },
+    "U16": {
+      "title": "多行必填",
+      "source": "A09",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T10:15:49.930Z",
+      "status": "通过",
+      "attempts": [
+        {
+          "status": "待诊断",
+          "evidence": "U16-attempt1.json"
+        },
+        {
+          "status": "待诊断",
+          "evidence": "U16-attempt2.json"
+        }
+      ],
+      "actual": {
+        "emptyRejected": true,
+        "validAccepted": true,
+        "falseAndZeroValid": false
+      },
+      "completedUTC": "2026-10-12T10:15:53.236Z",
+      "evidence": [
+        "U16.ax.txt",
+        "U16.jpg"
+      ]
+    },
+    "U17": {
+      "title": "数字必填及0",
+      "source": "A09",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T10:15:53.239Z",
+      "status": "通过",
+      "attempts": [
+        {
+          "status": "待诊断",
+          "evidence": "U17-attempt1.json"
+        },
+        {
+          "status": "待诊断",
+          "evidence": "U17-attempt2.json"
+        }
+      ],
+      "actual": {
+        "emptyRejected": true,
+        "validAccepted": true,
+        "falseAndZeroValid": true
+      },
+      "completedUTC": "2026-10-12T10:15:56.754Z",
+      "evidence": [
+        "U17.ax.txt",
+        "U17.jpg"
+      ]
+    },
+    "U18": {
+      "title": "单选必填",
+      "source": "A09",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T10:15:56.755Z",
+      "status": "通过",
+      "attempts": [
+        {
+          "status": "待诊断",
+          "evidence": "U18-attempt1.json"
+        },
+        {
+          "status": "待诊断",
+          "evidence": "U18-attempt2.json"
+        }
+      ],
+      "actual": {
+        "emptyRejected": true,
+        "validAccepted": true,
+        "falseAndZeroValid": false
+      },
+      "completedUTC": "2026-10-12T10:16:00.237Z",
+      "evidence": [
+        "U18.ax.txt",
+        "U18.jpg"
+      ]
+    },
+    "U19": {
+      "title": "多选必填",
+      "source": "A09",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T10:16:00.238Z",
+      "status": "通过",
+      "attempts": [],
+      "actual": {
+        "emptyRejected": true,
+        "validAccepted": true,
+        "falseAndZeroValid": false
+      },
+      "completedUTC": "2026-10-12T10:16:03.396Z",
+      "evidence": [
+        "U19.ax.txt",
+        "U19.jpg"
+      ]
+    },
+    "U20": {
+      "title": "下拉必填",
+      "source": "A09",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T10:16:03.396Z",
+      "status": "通过",
+      "attempts": [],
+      "actual": {
+        "emptyRejected": true,
+        "validAccepted": true,
+        "falseAndZeroValid": false
+      },
+      "completedUTC": "2026-10-12T10:16:07.294Z",
+      "evidence": [
+        "U20.ax.txt",
+        "U20.jpg"
+      ]
+    },
+    "U21": {
+      "title": "日期必填",
+      "source": "A09",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T10:16:07.295Z",
+      "status": "通过",
+      "attempts": [],
+      "actual": {
+        "emptyRejected": true,
+        "validAccepted": true,
+        "falseAndZeroValid": false
+      },
+      "completedUTC": "2026-10-12T10:16:10.639Z",
+      "evidence": [
+        "U21.ax.txt",
+        "U21.jpg"
+      ]
+    },
+    "U22": {
+      "title": "开关false有效",
+      "source": "A09",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T10:16:42.545Z",
+      "status": "通过",
+      "attempts": [
+        {
+          "status": "待诊断",
+          "evidence": "U22-attempt1.json"
+        }
+      ],
+      "actual": {
+        "emptyRejected": false,
+        "validAccepted": true,
+        "falseAndZeroValid": true
+      },
+      "completedUTC": "2026-10-12T10:16:47.330Z",
+      "evidence": [
+        "U22.ax.txt",
+        "U22.jpg"
+      ]
+    },
+    "U23": {
+      "title": "选项修改与顺序",
+      "source": "A10",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T10:37:46.958Z",
+      "status": "通过",
+      "attempts": [],
+      "actual": {
+        "threeTypesOptionsPreserved": true,
+        "stringValues": true
+      },
+      "completedUTC": "2026-10-12T10:37:57.722Z",
+      "evidence": [
+        "U23.ax.txt",
+        "U23.jpg"
+      ]
+    },
+    "U24": {
+      "title": "行列和字段顺序",
+      "source": "A10 A13",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T10:47:03.674Z",
+      "status": "通过",
+      "attempts": [
+        {
+          "status": "待诊断",
+          "evidence": "U24-attempt1.json"
+        }
+      ],
+      "actual": {
+        "topOrderChanged": true,
+        "columnOrderChanged": true,
+        "twoColumnsPreserved": true,
+        "nestedGridPrevented": true,
+        "reopenStable": true
+      },
+      "completedUTC": "2026-10-12T10:47:07.932Z",
+      "evidence": [
+        "U24.ax.txt",
+        "U24.jpg"
+      ]
+    },
+    "U25": {
+      "title": "表单级配置保真",
+      "source": "A10",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T10:37:05.810Z",
+      "status": "通过",
+      "attempts": [
+        {
+          "status": "失败",
+          "evidence": "U25-attempt1.json"
+        },
+        {
+          "status": "失败",
+          "evidence": "U25-attempt2.json"
+        }
+      ],
+      "actual": {
+        "options": {
+          "form": {
+            "inline": false,
+            "hideRequiredAsterisk": false,
+            "labelPosition": "left",
+            "size": "default",
+            "labelWidth": "126px"
+          },
+          "resetBtn": {
+            "show": false,
+            "innerText": "重置"
+          },
+          "submitBtn": {
+            "show": false,
+            "innerText": "提交"
+          },
+          "formName": "配置复验"
+        },
+        "inputMethod": "使用可见增量按钮；文本填值被第三方组件重置，另列待核实"
+      },
+      "completedUTC": "2026-10-12T10:37:11.742Z",
+      "evidence": [
+        "U25.ax.txt",
+        "U25.jpg"
+      ]
+    },
+    "U26": {
+      "title": "重开编辑标题",
+      "source": "A10",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T10:18:18.279Z",
+      "status": "通过",
+      "attempts": [],
+      "actual": {
+        "continuedEditing": true
+      },
+      "completedUTC": "2026-10-12T10:18:23.135Z",
+      "evidence": [
+        "U26.ax.txt",
+        "U26.jpg"
+      ]
+    },
+    "U27": {
+      "title": "改名保持引用",
+      "source": "A05",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T10:18:23.136Z",
+      "status": "通过",
+      "attempts": [],
+      "actual": {
+        "idPreserved": true
+      },
+      "completedUTC": "2026-10-12T10:18:25.929Z",
+      "evidence": [
+        "U27.ax.txt",
+        "U27.jpg"
+      ]
+    },
+    "U28": {
+      "title": "同名不同ID可区分",
+      "source": "A05",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T10:18:25.930Z",
+      "status": "通过",
+      "attempts": [],
+      "actual": {
+        "ids": [
+          "form_1",
+          "form_2",
+          "form_3"
+        ]
+      },
+      "completedUTC": "2026-10-12T10:18:28.705Z",
+      "evidence": [
+        "U28.ax.txt",
+        "U28.jpg"
+      ]
+    },
+    "U29": {
+      "title": "默认引用阻止删除",
+      "source": "A06",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T10:18:28.706Z",
+      "status": "通过",
+      "attempts": [],
+      "actual": {
+        "error": "表单「申请单」仍被以下位置引用，请先解除或调整引用：\n流程默认表单"
+      },
+      "completedUTC": "2026-10-12T10:18:31.634Z",
+      "evidence": [
+        "U29.ax.txt",
+        "U29.jpg"
+      ]
+    },
+    "U30": {
+      "title": "覆盖引用阻止删除",
+      "source": "A06",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T10:18:31.634Z",
+      "status": "通过",
+      "attempts": [],
+      "actual": {
+        "error": "表单「复核单」仍被以下位置引用，请先解除或调整引用：\n审批节点「财务复核（fin_node）」\n审批节点「合同会签（approval_mi）」"
+      },
+      "completedUTC": "2026-10-12T10:18:34.651Z",
+      "evidence": [
+        "U30.ax.txt",
+        "U30.jpg"
+      ]
+    },
+    "U31": {
+      "title": "取消删除",
+      "source": "A06",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T10:18:34.652Z",
+      "status": "通过",
+      "attempts": [],
+      "actual": {
+        "unchanged": true
+      },
+      "completedUTC": "2026-10-12T10:18:37.765Z",
+      "evidence": [
+        "U31.ax.txt",
+        "U31.jpg"
+      ]
+    },
+    "U32": {
+      "title": "解除引用后可删除",
+      "source": "A06",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T10:18:37.766Z",
+      "status": "通过",
+      "attempts": [],
+      "actual": {
+        "deletedAfterUnbind": true
+      },
+      "completedUTC": "2026-10-12T10:18:42.870Z",
+      "evidence": [
+        "U32.ax.txt",
+        "U32.jpg"
+      ]
+    },
+    "U33": {
+      "title": "默认和节点覆盖",
+      "source": "A02",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T10:18:54.212Z",
+      "status": "通过",
+      "attempts": [],
+      "actual": {
+        "inheritAndOverride": true
+      },
+      "completedUTC": "2026-10-12T10:18:58.666Z",
+      "evidence": [
+        "U33.ax.txt",
+        "U33.jpg"
+      ]
+    },
+    "U34": {
+      "title": "改默认仅影响继承",
+      "source": "A03",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T10:18:58.667Z",
+      "status": "通过",
+      "attempts": [],
+      "actual": {
+        "inheritUpdatesOverrideStable": true
+      },
+      "completedUTC": "2026-10-12T10:19:01.773Z",
+      "evidence": [
+        "U34.ax.txt",
+        "U34.jpg"
+      ]
+    },
+    "U35": {
+      "title": "清覆盖恢复继承",
+      "source": "A03",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T10:19:01.774Z",
+      "status": "通过",
+      "attempts": [],
+      "actual": {
+        "clearRestoresInheritance": true
+      },
+      "completedUTC": "2026-10-12T10:19:06.274Z",
+      "evidence": [
+        "U35.ax.txt",
+        "U35.jpg"
+      ]
+    },
+    "U36": {
+      "title": "单签保持ID与覆盖",
+      "source": "A04",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T10:19:06.275Z",
+      "status": "通过",
+      "attempts": [],
+      "actual": {
+        "kind": "single",
+        "idAndOverridePreserved": true
+      },
+      "completedUTC": "2026-10-12T10:19:11.434Z",
+      "evidence": [
+        "U36.ax.txt",
+        "U36.jpg"
+      ]
+    },
+    "U37": {
+      "title": "会签保持ID与覆盖",
+      "source": "A04",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T10:19:11.434Z",
+      "status": "通过",
+      "attempts": [],
+      "actual": {
+        "kind": "all",
+        "idAndOverridePreserved": true
+      },
+      "completedUTC": "2026-10-12T10:19:16.124Z",
+      "evidence": [
+        "U37.ax.txt",
+        "U37.jpg"
+      ]
+    },
+    "U38": {
+      "title": "或签保持ID与覆盖",
+      "source": "A04",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T10:19:16.125Z",
+      "status": "通过",
+      "attempts": [],
+      "actual": {
+        "kind": "any",
+        "idAndOverridePreserved": true
+      },
+      "completedUTC": "2026-10-12T10:19:20.813Z",
+      "evidence": [
+        "U38.ax.txt",
+        "U38.jpg"
+      ]
+    },
+    "U39": {
+      "title": "依次保持ID与覆盖",
+      "source": "A04",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T10:19:39.058Z",
+      "status": "通过",
+      "attempts": [],
+      "actual": {
+        "kind": "sequential",
+        "idAndOverridePreserved": true
+      },
+      "completedUTC": "2026-10-12T10:19:43.896Z",
+      "evidence": [
+        "U39.ax.txt",
+        "U39.jpg"
+      ]
+    },
+    "U40": {
+      "title": "多个节点同key",
+      "source": "A02",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T10:19:43.898Z",
+      "status": "通过",
+      "attempts": [],
+      "actual": {
+        "sharedKey": true
+      },
+      "completedUTC": "2026-10-12T10:19:48.990Z",
+      "evidence": [
+        "U40.ax.txt",
+        "U40.jpg"
+      ]
+    },
+    "U41": {
+      "title": "条件并行抄送无有效表单",
+      "source": "A19",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T10:35:30.190Z",
+      "status": "通过",
+      "attempts": [
+        {
+          "status": "失败",
+          "evidence": "U41-attempt1.json"
+        }
+      ],
+      "actual": {
+        "opts": [
+          "经理审批",
+          "合同会签",
+          "总监审批",
+          "财务复核",
+          "法务复核"
+        ],
+        "nonApprovalExcluded": true
+      },
+      "completedUTC": "2026-10-12T10:35:34.495Z",
+      "evidence": [
+        "U41.ax.txt",
+        "U41.jpg"
+      ]
+    },
+    "U42": {
+      "title": "完整草稿刷新",
+      "source": "A10 A15",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T10:19:48.990Z",
+      "status": "通过",
+      "attempts": [],
+      "actual": {
+        "formsEqual": true,
+        "restored": true
+      },
+      "completedUTC": "2026-10-12T10:19:51.234Z",
+      "evidence": [
+        "U42.ax.txt",
+        "U42.jpg"
+      ]
+    },
+    "U43": {
+      "title": "实际设计文档下载",
+      "source": "A15",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T10:26:51.507Z",
+      "status": "通过",
+      "attempts": [],
+      "actual": {
+        "path": "/Users/l/Downloads/playground_demo.flowduet.json",
+        "forms": 2,
+        "format": "flowduet.design",
+        "version": 1
+      },
+      "completedUTC": "2026-10-12T10:26:53.478Z",
+      "evidence": [
+        "U43.ax.txt",
+        "U43.jpg"
+      ]
+    },
+    "U44": {
+      "title": "从本轮下载物打开",
+      "source": "A15",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T10:27:33.598Z",
+      "status": "通过",
+      "attempts": [],
+      "actual": {
+        "actualDownloadedFileOpened": true
+      },
+      "completedUTC": "2026-10-12T10:27:35.133Z",
+      "evidence": [
+        "U44.ax.txt",
+        "U44.jpg"
+      ]
+    },
+    "U45": {
+      "title": "重复保存打开两轮",
+      "source": "A10",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T10:27:35.134Z",
+      "status": "通过",
+      "attempts": [],
+      "actual": {
+        "rounds": 2,
+        "paths": [
+          "/Users/l/Downloads/playground_demo.flowduet (1).json",
+          "/Users/l/Downloads/playground_demo.flowduet (2).json"
+        ],
+        "definitionsEqual": true
+      },
+      "completedUTC": "2026-10-12T10:27:38.197Z",
+      "evidence": [
+        "U45.ax.txt",
+        "U45.jpg"
+      ]
+    },
+    "U46": {
+      "title": "未绑定定义保留",
+      "source": "A08",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T10:19:51.234Z",
+      "status": "通过",
+      "attempts": [],
+      "actual": {
+        "unusedPreservedEditable": true
+      },
+      "completedUTC": "2026-10-12T10:19:56.852Z",
+      "evidence": [
+        "U46.ax.txt",
+        "U46.jpg"
+      ]
+    },
+    "U47": {
+      "title": "审批人和条件缺失",
+      "source": "A07",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T10:21:26.863Z",
+      "status": "通过",
+      "attempts": [],
+      "actual": {
+        "error": "单签审批节点「经理审批（approval_1）」的审批人为空白，请在抽屉补填后再导出\n条件分支「大额复核（fb）」未设置条件，请配置表达式或设为默认支路",
+        "draftSaved": true
+      },
+      "completedUTC": "2026-10-12T10:21:29.292Z",
+      "evidence": [
+        "U47.ax.txt",
+        "U47.jpg"
+      ]
+    },
+    "U48": {
+      "title": "会签空集合",
+      "source": "A07",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T10:22:35.882Z",
+      "status": "通过",
+      "attempts": [
+        {
+          "status": "待诊断",
+          "evidence": "U48-attempt1.json"
+        }
+      ],
+      "actual": {
+        "kind": "all",
+        "emptyRestored": true,
+        "exportBlocked": true
+      },
+      "completedUTC": "2026-10-12T10:22:41.160Z",
+      "evidence": [
+        "U48.ax.txt",
+        "U48.jpg"
+      ]
+    },
+    "U49": {
+      "title": "或签空集合",
+      "source": "A07",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T10:22:41.164Z",
+      "status": "通过",
+      "attempts": [
+        {
+          "status": "待诊断",
+          "evidence": "U49-attempt1.json"
+        }
+      ],
+      "actual": {
+        "kind": "any",
+        "emptyRestored": true,
+        "exportBlocked": true
+      },
+      "completedUTC": "2026-10-12T10:22:45.401Z",
+      "evidence": [
+        "U49.ax.txt",
+        "U49.jpg"
+      ]
+    },
+    "U50": {
+      "title": "依次空集合",
+      "source": "A07",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T10:22:45.405Z",
+      "status": "通过",
+      "attempts": [
+        {
+          "status": "待诊断",
+          "evidence": "U50-attempt1.json"
+        }
+      ],
+      "actual": {
+        "kind": "sequential",
+        "emptyRestored": true,
+        "exportBlocked": true
+      },
+      "completedUTC": "2026-10-12T10:22:50.407Z",
+      "evidence": [
+        "U50.ax.txt",
+        "U50.jpg"
+      ]
+    },
+    "U51": {
+      "title": "抄送空收件人",
+      "source": "A07",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T10:22:50.411Z",
+      "status": "通过",
+      "attempts": [
+        {
+          "status": "待诊断",
+          "evidence": "U51-attempt1.json"
+        }
+      ],
+      "actual": {
+        "emptyRecipientsRestored": true,
+        "exportBlocked": true
+      },
+      "completedUTC": "2026-10-12T10:22:55.238Z",
+      "evidence": [
+        "U51.ax.txt",
+        "U51.jpg"
+      ]
+    },
+    "U52": {
+      "title": "集合表达式非法",
+      "source": "A07 A13",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T10:21:55.646Z",
+      "status": "通过",
+      "attempts": [],
+      "actual": {
+        "invalid": "${approvers}",
+        "rejected": true,
+        "storagePreserved": true
+      },
+      "completedUTC": "2026-10-12T10:21:58.525Z",
+      "evidence": [
+        "U52.ax.txt",
+        "U52.jpg"
+      ]
+    },
+    "U53": {
+      "title": "集合逗号名单非法",
+      "source": "A07 A13",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T10:21:58.526Z",
+      "status": "通过",
+      "attempts": [],
+      "actual": {
+        "invalid": "a,b",
+        "rejected": true,
+        "storagePreserved": true
+      },
+      "completedUTC": "2026-10-12T10:22:01.500Z",
+      "evidence": [
+        "U53.ax.txt",
+        "U53.jpg"
+      ]
+    },
+    "U54": {
+      "title": "集合中文非法",
+      "source": "A07 A13",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T10:22:01.500Z",
+      "status": "通过",
+      "attempts": [],
+      "actual": {
+        "invalid": "中文",
+        "rejected": true,
+        "storagePreserved": true
+      },
+      "completedUTC": "2026-10-12T10:22:04.564Z",
+      "evidence": [
+        "U54.ax.txt",
+        "U54.jpg"
+      ]
+    },
+    "U55": {
+      "title": "抽屉快捷保存",
+      "source": "A07",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T10:22:55.239Z",
+      "status": "通过",
+      "attempts": [],
+      "actual": {
+        "unsubmittedCollected": true
+      },
+      "completedUTC": "2026-10-12T10:23:01.155Z",
+      "evidence": [
+        "U55.ax.txt",
+        "U55.jpg"
+      ]
+    },
+    "U56": {
+      "title": "焦点默认值快捷保存",
+      "source": "A10 A15",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T10:23:01.157Z",
+      "status": "通过",
+      "attempts": [],
+      "actual": {
+        "focusedDefaultCollected": true,
+        "optionsPreserved": true
+      },
+      "completedUTC": "2026-10-12T10:23:13.587Z",
+      "evidence": [
+        "U56.ax.txt",
+        "U56.jpg"
+      ]
+    },
+    "U57": {
+      "title": "未确认输入切BPMN",
+      "source": "A10 A15",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T10:55:17.647Z",
+      "status": "通过",
+      "attempts": [
+        {
+          "status": "待诊断",
+          "evidence": "U57-attempt1.json"
+        },
+        {
+          "status": "工具阻塞",
+          "evidence": "U57-attempt2.json"
+        },
+        {
+          "status": "待诊断",
+          "evidence": "U57-attempt3.json"
+        }
+      ],
+      "actual": {
+        "unsubmittedCollectedOnKeyboardViewSwitch": true,
+        "invalidSwitchBlocked": true,
+        "method": "鼠标遮挡，使用原生控件键盘Space"
+      },
+      "completedUTC": "2026-10-12T10:55:21.513Z",
+      "evidence": [
+        "U57.ax.txt",
+        "U57.jpg"
+      ]
+    },
+    "U58": {
+      "title": "取消新建",
+      "source": "A15",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T10:55:21.518Z",
+      "status": "通过",
+      "attempts": [
+        {
+          "status": "待诊断",
+          "evidence": "U58-attempt1.json"
+        },
+        {
+          "status": "工具阻塞",
+          "evidence": "U58-attempt2.json"
+        },
+        {
+          "status": "待诊断",
+          "evidence": "U58-attempt3.json"
+        }
+      ],
+      "actual": {
+        "unsubmittedBufferDirectoryAndDirtyPreserved": true,
+        "method": "键盘Enter启动新建"
+      },
+      "completedUTC": "2026-10-12T10:55:24.437Z",
+      "evidence": [
+        "U58.ax.txt",
+        "U58.jpg"
+      ]
+    },
+    "U59": {
+      "title": "确认新建",
+      "source": "A15",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T10:55:58.753Z",
+      "status": "通过",
+      "attempts": [
+        {
+          "status": "通过",
+          "evidence": "U59-attempt1.json"
+        }
+      ],
+      "actual": {
+        "unsubmittedModelAndCatalogCleared": true
+      },
+      "completedUTC": "2026-10-12T10:56:01.172Z",
+      "evidence": [
+        "U59.ax.txt",
+        "U59.jpg"
+      ]
+    },
+    "U60": {
+      "title": "取消文件替换",
+      "source": "A15",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T10:56:01.178Z",
+      "status": "通过",
+      "attempts": [
+        {
+          "status": "通过",
+          "evidence": "U60-attempt1.json"
+        }
+      ],
+      "actual": {
+        "unsubmittedBufferModelAndDirectoryPreserved": true,
+        "keyboardFileChooser": true
+      },
+      "completedUTC": "2026-10-12T10:56:03.604Z",
+      "evidence": [
+        "U60.ax.txt",
+        "U60.jpg"
+      ]
+    },
+    "U61": {
+      "title": "确认文件替换",
+      "source": "A15",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T10:56:58.370Z",
+      "status": "通过",
+      "attempts": [
+        {
+          "status": "失败",
+          "evidence": "U61-attempt1.json"
+        },
+        {
+          "status": "通过",
+          "evidence": "U61-attempt2.json"
+        },
+        {
+          "status": "待诊断",
+          "evidence": "U61-attempt3.json"
+        }
+      ],
+      "actual": {
+        "oldBufferClearedNewDesignOnly": true
+      },
+      "completedUTC": "2026-10-12T10:57:00.431Z",
+      "evidence": [
+        "U61.ax.txt",
+        "U61.jpg"
+      ]
+    },
+    "U62": {
+      "title": "取消原生文件选择",
+      "source": "A14 A15",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T10:33:20.420Z",
+      "status": "工具阻塞",
+      "attempts": [],
+      "actual": {
+        "escapeSent": true,
+        "nativeCancellationVerified": false,
+        "limitation": "浏览器文件选择事件提供上传接口，无原生选择器截图及取消结果，不能认定原生取消验收通过"
+      },
+      "completedUTC": "2026-10-12T10:33:22.835Z",
+      "evidence": [
+        "U62.ax.txt",
+        "U62.jpg"
+      ],
+      "verdictNote": "仅完成已记录的部分步骤，未执行或无法观察的原步骤不计通过。"
+    },
+    "U63": {
+      "title": "连续选同一文件",
+      "source": "A15",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T10:19:56.853Z",
+      "status": "通过",
+      "attempts": [],
+      "actual": {
+        "sameFileTwice": true
+      },
+      "completedUTC": "2026-10-12T10:19:59.593Z",
+      "evidence": [
+        "U63.ax.txt",
+        "U63.jpg"
+      ]
+    },
+    "U64": {
+      "title": "目标切换和重复打开",
+      "source": "A09 A10",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T10:27:38.197Z",
+      "status": "失败",
+      "attempts": [],
+      "error": "重开后当前值区与可见默认不一致",
+      "actual": {
+        "visibleDefault": "设计默认申请人",
+        "currentValues": {}
+      },
+      "completedUTC": "2026-10-12T10:27:43.212Z",
+      "evidence": [
+        "U64.ax.txt",
+        "U64.jpg"
+      ]
+    },
+    "U65": {
+      "title": "节点key失效不回退",
+      "source": "A11",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T10:26:43.546Z",
+      "status": "通过",
+      "attempts": [
+        {
+          "status": "待诊断",
+          "evidence": "U65-attempt1.json"
+        }
+      ],
+      "actual": {
+        "invalidPreservedOtherUsable": true
+      },
+      "completedUTC": "2026-10-12T10:26:47.765Z",
+      "evidence": [
+        "U65.ax.txt",
+        "U65.jpg"
+      ]
+    },
+    "U66": {
+      "title": "默认key失效",
+      "source": "A11",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T10:25:32.992Z",
+      "status": "通过",
+      "attempts": [],
+      "actual": {
+        "overrideStillUsable": true
+      },
+      "completedUTC": "2026-10-12T10:25:36.081Z",
+      "evidence": [
+        "U66.ax.txt",
+        "U66.jpg"
+      ]
+    },
+    "U67": {
+      "title": "无人继承的失效默认",
+      "source": "A18",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T10:25:36.082Z",
+      "status": "通过",
+      "attempts": [],
+      "actual": {
+        "unusedInvalidDefaultBlocked": true
+      },
+      "completedUTC": "2026-10-12T10:25:37.178Z",
+      "evidence": [
+        "U67.ax.txt",
+        "U67.jpg"
+      ]
+    },
+    "U68": {
+      "title": "有效变无效清旧XML",
+      "source": "A16",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T10:26:47.771Z",
+      "status": "通过",
+      "attempts": [
+        {
+          "status": "待诊断",
+          "evidence": "U68-attempt1.json"
+        }
+      ],
+      "actual": {
+        "oldXmlCleared": true
+      },
+      "completedUTC": "2026-10-12T10:26:51.505Z",
+      "evidence": [
+        "U68.ax.txt",
+        "U68.jpg"
+      ]
+    },
+    "U69": {
+      "title": "非法后合法可恢复",
+      "source": "A12 A15",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T10:19:59.594Z",
+      "status": "通过",
+      "attempts": [],
+      "actual": {
+        "recovered": true
+      },
+      "completedUTC": "2026-10-12T10:20:01.659Z",
+      "evidence": [
+        "U69.ax.txt",
+        "U69.jpg"
+      ]
+    },
+    "U70": {
+      "title": "设计闭环能力边界",
+      "source": "#70边界",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T10:20:01.660Z",
+      "status": "通过",
+      "attempts": [],
+      "actual": {
+        "designOnly": true
+      },
+      "completedUTC": "2026-10-12T10:20:02.564Z",
+      "evidence": [
+        "U70.ax.txt",
+        "U70.jpg"
+      ]
+    },
+    "G01": {
+      "title": "坏JSON",
+      "source": "A12/A13/A20",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T08:11:29.942Z",
+      "status": "通过",
+      "attempts": [
+        {
+          "status": "待诊断",
+          "evidence": "G01-attempt1.json"
+        }
+      ],
+      "actual": {
+        "rejected": true,
+        "error": "设计文档不是合法 JSON：Expected property name or '}' in JSON at position 1 (line 1 column 2)",
+        "preservedForms": true,
+        "preservedUnsavedModel": true,
+        "preservedDirty": true
+      },
+      "completedUTC": "2026-10-12T08:11:36.145Z",
+      "evidence": [
+        "G01.ax.txt",
+        "G01.jpg"
+      ]
+    },
+    "G02": {
+      "title": "错误format",
+      "source": "A12/A13/A20",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T08:15:02.509Z",
+      "status": "通过",
+      "attempts": [
+        {
+          "status": "待诊断",
+          "evidence": "G02-attempt1.json"
+        }
+      ],
+      "actual": {
+        "rejected": true,
+        "error": "未知的设计文档格式：期望 \"flowduet.design\"，实际 \"wrong.format\"",
+        "preservedForms": true,
+        "preservedUnsavedModel": true,
+        "preservedDirty": true
+      },
+      "completedUTC": "2026-10-12T08:15:06.218Z",
+      "evidence": [
+        "G02.ax.txt",
+        "G02.jpg"
+      ]
+    },
+    "G03": {
+      "title": "未知版本99",
+      "source": "A12/A13/A20",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T08:15:06.222Z",
+      "status": "通过",
+      "attempts": [
+        {
+          "status": "待诊断",
+          "evidence": "G03-attempt1.json"
+        }
+      ],
+      "actual": {
+        "rejected": true,
+        "error": "不支持的设计文档版本：期望 1，实际 99；不自动迁移",
+        "preservedForms": true,
+        "preservedUnsavedModel": true,
+        "preservedDirty": true
+      },
+      "completedUTC": "2026-10-12T08:15:09.747Z",
+      "evidence": [
+        "G03.ax.txt",
+        "G03.jpg"
+      ]
+    },
+    "G04": {
+      "title": "版本类型字符串",
+      "source": "A12/A13/A20",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T08:15:09.748Z",
+      "status": "通过",
+      "attempts": [
+        {
+          "status": "执行中",
+          "evidence": "G04-attempt1.json"
+        }
+      ],
+      "actual": {
+        "rejected": true,
+        "error": "不支持的设计文档版本：期望 1，实际 \"1\"；不自动迁移",
+        "preservedForms": true,
+        "preservedUnsavedModel": true,
+        "preservedDirty": true
+      },
+      "completedUTC": "2026-10-12T08:15:13.277Z",
+      "evidence": [
+        "G04.ax.txt",
+        "G04.jpg"
+      ]
+    },
+    "G05": {
+      "title": "未知引擎",
+      "source": "A12/A13/A20",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T08:15:13.278Z",
+      "status": "通过",
+      "attempts": [],
+      "actual": {
+        "rejected": true,
+        "error": "不支持的目标引擎：期望 \"flowable\"，实际 \"unknown\"；不猜测适配器",
+        "preservedForms": true,
+        "preservedUnsavedModel": true,
+        "preservedDirty": true
+      },
+      "completedUTC": "2026-10-12T08:15:16.760Z",
+      "evidence": [
+        "G05.ax.txt",
+        "G05.jpg"
+      ]
+    },
+    "G06": {
+      "title": "未知提供者",
+      "source": "A12/A13/A20",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T08:15:16.760Z",
+      "status": "通过",
+      "attempts": [],
+      "actual": {
+        "rejected": true,
+        "error": "表单 form_2 的提供者是 custom，本版本只支持 form-create/element-plus",
+        "preservedForms": true,
+        "preservedUnsavedModel": true,
+        "preservedDirty": true
+      },
+      "completedUTC": "2026-10-12T08:15:20.336Z",
+      "evidence": [
+        "G06.ax.txt",
+        "G06.jpg"
+      ]
+    },
+    "G07": {
+      "title": "重复表单ID",
+      "source": "A12/A13/A20",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T08:17:56.579Z",
+      "status": "通过",
+      "attempts": [],
+      "actual": {
+        "rejected": true,
+        "error": "表单 id 重复：form_1（文档内 id 必须唯一）",
+        "preservedForms": true,
+        "preservedUnsavedModel": true,
+        "preservedDirty": true
+      },
+      "completedUTC": "2026-10-12T08:18:00.409Z",
+      "evidence": [
+        "G07.ax.txt",
+        "G07.jpg"
+      ]
+    },
+    "G08": {
+      "title": "空表单ID",
+      "source": "A12/A13/A20",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T08:18:00.410Z",
+      "status": "通过",
+      "attempts": [],
+      "actual": {
+        "rejected": true,
+        "error": "表单定义的 id 不能为空白（名称：复核单）",
+        "preservedForms": true,
+        "preservedUnsavedModel": true,
+        "preservedDirty": true
+      },
+      "completedUTC": "2026-10-12T08:18:04.033Z",
+      "evidence": [
+        "G08.ax.txt",
+        "G08.jpg"
+      ]
+    },
+    "G09": {
+      "title": "空白表单名",
+      "source": "A12/A13/A20",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T08:18:04.034Z",
+      "status": "通过",
+      "attempts": [],
+      "actual": {
+        "rejected": true,
+        "error": "表单 form_2 的名称不能为空白",
+        "preservedForms": true,
+        "preservedUnsavedModel": true,
+        "preservedDirty": true
+      },
+      "completedUTC": "2026-10-12T08:18:07.525Z",
+      "evidence": [
+        "G09.ax.txt",
+        "G09.jpg"
+      ]
+    },
+    "G10": {
+      "title": "rules坏JSON",
+      "source": "A12/A13/A20",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T08:18:07.526Z",
+      "status": "通过",
+      "attempts": [],
+      "actual": {
+        "rejected": true,
+        "error": "表单 rules 不是合法 JSON：Expected property name or '}' in JSON at position 1 (line 1 column 2)",
+        "preservedForms": true,
+        "preservedUnsavedModel": true,
+        "preservedDirty": true
+      },
+      "completedUTC": "2026-10-12T08:18:11.103Z",
+      "evidence": [
+        "G10.ax.txt",
+        "G10.jpg"
+      ]
+    },
+    "G11": {
+      "title": "options坏JSON",
+      "source": "A12/A13/A20",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T08:18:11.103Z",
+      "status": "通过",
+      "attempts": [],
+      "actual": {
+        "rejected": true,
+        "error": "表单 options 不是合法 JSON：Expected property name or '}' in JSON at position 1 (line 1 column 2)",
+        "preservedForms": true,
+        "preservedUnsavedModel": true,
+        "preservedDirty": true
+      },
+      "completedUTC": "2026-10-12T08:18:14.753Z",
+      "evidence": [
+        "G11.ax.txt",
+        "G11.jpg"
+      ]
+    },
+    "G12": {
+      "title": "rules根对象",
+      "source": "A12/A13/A20",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T08:18:14.754Z",
+      "status": "通过",
+      "attempts": [],
+      "actual": {
+        "rejected": true,
+        "error": "表单 rules 必须是字段规则数组（JSON 数组）",
+        "preservedForms": true,
+        "preservedUnsavedModel": true,
+        "preservedDirty": true
+      },
+      "completedUTC": "2026-10-12T08:18:18.380Z",
+      "evidence": [
+        "G12.ax.txt",
+        "G12.jpg"
+      ]
+    },
+    "G13": {
+      "title": "props非对象",
+      "source": "A12/A13/A20",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T08:20:34.091Z",
+      "status": "通过",
+      "attempts": [],
+      "actual": {
+        "rejected": true,
+        "error": "字段或布局「申请人（apply_text）」的 props 必须是 JSON 对象",
+        "preservedForms": true,
+        "preservedUnsavedModel": true,
+        "preservedDirty": true
+      },
+      "completedUTC": "2026-10-12T08:20:37.848Z",
+      "evidence": [
+        "G13.ax.txt",
+        "G13.jpg"
+      ]
+    },
+    "G14": {
+      "title": "upload超范围",
+      "source": "A12/A13/A20",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T08:20:37.848Z",
+      "status": "通过",
+      "attempts": [],
+      "actual": {
+        "rejected": true,
+        "error": "表单字段「申请人（apply_text）」的类型是 upload，本版本支持的组件：文本 / 多行文本 / 数字 / 单选 / 多选 / 下拉单选 / 日期 / 开关 / 栅格布局，拒绝导入",
+        "preservedForms": true,
+        "preservedUnsavedModel": true,
+        "preservedDirty": true
+      },
+      "completedUTC": "2026-10-12T08:20:41.330Z",
+      "evidence": [
+        "G14.ax.txt",
+        "G14.jpg"
+      ]
+    },
+    "G15": {
+      "title": "input非文本类型",
+      "source": "A12/A13/A20",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T08:20:41.332Z",
+      "status": "通过",
+      "attempts": [],
+      "actual": {
+        "rejected": true,
+        "error": "输入字段「申请人（apply_text）」的形态是 password，本版本只支持文本或多行文本",
+        "preservedForms": true,
+        "preservedUnsavedModel": true,
+        "preservedDirty": true
+      },
+      "completedUTC": "2026-10-12T08:20:44.860Z",
+      "evidence": [
+        "G15.ax.txt",
+        "G15.jpg"
+      ]
+    },
+    "G16": {
+      "title": "select multiple",
+      "source": "A12/A13/A20",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T08:20:44.861Z",
+      "status": "通过",
+      "attempts": [],
+      "actual": {
+        "rejected": true,
+        "error": "下拉字段「申请部门（apply_select）」配置了 multiple 多选形态，本版本只支持下拉单选",
+        "preservedForms": true,
+        "preservedUnsavedModel": true,
+        "preservedDirty": true
+      },
+      "completedUTC": "2026-10-12T08:20:48.295Z",
+      "evidence": [
+        "G16.ax.txt",
+        "G16.jpg"
+      ]
+    },
+    "G17": {
+      "title": "select allowCreate",
+      "source": "A12/A13/A20",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T08:20:48.296Z",
+      "status": "通过",
+      "attempts": [],
+      "actual": {
+        "rejected": true,
+        "error": "下拉字段「申请部门（apply_select）」配置了 allowCreate 创建新选项，本版本只支持静态选项",
+        "preservedForms": true,
+        "preservedUnsavedModel": true,
+        "preservedDirty": true
+      },
+      "completedUTC": "2026-10-12T08:20:51.733Z",
+      "evidence": [
+        "G17.ax.txt",
+        "G17.jpg"
+      ]
+    },
+    "G18": {
+      "title": "date range",
+      "source": "A12/A13/A20",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T08:20:51.733Z",
+      "status": "通过",
+      "attempts": [],
+      "actual": {
+        "rejected": true,
+        "error": "日期字段「申请日期（apply_date）」的形态是 daterange，本版本只支持日期单值",
+        "preservedForms": true,
+        "preservedUnsavedModel": true,
+        "preservedDirty": true
+      },
+      "completedUTC": "2026-10-12T08:20:55.170Z",
+      "evidence": [
+        "G18.ax.txt",
+        "G18.jpg"
+      ]
+    },
+    "G19": {
+      "title": "control联动",
+      "source": "A12/A13/A20",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T08:23:12.263Z",
+      "status": "通过",
+      "attempts": [],
+      "actual": {
+        "rejected": true,
+        "error": "规则「申请人（apply_text）」不支持组件联动（control）",
+        "preservedForms": true,
+        "preservedUnsavedModel": true,
+        "preservedDirty": true
+      },
+      "completedUTC": "2026-10-12T08:23:15.976Z",
+      "evidence": [
+        "G19.ax.txt",
+        "G19.jpg"
+      ]
+    },
+    "G20": {
+      "title": "_control隐藏联动",
+      "source": "A12/A13/A20",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T08:23:15.977Z",
+      "status": "通过",
+      "attempts": [],
+      "actual": {
+        "rejected": true,
+        "error": "规则「申请人（apply_text）」不支持组件联动（_control）",
+        "preservedForms": true,
+        "preservedUnsavedModel": true,
+        "preservedDirty": true
+      },
+      "completedUTC": "2026-10-12T08:23:19.537Z",
+      "evidence": [
+        "G20.ax.txt",
+        "G20.jpg"
+      ]
+    },
+    "G21": {
+      "title": "远程fetch",
+      "source": "A12/A13/A20",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T08:23:19.538Z",
+      "status": "通过",
+      "attempts": [],
+      "actual": {
+        "rejected": true,
+        "error": "字段「申请部门（apply_select）」配置了远程数据源（effect.fetch），本版本只支持静态选项",
+        "preservedForms": true,
+        "preservedUnsavedModel": true,
+        "preservedDirty": true
+      },
+      "completedUTC": "2026-10-12T08:23:23.080Z",
+      "evidence": [
+        "G21.ax.txt",
+        "G21.jpg"
+      ]
+    },
+    "G22": {
+      "title": "字段事件脚本",
+      "source": "A12/A13/A20",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T08:23:23.081Z",
+      "status": "通过",
+      "attempts": [],
+      "actual": {
+        "rejected": true,
+        "error": "规则「申请人（apply_text）」不支持脚本配置（on）",
+        "preservedForms": true,
+        "preservedUnsavedModel": true,
+        "preservedDirty": true
+      },
+      "completedUTC": "2026-10-12T08:23:26.518Z",
+      "evidence": [
+        "G22.ax.txt",
+        "G22.jpg"
+      ]
+    },
+    "G23": {
+      "title": "重复字段ID",
+      "source": "A12/A13/A20",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T08:23:26.519Z",
+      "status": "通过",
+      "attempts": [],
+      "actual": {
+        "rejected": true,
+        "error": "表单 form_1 的字段标识重复：apply_text",
+        "preservedForms": true,
+        "preservedUnsavedModel": true,
+        "preservedDirty": true
+      },
+      "completedUTC": "2026-10-12T08:23:29.906Z",
+      "evidence": [
+        "G23.ax.txt",
+        "G23.jpg"
+      ]
+    },
+    "G24": {
+      "title": "嵌套栅格",
+      "source": "A12/A13/A20",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T08:23:29.907Z",
+      "status": "通过",
+      "attempts": [],
+      "actual": {
+        "rejected": true,
+        "error": "栅格布局（fcRow）不支持嵌套，复杂嵌套布局超出本版本范围",
+        "preservedForms": true,
+        "preservedUnsavedModel": true,
+        "preservedDirty": true
+      },
+      "completedUTC": "2026-10-12T08:23:33.344Z",
+      "evidence": [
+        "G24.ax.txt",
+        "G24.jpg"
+      ]
+    },
+    "G25": {
+      "title": "表单级脚本",
+      "source": "A12/A13/A20",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T08:27:07.061Z",
+      "status": "通过",
+      "attempts": [],
+      "actual": {
+        "rejected": true,
+        "error": "表单 options 不支持脚本配置（onSubmit）",
+        "preservedForms": true,
+        "preservedUnsavedModel": true,
+        "preservedDirty": true
+      },
+      "completedUTC": "2026-10-12T08:27:10.869Z",
+      "evidence": [
+        "G25.ax.txt",
+        "G25.jpg"
+      ]
+    },
+    "G26": {
+      "title": "坏XML",
+      "source": "A12/A13/A20",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T08:27:10.869Z",
+      "status": "通过",
+      "attempts": [],
+      "actual": {
+        "rejected": true,
+        "error": "文档 XML 无法解析：unparsable content detected\n\tline: 0\n\tcolumn: 13\n\tnested error: unexpected end of file",
+        "preservedForms": true,
+        "preservedUnsavedModel": true,
+        "preservedDirty": true
+      },
+      "completedUTC": "2026-10-12T08:27:14.439Z",
+      "evidence": [
+        "G26.ax.txt",
+        "G26.jpg"
+      ]
+    },
+    "G27": {
+      "title": "重复XML节点ID",
+      "source": "A12/A13/A20",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T08:27:14.439Z",
+      "status": "通过",
+      "attempts": [],
+      "actual": {
+        "rejected": true,
+        "error": "文档 XML 无法解析：XML 解析产生警告：unparsable content <bpmn:userTask> detected\n\tline: 6\n\tcolumn: 4\n\tnested error: duplicate ID <start>\nunresolved reference <approval_1>\nunresolved reference <approval_1>\nunresolved reference <approval_1>",
+        "preservedForms": true,
+        "preservedUnsavedModel": true,
+        "preservedDirty": true
+      },
+      "completedUTC": "2026-10-12T08:27:18.115Z",
+      "evidence": [
+        "G27.ax.txt",
+        "G27.jpg"
+      ]
+    },
+    "G28": {
+      "title": "多流程",
+      "source": "A12/A13/A20",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T08:27:18.116Z",
+      "status": "通过",
+      "attempts": [],
+      "actual": {
+        "rejected": true,
+        "error": "文档流程超出可编辑范围：XML 包含 2 个流程，本编辑器一次只编辑单流程文档",
+        "preservedForms": true,
+        "preservedUnsavedModel": true,
+        "preservedDirty": true
+      },
+      "completedUTC": "2026-10-12T08:27:21.690Z",
+      "evidence": [
+        "G28.ax.txt",
+        "G28.jpg"
+      ]
+    },
+    "G29": {
+      "title": "scriptTask",
+      "source": "A12/A13/A20",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T08:47:35.981Z",
+      "status": "通过",
+      "attempts": [
+        {
+          "status": "通过",
+          "evidence": "G29-attempt1.json"
+        }
+      ],
+      "actual": {
+        "rejected": true,
+        "error": "文档流程超出可编辑范围：流程元素「抄送法务备案（cc_1）」（bpmn:ScriptTask）超出本编辑器支持的流程子集",
+        "preservedForms": true,
+        "preservedUnsavedModel": true,
+        "preservedDirty": true
+      },
+      "completedUTC": "2026-10-12T08:47:39.916Z",
+      "evidence": [
+        "G29.ax.txt",
+        "G29.jpg"
+      ]
+    },
+    "G30": {
+      "title": "subProcess",
+      "source": "A12/A13/A20",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T08:27:25.127Z",
+      "status": "通过",
+      "attempts": [],
+      "actual": {
+        "rejected": true,
+        "error": "文档流程超出可编辑范围：流程元素「sub」（bpmn:SubProcess）超出本编辑器支持的流程子集",
+        "preservedForms": true,
+        "preservedUnsavedModel": true,
+        "preservedDirty": true
+      },
+      "completedUTC": "2026-10-12T08:27:28.610Z",
+      "evidence": [
+        "G30.ax.txt",
+        "G30.jpg"
+      ]
+    },
+    "G31": {
+      "title": "循环",
+      "source": "A12/A13/A20",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T08:47:39.922Z",
+      "status": "通过",
+      "attempts": [
+        {
+          "status": "通过",
+          "evidence": "G31-attempt1.json"
+        }
+      ],
+      "actual": {
+        "rejected": true,
+        "error": "文档流程超出可编辑范围：竖排推导不支持循环结构：元素 a 在链上被重复访问",
+        "preservedForms": true,
+        "preservedUnsavedModel": true,
+        "preservedDirty": true
+      },
+      "completedUTC": "2026-10-12T08:47:43.400Z",
+      "evidence": [
+        "G31.ax.txt",
+        "G31.jpg"
+      ]
+    },
+    "G32": {
+      "title": "不可达节点",
+      "source": "A12/A13/A20",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T08:31:50.734Z",
+      "status": "通过",
+      "attempts": [],
+      "actual": {
+        "rejected": true,
+        "error": "文档流程超出可编辑范围：竖排布局仅支持从开始事件可达的图形，元素 orphan75 不在块树中",
+        "preservedForms": true,
+        "preservedUnsavedModel": true,
+        "preservedDirty": true
+      },
+      "completedUTC": "2026-10-12T08:31:54.216Z",
+      "evidence": [
+        "G32.ax.txt",
+        "G32.jpg"
+      ]
+    },
+    "G33": {
+      "title": "多开始",
+      "source": "A12/A13/A20",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T08:31:54.217Z",
+      "status": "通过",
+      "attempts": [],
+      "actual": {
+        "rejected": true,
+        "error": "文档流程超出可编辑范围：竖排推导要求恰好一个开始事件，实际 2",
+        "preservedForms": true,
+        "preservedUnsavedModel": true,
+        "preservedDirty": true
+      },
+      "completedUTC": "2026-10-12T08:31:57.655Z",
+      "evidence": [
+        "G33.ax.txt",
+        "G33.jpg"
+      ]
+    },
+    "G34": {
+      "title": "未知URI属性",
+      "source": "A12/A13/A20",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T08:31:57.656Z",
+      "status": "通过",
+      "attempts": [],
+      "actual": {
+        "rejected": true,
+        "error": "文档 XML 使用了当前引擎适配器不支持的扩展：XML 实际使用了未注册命名空间的内容：第 7 行的 bad:assignee（前缀 \"bad\"，命名空间 urn:bad）。这些内容不在目标适配器与项目协议的已注册扩展范围内，无法无损恢复，拒绝打开",
+        "preservedForms": true,
+        "preservedUnsavedModel": true,
+        "preservedDirty": true
+      },
+      "completedUTC": "2026-10-12T08:32:01.235Z",
+      "evidence": [
+        "G34.ax.txt",
+        "G34.jpg"
+      ]
+    },
+    "G35": {
+      "title": "未知URI元素",
+      "source": "A12/A13/A20",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T08:32:01.236Z",
+      "status": "通过",
+      "attempts": [],
+      "actual": {
+        "rejected": true,
+        "error": "文档 XML 使用了当前引擎适配器不支持的扩展：XML 实际使用了未注册命名空间的内容：第 72 行的 bad:extra（前缀 \"bad\"，命名空间 urn:bad）。这些内容不在目标适配器与项目协议的已注册扩展范围内，无法无损恢复，拒绝打开",
+        "preservedForms": true,
+        "preservedUnsavedModel": true,
+        "preservedDirty": true
+      },
+      "completedUTC": "2026-10-12T08:32:04.620Z",
+      "evidence": [
+        "G35.ax.txt",
+        "G35.jpg"
+      ]
+    },
+    "G36": {
+      "title": "伪装flowable前缀",
+      "source": "A12/A13/A20",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T08:38:22.594Z",
+      "status": "通过",
+      "attempts": [],
+      "actual": {
+        "rejected": true,
+        "error": "文档 XML 使用了当前引擎适配器不支持的扩展：XML 实际使用了未注册命名空间的内容：第 7 行的 flowable:assignee（前缀 \"flowable\"，命名空间 urn:not-flowable）；第 11 行的 flowable:delegateExpression（前缀 \"flowable\"，命名空间 urn:not-flowable）；第 11 行的 flowable:ccTo（前缀 \"flowable\"，命名空间 urn:not-flowable）；第 20 行的 flowable:assignee（前缀 \"flowable\"，命名空间 urn:not-flowable）；第 34 行的 flowable:assignee（前缀 \"flowable\"，命名空间 urn:not-flowable）；第 34 行的 flowable:formKey（前缀 \"flowable\"，命名空间 urn:not-flowable）；第 38 行的 flowable:assignee（前缀 \"flowable\"，命名空间 urn:not-flowable）；第 63 行的 flowable:assignee（前缀 \"flowable\"，命名空间 urn:not-flowable）；第 63 行的 flowable:formKey（前缀 \"flowable\"，命名空间 urn:not-flowable）；第 66 行的 flowable:collection（前缀 \"flowable\"，命名空间 urn:not-flowable）；第 66 行的 flowable:elementVariable（前缀 \"flowable\"，命名空间 urn:not-flowable）。这些内容不在目标适配器与项目协议的已注册扩展范围内，无法无损恢复，拒绝打开",
+        "preservedForms": true,
+        "preservedUnsavedModel": true,
+        "preservedDirty": true
+      },
+      "completedUTC": "2026-10-12T08:38:26.167Z",
+      "evidence": [
+        "G36.ax.txt",
+        "G36.jpg"
+      ]
+    },
+    "G37": {
+      "title": "已注册URI未知属性",
+      "source": "A12/A13/A20",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T08:38:26.168Z",
+      "status": "通过",
+      "attempts": [],
+      "actual": {
+        "rejected": true,
+        "error": "文档 XML 无法解析：XML 解析产生警告：unknown attribute <flowable:unknownAttribute>",
+        "preservedForms": true,
+        "preservedUnsavedModel": true,
+        "preservedDirty": true
+      },
+      "completedUTC": "2026-10-12T08:38:29.604Z",
+      "evidence": [
+        "G37.ax.txt",
+        "G37.jpg"
+      ]
+    },
+    "G38": {
+      "title": "非法xml保留前缀",
+      "source": "A12/A13/A20",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T08:38:29.605Z",
+      "status": "通过",
+      "attempts": [],
+      "actual": {
+        "rejected": true,
+        "error": "文档 XML 无法解析：第 2 行的 xmlns:xml 是非法保留命名空间声明：urn:not-xml",
+        "preservedForms": true,
+        "preservedUnsavedModel": true,
+        "preservedDirty": true
+      },
+      "completedUTC": "2026-10-12T08:38:32.986Z",
+      "evidence": [
+        "G38.ax.txt",
+        "G38.jpg"
+      ]
+    },
+    "G39": {
+      "title": "URI大小写不归一",
+      "source": "A12/A13/A20",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T08:38:32.987Z",
+      "status": "通过",
+      "attempts": [],
+      "actual": {
+        "rejected": true,
+        "error": "文档 XML 使用了当前引擎适配器不支持的扩展：XML 实际使用了未注册命名空间的内容：第 7 行的 flowable:assignee（前缀 \"flowable\"，命名空间 HTTP://flowable.org/bpmn）；第 11 行的 flowable:delegateExpression（前缀 \"flowable\"，命名空间 HTTP://flowable.org/bpmn）；第 11 行的 flowable:ccTo（前缀 \"flowable\"，命名空间 HTTP://flowable.org/bpmn）；第 20 行的 flowable:assignee（前缀 \"flowable\"，命名空间 HTTP://flowable.org/bpmn）；第 34 行的 flowable:assignee（前缀 \"flowable\"，命名空间 HTTP://flowable.org/bpmn）；第 34 行的 flowable:formKey（前缀 \"flowable\"，命名空间 HTTP://flowable.org/bpmn）；第 38 行的 flowable:assignee（前缀 \"flowable\"，命名空间 HTTP://flowable.org/bpmn）；第 63 行的 flowable:assignee（前缀 \"flowable\"，命名空间 HTTP://flowable.org/bpmn）；第 63 行的 flowable:formKey（前缀 \"flowable\"，命名空间 HTTP://flowable.org/bpmn）；第 66 行的 flowable:collection（前缀 \"flowable\"，命名空间 HTTP://flowable.org/bpmn）；第 66 行的 flowable:elementVariable（前缀 \"flowable\"，命名空间 HTTP://flowable.org/bpmn）。这些内容不在目标适配器与项目协议的已注册扩展范围内，无法无损恢复，拒绝打开",
+        "preservedForms": true,
+        "preservedUnsavedModel": true,
+        "preservedDirty": true
+      },
+      "completedUTC": "2026-10-12T08:38:36.430Z",
+      "evidence": [
+        "G39.ax.txt",
+        "G39.jpg"
+      ]
+    },
+    "G40": {
+      "title": "URI百分号不归一",
+      "source": "A12/A13/A20",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T08:38:36.431Z",
+      "status": "通过",
+      "attempts": [],
+      "actual": {
+        "rejected": true,
+        "error": "文档 XML 使用了当前引擎适配器不支持的扩展：XML 实际使用了未注册命名空间的内容：第 7 行的 flowable:assignee（前缀 \"flowable\"，命名空间 http://flowable.org/bp%6Dn）；第 11 行的 flowable:delegateExpression（前缀 \"flowable\"，命名空间 http://flowable.org/bp%6Dn）；第 11 行的 flowable:ccTo（前缀 \"flowable\"，命名空间 http://flowable.org/bp%6Dn）；第 20 行的 flowable:assignee（前缀 \"flowable\"，命名空间 http://flowable.org/bp%6Dn）；第 34 行的 flowable:assignee（前缀 \"flowable\"，命名空间 http://flowable.org/bp%6Dn）；第 34 行的 flowable:formKey（前缀 \"flowable\"，命名空间 http://flowable.org/bp%6Dn）；第 38 行的 flowable:assignee（前缀 \"flowable\"，命名空间 http://flowable.org/bp%6Dn）；第 63 行的 flowable:assignee（前缀 \"flowable\"，命名空间 http://flowable.org/bp%6Dn）；第 63 行的 flowable:formKey（前缀 \"flowable\"，命名空间 http://flowable.org/bp%6Dn）；第 66 行的 flowable:collection（前缀 \"flowable\"，命名空间 http://flowable.org/bp%6Dn）；第 66 行的 flowable:elementVariable（前缀 \"flowable\"，命名空间 http://flowable.org/bp%6Dn）。这些内容不在目标适配器与项目协议的已注册扩展范围内，无法无损恢复，拒绝打开",
+        "preservedForms": true,
+        "preservedUnsavedModel": true,
+        "preservedDirty": true
+      },
+      "completedUTC": "2026-10-12T08:38:39.868Z",
+      "evidence": [
+        "G40.ax.txt",
+        "G40.jpg"
+      ]
+    },
+    "G41": {
+      "title": "内层前缀重绑",
+      "source": "A12/A13/A20",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T08:38:39.868Z",
+      "status": "通过",
+      "attempts": [],
+      "actual": {
+        "rejected": true,
+        "error": "文档 XML 使用了当前引擎适配器不支持的扩展：XML 实际使用了未注册命名空间的内容：第 7 行的 flowable:assignee（前缀 \"flowable\"，命名空间 urn:scope-bad）。这些内容不在目标适配器与项目协议的已注册扩展范围内，无法无损恢复，拒绝打开",
+        "preservedForms": true,
+        "preservedUnsavedModel": true,
+        "preservedDirty": true
+      },
+      "completedUTC": "2026-10-12T08:38:43.258Z",
+      "evidence": [
+        "G41.ax.txt",
+        "G41.jpg"
+      ]
+    },
+    "V01": {
+      "title": "纯标准BPMN业务草稿",
+      "source": "A20/A10",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T08:47:43.402Z",
+      "status": "通过",
+      "attempts": [],
+      "actual": {
+        "opened": true,
+        "allFormsPreserved": true,
+        "aliasBindingPreserved": false,
+        "draftExportBlocked": true
+      },
+      "completedUTC": "2026-10-12T08:47:44.650Z",
+      "evidence": [
+        "V01.ax.txt",
+        "V01.jpg"
+      ]
+    },
+    "V02": {
+      "title": "同URI换项目和引擎前缀",
+      "source": "A20/A10",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T08:47:44.651Z",
+      "status": "通过",
+      "attempts": [],
+      "actual": {
+        "opened": true,
+        "allFormsPreserved": true,
+        "aliasBindingPreserved": true,
+        "draftExportBlocked": false
+      },
+      "completedUTC": "2026-10-12T08:47:45.720Z",
+      "evidence": [
+        "V02.ax.txt",
+        "V02.jpg"
+      ]
+    },
+    "V03": {
+      "title": "仅声明未用的其他命名空间",
+      "source": "A20/A10",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T08:47:45.721Z",
+      "status": "通过",
+      "attempts": [],
+      "actual": {
+        "opened": true,
+        "allFormsPreserved": true,
+        "aliasBindingPreserved": true,
+        "draftExportBlocked": false
+      },
+      "completedUTC": "2026-10-12T08:47:46.928Z",
+      "evidence": [
+        "V03.ax.txt",
+        "V03.jpg"
+      ]
+    },
+    "V04": {
+      "title": "URI实体一次解码",
+      "source": "A20/A10",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T08:47:46.929Z",
+      "status": "通过",
+      "attempts": [],
+      "actual": {
+        "opened": true,
+        "allFormsPreserved": true,
+        "aliasBindingPreserved": true,
+        "draftExportBlocked": false
+      },
+      "completedUTC": "2026-10-12T08:47:48.037Z",
+      "evidence": [
+        "V04.ax.txt",
+        "V04.jpg"
+      ]
+    },
+    "V05": {
+      "title": "省略节点侧连线登记",
+      "source": "A20/A10",
+      "method": "Codex内置浏览器真实UI",
+      "startedUTC": "2026-10-12T08:47:48.037Z",
+      "status": "通过",
+      "attempts": [],
+      "actual": {
+        "opened": true,
+        "allFormsPreserved": true,
+        "aliasBindingPreserved": true,
+        "draftExportBlocked": false
+      },
+      "completedUTC": "2026-10-12T08:47:49.063Z",
+      "evidence": [
+        "V05.ax.txt",
+        "V05.jpg"
+      ]
+    },
+    "E01": {
+      "title": "存储读拒绝",
+      "source": "A14/A15/A16/并发边界",
+      "method": "Codex内置浏览器UI + 明确记录的CDP临时故障/延迟注入",
+      "startedUTC": "2026-10-12T10:40:21.548Z",
+      "status": "通过",
+      "attempts": [
+        {
+          "status": "待诊断",
+          "evidence": "E01-attempt1.json"
+        }
+      ],
+      "actual": {
+        "error": "本地存储读取失败，已载入演示流程：验收读拒绝",
+        "demoPreserved": true,
+        "method": "CDP重装配公开App启动恢复；raw CDP不支持刷新前脚本注入，未声称实际刷新"
+      },
+      "completedUTC": "2026-10-12T10:40:22.755Z",
+      "evidence": [
+        "E01.ax.txt",
+        "E01.jpg"
+      ]
+    },
+    "E02": {
+      "title": "损坏本地草稿",
+      "source": "A14/A15/A16/并发边界",
+      "method": "Codex内置浏览器UI + 明确记录的CDP临时故障/延迟注入",
+      "startedUTC": "2026-10-12T10:30:21.670Z",
+      "status": "通过",
+      "attempts": [],
+      "actual": {
+        "error": "本地草稿无法恢复，已保留当前演示流程：设计文档不是合法 JSON：Expected property name or '}' in JSON at position 1 (line 1 column 2)",
+        "demoPreserved": true
+      },
+      "completedUTC": "2026-10-12T10:30:23.758Z",
+      "evidence": [
+        "E02.ax.txt",
+        "E02.jpg"
+      ]
+    },
+    "E03": {
+      "title": "存储写拒绝",
+      "source": "A14/A15/A16/并发边界",
+      "method": "Codex内置浏览器UI + 明确记录的CDP临时故障/延迟注入",
+      "startedUTC": "2026-10-12T10:30:23.759Z",
+      "status": "通过",
+      "attempts": [],
+      "actual": {
+        "error": "本地存储写入失败（可能被浏览器设置拒绝或容量已满）：验收注入",
+        "dirtyAndStoragePreserved": true
+      },
+      "completedUTC": "2026-10-12T10:30:25.340Z",
+      "evidence": [
+        "E03.ax.txt",
+        "E03.jpg"
+      ]
+    },
+    "E04": {
+      "title": "容量不足",
+      "source": "A14/A15/A16/并发边界",
+      "method": "Codex内置浏览器UI + 明确记录的CDP临时故障/延迟注入",
+      "startedUTC": "2026-10-12T10:30:25.341Z",
+      "status": "通过",
+      "attempts": [],
+      "actual": {
+        "error": "本地存储写入失败（可能被浏览器设置拒绝或容量已满）：验收注入",
+        "dirtyAndStoragePreserved": true
+      },
+      "completedUTC": "2026-10-12T10:30:27.428Z",
+      "evidence": [
+        "E04.ax.txt",
+        "E04.jpg"
+      ]
+    },
+    "E05": {
+      "title": "文件读取拒绝",
+      "source": "A14/A15/A16/并发边界",
+      "method": "Codex内置浏览器UI + 明确记录的CDP临时故障/延迟注入",
+      "startedUTC": "2026-10-12T10:30:27.429Z",
+      "status": "通过",
+      "attempts": [],
+      "actual": {
+        "error": "验收文件读取失败",
+        "preserved": true
+      },
+      "completedUTC": "2026-10-12T10:30:31.141Z",
+      "evidence": [
+        "E05.ax.txt",
+        "E05.jpg"
+      ]
+    },
+    "E06": {
+      "title": "慢A后快B旧成功",
+      "source": "A14/A15/A16/并发边界",
+      "method": "Codex内置浏览器UI + 明确记录的CDP临时故障/延迟注入",
+      "startedUTC": "2026-10-12T10:30:31.142Z",
+      "status": "通过",
+      "attempts": [],
+      "actual": {
+        "newerBPreserved": true,
+        "lateMode": 6
+      },
+      "completedUTC": "2026-10-12T10:30:33.744Z",
+      "evidence": [
+        "E06.ax.txt",
+        "E06.jpg"
+      ]
+    },
+    "E07": {
+      "title": "慢A后快B旧失败",
+      "source": "A14/A15/A16/并发边界",
+      "method": "Codex内置浏览器UI + 明确记录的CDP临时故障/延迟注入",
+      "startedUTC": "2026-10-12T10:30:33.745Z",
+      "status": "通过",
+      "attempts": [],
+      "actual": {
+        "newerBPreserved": true,
+        "lateMode": 7
+      },
+      "completedUTC": "2026-10-12T10:30:36.251Z",
+      "evidence": [
+        "E07.ax.txt",
+        "E07.jpg"
+      ]
+    },
+    "E08": {
+      "title": "慢A后快B旧坏格式",
+      "source": "A14/A15/A16/并发边界",
+      "method": "Codex内置浏览器UI + 明确记录的CDP临时故障/延迟注入",
+      "startedUTC": "2026-10-12T10:30:36.252Z",
+      "status": "通过",
+      "attempts": [],
+      "actual": {
+        "newerBPreserved": true,
+        "lateMode": 8
+      },
+      "completedUTC": "2026-10-12T10:30:38.806Z",
+      "evidence": [
+        "E08.ax.txt",
+        "E08.jpg"
+      ]
+    },
+    "E09": {
+      "title": "慢A期间新建",
+      "source": "A14/A15/A16/并发边界",
+      "method": "Codex内置浏览器UI + 明确记录的CDP临时故障/延迟注入",
+      "startedUTC": "2026-10-12T10:30:38.807Z",
+      "status": "通过",
+      "attempts": [],
+      "actual": {
+        "newPreserved": true
+      },
+      "completedUTC": "2026-10-12T10:30:41.033Z",
+      "evidence": [
+        "E09.ax.txt",
+        "E09.jpg"
+      ]
+    },
+    "E10": {
+      "title": "读取期间继续编辑",
+      "source": "A14/A15/A16/并发边界",
+      "method": "Codex内置浏览器UI + 明确记录的CDP临时故障/延迟注入",
+      "startedUTC": "2026-10-12T10:31:02.906Z",
+      "status": "通过",
+      "attempts": [],
+      "actual": {
+        "editingPreserved": true
+      },
+      "completedUTC": "2026-10-12T10:31:05.463Z",
+      "evidence": [
+        "E10.ax.txt",
+        "E10.jpg"
+      ]
+    },
+    "E11": {
+      "title": "解析期间继续编辑",
+      "source": "A14/A15/A16/并发边界",
+      "method": "Codex内置浏览器UI + 明确记录的CDP临时故障/延迟注入",
+      "startedUTC": "2026-10-12T10:39:37.082Z",
+      "status": "通过",
+      "attempts": [
+        {
+          "status": "待诊断",
+          "evidence": "E11-attempt1.json"
+        },
+        {
+          "status": "失败",
+          "evidence": "E11-attempt2.json"
+        },
+        {
+          "status": "待诊断",
+          "evidence": "E11-attempt3.json"
+        }
+      ],
+      "actual": {
+        "parseEditPreserved": true
+      },
+      "completedUTC": "2026-10-12T10:39:39.612Z",
+      "evidence": [
+        "E11.ax.txt",
+        "E11.jpg"
+      ]
+    },
+    "E12": {
+      "title": "保存期间新编辑",
+      "source": "A14/A15/A16/并发边界",
+      "method": "Codex内置浏览器UI + 明确记录的CDP临时故障/延迟注入",
+      "startedUTC": "2026-10-12T10:31:06.622Z",
+      "status": "通过",
+      "attempts": [],
+      "actual": {
+        "latestStateProtected": true,
+        "olderSnapshot": true
+      },
+      "completedUTC": "2026-10-12T10:31:08.673Z",
+      "evidence": [
+        "E12.ax.txt",
+        "E12.jpg"
+      ]
+    },
+    "E13": {
+      "title": "保存乱序成功",
+      "source": "A14/A15/A16/并发边界",
+      "method": "Codex内置浏览器UI + 明确记录的CDP临时故障/延迟注入",
+      "startedUTC": "2026-10-12T10:31:08.674Z",
+      "status": "通过",
+      "attempts": [],
+      "actual": {
+        "latestStateProtected": true,
+        "olderSnapshot": false
+      },
+      "completedUTC": "2026-10-12T10:31:11.500Z",
+      "evidence": [
+        "E13.ax.txt",
+        "E13.jpg"
+      ]
+    },
+    "E14": {
+      "title": "保存乱序旧失败",
+      "source": "A14/A15/A16/并发边界",
+      "method": "Codex内置浏览器UI + 明确记录的CDP临时故障/延迟注入",
+      "startedUTC": "2026-10-12T10:31:11.501Z",
+      "status": "通过",
+      "attempts": [],
+      "actual": {
+        "latestStateProtected": true,
+        "olderSnapshot": false
+      },
+      "completedUTC": "2026-10-12T10:31:13.822Z",
+      "evidence": [
+        "E14.ax.txt",
+        "E14.jpg"
+      ]
+    },
+    "E15": {
+      "title": "旧导出迟到",
+      "source": "A14/A15/A16/并发边界",
+      "method": "Codex内置浏览器UI + 明确记录的CDP临时故障/延迟注入",
+      "startedUTC": "2026-10-12T10:39:39.617Z",
+      "status": "通过",
+      "attempts": [
+        {
+          "status": "待诊断",
+          "evidence": "E15-attempt1.json"
+        },
+        {
+          "status": "失败",
+          "evidence": "E15-attempt2.json"
+        },
+        {
+          "status": "待诊断",
+          "evidence": "E15-attempt3.json"
+        }
+      ],
+      "actual": {
+        "lateExportSuppressed": true
+      },
+      "completedUTC": "2026-10-12T10:39:41.931Z",
+      "evidence": [
+        "E15.ax.txt",
+        "E15.jpg"
+      ]
+    },
+    "E16": {
+      "title": "表单序列化抛错后恢复",
+      "source": "A14/A15/A16/并发边界",
+      "method": "Codex内置浏览器UI + 明确记录的CDP临时故障/延迟注入",
+      "startedUTC": "2026-10-12T10:37:57.728Z",
+      "status": "通过",
+      "attempts": [
+        {
+          "status": "待诊断",
+          "evidence": "E16-attempt1.json"
+        }
+      ],
+      "actual": {
+        "failedStoragePreserved": true,
+        "recovered": true
+      },
+      "completedUTC": "2026-10-12T10:38:02.457Z",
+      "evidence": [
+        "E16.ax.txt",
+        "E16.jpg"
+      ]
+    },
+    "C01": {
+      "title": "原designer手写formKey",
+      "source": "A17",
+      "method": "Codex内置浏览器辅助公开组件装配",
+      "startedUTC": "2026-10-12T10:39:41.932Z",
+      "status": "通过",
+      "attempts": [],
+      "actual": {
+        "publicLegacyEntry": true,
+        "manualKeyPreserved": true
+      },
+      "completedUTC": "2026-10-12T10:39:43.883Z",
+      "evidence": [
+        "C01.ax.txt",
+        "C01.jpg"
+      ]
+    }
+  }
+}

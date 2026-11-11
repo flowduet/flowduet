@@ -1,0 +1,10 @@
+{
+  "formCreate": "/private/tmp/flowduet-107-consumer.6Q7vrp/node_modules/@flowduet/form-create/dist/index.js",
+  "formCreateStyle": "/private/tmp/flowduet-107-consumer.6Q7vrp/node_modules/@flowduet/form-create/dist/form-create.css",
+  "designerStyle": "/private/tmp/flowduet-107-consumer.6Q7vrp/node_modules/@flowduet/designer/dist/designer.css",
+  "exists": true,
+  "formCreateVersion": "0.1.0",
+  "elementPlusVersion": "2.14.6",
+  "rendererVersion": "3.3.4",
+  "vueVersion": "3.5.43"
+}

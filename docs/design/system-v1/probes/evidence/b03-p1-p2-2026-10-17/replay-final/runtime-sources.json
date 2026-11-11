@@ -1,0 +1,484 @@
+{
+  "sources": [
+    {
+      "path": "packages/core/src/adapter/adapter-contract.ts",
+      "sha256": "4ed5bbddafef526f4f3a01afe7423b8e586599335e8518d53a819612e6a32680",
+      "bytes": 2878
+    },
+    {
+      "path": "packages/core/src/adapter/engine-adapter.ts",
+      "sha256": "5bda49fee74f81369cc5de4a2ed0073c342e5746a34677ddf18f90cee38ea4d6",
+      "bytes": 1451
+    },
+    {
+      "path": "packages/core/src/adapter/flowable-adapter.ts",
+      "sha256": "a0c3d420f5d7c717f0df5db6fd93b870a3b2209b90b405afc99529c18c19fe67",
+      "bytes": 3011
+    },
+    {
+      "path": "packages/core/src/adapter/flowduet-package.ts",
+      "sha256": "d3a0d04d6e62ded71a2f38707ddbe281ba191b2bf4dc3d32c3f077aad92eabd0",
+      "bytes": 1720
+    },
+    {
+      "path": "packages/core/src/compile/__fixtures__/branching-flows.ts",
+      "sha256": "70b35026a5ba582612548056a11a236e77fe581b176c10457269f94cfd509684",
+      "bytes": 4500
+    },
+    {
+      "path": "packages/core/src/compile/__fixtures__/cc-flow.ts",
+      "sha256": "9361e834e470dc9c354f69f462ca36babc974f6c5268a70337a1dcafd85cdb21",
+      "bytes": 1734
+    },
+    {
+      "path": "packages/core/src/compile/__fixtures__/default-form.ts",
+      "sha256": "a2af2fbc86796de5dc7e3342208b85e1719c3eac4b1744f5bc0e80b54e192a89",
+      "bytes": 1875
+    },
+    {
+      "path": "packages/core/src/compile/__fixtures__/form-override.ts",
+      "sha256": "33f964109d3d160efa8392ef3598caa99f495bd6ce24ecaafe154e39b810634b",
+      "bytes": 4717
+    },
+    {
+      "path": "packages/core/src/compile/__fixtures__/mi-flow.ts",
+      "sha256": "96a8d8ddad889e8764358d98c07eb54810cd26c52bff50834b9af57bcee0a8e2",
+      "bytes": 2020
+    },
+    {
+      "path": "packages/core/src/compile/__fixtures__/minimal-flow.ts",
+      "sha256": "c032320f71b854ce4b728d749a9fae408ffd6e8a6b44e68ab1e735db33925730",
+      "bytes": 2092
+    },
+    {
+      "path": "packages/core/src/compile/compiler.ts",
+      "sha256": "a9d7035a3717e480af3868f7e28f9cdd79b265e7c4adae419f2c6cb0518d24b8",
+      "bytes": 1985
+    },
+    {
+      "path": "packages/core/src/index.ts",
+      "sha256": "c224bad8e604f71aa38f2fdfe65fdca2efa7f3b1a8c32bbe741e2604f70bd001",
+      "bytes": 2155
+    },
+    {
+      "path": "packages/core/src/layout/__fixtures__/vertical-scenario.ts",
+      "sha256": "cc80016ee58ac6e403e213824d657f1e31d0264147ddd02a84fd453aeab88799",
+      "bytes": 4084
+    },
+    {
+      "path": "packages/core/src/layout/di-layout.ts",
+      "sha256": "83f26b56a615d9b7ef324e758252a550b914a2730730519b64b405dda1d9792f",
+      "bytes": 2840
+    },
+    {
+      "path": "packages/core/src/layout/vertical-layout.ts",
+      "sha256": "839be32679db085f62a5324be0b10395f7f2841046207e5a39b61409dd07e588",
+      "bytes": 18382
+    },
+    {
+      "path": "packages/core/src/model/bpmn-model.ts",
+      "sha256": "e67476d1089adecd1d0433b9ecf84f3ba1bdad2a627bf9f2c40ca837ad3e5a02",
+      "bytes": 28203
+    },
+    {
+      "path": "packages/core/src/model/form-binding.ts",
+      "sha256": "f18c4dcc74ddfbb4e743899f6e2c8fb886b73a57d9e3363d4c35ef1841703885",
+      "bytes": 2225
+    },
+    {
+      "path": "packages/core/src/parse/namespace-usage.ts",
+      "sha256": "b1ffbe289cc65f9bad02c635fc6d42cfcd563f04bc17edbf739e628de06c2539",
+      "bytes": 9917
+    },
+    {
+      "path": "packages/core/src/parse/parser.ts",
+      "sha256": "0002377a0b097fd779ca9c9a0dd8d09b223859742b0dceef9e4e3e47cfd12977",
+      "bytes": 3533
+    },
+    {
+      "path": "packages/core/src/types/bpmn-moddle.d.ts",
+      "sha256": "8a71f15380db8512fec405b61b4efe64bf0d94ba86082c509e848491d9405fff",
+      "bytes": 1380
+    },
+    {
+      "path": "packages/core/src/util/moddle-utils.ts",
+      "sha256": "0a7acfdf1db51086cc95726520c7ab15f5691e4dbd698a27b56d66aad92a19c0",
+      "bytes": 974
+    },
+    {
+      "path": "packages/designer/src/canvas-props.ts",
+      "sha256": "4a5b0fa4fc25b4d4f749175f6a9201670c84511e77e54e82ee49c4afd4efaa8f",
+      "bytes": 639
+    },
+    {
+      "path": "packages/designer/src/components/BlockNodeList.vue",
+      "sha256": "90e7f0704e4253b74b19320a932fcf344bcd9b6e9009eb6760050bee2dedbdd9",
+      "bytes": 13745
+    },
+    {
+      "path": "packages/designer/src/components/BpmnCanvas.vue",
+      "sha256": "33ff8c8ec2ef47fa224503845d0c05aa18e31c8afca64a10d6e157dd4374161d",
+      "bytes": 6999
+    },
+    {
+      "path": "packages/designer/src/components/BpmnEdge.vue",
+      "sha256": "eac5ba3eaee5615e6bf91620bd3cf8d84ae2f51f5f443d3aa2c4197346e82642",
+      "bytes": 2382
+    },
+    {
+      "path": "packages/designer/src/components/BpmnNode.vue",
+      "sha256": "0d0845b2016dc4c6793b6451de270fce4a665ea499c3d8911992f959185c0335",
+      "bytes": 6263
+    },
+    {
+      "path": "packages/designer/src/components/DingtalkDesigner.vue",
+      "sha256": "128e7367c41c592292a818cf3057f4e1aacc0a9b9898dcae4cab0ab56c1f2cdc",
+      "bytes": 17294
+    },
+    {
+      "path": "packages/designer/src/components/NodeCard.vue",
+      "sha256": "2d138e042c1970f246a5710d44427db9500d4b0fd66988412c06600e760b8427",
+      "bytes": 6419
+    },
+    {
+      "path": "packages/designer/src/components/NodeDrawer.vue",
+      "sha256": "e78b7c4f63feafce9e287d5ff0eab2891486da152bbef072510b622917710b3e",
+      "bytes": 3796
+    },
+    {
+      "path": "packages/designer/src/components/NodePropertyFields.vue",
+      "sha256": "ce58ec7b70978d1be81fed03c745cee28cf21414de9a6069e3bebe8a75784e2f",
+      "bytes": 7015
+    },
+    {
+      "path": "packages/designer/src/export.ts",
+      "sha256": "fbae5af22d6665b495447957fcc34a340b3bd788e1b8ad84d3f7852c3964d2b1",
+      "bytes": 4360
+    },
+    {
+      "path": "packages/designer/src/form-options.ts",
+      "sha256": "b17a3ceff404e58ab1383c82aba08aa96b3530d0311a09d4672c8c033dcf2895",
+      "bytes": 1356
+    },
+    {
+      "path": "packages/designer/src/geometry.ts",
+      "sha256": "dd9814e075cdfdde892a58e0429a393ea0ebb13d11720f60ecb63fe1ed4428e1",
+      "bytes": 4764
+    },
+    {
+      "path": "packages/designer/src/index.ts",
+      "sha256": "68584db7b494255990f87260670977c50c97bb615210e04a7b39065d6c2fc0a4",
+      "bytes": 1166
+    },
+    {
+      "path": "packages/designer/src/operations.ts",
+      "sha256": "e83677ca8b31fc1ff56180308636378c3489beb07e5192093523f7be434f8432",
+      "bytes": 32491
+    },
+    {
+      "path": "packages/designer/src/property-editing.ts",
+      "sha256": "e9e5bac3db427e0cc59dd408daa5717fe0843d389d08373dc9869989b28fa09d",
+      "bytes": 5923
+    },
+    {
+      "path": "packages/form-create/src/binding.ts",
+      "sha256": "66ec79a8d1ddc33bd930e734fd786fb67a5754fbac1763920c47fa049c8dd5d8",
+      "bytes": 2850
+    },
+    {
+      "path": "packages/form-create/src/components/DateDefaultEditor.vue",
+      "sha256": "360d309239794d6b5e8707dfaf8c9faca783e4d87f6e5f59c1d5f665e49b4381",
+      "bytes": 1701
+    },
+    {
+      "path": "packages/form-create/src/components/FormDesigner.vue",
+      "sha256": "8f7509468257603d5423b3968f858be1998f984d897efbf85d307b91f9a1879d",
+      "bytes": 14904
+    },
+    {
+      "path": "packages/form-create/src/components/FormManager.vue",
+      "sha256": "718b89dededc20c526e008f6217d8052b84052132311abdebb0d8977bcc549b7",
+      "bytes": 23412
+    },
+    {
+      "path": "packages/form-create/src/components/FormPreview.vue",
+      "sha256": "8461af1619b255d1bf45f37722ac75a39eb594bf52ae0a80bcf10a26b494faa7",
+      "bytes": 5001
+    },
+    {
+      "path": "packages/form-create/src/components/NumberDefaultEditor.vue",
+      "sha256": "44e36eb6a540329aa287a89b884c95dbf22910e4f47d38b6b3e8683025feda16",
+      "bytes": 1045
+    },
+    {
+      "path": "packages/form-create/src/components/checkbox-defaults.ts",
+      "sha256": "8cf8672ea5fb2b9c87804572e4c7c3fb1f75f0449b5bd65fb442da3947d583f5",
+      "bytes": 1657
+    },
+    {
+      "path": "packages/form-create/src/components/designer-config.ts",
+      "sha256": "70ec66b295055707fdec44f794d49e69f2d0c06e73eccca7909a93b0b56c8381",
+      "bytes": 6285
+    },
+    {
+      "path": "packages/form-create/src/components/editor-input-state.ts",
+      "sha256": "13bfb3f02736929c36647db013bc1e7f3885face85290caa7b086f0f9cbaea63",
+      "bytes": 6522
+    },
+    {
+      "path": "packages/form-create/src/document.ts",
+      "sha256": "2b482e7b9cb94228fcf30134eecd5de97c1ea82381bacafbb8e3b2acebeac11f",
+      "bytes": 11469
+    },
+    {
+      "path": "packages/form-create/src/editor-state.ts",
+      "sha256": "2ba6ef5c82cb2ead116ae94c78c8e1634a7f1c4a1f0ad72b0fb7fabb1c3e110f",
+      "bytes": 856
+    },
+    {
+      "path": "packages/form-create/src/element-label.ts",
+      "sha256": "685fcc7003889336c86d8740f90ca8638346c5f4492486c04cf4636a72140bea",
+      "bytes": 379
+    },
+    {
+      "path": "packages/form-create/src/export.ts",
+      "sha256": "85da7518f8d6d49726eaf4e73797ab135a4009e75bbdffada70661c9d8ce4449",
+      "bytes": 1081
+    },
+    {
+      "path": "packages/form-create/src/form-create-setup.ts",
+      "sha256": "bbb46ff77e305d0550169851055bd3e77ca7bcec579a5a7d3ad8d1a8626de0d4",
+      "bytes": 993
+    },
+    {
+      "path": "packages/form-create/src/form-schema.ts",
+      "sha256": "85f008f8f43a4087bae1995a3275152391dd9ba7c194ebb07f4815a36ddc7f53",
+      "bytes": 13256
+    },
+    {
+      "path": "packages/form-create/src/form-semantics.ts",
+      "sha256": "1928045c64180b8d9edcb1ee163251214357dea5e135df98aafc2b1ac6f85f99",
+      "bytes": 1895
+    },
+    {
+      "path": "packages/form-create/src/index.ts",
+      "sha256": "06a5af60a769191a369b105f94dc6d2e90ce5156c9c4402ceb51287ba0b89633",
+      "bytes": 1871
+    },
+    {
+      "path": "packages/form-create/src/session.ts",
+      "sha256": "3b3aa12241e0bfcdd05e07ba93c3cc1d95ab780cc1adca4807eb4621f9b64433",
+      "bytes": 9192
+    },
+    {
+      "path": "apps/playground/probes/stage-zero/ContractInstanceProbe.vue",
+      "sha256": "bb5da66788ee856229fc3baeea3b4d0389393d9da489728bb281175c07a8748c",
+      "bytes": 25162
+    },
+    {
+      "path": "apps/playground/probes/stage-zero/ContractProbe.vue",
+      "sha256": "c3430edc5955dd6f123aab3f5d0e6d98e6c4eae85a3159ccdcd5b4bbefbbd83c",
+      "bytes": 348
+    },
+    {
+      "path": "apps/playground/probes/stage-zero/EditorRetentionProbe.vue",
+      "sha256": "8e0804fdcd74220dadb605a3e84f21ef0326e5d248f25f483632c9b71625bacc",
+      "bytes": 10070
+    },
+    {
+      "path": "apps/playground/probes/stage-zero/FormStateProbe.vue",
+      "sha256": "e363601ceee4fdcf60e507b21f0d135025db30fc999cfc853803eb7b438040da",
+      "bytes": 2583
+    },
+    {
+      "path": "apps/playground/probes/stage-zero/HostProtocolProbe.vue",
+      "sha256": "f47a6f86cc8f080347169133915286ee64267d6f4a6dde4a82c4ec64c732ca45",
+      "bytes": 5849
+    },
+    {
+      "path": "apps/playground/probes/stage-zero/LocationProbe.vue",
+      "sha256": "ddcdbe857a415e956212240f0657b821459252a7c897da05417fe18a77814947",
+      "bytes": 10757
+    },
+    {
+      "path": "apps/playground/probes/stage-zero/ProbeApp.vue",
+      "sha256": "0e7b528cdacbb2b62a0baf344da2755210656d0883f2aaf9d843133d3637da2c",
+      "bytes": 2758
+    },
+    {
+      "path": "apps/playground/probes/stage-zero/ThemeIsolationProbe.vue",
+      "sha256": "5c7e9ff209b78106cd084ab4446561a6de785d9fb7e3aa63875e98a39506a836",
+      "bytes": 4809
+    },
+    {
+      "path": "apps/playground/probes/stage-zero/contracts/candidate.ts",
+      "sha256": "1ba4468b30effe8a88baf1ff8d3b6906bdbfd0987b0c26e30dd0452cd92eddfe",
+      "bytes": 5639
+    },
+    {
+      "path": "apps/playground/probes/stage-zero/contracts/controller.ts",
+      "sha256": "3f29873136ab96dafee41e7b4987ec55d2470daacc393a8c09e08f585a1bf230",
+      "bytes": 20542
+    },
+    {
+      "path": "apps/playground/probes/stage-zero/contracts/draft-store.ts",
+      "sha256": "d0a2e1be4064af9c240f68e2a23496fa67cd261e0cd3152aa37d8b3831b9f3ee",
+      "bytes": 9831
+    },
+    {
+      "path": "apps/playground/probes/stage-zero/contracts/entity-store.ts",
+      "sha256": "706674621008eecce18ab4f9d499b2d294bbfe3c0129d125ecb7be5c298f532f",
+      "bytes": 6125
+    },
+    {
+      "path": "apps/playground/probes/stage-zero/contracts/ep-select-binding.ts",
+      "sha256": "89946d83a0899afa486bae6f849a1e7ebea581d9a7c47fc33d6731bfd1ced0c8",
+      "bytes": 873
+    },
+    {
+      "path": "apps/playground/probes/stage-zero/contracts/fixtures.ts",
+      "sha256": "797ad94983e5328b524883329057a2b234d91fb8e0838492b58f123fdb7c16b5",
+      "bytes": 4782
+    },
+    {
+      "path": "apps/playground/probes/stage-zero/contracts/location.ts",
+      "sha256": "597cee03fd12f97928a927c575f6c03dddec34afcedd100e0b00c4ee0e2d2a3c",
+      "bytes": 3081
+    },
+    {
+      "path": "apps/playground/probes/stage-zero/contracts/operations.ts",
+      "sha256": "82e46129cb3bc1199a9b2f28da7713ef5b83319775db090accfc5d76ddd5731c",
+      "bytes": 1855
+    },
+    {
+      "path": "apps/playground/probes/stage-zero/contracts/transaction.ts",
+      "sha256": "9d35e3ee91c4aae41f2179082c88cc1f6f9cc13e0a9c8d94f26dfbfbc4305c11",
+      "bytes": 1329
+    },
+    {
+      "path": "apps/playground/probes/stage-zero/contracts/type-contract.test-d.ts",
+      "sha256": "e11dca0cdf857091db1c0e6acde0f410f0081c0d70ac73cab5a9584099714733",
+      "bytes": 762
+    },
+    {
+      "path": "apps/playground/probes/stage-zero/contracts/types.ts",
+      "sha256": "1ab18c829788c62c1807b416180a4e74b4ab01f8c8b883a3a5d7108adca9ace5",
+      "bytes": 3603
+    },
+    {
+      "path": "apps/playground/probes/stage-zero/contracts/versions.ts",
+      "sha256": "49eb36fabf9724f08b299e24bc87a8da9b79b3a1b09f064cb1cef5fdfb0009cf",
+      "bytes": 7561
+    },
+    {
+      "path": "apps/playground/probes/stage-zero/design-state.ts",
+      "sha256": "080c823c10927771402f18175ea984a6e7f77e4a788b51edb612898a9a2a954e",
+      "bytes": 6201
+    },
+    {
+      "path": "apps/playground/probes/stage-zero/fixtures.ts",
+      "sha256": "5e4aab13ef050fbffeb5bbcf88df4416dd7946a0cf287482fb8a6ff14e3d2a52",
+      "bytes": 1159
+    },
+    {
+      "path": "apps/playground/probes/stage-zero/form-repair/DefaultEditorSeamProbe.vue",
+      "sha256": "cda79ed0d495344b8b91e21b896a500b6517a184d17f840664f04e95cbefd72a",
+      "bytes": 11904
+    },
+    {
+      "path": "apps/playground/probes/stage-zero/form-repair/DialogCloseSeamProbe.vue",
+      "sha256": "a21de8b1af98703281525c62c861bbecb60978cca1e471660ed1591914a8edf8",
+      "bytes": 5280
+    },
+    {
+      "path": "apps/playground/probes/stage-zero/form-repair/FormRepairInstance.vue",
+      "sha256": "fa95fb98d33956f341cad6ead24fc41fb9a1f1977d11bd8f391d87bd90bdbc2b",
+      "bytes": 873
+    },
+    {
+      "path": "apps/playground/probes/stage-zero/form-repair/FormRepairProbe.vue",
+      "sha256": "00f252348ce810c7b2d83c5639a638e6ad6559e23797eb2edf526c84f80cca26",
+      "bytes": 7379
+    },
+    {
+      "path": "apps/playground/probes/stage-zero/form-repair/seam-proof.ts",
+      "sha256": "b4a6e7c86777badd1f8f351b33fbe694572bbe0f75ad7094450bb355ffc2042f",
+      "bytes": 612
+    },
+    {
+      "path": "apps/playground/probes/stage-zero/form-state/FormStateInstance.vue",
+      "sha256": "0bbaa821953f3e3f666a99456153c1a07679c865a4d5da834ba6a48f335e6dba",
+      "bytes": 11386
+    },
+    {
+      "path": "apps/playground/probes/stage-zero/form-state/browser-element.test-support.ts",
+      "sha256": "2a0cb805d7782de4bb07d4d710c0bdee7d6523a0c036b658115b7576b9097bb3",
+      "bytes": 656
+    },
+    {
+      "path": "apps/playground/probes/stage-zero/form-state/drag-boundary.ts",
+      "sha256": "3aeac7fa129d1c4ff3436aaf9dcd16dd5ee526cfb2ef62fb36a772218c4aa5d1",
+      "bytes": 764
+    },
+    {
+      "path": "apps/playground/probes/stage-zero/form-state/fixtures.ts",
+      "sha256": "e19d5ae247099f98f0f31ee3bb98c3004782f7cc3dca3c2fd4b0f0b4218140f3",
+      "bytes": 4325
+    },
+    {
+      "path": "apps/playground/probes/stage-zero/form-state/input-boundary.ts",
+      "sha256": "e6c3850266c2ac8f409e00058f1fe34d068b65d4c9abf74bfaf222bfec73fa96",
+      "bytes": 1019
+    },
+    {
+      "path": "apps/playground/probes/stage-zero/form-state/retention-policy.ts",
+      "sha256": "120bc3ba1f1d97a08ee76010ef372b92f76bfcf8baadd613c7eaab7c5a98e340",
+      "bytes": 9705
+    },
+    {
+      "path": "apps/playground/probes/stage-zero/form-state/state-evidence.ts",
+      "sha256": "d6fca30dd909be1d7cda37ca70ae71ad552f9c26ac51618692d087220726ed29",
+      "bytes": 5368
+    },
+    {
+      "path": "apps/playground/probes/stage-zero/form-state/test-host.ts",
+      "sha256": "d93b615208f07f359d2556ceb6cfb31ded567b64bce5a94ba95621067ceb3394",
+      "bytes": 2831
+    },
+    {
+      "path": "apps/playground/probes/stage-zero/form-state/types.ts",
+      "sha256": "f0c00f9d110354ca5ef8a92fd33e80e529eb22d66119a1204e53be9046e062ea",
+      "bytes": 1815
+    },
+    {
+      "path": "apps/playground/probes/stage-zero/host-protocol.ts",
+      "sha256": "49fb55403f2b88c5fabeeba6aa8ce284d8d447000b7523bfa9ef6b1f561f238a",
+      "bytes": 2099
+    },
+    {
+      "path": "apps/playground/probes/stage-zero/identity-policy.ts",
+      "sha256": "f79ca80026c266810b03791d185d48f3d85774e0e0d05969ab34e67020a6fe14",
+      "bytes": 3436
+    },
+    {
+      "path": "apps/playground/probes/stage-zero/main.ts",
+      "sha256": "bc5069c257080fafddfb0e0c9b46fef33dffefb9b9edaec2074c799d743c1b45",
+      "bytes": 185
+    },
+    {
+      "path": "apps/playground/probes/stage-zero/probe-contracts.ts",
+      "sha256": "706762e66f661b3b987fc24b06f57b0d0f9e54e208320d3c36b2ed061d1a4515",
+      "bytes": 317
+    },
+    {
+      "path": "apps/playground/probes/stage-zero/probe-log.ts",
+      "sha256": "b7771a3f715b345bcba499a0534106ea87bf790dc631f60f45f14998d8d3d360",
+      "bytes": 646
+    },
+    {
+      "path": "apps/playground/probes/stage-zero/vite.config.ts",
+      "sha256": "e97735144217c152d30b95bf661e895c204c66543db3366b347eac553f420f3e",
+      "bytes": 552
+    }
+  ]
+}

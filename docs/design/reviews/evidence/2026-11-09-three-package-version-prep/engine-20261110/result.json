@@ -1,0 +1,181 @@
+{
+  "context": "desktop-linux",
+  "image": "flowable/flowable-ui:6.8.0",
+  "status": "passed",
+  "commands": [
+    {
+      "name": "image-pull",
+      "command": [
+        "docker",
+        "pull",
+        "flowable/flowable-ui:6.8.0"
+      ],
+      "exit": 0
+    },
+    {
+      "name": "image-identity",
+      "command": [
+        "docker",
+        "image",
+        "inspect",
+        "flowable/flowable-ui:6.8.0",
+        "--format",
+        "{{.Id}} {{json .RepoDigests}} {{.Architecture}}"
+      ],
+      "exit": 0
+    },
+    {
+      "name": "baseline-smoke",
+      "command": [
+        "pnpm",
+        "smoke"
+      ],
+      "exit": 0
+    },
+    {
+      "name": "candidate-container-start",
+      "command": [
+        "docker",
+        "run",
+        "-d",
+        "--rm",
+        "--name",
+        "flowduet-release-120-f7131d90bb36",
+        "-p",
+        "127.0.0.1:18081:8080",
+        "flowable/flowable-ui:6.8.0"
+      ],
+      "exit": 0
+    }
+  ],
+  "candidateDeployments": [
+    {
+      "file": "approval-all-multi.bpmn",
+      "sha256": "868ae4938e31a00509048600502615595c3b0edbd6feb8fbe2aead7b26b1b8b6",
+      "httpStatus": 201,
+      "deploymentId": "1e296d13-dca2-11f1-89ad-524b56c5ea0e",
+      "processKey": "release_ui_default",
+      "definitionId": "release_ui_default:1:1e8792a6-dca2-11f1-89ad-524b56c5ea0e",
+      "fileAliases": [
+        "approval-all-multi.bpmn"
+      ]
+    },
+    {
+      "file": "approval-all-reopened-single.bpmn",
+      "sha256": "cc4a73226ef59c528f58a097135d761e054202f762f487632acb0a029b5a2cea",
+      "httpStatus": 201,
+      "deploymentId": "1eaf65f7-dca2-11f1-89ad-524b56c5ea0e",
+      "processKey": "release_ui_default",
+      "definitionId": "release_ui_default:2:1ec3632a-dca2-11f1-89ad-524b56c5ea0e",
+      "fileAliases": [
+        "approval-all-reopened-single.bpmn",
+        "approval-any-reopened-single.bpmn",
+        "approval-sequential-reopened-single.bpmn"
+      ]
+    },
+    {
+      "file": "approval-any-multi.bpmn",
+      "sha256": "44d3be7a3e852faf7bd37387a7b18550ebd4e92d77315fe8d88be70296c54b95",
+      "httpStatus": 201,
+      "deploymentId": "1ec8934b-dca2-11f1-89ad-524b56c5ea0e",
+      "processKey": "release_ui_default",
+      "definitionId": "release_ui_default:3:1ed3ddee-dca2-11f1-89ad-524b56c5ea0e",
+      "fileAliases": [
+        "approval-any-multi.bpmn"
+      ]
+    },
+    {
+      "file": "approval-sequential-multi.bpmn",
+      "sha256": "e78b944d0dbdca0bb6598ee0d965f8c2f2d731802cd0e9550e2188380c2092dc",
+      "httpStatus": 201,
+      "deploymentId": "1ed9833f-dca2-11f1-89ad-524b56c5ea0e",
+      "processKey": "release_ui_default",
+      "definitionId": "release_ui_default:4:1ee40a92-dca2-11f1-89ad-524b56c5ea0e",
+      "fileAliases": [
+        "approval-sequential-multi.bpmn"
+      ]
+    },
+    {
+      "file": "condition-deleted.bpmn",
+      "sha256": "957b6df16d19ebf926d9e616638c81d0344e311ad7a14d988831407b5b5999b8",
+      "httpStatus": 201,
+      "deploymentId": "1ee87763-dca2-11f1-89ad-524b56c5ea0e",
+      "processKey": "release_ui_condition",
+      "definitionId": "release_ui_condition:1:1ef17816-dca2-11f1-89ad-524b56c5ea0e",
+      "fileAliases": [
+        "condition-deleted.bpmn"
+      ]
+    },
+    {
+      "file": "condition-retarget.bpmn",
+      "sha256": "e1ca7753c95a94636059534e93ee0b6ed6dde139996ba5c31d3ae1a9bcd772de",
+      "httpStatus": 201,
+      "deploymentId": "1ef79297-dca2-11f1-89ad-524b56c5ea0e",
+      "processKey": "release_condition",
+      "definitionId": "release_condition:1:1effcffa-dca2-11f1-89ad-524b56c5ea0e",
+      "fileAliases": [
+        "condition-retarget.bpmn"
+      ]
+    },
+    {
+      "file": "default-deleted.bpmn",
+      "sha256": "6ac977f2b6e31c3eb18ace4532f1efd380d5b620cab2c25dfeaa0ddbfa53556e",
+      "httpStatus": 201,
+      "deploymentId": "1f04d90b-dca2-11f1-89ad-524b56c5ea0e",
+      "processKey": "release_ui_default",
+      "definitionId": "release_ui_default:5:1f0bddee-dca2-11f1-89ad-524b56c5ea0e",
+      "fileAliases": [
+        "default-deleted.bpmn"
+      ]
+    },
+    {
+      "file": "default-retarget.bpmn",
+      "sha256": "c255aaccc57fd93cb166f1d13b0b6098661aa11184c50cd24d9354f576db353f",
+      "httpStatus": 201,
+      "deploymentId": "1f1098df-dca2-11f1-89ad-524b56c5ea0e",
+      "processKey": "release_default",
+      "definitionId": "release_default:1:1f17ebe2-dca2-11f1-89ad-524b56c5ea0e",
+      "fileAliases": [
+        "default-retarget.bpmn"
+      ]
+    },
+    {
+      "file": "nested-condition-deleted.bpmn",
+      "sha256": "4344801fdbcb426e9ba60e196c53feb4c55ee5f4ddb366df2318da9bcb2502b9",
+      "httpStatus": 201,
+      "deploymentId": "1f1c58b3-dca2-11f1-89ad-524b56c5ea0e",
+      "processKey": "release_ui_nested_condition",
+      "definitionId": "1f24bd26-dca2-11f1-89ad-524b56c5ea0e",
+      "fileAliases": [
+        "nested-condition-deleted.bpmn"
+      ]
+    },
+    {
+      "file": "nested-default-deleted.bpmn",
+      "sha256": "c6aa54bdb78c1ae537a47d6457e2914269f23f1d27d86515ec71d966f01e4a77",
+      "httpStatus": 201,
+      "deploymentId": "1f2929f7-dca2-11f1-89ad-524b56c5ea0e",
+      "processKey": "release_ui_nested_default",
+      "definitionId": "release_ui_nested_default:1:1f322aaa-dca2-11f1-89ad-524b56c5ea0e",
+      "fileAliases": [
+        "nested-default-deleted.bpmn"
+      ]
+    }
+  ],
+  "cleanup": {
+    "containerId": "18007643aec6d96c581bc84feee603dfd41b4a769aa533d92be8b57916ec6a42",
+    "exit": 0,
+    "stdout": "18007643aec6d96c581bc84feee603dfd41b4a769aa533d92be8b57916ec6a42\n",
+    "stderr": ""
+  },
+  "candidateFiles": 12,
+  "uniqueContents": 10,
+  "imageIdentity": "sha256:8ceeaed674582051590c6a7d23533c4920bda70bbe86e7ca09ad0fa68714fed3 [\"flowable/flowable-ui@sha256:8ceeaed674582051590c6a7d23533c4920bda70bbe86e7ca09ad0fa68714fed3\"] amd64",
+  "containerId": "18007643aec6d96c581bc84feee603dfd41b4a769aa533d92be8b57916ec6a42",
+  "engine": {
+    "name": "default",
+    "resourceUrl": null,
+    "exception": null,
+    "version": "6.8.0"
+  }
+}

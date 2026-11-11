@@ -1,0 +1,14 @@
+{
+  "title": "表单序列化抛错后恢复",
+  "source": "A14/A15/A16/并发边界",
+  "method": "Codex内置浏览器UI + 明确记录的CDP临时故障/延迟注入",
+  "startedUTC": "2026-10-12T10:32:11.973Z",
+  "status": "待诊断",
+  "attempts": [],
+  "error": "Error: Playwright selector deadline exceeded\nlocator.waitFor(hidden) timed out for selector .el-overlay:has(> .el-overlay-dialog > [data-test=\"form-manager-dialog\"])\nLocator diagnostics: {\"kind\":\"action_failed\",\"action\":\"waitFor\",\"locator\":\".el-overlay:has(> .el-overlay-dialog > [data-test=\\\"form-manager-dialog\\\"])\",\"matchCount\":1,\"matches\":[{\"ariaLabel\":null,\"disabled\":false,\"role\":null,\"tag\":\"div\",\"text\":\"表单管理 新建表单 申请单 form_1 改名  编辑内容  删除 复核单 form_2 改名  编辑内容  删除\",\"type\":null,\"visible\":true}],\"visibleCount\":1,\"truncated\":false}",
+  "completedUTC": "2026-10-12T10:32:19.350Z",
+  "evidence": [
+    "E16.ax.txt",
+    "E16.jpg"
+  ]
+}

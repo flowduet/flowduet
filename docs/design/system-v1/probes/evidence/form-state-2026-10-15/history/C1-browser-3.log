@@ -1,0 +1,46 @@
+### Result
+[{"caseId":"F03/grid/decimal/K/load","field":"F03","layout":"grid","variant":"decimal","want":1.5,"present":true,"status":"passed","actual":{"present":true,"value":1.5,"type":"inputNumber","field":"a_amount"},"unchanged":true,"typePass":true,"datePass":true,"gridPass":true},{"caseId":"F03/grid/unset/K/load","field":"F03","layout":"grid","variant":"unset","want":null,"present":false,"status":"passed","actual":{"present":false,"type":"inputNumber","field":"a_amount"},"unchanged":true,"typePass":true,"datePass":true,"gridPass":true},{"caseId":"F04/top/zero/K/load","field":"F04","layout":"top","variant":"zero","want":0,"present":true,"status":"passed","actual":{"present":true,"value":0,"type":"radio","field":"a_priority"},"unchanged":true,"typePass":true,"datePass":true,"gridPass":true},{"caseId":"F04/top/string-zero/K/load","field":"F04","layout":"top","variant":"string-zero","want":"0","present":true,"status":"passed","actual":{"present":true,"value":"0","type":"radio","field":"a_priority"},"unchanged":true,"typePass":true,"datePass":true,"gridPass":true},{"caseId":"F04/top/normal/K/load","field":"F04","layout":"top","variant":"normal","want":"normal","present":true,"status":"passed","actual":{"present":true,"value":"normal","type":"radio","field":"a_priority"},"unchanged":true,"typePass":true,"datePass":true,"gridPass":true},{"caseId":"F04/top/unset/K/load","field":"F04","layout":"top","variant":"unset","want":null,"present":false,"status":"passed","actual":{"present":false,"type":"radio","field":"a_priority"},"unchanged":true,"typePass":true,"datePass":true,"gridPass":true}]
+### Ran Playwright code
+```js
+await (async (page) => {
+  if (!page.url().includes('/probes/stage-zero/index.html')) await page.goto('http://127.0.0.1:5173/probes/stage-zero/index.html');
+  if (!(await page.locator('[data-test=form-state-probe]').count())) await page.getByRole('button',{name:'表单状态 C',exact:true}).click();
+  const cases = [{"caseId": "F03/grid/decimal/K/load", "field": "F03", "layout": "grid", "variant": "decimal", "want": 1.5, "present": true}, {"caseId": "F03/grid/unset/K/load", "field": "F03", "layout": "grid", "variant": "unset", "want": null, "present": false}, {"caseId": "F04/top/zero/K/load", "field": "F04", "layout": "top", "variant": "zero", "want": 0, "present": true}, {"caseId": "F04/top/string-zero/K/load", "field": "F04", "layout": "top", "variant": "string-zero", "want": "0", "present": true}, {"caseId": "F04/top/normal/K/load", "field": "F04", "layout": "top", "variant": "normal", "want": "normal", "present": true}, {"caseId": "F04/top/unset/K/load", "field": "F04", "layout": "top", "variant": "unset", "want": null, "present": false}], results=[];
+  const names={F01:'文本',F02:'多行文本',F03:'数字',F04:'单选',F05:'多选',F06:'下拉单选',F07:'日期',F08:'开关',I01:'日期'};
+  const leaves = rules => rules.flatMap(r=>r.children?leaves(r.children):[r]);
+  for(const item of cases) {
+    try {
+      await page.locator('[data-test=c-field]').selectOption(item.field);
+      await page.locator('[data-test=c-layout]').selectOption(item.layout);
+      await page.locator('[data-test=c-variant]').selectOption(item.variant);
+      if(item.dateType!==undefined) await page.locator('[data-test=c-date-type]').selectOption(item.dateType);
+      await page.locator('[data-test=c-reset]').click();
+      const owner=page.locator('[data-c-owner="C-A"]');
+      await owner.locator('._fc-m-drag .el-form-item__label').filter({hasText:'甲'+names[item.field]}).first().waitFor();
+      await page.waitForFunction(()=>JSON.parse(document.querySelector('[data-c-owner="C-A"] [data-test=c-state]').textContent).activeId!=='');
+      const before=JSON.parse(await owner.locator('[data-test=c-state]').textContent());
+      const beforeRule=leaves(JSON.parse(before.forms[0].rules))[0];
+      if(Object.hasOwn(beforeRule,'value')!==item.present || (item.present&&JSON.stringify(beforeRule.value)!==JSON.stringify(item.want))) throw new Error('fixture differs from hand-derived value');
+      await owner.locator('[data-test=c-collect]').click();
+      await page.waitForFunction(()=>JSON.parse(document.querySelector('[data-c-owner="C-A"] [data-test=c-state]').textContent).result!==null);
+      const after=JSON.parse(await owner.locator('[data-test=c-state]').textContent());
+      if(!after.result.ok) { results.push({...item,status:'failed',reason:'capture rejected',result:after.result}); continue; }
+      const doc=JSON.parse(after.result.value.json), output=leaves(JSON.parse(doc.forms[0].rules))[0];
+      const valuePass=Object.hasOwn(output,'value')===item.present&&(!item.present||JSON.stringify(output.value)===JSON.stringify(item.want));
+      const unchanged=JSON.stringify(before.forms)===JSON.stringify(after.forms)&&after.persistCalls===0;
+      const typePass=output.type===beforeRule.type && output.field===beforeRule.field && output.title===beforeRule.title && JSON.stringify(output.options??[])===JSON.stringify(beforeRule.options??[]);
+      const datePass=item.field!=='I01'||output.props?.type===beforeRule.props?.type;
+      const gridPass=item.layout!=='grid'||JSON.parse(doc.forms[0].rules)[0].type==='fcRow';
+      results.push({...item,status:valuePass&&unchanged&&typePass&&datePass&&gridPass?'passed':'failed',actual:{present:Object.hasOwn(output,'value'),value:output.value,type:output.type,field:output.field,props:output.props},unchanged,typePass,datePass,gridPass});
+    } catch(error) { results.push({...item,status:'failed',reason:String(error)}); }
+  }
+  return results;
+}
+)(page);
+```
+### Page
+- Page URL: http://127.0.0.1:5173/probes/stage-zero/index.html
+- Page Title: FlowDuet 阶段零探针
+- Console: 0 errors, 28 warnings
+### Events
+- New console entries: .playwright-cli/console-2026-10-15T09-14-16-354Z.log#L63-L68

@@ -1,0 +1,55 @@
+
+> flowduet-monorepo@0.0.0 test /Users/l/.codex/worktrees/design-system-stage-zero/flowduet
+> pnpm -r test
+
+Scope: 4 of 5 workspace projects
+packages/core test$ vitest run
+packages/core test:  RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/core
+packages/core test:  Test Files  14 passed (14)
+packages/core test:       Tests  148 passed (148)
+packages/core test:    Start at  00:30:05
+packages/core test:    Duration  1.80s (transform 73%, tests 18%, import 8%, worker 1%)
+packages/core test:   Transform  transforming modules took 8.61s · 73% of tracked time, re-done on every run
+packages/core test:              persist transforms across runs with fsModuleCache: true
+packages/core test:              learn more: https://vitest.dev/guide/improving-performance#caching-between-reruns
+packages/core test: Done
+packages/designer test$ vitest run
+packages/designer test:  RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/designer
+packages/designer test:  Test Files  14 passed (14)
+packages/designer test:       Tests  184 passed (184)
+packages/designer test:    Start at  00:30:08
+packages/designer test:    Duration  11.28s (tests 48%, environment 20%, import 18%, transform 14%)
+packages/designer test: Done
+packages/form-create test$ vitest run
+packages/form-create test:  RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/form-create
+packages/form-create test:  Test Files  9 passed (9)
+packages/form-create test:       Tests  137 passed (137)
+packages/form-create test:    Start at  00:30:20
+packages/form-create test:    Duration  18.01s (tests 34%, import 32%, environment 19%, transform 15%, worker 1%)
+packages/form-create test: Done
+apps/playground test$ vitest run
+apps/playground test:  RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground
+apps/playground test:  ❯ src/App.integration.test.ts (45 tests | 1 failed) 55059ms
+apps/playground test:    ❯ Playground 与 designer 的导出链路 (1)
+apps/playground test:      × 插入抄送草稿后自动与手动导出均报错，配置收件人后自动恢复 XML 5270ms
+apps/playground test: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+apps/playground test:  FAIL  src/App.integration.test.ts > Playground 与 designer 的导出链路 > 插入抄送草稿后自动与手动导出均报错，配置收件人后自动恢复 XML
+apps/playground test: Error: Test timed out in 5000ms.
+apps/playground test: If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+apps/playground test:  ❯ src/App.integration.test.ts:68:3
+apps/playground test:      66|
+apps/playground test:      67| describe("Playground 与 designer 的导出链路", () => {
+apps/playground test:      68|   it("插入抄送草稿后自动与手动导出均报错，配置收件人后自动恢复 XML", async () => {
+apps/playground test:        |   ^
+apps/playground test:      69|     wrapper = mount(App, { attachTo: document.body });
+apps/playground test:      70|     await wrapper.find('[data-test="export-btn"]').trigger("click");
+apps/playground test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+apps/playground test:  Test Files  1 failed | 16 passed (17)
+apps/playground test:       Tests  1 failed | 278 passed (279)
+apps/playground test:    Start at  00:30:38
+apps/playground test:    Duration  62.68s (tests 57%, import 29%, environment 8%, transform 6%)
+apps/playground test: Failed
+/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @flowduet/playground@0.0.0 test: `vitest run`
+Exit status 1
+ ELIFECYCLE  Test failed. See above for more details.

@@ -1,0 +1,115 @@
+[
+  {
+    "caseId": "F03/top/zero/K/load",
+    "field": "F03",
+    "layout": "top",
+    "variant": "zero",
+    "want": 0,
+    "present": true,
+    "status": "passed",
+    "actual": {
+      "present": true,
+      "value": 0,
+      "type": "inputNumber",
+      "field": "a_amount"
+    },
+    "unchanged": true,
+    "typePass": true,
+    "datePass": true,
+    "gridPass": true
+  },
+  {
+    "caseId": "F03/top/negative/K/load",
+    "field": "F03",
+    "layout": "top",
+    "variant": "negative",
+    "want": -2,
+    "present": true,
+    "status": "passed",
+    "actual": {
+      "present": true,
+      "value": -2,
+      "type": "inputNumber",
+      "field": "a_amount"
+    },
+    "unchanged": true,
+    "typePass": true,
+    "datePass": true,
+    "gridPass": true
+  },
+  {
+    "caseId": "F03/top/decimal/K/load",
+    "field": "F03",
+    "layout": "top",
+    "variant": "decimal",
+    "want": 1.5,
+    "present": true,
+    "status": "passed",
+    "actual": {
+      "present": true,
+      "value": 1.5,
+      "type": "inputNumber",
+      "field": "a_amount"
+    },
+    "unchanged": true,
+    "typePass": true,
+    "datePass": true,
+    "gridPass": true
+  },
+  {
+    "caseId": "F03/top/unset/K/load",
+    "field": "F03",
+    "layout": "top",
+    "variant": "unset",
+    "want": null,
+    "present": false,
+    "status": "passed",
+    "actual": {
+      "present": false,
+      "type": "inputNumber",
+      "field": "a_amount"
+    },
+    "unchanged": true,
+    "typePass": true,
+    "datePass": true,
+    "gridPass": true
+  },
+  {
+    "caseId": "F03/grid/zero/K/load",
+    "field": "F03",
+    "layout": "grid",
+    "variant": "zero",
+    "want": 0,
+    "present": true,
+    "status": "passed",
+    "actual": {
+      "present": true,
+      "value": 0,
+      "type": "inputNumber",
+      "field": "a_amount"
+    },
+    "unchanged": true,
+    "typePass": true,
+    "datePass": true,
+    "gridPass": true
+  },
+  {
+    "caseId": "F03/grid/negative/K/load",
+    "field": "F03",
+    "layout": "grid",
+    "variant": "negative",
+    "want": -2,
+    "present": true,
+    "status": "passed",
+    "actual": {
+      "present": true,
+      "value": -2,
+      "type": "inputNumber",
+      "field": "a_amount"
+    },
+    "unchanged": true,
+    "typePass": true,
+    "datePass": true,
+    "gridPass": true
+  }
+]

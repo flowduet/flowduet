@@ -1,0 +1,93 @@
+
+ RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground
+
+stderr | probes/stage-zero/contracts/candidate.test.ts > P1 同步候选隔离（协议；真实retained实例另验） > 活对象0 capture json实际执行、零写入且原租约可重试
+[BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+
+stderr | probes/stage-zero/contracts/candidate.test.ts > P1 同步候选隔离（协议；真实retained实例另验） > 活对象0 capture schema实际执行、零写入且原租约可重试
+[BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+
+stderr | probes/stage-zero/contracts/candidate.test.ts > P1 同步候选隔离（协议；真实retained实例另验） > 活对象1 capture json实际执行、零写入且原租约可重试
+[BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+
+stderr | probes/stage-zero/contracts/candidate.test.ts > P1 同步候选隔离（协议；真实retained实例另验） > 活对象1 capture schema实际执行、零写入且原租约可重试
+[BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+
+ ❯ probes/stage-zero/contracts/candidate.test.ts (120 tests | 10 failed) 2576ms
+   ❯ P1 同步候选隔离（协议；真实retained实例另验） (10)
+     × 活对象0 capture throw实际执行、零写入且原租约可重试 20ms
+     × 活对象0 capture null实际执行、零写入且原租约可重试 6ms
+     × 活对象0 capture json实际执行、零写入且原租约可重试 15ms
+     × 活对象0 capture kind实际执行、零写入且原租约可重试 4ms
+     × 活对象0 capture schema实际执行、零写入且原租约可重试 8ms
+     × 活对象1 capture throw实际执行、零写入且原租约可重试 4ms
+     × 活对象1 capture null实际执行、零写入且原租约可重试 4ms
+     × 活对象1 capture json实际执行、零写入且原租约可重试 7ms
+     × 活对象1 capture kind实际执行、零写入且原租约可重试 4ms
+     × 活对象1 capture schema实际执行、零写入且原租约可重试 7ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 10 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  probes/stage-zero/contracts/candidate.test.ts > P1 同步候选隔离（协议；真实retained实例另验） > 活对象0 capture throw实际执行、零写入且原租约可重试
+ FAIL  probes/stage-zero/contracts/candidate.test.ts > P1 同步候选隔离（协议；真实retained实例另验） > 活对象0 capture null实际执行、零写入且原租约可重试
+ FAIL  probes/stage-zero/contracts/candidate.test.ts > P1 同步候选隔离（协议；真实retained实例另验） > 活对象0 capture json实际执行、零写入且原租约可重试
+ FAIL  probes/stage-zero/contracts/candidate.test.ts > P1 同步候选隔离（协议；真实retained实例另验） > 活对象0 capture kind实际执行、零写入且原租约可重试
+ FAIL  probes/stage-zero/contracts/candidate.test.ts > P1 同步候选隔离（协议；真实retained实例另验） > 活对象0 capture schema实际执行、零写入且原租约可重试
+AssertionError: expected [ '0:flush', '1:flush' ] to deeply equal [ '0:flush', '0:capture' ]
+
+- Expected
++ Received
+
+  [
+    "0:flush",
+-   "0:capture",
++   "1:flush",
+  ]
+
+ ❯ probes/stage-zero/form-repair/input-capture.cases.ts:35:59
+     33|         expect(result.ok).toBe(false);
+     34|         expect(calls).toContain(`${failedIndex}:capture`);
+     35|         expect(calls.slice(0, failedIndex === 0 ? 2 : 4)).toEqual(fail…
+       |                                                           ^
+     36|         expect(c.session.current).toBe(live);
+     37|         expect(stateSignature(c.session)).toBe(signature);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/10]⎯
+
+ FAIL  probes/stage-zero/contracts/candidate.test.ts > P1 同步候选隔离（协议；真实retained实例另验） > 活对象1 capture throw实际执行、零写入且原租约可重试
+ FAIL  probes/stage-zero/contracts/candidate.test.ts > P1 同步候选隔离（协议；真实retained实例另验） > 活对象1 capture null实际执行、零写入且原租约可重试
+ FAIL  probes/stage-zero/contracts/candidate.test.ts > P1 同步候选隔离（协议；真实retained实例另验） > 活对象1 capture json实际执行、零写入且原租约可重试
+ FAIL  probes/stage-zero/contracts/candidate.test.ts > P1 同步候选隔离（协议；真实retained实例另验） > 活对象1 capture kind实际执行、零写入且原租约可重试
+ FAIL  probes/stage-zero/contracts/candidate.test.ts > P1 同步候选隔离（协议；真实retained实例另验） > 活对象1 capture schema实际执行、零写入且原租约可重试
+AssertionError: expected [ '0:flush', '1:flush', …(2) ] to deeply equal [ '0:flush', '0:capture', …(2) ]
+
+- Expected
++ Received
+
+  [
+    "0:flush",
+-   "0:capture",
+    "1:flush",
++   "0:capture",
+    "1:capture",
+  ]
+
+ ❯ probes/stage-zero/form-repair/input-capture.cases.ts:35:59
+     33|         expect(result.ok).toBe(false);
+     34|         expect(calls).toContain(`${failedIndex}:capture`);
+     35|         expect(calls.slice(0, failedIndex === 0 ? 2 : 4)).toEqual(fail…
+       |                                                           ^
+     36|         expect(c.session.current).toBe(live);
+     37|         expect(stateSignature(c.session)).toBe(signature);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/10]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  10 failed | 110 passed (120)
+   Start at  18:26:28
+   Duration  5.36s (tests 49%, import 27%, transform 17%, environment 6%)
+
+undefined
+/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run probes/stage-zero/contracts/candidate.test.ts

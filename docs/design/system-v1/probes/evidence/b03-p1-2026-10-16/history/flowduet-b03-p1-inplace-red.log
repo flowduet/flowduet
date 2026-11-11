@@ -1,0 +1,36 @@
+
+ RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/form-create
+
+ ❯ src/components.test.ts (69 tests | 1 failed | 68 skipped) 1613ms
+   × 同一表单对象被宿主原位改写也不覆盖当前输入 1611ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/components.test.ts > 同一表单对象被宿主原位改写也不覆盖当前输入
+AssertionError: expected undefined to be 'version-changed' // Object.is equality
+
+- Expected:
+"version-changed"
+
++ Received:
+undefined
+
+ ❯ src/components.test.ts:1571:52
+    1569|   const form = wrapper!.props("forms")[0]!;
+    1570|   form.rules = "[]";
+    1571|   expect(vm.readEditingState()?.blockers[0]?.code).toBe("version-chang…
+       |                                                    ^
+    1572|   expect(vm.commitPendingEdit()).toBe(false);
+    1573|   expect(input.element.value).toBe("7");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 68 skipped (69)
+   Start at  18:45:55
+   Duration  3.89s (tests 43%, import 36%, transform 13%, environment 8%)
+
+undefined
+/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/form-create:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run src/components.test.ts -t 宿主原位改写

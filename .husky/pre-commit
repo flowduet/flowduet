@@ -1,0 +1,11 @@
+# develop/main 是集成分支：仅接受 PR 合入（远端规则集强制），本地直提一律拦截。
+# 实施票请从最新 develop 切白名单分支施工，详见 CONTRIBUTING.md「分支体系与命名」。
+branch=$(git branch --show-current)
+case "$branch" in
+develop | main)
+  echo "✗ 拒绝在 ${branch} 上直接提交（集成分支仅接受 PR 合入）"
+  echo "  实施票请先切分支，例如：git checkout -b feat/<issue 号>-<摘要> origin/develop"
+  echo "  分支命名白名单见 CONTRIBUTING.md「分支体系与命名」"
+  exit 1
+  ;;
+esac

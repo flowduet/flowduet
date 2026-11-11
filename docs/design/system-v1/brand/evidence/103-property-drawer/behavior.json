@@ -1,0 +1,42 @@
+{
+  "browser": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+  "viewport": "1440×1100；缩放段改为 1024×900 + CSS zoom 200%",
+  "results": {
+    "formSelectAndCommit": "通过",
+    "approvalKinds": "单签、会签、或签、依次审批均通过公开点击与确定",
+    "ccAndBranch": "通过",
+    "emptyStates": "通过",
+    "handwrittenFormKey": "通过",
+    "runtimeAndInvalid": "通过",
+    "syntheticComposition": "通过（不冒充真实 OS IME）",
+    "dualInstance": "通过",
+    "keyboard": "通过",
+    "longErrorAndZoom": {
+      "errorLayout": {
+        "height": 33,
+        "scrollWidth": 646,
+        "clientWidth": 646
+      },
+      "zoomLayout": {
+        "x": 304,
+        "right": 1024,
+        "saveBottom": 868,
+        "viewport": 900
+      }
+    }
+  },
+  "errors": [
+    "console: Failed to load resource: the server responded with a status of 404 (Not Found)"
+  ],
+  "warnings": [
+    "[FlowDuet] appearance.density 只支持 \"comfortable\" 或 \"compact\"；已整份拒绝本次 appearance 配置。",
+    "[FlowDuet] appearance.density 只支持 \"comfortable\" 或 \"compact\"；已整份拒绝本次 appearance 配置。"
+  ],
+  "failures": [],
+  "limitations": [
+    "组合输入使用合成 CompositionEvent/InputEvent，未执行真实 macOS 中文输入法。",
+    "缩放使用 CSS zoom 200% 验证布局，不冒充操作系统或浏览器原生缩放全套测试。",
+    "原生 select 系统选项弹层的外观只能有限控制，未记录为像素级一致。",
+    "Firefox、Safari/WebKit、移动端与完整可访问性认证未验证。"
+  ]
+}

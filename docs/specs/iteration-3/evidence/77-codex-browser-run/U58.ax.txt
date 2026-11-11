@@ -1,0 +1,111 @@
+Browser tab: 2, Title: "FlowDuet Playground", URL: "http://127.0.0.1:5173/".
+1 AXWebArea FlowDuet Playground, URL: 127.0.0.1:5173/
+	2 container app
+		3 container
+			4 heading FlowDuet Playground, Value: 1
+				5 text FlowDuet Playground
+			112 Description: radio-group, ID: el-id-8304-75
+				113 container
+					114 radio button (settable, integer) Description: 钉钉式, Value: 1
+					115 text 钉钉式
+				116 container
+					117 radio button (settable, integer) Description: BPMN 视图, Value: 0
+					118 text BPMN 视图
+			13 button 新建设计
+			14 button 打开文档
+			15 button 表单管理
+			16 button 预览表单
+			17 button 保存草稿
+			18 button 下载设计文档
+			19 button 导出 XML
+		20 container
+			127 text 流程默认表单
+			128 pop up button (collapsed, settable) Value: 复核单, Secondary Actions: Expand
+				129 menu
+					130 无
+					131 申请单
+					132 (selected) 复核单
+			133 container
+				134 text 起 开始
+			135 pop up button (collapsed) +, Help: 在此后添加节点, ID: el-id-8304-76, Secondary Actions: Expand
+			136 container
+				137 text 审 键盘取消新建缓冲 审批人 ${manager} 表单：复核单（继承默认）
+			138 pop up button (collapsed) +, Help: 在此后添加节点, ID: el-id-8304-80, Secondary Actions: Expand
+			139 container
+				140 text 审 合同会签 多人 · 集合 approvers 表单：复核单（节点指定）
+			141 pop up button (collapsed) +, Help: 在此后添加节点, ID: el-id-8304-84, Secondary Actions: Expand
+			142 container
+				143 text 抄 抄送法务备案 抄送：张三,李四
+			144 pop up button (collapsed) +, Help: 在此后添加节点, ID: el-id-8304-88, Secondary Actions: Expand
+			145 container
+				146 text 条件分支
+				147 button 默认1, Help: 点击取消默认（其余情况无兜底支路）
+				148 button 默认2, Help: 把该支路设为默认（其余情况走此支路）
+				149 button + 分支, Help: 添加分支
+				150 button 删块, Help: 删除整块（前后直连）
+				151 container
+					152 button 常规审批 其他情况（默认）, Help: 常规审批：其他情况（默认）；点击配置此分支
+						153 text 常规审批
+						154 text 其他情况（默认）
+					155 text 审
+					156 text 总监审批
+					157 text 审批人 ${director}
+					181 text 表单：复核单（继承默认）
+					159 pop up button (collapsed) +, Help: 在此后添加节点, ID: el-id-8304-92, Secondary Actions: Expand
+				160 container
+					161 button 大额复核 ${amount > 1000}, Help: 大额复核：${amount > 1000}；点击配置此分支
+						162 text 大额复核
+						163 text ${amount > 1000}
+					164 container
+						165 text 并行分支
+						166 button + 分支, Help: 添加分支
+						167 button 删块, Help: 删除整块（前后直连）
+					168 container
+						169 text 支路 1
+						170 container
+							171 text 审 财务复核 审批人 ${finance} 表单：复核单（节点指定）
+						172 pop up button (collapsed) +, Help: 在此后添加节点, ID: el-id-8304-96, Secondary Actions: Expand
+						173 text 支路 2
+						174 container
+							175 text 审 法务复核 审批人 ${legal} 表单：复核单（继承默认）
+						176 pop up button (collapsed) +, Help: 在此后添加节点, ID: el-id-8304-100, Secondary Actions: Expand
+			177 container
+				178 text 终 结束
+			182 container 审批节点
+				184 container
+					185 heading 审批节点, Value: 2, ID: el-id-8304-104
+						186 text 审批节点
+					187 button Close this dialog
+				188 container
+					189 text 节点名称
+					190 text field (settable) 节点名称, Value: 键盘取消新建缓冲, ID: el-id-8304-110
+					191 text 审批人
+					192 text field (settable) 审批人, Value: ${manager}, ID: el-id-8304-111
+					193 container 完成方式
+						194 text 完成方式
+						195 container
+							196 button 单签 一人审批
+								197 text 单签
+								198 text 一人审批
+							199 button 会签 全员同意
+								200 text 会签
+								201 text 全员同意
+							202 button 或签 任一同意
+								203 text 或签
+								204 text 任一同意
+							205 button 依次 顺序逐人
+								206 text 依次
+								207 text 顺序逐人
+					208 container 表单
+						209 text 表单
+						210 pop up button (collapsed, settable) Value: 继承默认（复核单）, Secondary Actions: Expand
+							211 menu
+								212 (selected) 继承默认（复核单）
+								213 申请单
+								214 复核单
+				215 container
+					216 button 取消
+					217 button 确定
+			218 text 已保存到本地（刷新后可恢复），当前无待修复项
+
+The focused UI element is 1 AXWebArea FlowDuet Playground, URL: 127.0.0.1:5173/

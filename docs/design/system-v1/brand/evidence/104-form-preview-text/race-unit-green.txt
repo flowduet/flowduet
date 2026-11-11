@@ -1,0 +1,9 @@
+
+ RUN  v5.0.1 /Users/l/Documents/projects/flowduet/packages/form-create
+
+ ✓ src/appearance.test.ts (12 tests) 1020ms
+
+ Test Files  1 passed (1)
+      Tests  12 passed (12)
+   Start at  19:11:06
+   Duration  3.69s (import 40%, tests 29%, transform 23%, environment 9%)

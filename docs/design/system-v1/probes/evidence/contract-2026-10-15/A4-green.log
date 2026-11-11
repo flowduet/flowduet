@@ -1,0 +1,26 @@
+
+ RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/designer
+
+ ❯ src/external-editing.test.ts (6 tests | 1 failed) 797ms
+   ❯ 外置编辑显式接缝 (6)
+     × external_commit_pending_refuses 203ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/external-editing.test.ts > 外置编辑显式接缝 > external_commit_pending_refuses
+Error: Cannot call text on an empty DOMWrapper.
+ ❯ Object.get ../../node_modules/.pnpm/@vue+test-utils@2.5.1_@vue+compiler-dom@3.5.43_@vue+server-renderer@3.5.43_vue@3.5.43_typescript@5.9.3_/node_modules/@vue/test-utils/dist/vue-test-utils.cjs.js:1488:27
+ ❯ src/external-editing.test.ts:10:183
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 8 passed (9)
+   Start at  09:53:07
+   Duration  3.21s (import 32%, transform 25%, tests 24%, environment 19%)
+
+undefined
+/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/designer:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run src/external-editing.test.ts src/property-editing.test.ts --testTimeout 20000

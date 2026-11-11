@@ -1,0 +1,9 @@
+
+ RUN  v5.0.1 /Users/l/Documents/projects/flowduet-103-property-appearance/packages/designer
+
+
+ Test Files  1 passed (1)
+      Tests  1 passed | 15 skipped (16)
+   Start at  17:54:01
+   Duration  2.44s (import 43%, transform 31%, environment 16%, tests 10%)
+

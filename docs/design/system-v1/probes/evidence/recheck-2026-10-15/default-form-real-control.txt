@@ -1,0 +1,6 @@
+### Result
+{"message":"已进入真实默认表单配置控件","state":{"documentEpoch":1,"view":"form","node":{"documentEpoch":1,"kind":"node","id":"approval_1","lifetime":3},"branch":{"documentEpoch":1,"kind":"flow","id":"fa","lifetime":9},"nodeAlive":false,"branchAlive":true,"branchBuffer":{"input":{"condition":"${amount > 200}"},"conflict":false},"nodeBuffer":null,"headTarget":"tail","branchOrder":["fa","fb"],"defaultFormKey":"form_2"},"selected":"form_2"}
+### Ran Playwright code
+```js
+await (async (page) => { await page.getByRole("button",{name:"Close this dialog",exact:true}).click(); const root=page.locator("[data-location-case=chain]"); await root.getByRole("button",{name:"定位默认表单问题",exact:true}).click(); await root.locator("[data-test=location-default-form]").selectOption("form_2"); return {message:await root.locator("[data-test=location-result]").textContent(),state:JSON.parse(await root.locator("[data-test=location-state]").textContent()),selected:await root.locator("[data-test=location-default-form]").inputValue()}; })(page);
+```

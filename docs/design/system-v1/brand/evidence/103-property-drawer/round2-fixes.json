@@ -1,0 +1,46 @@
+{
+  "browser": "156.0.8078.4",
+  "declarativeDark": {
+    "surfaceVar": "#162220",
+    "secondaryVar": "#B8CECA",
+    "primaryVar": "#7FCFC7",
+    "hasEpWrites": false,
+    "cardBg": "rgb(26, 60, 57)",
+    "cardLabelColor": "rgb(230, 242, 240)",
+    "inputValue": "声明式换肤保留的草稿",
+    "inputFocused": true,
+    "changeCount": "change 0",
+    "selectedCardContrast": 10.47
+  },
+  "declarativeLightBack": {
+    "surfaceVar": "#FFFFFF",
+    "primaryVar": "#409EFF"
+  },
+  "focusRingCard": {
+    "focusVar": "#303133",
+    "primaryInkVar": "#303133",
+    "activeTestId": "kind-single",
+    "focusVisible": true,
+    "outlineStyle": "solid",
+    "outlineWidth": "2px",
+    "outlineColor": "rgb(48, 49, 51)",
+    "drawerSurfaceColor": "rgb(251, 251, 251)",
+    "outlineContrastOnSurface": 12.58
+  },
+  "rgbParsing": {
+    "spaceRgbPrimary": "#0F6B65",
+    "mixedInvalidRgbPrimary": "#409EFF"
+  },
+  "darkHostBrandLightButton": {
+    "htmlDark": true,
+    "disabledVar": "#8B92A4",
+    "disabledComputedColor": "rgb(139, 146, 164)"
+  },
+  "lateEpOrder": {
+    "labelLineHeight": "20.8px",
+    "errorPaddingTop": "4px",
+    "errorPosition": "static"
+  },
+  "errors": [],
+  "failures": []
+}

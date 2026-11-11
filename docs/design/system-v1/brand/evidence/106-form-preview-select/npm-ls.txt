@@ -1,0 +1,63 @@
+flowduet-106-consumer@ /private/tmp/flowduet-106-consumer.e0m7Qw
+├── @flowduet/core@0.3.0
+├─┬ @flowduet/designer@0.1.0
+│ ├── @flowduet/core@0.3.0 deduped
+│ ├─┬ @vue-flow/core@1.48.2
+│ │ ├─┬ @vueuse/core@10.11.1
+│ │ │ ├─┬ @vueuse/shared@10.11.1
+│ │ │ │ └─┬ vue-demi@0.14.10
+│ │ │ │   └── vue@3.5.43 deduped
+│ │ │ └─┬ vue-demi@0.14.10
+│ │ │   └── vue@3.5.43 deduped
+│ │ └── vue@3.5.43 deduped
+│ ├── element-plus@2.14.6 deduped
+│ └── vue@3.5.43 deduped
+├─┬ @flowduet/form-create@0.1.0
+│ ├── @flowduet/core@0.3.0 deduped
+│ ├── @flowduet/designer@0.1.0 deduped
+│ ├─┬ @form-create/designer@3.5.0
+│ │ ├─┬ @form-create/component-wangeditor@3.3.0
+│ │ │ └── vue@3.5.43 deduped
+│ │ ├── @form-create/element-ui@3.3.4 deduped
+│ │ ├── element-plus@2.14.6 deduped
+│ │ ├── vue@3.5.43 deduped
+│ │ └─┬ vuedraggable@4.1.0
+│ │   └── vue@3.5.43 deduped
+│ ├─┬ @form-create/element-ui@3.3.4
+│ │ ├─┬ @form-create/component-elm-checkbox@3.3.0
+│ │ │ └── vue@3.5.43 deduped
+│ │ ├─┬ @form-create/component-elm-frame@3.3.6
+│ │ │ └── vue@3.5.43 deduped
+│ │ ├─┬ @form-create/component-elm-group@3.3.6
+│ │ │ └── vue@3.5.43 deduped
+│ │ ├─┬ @form-create/component-elm-radio@3.3.0
+│ │ │ └── vue@3.5.43 deduped
+│ │ ├─┬ @form-create/component-elm-select@3.3.0
+│ │ │ └── vue@3.5.43 deduped
+│ │ ├─┬ @form-create/component-elm-tree@3.3.6
+│ │ │ └── vue@3.5.43 deduped
+│ │ ├─┬ @form-create/component-elm-upload@3.3.0
+│ │ │ └── vue@3.5.43 deduped
+│ │ ├─┬ @form-create/component-subform@3.3.0
+│ │ │ └── vue@3.5.43 deduped
+│ │ ├─┬ @form-create/core@3.3.6
+│ │ │ └── vue@3.5.43 deduped
+│ │ └── vue@3.5.43 deduped
+│ ├── element-plus@2.14.6 deduped
+│ └── vue@3.5.43 deduped
+├─┬ @vitejs/plugin-vue@6.0.9
+│ ├── vite@8.3.0 deduped
+│ └── vue@3.5.43 deduped
+├─┬ element-plus@2.14.6
+│ ├─┬ @element-plus/icons-vue@2.3.2
+│ │ └── vue@3.5.43 deduped
+│ ├─┬ @vueuse/core@15.0.0
+│ │ ├─┬ @vueuse/shared@15.0.0
+│ │ │ └── vue@3.5.43 deduped
+│ │ └── vue@3.5.43 deduped
+│ └── vue@3.5.43 deduped
+├── typescript@5.9.3
+├── vite@8.3.0
+└─┬ vue@3.5.43
+  └── typescript@5.9.3 deduped
+

@@ -1,0 +1,218 @@
+
+ RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground
+
+ ❯ probes/stage-zero/form-state/rebuild-policy.test.ts (28 tests | 28 failed) 128ms
+   ❯ C4 验证重建协议（宿主替身，不冒充FormCreate） (28)
+     × rebuild_preserves_source_identity_and_targets_destination 23ms
+     × context失败保持源输入且只记K回退 4ms
+     × restore失败保持源输入且只记K回退 5ms
+     × mount失败保持源输入且只记K回退 5ms
+     × export失败保持源输入且只记K回退 4ms
+     × semantic失败保持源输入且只记K回退 4ms
+     × busy失败保持源输入且只记K回退 3ms
+     × owner失败保持源输入且只记K回退 3ms
+     × drag失败保持源输入且只记K回退 3ms
+     × capture_throw_null_invalid_keeps_both_forms 0/throw 4ms
+     × capture_throw_null_invalid_keeps_both_forms 0/null 3ms
+     × capture_throw_null_invalid_keeps_both_forms 0/json 4ms
+     × capture_throw_null_invalid_keeps_both_forms 0/kind 4ms
+     × capture_throw_null_invalid_keeps_both_forms 0/duplicate 3ms
+     × capture_throw_null_invalid_keeps_both_forms 0/range 3ms
+     × capture_throw_null_invalid_keeps_both_forms 0/options 5ms
+     × capture_throw_null_invalid_keeps_both_forms 1/throw 4ms
+     × capture_throw_null_invalid_keeps_both_forms 1/null 3ms
+     × capture_throw_null_invalid_keeps_both_forms 1/json 3ms
+     × capture_throw_null_invalid_keeps_both_forms 1/kind 3ms
+     × capture_throw_null_invalid_keeps_both_forms 1/duplicate 3ms
+     × capture_throw_null_invalid_keeps_both_forms 1/range 4ms
+     × capture_throw_null_invalid_keeps_both_forms 1/options 5ms
+     × input_during_restore_rejects_stale_candidate，目的基线早于prepare 4ms
+     × post_handoff_cleanup_failure_keeps_new_lease adopt 4ms
+     × post_handoff_cleanup_failure_keeps_new_lease show 6ms
+     × post_handoff_cleanup_failure_keeps_new_lease unmount 4ms
+     × 取消/释放期间临时挂载清理，旧失败不能卸载新成功 4ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 28 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  probes/stage-zero/form-state/rebuild-policy.test.ts > C4 验证重建协议（宿主替身，不冒充FormCreate） > rebuild_preserves_source_identity_and_targets_destination
+AssertionError: expected { Object (ok, code, ...) } to match object { ok: true, value: { …(2) } }
+(2 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "ok": true,
+-   "value": {
+-     "active": {
+-       "facet": "form-content",
+-       "ref": {
+-         "controllerId": "policy",
+-         "documentEpoch": 1,
+-         "id": "form_2",
+-         "kind": "form",
+-         "lifetime": 8,
+-       },
+-     },
+-     "actual": "rebuilt",
+-   },
++   "ok": false,
+  }
+
+ ❯ probes/stage-zero/form-state/rebuild-policy.test.ts:16:59
+     14|       f.entry(old).content.rules='[{"type":"input","field":"a_subject"…
+     15|       const before=f.c.session.current, xml=(await f.c.model.toXML()).…
+     16|       expect(await f.policy.select(b,"rebuild-verified")).toMatchObjec…
+       |                                                           ^
+     17|       expect(f.current()!.target).toBe(b);expect(f.entry(f.current()!)…
+     18|       expect(f.c.store.editor(a)).toBeUndefined();expect(f.entry(old).…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/28]⎯
+
+ FAIL  probes/stage-zero/form-state/rebuild-policy.test.ts > C4 验证重建协议（宿主替身，不冒充FormCreate） > context失败保持源输入且只记K回退
+ FAIL  probes/stage-zero/form-state/rebuild-policy.test.ts > C4 验证重建协议（宿主替身，不冒充FormCreate） > restore失败保持源输入且只记K回退
+ FAIL  probes/stage-zero/form-state/rebuild-policy.test.ts > C4 验证重建协议（宿主替身，不冒充FormCreate） > mount失败保持源输入且只记K回退
+ FAIL  probes/stage-zero/form-state/rebuild-policy.test.ts > C4 验证重建协议（宿主替身，不冒充FormCreate） > export失败保持源输入且只记K回退
+ FAIL  probes/stage-zero/form-state/rebuild-policy.test.ts > C4 验证重建协议（宿主替身，不冒充FormCreate） > semantic失败保持源输入且只记K回退
+ FAIL  probes/stage-zero/form-state/rebuild-policy.test.ts > C4 验证重建协议（宿主替身，不冒充FormCreate） > busy失败保持源输入且只记K回退
+ FAIL  probes/stage-zero/form-state/rebuild-policy.test.ts > C4 验证重建协议（宿主替身，不冒充FormCreate） > owner失败保持源输入且只记K回退
+ FAIL  probes/stage-zero/form-state/rebuild-policy.test.ts > C4 验证重建协议（宿主替身，不冒充FormCreate） > drag失败保持源输入且只记K回退
+AssertionError: expected { Object (ok, code, ...) } to match object { ok: true, …(1) }
+(2 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "ok": true,
+-   "value": {
+-     "actual": "kept-fallback",
+-   },
++   "ok": false,
+  }
+
+ ❯ probes/stage-zero/form-state/rebuild-policy.test.ts:39:69
+     37|       if(kind==='owner')f.entry(old).state.ownerKnown=false;
+     38|       if(kind==='drag')f.entry(old).state.dragging=true;
+     39|       expect(await f.policy.select(f.forms[1]!,"rebuild-verified")).to…
+       |                                                                     ^
+     40|       expect(f.entry(old).unmounted).toBe(false);expect(f.c.store.edit…
+     41|       expect(f.c.session.current!.forms[0]!.rules).toContain('事项甲');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/28]⎯
+
+ FAIL  probes/stage-zero/form-state/rebuild-policy.test.ts > C4 验证重建协议（宿主替身，不冒充FormCreate） > capture_throw_null_invalid_keeps_both_forms 0/throw
+ FAIL  probes/stage-zero/form-state/rebuild-policy.test.ts > C4 验证重建协议（宿主替身，不冒充FormCreate） > capture_throw_null_invalid_keeps_both_forms 0/null
+ FAIL  probes/stage-zero/form-state/rebuild-policy.test.ts > C4 验证重建协议（宿主替身，不冒充FormCreate） > capture_throw_null_invalid_keeps_both_forms 0/json
+ FAIL  probes/stage-zero/form-state/rebuild-policy.test.ts > C4 验证重建协议（宿主替身，不冒充FormCreate） > capture_throw_null_invalid_keeps_both_forms 0/kind
+ FAIL  probes/stage-zero/form-state/rebuild-policy.test.ts > C4 验证重建协议（宿主替身，不冒充FormCreate） > capture_throw_null_invalid_keeps_both_forms 0/duplicate
+ FAIL  probes/stage-zero/form-state/rebuild-policy.test.ts > C4 验证重建协议（宿主替身，不冒充FormCreate） > capture_throw_null_invalid_keeps_both_forms 0/range
+ FAIL  probes/stage-zero/form-state/rebuild-policy.test.ts > C4 验证重建协议（宿主替身，不冒充FormCreate） > capture_throw_null_invalid_keeps_both_forms 0/options
+ FAIL  probes/stage-zero/form-state/rebuild-policy.test.ts > C4 验证重建协议（宿主替身，不冒充FormCreate） > capture_throw_null_invalid_keeps_both_forms 1/throw
+ FAIL  probes/stage-zero/form-state/rebuild-policy.test.ts > C4 验证重建协议（宿主替身，不冒充FormCreate） > capture_throw_null_invalid_keeps_both_forms 1/null
+ FAIL  probes/stage-zero/form-state/rebuild-policy.test.ts > C4 验证重建协议（宿主替身，不冒充FormCreate） > capture_throw_null_invalid_keeps_both_forms 1/json
+ FAIL  probes/stage-zero/form-state/rebuild-policy.test.ts > C4 验证重建协议（宿主替身，不冒充FormCreate） > capture_throw_null_invalid_keeps_both_forms 1/kind
+ FAIL  probes/stage-zero/form-state/rebuild-policy.test.ts > C4 验证重建协议（宿主替身，不冒充FormCreate） > capture_throw_null_invalid_keeps_both_forms 1/duplicate
+ FAIL  probes/stage-zero/form-state/rebuild-policy.test.ts > C4 验证重建协议（宿主替身，不冒充FormCreate） > capture_throw_null_invalid_keeps_both_forms 1/range
+ FAIL  probes/stage-zero/form-state/rebuild-policy.test.ts > C4 验证重建协议（宿主替身，不冒充FormCreate） > capture_throw_null_invalid_keeps_both_forms 1/options
+AssertionError: expected { Object (ok, code, ...) } to match object { ok: true, …(1) }
+(2 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "ok": true,
+-   "value": {
+-     "actual": "kept-fallback",
+-   },
++   "ok": false,
+  }
+
+ ❯ probes/stage-zero/form-state/rebuild-policy.test.ts:55:22
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/28]⎯
+
+ FAIL  probes/stage-zero/form-state/rebuild-policy.test.ts > C4 验证重建协议（宿主替身，不冒充FormCreate） > input_during_restore_rejects_stale_candidate，目的基线早于prepare
+AssertionError: expected { Object (ok, code, ...) } to match object { ok: true, …(1) }
+(2 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "ok": true,
+-   "value": {
+-     "actual": "kept-fallback",
+-   },
++   "ok": false,
+  }
+
+ ❯ probes/stage-zero/form-state/rebuild-policy.test.ts:63:69
+     61|       const old=f.current()!,restore=f.host.restoreContext;let sawBasi…
+     62|       f.host.restoreContext=async(e,before)=>{sawBasis=f.c.drafts.buff…
+     63|       expect(await f.policy.select(f.forms[1]!,"rebuild-verified")).to…
+       |                                                                     ^
+     64|       expect(sawBasis).toBe(true);expect(f.entry(old).unmounted).toBe(…
+     65|     }finally{finish(f)}
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/28]⎯
+
+ FAIL  probes/stage-zero/form-state/rebuild-policy.test.ts > C4 验证重建协议（宿主替身，不冒充FormCreate） > post_handoff_cleanup_failure_keeps_new_lease adopt
+ FAIL  probes/stage-zero/form-state/rebuild-policy.test.ts > C4 验证重建协议（宿主替身，不冒充FormCreate） > post_handoff_cleanup_failure_keeps_new_lease show
+ FAIL  probes/stage-zero/form-state/rebuild-policy.test.ts > C4 验证重建协议（宿主替身，不冒充FormCreate） > post_handoff_cleanup_failure_keeps_new_lease unmount
+AssertionError: expected { Object (ok, code, ...) } to match object { ok: false, code: 'commit-failed' }
+(1 matching property omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "code": "commit-failed",
++   "code": "unsupported",
+    "ok": false,
+  }
+
+ ❯ probes/stage-zero/form-state/rebuild-policy.test.ts:73:59
+     71|       else if(fault==='show'){const show=f.host.show;f.host.show=e=>{i…
+     72|       else {const adopt=f.host.adopt;f.host.adopt=(e,l)=>{if(fail)thro…
+     73|       expect(await f.policy.select(b,'rebuild-verified')).toMatchObjec…
+       |                                                           ^
+     74|       const lease=f.c.store.editor(b)!.lease;expect(f.c.store.editor(a…
+     75|       const entry=f.entries.find(e=>e.editor.adapter===f.c.store.edito…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/28]⎯
+
+ FAIL  probes/stage-zero/form-state/rebuild-policy.test.ts > C4 验证重建协议（宿主替身，不冒充FormCreate） > 取消/释放期间临时挂载清理，旧失败不能卸载新成功
+AssertionError: expected { Object (ok, code, ...) } to match object { ok: false, code: 'cancelled' }
+(1 matching property omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "code": "cancelled",
++   "code": "unsupported",
+    "ok": false,
+  }
+
+ ❯ probes/stage-zero/form-state/rebuild-policy.test.ts:86:29
+     84|       const pending=f.policy.select(f.forms[1]!, 'rebuild-verified');
+     85|       await Promise.resolve();await f.policy.select(f.forms[0]!, 'keep…
+     86|       expect(await pending).toMatchObject({ok:false,code:'cancelled'})…
+       |                             ^
+     87|       expect(f.entries.filter(e=>!e.unmounted)).toHaveLength(1);
+     88|     }finally{wait.resolve();finish(f)}
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/28]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  28 failed (28)
+   Start at  22:48:11
+   Duration  3.20s (import 52%, transform 32%, environment 12%, tests 4%)
+
+undefined
+/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run probes/stage-zero/form-state/rebuild-policy.test.ts

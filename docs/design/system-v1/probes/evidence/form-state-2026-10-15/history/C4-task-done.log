@@ -1,0 +1,6 @@
+ Test Files  9 passed (9)
+      Tests  119 passed (119)
+   Start at  23:19:50
+   Duration  8.30s (import 43%, tests 23%, environment 19%, transform 14%)
+
+ledger: Task 5: complete (commits eb3773b..a75dca7, tests: pnpm --filter @flowduet/playground exec vitest run probes/stage-zero/contracts/candidate.test.ts probes/stage-zero/contracts/validation.test.ts probes/stage-zero/contracts/error-boundary.test.ts probes/stage-zero/form-state/retention-policy.test.ts probes/stage-zero/form-state/rebuild-policy.test.ts probes/stage-zero/editor-recovery.test.ts probes/stage-zero/form-state.test.ts probes/stage-zero/form-state/input-boundary.test.ts probes/stage-zero/form-state/drag-boundary.test.ts →    Duration  8.30s (import 43%, tests 23%, environment 19%, transform 14%))

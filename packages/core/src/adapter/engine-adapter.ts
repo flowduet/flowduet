@@ -7,9 +7,9 @@
  */
 
 /** 引擎中立的任务种类（v1 元素集的任务面；ADR-0004 的钉钉式节点最终也落到这里） */
-export type TaskKind = "user" | "service" | "script" | "mail";
+export type TaskKind = "user" | "service" | "script" | "mail" | "cc";
 
-export const TASK_KINDS: readonly TaskKind[] = ["user", "service", "script", "mail"];
+export const TASK_KINDS: readonly TaskKind[] = ["user", "service", "script", "mail", "cc"];
 
 /** 语义任务种类 → 方言任务形态 */
 export interface TaskTypeMapping {

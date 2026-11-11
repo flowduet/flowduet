@@ -1,0 +1,242 @@
+[
+  {
+    "density": "compact",
+    "width": "1440",
+    "observed": [
+      {
+        "theme": "light",
+        "width": 1440,
+        "client": 1438,
+        "scroll": 1438,
+        "color": "rgb(38, 51, 76)",
+        "bg": "rgb(255, 255, 255)",
+        "primary": "#2d3e97"
+      },
+      {
+        "theme": "dark",
+        "width": 1440,
+        "client": 1438,
+        "scroll": 1438,
+        "color": "rgb(228, 233, 243)",
+        "bg": "rgb(32, 39, 53)",
+        "primary": "#a5b2ff"
+      }
+    ]
+  },
+  {
+    "density": "compact",
+    "width": "1280",
+    "observed": [
+      {
+        "theme": "light",
+        "width": 1280,
+        "client": 1278,
+        "scroll": 1278,
+        "color": "rgb(38, 51, 76)",
+        "bg": "rgb(255, 255, 255)",
+        "primary": "#2d3e97"
+      },
+      {
+        "theme": "dark",
+        "width": 1280,
+        "client": 1278,
+        "scroll": 1278,
+        "color": "rgb(228, 233, 243)",
+        "bg": "rgb(32, 39, 53)",
+        "primary": "#a5b2ff"
+      }
+    ]
+  },
+  {
+    "density": "compact",
+    "width": "1024",
+    "observed": [
+      {
+        "theme": "light",
+        "width": 1024,
+        "client": 1022,
+        "scroll": 1022,
+        "color": "rgb(38, 51, 76)",
+        "bg": "rgb(255, 255, 255)",
+        "primary": "#2d3e97"
+      },
+      {
+        "theme": "dark",
+        "width": 1024,
+        "client": 1022,
+        "scroll": 1022,
+        "color": "rgb(228, 233, 243)",
+        "bg": "rgb(32, 39, 53)",
+        "primary": "#a5b2ff"
+      }
+    ]
+  },
+  {
+    "density": "compact",
+    "width": "900",
+    "observed": [
+      {
+        "theme": "light",
+        "width": 900,
+        "client": 898,
+        "scroll": 898,
+        "color": "rgb(38, 51, 76)",
+        "bg": "rgb(255, 255, 255)",
+        "primary": "#2d3e97"
+      },
+      {
+        "theme": "dark",
+        "width": 900,
+        "client": 898,
+        "scroll": 898,
+        "color": "rgb(228, 233, 243)",
+        "bg": "rgb(32, 39, 53)",
+        "primary": "#a5b2ff"
+      }
+    ]
+  },
+  {
+    "density": "compact",
+    "width": "768",
+    "observed": [
+      {
+        "theme": "light",
+        "width": 768,
+        "client": 766,
+        "scroll": 766,
+        "color": "rgb(38, 51, 76)",
+        "bg": "rgb(255, 255, 255)",
+        "primary": "#2d3e97"
+      },
+      {
+        "theme": "dark",
+        "width": 768,
+        "client": 766,
+        "scroll": 766,
+        "color": "rgb(228, 233, 243)",
+        "bg": "rgb(32, 39, 53)",
+        "primary": "#a5b2ff"
+      }
+    ]
+  },
+  {
+    "density": "comfortable",
+    "width": "1440",
+    "observed": [
+      {
+        "theme": "light",
+        "width": 1440,
+        "client": 1438,
+        "scroll": 1438,
+        "color": "rgb(38, 51, 76)",
+        "bg": "rgb(255, 255, 255)",
+        "primary": "#2d3e97"
+      },
+      {
+        "theme": "dark",
+        "width": 1440,
+        "client": 1438,
+        "scroll": 1438,
+        "color": "rgb(228, 233, 243)",
+        "bg": "rgb(32, 39, 53)",
+        "primary": "#a5b2ff"
+      }
+    ]
+  },
+  {
+    "density": "comfortable",
+    "width": "1280",
+    "observed": [
+      {
+        "theme": "light",
+        "width": 1280,
+        "client": 1278,
+        "scroll": 1278,
+        "color": "rgb(38, 51, 76)",
+        "bg": "rgb(255, 255, 255)",
+        "primary": "#2d3e97"
+      },
+      {
+        "theme": "dark",
+        "width": 1280,
+        "client": 1278,
+        "scroll": 1278,
+        "color": "rgb(228, 233, 243)",
+        "bg": "rgb(32, 39, 53)",
+        "primary": "#a5b2ff"
+      }
+    ]
+  },
+  {
+    "density": "comfortable",
+    "width": "1024",
+    "observed": [
+      {
+        "theme": "light",
+        "width": 1024,
+        "client": 1022,
+        "scroll": 1022,
+        "color": "rgb(38, 51, 76)",
+        "bg": "rgb(255, 255, 255)",
+        "primary": "#2d3e97"
+      },
+      {
+        "theme": "dark",
+        "width": 1024,
+        "client": 1022,
+        "scroll": 1022,
+        "color": "rgb(228, 233, 243)",
+        "bg": "rgb(32, 39, 53)",
+        "primary": "#a5b2ff"
+      }
+    ]
+  },
+  {
+    "density": "comfortable",
+    "width": "900",
+    "observed": [
+      {
+        "theme": "light",
+        "width": 900,
+        "client": 898,
+        "scroll": 898,
+        "color": "rgb(38, 51, 76)",
+        "bg": "rgb(255, 255, 255)",
+        "primary": "#2d3e97"
+      },
+      {
+        "theme": "dark",
+        "width": 900,
+        "client": 898,
+        "scroll": 898,
+        "color": "rgb(228, 233, 243)",
+        "bg": "rgb(32, 39, 53)",
+        "primary": "#a5b2ff"
+      }
+    ]
+  },
+  {
+    "density": "comfortable",
+    "width": "768",
+    "observed": [
+      {
+        "theme": "light",
+        "width": 768,
+        "client": 766,
+        "scroll": 766,
+        "color": "rgb(38, 51, 76)",
+        "bg": "rgb(255, 255, 255)",
+        "primary": "#2d3e97"
+      },
+      {
+        "theme": "dark",
+        "width": 768,
+        "client": 766,
+        "scroll": 766,
+        "color": "rgb(228, 233, 243)",
+        "bg": "rgb(32, 39, 53)",
+        "primary": "#a5b2ff"
+      }
+    ]
+  }
+]

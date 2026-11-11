@@ -1,0 +1,35 @@
+diff --git a/packages/form-create/src/components.test.ts b/packages/form-create/src/components.test.ts
+index 87386dd..fd3cdcc 100644
+--- a/packages/form-create/src/components.test.ts
++++ b/packages/form-create/src/components.test.ts
+@@ -1019,15 +1019,8 @@ async function retainedEditor(rules = numericDateRules) {
+   return wrapper.vm as unknown as RetainedVm;
+ }
+ async function selectRetained(field: string) {
+-  const designer = wrapper!.findComponent(FcDesigner);
+-  // setRule后画布尚未挂载时triggerActive无效；先只读等待真实画布，而非反复触发配置。
+-  await vi.waitFor(() => {
+-    expect(designer.find("._fc-m-drag ._fd-drag-mask").exists()).toBe(true);
+-  });
+-  await flushPromises();
+-  // triggerActive会重建属性配置；轮询只观察，不能在等待期间重复选择同一字段。
+-  designer.vm.triggerActive(field);
+   await vi.waitFor(() => {
++    wrapper!.findComponent(FcDesigner).vm.triggerActive(field);
+     expect(wrapper!.find(`[data-retained-input][data-field="${field}"]`).exists()).toBe(true);
+   });
+   await flushPromises();
+@@ -1127,7 +1120,12 @@ async function retainedManager() {
+   return vm;
+ }
+ async function managerRaw(raw = "-") {
+-  const input = await selectRetained("amount");
++  await vi.waitFor(() => {
++    wrapper!.findComponent(FcDesigner).vm.triggerActive("amount");
++    expect(wrapper!.find('[data-retained-input="number"]').exists()).toBe(true);
++  });
++  await flushPromises();
++  const input = wrapper!.get<HTMLInputElement>('[data-retained-input="number"]');
+   await input.setValue(raw);
+   return input;
+ }

@@ -1,7 +1,43 @@
 pnpm-lock.yaml
 README.md
 AGENTS.md
-CONTEXT.md
+GLOSSARY.md
 **/dist/
 **/coverage/
 **/node_modules/
+# 故意损坏的 JSON 文件用于文档拒绝验收，不能被格式化或要求语法合法。
+docs/specs/iteration-3/evidence/75-browser-fixtures/E01.flowduet.json
+
+# 原始浏览器证据保留实际下载/落盘字节及校验和，不由格式化器重写。
+docs/specs/iteration-3/evidence/76-browser-run/
+docs/specs/iteration-3/evidence/76-browser-recheck/
+docs/specs/iteration-3/evidence/76-browser-fixtures/bad-json.flowduet.json
+
+# PR #89 复验的原始下载、部署资源及校验和保留实际字节。
+docs/specs/iteration-3/evidence/77-recheck/
+
+# PR #89 内置浏览器原始证据保留字节及校验和。
+docs/specs/iteration-3/evidence/77-codex-browser-run/
+docs/specs/iteration-3/evidence/77-u64-fix/
+
+# #77 版本化候选产物原始证据与下载字节。
+docs/specs/iteration-3/evidence/77-version-prep/
+
+# 本地执行记录与浏览器临时快照；正式验收产物保存在 docs 中。
+.superpowers/
+.playwright-cli/
+
+# 本轮浏览器原始下载及运行证据保留字节，不由格式化器重写。
+docs/design/reviews/evidence/2026-10-14-branch-structure-repair/
+
+# 阶段零原始截图、浏览器快照与测量证据保留字节。
+docs/design/system-v1/probes/evidence/
+
+# vendored 第三方技能（上游 vuejs-ai/skills）保持与上游逐字节一致，便于升级时逐行比对，不参与仓库格式化。
+.agents/
+
+# #118 宿主事件的浏览器、消费和运行原始证据保留字节。
+docs/design/reviews/evidence/2026-11-09-form-designer-host-events/
+
+# #120 版本化产物、浏览器与引擎验收原物保留字节。
+docs/design/reviews/evidence/2026-11-09-three-package-version-prep/

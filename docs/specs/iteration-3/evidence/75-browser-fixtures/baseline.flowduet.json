@@ -1,0 +1,22 @@
+{
+  "format": "flowduet.design",
+  "version": 1,
+  "engine": "flowable",
+  "xml": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<bpmn:definitions xmlns:bpmn=\"http://www.omg.org/spec/BPMN/20100524/MODEL\" xmlns:fa=\"http://flowable.org/bpmn\" xmlns:fd=\"urn:flowduet:bpmn\" id=\"defs75\" targetNamespace=\"urn:acceptance75\">\n  <bpmn:process id=\"flow75\" name=\"保留中的验收流程75\" isExecutable=\"true\" fd:defaultFormKey=\"f_apply\">\n    <bpmn:startEvent id=\"s\" name=\"开始\" />\n    <bpmn:userTask id=\"t\" name=\"验收审批75\" fa:assignee=\"keep75\" />\n    <bpmn:endEvent id=\"e\" name=\"结束\" />\n    <bpmn:sequenceFlow id=\"f1\" sourceRef=\"s\" targetRef=\"t\" />\n    <bpmn:sequenceFlow id=\"f2\" sourceRef=\"t\" targetRef=\"e\" />\n    \n  </bpmn:process>\n</bpmn:definitions>",
+  "forms": [
+    {
+      "id": "f_apply",
+      "name": "验收申请单75",
+      "provider": "form-create/element-plus",
+      "rules": "[{\"type\": \"input\", \"field\": \"reason75\", \"title\": \"验收事由75\", \"value\": \"原始默认值75\", \"$required\": true}]",
+      "options": "{\"form\": {\"labelWidth\": \"130px\"}, \"submitBtn\": {\"show\": false}}"
+    },
+    {
+      "id": "f_unbound",
+      "name": "未绑定表单75",
+      "provider": "form-create/element-plus",
+      "rules": "[{\"type\": \"input\", \"field\": \"reason75\", \"title\": \"验收事由75\", \"value\": \"原始默认值75\", \"$required\": true}]",
+      "options": "{\"form\": {\"labelWidth\": \"130px\"}, \"submitBtn\": {\"show\": false}}"
+    }
+  ]
+}

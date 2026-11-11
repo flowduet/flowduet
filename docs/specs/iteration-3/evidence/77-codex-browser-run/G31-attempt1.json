@@ -1,0 +1,20 @@
+{
+  "title": "循环",
+  "source": "A12/A13/A20",
+  "method": "Codex内置浏览器真实UI",
+  "startedUTC": "2026-10-12T08:31:47.090Z",
+  "status": "通过",
+  "attempts": [],
+  "actual": {
+    "rejected": true,
+    "error": "文档流程超出可编辑范围：元素 t 的多出边未按分支块处理（非网关多出边，不良构）",
+    "preservedForms": true,
+    "preservedUnsavedModel": true,
+    "preservedDirty": true
+  },
+  "completedUTC": "2026-10-12T08:31:50.734Z",
+  "evidence": [
+    "G31.ax.txt",
+    "G31.jpg"
+  ]
+}

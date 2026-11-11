@@ -1,0 +1,6 @@
+{
+  "bg": "rgb(255, 255, 255)",
+  "class": "el-picker-panel el-date-picker",
+  "primary": "#409eff",
+  "theme": null
+}

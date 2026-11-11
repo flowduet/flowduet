@@ -1,0 +1,13 @@
+async(page)=>{
+ page.setDefaultTimeout(5000);
+ if(!page.url().includes('/probes/stage-zero/index.html'))await page.goto('http://127.0.0.1:5173/probes/stage-zero/index.html');
+ if(!(await page.locator('[data-test=form-state-probe]').count()))await page.getByRole('button',{name:'表单状态 C',exact:true}).click();
+ await page.locator('[data-test=c-field]').selectOption('F01');await page.locator('[data-test=c-layout]').selectOption('top');await page.locator('[data-test=c-variant]').selectOption('normal-default');await page.locator('[data-test=c-reset]').click();
+ const root=page.locator('[data-c-owner="C-A"]');await root.locator('._fc-m-drag ._fd-drag-tool').first().click();
+ const row=root.locator('._fc-r-config .el-form-item').filter({has:page.locator('.el-form-item__label',{hasText:/^默认值$/})}),input=row.locator('input');await input.fill('快捷键最新文字');
+ const before=JSON.parse(await root.locator('[data-test=c-state]').textContent());await input.press('Alt+s');
+ await page.waitForFunction(seq=>JSON.parse(document.querySelector('[data-c-owner="C-A"] [data-test=c-state]').textContent).resultSequence>seq,before.resultSequence);
+ const after=JSON.parse(await root.locator('[data-test=c-state]').textContent());
+ if(!after.result.ok)throw new Error(JSON.stringify(after.result));
+ const output=JSON.parse(JSON.parse(after.result.value.json).forms[0].rules)[0];if(output.value!=='快捷键最新文字')throw new Error('旧值导出');return {value:output.value,result:after.result,unchanged:after.sameForms&&after.sameGraph};
+}

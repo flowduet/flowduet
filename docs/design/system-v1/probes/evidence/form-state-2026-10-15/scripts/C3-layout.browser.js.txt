@@ -1,0 +1,20 @@
+async(page)=>{
+ const root=page.locator('[data-c-owner="C-A"]'),rows=[];page.setDefaultTimeout(5000);
+ const state=async()=>JSON.parse(await root.locator('[data-test=c-state]').textContent());
+ const capture=async()=>{const s=await state();await root.locator('[data-test=c-collect]').click();await page.waitForFunction(n=>JSON.parse(document.querySelector('[data-c-owner="C-A"] [data-test=c-state]').textContent).resultSequence>n,s.resultSequence);const t=await state();return {result:t.result,rules:t.result.ok?JSON.parse(JSON.parse(t.result.value.json).forms[0].rules):null,unchanged:t.sameForms&&t.sameGraph,persist:t.persistCalls}};
+ const reset=async(field='all')=>{await page.locator('[data-test=c-field]').selectOption(field);await page.locator('[data-test=c-layout]').selectOption('grid');await page.locator('[data-test=c-reset]').click()};
+ for(const action of ['cross-column','sort','nested-row','build-row']){
+  try{await reset(action==='build-row'?'F01':'all');if(action==='build-row'){await page.locator('[data-test=c-layout]').selectOption('top');await page.locator('[data-test=c-reset]').click()}const before=await capture(),cols=root.locator('._fd-col-drag');
+   if(action==='cross-column'||action==='sort'){
+    const item=root.locator('._fc-col-item').filter({hasText:'甲文本'}).last();await item.locator('._fd-drag-tool').click();const handle=item.locator('._fd-drag-l ._fd-drag-btn').first();await handle.scrollIntoViewIfNeeded();const a=await handle.boundingBox(),b=await (action==='cross-column'?cols.nth(1):root.locator('._fc-col-item').filter({hasText:'甲数字'}).last()).boundingBox();await page.mouse.move(a.x+a.width/2,a.y+a.height/2);await page.mouse.down();await page.mouse.move(a.x+20,a.y+20,{steps:5});await page.mouse.move(b.x+30,b.y+Math.min(b.height-2,60),{steps:15});await page.mouse.up();
+   }
+   if(action==='nested-row')await root.locator('._fc-l-item').last().dragTo(cols.first(),{targetPosition:{x:30,y:20}});
+   if(action==='build-row')await root.locator('._fc-l-item').last().dragTo(root.locator('._fc-m-drag'),{targetPosition:{x:20,y:20}});
+   const after=await capture();rows.push({action,before,after});
+  }catch(e){rows.push({action,error:String(e),status:'tool-or-UI-failed'});await page.mouse.up()}
+ }
+ for(let run=1;run<=3;run++){
+  try{await reset('F01');const before=await capture();const src=root.locator('._fc-l-item').first();await src.scrollIntoViewIfNeeded();const a=await src.boundingBox();await page.mouse.move(a.x+15,a.y+15);await page.mouse.down();await page.mouse.move(a.x+35,a.y+35,{steps:5});await page.mouse.move(5,5,{steps:15});await page.mouse.up();const after=await capture();rows.push({action:'outside-drop',run,before,after,layoutRestored:JSON.stringify(before.rules)===JSON.stringify(after.rules)})}catch(e){rows.push({action:'outside-drop',run,error:String(e)});await page.mouse.up()}
+ }
+ return rows;
+}

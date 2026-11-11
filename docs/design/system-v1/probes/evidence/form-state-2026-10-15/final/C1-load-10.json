@@ -1,0 +1,98 @@
+[
+  {
+    "caseId": "I01/month/top/K/load",
+    "field": "I01",
+    "layout": "top",
+    "variant": "normal-default",
+    "dateType": "month",
+    "want": "2026-10",
+    "present": true,
+    "status": "passed",
+    "actual": {
+      "present": true,
+      "value": "2026-10",
+      "type": "datePicker",
+      "field": "a_date",
+      "props": {
+        "type": "month",
+        "valueFormat": "YYYY-MM"
+      }
+    },
+    "unchanged": true,
+    "typePass": true,
+    "datePass": true,
+    "gridPass": true
+  },
+  {
+    "caseId": "I01/month/grid/K/load",
+    "field": "I01",
+    "layout": "grid",
+    "variant": "normal-default",
+    "dateType": "month",
+    "want": "2026-10",
+    "present": true,
+    "status": "passed",
+    "actual": {
+      "present": true,
+      "value": "2026-10",
+      "type": "datePicker",
+      "field": "a_date",
+      "props": {
+        "type": "month",
+        "valueFormat": "YYYY-MM"
+      }
+    },
+    "unchanged": true,
+    "typePass": true,
+    "datePass": true,
+    "gridPass": true
+  },
+  {
+    "caseId": "I01/year/top/K/load",
+    "field": "I01",
+    "layout": "top",
+    "variant": "normal-default",
+    "dateType": "year",
+    "want": "2026",
+    "present": true,
+    "status": "passed",
+    "actual": {
+      "present": true,
+      "value": "2026",
+      "type": "datePicker",
+      "field": "a_date",
+      "props": {
+        "type": "year",
+        "valueFormat": "YYYY"
+      }
+    },
+    "unchanged": true,
+    "typePass": true,
+    "datePass": true,
+    "gridPass": true
+  },
+  {
+    "caseId": "I01/year/grid/K/load",
+    "field": "I01",
+    "layout": "grid",
+    "variant": "normal-default",
+    "dateType": "year",
+    "want": "2026",
+    "present": true,
+    "status": "passed",
+    "actual": {
+      "present": true,
+      "value": "2026",
+      "type": "datePicker",
+      "field": "a_date",
+      "props": {
+        "type": "year",
+        "valueFormat": "YYYY"
+      }
+    },
+    "unchanged": true,
+    "typePass": true,
+    "datePass": true,
+    "gridPass": true
+  }
+]

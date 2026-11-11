@@ -1,0 +1,4 @@
+[refactor/stage-zero-form-state eb3773b] test(probe): 记录真实拖拽完成与中断边界
+ 4 files changed, 102 insertions(+), 1 deletion(-)
+ create mode 100644 apps/playground/probes/stage-zero/form-state/drag-boundary.test.ts
+ create mode 100644 apps/playground/probes/stage-zero/form-state/drag-boundary.ts

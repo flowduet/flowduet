@@ -1,0 +1,29 @@
+{
+  "sourceCommit": "23fb82653aa0f7119622186a2bc72733e6ed439e",
+  "sources": [
+    {
+      "path": "apps/playground/probes/stage-zero/contracts/candidate.test.ts",
+      "sha256": "91673e985a602f8b4dabcf66ea0ddf0e8f7e533258f9839de75645a6086d00cc",
+      "bytes": 10827,
+      "gitBlob": "86ef445b954fd67cb9bd315b5e625f9837ac556a"
+    },
+    {
+      "path": "apps/playground/probes/stage-zero/form-repair/input-capture.cases.ts",
+      "sha256": "e2fbe2448ad16cfe78b4c38e596a4ec447b149c84294ff4693df839f2d2381d1",
+      "bytes": 3212,
+      "gitBlob": "f136b58ab881e77cb6d3033c414fe5e5bece9ca4"
+    },
+    {
+      "path": "packages/form-create/src/components.test.ts",
+      "sha256": "bac0a4bd394aa1fb6e74dced6aa0259c1fdd3e7a81db79c35bd59924f1cdb47e",
+      "bytes": 65769,
+      "gitBlob": "9222cb01aabd8c22d3298d2a8df842ca110174a3"
+    },
+    {
+      "path": "packages/form-create/src/editor-input-state.test.ts",
+      "sha256": "cc44399bb24ef3aa6873cf170c77e26920d5e858d24840e4a6f7f3edf2b3fb9f",
+      "bytes": 4372,
+      "gitBlob": "a5cda0e5ae5d3bca4658a89fd0b6ab5800620b0e"
+    }
+  ]
+}

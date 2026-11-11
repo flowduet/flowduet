@@ -1,0 +1,10 @@
+{
+  "surface": "Codex in-app browser",
+  "url": "http://127.0.0.1:5173/probes/stage-zero/index.html",
+  "viewport": {
+    "height": 874,
+    "width": 1255
+  },
+  "finalReplayCommit": "a293b24",
+  "resourceMetricsLimit": "Performance.enable and Memory.getDOMCounters are not supported through raw CDP"
+}

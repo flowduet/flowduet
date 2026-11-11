@@ -1,0 +1,8 @@
+{"phase":"begin","failure":"正常"}
+{"phase":"begin","failure":"测试体抛错"}
+{"phase":"B-before","connected":true,"spy":true}
+{"phase":"caught","failure":"正常","error":"Error: 测试实例已失效，拒绝迟到动作"}
+{"phase":"closing","failure":"正常"}
+{"phase":"B-after","connected":false,"spy":false}
+{"phase":"caught","failure":"测试体抛错","error":"AssertionError: expected false to be true // Object.is equality"}
+{"phase":"closing","failure":"测试体抛错"}

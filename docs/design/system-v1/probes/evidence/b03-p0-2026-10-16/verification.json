@@ -1,0 +1,117 @@
+{
+  "runtimeBase": "aaf7da6",
+  "baseline": {
+    "command": [
+      "pnpm",
+      "test"
+    ],
+    "exitCode": 1,
+    "failure": "App.integration.test.ts:68 默认5秒超时",
+    "log": "verification/baseline-test.log"
+  },
+  "commands": [
+    {
+      "name": "candidate",
+      "command": [
+        "pnpm",
+        "--filter",
+        "@flowduet/playground",
+        "exec",
+        "vitest",
+        "run",
+        "probes/stage-zero/contracts/candidate.test.ts"
+      ],
+      "exitCode": 0,
+      "startedAt": "2026-10-16T06:54:37.060499+00:00",
+      "finishedAt": "2026-10-16T06:54:43.763016+00:00",
+      "log": "verification/candidate.log"
+    },
+    {
+      "name": "test",
+      "command": [
+        "pnpm",
+        "test"
+      ],
+      "exitCode": 0,
+      "startedAt": "2026-10-16T06:54:43.763710+00:00",
+      "finishedAt": "2026-10-16T06:55:53.922284+00:00",
+      "log": "verification/test.log"
+    },
+    {
+      "name": "build",
+      "command": [
+        "pnpm",
+        "build"
+      ],
+      "exitCode": 0,
+      "startedAt": "2026-10-16T06:55:53.922896+00:00",
+      "finishedAt": "2026-10-16T06:56:05.077376+00:00",
+      "log": "verification/build.log"
+    },
+    {
+      "name": "lint",
+      "command": [
+        "pnpm",
+        "lint"
+      ],
+      "exitCode": 0,
+      "startedAt": "2026-10-16T06:56:05.078186+00:00",
+      "finishedAt": "2026-10-16T06:56:15.938977+00:00",
+      "log": "verification/lint.log"
+    },
+    {
+      "name": "strict",
+      "command": [
+        "pnpm",
+        "--filter",
+        "@flowduet/form-create",
+        "exec",
+        "vue-tsc",
+        "--noEmit",
+        "-p",
+        "../../apps/playground/probes/stage-zero/tsconfig.json"
+      ],
+      "exitCode": 0,
+      "startedAt": "2026-10-16T06:56:15.939611+00:00",
+      "finishedAt": "2026-10-16T06:56:21.597352+00:00",
+      "log": "verification/strict.log"
+    },
+    {
+      "name": "lint-final-docs",
+      "command": [
+        "pnpm",
+        "lint"
+      ],
+      "exitCode": 0,
+      "startedAt": "2026-10-16T07:02:16.825593+00:00",
+      "finishedAt": "2026-10-16T07:02:28.001016+00:00",
+      "log": "verification/lint-final-docs.log",
+      "reason": "独立复核后新增验收文档；不重复未改动源码的全量测试"
+    }
+  ],
+  "cleanup": {
+    "browserSession": "flowduet-p0 closed",
+    "vite5180": "SIGINT stopped; lsof no listener"
+  },
+  "runtimeSourceCommit": "dbb011aea101e54fcf32cc2f8134a82547a8a4c7",
+  "gitIntegrity": {
+    "evidenceGitBlobsChecked": 79,
+    "runtimeSourceBlobsChecked": 154,
+    "documentBlobsChecked": 4,
+    "result": "all bytes and SHA256 match",
+    "rawLogWhitespace": "git diff --check includes raw-log blank-line/trailing-space warnings in four original logs; bytes preserved intentionally",
+    "engineeringDiffCheck": {
+      "command": [
+        "git",
+        "diff",
+        "--check",
+        "aaf7da6..HEAD",
+        "--",
+        ".",
+        ":(glob,exclude)docs/design/system-v1/probes/evidence/b03-p0-2026-10-16/**/*.log"
+      ],
+      "exitCode": 0,
+      "output": ""
+    }
+  }
+}

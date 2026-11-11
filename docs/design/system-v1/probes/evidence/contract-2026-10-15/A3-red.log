@@ -1,0 +1,114 @@
+
+ RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground
+
+ ❯ probes/stage-zero/contracts/transaction.test.ts (1 test | 1 failed) 19ms
+   ❯ 属性提交原子性 (1)
+     × commit_middle_failure_rolls_back_identity_arrays_di_events 17ms
+ ❯ probes/stage-zero/contracts/candidate.test.ts (7 tests | 7 failed) 25ms
+   ❯ 隔离候选与当前编辑版本 (7)
+     × focused_flush_included_in_first_candidate 10ms
+     × second_capture_failure_zero_live_writes 3ms
+     × prepare_new_input_rejected 2ms
+     × snapshot_compile_keeps_original_di 2ms
+     × unsupported_extension_preserved_or_rejected 2ms
+     × fork_default_readset_detects_sibling_change 2ms
+     × new_form_reference_blocks_stale_delete 2ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 8 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  probes/stage-zero/contracts/candidate.test.ts > 隔离候选与当前编辑版本 > focused_flush_included_in_first_candidate
+Error: Controller尚未实现
+ ❯ createContractController probes/stage-zero/contracts/controller.ts:1:78
+      1| export function createContractController(..._args: unknown[]): never {…
+       |                                                                              ^
+      2|
+ ❯ withForms probes/stage-zero/contracts/candidate.test.ts:6:127
+ ❯ probes/stage-zero/contracts/candidate.test.ts:9:15
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/8]⎯
+
+ FAIL  probes/stage-zero/contracts/candidate.test.ts > 隔离候选与当前编辑版本 > second_capture_failure_zero_live_writes
+Error: Controller尚未实现
+ ❯ createContractController probes/stage-zero/contracts/controller.ts:1:78
+      1| export function createContractController(..._args: unknown[]): never {…
+       |                                                                              ^
+      2|
+ ❯ withForms probes/stage-zero/contracts/candidate.test.ts:6:127
+ ❯ probes/stage-zero/contracts/candidate.test.ts:16:15
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/8]⎯
+
+ FAIL  probes/stage-zero/contracts/candidate.test.ts > 隔离候选与当前编辑版本 > prepare_new_input_rejected
+Error: Controller尚未实现
+ ❯ createContractController probes/stage-zero/contracts/controller.ts:1:78
+      1| export function createContractController(..._args: unknown[]): never {…
+       |                                                                              ^
+      2|
+ ❯ withForms probes/stage-zero/contracts/candidate.test.ts:6:127
+ ❯ probes/stage-zero/contracts/candidate.test.ts:26:15
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/8]⎯
+
+ FAIL  probes/stage-zero/contracts/candidate.test.ts > 隔离候选与当前编辑版本 > snapshot_compile_keeps_original_di
+Error: Controller尚未实现
+ ❯ createContractController probes/stage-zero/contracts/controller.ts:1:78
+      1| export function createContractController(..._args: unknown[]): never {…
+       |                                                                              ^
+      2|
+ ❯ withForms probes/stage-zero/contracts/candidate.test.ts:6:127
+ ❯ probes/stage-zero/contracts/candidate.test.ts:32:15
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/8]⎯
+
+ FAIL  probes/stage-zero/contracts/candidate.test.ts > 隔离候选与当前编辑版本 > unsupported_extension_preserved_or_rejected
+Error: Controller尚未实现
+ ❯ createContractController probes/stage-zero/contracts/controller.ts:1:78
+      1| export function createContractController(..._args: unknown[]): never {…
+       |                                                                              ^
+      2|
+ ❯ withForms probes/stage-zero/contracts/candidate.test.ts:6:127
+ ❯ probes/stage-zero/contracts/candidate.test.ts:38:15
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/8]⎯
+
+ FAIL  probes/stage-zero/contracts/candidate.test.ts > 隔离候选与当前编辑版本 > fork_default_readset_detects_sibling_change
+Error: Controller尚未实现
+ ❯ createContractController probes/stage-zero/contracts/controller.ts:1:78
+      1| export function createContractController(..._args: unknown[]): never {…
+       |                                                                              ^
+      2|
+ ❯ withForms probes/stage-zero/contracts/candidate.test.ts:6:127
+ ❯ probes/stage-zero/contracts/candidate.test.ts:45:15
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/8]⎯
+
+ FAIL  probes/stage-zero/contracts/candidate.test.ts > 隔离候选与当前编辑版本 > new_form_reference_blocks_stale_delete
+Error: Controller尚未实现
+ ❯ createContractController probes/stage-zero/contracts/controller.ts:1:78
+      1| export function createContractController(..._args: unknown[]): never {…
+       |                                                                              ^
+      2|
+ ❯ withForms probes/stage-zero/contracts/candidate.test.ts:6:127
+ ❯ probes/stage-zero/contracts/candidate.test.ts:51:15
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/8]⎯
+
+ FAIL  probes/stage-zero/contracts/transaction.test.ts > 属性提交原子性 > commit_middle_failure_rolls_back_identity_arrays_di_events
+Error: 事务尚未实现
+ ❯ commitAtomicProperties probes/stage-zero/contracts/transaction.ts:1:76
+      1| export function commitAtomicProperties(..._args: unknown[]): never { t…
+       |                                                                            ^
+      2|
+ ❯ probes/stage-zero/contracts/transaction.test.ts:9:20
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/8]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  8 failed (8)
+   Start at  09:43:39
+   Duration  2.68s (import 58%, transform 27%, environment 13%, tests 1%)
+
+undefined
+/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run probes/stage-zero/contracts/candidate.test.ts probes/stage-zero/contracts/transaction.test.ts --testTimeout 20000

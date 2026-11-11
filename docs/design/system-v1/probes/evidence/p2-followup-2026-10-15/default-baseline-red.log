@@ -1,0 +1,40 @@
+
+ RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground
+
+ ❯ probes/stage-zero/contract-location.test.ts (21 tests | 1 failed | 19 skipped) 870ms
+   ❯ 四项P2的真实组件回归 (3)
+     × 默认表单冲突明确放弃旧输入后留在配置区且保留原流程选择 341ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  probes/stage-zero/contract-location.test.ts > 四项P2的真实组件回归 > 默认表单冲突明确放弃旧输入后留在配置区且保留原流程选择
+AssertionError: expected undefined to match object { kind: 'default-form', …(1) }
+
+- Expected:
+{
+  "formKey": "external",
+  "kind": "default-form",
+}
+
++ Received:
+undefined
+
+ ❯ probes/stage-zero/contract-location.test.ts:424:53
+    422|       await flushPromises();
+    423|       const visible = w.get('[data-test="contract-default-form"]').isV…
+    424|       expect(w.vm.controller.drafts.input(t.value)).toMatchObject({
+       |                                                     ^
+    425|         kind: "default-form", formKey: "external",
+    426|       });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 1 passed | 19 skipped (21)
+   Start at  13:52:21
+   Duration  3.36s (import 41%, tests 27%, transform 23%, environment 9%)
+
+undefined
+/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run probes/stage-zero/contract-location.test.ts -t 默认表单冲突

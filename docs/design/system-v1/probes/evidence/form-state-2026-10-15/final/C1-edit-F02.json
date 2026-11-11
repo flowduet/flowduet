@@ -1,0 +1,92 @@
+[
+  {
+    "field": "F02",
+    "layout": "top",
+    "fieldReadonly": true,
+    "action": "edit",
+    "status": "passed",
+    "actual": {
+      "type": "input",
+      "field": "a_notes",
+      "title": "配置F02",
+      "props": {
+        "type": "textarea",
+        "placeholder": "输入说明"
+      },
+      "value": "新第一行\n新第二行",
+      "_fc_id": "id_Fnknmv9p7aswvbc",
+      "name": "ref_F3timv9p7aswvcc",
+      "display": true,
+      "hidden": false,
+      "_fc_drag_tag": "input",
+      "$required": true
+    },
+    "sessionUnchanged": true
+  },
+  {
+    "field": "F02",
+    "layout": "top",
+    "action": "clear",
+    "status": "failed",
+    "actual": {
+      "type": "input",
+      "field": "a_notes",
+      "title": "配置F02",
+      "props": {
+        "type": "textarea",
+        "placeholder": "输入说明"
+      },
+      "_fc_id": "id_Fnknmv9p7aswvbc",
+      "name": "ref_F3timv9p7aswvcc",
+      "display": true,
+      "hidden": false,
+      "_fc_drag_tag": "input",
+      "$required": true
+    }
+  },
+  {
+    "field": "F02",
+    "layout": "grid",
+    "fieldReadonly": true,
+    "action": "edit",
+    "status": "passed",
+    "actual": {
+      "type": "input",
+      "field": "a_notes",
+      "title": "配置F02",
+      "props": {
+        "type": "textarea",
+        "placeholder": "输入说明"
+      },
+      "value": "新第一行\n新第二行",
+      "_fc_id": "id_Fxbrmv9p7be4vfc",
+      "name": "ref_Foecmv9p7be4vgc",
+      "display": true,
+      "hidden": false,
+      "_fc_drag_tag": "input",
+      "$required": true
+    },
+    "sessionUnchanged": true
+  },
+  {
+    "field": "F02",
+    "layout": "grid",
+    "action": "clear",
+    "status": "failed",
+    "actual": {
+      "type": "input",
+      "field": "a_notes",
+      "title": "配置F02",
+      "props": {
+        "type": "textarea",
+        "placeholder": "输入说明"
+      },
+      "_fc_id": "id_Fxbrmv9p7be4vfc",
+      "name": "ref_Foecmv9p7be4vgc",
+      "display": true,
+      "hidden": false,
+      "_fc_drag_tag": "input",
+      "$required": true
+    }
+  }
+]

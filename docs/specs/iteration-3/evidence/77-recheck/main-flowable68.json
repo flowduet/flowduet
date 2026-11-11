@@ -1,0 +1,48 @@
+{
+  "verifiedCommit": "211b9e13e63e9dc37b85bde067e9048b788ab076",
+  "engine": {
+    "name": "default",
+    "resourceUrl": null,
+    "exception": null,
+    "version": "6.8.0"
+  },
+  "image": "flowable/flowable-ui:6.8.0",
+  "endpoint": "http://127.0.0.1:18081/flowable-ui/process-api",
+  "xmlSha256": "d690e7f47cd7c0e17ec6de035b6a9ee9a54aedfc63f47e4a9627269c530f08c7",
+  "documentSha256": "0e363cf383240d2895a45421688c11c0a950706a183cbeeb7b0a75bf3c0c61e4",
+  "deploymentHttp": 201,
+  "deploymentId": "e517272f-c5dd-11f1-b30a-eee469626533",
+  "definitionId": "playground_demo:1:e597eff2-c5dd-11f1-b30a-eee469626533",
+  "definitionKey": "playground_demo",
+  "storedResourceMatchesExport": true,
+  "instanceHttp": 201,
+  "instanceId": "e5d79103-c5dd-11f1-b30a-eee469626533",
+  "firstTask": {
+    "id": "e5db88ab-c5dd-11f1-b30a-eee469626533",
+    "name": "经理审批",
+    "assignee": "王经理",
+    "formKey": null
+  },
+  "completeFirstTaskHttp": 200,
+  "multiInstanceTasks": [
+    {
+      "id": "e5ef10bc-c5dd-11f1-b30a-eee469626533",
+      "name": "合同会签",
+      "assignee": "\"刘备\"",
+      "formKey": "form_2"
+    },
+    {
+      "id": "e5ef37d1-c5dd-11f1-b30a-eee469626533",
+      "name": "合同会签",
+      "assignee": "\"关羽\"",
+      "formKey": "form_2"
+    },
+    {
+      "id": "e5ef5ee6-c5dd-11f1-b30a-eee469626533",
+      "name": "合同会签",
+      "assignee": "\"张飞\"",
+      "formKey": "form_2"
+    }
+  ],
+  "boundary": "停止在会签任务；未调用抄送代理 bean，不证明运行时表单接通或流程全程完成"
+}

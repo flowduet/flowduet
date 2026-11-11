@@ -1,0 +1,20 @@
+
+ RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground
+
+ ✓ probes/stage-zero/form-state/input-boundary.test.ts > C2 输入边界 > 只读快捷键不再传入第三方潜在编辑监听，其他键保持原路由 3ms
+ ✓ probes/stage-zero/form-state/input-boundary.test.ts > C2 输入边界 > composition待确认时不允许序列化旧值 1ms
+ ✓ probes/stage-zero/form-state/input-boundary.test.ts > C2 输入边界 > drag待确认时不允许序列化旧值 0ms
+ ✓ probes/stage-zero/form-state/input-boundary.test.ts > C2 输入边界 > owner待确认时不允许序列化旧值 0ms
+ ✓ probes/stage-zero/form-state/input-boundary.test.ts > C2 输入边界 > popup待确认时不允许序列化旧值 0ms
+ ✓ probes/stage-zero/form-state/input-boundary.test.ts > C2 输入边界 > badInput待确认时不允许序列化旧值 0ms
+ ✓ probes/stage-zero/form-state/input-boundary.test.ts > C2 输入边界 > 已确认输入不会被误挡 0ms
+ ✓ probes/stage-zero/form-state/retention-policy.test.ts > C2 保持挂载导航 > two_forms_switch_without_session_write：忙碌和未捕获输入也不触发导出 14ms
+ ✓ probes/stage-zero/form-state/retention-policy.test.ts > C2 保持挂载导航 > 外来/错误facet在触碰宿主前拒绝 6ms
+ ✓ probes/stage-zero/form-state/retention-policy.test.ts > C2 保持挂载导航 > 后一次导航获胜，迟到挂载不能显示或卸载当前实例 3ms
+ ✓ probes/stage-zero/form-state/retention-policy.test.ts > C2 保持挂载导航 > 目标删除或dispose期间完成的挂载不再导航 3ms
+
+ Test Files  2 passed (2)
+      Tests  11 passed (11)
+   Start at  20:25:39
+   Duration  2.69s (import 53%, transform 24%, environment 21%, tests 1%, worker 1%)
+

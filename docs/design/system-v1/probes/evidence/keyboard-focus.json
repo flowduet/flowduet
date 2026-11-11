@@ -1,0 +1,7 @@
+{
+  "class": "el-switch__input",
+  "label": null,
+  "outline": "rgb(153, 200, 255) auto 1px",
+  "role": "switch",
+  "tag": "INPUT"
+}

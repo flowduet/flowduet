@@ -1,0 +1,6 @@
+### Result
+[{"instance":0,"epoch":1,"dirty":true,"generation":2,"saved":1,"validation":false,"pending":false},{"instance":1,"epoch":1,"dirty":false,"generation":0,"saved":0,"validation":false,"pending":false}]
+### Ran Playwright code
+```js
+await (async (page) => { const own=page.locator("[data-host-instance]").first(); await own.getByRole("button",{name:"开始保存",exact:true}).click(); await page.waitForFunction(() => JSON.parse(document.querySelector("[data-test=host-result]").textContent)[0].pending); await own.getByRole("textbox",{name:"实例0候选名称"}).fill("保存中继续编辑"); await own.getByRole("button",{name:"宿主确认成功",exact:true}).click(); await page.waitForFunction(() => !JSON.parse(document.querySelector("[data-test=host-result]").textContent)[0].pending); return JSON.parse(await page.locator("[data-test=host-result]").textContent()); })(page);
+```

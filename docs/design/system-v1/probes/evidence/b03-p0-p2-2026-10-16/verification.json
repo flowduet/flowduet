@@ -1,0 +1,89 @@
+{
+  "base": "a857675",
+  "commands": [
+    {
+      "name": "candidate",
+      "command": [
+        "pnpm",
+        "--filter",
+        "@flowduet/playground",
+        "exec",
+        "vitest",
+        "run",
+        "probes/stage-zero/contracts/candidate.test.ts"
+      ],
+      "exitCode": 0,
+      "startedAt": "2026-10-16T08:14:52.575051+00:00",
+      "finishedAt": "2026-10-16T08:14:59.681005+00:00",
+      "log": "verification/candidate.log"
+    },
+    {
+      "name": "test",
+      "command": [
+        "pnpm",
+        "test"
+      ],
+      "exitCode": 0,
+      "startedAt": "2026-10-16T08:14:59.681540+00:00",
+      "finishedAt": "2026-10-16T08:16:05.334734+00:00",
+      "log": "verification/test.log"
+    },
+    {
+      "name": "build",
+      "command": [
+        "pnpm",
+        "build"
+      ],
+      "exitCode": 0,
+      "startedAt": "2026-10-16T08:16:05.335314+00:00",
+      "finishedAt": "2026-10-16T08:16:16.110083+00:00",
+      "log": "verification/build.log"
+    },
+    {
+      "name": "lint",
+      "command": [
+        "pnpm",
+        "lint"
+      ],
+      "exitCode": 0,
+      "startedAt": "2026-10-16T08:16:16.110628+00:00",
+      "finishedAt": "2026-10-16T08:16:26.937037+00:00",
+      "log": "verification/lint.log"
+    },
+    {
+      "name": "strict",
+      "command": [
+        "pnpm",
+        "--filter",
+        "@flowduet/form-create",
+        "exec",
+        "vue-tsc",
+        "--noEmit",
+        "-p",
+        "../../apps/playground/probes/stage-zero/tsconfig.json"
+      ],
+      "exitCode": 0,
+      "startedAt": "2026-10-16T08:16:26.937818+00:00",
+      "finishedAt": "2026-10-16T08:16:32.713185+00:00",
+      "log": "verification/strict.log"
+    },
+    {
+      "name": "lint-final-docs",
+      "command": [
+        "pnpm",
+        "lint"
+      ],
+      "exitCode": 0,
+      "startedAt": "2026-10-16T08:23:31.803928+00:00",
+      "finishedAt": "2026-10-16T08:23:41.960875+00:00",
+      "log": "verification/lint-final-docs.log",
+      "reason": "独立复核后更新验收文档，源码未变，不重复全量测试"
+    }
+  ],
+  "cleanup": {
+    "browser": "flowduet-p0-p2 closed",
+    "vite5182": "SIGINT stopped"
+  },
+  "sourceSnapshot": "runtime-sources.json",
+  "runtimeSourceCommit": "6b1dacaa163f1c656393658df37381844c3f303f"
+}

@@ -1,0 +1,13 @@
+#78 消费者安装入口演练（2026-10-13）
+
+命令：临时目录 npm install --registry https://registry.npmjs.org/ @flowduet/core@latest @flowduet/designer@latest @flowduet/form-create@latest
+INSTALL_EXIT=0
+
+安装结果（node 读 node_modules 内 package.json）：
+@flowduet/core → 0.3.0
+@flowduet/designer → 0.1.0
+@flowduet/form-create → 0.1.0
+
+npm warn deprecated codemirror@6.65.7: This is an accidentally mis-tagged instance of 5.65.7
+
+added 143 packages in 35s

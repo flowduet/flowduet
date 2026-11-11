@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:flowable="http://flowable.org/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="default_branch_defs" targetNamespace="http://flowduet.dev/bpmn">
+  <bpmn:process id="default_branch" name="默认分支审批" isExecutable="true">
+    <bpmn:startEvent id="start" name="开始">
+      <bpmn:outgoing>flow_start_approve</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:userTask id="manager_approval" name="经理审批" flowable:assignee="${manager}">
+      <bpmn:incoming>flow_start_approve</bpmn:incoming>
+      <bpmn:outgoing>flow_approve_decision</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="decision" name="是否同意" default="flow_rejected">
+      <bpmn:incoming>flow_approve_decision</bpmn:incoming>
+      <bpmn:outgoing>flow_approved</bpmn:outgoing>
+      <bpmn:outgoing>flow_rejected</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:endEvent id="end_approved" name="同意归档">
+      <bpmn:incoming>flow_approved</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:endEvent id="end_rejected" name="拒绝结束">
+      <bpmn:incoming>flow_rejected</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="flow_start_approve" sourceRef="start" targetRef="manager_approval" />
+    <bpmn:sequenceFlow id="flow_approve_decision" sourceRef="manager_approval" targetRef="decision" />
+    <bpmn:sequenceFlow id="flow_approved" name="同意" sourceRef="decision" targetRef="end_approved">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${approved}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="flow_rejected" name="拒绝" sourceRef="decision" targetRef="end_rejected" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="default_branch_di">
+    <bpmndi:BPMNPlane id="default_branch_plane" bpmnElement="default_branch">
+      <bpmndi:BPMNShape id="start_di" bpmnElement="start">
+        <dc:Bounds x="160" y="60" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="manager_approval_di" bpmnElement="manager_approval">
+        <dc:Bounds x="140" y="160" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="decision_di" bpmnElement="decision">
+        <dc:Bounds x="165" y="290" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="end_approved_di" bpmnElement="end_approved">
+        <dc:Bounds x="250" y="400" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="end_rejected_di" bpmnElement="end_rejected">
+        <dc:Bounds x="100" y="400" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="flow_start_approve_di" bpmnElement="flow_start_approve">
+        <di:waypoint x="178" y="96" />
+        <di:waypoint x="178" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_approve_decision_di" bpmnElement="flow_approve_decision">
+        <di:waypoint x="190" y="240" />
+        <di:waypoint x="190" y="290" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_approved_di" bpmnElement="flow_approved">
+        <di:waypoint x="215" y="315" />
+        <di:waypoint x="268" y="400" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_rejected_di" bpmnElement="flow_rejected">
+        <di:waypoint x="165" y="315" />
+        <di:waypoint x="118" y="400" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

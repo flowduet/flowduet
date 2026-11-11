@@ -1,0 +1,64 @@
+{
+  "name": "@flowduet/form-create",
+  "version": "0.1.0",
+  "filename": "/Users/l/Documents/projects/flowduet/flowduet-form-create-0.1.0.tgz",
+  "files": [
+    {
+      "path": "dist/binding.d.ts"
+    },
+    {
+      "path": "dist/components/checkbox-defaults.d.ts"
+    },
+    {
+      "path": "dist/components/designer-config.d.ts"
+    },
+    {
+      "path": "dist/components/FormDesigner.vue.d.ts"
+    },
+    {
+      "path": "dist/components/FormManager.vue.d.ts"
+    },
+    {
+      "path": "dist/components/FormPreview.vue.d.ts"
+    },
+    {
+      "path": "dist/document.d.ts"
+    },
+    {
+      "path": "dist/element-label.d.ts"
+    },
+    {
+      "path": "dist/export.d.ts"
+    },
+    {
+      "path": "dist/form-create-setup.d.ts"
+    },
+    {
+      "path": "dist/form-create.css"
+    },
+    {
+      "path": "dist/form-schema.d.ts"
+    },
+    {
+      "path": "dist/form-semantics.d.ts"
+    },
+    {
+      "path": "dist/index.d.ts"
+    },
+    {
+      "path": "dist/index.js"
+    },
+    {
+      "path": "dist/session.d.ts"
+    },
+    {
+      "path": "LICENSE"
+    },
+    {
+      "path": "package.json"
+    },
+    {
+      "path": "README.md"
+    }
+  ]
+}

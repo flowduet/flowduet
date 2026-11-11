@@ -1,0 +1,35 @@
+[
+  {
+    "name": "build",
+    "command": [
+      "pnpm",
+      "build"
+    ],
+    "exitCode": 0,
+    "wallSeconds": 19.997
+  },
+  {
+    "name": "strict-probe",
+    "command": [
+      "pnpm",
+      "--filter",
+      "@flowduet/form-create",
+      "exec",
+      "vue-tsc",
+      "--noEmit",
+      "-p",
+      "../../apps/playground/probes/stage-zero/tsconfig.json"
+    ],
+    "exitCode": 0,
+    "wallSeconds": 5.977
+  },
+  {
+    "name": "lint",
+    "command": [
+      "pnpm",
+      "lint"
+    ],
+    "exitCode": 0,
+    "wallSeconds": 11.231
+  }
+]

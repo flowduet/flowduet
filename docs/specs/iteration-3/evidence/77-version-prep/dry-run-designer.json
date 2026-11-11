@@ -1,0 +1,61 @@
+{
+  "name": "@flowduet/designer",
+  "version": "0.1.0",
+  "filename": "/Users/l/Documents/projects/flowduet/flowduet-designer-0.1.0.tgz",
+  "files": [
+    {
+      "path": "dist/canvas-props.d.ts"
+    },
+    {
+      "path": "dist/components/BlockNodeList.vue.d.ts"
+    },
+    {
+      "path": "dist/components/BpmnCanvas.vue.d.ts"
+    },
+    {
+      "path": "dist/components/BpmnEdge.vue.d.ts"
+    },
+    {
+      "path": "dist/components/BpmnNode.vue.d.ts"
+    },
+    {
+      "path": "dist/components/DingtalkDesigner.vue.d.ts"
+    },
+    {
+      "path": "dist/components/NodeCard.vue.d.ts"
+    },
+    {
+      "path": "dist/components/NodeDrawer.vue.d.ts"
+    },
+    {
+      "path": "dist/designer.css"
+    },
+    {
+      "path": "dist/export.d.ts"
+    },
+    {
+      "path": "dist/form-options.d.ts"
+    },
+    {
+      "path": "dist/geometry.d.ts"
+    },
+    {
+      "path": "dist/index.d.ts"
+    },
+    {
+      "path": "dist/index.js"
+    },
+    {
+      "path": "dist/operations.d.ts"
+    },
+    {
+      "path": "LICENSE"
+    },
+    {
+      "path": "package.json"
+    },
+    {
+      "path": "README.md"
+    }
+  ]
+}

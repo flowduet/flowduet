@@ -1,0 +1,5 @@
+{
+  "beforeValues": "{}",
+  "displayedZero": "0",
+  "afterValues": "{\n  \"apply_text\": \"设计默认申请人\",\n  \"apply_textarea\": \"第一行\\n第二行\",\n  \"apply_number\": 0,\n  \"apply_radio\": \"0\",\n  \"apply_checkbox\": [],\n  \"apply_select\": \"0\",\n  \"apply_date\": \"2026-10-12\",\n  \"apply_switch\": false,\n  \"apply_layout_note\": \"列内默认\",\n  \"apply_layout_contact\": \"列二默认\"\n}"
+}

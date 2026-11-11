@@ -1,0 +1,31 @@
+
+ RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/designer
+
+ ❯ probes/stage-zero/default-form-entry.test.ts (2 tests | 1 failed) 39ms
+   × embedded explicit opt-out removes the editable default form selector 11ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  probes/stage-zero/default-form-entry.test.ts > embedded explicit opt-out removes the editable default form selector
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ probes/stage-zero/default-form-entry.test.ts:8:235
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 1 passed (2)
+   Start at  19:24:57
+   Duration  1.74s (import 50%, transform 28%, environment 19%, tests 2%)
+
+undefined
+/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/designer:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run probes/stage-zero/default-form-entry.test.ts

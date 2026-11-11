@@ -1,0 +1,22 @@
+{
+  "checkedAt": "2026-11-10T08:58:45.217874+08:00",
+  "authorizedBy": "用户2026-11-10问题卡片明确授权按既定计划本地验证",
+  "candidateCommit": "57da235412b7a107d3ac11d5b2f4fc888e9f22a2",
+  "context": "desktop-linux",
+  "endpointScheme": "unix",
+  "server": "29.9.2 x86_64",
+  "portsAvailable": [
+    18080,
+    18081
+  ],
+  "candidateFiles": 12,
+  "uniqueContents": 10,
+  "mirrorChecks": [
+    {
+      "configuredMirrorIndex": 1,
+      "exit": 0,
+      "httpStatus": "200"
+    }
+  ],
+  "existingTaskPrefixContainers": []
+}

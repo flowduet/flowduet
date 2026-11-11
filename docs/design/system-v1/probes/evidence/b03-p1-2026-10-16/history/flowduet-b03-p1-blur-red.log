@@ -1,0 +1,36 @@
+
+ RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/form-create
+
+ ❯ src/components.test.ts (70 tests | 1 failed | 69 skipped) 1592ms
+   × 缓存原文后的原生change/失焦不制造新的编辑版本 1590ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/components.test.ts > 缓存原文后的原生change/失焦不制造新的编辑版本
+AssertionError: expected 4 to be 3 // Object.is equality
+
+- Expected
++ Received
+
+- 3
++ 4
+
+ ❯ src/components.test.ts:1583:42
+    1581|   const count = wrapper!.emitted("draftChange")?.length;
+    1582|   await input.trigger("change"); await input.trigger("blur");
+    1583|   expect(vm.readEditingState().revision).toBe(before);
+       |                                          ^
+    1584|   expect(wrapper!.emitted("draftChange")?.length).toBe(count);
+    1585| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 69 skipped (70)
+   Start at  18:51:18
+   Duration  4.02s (tests 41%, import 36%, transform 14%, environment 8%)
+
+undefined
+/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/form-create:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run src/components.test.ts -t 缓存原文后

@@ -1,0 +1,10 @@
+{
+  "ref": {
+    "documentEpoch": 1,
+    "kind": "node",
+    "id": "same",
+    "lifetime": 1
+  },
+  "foreignRefResolvesWithoutOwner": true,
+  "conclusion": "EntityRef 的整数元组仅在所属 Registry 内有效；公共定位入口还必须绑定实例/控制器上下文，不能全局按元组路由。"
+}

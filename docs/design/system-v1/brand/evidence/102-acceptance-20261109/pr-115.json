@@ -1,0 +1,30 @@
+{
+  "mergeCommit": { "oid": "921f743c942302e271b024014fb442dbfbfcb1ce" },
+  "mergedAt": "2026-11-06T09:43:31Z",
+  "number": 115,
+  "state": "MERGED",
+  "statusCheckRollup": [
+    {
+      "__typename": "CheckRun",
+      "completedAt": "2026-11-06T09:30:19Z",
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/flowduet/flowduet/actions/runs/42194945474/job/127815730197",
+      "name": "Lint + Test + Build (Node 22)",
+      "startedAt": "2026-11-06T09:25:33Z",
+      "status": "COMPLETED",
+      "workflowName": "CI"
+    },
+    {
+      "__typename": "CheckRun",
+      "completedAt": "2026-11-06T09:29:38Z",
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/flowduet/flowduet/actions/runs/42194945474/job/127815730561",
+      "name": "Lint + Test + Build (Node 24)",
+      "startedAt": "2026-11-06T09:25:33Z",
+      "status": "COMPLETED",
+      "workflowName": "CI"
+    }
+  ],
+  "title": "feat(playground): 交付双入口消费示例与安装包验证",
+  "url": "https://github.com/flowduet/flowduet/pull/115"
+}

@@ -1,0 +1,4 @@
+{'check': 'test', 'command': ['pnpm', 'test'], 'exit': 0, 'seconds': 92.11, 'head': 'c53004e2366b549320863140d934eb3a4056b98c'}
+{'check': 'build', 'command': ['pnpm', 'build'], 'exit': 0, 'seconds': 12.83, 'head': 'c53004e2366b549320863140d934eb3a4056b98c'}
+{'check': 'lint', 'command': ['pnpm', 'lint'], 'exit': 0, 'seconds': 12.3, 'head': 'c53004e2366b549320863140d934eb3a4056b98c'}
+{'check': 'strict', 'command': ['pnpm', '--filter', '@flowduet/form-create', 'exec', 'vue-tsc', '--noEmit', '-p', '../../apps/playground/probes/stage-zero/tsconfig.json'], 'exit': 0, 'seconds': 7.66, 'head': 'c53004e2366b549320863140d934eb3a4056b98c'}

@@ -1,0 +1,61 @@
+{
+  "test.txt": {
+    "passed": false,
+    "failures": [
+      "设计器开放范围收口（A13，designer-config 与真实面板） > 真实设计器面板不出现范围外组件与配置入口",
+      "设计器开放范围收口（A13，designer-config 与真实面板） > 选中字段后：联动与编辑数据入口不渲染，静态选项与必填配置在场"
+    ],
+    "failureKind": "组件测试超时；不将环境推测当已证实根因"
+  },
+  "test-recheck.txt": {
+    "passed": false,
+    "failures": [
+      "FormManager（目录管理面板） > 内容守卫前置：超范围字段不 emit 且编辑器保持打开供修正",
+      "FormManager（目录管理面板） > 重复字段标识不能关闭编辑器或上报保存",
+      "FormDesigner 全字段与布局矩阵（真实设计器，A10） > 数字与开关字段可在真实配置面板编辑默认值",
+      "设计器开放范围收口（A13，designer-config 与真实面板） > 真实设计器面板不出现范围外组件与配置入口",
+      "设计器开放范围收口（A13，designer-config 与真实面板） > 选中字段后：联动与编辑数据入口不渲染，静态选项与必填配置在场",
+      "FormManager 未提交内容收集（#76：commitPendingEdit） > 编辑器开着：commitPendingEdit 经真实设计器序列化上抛并关闭编辑器"
+    ],
+    "failureKind": "组件测试超时；不将环境推测当已证实根因"
+  },
+  "test-single-worker.txt": {
+    "passed": false,
+    "failures": [
+      "FormManager（目录管理面板） > 内容守卫前置：超范围字段不 emit 且编辑器保持打开供修正",
+      "FormManager（目录管理面板） > 重复字段标识不能关闭编辑器或上报保存",
+      "FormManager（目录管理面板） > 取消内容编辑时关闭弹窗，不留下空白编辑器",
+      "设计器开放范围收口（A13，designer-config 与真实面板） > 选中字段后：联动与编辑数据入口不渲染，静态选项与必填配置在场"
+    ],
+    "failureKind": "组件测试超时；不将环境推测当已证实根因"
+  },
+  "node22-linux.txt": {
+    "passed": false,
+    "failures": [
+      "FormManager（目录管理面板） > 内容守卫前置：超范围字段不 emit 且编辑器保持打开供修正",
+      "FormManager（目录管理面板） > 重复字段标识不能关闭编辑器或上报保存",
+      "FormManager（目录管理面板） > 取消内容编辑时关闭弹窗，不留下空白编辑器",
+      "FormDesigner（真实 FcDesigner 装载） > 装载既有规则并成对导出 rules/options 序列化串",
+      "FormDesigner 全字段与布局矩阵（真实设计器，A10） > 新建多选字段可显式设置空默认值，再恢复未设置",
+      "FormDesigner 全字段与布局矩阵（真实设计器，A10） > 清除多选默认项保存为显式空数组，关闭默认值设置才变为未设置",
+      "FormDesigner 全字段与布局矩阵（真实设计器，A10） > 装载八类字段与栅格布局后成对导出，语义与装载内容等价",
+      "FormDesigner 全字段与布局矩阵（真实设计器，A10） > 数字与开关字段可在真实配置面板编辑默认值",
+      "设计器开放范围收口（A13，designer-config 与真实面板） > 下拉单选真实配置面板不能开启创建新条目",
+      "设计器开放范围收口（A13，designer-config 与真实面板） > 真实设计器面板不出现范围外组件与配置入口",
+      "设计器开放范围收口（A13，designer-config 与真实面板） > 选中字段后：联动与编辑数据入口不渲染，静态选项与必填配置在场"
+    ],
+    "failureKind": "组件测试超时；不将环境推测当已证实根因"
+  },
+  "node22-linux-internal.txt": {
+    "passed": false,
+    "failures": [
+      "FormManager（目录管理面板） > 内容守卫前置：超范围字段不 emit 且编辑器保持打开供修正",
+      "FormDesigner 全字段与布局矩阵（真实设计器，A10） > 装载八类字段与栅格布局后成对导出，语义与装载内容等价",
+      "FormDesigner 全字段与布局矩阵（真实设计器，A10） > 数字与开关字段可在真实配置面板编辑默认值",
+      "设计器开放范围收口（A13，designer-config 与真实面板） > 真实设计器面板不出现范围外组件与配置入口",
+      "设计器开放范围收口（A13，designer-config 与真实面板） > 选中字段后：联动与编辑数据入口不渲染，静态选项与必填配置在场",
+      "FormManager 未提交内容收集（#76：commitPendingEdit） > 编辑器开着：commitPendingEdit 经真实设计器序列化上抛并关闭编辑器"
+    ],
+    "failureKind": "组件测试超时；不将环境推测当已证实根因"
+  }
+}

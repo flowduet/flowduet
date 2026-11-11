@@ -1,0 +1,221 @@
+[
+  {
+    "caseId": "F03/top/zero/K/load",
+    "field": "F03",
+    "layout": "top",
+    "variant": "zero",
+    "want": 0,
+    "present": true,
+    "actualStrategy": {
+      "outward": {
+        "ok": true,
+        "value": {
+          "active": {
+            "ref": {
+              "controllerId": "C-A",
+              "documentEpoch": 1,
+              "kind": "form",
+              "id": "form_2",
+              "lifetime": 8
+            },
+            "facet": "form-content"
+          },
+          "actual": "kept-fallback",
+          "reason": "临时实例内容或value存在性不等价"
+        }
+      },
+      "inward": {
+        "ok": true,
+        "value": {
+          "active": {
+            "ref": {
+              "controllerId": "C-A",
+              "documentEpoch": 1,
+              "kind": "form",
+              "id": "form_1",
+              "lifetime": 7
+            },
+            "facet": "form-content"
+          },
+          "actual": "kept-fallback",
+          "reason": "目标已有活实例，复用K"
+        }
+      }
+    },
+    "status": "passed",
+    "actual": {
+      "present": true,
+      "value": 0,
+      "type": "inputNumber",
+      "field": "a_amount"
+    },
+    "unchanged": true,
+    "typePass": true,
+    "datePass": true,
+    "gridPass": true
+  },
+  {
+    "caseId": "F03/top/negative/K/load",
+    "field": "F03",
+    "layout": "top",
+    "variant": "negative",
+    "want": -2,
+    "present": true,
+    "actualStrategy": {
+      "outward": {
+        "ok": true,
+        "value": {
+          "active": {
+            "ref": {
+              "controllerId": "C-A",
+              "documentEpoch": 1,
+              "kind": "form",
+              "id": "form_2",
+              "lifetime": 8
+            },
+            "facet": "form-content"
+          },
+          "actual": "kept-fallback",
+          "reason": "临时实例内容或value存在性不等价"
+        }
+      },
+      "inward": {
+        "ok": true,
+        "value": {
+          "active": {
+            "ref": {
+              "controllerId": "C-A",
+              "documentEpoch": 1,
+              "kind": "form",
+              "id": "form_1",
+              "lifetime": 7
+            },
+            "facet": "form-content"
+          },
+          "actual": "kept-fallback",
+          "reason": "目标已有活实例，复用K"
+        }
+      }
+    },
+    "status": "passed",
+    "actual": {
+      "present": true,
+      "value": -2,
+      "type": "inputNumber",
+      "field": "a_amount"
+    },
+    "unchanged": true,
+    "typePass": true,
+    "datePass": true,
+    "gridPass": true
+  },
+  {
+    "caseId": "F03/top/decimal/K/load",
+    "field": "F03",
+    "layout": "top",
+    "variant": "decimal",
+    "want": 1.5,
+    "present": true,
+    "actualStrategy": {
+      "outward": {
+        "ok": true,
+        "value": {
+          "active": {
+            "ref": {
+              "controllerId": "C-A",
+              "documentEpoch": 1,
+              "kind": "form",
+              "id": "form_2",
+              "lifetime": 8
+            },
+            "facet": "form-content"
+          },
+          "actual": "kept-fallback",
+          "reason": "临时实例内容或value存在性不等价"
+        }
+      },
+      "inward": {
+        "ok": true,
+        "value": {
+          "active": {
+            "ref": {
+              "controllerId": "C-A",
+              "documentEpoch": 1,
+              "kind": "form",
+              "id": "form_1",
+              "lifetime": 7
+            },
+            "facet": "form-content"
+          },
+          "actual": "kept-fallback",
+          "reason": "目标已有活实例，复用K"
+        }
+      }
+    },
+    "status": "passed",
+    "actual": {
+      "present": true,
+      "value": 1.5,
+      "type": "inputNumber",
+      "field": "a_amount"
+    },
+    "unchanged": true,
+    "typePass": true,
+    "datePass": true,
+    "gridPass": true
+  },
+  {
+    "caseId": "F03/top/unset/K/load",
+    "field": "F03",
+    "layout": "top",
+    "variant": "unset",
+    "want": null,
+    "present": false,
+    "actualStrategy": {
+      "outward": {
+        "ok": true,
+        "value": {
+          "active": {
+            "ref": {
+              "controllerId": "C-A",
+              "documentEpoch": 1,
+              "kind": "form",
+              "id": "form_2",
+              "lifetime": 8
+            },
+            "facet": "form-content"
+          },
+          "actual": "kept-fallback",
+          "reason": "临时实例内容或value存在性不等价"
+        }
+      },
+      "inward": {
+        "ok": true,
+        "value": {
+          "active": {
+            "ref": {
+              "controllerId": "C-A",
+              "documentEpoch": 1,
+              "kind": "form",
+              "id": "form_1",
+              "lifetime": 7
+            },
+            "facet": "form-content"
+          },
+          "actual": "kept-fallback",
+          "reason": "目标已有活实例，复用K"
+        }
+      }
+    },
+    "status": "passed",
+    "actual": {
+      "present": false,
+      "type": "inputNumber",
+      "field": "a_amount"
+    },
+    "unchanged": true,
+    "typePass": true,
+    "datePass": true,
+    "gridPass": true
+  }
+]

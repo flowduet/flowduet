@@ -1,0 +1,369 @@
+import { mkdir, writeFile } from "node:fs/promises";
+import { resolve } from "node:path";
+import { pathToFileURL } from "node:url";
+
+const [driverPath, baseUrl, outputDir] = process.argv.slice(2);
+if (!driverPath || !baseUrl || !outputDir) throw new Error("需要驱动、URL 和输出目录参数");
+const { chromium } = await import(pathToFileURL(resolve(driverPath)).href);
+await mkdir(outputDir, { recursive: true });
+const browser = await chromium.launch({
+  headless: true,
+  executablePath:
+    process.env.FLOWDUET_CHROMIUM_PATH ||
+    "/Users/l/Library/Caches/ms-playwright/chromium-1248/chrome-mac-x64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing",
+});
+const page = await browser.newPage({ viewport: { width: 1440, height: 1800 }, deviceScaleFactor: 1 });
+const errors = [];
+const resourceErrors = [];
+const failures = [];
+const results = {};
+page.on("pageerror", (error) => errors.push(`pageerror: ${error.stack || error.message}`));
+page.on("console", (message) => {
+  if (message.type() === "error") errors.push(`console: ${message.text()}`);
+});
+page.on("response", (response) => {
+  if (response.status() >= 400) resourceErrors.push(`${response.status()} ${response.url()}`);
+});
+await page.addInitScript(() => {
+  window.__fd106Unhandled = [];
+  window.addEventListener("unhandledrejection", (event) => {
+    window.__fd106Unhandled.push(String(event.reason));
+  });
+});
+const check = (condition, message) => {
+  if (!condition) failures.push(message);
+};
+const firstInstance = () => page.locator('[data-test="form-appearance-first-instance"]');
+const secondInstance = () => page.locator('[data-test="form-appearance-second-instance"]');
+const first = () => firstInstance().locator('[data-test="form-preview"]');
+const second = () => secondInstance().locator('[data-test="form-preview"]');
+const select = (root, index = 0) => root.locator(".el-select").nth(index);
+const selectInput = (root, index = 0) => select(root, index).locator(".el-select__input");
+const firstPanel = () => page.locator(".el-select__popper.preview-select-panel");
+const secondPanel = () => page.locator(".el-select__popper.explicit-select-panel");
+const trialValues = async (root) => JSON.parse(await root.locator('[data-test="form-preview-values"]').textContent());
+const setSelect = async (test, value) => {
+  await page.evaluate(
+    ({ test, value }) => {
+      const select = document.querySelector(`[data-test="${test}"]`);
+      select.value = value;
+      select.dispatchEvent(new Event("change", { bubbles: true }));
+    },
+    { test, value },
+  );
+  await page.waitForTimeout(150);
+};
+const setCheckbox = async (test, checked) => {
+  await page.evaluate(
+    ({ test, checked }) => {
+      const input = document.querySelector(`[data-test="${test}"]`);
+      if (input.checked !== checked) {
+        input.checked = checked;
+        input.dispatchEvent(new Event("change", { bubbles: true }));
+      }
+    },
+    { test, checked },
+  );
+  await page.waitForTimeout(150);
+};
+const setHostDark = (dark) => setCheckbox("form-appearance-host-dark", dark);
+const setAppearance = async ({ enabled = true, colorSource = "brand", mode = "light", density = "comfortable" }) => {
+  await setCheckbox("form-appearance-first-enabled", enabled);
+  if (!enabled) return;
+  await setSelect("form-appearance-first-source", colorSource);
+  if (colorSource === "brand") await setSelect("form-appearance-first-mode", mode);
+  await setSelect("form-appearance-first-density", density);
+};
+const ownerClass = (panel) => panel.evaluate((element) => [...element.classList].find((name) => name.startsWith("flowduet-form-preview-select-")));
+const instanceStyleCount = (owner) => page.evaluate((owner) => [...document.head.querySelectorAll("style")].filter((style) => style.textContent.includes(`.${owner}`)).length, owner);
+const openByKeyboard = async (input, panel) => {
+  await input.focus();
+  await input.press("ArrowDown");
+  await panel.waitFor({ state: "visible" });
+  await page.waitForTimeout(350);
+};
+const dispatchNonBubblingOpen = (selector) => page.evaluate((selector) => {
+  const trigger = document.querySelector(selector);
+  const input = trigger.matches(".el-select__input") ? trigger : trigger.querySelector(".el-select__input");
+  input.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowDown", code: "ArrowDown", bubbles: false, cancelable: true }));
+}, selector);
+try {
+  await page.route("**/favicon.ico", (route) => route.fulfill({ status: 204, body: "" }));
+  await page.goto(baseUrl, { waitUntil: "networkidle" });
+  await page.locator('[data-test="form-appearance-scene-btn"]').click();
+  await page.locator('[data-test="form-appearance-first-controls"]').click();
+  await first().waitFor({ state: "visible" });
+  await setCheckbox("form-appearance-first-enabled", false);
+
+  // 旧路径与真实鼠标行为。
+  await select(first()).locator(".el-select__wrapper").click();
+  await firstPanel().waitFor({ state: "visible" });
+  await page.mouse.move(0, 0);
+  await page.waitForTimeout(350);
+  const legacyOwner = await ownerClass(firstPanel());
+  const legacy = await firstPanel().evaluate((panel) => {
+    const selected = panel.querySelector(".el-select-dropdown__item.is-selected");
+    return {
+      owner: [...panel.classList].find((name) => name.startsWith("flowduet-form-preview-select-")),
+      height: selected.getBoundingClientRect().height,
+      color: getComputedStyle(selected).color,
+      background: getComputedStyle(selected).backgroundColor,
+    };
+  });
+  check(!legacyOwner, "旧路径追加了实例面板标识");
+  check((await instanceStyleCount(legacyOwner || "missing")) === 0, "旧路径创建了实例弹层样式资源");
+  check(Math.abs(legacy.height - 34) <= 0.1 && legacy.color === "rgb(64, 158, 255)", `旧路径选项高度或选中色改变 ${JSON.stringify(legacy)}`);
+  await firstPanel().getByRole("option", { name: "同意", exact: true }).click();
+  check((await trialValues(first())).dropdownDecision === "yes", "鼠标选择未更新试填值");
+  await select(first()).hover();
+  await select(first()).locator(".el-select__clear").click();
+  check((await trialValues(first())).dropdownDecision === "", "清除未得到显式空字符串");
+  check((await select(first()).locator(".el-select__placeholder").textContent()).includes("请选择审批结果"), "清除后占位未恢复");
+  await first().locator('[data-test="form-preview-validate"]').click();
+  await first().locator('[data-test="form-preview-validation"]').filter({ hasText: "校验未通过" }).waitFor();
+  await first().locator(".el-form-item__error").filter({ hasText: "请选择下拉审批结果" }).waitFor({ state: "visible" });
+  results.legacyAndValidation = {
+    legacy,
+    placeholder: await select(first()).locator(".el-select__placeholder").textContent(),
+    error: await first().locator(".el-form-item__error").textContent(),
+  };
+
+  // 真实键盘打开、高亮、选择、关闭和焦点恢复。
+  await openByKeyboard(selectInput(first()), firstPanel());
+  await selectInput(first()).press("ArrowDown");
+  const initialHighlight = await firstPanel().locator(".el-select-dropdown__item.is-hovering").textContent();
+  await selectInput(first()).press("ArrowDown");
+  const nextHighlight = await firstPanel().locator(".el-select-dropdown__item.is-hovering").textContent();
+  await selectInput(first()).press("ArrowUp");
+  await selectInput(first()).press("Enter");
+  await firstPanel().waitFor({ state: "hidden" });
+  check(initialHighlight !== nextHighlight, `键盘高亮未移动：${initialHighlight}`);
+  check((await trialValues(first())).dropdownDecision === "yes", "键盘 Enter 未选择高亮项");
+  check(await selectInput(first()).evaluate((element) => document.activeElement === element), "键盘选择后焦点未回到输入");
+  await openByKeyboard(selectInput(first()), firstPanel());
+  check(await firstPanel().getByRole("option", { name: "禁用选项", exact: true }).evaluate((element) => element.classList.contains("is-disabled")), "禁用选项缺少状态");
+  const disabledClick = await firstPanel().getByRole("option", { name: "禁用选项", exact: true }).click({ timeout: 1000 }).then(() => "performed").catch(() => "blocked");
+  check(disabledClick === "blocked" && (await trialValues(first())).dropdownDecision === "yes", "禁用选项改变选中值或未被指针守卫");
+  await selectInput(first()).press("Escape");
+  await firstPanel().waitFor({ state: "hidden" });
+  check(await selectInput(first()).evaluate((element) => document.activeElement === element), "Escape 关闭后焦点丢失");
+  results.keyboard = { initialHighlight, nextHighlight, value: "yes", focusRestored: true };
+
+  await openByKeyboard(selectInput(first(), 1), page.locator(".el-select__popper").filter({ has: page.locator(".el-select-dropdown__empty") }).last());
+  const emptyPanel = page.locator(".el-select__popper").filter({ has: page.locator(".el-select-dropdown__empty") }).last();
+  check((await emptyPanel.locator(".el-select-dropdown__item").count()) === 0, "空选项面板仍出现选项");
+  results.empty = await emptyPanel.locator(".el-select-dropdown__empty").textContent();
+  await selectInput(first(), 1).press("Escape");
+  await emptyPanel.waitFor({ state: "hidden" });
+  check(await selectInput(first(), 2).isDisabled(), "禁用下拉输入仍可操作");
+  results.disabled = await select(first(), 2).locator(".el-select__placeholder").textContent();
+  await first().locator('[data-test="form-preview-validate"]').click();
+  await first().locator('[data-test="form-preview-validation"]').filter({ hasText: "校验通过" }).waitFor();
+
+  // 打开和关闭状态下切换来源、主题、密度及启停，保持输入身份、值和焦点。
+  await setAppearance({ colorSource: "host", mode: "light", density: "comfortable" });
+  await openByKeyboard(selectInput(first()), firstPanel());
+  await selectInput(first()).evaluate((element) => { window.__fd106BehaviorInput = element; });
+  const variants = [
+    { colorSource: "brand", mode: "dark", density: "compact" },
+    { colorSource: "host", mode: "light", density: "comfortable" },
+    { enabled: false },
+    { colorSource: "brand", mode: "light", density: "compact" },
+  ];
+  results.openVariants = [];
+  for (const variant of variants) {
+    await setAppearance(variant);
+    const state = await selectInput(first()).evaluate((input) => ({
+      identity: input === window.__fd106BehaviorInput,
+      focused: document.activeElement === input,
+    }));
+    const value = (await trialValues(first())).dropdownDecision;
+    const feedback = await first().locator('[data-test="form-preview-validation"]').textContent();
+    const visible = await firstPanel().isVisible();
+    const owner = await ownerClass(firstPanel());
+    const styles = await instanceStyleCount(owner);
+    check(state.identity && state.focused && value === "yes" && visible && feedback.includes("校验通过"), `打开中换肤破坏输入／焦点／值／反馈／面板 ${JSON.stringify({ variant, state, value, visible, feedback })}`);
+    check(styles === (variant.enabled === false ? 0 : 1), `打开中启停的实例样式资源数量错误 ${variant.enabled}:${styles}`);
+    results.openVariants.push({ variant, state, value, visible, styles });
+  }
+  await selectInput(first()).press("Escape");
+  await firstPanel().waitFor({ state: "hidden" });
+  results.closedVariants = [];
+  for (const variant of variants) {
+    await setAppearance(variant);
+    const state = await selectInput(first()).evaluate((input) => ({
+      identity: input === window.__fd106BehaviorInput,
+      focused: document.activeElement === input,
+    }));
+    const value = (await trialValues(first())).dropdownDecision;
+    const feedback = await first().locator('[data-test="form-preview-validation"]').textContent();
+    check(state.identity && state.focused && value === "yes" && feedback.includes("校验通过"), `关闭状态换肤破坏输入／焦点／值／反馈 ${JSON.stringify({ variant, state, value, feedback })}`);
+    results.closedVariants.push({ variant, state, value });
+  }
+  await firstInstance().locator('[data-test="form-appearance-first-reopen-controls"]').click();
+  await page.waitForTimeout(200);
+  check((await trialValues(first())).dropdownDecision === "no", "同 ID 定义重开未恢复下拉默认值");
+  check((await first().locator('[data-test="form-preview-validation"]').count()) === 0, "定义换代未清除校验反馈");
+  results.definitionReset = "同 ID 重开恢复 no 并清除反馈";
+
+  // 双实例同时展开：不冒泡 ArrowDown 只构造 EP 自然交互不允许并存的验收状态。
+  await setAppearance({ colorSource: "brand", mode: "light", density: "comfortable" });
+  await setCheckbox("form-appearance-second-mounted", true);
+  await dispatchNonBubblingOpen('[data-test="form-appearance-first-instance"] .el-select__wrapper');
+  await dispatchNonBubblingOpen('[data-test="form-appearance-second-instance"] .el-select__wrapper');
+  await firstPanel().waitFor({ state: "visible" });
+  await secondPanel().waitFor({ state: "visible" });
+  const firstOwner = await ownerClass(firstPanel());
+  const secondOwner = await ownerClass(secondPanel());
+  const dual = await page.evaluate(() => {
+    const read = (selector) => {
+      const panel = document.querySelector(selector);
+      const selected = panel.querySelector(".el-select-dropdown__item.is-selected");
+      return {
+        text: panel.textContent,
+        owner: [...panel.classList].find((name) => name.startsWith("flowduet-form-preview-select-")),
+        zIndex: Number(getComputedStyle(panel).zIndex),
+        selectedColor: getComputedStyle(selected).color,
+        selectedBackground: getComputedStyle(selected).backgroundColor,
+      };
+    };
+    const first = read(".el-select__popper.preview-select-panel");
+    const second = read(".el-select__popper.explicit-select-panel");
+    return {
+      first,
+      second,
+      externalMounted: document.querySelector("#form-appearance-explicit-popper-target").contains(document.querySelector(".el-select__popper.explicit-select-panel")),
+      explicitHeight: document.querySelectorAll('[data-test="form-appearance-second-instance"] .el-select__wrapper')[0].getBoundingClientRect().height,
+    };
+  });
+  check(firstOwner && secondOwner && firstOwner !== secondOwner, "双实例面板标识相同或缺失");
+  check(dual.first.text.includes("长中文选项") && dual.second.text.includes("显式拒绝"), "双实例面板内容串用");
+  check(dual.second.zIndex > dual.first.zIndex, `双实例层级未递增 ${dual.first.zIndex}/${dual.second.zIndex}`);
+  check(dual.first.selectedColor === "rgb(45, 62, 151)" && dual.first.selectedBackground === "rgb(234, 240, 255)", "第一实例品牌选中样式错误");
+  check(dual.second.selectedColor === "rgb(18, 52, 86)" && dual.second.selectedBackground === "rgb(230, 232, 240)", `显式 popperStyle 未优先 ${dual.second.selectedColor}/${dual.second.selectedBackground}`);
+  check(dual.externalMounted && Math.abs(dual.explicitHeight - 40) <= 0.1, "显式 appendTo 或 large 尺寸未保持");
+  results.dual = dual;
+  await page.screenshot({ path: resolve(outputDir, "dual-instances.png"), fullPage: true });
+
+  await setCheckbox("form-appearance-first-mounted", false);
+  check((await firstPanel().count()) === 0 && (await secondPanel().isVisible()), "卸载第一实例未清理其面板或影响第二实例");
+  check((await instanceStyleCount(firstOwner)) === 0 && (await instanceStyleCount(secondOwner)) === 1, "卸载后实例样式资源清理错误");
+  await setCheckbox("form-appearance-first-mounted", true);
+  await dispatchNonBubblingOpen('[data-test="form-appearance-first-instance"] .el-select__wrapper');
+  const remountedOwner = await ownerClass(firstPanel());
+  check(remountedOwner && remountedOwner !== firstOwner, "重挂未生成新实例标识");
+  check((await instanceStyleCount(remountedOwner)) === 1, "重挂未恢复实例样式");
+
+  // 公开表单中的第二个真实选择框验证 teleported=false。
+  await page.evaluate(() => {
+    const inputs = document.querySelectorAll('[data-test="form-appearance-second-instance"] .el-select__input');
+    inputs[1].dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowDown", code: "ArrowDown", bubbles: false, cancelable: true }));
+  });
+  const inlinePanel = page.locator(".el-select__popper.inline-select-panel");
+  await inlinePanel.waitFor({ state: "visible" });
+  check(await inlinePanel.evaluate((panel) => panel.closest(".el-select")?.querySelector(".el-select__input")?.id === document.querySelectorAll('[data-test="form-appearance-second-instance"] .el-select__input')[1].id), "teleported=false 未留在所属选择框");
+  await setCheckbox("form-appearance-second-mounted", false);
+  check((await secondPanel().count()) === 0 && (await inlinePanel.count()) === 0, "卸载第二实例未清理外部与原位面板");
+  check((await instanceStyleCount(secondOwner)) === 0, "第二实例样式资源未清理");
+  results.unmountRemount = { firstOwner, remountedOwner, secondOwner, cleaned: true };
+
+  // 无关宿主下拉：实例重建和品牌变化不改变宿主选中色或归属。
+  await page.locator('[data-test="form-appearance-host-select"]').click();
+  const hostPanel = page.locator(".el-select__popper").filter({ hasText: "宿主甲" });
+  await hostPanel.waitFor({ state: "visible" });
+  const hostBefore = await hostPanel.locator(".el-select-dropdown__item.is-selected").evaluate((element) => ({
+    color: getComputedStyle(element).color,
+    background: getComputedStyle(element).backgroundColor,
+    owner: [...element.closest(".el-select__popper").classList].some((name) => name.startsWith("flowduet-form-preview-select-")),
+  }));
+  await setCheckbox("form-appearance-second-mounted", true);
+  await setSelect("form-appearance-second-source", "brand");
+  await setSelect("form-appearance-second-mode", "light");
+  const hostAfter = await hostPanel.locator(".el-select-dropdown__item.is-selected").evaluate((element) => ({
+    color: getComputedStyle(element).color,
+    background: getComputedStyle(element).backgroundColor,
+    owner: [...element.closest(".el-select__popper").classList].some((name) => name.startsWith("flowduet-form-preview-select-")),
+  }));
+  check(JSON.stringify(hostBefore) === JSON.stringify(hostAfter) && !hostBefore.owner, `宿主下拉被实例适配污染 ${JSON.stringify({ hostBefore, hostAfter })}`);
+  await hostPanel.getByRole("option", { name: "宿主乙", exact: true }).click();
+  check((await page.locator('[data-test="form-appearance-host-select"]').textContent()).includes("宿主乙"), "宿主下拉选择行为受影响");
+  results.hostIsolation = { hostBefore, hostAfter };
+
+  // 窄容器、CSS zoom 200%、容器滚动与边缘翻转，八组均检查长中文与可达性。
+  await setCheckbox("form-appearance-first-mounted", true);
+  await setCheckbox("form-appearance-second-mounted", false);
+  await page.setViewportSize({ width: 900, height: 700 });
+  await firstInstance().evaluate((element) => {
+    element.style.width = "180px";
+    element.style.maxHeight = "260px";
+    element.style.overflow = "auto";
+    element.style.zoom = "200%";
+  });
+  const zoomCombinations = [
+    { colorSource: "host", mode: "light", density: "comfortable" },
+    { colorSource: "host", mode: "light", density: "compact" },
+    { colorSource: "host", mode: "dark", density: "comfortable" },
+    { colorSource: "host", mode: "dark", density: "compact" },
+    { colorSource: "brand", mode: "light", density: "comfortable" },
+    { colorSource: "brand", mode: "light", density: "compact" },
+    { colorSource: "brand", mode: "dark", density: "comfortable" },
+    { colorSource: "brand", mode: "dark", density: "compact" },
+  ];
+  results.zoom = [];
+  for (const combination of zoomCombinations) {
+    await setAppearance(combination);
+    await setHostDark(combination.colorSource === "host" && combination.mode === "dark");
+    const input = selectInput(first());
+    await input.scrollIntoViewIfNeeded();
+    await openByKeyboard(input, firstPanel());
+    const longOption = firstPanel().locator(".el-select-dropdown__item").filter({ hasText: "长中文选项" });
+    const before = await firstPanel().evaluate((panel) => {
+      const select = document.querySelector('[data-test="form-appearance-first-instance"] .el-select__wrapper');
+      const long = panel.querySelectorAll(".el-select-dropdown__item")[2];
+      const text = long.querySelector("span");
+      const rect = (element) => {
+        const box = element.getBoundingClientRect();
+        return { left: box.left, right: box.right, top: box.top, bottom: box.bottom, height: box.height };
+      };
+      return {
+        panel: rect(panel),
+        trigger: rect(select),
+        long: rect(long),
+        text: rect(text),
+        placement: panel.getAttribute("data-popper-placement"),
+        pageOverflow: document.documentElement.scrollWidth > innerWidth + 1,
+      };
+    });
+    await firstInstance().evaluate((element) => { element.scrollTop = Math.min(element.scrollTop + 30, element.scrollHeight); });
+    await page.waitForTimeout(250);
+    const after = await firstPanel().evaluate((panel) => {
+      const select = document.querySelector('[data-test="form-appearance-first-instance"] .el-select__wrapper');
+      const rect = (element) => {
+        const box = element.getBoundingClientRect();
+        return { left: box.left, right: box.right, top: box.top, bottom: box.bottom };
+      };
+      return { panelTop: panel.getBoundingClientRect().top, triggerTop: select.getBoundingClientRect().top, panel: rect(panel), trigger: rect(select), placement: panel.getAttribute("data-popper-placement") };
+    });
+    const id = `${combination.colorSource}-${combination.mode}-${combination.density}`;
+    const minHeight = combination.density === "compact" ? 24 : 32;
+    check(before.panel.left >= 0 && before.panel.right <= 900 && before.panel.top >= 0 && before.panel.bottom <= 700, `${id}: 缩放／边缘下面板超出视口 ${JSON.stringify(before.panel)}`);
+    check(before.long.height > minHeight + 1 && before.text.bottom <= before.long.bottom + 1 && before.text.right <= before.long.right + 1, `${id}: 长中文未正确换行 ${JSON.stringify(before.long)}`);
+    check(!before.pageOverflow, `${id}: 窄容器缩放产生页面横向溢出`);
+    const samePlacementDelta = Math.abs((after.panelTop - before.panel.top) - (after.triggerTop - before.trigger.top)) <= 1;
+    const flippedWithinViewport = after.placement !== before.placement && after.panel.top >= 0 && after.panel.bottom <= 700 && Math.abs(after.panel.left - after.trigger.left) <= 1;
+    check(samePlacementDelta || flippedWithinViewport, `${id}: 容器滚动后面板未跟随或正确翻转 ${JSON.stringify({ before: before.placement, after })}`);
+    results.zoom.push({ ...combination, before, after });
+    if (id === "brand-light-comfortable" || id === "brand-dark-compact") await page.screenshot({ path: resolve(outputDir, `${id}-zoom-200.png`), fullPage: true });
+    await input.press("Escape");
+    await firstPanel().waitFor({ state: "hidden" });
+  }
+
+  const unhandled = await page.evaluate(() => window.__fd106Unhandled.slice());
+  check(unhandled.length === 0, `存在未处理 Promise 拒绝：${unhandled}`);
+  const result = { browser: await browser.version(), viewport: "1440x1800@1; zoom=900x700@1 + CSS 200%", results, errors, resourceErrors, unhandled, failures };
+  await writeFile(resolve(outputDir, "behavior.json"), JSON.stringify(result, null, 2));
+  console.log(JSON.stringify({ browser: result.browser, sections: Object.keys(results), errors, resourceErrors, unhandled, failures }, null, 2));
+  if (errors.length || resourceErrors.length || failures.length) process.exitCode = 1;
+} finally {
+  await browser.close();
+}

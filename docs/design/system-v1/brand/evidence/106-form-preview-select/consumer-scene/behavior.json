@@ -1,0 +1,602 @@
+{
+  "browser": "156.0.8078.4",
+  "viewport": "1440x1800@1; zoom=900x700@1 + CSS 200%",
+  "results": {
+    "legacyAndValidation": {
+      "legacy": {
+        "height": 34,
+        "color": "rgb(64, 158, 255)",
+        "background": "rgb(245, 247, 250)"
+      },
+      "placeholder": "请选择审批结果",
+      "error": "请选择下拉审批结果"
+    },
+    "keyboard": {
+      "initialHighlight": "同意",
+      "nextHighlight": "拒绝",
+      "value": "yes",
+      "focusRestored": true
+    },
+    "empty": "No data",
+    "disabled": "禁用已选",
+    "openVariants": [
+      {
+        "variant": {
+          "colorSource": "brand",
+          "mode": "dark",
+          "density": "compact"
+        },
+        "state": {
+          "identity": true,
+          "focused": true
+        },
+        "value": "yes",
+        "visible": true,
+        "styles": 1
+      },
+      {
+        "variant": {
+          "colorSource": "host",
+          "mode": "light",
+          "density": "comfortable"
+        },
+        "state": {
+          "identity": true,
+          "focused": true
+        },
+        "value": "yes",
+        "visible": true,
+        "styles": 1
+      },
+      {
+        "variant": {
+          "enabled": false
+        },
+        "state": {
+          "identity": true,
+          "focused": true
+        },
+        "value": "yes",
+        "visible": true,
+        "styles": 0
+      },
+      {
+        "variant": {
+          "colorSource": "brand",
+          "mode": "light",
+          "density": "compact"
+        },
+        "state": {
+          "identity": true,
+          "focused": true
+        },
+        "value": "yes",
+        "visible": true,
+        "styles": 1
+      }
+    ],
+    "closedVariants": [
+      {
+        "variant": {
+          "colorSource": "brand",
+          "mode": "dark",
+          "density": "compact"
+        },
+        "state": {
+          "identity": true,
+          "focused": true
+        },
+        "value": "yes"
+      },
+      {
+        "variant": {
+          "colorSource": "host",
+          "mode": "light",
+          "density": "comfortable"
+        },
+        "state": {
+          "identity": true,
+          "focused": true
+        },
+        "value": "yes"
+      },
+      {
+        "variant": {
+          "enabled": false
+        },
+        "state": {
+          "identity": true,
+          "focused": true
+        },
+        "value": "yes"
+      },
+      {
+        "variant": {
+          "colorSource": "brand",
+          "mode": "light",
+          "density": "compact"
+        },
+        "state": {
+          "identity": true,
+          "focused": true
+        },
+        "value": "yes"
+      }
+    ],
+    "definitionReset": "同 ID 重开恢复 no 并清除反馈",
+    "dual": {
+      "first": {
+        "text": "同意拒绝长中文选项：用于核对下拉面板在窄容器和缩放时的换行、选中与键盘高亮；继续补充一段审批说明，确保在窄屏与缩放后仍需要两行以上展示；另外保留用于校验反馈和焦点恢复的说明文字，让整项内容超过紧凑面板的单行可用宽度。禁用选项",
+        "owner": "flowduet-form-preview-select-1",
+        "zIndex": 2015,
+        "selectedColor": "rgb(45, 62, 151)",
+        "selectedBackground": "rgb(234, 240, 255)"
+      },
+      "second": {
+        "text": "显式同意显式拒绝",
+        "owner": "flowduet-form-preview-select-2",
+        "zIndex": 2016,
+        "selectedColor": "rgb(18, 52, 86)",
+        "selectedBackground": "rgb(230, 232, 240)"
+      },
+      "externalMounted": true,
+      "explicitHeight": 40
+    },
+    "unmountRemount": {
+      "firstOwner": "flowduet-form-preview-select-1",
+      "remountedOwner": "flowduet-form-preview-select-3",
+      "secondOwner": "flowduet-form-preview-select-2",
+      "cleaned": true
+    },
+    "hostIsolation": {
+      "hostBefore": {
+        "color": "rgb(64, 158, 255)",
+        "background": "rgb(245, 247, 250)",
+        "owner": false
+      },
+      "hostAfter": {
+        "color": "rgb(64, 158, 255)",
+        "background": "rgb(245, 247, 250)",
+        "owner": false
+      }
+    },
+    "zoom": [
+      {
+        "colorSource": "host",
+        "mode": "light",
+        "density": "comfortable",
+        "before": {
+          "panel": {
+            "left": 80,
+            "right": 900,
+            "top": 311.21875,
+            "bottom": 466,
+            "height": 154.78125
+          },
+          "trigger": {
+            "left": 80,
+            "right": 344,
+            "top": 478.09375,
+            "bottom": 542.09375,
+            "height": 64
+          },
+          "long": {
+            "left": 81,
+            "right": 899,
+            "top": 382.21875,
+            "bottom": 427,
+            "height": 44.78125
+          },
+          "text": {
+            "left": 101,
+            "right": 867,
+            "top": 382.21875,
+            "bottom": 427,
+            "height": 44.78125
+          },
+          "placement": "top-start",
+          "pageOverflow": false
+        },
+        "after": {
+          "panelTop": 494,
+          "triggerTop": 418.09375,
+          "panel": {
+            "left": 80,
+            "right": 900,
+            "top": 494,
+            "bottom": 648.78125
+          },
+          "trigger": {
+            "left": 80,
+            "right": 344,
+            "top": 418.09375,
+            "bottom": 482.09375
+          },
+          "placement": "bottom-start"
+        }
+      },
+      {
+        "colorSource": "host",
+        "mode": "light",
+        "density": "compact",
+        "before": {
+          "panel": {
+            "left": 64,
+            "right": 900,
+            "top": 546,
+            "bottom": 670.375,
+            "height": 124.375
+          },
+          "trigger": {
+            "left": 64,
+            "right": 360,
+            "top": 485.703125,
+            "bottom": 533.703125,
+            "height": 48
+          },
+          "long": {
+            "left": 65,
+            "right": 899,
+            "top": 601,
+            "bottom": 639.375,
+            "height": 38.375
+          },
+          "text": {
+            "left": 85,
+            "right": 867,
+            "top": 601,
+            "bottom": 639.375,
+            "height": 38.375
+          },
+          "placement": "bottom-start",
+          "pageOverflow": false
+        },
+        "after": {
+          "panelTop": 486,
+          "triggerTop": 425.703125,
+          "panel": {
+            "left": 64,
+            "right": 900,
+            "top": 486,
+            "bottom": 610.375
+          },
+          "trigger": {
+            "left": 64,
+            "right": 360,
+            "top": 425.703125,
+            "bottom": 473.703125
+          },
+          "placement": "bottom-start"
+        }
+      },
+      {
+        "colorSource": "host",
+        "mode": "dark",
+        "density": "comfortable",
+        "before": {
+          "panel": {
+            "left": 80,
+            "right": 900,
+            "top": 311.21875,
+            "bottom": 466,
+            "height": 154.78125
+          },
+          "trigger": {
+            "left": 80,
+            "right": 344,
+            "top": 478.09375,
+            "bottom": 542.09375,
+            "height": 64
+          },
+          "long": {
+            "left": 81,
+            "right": 899,
+            "top": 382.21875,
+            "bottom": 427,
+            "height": 44.78125
+          },
+          "text": {
+            "left": 101,
+            "right": 867,
+            "top": 382.21875,
+            "bottom": 427,
+            "height": 44.78125
+          },
+          "placement": "top-start",
+          "pageOverflow": false
+        },
+        "after": {
+          "panelTop": 494,
+          "triggerTop": 418.09375,
+          "panel": {
+            "left": 80,
+            "right": 900,
+            "top": 494,
+            "bottom": 648.78125
+          },
+          "trigger": {
+            "left": 80,
+            "right": 344,
+            "top": 418.09375,
+            "bottom": 482.09375
+          },
+          "placement": "bottom-start"
+        }
+      },
+      {
+        "colorSource": "host",
+        "mode": "dark",
+        "density": "compact",
+        "before": {
+          "panel": {
+            "left": 64,
+            "right": 900,
+            "top": 546,
+            "bottom": 670.375,
+            "height": 124.375
+          },
+          "trigger": {
+            "left": 64,
+            "right": 360,
+            "top": 485.703125,
+            "bottom": 533.703125,
+            "height": 48
+          },
+          "long": {
+            "left": 65,
+            "right": 899,
+            "top": 601,
+            "bottom": 639.375,
+            "height": 38.375
+          },
+          "text": {
+            "left": 85,
+            "right": 867,
+            "top": 601,
+            "bottom": 639.375,
+            "height": 38.375
+          },
+          "placement": "bottom-start",
+          "pageOverflow": false
+        },
+        "after": {
+          "panelTop": 486,
+          "triggerTop": 425.703125,
+          "panel": {
+            "left": 64,
+            "right": 900,
+            "top": 486,
+            "bottom": 610.375
+          },
+          "trigger": {
+            "left": 64,
+            "right": 360,
+            "top": 425.703125,
+            "bottom": 473.703125
+          },
+          "placement": "bottom-start"
+        }
+      },
+      {
+        "colorSource": "brand",
+        "mode": "light",
+        "density": "comfortable",
+        "before": {
+          "panel": {
+            "left": 80,
+            "right": 900,
+            "top": 311.21875,
+            "bottom": 466,
+            "height": 154.78125
+          },
+          "trigger": {
+            "left": 80,
+            "right": 344,
+            "top": 478.09375,
+            "bottom": 542.09375,
+            "height": 64
+          },
+          "long": {
+            "left": 81,
+            "right": 899,
+            "top": 382.21875,
+            "bottom": 427,
+            "height": 44.78125
+          },
+          "text": {
+            "left": 101,
+            "right": 867,
+            "top": 382.21875,
+            "bottom": 427,
+            "height": 44.78125
+          },
+          "placement": "top-start",
+          "pageOverflow": false
+        },
+        "after": {
+          "panelTop": 494,
+          "triggerTop": 418.09375,
+          "panel": {
+            "left": 80,
+            "right": 900,
+            "top": 494,
+            "bottom": 648.78125
+          },
+          "trigger": {
+            "left": 80,
+            "right": 344,
+            "top": 418.09375,
+            "bottom": 482.09375
+          },
+          "placement": "bottom-start"
+        }
+      },
+      {
+        "colorSource": "brand",
+        "mode": "light",
+        "density": "compact",
+        "before": {
+          "panel": {
+            "left": 64,
+            "right": 900,
+            "top": 546,
+            "bottom": 670.375,
+            "height": 124.375
+          },
+          "trigger": {
+            "left": 64,
+            "right": 360,
+            "top": 485.703125,
+            "bottom": 533.703125,
+            "height": 48
+          },
+          "long": {
+            "left": 65,
+            "right": 899,
+            "top": 601,
+            "bottom": 639.375,
+            "height": 38.375
+          },
+          "text": {
+            "left": 85,
+            "right": 867,
+            "top": 601,
+            "bottom": 639.375,
+            "height": 38.375
+          },
+          "placement": "bottom-start",
+          "pageOverflow": false
+        },
+        "after": {
+          "panelTop": 486,
+          "triggerTop": 425.703125,
+          "panel": {
+            "left": 64,
+            "right": 900,
+            "top": 486,
+            "bottom": 610.375
+          },
+          "trigger": {
+            "left": 64,
+            "right": 360,
+            "top": 425.703125,
+            "bottom": 473.703125
+          },
+          "placement": "bottom-start"
+        }
+      },
+      {
+        "colorSource": "brand",
+        "mode": "dark",
+        "density": "comfortable",
+        "before": {
+          "panel": {
+            "left": 80,
+            "right": 900,
+            "top": 311.21875,
+            "bottom": 466,
+            "height": 154.78125
+          },
+          "trigger": {
+            "left": 80,
+            "right": 344,
+            "top": 478.09375,
+            "bottom": 542.09375,
+            "height": 64
+          },
+          "long": {
+            "left": 81,
+            "right": 899,
+            "top": 382.21875,
+            "bottom": 427,
+            "height": 44.78125
+          },
+          "text": {
+            "left": 101,
+            "right": 867,
+            "top": 382.21875,
+            "bottom": 427,
+            "height": 44.78125
+          },
+          "placement": "top-start",
+          "pageOverflow": false
+        },
+        "after": {
+          "panelTop": 494,
+          "triggerTop": 418.09375,
+          "panel": {
+            "left": 80,
+            "right": 900,
+            "top": 494,
+            "bottom": 648.78125
+          },
+          "trigger": {
+            "left": 80,
+            "right": 344,
+            "top": 418.09375,
+            "bottom": 482.09375
+          },
+          "placement": "bottom-start"
+        }
+      },
+      {
+        "colorSource": "brand",
+        "mode": "dark",
+        "density": "compact",
+        "before": {
+          "panel": {
+            "left": 64,
+            "right": 900,
+            "top": 546,
+            "bottom": 670.375,
+            "height": 124.375
+          },
+          "trigger": {
+            "left": 64,
+            "right": 360,
+            "top": 485.703125,
+            "bottom": 533.703125,
+            "height": 48
+          },
+          "long": {
+            "left": 65,
+            "right": 899,
+            "top": 601,
+            "bottom": 639.375,
+            "height": 38.375
+          },
+          "text": {
+            "left": 85,
+            "right": 867,
+            "top": 601,
+            "bottom": 639.375,
+            "height": 38.375
+          },
+          "placement": "bottom-start",
+          "pageOverflow": false
+        },
+        "after": {
+          "panelTop": 486,
+          "triggerTop": 425.703125,
+          "panel": {
+            "left": 64,
+            "right": 900,
+            "top": 486,
+            "bottom": 610.375
+          },
+          "trigger": {
+            "left": 64,
+            "right": 360,
+            "top": 425.703125,
+            "bottom": 473.703125
+          },
+          "placement": "bottom-start"
+        }
+      }
+    ]
+  },
+  "errors": [],
+  "resourceErrors": [],
+  "unhandled": [],
+  "failures": []
+}

@@ -1,0 +1,36 @@
+
+ RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/form-create
+
+ ❯ src/components.test.ts (90 tests | 1 failed | 89 skipped) 3680ms
+   × P1复审P2：同次change和blur的合法number归一后解除等待 3677ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/components.test.ts > P1复审P2：同次change和blur的合法number归一后解除等待
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ src/components.test.ts:1919:44
+    1917|   await flushPromises();
+    1918|   expect(input.element.value).toBe("1");
+    1919|   expect(vm.readEditingState().canSuspend).toBe(true);
+       |                                            ^
+    1920|   const captured = vm.captureContent();
+    1921|   expect(captured.status).toBe("captured");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 89 skipped (90)
+   Start at  01:10:26
+   Duration  8.47s (tests 45%, import 35%, transform 12%, environment 8%)
+
+undefined
+/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/form-create:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run src/components.test.ts -t 合法number归一

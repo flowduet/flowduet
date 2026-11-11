@@ -1,0 +1,23 @@
+{
+  "title": "未确认输入切BPMN",
+  "source": "A10 A15",
+  "method": "Codex内置浏览器真实UI",
+  "startedUTC": "2026-10-12T10:54:32.323Z",
+  "status": "待诊断",
+  "attempts": [
+    {
+      "status": "待诊断",
+      "evidence": "U57-attempt1.json"
+    },
+    {
+      "status": "工具阻塞",
+      "evidence": "U57-attempt2.json"
+    }
+  ],
+  "error": "Error: Playwright selector deadline exceeded\nwaiting on click for selector [data-test=\"node-card\"] >> internal:has-text=\"经理审批\"i\nLocator diagnostics: {\"kind\":\"no_matches\",\"action\":\"click\",\"locator\":\"[data-test=\\\"node-card\\\"] >> internal:has-text=\\\"经理审批\\\"i\",\"matchCount\":0,\"matches\":[],\"visibleCount\":0,\"truncated\":false}",
+  "completedUTC": "2026-10-12T10:54:36.651Z",
+  "evidence": [
+    "U57.ax.txt",
+    "U57.jpg"
+  ]
+}

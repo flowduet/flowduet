@@ -1,0 +1,24 @@
+diff --git a/packages/form-create/src/components.test.ts b/packages/form-create/src/components.test.ts
+index fd3cdcc..8fb062d 100644
+--- a/packages/form-create/src/components.test.ts
++++ b/packages/form-create/src/components.test.ts
+@@ -1370,9 +1370,16 @@ describe("retained 多实例与捕获版本", () => {
+       await manager.get('[data-test="form-edit-btn-form_apply"]').trigger("click");
+     await flushPromises();
+     const first = managers[0]!;
+-    await vi.waitFor(async () => {
+-      first.findComponent(FcDesigner).vm.triggerActive("amount");
+-      await flushPromises();
++    const designer = first.findComponent(FcDesigner);
++    const previous = designer.emitted("active")?.length ?? 0;
++    // 选择确认与异步刷新分阶段；观察输入的waitFor不重复发起昂贵的选择/刷新。
++    await vi.waitFor(() => {
++      if ((designer.emitted("active")?.length ?? 0) === previous)
++        designer.vm.triggerActive("amount");
++      expect(designer.emitted("active")?.length ?? 0).toBeGreaterThan(previous);
++    });
++    await flushPromises();
++    await vi.waitFor(() => {
+       expect(first.find('[data-retained-input="number"]').exists()).toBe(true);
+     });
+     const input = first.get('[data-retained-input="number"]');

@@ -1,0 +1,211 @@
+Browser tab: 3, Title: "三包版本化消费验收", URL: "http://127.0.0.1:5174/".
+0 AXWebArea 三包版本化消费验收, URL: 127.0.0.1:5174/
+	1 container
+		2 heading 三包版本化外部消费验收, Value: 1
+			3 text 三包版本化外部消费验收
+		4 text core 0.3.0 · designer 0.1.0 · form-create 0.1.0 保存恢复通过：2张表单
+		5 button 打开真实设计器
+		6 button 保存并恢复
+		7 button 下载组合XML
+		196 container
+			197 container el-id-9587-57
+				198 text *
+				199 text 申请人
+			200 text field (settable) *申请人, Value: 设计默认申请人, ID: el-id-9587-74
+			201 container el-id-9587-58
+				202 text *
+				203 text 申请说明
+			204 text entry area (settable) *申请说明, ID: el-id-9587-75, Value: 第一行
+第二行
+			205 container el-id-9587-59
+				206 text *
+				207 text 申请金额
+			208 container
+				209 button decrease number
+				210 button increase number
+				211 stepper (settable, integer) *申请金额, Value: 0, ID: el-id-9587-76
+			212 container el-id-9587-60
+				213 text *
+				214 text 申请类型
+			215 Description: *申请类型, ID: el-id-9587-77
+				216 container
+					217 radio button (settable, integer) Description: 否, Value: 1
+					218 text 否
+				219 container
+					220 radio button (settable, integer) Description: 是, Value: 0
+					221 text 是
+			222 container el-id-9587-62
+				223 text *
+				224 text 申请附件类别
+			225 container *申请附件类别
+				226 container
+					227 checkbox (settable, integer) Description: 否, Value: 0
+					228 text 否
+				229 container
+					230 checkbox (settable, integer) Description: 是, Value: 0
+					231 text 是
+			232 container el-id-9587-63
+				233 text *
+				234 text 申请部门
+			235 container
+				236 combo box (collapsed, settable) *申请部门, ID: el-id-9587-79, Secondary Actions: Expand
+				237 text 否
+				238 image
+			239 container el-id-9587-68
+				240 text *
+				241 text 申请日期
+			242 container
+				243 image
+				244 combo box (collapsed, settable) *申请日期, Value: 2026-10-12, ID: el-id-9587-80, Secondary Actions: Expand
+			245 container el-id-9587-70
+				246 text *
+				247 text 紧急申请
+			248 container
+				249 switch (settable, boolean) Description: *紧急申请, Value: 0, ID: el-id-9587-81
+			250 text 布局备注
+			251 text field (settable) 布局备注, Value: 列内默认, ID: el-id-9587-82
+			252 text 列二联系人
+			253 text field (settable) 列二联系人, Value: 列二默认, ID: el-id-9587-83
+			254 button 提交
+		67 button 触发校验
+		68 text 当前试填值（与设计默认值隔离，不随文档保存） {
+  "apply_text": "设计默认申请人",
+  "apply_textarea": "第一行\n第二行",
+  "apply_number": 0,
+  "apply_radio": "0",
+  "apply_checkbox": [],
+  "apply_select": "0",
+  "apply_date": "2026-10-12",
+  "apply_switch": false,
+  "apply_layout_note": "列内默认",
+  "apply_layout_contact": "列二默认"
+}
+		69 button (expanded) 公开流程组件, Secondary Actions: Collapse
+			70 text 公开流程组件
+		71 text 流程默认表单
+		72 pop up button (collapsed, settable) Value: 申请单, Secondary Actions: Expand
+			73 menu
+				74 无
+				75 (selected) 申请单
+				76 复核单
+		77 container
+			78 text 起 开始
+		79 pop up button (collapsed) +, Help: 在此后添加节点, ID: el-id-9587-17, Secondary Actions: Expand
+		80 container
+			81 text 审 经理审批 审批人 ${manager} 表单：申请单（继承默认）
+		82 pop up button (collapsed) +, Help: 在此后添加节点, ID: el-id-9587-21, Secondary Actions: Expand
+		83 container
+			84 text 审 合同会签 多人 · 集合 approvers 表单：复核单（节点指定）
+		85 pop up button (collapsed) +, Help: 在此后添加节点, ID: el-id-9587-25, Secondary Actions: Expand
+		86 container
+			87 text 抄 抄送法务备案 抄送：张三,李四
+		88 pop up button (collapsed) +, Help: 在此后添加节点, ID: el-id-9587-29, Secondary Actions: Expand
+		89 container
+			90 text 条件分支
+			91 button 默认1, Help: 点击取消默认（其余情况无兜底支路）
+			92 button 默认2, Help: 把该支路设为默认（其余情况走此支路）
+			93 button + 分支, Help: 添加分支
+			94 button 删块, Help: 删除整块（前后直连）
+			95 container
+				96 button 常规审批 其他情况（默认）, Help: 常规审批：其他情况（默认）；点击配置此分支
+					97 text 常规审批
+					98 text 其他情况（默认）
+				99 text 审
+				100 text 总监审批
+				101 text 审批人 ${director}
+				102 text 表单：申请单（继承默认）
+				103 pop up button (collapsed) +, Help: 在此后添加节点, ID: el-id-9587-33, Secondary Actions: Expand
+			104 container
+				105 button 大额复核 ${amount > 1000}, Help: 大额复核：${amount > 1000}；点击配置此分支
+					106 text 大额复核
+					107 text ${amount > 1000}
+				108 container
+					109 text 并行分支
+					110 button + 分支, Help: 添加分支
+					111 button 删块, Help: 删除整块（前后直连）
+				112 container
+					113 text 支路 1
+					114 container
+						115 text 审 财务复核 审批人 ${finance} 表单：复核单（节点指定）
+					116 pop up button (collapsed) +, Help: 在此后添加节点, ID: el-id-9587-37, Secondary Actions: Expand
+					117 text 支路 2
+					118 container
+						119 text 审 法务复核 审批人 ${legal} 表单：申请单（继承默认）
+					120 pop up button (collapsed) +, Help: 在此后添加节点, ID: el-id-9587-41, Secondary Actions: Expand
+		121 container
+			122 text 终 结束
+		123 container
+			124 container
+				125 image
+					126 container Edge from start to approval_1
+				127 image
+					128 container Edge from cc_1 to fork1
+				129 image
+					130 container Edge from fork1 to a_node
+						131 text 常规审批 · 默认
+				132 image
+					133 container Edge from fork1 to pfork
+						134 container ${amount > 1000}
+							135 text 大额复核
+				136 image
+					137 container Edge from pfork to fin_node
+				138 image
+					139 container Edge from pfork to legal_node
+				140 image
+					141 container Edge from fin_node to pjoin
+				142 image
+					143 container Edge from legal_node to pjoin
+				144 image
+					145 container Edge from pjoin to join1
+				146 image
+					147 container Edge from a_node to join1
+				148 image
+					149 container Edge from join1 to end
+				150 image
+					151 container Edge from approval_1 to approval_mi
+				152 image
+					153 container Edge from approval_mi to cc_1
+				154 container start
+					155 image
+					156 text 开始
+				157 container approval_1
+					158 container
+						159 image
+						160 text 经理审批
+				161 container cc_1
+					162 container
+						163 image
+						164 text 抄送法务备案
+				165 container fork1
+					166 image
+					167 text 金额判断
+				168 container a_node
+					169 container
+						170 image
+						171 text 总监审批
+				172 container pfork
+					173 image
+					174 text 并行开始
+				175 container pjoin
+					176 image
+					177 text 并行结束
+				178 container fin_node
+					179 container
+						180 image
+						181 text 财务复核
+				182 container legal_node
+					183 container
+						184 image
+						185 text 法务复核
+				186 container join1
+					187 image
+					188 text 汇聚
+				189 container end
+					190 image
+					191 text 结束
+				192 container approval_mi
+					193 container
+						194 image
+						195 text 合同会签
+
+The focused UI element is 6 button 保存并恢复

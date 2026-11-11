@@ -1,0 +1,12 @@
+{
+  "paths": {
+    "@flowduet/core": "/private/tmp/flowduet-105-height-consumer.pRQBHh/node_modules/@flowduet/core/dist/index.js",
+    "@flowduet/designer": "/private/tmp/flowduet-105-height-consumer.pRQBHh/node_modules/@flowduet/designer/dist/index.js",
+    "@flowduet/form-create": "/private/tmp/flowduet-105-height-consumer.pRQBHh/node_modules/@flowduet/form-create/dist/index.js",
+    "@flowduet/designer/style.css": "/private/tmp/flowduet-105-height-consumer.pRQBHh/node_modules/@flowduet/designer/dist/designer.css",
+    "@flowduet/form-create/style.css": "/private/tmp/flowduet-105-height-consumer.pRQBHh/node_modules/@flowduet/form-create/dist/form-create.css"
+  },
+  "allExist": true,
+  "hasControlRules": true,
+  "residualDeep": false
+}

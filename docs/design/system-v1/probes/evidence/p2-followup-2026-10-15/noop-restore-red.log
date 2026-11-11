@@ -1,0 +1,51 @@
+
+ RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground
+
+stderr | probes/stage-zero/contracts/validation.test.ts > 无变化的属性还原保留已覆盖租约和校验章
+[BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+
+ ❯ probes/stage-zero/contracts/validation.test.ts (10 tests | 1 failed | 9 skipped) 46ms
+   × 无变化的属性还原保留已覆盖租约和校验章 45ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  probes/stage-zero/contracts/validation.test.ts > 无变化的属性还原保留已覆盖租约和校验章
+AssertionError: expected undefined to be { token: Symbol(EditorLease), …(1) } // Object.is equality
+
+- Expected:
+{
+  "target": {
+    "facet": "properties",
+    "ref": {
+      "controllerId": "A",
+      "documentEpoch": 1,
+      "id": "approval_1",
+      "kind": "node",
+      "lifetime": 4,
+    },
+  },
+  "token": Symbol(EditorLease),
+}
+
++ Received:
+undefined
+
+ ❯ probes/stage-zero/contracts/validation.test.ts:114:38
+    112|   expect(await f.c.validate()).toMatchObject({ ok: true });
+    113|   expect(f.c.restore(f.t)).toMatchObject({ ok: true });
+    114|   expect(f.store.editor(f.t)?.lease).toBe(lease);
+       |                                      ^
+    115|   expect(f.c.validationCurrent).toBe(true);
+    116| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 9 skipped (10)
+   Start at  13:45:35
+   Duration  2.56s (import 56%, transform 28%, environment 14%, tests 2%)
+
+undefined
+/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run probes/stage-zero/contracts/validation.test.ts --testTimeout 20000 -t 无变化的属性还原

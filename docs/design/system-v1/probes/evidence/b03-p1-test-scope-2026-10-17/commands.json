@@ -1,0 +1,264 @@
+[
+  {
+    "name": "scope-green",
+    "command": [
+      "pnpm",
+      "--filter",
+      "@flowduet/playground",
+      "exec",
+      "vitest",
+      "run",
+      "src/test-utils/browser-test-scope.test.ts"
+    ],
+    "exitCode": 0,
+    "seconds": 7.4,
+    "log": "verification/scope-green.log",
+    "executionGitHead": "bec34c2e833d53d46bb82c1361b987e7fd23373f",
+    "verifiedTestSourceCommit": "1c948c0662f63ac8edfc008b8f690596d2650210",
+    "cwd": "/Users/l/.codex/worktrees/design-system-stage-zero/flowduet"
+  },
+  {
+    "name": "target-1",
+    "command": [
+      "pnpm",
+      "--filter",
+      "@flowduet/playground",
+      "exec",
+      "vitest",
+      "run",
+      "src/App.integration.test.ts",
+      "probes/stage-zero/location.test.ts",
+      "-t",
+      "插入抄送草稿后自动与手动导出|新建草稿可保存并报告待修复项|读取期间新打开表单编辑器|单↔多转换后原分支诊断"
+    ],
+    "exitCode": 0,
+    "seconds": 8.97,
+    "log": "verification/target-1.log",
+    "executionGitHead": "bec34c2e833d53d46bb82c1361b987e7fd23373f",
+    "verifiedTestSourceCommit": "1c948c0662f63ac8edfc008b8f690596d2650210",
+    "cwd": "/Users/l/.codex/worktrees/design-system-stage-zero/flowduet"
+  },
+  {
+    "name": "target-2",
+    "command": [
+      "pnpm",
+      "--filter",
+      "@flowduet/playground",
+      "exec",
+      "vitest",
+      "run",
+      "src/App.integration.test.ts",
+      "probes/stage-zero/location.test.ts",
+      "-t",
+      "插入抄送草稿后自动与手动导出|新建草稿可保存并报告待修复项|读取期间新打开表单编辑器|单↔多转换后原分支诊断"
+    ],
+    "exitCode": 0,
+    "seconds": 9.82,
+    "log": "verification/target-2.log",
+    "executionGitHead": "bec34c2e833d53d46bb82c1361b987e7fd23373f",
+    "verifiedTestSourceCommit": "1c948c0662f63ac8edfc008b8f690596d2650210",
+    "cwd": "/Users/l/.codex/worktrees/design-system-stage-zero/flowduet"
+  },
+  {
+    "name": "target-3",
+    "command": [
+      "pnpm",
+      "--filter",
+      "@flowduet/playground",
+      "exec",
+      "vitest",
+      "run",
+      "src/App.integration.test.ts",
+      "probes/stage-zero/location.test.ts",
+      "-t",
+      "插入抄送草稿后自动与手动导出|新建草稿可保存并报告待修复项|读取期间新打开表单编辑器|单↔多转换后原分支诊断"
+    ],
+    "exitCode": 0,
+    "seconds": 9.53,
+    "log": "verification/target-3.log",
+    "executionGitHead": "bec34c2e833d53d46bb82c1361b987e7fd23373f",
+    "verifiedTestSourceCommit": "1c948c0662f63ac8edfc008b8f690596d2650210",
+    "cwd": "/Users/l/.codex/worktrees/design-system-stage-zero/flowduet"
+  },
+  {
+    "name": "app-file",
+    "command": [
+      "pnpm",
+      "--filter",
+      "@flowduet/playground",
+      "exec",
+      "vitest",
+      "run",
+      "src/App.integration.test.ts"
+    ],
+    "exitCode": 0,
+    "seconds": 33.85,
+    "log": "verification/app-file.log",
+    "executionGitHead": "bec34c2e833d53d46bb82c1361b987e7fd23373f",
+    "verifiedTestSourceCommit": "1c948c0662f63ac8edfc008b8f690596d2650210",
+    "cwd": "/Users/l/.codex/worktrees/design-system-stage-zero/flowduet"
+  },
+  {
+    "name": "location-file",
+    "command": [
+      "pnpm",
+      "--filter",
+      "@flowduet/playground",
+      "exec",
+      "vitest",
+      "run",
+      "probes/stage-zero/location.test.ts"
+    ],
+    "exitCode": 0,
+    "seconds": 11.46,
+    "log": "verification/location-file.log",
+    "executionGitHead": "bec34c2e833d53d46bb82c1361b987e7fd23373f",
+    "verifiedTestSourceCommit": "1c948c0662f63ac8edfc008b8f690596d2650210",
+    "cwd": "/Users/l/.codex/worktrees/design-system-stage-zero/flowduet"
+  },
+  {
+    "name": "full-default",
+    "command": [
+      "pnpm",
+      "test"
+    ],
+    "exitCode": 0,
+    "seconds": 229.16,
+    "log": "verification/full-default.log",
+    "executionGitHead": "bec34c2e833d53d46bb82c1361b987e7fd23373f",
+    "verifiedTestSourceCommit": "1c948c0662f63ac8edfc008b8f690596d2650210",
+    "cwd": "/Users/l/.codex/worktrees/design-system-stage-zero/flowduet"
+  },
+  {
+    "name": "lint",
+    "command": [
+      "pnpm",
+      "lint"
+    ],
+    "exitCode": 1,
+    "seconds": 10.55,
+    "log": "verification/lint-evidence-source-first.log",
+    "executionGitHead": "bec34c2e833d53d46bb82c1361b987e7fd23373f",
+    "verifiedTestSourceCommit": "1c948c0662f63ac8edfc008b8f690596d2650210",
+    "cwd": "/Users/l/.codex/worktrees/design-system-stage-zero/flowduet"
+  },
+  {
+    "name": "lint",
+    "command": [
+      "pnpm",
+      "lint"
+    ],
+    "exitCode": 0,
+    "seconds": 17.98,
+    "log": "verification/lint.log",
+    "executionGitHead": "bec34c2e833d53d46bb82c1361b987e7fd23373f",
+    "verifiedTestSourceCommit": "1c948c0662f63ac8edfc008b8f690596d2650210",
+    "cwd": "/Users/l/.codex/worktrees/design-system-stage-zero/flowduet"
+  },
+  {
+    "name": "build",
+    "command": [
+      "pnpm",
+      "build"
+    ],
+    "exitCode": 0,
+    "seconds": 16.36,
+    "log": "verification/build.log",
+    "executionGitHead": "bec34c2e833d53d46bb82c1361b987e7fd23373f",
+    "verifiedTestSourceCommit": "1c948c0662f63ac8edfc008b8f690596d2650210",
+    "cwd": "/Users/l/.codex/worktrees/design-system-stage-zero/flowduet"
+  },
+  {
+    "name": "strict",
+    "command": [
+      "pnpm",
+      "--filter",
+      "@flowduet/form-create",
+      "exec",
+      "vue-tsc",
+      "-p",
+      "../../apps/playground/probes/stage-zero/tsconfig.json",
+      "--noEmit"
+    ],
+    "exitCode": 0,
+    "seconds": 8.89,
+    "log": "verification/strict.log",
+    "executionGitHead": "bec34c2e833d53d46bb82c1361b987e7fd23373f",
+    "verifiedTestSourceCommit": "1c948c0662f63ac8edfc008b8f690596d2650210",
+    "cwd": "/Users/l/.codex/worktrees/design-system-stage-zero/flowduet"
+  },
+  {
+    "name": "esm",
+    "command": [
+      "node",
+      "--input-type=module",
+      "-e",
+      "import { CORE_VERSION } from \"./packages/core/dist/index.js\"; console.log(\"dist import OK\",CORE_VERSION)"
+    ],
+    "exitCode": 0,
+    "seconds": 0.1,
+    "log": "verification/esm.log",
+    "executionGitHead": "bec34c2e833d53d46bb82c1361b987e7fd23373f",
+    "verifiedTestSourceCommit": "1c948c0662f63ac8edfc008b8f690596d2650210",
+    "cwd": "/Users/l/.codex/worktrees/design-system-stage-zero/flowduet"
+  },
+  {
+    "name": "extra-app-strict",
+    "command": [
+      "pnpm",
+      "--filter",
+      "@flowduet/form-create",
+      "exec",
+      "vue-tsc",
+      "-p",
+      "../../apps/playground/tsconfig.json",
+      "--noEmit"
+    ],
+    "exitCode": 1,
+    "log": "verification/strict-app.log",
+    "scope": "extra wider check: 10 existing errors; not an all-green claim"
+  },
+  {
+    "name": "baseline-app-strict",
+    "command": [
+      "pnpm",
+      "--filter",
+      "@flowduet/form-create",
+      "exec",
+      "vue-tsc",
+      "-p",
+      "/tmp/b03-test-scope-repair-2026-10-17/type-baseline/apps/playground/tsconfig.json",
+      "--noEmit"
+    ],
+    "exitCode": 1,
+    "log": "verification/strict-app-baseline.log",
+    "scope": "bec34c2 App sources: 17 errors, current 10 are all already present by file + TS diagnostic; dependencies/product build unchanged"
+  },
+  {
+    "name": "independent-spec",
+    "command": [
+      "pnpm",
+      "--filter",
+      "@flowduet/playground",
+      "exec",
+      "vitest",
+      "run",
+      "src/test-utils/browser-test-scope.test.ts"
+    ],
+    "exitCode": 0,
+    "log": "verification/independent-spec.log",
+    "executionGitHead": "1c948c0662f63ac8edfc008b8f690596d2650210",
+    "scope": "fresh-context Spec reviewer: 6/6; did not rerun full suite"
+  },
+  {
+    "name": "lint-final-docs",
+    "command": [
+      "pnpm",
+      "lint"
+    ],
+    "exitCode": 0,
+    "log": "verification/lint-final-docs.log",
+    "executionGitHead": "1c948c0662f63ac8edfc008b8f690596d2650210",
+    "scope": "after documentation/evidence assembly; test/product sources unchanged"
+  }
+]

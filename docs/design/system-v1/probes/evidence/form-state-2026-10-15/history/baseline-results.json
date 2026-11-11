@@ -1,0 +1,26 @@
+[
+  {
+    "name": "baseline-full",
+    "command": [
+      "pnpm",
+      "test"
+    ],
+    "exit": 0,
+    "seconds": 110.3
+  },
+  {
+    "name": "baseline-strict",
+    "command": [
+      "pnpm",
+      "--filter",
+      "@flowduet/form-create",
+      "exec",
+      "vue-tsc",
+      "--noEmit",
+      "-p",
+      "../../apps/playground/probes/stage-zero/tsconfig.json"
+    ],
+    "exit": 0,
+    "seconds": 8.14
+  }
+]

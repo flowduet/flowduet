@@ -1,0 +1,228 @@
+
+ RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground
+
+stderr | src/App.integration.test.ts > Playground 文档兼容检查与原子打开（#75） > 字符引用 URI 文件可打开并导出；非法 xml 重绑定文件拒绝且未保存内容不丢失
+[BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+
+stderr | src/App.integration.test.ts > Playground 文档兼容检查与原子打开（#75） > 导入失效表单 key 的可恢复文档：以草稿打开、key 保留并定位、预览与部署导出受阻（A11）
+[BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+
+stderr | src/App.integration.test.ts > Playground 本地草稿与未完成设计保护（#76） > AC7：恢复含有效表单定义的草稿后可继续试填，试填不落本地草稿
+[BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+
+stderr | src/App.integration.test.ts > E16 文件读取期间新编辑保护 > 新抽屉输入取消迟到打开，模型目录缓冲dirty保持，重试仍可打开
+[BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+
+stderr | src/App.integration.test.ts > E16 文件读取期间新编辑保护 > 读取期间新打开表单编辑器也保持当前目录及编辑器
+[BpmnModel] 未找到与 process 匹配的 DI 图，几何信息丢失；多 process 场景请确保 diagram 指向第一个 bpmn:Process
+
+ ❯ src/App.integration.test.ts (45 tests | 12 failed) 26619ms
+   ❯ Playground 默认表单闭环（#72：表单 → 绑定 → 保存 → 打开 → 导出） (3)
+     × 真实组件串联：新建表单、设默认、下载文档、从文件打开恢复绑定、组合导出含默认引用 416ms
+   ❯ Playground 多表单管理与节点覆盖闭环（#73） (3)
+     × 双表单：抽屉选覆盖、保存打开后默认/覆盖关系恢复、导出含两处引用 469ms
+     × 删除守卫：被默认引用拒绝并说明位置，解除引用后可删除（A06） 321ms
+     × 预览多目标：同表单双节点切换清理旧试填值；失效只阻止相关目标（AC5） 1371ms
+   ❯ Playground 文件读取与打开竞态（A14） (6)
+     × 较新文件失败后，旧文件迟到也不能替换原未保存设计 295ms
+   ❯ Playground 文档兼容检查与原子打开（#75） (6)
+     × 字符引用 URI 文件可打开并导出；非法 xml 重绑定文件拒绝且未保存内容不丢失 650ms
+     × 导入失效表单 key 的可恢复文档：以草稿打开、key 保留并定位、预览与部署导出受阻（A11） 428ms
+     × 先持有未保存设计与表单目录，打开失败后全部保留（A12） 250ms
+   ❯ Playground 本地草稿与未完成设计保护（#76） (5)
+     × AC7：恢复含有效表单定义的草稿后可继续试填，试填不落本地草稿 831ms
+   ❯ Playground 未保存替换提示（#76：新建/打开前确认） (4)
+     × 打开文件前提示替换影响；取消后模型、表单、未提交输入与未保存状态全部保持 282ms
+   ❯ E16 文件读取期间新编辑保护 (2)
+     × 新抽屉输入取消迟到打开，模型目录缓冲dirty保持，重试仍可打开 296ms
+     × 读取期间新打开表单编辑器也保持当前目录及编辑器 917ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 12 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/App.integration.test.ts > Playground 默认表单闭环（#72：表单 → 绑定 → 保存 → 打开 → 导出） > 真实组件串联：新建表单、设默认、下载文档、从文件打开恢复绑定、组合导出含默认引用
+AssertionError: expected '[object Object] form_1 改名  编辑内容  删除' to contain '申请单'
+
+Expected: "申请单"
+Received: "[object Object] form_1 改名  编辑内容  删除"
+
+ ❯ src/App.integration.test.ts:356:64
+    354|     await flushPromises();
+    355|     assertActiveTarget(target);
+    356|     expect(target.find("[data-test=form-item-form_1]").text()).toConta…
+       |                                                                ^
+    357|
+    358|     // 流程默认表单选择条：设为 form_1；审批卡片显示继承
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/12]⎯
+
+ FAIL  src/App.integration.test.ts > Playground 多表单管理与节点覆盖闭环（#73） > 双表单：抽屉选覆盖、保存打开后默认/覆盖关系恢复、导出含两处引用
+AssertionError: expected '继承默认（当前未设默认表单）' to contain '继承默认（申请单）'
+
+Expected: "继承默认（申请单）"
+Received: "继承默认（当前未设默认表单）"
+
+ ❯ src/App.integration.test.ts:639:46
+    637|     expect(select).not.toBeNull();
+    638|     // 继承选项呈现当前默认名，覆盖选项可区分
+    639|     expect(select!.selectedOptions[0]?.text).toContain("继承默认（申请单）");
+       |                                              ^
+    640|     select!.value = "form_2";
+    641|     select!.dispatchEvent(new Event("change", { bubbles: true }));
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/12]⎯
+
+ FAIL  src/App.integration.test.ts > Playground 多表单管理与节点覆盖闭环（#73） > 删除守卫：被默认引用拒绝并说明位置，解除引用后可删除（A06）
+Error: Cannot call text on an empty DOMWrapper.
+ ❯ Object.get ../../node_modules/.pnpm/@vue+test-utils@2.5.1_@vue+compiler-dom@3.5.43_@vue+server-renderer@3.5.43_vue@3.5.43_typescript@5.9.3_/node_modules/@vue/test-utils/dist/vue-test-utils.cjs.js:1488:27
+ ❯ src/App.integration.test.ts:743:50
+    741|     await flushPromises();
+    742|     assertActiveTarget(target);
+    743|     expect(target.find('[data-test="doc-error"]').text()).toContain("流…
+       |                                                  ^
+    744|     expect(
+    745|       target.find('[data-test="form-manager-dialog"] [data-test="form-…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/12]⎯
+
+ FAIL  src/App.integration.test.ts > Playground 多表单管理与节点覆盖闭环（#73） > 预览多目标：同表单双节点切换清理旧试填值；失效只阻止相关目标（AC5）
+AssertionError: expected null not to be null
+ ❯ src/App.integration.test.ts:849:25
+    847|         '[data-test="form-preview-render"] input',
+    848|       );
+    849|       expect(input).not.toBeNull();
+       |                         ^
+    850|       input!.value = "试用内容";
+    851|       input!.dispatchEvent(new Event("input", { bubbles: true }));
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/12]⎯
+
+ FAIL  src/App.integration.test.ts > Playground 文件读取与打开竞态（A14） > 较新文件失败后，旧文件迟到也不能替换原未保存设计
+AssertionError: expected '[object Object] form_1 改名  编辑内容  删除' to contain '未保存申请单'
+
+Expected: "未保存申请单"
+Received: "[object Object] form_1 改名  编辑内容  删除"
+
+ ❯ src/App.integration.test.ts:1047:66
+    1045|     await flushPromises();
+    1046|     assertActiveTarget(target);
+    1047|     expect(target.find('[data-test="form-item-form_1"]').text()).toCon…
+       |                                                                  ^
+    1048|   });
+    1049|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/12]⎯
+
+ FAIL  src/App.integration.test.ts > Playground 文档兼容检查与原子打开（#75） > 字符引用 URI 文件可打开并导出；非法 xml 重绑定文件拒绝且未保存内容不丢失
+AssertionError: expected '[object Object] form_1 改名  编辑内容  删除' to contain '未保存申请单'
+
+Expected: "未保存申请单"
+Received: "[object Object] form_1 改名  编辑内容  删除"
+
+ ❯ src/App.integration.test.ts:1106:64
+    1104|     await flushPromises();
+    1105|     assertActiveTarget(target);
+    1106|     expect(target.find("[data-test=form-item-form_1]").text()).toConta…
+       |                                                                ^
+    1107|   });
+    1108|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/12]⎯
+
+ FAIL  src/App.integration.test.ts > Playground 文档兼容检查与原子打开（#75） > 导入失效表单 key 的可恢复文档：以草稿打开、key 保留并定位、预览与部署导出受阻（A11）
+Error: Cannot call text on an empty DOMWrapper.
+ ❯ Object.get ../../node_modules/.pnpm/@vue+test-utils@2.5.1_@vue+compiler-dom@3.5.43_@vue+server-renderer@3.5.43_vue@3.5.43_typescript@5.9.3_/node_modules/@vue/test-utils/dist/vue-test-utils.cjs.js:1488:27
+ ❯ src/App.integration.test.ts:1144:61
+    1142|     await flushPromises();
+    1143|     assertActiveTarget(target);
+    1144|     expect(target.find('[data-test="preview-target-error"]').text()).t…
+       |                                                             ^
+    1145|     expect(target.find('[data-test="form-preview-render"]').exists()).…
+    1146|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/12]⎯
+
+ FAIL  src/App.integration.test.ts > Playground 文档兼容检查与原子打开（#75） > 先持有未保存设计与表单目录，打开失败后全部保留（A12）
+AssertionError: expected '[object Object] form_1 改名  编辑内容  删除' to contain '未保存申请单'
+
+Expected: "未保存申请单"
+Received: "[object Object] form_1 改名  编辑内容  删除"
+
+ ❯ src/App.integration.test.ts:1183:64
+    1181|     await flushPromises();
+    1182|     assertActiveTarget(target);
+    1183|     expect(target.find("[data-test=form-item-form_1]").text()).toConta…
+       |                                                                ^
+    1184|
+    1185|     // 坏 XML：同样拒绝且不部分覆盖（表单管理弹窗开着也不受影响）
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/12]⎯
+
+ FAIL  src/App.integration.test.ts > Playground 本地草稿与未完成设计保护（#76） > AC7：恢复含有效表单定义的草稿后可继续试填，试填不落本地草稿
+AssertionError: expected null not to be null
+ ❯ src/App.integration.test.ts:1468:30
+    1466|       '[data-test="form-preview-render"] input',
+    1467|     );
+    1468|     expect(previewInput).not.toBeNull();
+       |                              ^
+    1469|     previewInput!.value = "预览试填事由";
+    1470|     previewInput!.dispatchEvent(new Event("input", { bubbles: true }));
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/12]⎯
+
+ FAIL  src/App.integration.test.ts > Playground 未保存替换提示（#76：新建/打开前确认） > 打开文件前提示替换影响；取消后模型、表单、未提交输入与未保存状态全部保持
+AssertionError: expected '[object Object] form_1 改名  编辑内容  删除' to contain '未保存申请单'
+
+Expected: "未保存申请单"
+Received: "[object Object] form_1 改名  编辑内容  删除"
+
+ ❯ src/App.integration.test.ts:1597:64
+    1595|     await flushPromises();
+    1596|     assertActiveTarget(target);
+    1597|     expect(target.find("[data-test=form-item-form_1]").text()).toConta…
+       |                                                                ^
+    1598|     expect(target.text()).not.toContain("已打开设计文档");
+    1599|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/12]⎯
+
+ FAIL  src/App.integration.test.ts > E16 文件读取期间新编辑保护 > 新抽屉输入取消迟到打开，模型目录缓冲dirty保持，重试仍可打开
+AssertionError: expected '[object Object]' to be '保留目录76' // Object.is equality
+
+Expected: "保留目录76"
+Received: "[object Object]"
+
+ ❯ src/App.integration.test.ts:2066:33
+    2064|     const saved = JSON.parse(localStorage.getItem("flowduet.playground…
+    2065|     expect(saved.xml).toContain("读取期间新输入76");
+    2066|     expect(saved.forms[0].name).toBe("保留目录76");
+       |                                 ^
+    2067|     await openDocument(target, incoming);
+    2068|     assertActiveTarget(target);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/12]⎯
+
+ FAIL  src/App.integration.test.ts > E16 文件读取期间新编辑保护 > 读取期间新打开表单编辑器也保持当前目录及编辑器
+AssertionError: expected '[object Object]' to contain '保留编辑器76'
+
+Expected: "保留编辑器76"
+Received: "[object Object]"
+
+ ❯ src/App.integration.test.ts:2095:68
+    2093|     assertActiveTarget(target);
+    2094|     expect(target.find('[data-test="doc-error"]').text()).toContain("新…
+    2095|     expect(target.find('[data-test="form-designer-name"]').text()).toC…
+       |                                                                    ^
+    2096|   });
+    2097| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/12]⎯
+
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  12 failed | 48 passed (60)
+   Start at  11:50:59
+   Duration  31.81s (tests 72%, import 17%, transform 7%, environment 3%)
+
+undefined
+/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run src/test-utils/browser-test-scope.test.ts src/App.integration.test.ts probes/stage-zero/location.test.ts

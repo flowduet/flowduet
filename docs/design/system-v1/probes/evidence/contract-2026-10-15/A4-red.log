@@ -1,0 +1,139 @@
+
+ RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/designer
+
+ ❯ src/property-editing.test.ts (3 tests | 3 failed) 34ms
+   ❯ 共享属性编辑规则 (3)
+     × 草稿允许业务缺项但严格确定仍拒绝，拒绝前不改名称 17ms
+     × 非法集合格式在草稿路径仍拒绝 8ms
+     × 单多切换在输入内保存两侧值，不写模型 4ms
+ ❯ src/external-editing.test.ts (6 tests | 6 failed) 920ms
+   ❯ 外置编辑显式接缝 (6)
+     × external_commit_pending_refuses 226ms
+     × external_structure_request_does_not_mutate_first 157ms
+     × 外置选择仅发请求不打开抽屉 184ms
+     × locate_same_name_by_actual_id 118ms
+     × destroyed_view_cancels_focus 113ms
+     × 默认条可显式隐藏且旧默认不变 119ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 9 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/external-editing.test.ts > 外置编辑显式接缝 > external_commit_pending_refuses
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ src/external-editing.test.ts:10:121
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/9]⎯
+
+ FAIL  src/external-editing.test.ts > 外置编辑显式接缝 > external_structure_request_does_not_mutate_first
+AssertionError: expected undefined to match object { model: BpmnModel{}, …(1) }
+
+- Expected:
+{
+  "model": BpmnModel {},
+  "operation": {
+    "nodeId": "a",
+    "type": "remove-node",
+  },
+}
+
++ Received:
+undefined
+
+ ❯ src/external-editing.test.ts:11:274
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/9]⎯
+
+ FAIL  src/external-editing.test.ts > 外置编辑显式接缝 > 外置选择仅发请求不打开抽屉
+AssertionError: expected undefined to match object { id: 'a' }
+
+- Expected:
+{
+  "id": "a",
+}
+
++ Received:
+undefined
+
+ ❯ src/external-editing.test.ts:12:193
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/9]⎯
+
+ FAIL  src/external-editing.test.ts > 外置编辑显式接缝 > locate_same_name_by_actual_id
+TypeError: wrapper.vm.focusElement is not a function
+ ❯ src/external-editing.test.ts:13:175
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/9]⎯
+
+ FAIL  src/external-editing.test.ts > 外置编辑显式接缝 > destroyed_view_cancels_focus
+TypeError: wrapper.vm.focusElement is not a function
+ ❯ src/external-editing.test.ts:14:154
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/9]⎯
+
+ FAIL  src/external-editing.test.ts > 外置编辑显式接缝 > 默认条可显式隐藏且旧默认不变
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ src/external-editing.test.ts:15:223
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/9]⎯
+
+ FAIL  src/property-editing.test.ts > 共享属性编辑规则 > 草稿允许业务缺项但严格确定仍拒绝，拒绝前不改名称
+Error: 共享读取尚未实现
+ ❯ readPropertyDraft src/property-editing.ts:1:71
+      1| export function readPropertyDraft(..._args: unknown[]): never { throw …
+       |                                                                       ^
+      2| export function applyPropertyDraft(..._args: unknown[]): never { throw…
+      3| export function switchApprovalKind(..._args: unknown[]): never { throw…
+ ❯ src/property-editing.test.ts:7:32
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/9]⎯
+
+ FAIL  src/property-editing.test.ts > 共享属性编辑规则 > 非法集合格式在草稿路径仍拒绝
+Error: 共享读取尚未实现
+ ❯ readPropertyDraft src/property-editing.ts:1:71
+      1| export function readPropertyDraft(..._args: unknown[]): never { throw …
+       |                                                                       ^
+      2| export function applyPropertyDraft(..._args: unknown[]): never { throw…
+      3| export function switchApprovalKind(..._args: unknown[]): never { throw…
+ ❯ src/property-editing.test.ts:15:32
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/9]⎯
+
+ FAIL  src/property-editing.test.ts > 共享属性编辑规则 > 单多切换在输入内保存两侧值，不写模型
+Error: 共享读取尚未实现
+ ❯ readPropertyDraft src/property-editing.ts:1:71
+      1| export function readPropertyDraft(..._args: unknown[]): never { throw …
+       |                                                                       ^
+      2| export function applyPropertyDraft(..._args: unknown[]): never { throw…
+      3| export function switchApprovalKind(..._args: unknown[]): never { throw…
+ ❯ src/property-editing.test.ts:20:32
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/9]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  9 failed (9)
+   Start at  09:50:25
+   Duration  4.29s (import 28%, environment 27%, transform 24%, tests 21%)
+
+undefined
+/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/designer:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run src/property-editing.test.ts src/external-editing.test.ts --testTimeout 20000

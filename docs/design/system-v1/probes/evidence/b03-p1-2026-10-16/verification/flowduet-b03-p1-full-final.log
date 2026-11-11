@@ -1,0 +1,33 @@
+
+> flowduet-monorepo@0.0.0 test /Users/l/.codex/worktrees/design-system-stage-zero/flowduet
+> pnpm -r test
+
+Scope: 4 of 5 workspace projects
+packages/core test$ vitest run
+packages/core test:  RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/core
+packages/core test:  Test Files  14 passed (14)
+packages/core test:       Tests  148 passed (148)
+packages/core test:    Start at  19:00:56
+packages/core test:    Duration  971ms (tests 48%, transform 38%, import 12%, worker 2%)
+packages/core test: Done
+packages/designer test$ vitest run
+packages/designer test:  RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/designer
+packages/designer test:  Test Files  14 passed (14)
+packages/designer test:       Tests  184 passed (184)
+packages/designer test:    Start at  19:00:58
+packages/designer test:    Duration  7.66s (tests 45%, import 21%, environment 17%, transform 16%)
+packages/designer test: Done
+packages/form-create test$ vitest run
+packages/form-create test:  RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/form-create
+packages/form-create test:  Test Files  10 passed (10)
+packages/form-create test:       Tests  195 passed (195)
+packages/form-create test:    Start at  19:01:06
+packages/form-create test:    Duration  62.75s (tests 74%, import 12%, environment 8%, transform 5%)
+packages/form-create test: Done
+apps/playground test$ vitest run
+apps/playground test:  RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground
+apps/playground test:  Test Files  16 passed (16)
+apps/playground test:       Tests  297 passed (297)
+apps/playground test:    Start at  19:02:10
+apps/playground test:    Duration  44.89s (tests 59%, import 27%, transform 7%, environment 7%)
+apps/playground test: Done

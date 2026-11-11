@@ -1,0 +1,17 @@
+[
+  {
+    "name": "app-file",
+    "command": [
+      "pnpm",
+      "--filter",
+      "@flowduet/playground",
+      "exec",
+      "vitest",
+      "run",
+      "src/App.integration.test.ts"
+    ],
+    "exitCode": 1,
+    "seconds": 36.39,
+    "log": "verification/app-before-storage-fix.log"
+  }
+]

@@ -1,0 +1,14 @@
+### Result
+{"native":{"value":"","badInput":true},"state":{"mode":"retained","revision":4,"canSuspend":true,"canCapture":true,"blockers":[]},"capture":"captured"}
+### Ran Playwright code
+```js
+await (async page => {
+ const root=page.locator('[data-repair-instance="0"]');
+ const min=root.locator('._fc-r-config .el-form-item').filter({hasText:'设置计数器允许的最小值'}).locator('input[type=number]');
+ await min.click(); await min.press('-');
+ await page.locator('[data-test="repair-observe"]').click();
+ const out=JSON.parse(await page.locator('[data-test="repair-result"]').textContent());
+ return {native:await min.evaluate(el=>({value:el.value,badInput:el.validity.badInput})),state:out.states[0],capture:out.captures[0].status};
+}
+)(page);
+```

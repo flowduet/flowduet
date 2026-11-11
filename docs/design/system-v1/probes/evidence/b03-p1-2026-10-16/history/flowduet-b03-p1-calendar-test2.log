@@ -1,0 +1,36 @@
+
+ RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/form-create
+
+ ❯ src/components.test.ts (66 tests | 1 failed | 65 skipped) 2626ms
+   × 日历动画开始后即阻断捕获，关闭后恢复 2625ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/components.test.ts > 日历动画开始后即阻断捕获，关闭后恢复
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ src/components.test.ts:1520:104
+    1518|   const calendar = wrapper!.findComponent(ElDatePicker);
+    1519|   calendar.vm.handleOpen();
+    1520|   await vi.waitFor(() => expect(wrapper!.find('[data-retained-date] [a…
+       |                                                                                                        ^
+    1521|   expect(vm.captureContent().status).toBe("blocked");
+    1522|   calendar.vm.handleClose();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 65 skipped (66)
+   Start at  18:41:07
+   Duration  4.98s (tests 55%, import 29%, transform 10%, environment 6%)
+
+undefined
+/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/form-create:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run src/components.test.ts -t 日历动画

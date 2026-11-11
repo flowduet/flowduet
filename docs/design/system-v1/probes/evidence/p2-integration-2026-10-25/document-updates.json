@@ -1,0 +1,62 @@
+[
+  {
+    "path": "docs/design/plans/2026-10-14-stage-zero-probes.md",
+    "mode": "current-status-added"
+  },
+  {
+    "path": "docs/design/plans/2026-10-23-stage-zero-integrated-vendor-repair.md",
+    "mode": "retirement-entry-with-archived-original"
+  },
+  {
+    "path": "docs/design/system-v1/probes/README.md",
+    "mode": "current-status-added"
+  },
+  {
+    "path": "docs/design/2026-10-22-stage-zero-convergence.md",
+    "mode": "retirement-entry-with-archived-original"
+  },
+  {
+    "path": "docs/design/2026-10-23-stage-zero-consolidated-route.md",
+    "mode": "retirement-entry-with-archived-original"
+  },
+  {
+    "path": "docs/design/2026-10-14-design-system-workbench-proposal.md",
+    "mode": "current-status-added"
+  },
+  {
+    "path": "docs/design/plans/2026-10-16-b03-minimal-production-fixes.md",
+    "mode": "current-status-added"
+  },
+  {
+    "path": "docs/design/plans/2026-10-19-stage-zero-remaining-blockers.md",
+    "mode": "retirement-entry-with-archived-original"
+  },
+  {
+    "path": "docs/design/plans/2026-10-19-stage-zero-cd-batch.md",
+    "mode": "retirement-entry-with-archived-original"
+  },
+  {
+    "path": "docs/design/2026-10-23-stage-zero-integrated-vendor-repair-design.md",
+    "mode": "retirement-entry-with-archived-original"
+  },
+  {
+    "path": "docs/design/2026-10-19-stage-zero-remaining-blockers-proposal.md",
+    "mode": "retirement-entry-with-archived-original"
+  },
+  {
+    "path": "docs/ROADMAP.md",
+    "mode": "current-status-added"
+  },
+  {
+    "path": "docs/design/experience-redesign-discussion.md",
+    "mode": "current-status-added"
+  },
+  {
+    "path": "docs/adr/0010-integrated-designer-delivery.md",
+    "mode": "current-status-added"
+  },
+  {
+    "path": "docs/adr/0011-property-editing-containers.md",
+    "mode": "current-status-added"
+  }
+]

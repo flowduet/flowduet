@@ -1,0 +1,6 @@
+### Result
+{"dom":{"documents":1,"nodes":76651,"jsEventListeners":23243},"heap":{"usedSize":205628536,"totalSize":257269760,"embedderHeapUsedSize":32029480,"backingStorageSize":19535169},"visible":"{\n  \"forms\": 10,\n  \"mountedEditors\": 1,\n  \"domNodes\": 1354,\n  \"designerHosts\": 1\n}"}
+### Ran Playwright code
+```js
+await (async (page) => { await page.waitForFunction(() => { try { return JSON.parse(document.querySelector("[data-test=retention-result]").textContent).mountedEditors===1; } catch { return false; } }); const cdp=await page.context().newCDPSession(page); const result={dom:await cdp.send("Memory.getDOMCounters"),heap:await cdp.send("Runtime.getHeapUsage"),visible:await page.locator("[data-test=retention-result]").textContent()}; await cdp.detach(); return result; })(page);
+```

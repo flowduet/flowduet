@@ -1,0 +1,138 @@
+{
+  "profile": "CPU.20261015.143150.28197.0.001.cpuprofile",
+  "groupsMs": {
+    "other/import/runtime": 2108.074,
+    "other happy-dom (inclusive)": 193.163,
+    "happy-dom CSS (inclusive)": 454.712,
+    "idle": 438.745,
+    "FormCreate excluding above": 596.722,
+    "happy-dom selector/serialization (inclusive)": 3084.234
+  },
+  "topLeaves": [
+    {
+      "function": "serializeToString",
+      "url": "file:///Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/happy-dom@20.14.5/node_modules/happy-dom/lib/html-serializer/HTMLSerializer.js",
+      "ms": 1968.795
+    },
+    {
+      "function": "encodeHTMLAttributeValue",
+      "url": "file:///Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/happy-dom@20.14.5/node_modules/happy-dom/lib/utilities/XMLEncodeUtility.js",
+      "ms": 487.605
+    },
+    {
+      "function": "(idle)",
+      "url": "",
+      "ms": 438.745
+    },
+    {
+      "function": "getAttributes",
+      "url": "file:///Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/happy-dom@20.14.5/node_modules/happy-dom/lib/html-serializer/HTMLSerializer.js",
+      "ms": 292.254
+    },
+    {
+      "function": "compileSourceTextModule",
+      "url": "node:internal/modules/esm/utils",
+      "ms": 225.44
+    },
+    {
+      "function": "(garbage collector)",
+      "url": "",
+      "ms": 207.499
+    },
+    {
+      "function": "internalModuleStat",
+      "url": "",
+      "ms": 161.373
+    },
+    {
+      "function": "wrapSafe",
+      "url": "node:internal/modules/cjs/loader",
+      "ms": 136.269
+    },
+    {
+      "function": "RegExp: [&\"]",
+      "url": "",
+      "ms": 119.901
+    },
+    {
+      "function": "matches",
+      "url": "file:///Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/happy-dom@20.14.5/node_modules/happy-dom/lib/query-selector/QuerySelector.js",
+      "ms": 115.793
+    },
+    {
+      "function": "realpathSync",
+      "url": "node:fs",
+      "ms": 84.685
+    },
+    {
+      "function": "",
+      "url": "file:///Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/happy-dom@20.14.5/node_modules/happy-dom/lib/nodes/node/Node.js",
+      "ms": 73.685
+    },
+    {
+      "function": "parse",
+      "url": "",
+      "ms": 72.162
+    },
+    {
+      "function": "open",
+      "url": "",
+      "ms": 69.098
+    },
+    {
+      "function": "readFileUtf8",
+      "url": "",
+      "ms": 55.617
+    },
+    {
+      "function": "get parentElement",
+      "url": "file:///Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/happy-dom@20.14.5/node_modules/happy-dom/lib/nodes/node/Node.js",
+      "ms": 50.658
+    },
+    {
+      "function": "(program)",
+      "url": "",
+      "ms": 48.998
+    },
+    {
+      "function": "",
+      "url": "node:internal/modules/cjs/loader",
+      "ms": 44.78
+    },
+    {
+      "function": "get shadowRoot",
+      "url": "file:///Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/happy-dom@20.14.5/node_modules/happy-dom/lib/nodes/element/Element.js",
+      "ms": 41.771
+    },
+    {
+      "function": "parseCSSRules",
+      "url": "file:///Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/happy-dom@20.14.5/node_modules/happy-dom/lib/css/declaration/computed-style/CSSComputedStyle.js",
+      "ms": 41.758
+    },
+    {
+      "function": "detectModuleFormat",
+      "url": "node:internal/modules/esm/get_format",
+      "ms": 40.946
+    },
+    {
+      "function": "escape",
+      "url": "file:///Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/.pnpm/entities@7.0.1/node_modules/entities/dist/esm/escape.js",
+      "ms": 39.773
+    },
+    {
+      "function": "lstat",
+      "url": "",
+      "ms": 38.845
+    },
+    {
+      "function": "defaultLoadSync",
+      "url": "node:internal/modules/esm/load",
+      "ms": 37.247
+    },
+    {
+      "function": "getPackageScopeConfig",
+      "url": "node:internal/modules/package_json_reader",
+      "ms": 36.271
+    }
+  ]
+}

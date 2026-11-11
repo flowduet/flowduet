@@ -1,0 +1,17 @@
+{
+  "id": "U62",
+  "status": "通过",
+  "date": "2026-10-13",
+  "provenance": "用户手工打开原生文件选择窗口并点击取消，回复已取消；Codex核对取消后的公开页面与持久草稿，不声称自动操作或观察系统窗口",
+  "beforeDraftHash": "c4b675976b54c53bc0879da02edbe6d6c05bb8444b97af6474eda83f867d0871",
+  "afterDraftHash": "c4b675976b54c53bc0879da02edbe6d6c05bb8444b97af6474eda83f867d0871",
+  "draftByteEqual": true,
+  "axEqualExceptFocus": true,
+  "focusAfter": "打开文档",
+  "statusUnchanged": true,
+  "newDocumentError": false,
+  "discardDialog": false,
+  "dirty": false,
+  "scope": "当前恢复草稿状态；未另外重跑带未确认输入或全部133项矩阵",
+  "nativeWindowEvidence": "用户确认，未取得系统窗口截图"
+}

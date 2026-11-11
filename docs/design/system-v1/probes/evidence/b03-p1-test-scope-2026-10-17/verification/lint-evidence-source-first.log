@@ -1,0 +1,274 @@
+
+> flowduet-monorepo@0.0.0 lint /Users/l/.codex/worktrees/design-system-stage-zero/flowduet
+> eslint . && prettier --check .
+
+
+/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/docs/design/system-v1/probes/evidence/b03-p1-test-scope-2026-10-17/diagnosis/full-generated/app.diag.test.ts
+   4:41  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   5:40  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   6:30  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   8:25  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  12:69  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  14:38  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  20:28  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  30:23  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  31:59  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  33:36  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  33:41  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  34:62  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  36:34  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  37:67  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  49:22  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  49:34  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  49:61  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  49:77  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/docs/design/system-v1/probes/evidence/b03-p1-test-scope-2026-10-17/diagnosis/full-generated/location.diag.test.ts
+   4:41  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   5:40  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   6:30  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   8:25  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  12:69  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  14:38  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  20:28  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  30:23  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  31:59  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  33:36  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  33:41  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  34:62  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  36:34  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  37:67  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  49:22  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  49:34  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  49:61  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  49:77  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/docs/design/system-v1/probes/evidence/b03-p1-test-scope-2026-10-17/diagnosis/generated-develop/app.diag.test.ts
+   4:41  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   5:40  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   6:30  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   8:25  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  12:69  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  14:38  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  20:28  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  30:23  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  31:59  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  33:36  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  33:41  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  34:62  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  36:34  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  37:67  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  49:22  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  49:34  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  49:61  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  49:77  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/docs/design/system-v1/probes/evidence/b03-p1-test-scope-2026-10-17/diagnosis/generated-develop/location.diag.test.ts
+   4:41  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   5:40  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   6:30  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   8:25  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  12:69  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  14:38  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  20:28  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  30:23  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  31:59  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  33:36  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  33:41  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  34:62  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  36:34  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  37:67  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  49:22  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  49:34  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  49:61  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  49:77  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/docs/design/system-v1/probes/evidence/b03-p1-test-scope-2026-10-17/diagnosis/generated-ee/app.diag.test.ts
+   4:41  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   5:40  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   6:30  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   8:25  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  12:69  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  14:38  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  20:28  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  30:23  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  31:59  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  33:36  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  33:41  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  34:62  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  36:34  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  37:67  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  49:22  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  49:34  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  49:61  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  49:77  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/docs/design/system-v1/probes/evidence/b03-p1-test-scope-2026-10-17/diagnosis/generated-ee/location.diag.test.ts
+   4:41  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   5:40  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   6:30  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   8:25  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  12:69  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  14:38  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  20:28  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  30:23  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  31:59  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  33:36  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  33:41  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  34:62  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  36:34  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  37:67  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  49:22  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  49:34  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  49:61  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  49:77  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/docs/design/system-v1/probes/evidence/b03-p1-test-scope-2026-10-17/diagnosis/harness/app.diag.test.ts
+   4:41  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   5:40  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   6:30  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   8:25  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  12:69  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  14:38  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  20:28  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  30:23  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  31:59  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  33:36  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  33:41  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  34:62  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  36:34  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  37:67  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  49:22  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  49:34  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  49:61  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  49:77  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/docs/design/system-v1/probes/evidence/b03-p1-test-scope-2026-10-17/diagnosis/harness/location.diag.test.ts
+   4:41  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   5:40  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   6:30  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   8:25  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  12:69  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  14:38  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  20:28  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  30:23  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  31:59  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  33:36  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  33:41  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  34:62  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  36:34  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  37:67  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  49:22  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  49:34  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  49:61  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  49:77  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/docs/design/system-v1/probes/evidence/b03-p1-test-scope-2026-10-17/diagnosis/harness/restore.diag.test.ts
+   7:111  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  11:60   error  Unsafe usage of ThrowStatement            no-unsafe-finally
+
+/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/docs/design/system-v1/probes/evidence/b03-p1-test-scope-2026-10-17/diagnosis/pollution-ee/app.diag.test.ts
+   6:41   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   7:40   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   8:30   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   9:77   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  12:25   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  16:69   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  18:201  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  18:281  error  Empty block statement                     no-empty
+  19:38   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  27:28   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  34:79   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  34:122  error  Empty block statement                     no-empty
+  41:23   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  42:59   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  44:36   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  44:41   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  45:62   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  47:34   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  48:67   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  60:22   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  60:34   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  60:61   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  60:77   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/docs/design/system-v1/probes/evidence/b03-p1-test-scope-2026-10-17/diagnosis/pollution-ee/location.diag.test.ts
+   6:41   error  Unexpected any. Specify a different type                @typescript-eslint/no-explicit-any
+   7:40   error  Unexpected any. Specify a different type                @typescript-eslint/no-explicit-any
+   8:30   error  Unexpected any. Specify a different type                @typescript-eslint/no-explicit-any
+   9:77   error  Unexpected any. Specify a different type                @typescript-eslint/no-explicit-any
+  10:7    error  'diagPollutionGate' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  12:25   error  Unexpected any. Specify a different type                @typescript-eslint/no-explicit-any
+  16:69   error  Unexpected any. Specify a different type                @typescript-eslint/no-explicit-any
+  18:201  error  Unexpected any. Specify a different type                @typescript-eslint/no-explicit-any
+  18:281  error  Empty block statement                                   no-empty
+  19:38   error  Unexpected any. Specify a different type                @typescript-eslint/no-explicit-any
+  27:28   error  Unexpected any. Specify a different type                @typescript-eslint/no-explicit-any
+  34:79   error  Unexpected any. Specify a different type                @typescript-eslint/no-explicit-any
+  34:122  error  Empty block statement                                   no-empty
+  41:23   error  Unexpected any. Specify a different type                @typescript-eslint/no-explicit-any
+  42:59   error  Unexpected any. Specify a different type                @typescript-eslint/no-explicit-any
+  44:36   error  Unexpected any. Specify a different type                @typescript-eslint/no-explicit-any
+  44:41   error  Unexpected any. Specify a different type                @typescript-eslint/no-explicit-any
+  45:62   error  Unexpected any. Specify a different type                @typescript-eslint/no-explicit-any
+  47:34   error  Unexpected any. Specify a different type                @typescript-eslint/no-explicit-any
+  48:67   error  Unexpected any. Specify a different type                @typescript-eslint/no-explicit-any
+  60:22   error  Unexpected any. Specify a different type                @typescript-eslint/no-explicit-any
+  60:34   error  Unexpected any. Specify a different type                @typescript-eslint/no-explicit-any
+  60:61   error  Unexpected any. Specify a different type                @typescript-eslint/no-explicit-any
+  60:77   error  Unexpected any. Specify a different type                @typescript-eslint/no-explicit-any
+
+/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/docs/design/system-v1/probes/evidence/b03-p1-test-scope-2026-10-17/diagnosis/pollution-harness/app.diag.test.ts
+   6:41   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   7:40   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   8:30   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   9:77   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  12:25   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  16:69   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  18:201  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  18:281  error  Empty block statement                     no-empty
+  19:38   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  27:28   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  34:79   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  34:122  error  Empty block statement                     no-empty
+  41:23   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  42:59   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  44:36   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  44:41   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  45:62   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  47:34   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  48:67   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  60:22   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  60:34   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  60:61   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  60:77   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/docs/design/system-v1/probes/evidence/b03-p1-test-scope-2026-10-17/diagnosis/pollution-harness/location.diag.test.ts
+   6:41   error  Unexpected any. Specify a different type                @typescript-eslint/no-explicit-any
+   7:40   error  Unexpected any. Specify a different type                @typescript-eslint/no-explicit-any
+   8:30   error  Unexpected any. Specify a different type                @typescript-eslint/no-explicit-any
+   9:77   error  Unexpected any. Specify a different type                @typescript-eslint/no-explicit-any
+  10:7    error  'diagPollutionGate' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  12:25   error  Unexpected any. Specify a different type                @typescript-eslint/no-explicit-any
+  16:69   error  Unexpected any. Specify a different type                @typescript-eslint/no-explicit-any
+  18:201  error  Unexpected any. Specify a different type                @typescript-eslint/no-explicit-any
+  18:281  error  Empty block statement                                   no-empty
+  19:38   error  Unexpected any. Specify a different type                @typescript-eslint/no-explicit-any
+  27:28   error  Unexpected any. Specify a different type                @typescript-eslint/no-explicit-any
+  34:79   error  Unexpected any. Specify a different type                @typescript-eslint/no-explicit-any
+  34:122  error  Empty block statement                                   no-empty
+  41:23   error  Unexpected any. Specify a different type                @typescript-eslint/no-explicit-any
+  42:59   error  Unexpected any. Specify a different type                @typescript-eslint/no-explicit-any
+  44:36   error  Unexpected any. Specify a different type                @typescript-eslint/no-explicit-any
+  44:41   error  Unexpected any. Specify a different type                @typescript-eslint/no-explicit-any
+  45:62   error  Unexpected any. Specify a different type                @typescript-eslint/no-explicit-any
+  47:34   error  Unexpected any. Specify a different type                @typescript-eslint/no-explicit-any
+  48:67   error  Unexpected any. Specify a different type                @typescript-eslint/no-explicit-any
+  60:22   error  Unexpected any. Specify a different type                @typescript-eslint/no-explicit-any
+  60:34   error  Unexpected any. Specify a different type                @typescript-eslint/no-explicit-any
+  60:61   error  Unexpected any. Specify a different type                @typescript-eslint/no-explicit-any
+  60:77   error  Unexpected any. Specify a different type                @typescript-eslint/no-explicit-any
+
+✖ 240 problems (240 errors, 0 warnings)
+
+ ELIFECYCLE  Command failed with exit code 1.

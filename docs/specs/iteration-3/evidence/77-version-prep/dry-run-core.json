@@ -1,0 +1,175 @@
+{
+  "name": "@flowduet/core",
+  "version": "0.3.0",
+  "filename": "/Users/l/Documents/projects/flowduet/flowduet-core-0.3.0.tgz",
+  "files": [
+    {
+      "path": "dist/adapter/adapter-contract.d.ts"
+    },
+    {
+      "path": "dist/adapter/adapter-contract.d.ts.map"
+    },
+    {
+      "path": "dist/adapter/adapter-contract.js"
+    },
+    {
+      "path": "dist/adapter/adapter-contract.js.map"
+    },
+    {
+      "path": "dist/adapter/engine-adapter.d.ts"
+    },
+    {
+      "path": "dist/adapter/engine-adapter.d.ts.map"
+    },
+    {
+      "path": "dist/adapter/engine-adapter.js"
+    },
+    {
+      "path": "dist/adapter/engine-adapter.js.map"
+    },
+    {
+      "path": "dist/adapter/flowable-adapter.d.ts"
+    },
+    {
+      "path": "dist/adapter/flowable-adapter.d.ts.map"
+    },
+    {
+      "path": "dist/adapter/flowable-adapter.js"
+    },
+    {
+      "path": "dist/adapter/flowable-adapter.js.map"
+    },
+    {
+      "path": "dist/adapter/flowduet-package.d.ts"
+    },
+    {
+      "path": "dist/adapter/flowduet-package.d.ts.map"
+    },
+    {
+      "path": "dist/adapter/flowduet-package.js"
+    },
+    {
+      "path": "dist/adapter/flowduet-package.js.map"
+    },
+    {
+      "path": "dist/compile/compiler.d.ts"
+    },
+    {
+      "path": "dist/compile/compiler.d.ts.map"
+    },
+    {
+      "path": "dist/compile/compiler.js"
+    },
+    {
+      "path": "dist/compile/compiler.js.map"
+    },
+    {
+      "path": "dist/index.d.ts"
+    },
+    {
+      "path": "dist/index.d.ts.map"
+    },
+    {
+      "path": "dist/index.js"
+    },
+    {
+      "path": "dist/index.js.map"
+    },
+    {
+      "path": "dist/layout/di-layout.d.ts"
+    },
+    {
+      "path": "dist/layout/di-layout.d.ts.map"
+    },
+    {
+      "path": "dist/layout/di-layout.js"
+    },
+    {
+      "path": "dist/layout/di-layout.js.map"
+    },
+    {
+      "path": "dist/layout/vertical-layout.d.ts"
+    },
+    {
+      "path": "dist/layout/vertical-layout.d.ts.map"
+    },
+    {
+      "path": "dist/layout/vertical-layout.js"
+    },
+    {
+      "path": "dist/layout/vertical-layout.js.map"
+    },
+    {
+      "path": "dist/model/bpmn-model.d.ts"
+    },
+    {
+      "path": "dist/model/bpmn-model.d.ts.map"
+    },
+    {
+      "path": "dist/model/bpmn-model.js"
+    },
+    {
+      "path": "dist/model/bpmn-model.js.map"
+    },
+    {
+      "path": "dist/model/form-binding.d.ts"
+    },
+    {
+      "path": "dist/model/form-binding.d.ts.map"
+    },
+    {
+      "path": "dist/model/form-binding.js"
+    },
+    {
+      "path": "dist/model/form-binding.js.map"
+    },
+    {
+      "path": "dist/parse/namespace-usage.d.ts"
+    },
+    {
+      "path": "dist/parse/namespace-usage.d.ts.map"
+    },
+    {
+      "path": "dist/parse/namespace-usage.js"
+    },
+    {
+      "path": "dist/parse/namespace-usage.js.map"
+    },
+    {
+      "path": "dist/parse/parser.d.ts"
+    },
+    {
+      "path": "dist/parse/parser.d.ts.map"
+    },
+    {
+      "path": "dist/parse/parser.js"
+    },
+    {
+      "path": "dist/parse/parser.js.map"
+    },
+    {
+      "path": "dist/types/bpmn-moddle.d.ts"
+    },
+    {
+      "path": "dist/util/moddle-utils.d.ts"
+    },
+    {
+      "path": "dist/util/moddle-utils.d.ts.map"
+    },
+    {
+      "path": "dist/util/moddle-utils.js"
+    },
+    {
+      "path": "dist/util/moddle-utils.js.map"
+    },
+    {
+      "path": "LICENSE"
+    },
+    {
+      "path": "package.json"
+    },
+    {
+      "path": "README.md"
+    }
+  ]
+}

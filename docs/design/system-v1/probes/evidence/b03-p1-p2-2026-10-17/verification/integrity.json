@@ -1,0 +1,19 @@
+{
+  "snapshotEntriesChecked": 392,
+  "uniqueGitBlobsChecked": 102,
+  "currentRuntimeFilesMatched": 96,
+  "currentTestFilesMatched": 2,
+  "browser125ByCohort": {
+    "978e957": 125,
+    "78a7a78": 125
+  },
+  "finalRecoveryRows": 12,
+  "finalNormalizationRows": 1,
+  "defaultFullResult": {
+    "passed": 841,
+    "failed": 4,
+    "total": 845,
+    "exitCode": 1
+  },
+  "acceptanceRestored": false
+}

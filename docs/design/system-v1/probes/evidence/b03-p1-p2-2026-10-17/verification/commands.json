@@ -1,0 +1,183 @@
+{
+  "sourceHead": "0851e175e81b676492f40a3da6f1010587352e11",
+  "node": "24.16.0",
+  "pnpm": "10.26.1",
+  "remoteCI": false,
+  "commands": [
+    {
+      "command": "pnpm --filter @flowduet/form-create exec vitest run src/components.test.ts -t 'P1复审P2'",
+      "log": "verification/red-components-final.log",
+      "exitCode": 1,
+      "scope": "uncommitted formal RED; 11 failures, setup typo excluded",
+      "cwd": "/Users/l/.codex/worktrees/design-system-stage-zero/flowduet"
+    },
+    {
+      "command": "pnpm --filter @flowduet/form-create exec vitest run src/editor-input-state.test.ts",
+      "log": "verification/red-state.log",
+      "exitCode": 1,
+      "scope": "uncommitted formal RED; 2 failures/20 pass",
+      "cwd": "/Users/l/.codex/worktrees/design-system-stage-zero/flowduet"
+    },
+    {
+      "command": "pnpm test",
+      "log": "verification/full.log",
+      "exitCode": 1,
+      "runtimeCommit": "978e957",
+      "testsCommit": "978e957",
+      "counts": {
+        "passed": 843,
+        "failed": 1,
+        "total": 844
+      },
+      "cwd": "/Users/l/.codex/worktrees/design-system-stage-zero/flowduet"
+    },
+    {
+      "command": "pnpm --filter @flowduet/form-create exec vitest run src/components.test.ts -t 合法number归一",
+      "log": "verification/normalization-red.log",
+      "exitCode": 1,
+      "runtimeCommit": "978e957",
+      "testsCommit": "78a7a78",
+      "scope": "new regression RED before normalization production fix",
+      "cwd": "/Users/l/.codex/worktrees/design-system-stage-zero/flowduet"
+    },
+    {
+      "command": "pnpm --filter @flowduet/form-create exec vitest run src/components.test.ts -t 'P1复审P2'",
+      "log": "verification/normalization-all-green.log",
+      "exitCode": 0,
+      "runtimeCommit": "78a7a78",
+      "testsCommit": "78a7a78",
+      "counts": {
+        "passed": 14,
+        "skipped": 76
+      },
+      "cwd": "/Users/l/.codex/worktrees/design-system-stage-zero/flowduet"
+    },
+    {
+      "command": "pnpm test",
+      "log": "verification/full-final.log",
+      "exitCode": 1,
+      "runtimeCommit": "78a7a78",
+      "testsCommit": "78a7a78",
+      "scope": "form-create 215 pass/1 timeout; Playground not run",
+      "cwd": "/Users/l/.codex/worktrees/design-system-stage-zero/flowduet"
+    },
+    {
+      "command": "pnpm test",
+      "log": "verification/full-after-harness.log",
+      "exitCode": 1,
+      "runtimeCommit": "78a7a78",
+      "testsCommit": "2bb34ee",
+      "scope": "form-create 215 pass/1 old field-lifetime wait assertion fail; experiment reverted",
+      "cwd": "/Users/l/.codex/worktrees/design-system-stage-zero/flowduet"
+    },
+    {
+      "command": "pnpm test",
+      "log": "verification/full-final-minimal.log",
+      "exitCode": 1,
+      "runtimeCommit": "78a7a78",
+      "testsCommit": "9aadac4",
+      "scope": "form-create 215 pass/1 old dual Dialog waitFor failure; Playground not run",
+      "cwd": "/Users/l/.codex/worktrees/design-system-stage-zero/flowduet"
+    },
+    {
+      "command": "pnpm --filter @flowduet/playground test",
+      "log": "verification/playground-final.log",
+      "exitCode": 1,
+      "runtimeCommit": "78a7a78",
+      "testsCommit": "9aadac4",
+      "counts": {
+        "passed": 294,
+        "failed": 3,
+        "total": 297
+      },
+      "cwd": "/Users/l/.codex/worktrees/design-system-stage-zero/flowduet"
+    },
+    {
+      "command": "pnpm --filter @flowduet/playground exec vitest run src/App.integration.test.ts -t 插入抄送草稿后自动与手动导出均报错",
+      "logs": [
+        "verification/app-target-1.log",
+        "verification/app-target-2.log"
+      ],
+      "exitCodes": [
+        0,
+        0
+      ],
+      "scope": "each 1 pass/44 filtered skip, not full file",
+      "cwd": "/Users/l/.codex/worktrees/design-system-stage-zero/flowduet"
+    },
+    {
+      "command": "pnpm --filter @flowduet/form-create exec vitest run src/components.test.ts -t '同ID两个真实FormManager|P1复审P2'",
+      "log": "verification/dual-related-green.log",
+      "exitCode": 0,
+      "runtimeCommit": "78a7a78",
+      "testsCommit": "0851e17",
+      "counts": {
+        "passed": 15,
+        "skipped": 75
+      },
+      "cwd": "/Users/l/.codex/worktrees/design-system-stage-zero/flowduet"
+    },
+    {
+      "command": "pnpm test",
+      "log": "verification/full-delivery.log",
+      "exitCode": 1,
+      "executionHead": "0851e175e81b676492f40a3da6f1010587352e11",
+      "counts": {
+        "passed": 841,
+        "failed": 4,
+        "total": 845
+      },
+      "packages": {
+        "core": {
+          "passed": 148
+        },
+        "designer": {
+          "passed": 184
+        },
+        "form-create": {
+          "passed": 216
+        },
+        "playground": {
+          "passed": 293,
+          "failed": 4
+        }
+      },
+      "cwd": "/Users/l/.codex/worktrees/design-system-stage-zero/flowduet"
+    },
+    {
+      "command": "pnpm --filter @flowduet/playground exec vitest run src/App.integration.test.ts -t 新建草稿可保存并报告待修复项",
+      "log": "verification/app-draft-assertion-isolated.log",
+      "exitCode": 0,
+      "scope": "1 pass/44 filtered skip; does not close full-run assertion failure",
+      "cwd": "/Users/l/.codex/worktrees/design-system-stage-zero/flowduet"
+    },
+    {
+      "command": "pnpm build",
+      "log": "verification/build-delivery.log",
+      "exitCode": 0,
+      "executionHead": "0851e175e81b676492f40a3da6f1010587352e11",
+      "cwd": "/Users/l/.codex/worktrees/design-system-stage-zero/flowduet"
+    },
+    {
+      "command": "pnpm --filter @flowduet/form-create exec vue-tsc -p ../../apps/playground/probes/stage-zero/tsconfig.json --noEmit",
+      "log": "verification/strict-delivery.log",
+      "exitCode": 0,
+      "executionHead": "0851e175e81b676492f40a3da6f1010587352e11",
+      "cwd": "/Users/l/.codex/worktrees/design-system-stage-zero/flowduet"
+    },
+    {
+      "command": "node --input-type=module -e 'import { CORE_VERSION } from \"./packages/core/dist/index.js\"; console.log(\"dist import OK\", CORE_VERSION)'",
+      "log": "verification/esm-delivery.log",
+      "exitCode": 0,
+      "scope": "core built native ESM only, version0.3.0",
+      "cwd": "/Users/l/.codex/worktrees/design-system-stage-zero/flowduet"
+    },
+    {
+      "command": "pnpm lint",
+      "cwd": "/Users/l/.codex/worktrees/design-system-stage-zero/flowduet",
+      "log": "verification/lint-delivery.log",
+      "exitCode": 0,
+      "scope": "0851e17 source and final report drafts; evidence directory ignored by configured lint/format rules"
+    }
+  ]
+}

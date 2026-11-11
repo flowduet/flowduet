@@ -1,0 +1,6 @@
+### Result
+{"elementString":"[object HTMLDivElement]","objectTag":"[object HTMLDivElement]","outerHTML":"<div><span>样例</span></div>"}
+### Ran Playwright code
+```js
+await (async (page) => {return await page.evaluate(()=>{const el=document.createElement('div');el.innerHTML='<span>样例</span>';return {elementString:el.toString(),objectTag:Object.prototype.toString.call(el),outerHTML:el.outerHTML};});})(page);
+```

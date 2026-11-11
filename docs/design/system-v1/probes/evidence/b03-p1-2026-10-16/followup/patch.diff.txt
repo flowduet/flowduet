@@ -1,0 +1,201 @@
+diff --git a/packages/form-create/src/components.test.ts b/packages/form-create/src/components.test.ts
+index 9222cb0..e7b3be5 100644
+--- a/packages/form-create/src/components.test.ts
++++ b/packages/form-create/src/components.test.ts
+@@ -1613,3 +1613,69 @@ it.each(["legacy", "retained"] as const)(
+     }
+   },
+ );
++
++it("旧Dialog迟到modelValue回调不能关闭同ID重开的编辑器", async () => {
++  const vm = await retainedManager();
++  await managerRaw("7");
++  const oldDialog = wrapper!.findComponent(ElDialog),
++    oldEditor = wrapper!.findComponent(FormDesigner);
++  expect(vm.commitPendingEdit()).toBe(true);
++  // 在Vue重渲染前重开；旧组件此刻仍挂载，确保迟到回调真的进入旧监听器。
++  wrapper!
++    .get('[data-test="form-edit-btn-form_apply"]')
++    .element.dispatchEvent(new MouseEvent("click", { bubbles: true }));
++  expect(oldEditor.element.isConnected).toBe(true);
++  oldEditor.vm.$emit("editingStateChange", {
++    mode: "retained",
++    revision: 999,
++    canCapture: true,
++    canSuspend: true,
++    blockers: [],
++  });
++  oldEditor.vm.$emit("save", "[]", "{}");
++  oldEditor.vm.$emit("cancel");
++  oldDialog.vm.$emit("update:modelValue", false);
++  oldDialog.vm.$emit("closed");
++  expect(oldEditor.emitted("save")).toHaveLength(1);
++  expect(oldDialog.emitted("update:modelValue")).toHaveLength(1);
++  await flushPromises();
++  expect(vm.hasOpenEditor()).toBe(true);
++  expect(vm.readEditingState()?.revision).not.toBe(999);
++  expect(wrapper!.emitted("updateContent")?.length).toBe(1);
++});
++
++it("当前Dialog modelValue=false只请求关闭，未经明确放弃不销毁", async () => {
++  const vm = await retainedManager();
++  const input = await managerRaw();
++  const confirm = vi.spyOn(ElMessageBox, "confirm").mockRejectedValue("cancel");
++  try {
++    wrapper!.findComponent(ElDialog).vm.$emit("update:modelValue", false);
++    await flushPromises();
++    expect(vm.hasOpenEditor()).toBe(true);
++    expect(input.element.isConnected).toBe(true);
++    expect(input.element.value).toBe("-");
++    expect(confirm).toHaveBeenCalledTimes(1);
++    expect(wrapper!.emitted("updateContent")).toBeUndefined();
++  } finally {
++    confirm.mockRestore();
++  }
++});
++
++it("同ID新会话尚未挂载时不读取或收集旧子ref", async () => {
++  const vm = await retainedManager();
++  await managerRaw("7");
++  expect(vm.commitPendingEdit()).toBe(true);
++  wrapper!
++    .get('[data-test="form-edit-btn-form_apply"]')
++    .element.dispatchEvent(new MouseEvent("click", { bubbles: true }));
++  expect(vm.readEditingState()?.blockers[0]?.code).toBe("not-ready");
++  expect(vm.commitPendingEdit()).toBe(false);
++  expect(wrapper!.emitted("updateContent")?.length).toBe(1);
++  await flushPromises();
++  expect(vm.hasOpenEditor()).toBe(true);
++  const content = (
++    wrapper!.findComponent(FormDesigner).vm as unknown as RetainedVm
++  ).captureContent();
++  expect(content.status).toBe("captured");
++  if (content.status === "captured") expect(JSON.parse(content.content.rules)[0].value).toBe(0);
++});
+diff --git a/packages/form-create/src/components/FormManager.vue b/packages/form-create/src/components/FormManager.vue
+index b998871..2459b06 100644
+--- a/packages/form-create/src/components/FormManager.vue
++++ b/packages/form-create/src/components/FormManager.vue
+@@ -56,6 +56,9 @@ type EditorSession = {
+   handlers: Record<string, (...args: never[]) => unknown>;
+   closed: () => void;
+   requestClose: () => void;
++  modelUpdate: (visible: boolean) => void;
++  designer: InstanceType<typeof FormDesigner> | null;
++  bindDesigner: (value: unknown) => void;
+ };
+ const editorSession = shallowRef<EditorSession | null>(null);
+ let disposed = false,
+@@ -75,6 +78,9 @@ function definitionMatches(session: EditorSession): boolean {
+     source.provider === loaded.provider
+   );
+ }
++function activeDesigner() {
++  return mode === "retained" ? (editorSession.value?.designer ?? null) : designerRef.value;
++}
+ function readEditingState(): FormDesignerEditingState | null {
+   if (editorSession.value === null && editing.value === null) return null;
+   if (unsupportedMode)
+@@ -87,7 +93,8 @@ function readEditingState(): FormDesignerEditingState | null {
+         { code: "unsupported-mode" as const, message: "编辑模式不可在当前挂载中切换" },
+       ]),
+     });
+-  if (editorSession.value?.closing || !designerRef.value)
++  const designer = activeDesigner();
++  if (editorSession.value?.closing || !designer)
+     return Object.freeze({
+       mode,
+       revision: 0,
+@@ -97,7 +104,7 @@ function readEditingState(): FormDesignerEditingState | null {
+         { code: "not-ready" as const, message: "表单编辑会话尚未就绪或正在收尾" },
+       ]),
+     });
+-  const child = designerRef.value.readEditingState();
++  const child = designer.readEditingState();
+   if (
+     mode === "retained" &&
+     editorSession.value &&
+@@ -344,6 +351,19 @@ function openEditor(form: FormDefinition): void {
+     handlers: {},
+     closed: () => {},
+     requestClose: () => {},
++    modelUpdate: () => {},
++    designer: null,
++    bindDesigner: () => {},
++  };
++  session.bindDesigner = (value) => {
++    const designer = value as InstanceType<typeof FormDesigner> | null;
++    if (session.designer === designer) return;
++    const previous = session.designer;
++    session.designer = designer;
++    if (designer === null && designerRef.value === previous) designerRef.value = null;
++    if (editorSession.value !== session || session.closing || disposed) return;
++    designerRef.value = session.designer;
++    forwardState();
+   };
+   session.handlers = {
+     save: (rules: string, options: string) => {
+@@ -363,6 +383,14 @@ function openEditor(form: FormDefinition): void {
+   session.requestClose = () => {
+     if (mode === "retained") void requestClose(session);
+   };
++  // provider的v-model回调也绑定原会话；不能让旧动画回调直接写新会话的显示状态。
++  session.modelUpdate = (visible) => {
++    if (mode === "legacy") {
++      editVisible.value = visible;
++      return;
++    }
++    if (current(session) && !visible) void requestClose(session);
++  };
+   session.closed = () => {
+     if (editorSession.value !== session) return;
+     if (mode === "legacy") editing.value = null;
+@@ -385,6 +413,9 @@ function cancelEdit(): void {
+   editVisible.value = false;
+   editorSession.value = null;
+ }
++function legacyModelUpdate(visible: boolean) {
++  if (mode === "legacy") editVisible.value = visible;
++}
+ function beforeClose(done: () => void) {
+   if (mode === "legacy") done();
+   else editorSession.value?.requestClose();
+@@ -433,7 +464,7 @@ function commitPendingEdit(): boolean {
+   if (!hasOpenEditor()) return true;
+   try {
+     if (mode === "retained") {
+-      const result = designerRef.value?.captureContent();
++      const result = activeDesigner()?.captureContent();
+       if (result?.status !== "captured") {
+         editError.value =
+           result?.status === "blocked"
+@@ -581,7 +612,7 @@ defineExpose({ commitPendingEdit, hasOpenEditor, readEditingState });
+     </ul>
+ 
+     <ElDialog
+-      v-model="editVisible"
++      :model-value="editVisible"
+       :key="mode === 'retained' ? (editorSession?.key ?? 'closed') : 'legacy'"
+       :class="contentClass"
+       :modal-class="modalClass"
+@@ -590,7 +621,10 @@ defineExpose({ commitPendingEdit, hasOpenEditor, readEditingState });
+       :before-close="
+         mode === 'retained' ? (editorSession?.requestClose ?? (() => {})) : beforeClose
+       "
+-      v-bind="{ onClosed: editorSession?.closed }"
++      v-bind="{
++        onClosed: editorSession?.closed,
++        'onUpdate:modelValue': editorSession?.modelUpdate ?? legacyModelUpdate,
++      }"
+       :title="editing ? `编辑表单：${editing.name}` : '编辑表单'"
+       width="920px"
+       data-test="form-manager-edit-dialog"
+@@ -611,7 +645,7 @@ defineExpose({ commitPendingEdit, hasOpenEditor, readEditingState });
+       </p>
+       <FormDesigner
+         v-if="editing"
+-        ref="designerRef"
++        :ref="editorSession?.bindDesigner ?? (() => {})"
+         :key="editorSession?.key ?? 'closed'"
+         :editing-mode="props.editingMode ?? 'legacy'"
+         v-on="editorSession?.handlers ?? {}"

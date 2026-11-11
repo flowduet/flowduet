@@ -1,0 +1,2607 @@
+[
+  {
+    "caseId": "F01/top/normal-default/K/load",
+    "source": "final/C1-load-0.json",
+    "row": 0,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F01/top/empty/K/load",
+    "source": "final/C1-load-0.json",
+    "row": 1,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F01/top/unset/K/load",
+    "source": "final/C1-load-0.json",
+    "row": 2,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F01/grid/normal-default/K/load",
+    "source": "final/C1-load-0.json",
+    "row": 3,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F01/grid/empty/K/load",
+    "source": "final/C1-load-0.json",
+    "row": 4,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F01/grid/unset/K/load",
+    "source": "final/C1-load-0.json",
+    "row": 5,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F02/top/normal-default/K/load",
+    "source": "final/C1-load-1.json",
+    "row": 0,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F02/top/empty/K/load",
+    "source": "final/C1-load-1.json",
+    "row": 1,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F02/top/unset/K/load",
+    "source": "final/C1-load-1.json",
+    "row": 2,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F02/grid/normal-default/K/load",
+    "source": "final/C1-load-1.json",
+    "row": 3,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F02/grid/empty/K/load",
+    "source": "final/C1-load-1.json",
+    "row": 4,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F02/grid/unset/K/load",
+    "source": "final/C1-load-1.json",
+    "row": 5,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "I01/month/top/K/load",
+    "source": "final/C1-load-10.json",
+    "row": 0,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "I01/month/grid/K/load",
+    "source": "final/C1-load-10.json",
+    "row": 1,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "I01/year/top/K/load",
+    "source": "final/C1-load-10.json",
+    "row": 2,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "I01/year/grid/K/load",
+    "source": "final/C1-load-10.json",
+    "row": 3,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F03/top/zero/K/load",
+    "source": "final/C1-load-2.json",
+    "row": 0,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F03/top/negative/K/load",
+    "source": "final/C1-load-2.json",
+    "row": 1,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F03/top/decimal/K/load",
+    "source": "final/C1-load-2.json",
+    "row": 2,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F03/top/unset/K/load",
+    "source": "final/C1-load-2.json",
+    "row": 3,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F03/grid/zero/K/load",
+    "source": "final/C1-load-2.json",
+    "row": 4,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F03/grid/negative/K/load",
+    "source": "final/C1-load-2.json",
+    "row": 5,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F03/grid/decimal/K/load",
+    "source": "final/C1-load-3.json",
+    "row": 0,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F03/grid/unset/K/load",
+    "source": "final/C1-load-3.json",
+    "row": 1,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F04/top/zero/K/load",
+    "source": "final/C1-load-3.json",
+    "row": 2,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F04/top/string-zero/K/load",
+    "source": "final/C1-load-3.json",
+    "row": 3,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F04/top/normal/K/load",
+    "source": "final/C1-load-3.json",
+    "row": 4,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F04/top/unset/K/load",
+    "source": "final/C1-load-3.json",
+    "row": 5,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F04/grid/zero/K/load",
+    "source": "final/C1-load-4.json",
+    "row": 0,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F04/grid/string-zero/K/load",
+    "source": "final/C1-load-4.json",
+    "row": 1,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F04/grid/normal/K/load",
+    "source": "final/C1-load-4.json",
+    "row": 2,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F04/grid/unset/K/load",
+    "source": "final/C1-load-4.json",
+    "row": 3,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F05/top/empty-array/K/load",
+    "source": "final/C1-load-4.json",
+    "row": 4,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F05/top/selected-array/K/load",
+    "source": "final/C1-load-4.json",
+    "row": 5,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F05/top/unset/K/load",
+    "source": "final/C1-load-5.json",
+    "row": 0,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F05/grid/empty-array/K/load",
+    "source": "final/C1-load-5.json",
+    "row": 1,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F05/grid/selected-array/K/load",
+    "source": "final/C1-load-5.json",
+    "row": 2,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F05/grid/unset/K/load",
+    "source": "final/C1-load-5.json",
+    "row": 3,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F06/top/zero/K/load",
+    "source": "final/C1-load-5.json",
+    "row": 4,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F06/top/string-zero/K/load",
+    "source": "final/C1-load-5.json",
+    "row": 5,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F06/top/normal/K/load",
+    "source": "final/C1-load-6.json",
+    "row": 0,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F06/top/unset/K/load",
+    "source": "final/C1-load-6.json",
+    "row": 1,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F06/grid/zero/K/load",
+    "source": "final/C1-load-6.json",
+    "row": 2,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F06/grid/string-zero/K/load",
+    "source": "final/C1-load-6.json",
+    "row": 3,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F06/grid/normal/K/load",
+    "source": "final/C1-load-6.json",
+    "row": 4,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F06/grid/unset/K/load",
+    "source": "final/C1-load-6.json",
+    "row": 5,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F07/top/normal-default/K/load",
+    "source": "final/C1-load-7.json",
+    "row": 0,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F07/top/unset/K/load",
+    "source": "final/C1-load-7.json",
+    "row": 1,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F07/grid/normal-default/K/load",
+    "source": "final/C1-load-7.json",
+    "row": 2,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F07/grid/unset/K/load",
+    "source": "final/C1-load-7.json",
+    "row": 3,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F08/top/false/K/load",
+    "source": "final/C1-load-7.json",
+    "row": 4,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F08/top/true/K/load",
+    "source": "final/C1-load-7.json",
+    "row": 5,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F08/top/unset/K/load",
+    "source": "final/C1-load-8.json",
+    "row": 0,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F08/grid/false/K/load",
+    "source": "final/C1-load-8.json",
+    "row": 1,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F08/grid/true/K/load",
+    "source": "final/C1-load-8.json",
+    "row": 2,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F08/grid/unset/K/load",
+    "source": "final/C1-load-8.json",
+    "row": 3,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "I01/omitted/top/K/load",
+    "source": "final/C1-load-8.json",
+    "row": 4,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "I01/omitted/grid/K/load",
+    "source": "final/C1-load-8.json",
+    "row": 5,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "I01/date/top/K/load",
+    "source": "final/C1-load-9.json",
+    "row": 0,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "I01/date/grid/K/load",
+    "source": "final/C1-load-9.json",
+    "row": 1,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "I01/datetime/top/K/load",
+    "source": "final/C1-load-9.json",
+    "row": 2,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "I01/datetime/grid/K/load",
+    "source": "final/C1-load-9.json",
+    "row": 3,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "I01/week/top/K/load",
+    "source": "final/C1-load-9.json",
+    "row": 4,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "I01/week/grid/K/load",
+    "source": "final/C1-load-9.json",
+    "row": 5,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F01/top/K/edit",
+    "source": "final/C1-edit-F01.json",
+    "row": 0,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F01/top/K/clear",
+    "source": "final/C1-edit-F01.json",
+    "row": 1,
+    "origin": "real-browser",
+    "status": "failed",
+    "note": ""
+  },
+  {
+    "caseId": "F01/grid/K/edit",
+    "source": "final/C1-edit-F01.json",
+    "row": 2,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F01/grid/K/clear",
+    "source": "final/C1-edit-F01.json",
+    "row": 3,
+    "origin": "real-browser",
+    "status": "failed",
+    "note": ""
+  },
+  {
+    "caseId": "F02/top/K/edit",
+    "source": "final/C1-edit-F02.json",
+    "row": 0,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F02/top/K/clear",
+    "source": "final/C1-edit-F02.json",
+    "row": 1,
+    "origin": "real-browser",
+    "status": "failed",
+    "note": ""
+  },
+  {
+    "caseId": "F02/grid/K/edit",
+    "source": "final/C1-edit-F02.json",
+    "row": 2,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F02/grid/K/clear",
+    "source": "final/C1-edit-F02.json",
+    "row": 3,
+    "origin": "real-browser",
+    "status": "failed",
+    "note": ""
+  },
+  {
+    "caseId": "F03/top/K/edit",
+    "source": "final/C1-edit-F03.json",
+    "row": 0,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F03/top/K/clear",
+    "source": "final/C1-edit-F03.json",
+    "row": 1,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F03/grid/K/edit",
+    "source": "final/C1-edit-F03.json",
+    "row": 2,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F03/grid/K/clear",
+    "source": "final/C1-edit-F03.json",
+    "row": 3,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F04/top/K/edit",
+    "source": "final/C1-edit-F04.json",
+    "row": 0,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F04/top/K/clear",
+    "source": "final/C1-edit-F04.json",
+    "row": 1,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F04/grid/K/edit",
+    "source": "final/C1-edit-F04.json",
+    "row": 2,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F04/grid/K/clear",
+    "source": "final/C1-edit-F04.json",
+    "row": 3,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F05/top/K/edit",
+    "source": "final/C1-edit-F05.json",
+    "row": 0,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F05/top/K/clear",
+    "source": "final/C1-edit-F05.json",
+    "row": 1,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F05/top/K/unset-checkbox",
+    "source": "final/C1-edit-F05.json",
+    "row": 2,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F05/grid/K/edit",
+    "source": "final/C1-edit-F05.json",
+    "row": 3,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F05/grid/K/clear",
+    "source": "final/C1-edit-F05.json",
+    "row": 4,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F05/grid/K/unset-checkbox",
+    "source": "final/C1-edit-F05.json",
+    "row": 5,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F06/top/K/edit",
+    "source": "final/C1-edit-F06.json",
+    "row": 0,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F06/top/K/clear",
+    "source": "final/C1-edit-F06.json",
+    "row": 1,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F06/grid/K/edit",
+    "source": "final/C1-edit-F06.json",
+    "row": 2,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F06/grid/K/clear",
+    "source": "final/C1-edit-F06.json",
+    "row": 3,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F07/top/K/edit",
+    "source": "final/C1-edit-F07.json",
+    "row": 0,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F07/top/K/clear",
+    "source": "final/C1-edit-F07.json",
+    "row": 1,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F07/grid/K/edit",
+    "source": "final/C1-edit-F07.json",
+    "row": 2,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F07/grid/K/clear",
+    "source": "final/C1-edit-F07.json",
+    "row": 3,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F08/top/K/edit",
+    "source": "final/C1-edit-F08.json",
+    "row": 0,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F08/top/K/clear",
+    "source": "final/C1-edit-F08.json",
+    "row": 1,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F08/grid/K/edit",
+    "source": "final/C1-edit-F08.json",
+    "row": 2,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F08/grid/K/clear",
+    "source": "final/C1-edit-F08.json",
+    "row": 3,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F04/top/K/option-label",
+    "source": "final/C1-options-F04.json",
+    "row": 0,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F04/top/K/option-value-number",
+    "source": "final/C1-options-F04.json",
+    "row": 1,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F04/top/K/option-add",
+    "source": "final/C1-options-F04.json",
+    "row": 2,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F04/top/K/option-delete-first",
+    "source": "final/C1-options-F04.json",
+    "row": 3,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F04/grid/K/option-label",
+    "source": "final/C1-options-F04.json",
+    "row": 4,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F04/grid/K/option-value-number",
+    "source": "final/C1-options-F04.json",
+    "row": 5,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F04/grid/K/option-add",
+    "source": "final/C1-options-F04.json",
+    "row": 6,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F04/grid/K/option-delete-first",
+    "source": "final/C1-options-F04.json",
+    "row": 7,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F05/top/K/option-label",
+    "source": "final/C1-options-F05.json",
+    "row": 0,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F05/top/K/option-value-number",
+    "source": "final/C1-options-F05.json",
+    "row": 1,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F05/top/K/option-add",
+    "source": "final/C1-options-F05.json",
+    "row": 2,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F05/top/K/option-delete-first",
+    "source": "final/C1-options-F05.json",
+    "row": 3,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F05/grid/K/option-label",
+    "source": "final/C1-options-F05.json",
+    "row": 4,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F05/grid/K/option-value-number",
+    "source": "final/C1-options-F05.json",
+    "row": 5,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F05/grid/K/option-add",
+    "source": "final/C1-options-F05.json",
+    "row": 6,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F05/grid/K/option-delete-first",
+    "source": "final/C1-options-F05.json",
+    "row": 7,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F06/top/K/option-label",
+    "source": "final/C1-options-F06.json",
+    "row": 0,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F06/top/K/option-value-number",
+    "source": "final/C1-options-F06.json",
+    "row": 1,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F06/top/K/option-add",
+    "source": "final/C1-options-F06.json",
+    "row": 2,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F06/top/K/option-delete-first",
+    "source": "final/C1-options-F06.json",
+    "row": 3,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F06/grid/K/option-label",
+    "source": "final/C1-options-F06.json",
+    "row": 4,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F06/grid/K/option-value-number",
+    "source": "final/C1-options-F06.json",
+    "row": 5,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F06/grid/K/option-add",
+    "source": "final/C1-options-F06.json",
+    "row": 6,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F06/grid/K/option-delete-first",
+    "source": "final/C1-options-F06.json",
+    "row": 7,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "F01/top/normal-default/R/load",
+    "source": "final/C1-R-load-0.json",
+    "row": 0,
+    "origin": "real-browser",
+    "status": "kept-fallback-not-rebuilt",
+    "note": "回退后的值断言=passed"
+  },
+  {
+    "caseId": "F01/top/empty/R/load",
+    "source": "final/C1-R-load-0.json",
+    "row": 1,
+    "origin": "real-browser",
+    "status": "kept-fallback-not-rebuilt",
+    "note": "回退后的值断言=passed"
+  },
+  {
+    "caseId": "F01/top/unset/R/load",
+    "source": "final/C1-R-load-0.json",
+    "row": 2,
+    "origin": "real-browser",
+    "status": "kept-fallback-not-rebuilt",
+    "note": "回退后的值断言=passed"
+  },
+  {
+    "caseId": "F01/grid/normal-default/R/load",
+    "source": "final/C1-R-load-0.json",
+    "row": 3,
+    "origin": "real-browser",
+    "status": "kept-fallback-not-rebuilt",
+    "note": "回退后的值断言=passed"
+  },
+  {
+    "caseId": "F01/grid/empty/R/load",
+    "source": "final/C1-R-load-1.json",
+    "row": 0,
+    "origin": "real-browser",
+    "status": "kept-fallback-not-rebuilt",
+    "note": "回退后的值断言=passed"
+  },
+  {
+    "caseId": "F01/grid/unset/R/load",
+    "source": "final/C1-R-load-1.json",
+    "row": 1,
+    "origin": "real-browser",
+    "status": "kept-fallback-not-rebuilt",
+    "note": "回退后的值断言=passed"
+  },
+  {
+    "caseId": "F02/top/normal-default/R/load",
+    "source": "final/C1-R-load-1.json",
+    "row": 2,
+    "origin": "real-browser",
+    "status": "kept-fallback-not-rebuilt",
+    "note": "回退后的值断言=passed"
+  },
+  {
+    "caseId": "F02/top/empty/R/load",
+    "source": "final/C1-R-load-1.json",
+    "row": 3,
+    "origin": "real-browser",
+    "status": "kept-fallback-not-rebuilt",
+    "note": "回退后的值断言=passed"
+  },
+  {
+    "caseId": "F06/grid/normal/R/load",
+    "source": "final/C1-R-load-10.json",
+    "row": 0,
+    "origin": "real-browser",
+    "status": "kept-fallback-not-rebuilt",
+    "note": "回退后的值断言=passed"
+  },
+  {
+    "caseId": "F06/grid/unset/R/load",
+    "source": "final/C1-R-load-10.json",
+    "row": 1,
+    "origin": "real-browser",
+    "status": "kept-fallback-not-rebuilt",
+    "note": "回退后的值断言=passed"
+  },
+  {
+    "caseId": "F07/top/normal-default/R/load",
+    "source": "final/C1-R-load-10.json",
+    "row": 2,
+    "origin": "real-browser",
+    "status": "kept-fallback-not-rebuilt",
+    "note": "回退后的值断言=passed"
+  },
+  {
+    "caseId": "F07/top/unset/R/load",
+    "source": "final/C1-R-load-10.json",
+    "row": 3,
+    "origin": "real-browser",
+    "status": "kept-fallback-not-rebuilt",
+    "note": "回退后的值断言=passed"
+  },
+  {
+    "caseId": "F07/grid/normal-default/R/load",
+    "source": "final/C1-R-load-11.json",
+    "row": 0,
+    "origin": "real-browser",
+    "status": "kept-fallback-not-rebuilt",
+    "note": "回退后的值断言=passed"
+  },
+  {
+    "caseId": "F07/grid/unset/R/load",
+    "source": "final/C1-R-load-11.json",
+    "row": 1,
+    "origin": "real-browser",
+    "status": "kept-fallback-not-rebuilt",
+    "note": "回退后的值断言=passed"
+  },
+  {
+    "caseId": "F08/top/false/R/load",
+    "source": "final/C1-R-load-11.json",
+    "row": 2,
+    "origin": "real-browser",
+    "status": "kept-fallback-not-rebuilt",
+    "note": "回退后的值断言=passed"
+  },
+  {
+    "caseId": "F08/top/true/R/load",
+    "source": "final/C1-R-load-11.json",
+    "row": 3,
+    "origin": "real-browser",
+    "status": "kept-fallback-not-rebuilt",
+    "note": "回退后的值断言=passed"
+  },
+  {
+    "caseId": "F08/top/unset/R/load",
+    "source": "final/C1-R-load-12.json",
+    "row": 0,
+    "origin": "real-browser",
+    "status": "kept-fallback-not-rebuilt",
+    "note": "回退后的值断言=passed"
+  },
+  {
+    "caseId": "F08/grid/false/R/load",
+    "source": "final/C1-R-load-12.json",
+    "row": 1,
+    "origin": "real-browser",
+    "status": "kept-fallback-not-rebuilt",
+    "note": "回退后的值断言=passed"
+  },
+  {
+    "caseId": "F08/grid/true/R/load",
+    "source": "final/C1-R-load-12.json",
+    "row": 2,
+    "origin": "real-browser",
+    "status": "kept-fallback-not-rebuilt",
+    "note": "回退后的值断言=passed"
+  },
+  {
+    "caseId": "F08/grid/unset/R/load",
+    "source": "final/C1-R-load-12.json",
+    "row": 3,
+    "origin": "real-browser",
+    "status": "kept-fallback-not-rebuilt",
+    "note": "回退后的值断言=passed"
+  },
+  {
+    "caseId": "I01/omitted/top/R/load",
+    "source": "final/C1-R-load-13.json",
+    "row": 0,
+    "origin": "real-browser",
+    "status": "kept-fallback-not-rebuilt",
+    "note": "回退后的值断言=passed"
+  },
+  {
+    "caseId": "I01/omitted/grid/R/load",
+    "source": "final/C1-R-load-13.json",
+    "row": 1,
+    "origin": "real-browser",
+    "status": "kept-fallback-not-rebuilt",
+    "note": "回退后的值断言=passed"
+  },
+  {
+    "caseId": "I01/date/top/R/load",
+    "source": "final/C1-R-load-13.json",
+    "row": 2,
+    "origin": "real-browser",
+    "status": "kept-fallback-not-rebuilt",
+    "note": "回退后的值断言=passed"
+  },
+  {
+    "caseId": "I01/date/grid/R/load",
+    "source": "final/C1-R-load-13.json",
+    "row": 3,
+    "origin": "real-browser",
+    "status": "kept-fallback-not-rebuilt",
+    "note": "回退后的值断言=passed"
+  },
+  {
+    "caseId": "I01/datetime/top/R/load",
+    "source": "final/C1-R-load-14.json",
+    "row": 0,
+    "origin": "real-browser",
+    "status": "kept-fallback-not-rebuilt",
+    "note": "回退后的值断言=passed"
+  },
+  {
+    "caseId": "I01/datetime/grid/R/load",
+    "source": "final/C1-R-load-14.json",
+    "row": 1,
+    "origin": "real-browser",
+    "status": "kept-fallback-not-rebuilt",
+    "note": "回退后的值断言=passed"
+  },
+  {
+    "caseId": "I01/week/top/R/load",
+    "source": "final/C1-R-load-14.json",
+    "row": 2,
+    "origin": "real-browser",
+    "status": "kept-fallback-not-rebuilt",
+    "note": "回退后的值断言=passed"
+  },
+  {
+    "caseId": "I01/week/grid/R/load",
+    "source": "final/C1-R-load-14.json",
+    "row": 3,
+    "origin": "real-browser",
+    "status": "kept-fallback-not-rebuilt",
+    "note": "回退后的值断言=passed"
+  },
+  {
+    "caseId": "I01/month/top/R/load",
+    "source": "final/C1-R-load-15.json",
+    "row": 0,
+    "origin": "real-browser",
+    "status": "kept-fallback-not-rebuilt",
+    "note": "回退后的值断言=passed"
+  },
+  {
+    "caseId": "I01/month/grid/R/load",
+    "source": "final/C1-R-load-15.json",
+    "row": 1,
+    "origin": "real-browser",
+    "status": "kept-fallback-not-rebuilt",
+    "note": "回退后的值断言=passed"
+  },
+  {
+    "caseId": "I01/year/top/R/load",
+    "source": "final/C1-R-load-15.json",
+    "row": 2,
+    "origin": "real-browser",
+    "status": "kept-fallback-not-rebuilt",
+    "note": "回退后的值断言=passed"
+  },
+  {
+    "caseId": "I01/year/grid/R/load",
+    "source": "final/C1-R-load-15.json",
+    "row": 3,
+    "origin": "real-browser",
+    "status": "kept-fallback-not-rebuilt",
+    "note": "回退后的值断言=passed"
+  },
+  {
+    "caseId": "F02/top/unset/R/load",
+    "source": "final/C1-R-load-2.json",
+    "row": 0,
+    "origin": "real-browser",
+    "status": "kept-fallback-not-rebuilt",
+    "note": "回退后的值断言=passed"
+  },
+  {
+    "caseId": "F02/grid/normal-default/R/load",
+    "source": "final/C1-R-load-2.json",
+    "row": 1,
+    "origin": "real-browser",
+    "status": "kept-fallback-not-rebuilt",
+    "note": "回退后的值断言=passed"
+  },
+  {
+    "caseId": "F02/grid/empty/R/load",
+    "source": "final/C1-R-load-2.json",
+    "row": 2,
+    "origin": "real-browser",
+    "status": "kept-fallback-not-rebuilt",
+    "note": "回退后的值断言=passed"
+  },
+  {
+    "caseId": "F02/grid/unset/R/load",
+    "source": "final/C1-R-load-2.json",
+    "row": 3,
+    "origin": "real-browser",
+    "status": "kept-fallback-not-rebuilt",
+    "note": "回退后的值断言=passed"
+  },
+  {
+    "caseId": "F03/top/zero/R/load",
+    "source": "final/C1-R-load-3.json",
+    "row": 0,
+    "origin": "real-browser",
+    "status": "kept-fallback-not-rebuilt",
+    "note": "回退后的值断言=passed"
+  },
+  {
+    "caseId": "F03/top/negative/R/load",
+    "source": "final/C1-R-load-3.json",
+    "row": 1,
+    "origin": "real-browser",
+    "status": "kept-fallback-not-rebuilt",
+    "note": "回退后的值断言=passed"
+  },
+  {
+    "caseId": "F03/top/decimal/R/load",
+    "source": "final/C1-R-load-3.json",
+    "row": 2,
+    "origin": "real-browser",
+    "status": "kept-fallback-not-rebuilt",
+    "note": "回退后的值断言=passed"
+  },
+  {
+    "caseId": "F03/top/unset/R/load",
+    "source": "final/C1-R-load-3.json",
+    "row": 3,
+    "origin": "real-browser",
+    "status": "kept-fallback-not-rebuilt",
+    "note": "回退后的值断言=passed"
+  },
+  {
+    "caseId": "F03/grid/zero/R/load",
+    "source": "final/C1-R-load-4.json",
+    "row": 0,
+    "origin": "real-browser",
+    "status": "kept-fallback-not-rebuilt",
+    "note": "回退后的值断言=passed"
+  },
+  {
+    "caseId": "F03/grid/negative/R/load",
+    "source": "final/C1-R-load-4.json",
+    "row": 1,
+    "origin": "real-browser",
+    "status": "kept-fallback-not-rebuilt",
+    "note": "回退后的值断言=passed"
+  },
+  {
+    "caseId": "F03/grid/decimal/R/load",
+    "source": "final/C1-R-load-4.json",
+    "row": 2,
+    "origin": "real-browser",
+    "status": "kept-fallback-not-rebuilt",
+    "note": "回退后的值断言=passed"
+  },
+  {
+    "caseId": "F03/grid/unset/R/load",
+    "source": "final/C1-R-load-4.json",
+    "row": 3,
+    "origin": "real-browser",
+    "status": "kept-fallback-not-rebuilt",
+    "note": "回退后的值断言=passed"
+  },
+  {
+    "caseId": "F04/top/zero/R/load",
+    "source": "final/C1-R-load-5.json",
+    "row": 0,
+    "origin": "real-browser",
+    "status": "kept-fallback-not-rebuilt",
+    "note": "回退后的值断言=passed"
+  },
+  {
+    "caseId": "F04/top/string-zero/R/load",
+    "source": "final/C1-R-load-5.json",
+    "row": 1,
+    "origin": "real-browser",
+    "status": "kept-fallback-not-rebuilt",
+    "note": "回退后的值断言=passed"
+  },
+  {
+    "caseId": "F04/top/normal/R/load",
+    "source": "final/C1-R-load-5.json",
+    "row": 2,
+    "origin": "real-browser",
+    "status": "kept-fallback-not-rebuilt",
+    "note": "回退后的值断言=passed"
+  },
+  {
+    "caseId": "F04/top/unset/R/load",
+    "source": "final/C1-R-load-5.json",
+    "row": 3,
+    "origin": "real-browser",
+    "status": "kept-fallback-not-rebuilt",
+    "note": "回退后的值断言=passed"
+  },
+  {
+    "caseId": "F04/grid/zero/R/load",
+    "source": "final/C1-R-load-6.json",
+    "row": 0,
+    "origin": "real-browser",
+    "status": "kept-fallback-not-rebuilt",
+    "note": "回退后的值断言=passed"
+  },
+  {
+    "caseId": "F04/grid/string-zero/R/load",
+    "source": "final/C1-R-load-6.json",
+    "row": 1,
+    "origin": "real-browser",
+    "status": "kept-fallback-not-rebuilt",
+    "note": "回退后的值断言=passed"
+  },
+  {
+    "caseId": "F04/grid/normal/R/load",
+    "source": "final/C1-R-load-6.json",
+    "row": 2,
+    "origin": "real-browser",
+    "status": "kept-fallback-not-rebuilt",
+    "note": "回退后的值断言=passed"
+  },
+  {
+    "caseId": "F04/grid/unset/R/load",
+    "source": "final/C1-R-load-6.json",
+    "row": 3,
+    "origin": "real-browser",
+    "status": "kept-fallback-not-rebuilt",
+    "note": "回退后的值断言=passed"
+  },
+  {
+    "caseId": "F05/top/empty-array/R/load",
+    "source": "final/C1-R-load-7.json",
+    "row": 0,
+    "origin": "real-browser",
+    "status": "kept-fallback-not-rebuilt",
+    "note": "回退后的值断言=passed"
+  },
+  {
+    "caseId": "F05/top/selected-array/R/load",
+    "source": "final/C1-R-load-7.json",
+    "row": 1,
+    "origin": "real-browser",
+    "status": "kept-fallback-not-rebuilt",
+    "note": "回退后的值断言=passed"
+  },
+  {
+    "caseId": "F05/top/unset/R/load",
+    "source": "final/C1-R-load-7.json",
+    "row": 2,
+    "origin": "real-browser",
+    "status": "kept-fallback-not-rebuilt",
+    "note": "回退后的值断言=passed"
+  },
+  {
+    "caseId": "F05/grid/empty-array/R/load",
+    "source": "final/C1-R-load-7.json",
+    "row": 3,
+    "origin": "real-browser",
+    "status": "kept-fallback-not-rebuilt",
+    "note": "回退后的值断言=passed"
+  },
+  {
+    "caseId": "F05/grid/selected-array/R/load",
+    "source": "final/C1-R-load-8.json",
+    "row": 0,
+    "origin": "real-browser",
+    "status": "kept-fallback-not-rebuilt",
+    "note": "回退后的值断言=passed"
+  },
+  {
+    "caseId": "F05/grid/unset/R/load",
+    "source": "final/C1-R-load-8.json",
+    "row": 1,
+    "origin": "real-browser",
+    "status": "kept-fallback-not-rebuilt",
+    "note": "回退后的值断言=passed"
+  },
+  {
+    "caseId": "F06/top/zero/R/load",
+    "source": "final/C1-R-load-8.json",
+    "row": 2,
+    "origin": "real-browser",
+    "status": "kept-fallback-not-rebuilt",
+    "note": "回退后的值断言=passed"
+  },
+  {
+    "caseId": "F06/top/string-zero/R/load",
+    "source": "final/C1-R-load-8.json",
+    "row": 3,
+    "origin": "real-browser",
+    "status": "kept-fallback-not-rebuilt",
+    "note": "回退后的值断言=passed"
+  },
+  {
+    "caseId": "F06/top/normal/R/load",
+    "source": "final/C1-R-load-9.json",
+    "row": 0,
+    "origin": "real-browser",
+    "status": "kept-fallback-not-rebuilt",
+    "note": "回退后的值断言=passed"
+  },
+  {
+    "caseId": "F06/top/unset/R/load",
+    "source": "final/C1-R-load-9.json",
+    "row": 1,
+    "origin": "real-browser",
+    "status": "kept-fallback-not-rebuilt",
+    "note": "回退后的值断言=passed"
+  },
+  {
+    "caseId": "F06/grid/zero/R/load",
+    "source": "final/C1-R-load-9.json",
+    "row": 2,
+    "origin": "real-browser",
+    "status": "kept-fallback-not-rebuilt",
+    "note": "回退后的值断言=passed"
+  },
+  {
+    "caseId": "F06/grid/string-zero/R/load",
+    "source": "final/C1-R-load-9.json",
+    "row": 3,
+    "origin": "real-browser",
+    "status": "kept-fallback-not-rebuilt",
+    "note": "回退后的值断言=passed"
+  },
+  {
+    "caseId": "C2-navigation/X01-X04-X09//1",
+    "source": "final/C2-navigation.json",
+    "row": 0,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "C2-navigation/CompositionEvent-protocol-not-OS-IME//1",
+    "source": "final/C2-navigation.json",
+    "row": 1,
+    "origin": "component-event-not-OS-IME",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "C2-navigation/X01-X04-X09//2",
+    "source": "final/C2-navigation.json",
+    "row": 2,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "C2-navigation/CompositionEvent-protocol-not-OS-IME//2",
+    "source": "final/C2-navigation.json",
+    "row": 3,
+    "origin": "component-event-not-OS-IME",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "C2-navigation/X01-X04-X09//3",
+    "source": "final/C2-navigation.json",
+    "row": 4,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "C2-navigation/CompositionEvent-protocol-not-OS-IME//3",
+    "source": "final/C2-navigation.json",
+    "row": 5,
+    "origin": "component-event-not-OS-IME",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "C2-focus/F01//0",
+    "source": "final/C2-focus.json",
+    "row": 0,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "C2-focus/F03//1",
+    "source": "final/C2-focus.json",
+    "row": 1,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "C2-focus/F07//2",
+    "source": "final/C2-focus.json",
+    "row": 2,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "C2-pending/F01/top/1",
+    "source": "final/C2-pending.json",
+    "row": 0,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "C2-pending/F02/top/1",
+    "source": "final/C2-pending.json",
+    "row": 1,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "C2-pending/F03/top/1",
+    "source": "final/C2-pending.json",
+    "row": 2,
+    "origin": "real-browser",
+    "status": "failed",
+    "note": ""
+  },
+  {
+    "caseId": "C2-pending/F04/top/1",
+    "source": "final/C2-pending.json",
+    "row": 3,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "C2-pending/F05/top/1",
+    "source": "final/C2-pending.json",
+    "row": 4,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "C2-pending/F06/top/1",
+    "source": "final/C2-pending.json",
+    "row": 5,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "C2-pending/F07/top/1",
+    "source": "final/C2-pending.json",
+    "row": 6,
+    "origin": "real-browser",
+    "status": "failed",
+    "note": ""
+  },
+  {
+    "caseId": "C2-pending/F08/top/1",
+    "source": "final/C2-pending.json",
+    "row": 7,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "C2-pending/F01/grid/1",
+    "source": "final/C2-pending.json",
+    "row": 8,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "C2-pending/F02/grid/1",
+    "source": "final/C2-pending.json",
+    "row": 9,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "C2-pending/F03/grid/1",
+    "source": "final/C2-pending.json",
+    "row": 10,
+    "origin": "real-browser",
+    "status": "failed",
+    "note": ""
+  },
+  {
+    "caseId": "C2-pending/F04/grid/1",
+    "source": "final/C2-pending.json",
+    "row": 11,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "C2-pending/F05/grid/1",
+    "source": "final/C2-pending.json",
+    "row": 12,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "C2-pending/F06/grid/1",
+    "source": "final/C2-pending.json",
+    "row": 13,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "C2-pending/F07/grid/1",
+    "source": "final/C2-pending.json",
+    "row": 14,
+    "origin": "real-browser",
+    "status": "failed",
+    "note": ""
+  },
+  {
+    "caseId": "C2-pending/F08/grid/1",
+    "source": "final/C2-pending.json",
+    "row": 15,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "C2-pending/F01/top/2",
+    "source": "final/C2-pending.json",
+    "row": 16,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "C2-pending/F02/top/2",
+    "source": "final/C2-pending.json",
+    "row": 17,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "C2-pending/F03/top/2",
+    "source": "final/C2-pending.json",
+    "row": 18,
+    "origin": "real-browser",
+    "status": "failed",
+    "note": ""
+  },
+  {
+    "caseId": "C2-pending/F04/top/2",
+    "source": "final/C2-pending.json",
+    "row": 19,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "C2-pending/F05/top/2",
+    "source": "final/C2-pending.json",
+    "row": 20,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "C2-pending/F06/top/2",
+    "source": "final/C2-pending.json",
+    "row": 21,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "C2-pending/F07/top/2",
+    "source": "final/C2-pending.json",
+    "row": 22,
+    "origin": "real-browser",
+    "status": "failed",
+    "note": ""
+  },
+  {
+    "caseId": "C2-pending/F08/top/2",
+    "source": "final/C2-pending.json",
+    "row": 23,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "C2-pending/F01/grid/2",
+    "source": "final/C2-pending.json",
+    "row": 24,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "C2-pending/F02/grid/2",
+    "source": "final/C2-pending.json",
+    "row": 25,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "C2-pending/F03/grid/2",
+    "source": "final/C2-pending.json",
+    "row": 26,
+    "origin": "real-browser",
+    "status": "failed",
+    "note": ""
+  },
+  {
+    "caseId": "C2-pending/F04/grid/2",
+    "source": "final/C2-pending.json",
+    "row": 27,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "C2-pending/F05/grid/2",
+    "source": "final/C2-pending.json",
+    "row": 28,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "C2-pending/F06/grid/2",
+    "source": "final/C2-pending.json",
+    "row": 29,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "C2-pending/F07/grid/2",
+    "source": "final/C2-pending.json",
+    "row": 30,
+    "origin": "real-browser",
+    "status": "failed",
+    "note": ""
+  },
+  {
+    "caseId": "C2-pending/F08/grid/2",
+    "source": "final/C2-pending.json",
+    "row": 31,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "C2-pending/F01/top/3",
+    "source": "final/C2-pending.json",
+    "row": 32,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "C2-pending/F02/top/3",
+    "source": "final/C2-pending.json",
+    "row": 33,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "C2-pending/F03/top/3",
+    "source": "final/C2-pending.json",
+    "row": 34,
+    "origin": "real-browser",
+    "status": "failed",
+    "note": ""
+  },
+  {
+    "caseId": "C2-pending/F04/top/3",
+    "source": "final/C2-pending.json",
+    "row": 35,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "C2-pending/F05/top/3",
+    "source": "final/C2-pending.json",
+    "row": 36,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "C2-pending/F06/top/3",
+    "source": "final/C2-pending.json",
+    "row": 37,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "C2-pending/F07/top/3",
+    "source": "final/C2-pending.json",
+    "row": 38,
+    "origin": "real-browser",
+    "status": "failed",
+    "note": ""
+  },
+  {
+    "caseId": "C2-pending/F08/top/3",
+    "source": "final/C2-pending.json",
+    "row": 39,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "C2-pending/F01/grid/3",
+    "source": "final/C2-pending.json",
+    "row": 40,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "C2-pending/F02/grid/3",
+    "source": "final/C2-pending.json",
+    "row": 41,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "C2-pending/F03/grid/3",
+    "source": "final/C2-pending.json",
+    "row": 42,
+    "origin": "real-browser",
+    "status": "failed",
+    "note": ""
+  },
+  {
+    "caseId": "C2-pending/F04/grid/3",
+    "source": "final/C2-pending.json",
+    "row": 43,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "C2-pending/F05/grid/3",
+    "source": "final/C2-pending.json",
+    "row": 44,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "C2-pending/F06/grid/3",
+    "source": "final/C2-pending.json",
+    "row": 45,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "C2-pending/F07/grid/3",
+    "source": "final/C2-pending.json",
+    "row": 46,
+    "origin": "real-browser",
+    "status": "failed",
+    "note": ""
+  },
+  {
+    "caseId": "C2-pending/F08/grid/3",
+    "source": "final/C2-pending.json",
+    "row": 47,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "C3-drag/F01/top/0",
+    "source": "final/C3-drag.json",
+    "row": 0,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "C3-drag/F02/top/1",
+    "source": "final/C3-drag.json",
+    "row": 1,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "C3-drag/F03/top/2",
+    "source": "final/C3-drag.json",
+    "row": 2,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "C3-drag/F04/top/3",
+    "source": "final/C3-drag.json",
+    "row": 3,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "C3-drag/F05/top/4",
+    "source": "final/C3-drag.json",
+    "row": 4,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "C3-drag/F06/top/5",
+    "source": "final/C3-drag.json",
+    "row": 5,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "C3-drag/F07/top/6",
+    "source": "final/C3-drag.json",
+    "row": 6,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "C3-drag/F08/top/7",
+    "source": "final/C3-drag.json",
+    "row": 7,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "C3-drag/F01/grid/8",
+    "source": "final/C3-drag.json",
+    "row": 8,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "C3-drag/F02/grid/9",
+    "source": "final/C3-drag.json",
+    "row": 9,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "C3-drag/F03/grid/10",
+    "source": "final/C3-drag.json",
+    "row": 10,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "C3-drag/F04/grid/11",
+    "source": "final/C3-drag.json",
+    "row": 11,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "C3-drag/F05/grid/12",
+    "source": "final/C3-drag.json",
+    "row": 12,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "C3-drag/F06/grid/13",
+    "source": "final/C3-drag.json",
+    "row": 13,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "C3-drag/F07/grid/14",
+    "source": "final/C3-drag.json",
+    "row": 14,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "C3-drag/F08/grid/15",
+    "source": "final/C3-drag.json",
+    "row": 15,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "C3-drag/native-drag-Escape//1/capture-barrier",
+    "source": "final/C3-drag.json",
+    "row": 16,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "C3-drag/native-drag-Escape//1",
+    "source": "final/C3-drag.json",
+    "row": 16,
+    "origin": "real-browser",
+    "status": "failed",
+    "note": ""
+  },
+  {
+    "caseId": "C3-drag/native-drag-Escape//2/capture-barrier",
+    "source": "final/C3-drag.json",
+    "row": 17,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "C3-drag/native-drag-Escape//2",
+    "source": "final/C3-drag.json",
+    "row": 17,
+    "origin": "real-browser",
+    "status": "failed",
+    "note": ""
+  },
+  {
+    "caseId": "C3-drag/native-drag-Escape//3/capture-barrier",
+    "source": "final/C3-drag.json",
+    "row": 18,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "C3-drag/native-drag-Escape//3",
+    "source": "final/C3-drag.json",
+    "row": 18,
+    "origin": "real-browser",
+    "status": "failed",
+    "note": ""
+  },
+  {
+    "caseId": "C3-layout/cross-column//0",
+    "source": "final/C3-layout.json",
+    "row": 0,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "C3-layout/sort//1",
+    "source": "final/C3-layout.json",
+    "row": 1,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "C3-layout/nested-row//2",
+    "source": "final/C3-layout.json",
+    "row": 2,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "C3-layout/build-row//3",
+    "source": "final/C3-layout.json",
+    "row": 3,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "C3-layout/outside-drop//1",
+    "source": "final/C3-layout.json",
+    "row": 4,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "C3-layout/outside-drop//2",
+    "source": "final/C3-layout.json",
+    "row": 5,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "C3-layout/outside-drop//3",
+    "source": "final/C3-layout.json",
+    "row": 6,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "C4-real/F01/top/0",
+    "source": "final/C4-real.json",
+    "row": 0,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "C4-real/F02/top/1",
+    "source": "final/C4-real.json",
+    "row": 1,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "C4-real/F03/top/2",
+    "source": "final/C4-real.json",
+    "row": 2,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "C4-real/F04/top/3",
+    "source": "final/C4-real.json",
+    "row": 3,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "C4-real/F05/top/4",
+    "source": "final/C4-real.json",
+    "row": 4,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "C4-real/F06/top/5",
+    "source": "final/C4-real.json",
+    "row": 5,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "C4-real/F07/top/6",
+    "source": "final/C4-real.json",
+    "row": 6,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "C4-real/F08/top/7",
+    "source": "final/C4-real.json",
+    "row": 7,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "C4-real/F01/grid/8",
+    "source": "final/C4-real.json",
+    "row": 8,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "C4-real/F02/grid/9",
+    "source": "final/C4-real.json",
+    "row": 9,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "C4-real/F03/grid/10",
+    "source": "final/C4-real.json",
+    "row": 10,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "C4-real/F04/grid/11",
+    "source": "final/C4-real.json",
+    "row": 11,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "C4-real/F05/grid/12",
+    "source": "final/C4-real.json",
+    "row": 12,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "C4-real/F06/grid/13",
+    "source": "final/C4-real.json",
+    "row": 13,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "C4-real/F07/grid/14",
+    "source": "final/C4-real.json",
+    "row": 14,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "C4-real/F08/grid/15",
+    "source": "final/C4-real.json",
+    "row": 15,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "C4-real/F01/top/16",
+    "source": "final/C4-real.json",
+    "row": 16,
+    "origin": "real-browser",
+    "status": "kept-fallback-not-rebuilt",
+    "note": ""
+  },
+  {
+    "caseId": "C4-real/F02/top/17",
+    "source": "final/C4-real.json",
+    "row": 17,
+    "origin": "real-browser",
+    "status": "kept-fallback-not-rebuilt",
+    "note": ""
+  },
+  {
+    "caseId": "C4-real/F03/top/18",
+    "source": "final/C4-real.json",
+    "row": 18,
+    "origin": "real-browser",
+    "status": "kept-fallback-not-rebuilt",
+    "note": ""
+  },
+  {
+    "caseId": "C4-real/F04/top/19",
+    "source": "final/C4-real.json",
+    "row": 19,
+    "origin": "real-browser",
+    "status": "kept-fallback-not-rebuilt",
+    "note": ""
+  },
+  {
+    "caseId": "C4-real/F05/top/20",
+    "source": "final/C4-real.json",
+    "row": 20,
+    "origin": "real-browser",
+    "status": "kept-fallback-not-rebuilt",
+    "note": ""
+  },
+  {
+    "caseId": "C4-real/F06/top/21",
+    "source": "final/C4-real.json",
+    "row": 21,
+    "origin": "real-browser",
+    "status": "kept-fallback-not-rebuilt",
+    "note": ""
+  },
+  {
+    "caseId": "C4-real/F07/top/22",
+    "source": "final/C4-real.json",
+    "row": 22,
+    "origin": "real-browser",
+    "status": "kept-fallback-not-rebuilt",
+    "note": ""
+  },
+  {
+    "caseId": "C4-real/F08/top/23",
+    "source": "final/C4-real.json",
+    "row": 23,
+    "origin": "real-browser",
+    "status": "kept-fallback-not-rebuilt",
+    "note": ""
+  },
+  {
+    "caseId": "C4-real/F01/grid/24",
+    "source": "final/C4-real.json",
+    "row": 24,
+    "origin": "real-browser",
+    "status": "kept-fallback-not-rebuilt",
+    "note": ""
+  },
+  {
+    "caseId": "C4-real/F02/grid/25",
+    "source": "final/C4-real.json",
+    "row": 25,
+    "origin": "real-browser",
+    "status": "kept-fallback-not-rebuilt",
+    "note": ""
+  },
+  {
+    "caseId": "C4-real/F03/grid/26",
+    "source": "final/C4-real.json",
+    "row": 26,
+    "origin": "real-browser",
+    "status": "kept-fallback-not-rebuilt",
+    "note": ""
+  },
+  {
+    "caseId": "C4-real/F04/grid/27",
+    "source": "final/C4-real.json",
+    "row": 27,
+    "origin": "real-browser",
+    "status": "kept-fallback-not-rebuilt",
+    "note": ""
+  },
+  {
+    "caseId": "C4-real/F05/grid/28",
+    "source": "final/C4-real.json",
+    "row": 28,
+    "origin": "real-browser",
+    "status": "kept-fallback-not-rebuilt",
+    "note": ""
+  },
+  {
+    "caseId": "C4-real/F06/grid/29",
+    "source": "final/C4-real.json",
+    "row": 29,
+    "origin": "real-browser",
+    "status": "kept-fallback-not-rebuilt",
+    "note": ""
+  },
+  {
+    "caseId": "C4-real/F07/grid/30",
+    "source": "final/C4-real.json",
+    "row": 30,
+    "origin": "real-browser",
+    "status": "kept-fallback-not-rebuilt",
+    "note": ""
+  },
+  {
+    "caseId": "C4-real/F08/grid/31",
+    "source": "final/C4-real.json",
+    "row": 31,
+    "origin": "real-browser",
+    "status": "kept-fallback-not-rebuilt",
+    "note": ""
+  },
+  {
+    "caseId": "C4-real/ERR06-native-correction//1",
+    "source": "final/C4-real.json",
+    "row": 32,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "C4-real/ERR06-native-correction//2",
+    "source": "final/C4-real.json",
+    "row": 33,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "C4-real/ERR06-native-correction//3",
+    "source": "final/C4-real.json",
+    "row": 34,
+    "origin": "real-browser",
+    "status": "passed",
+    "note": ""
+  },
+  {
+    "caseId": "C4-loaded/F01/top/0",
+    "source": "final/C4-loaded.json",
+    "row": 0,
+    "origin": "real-browser",
+    "status": "kept-fallback-not-rebuilt",
+    "note": ""
+  },
+  {
+    "caseId": "C4-loaded/F02/top/1",
+    "source": "final/C4-loaded.json",
+    "row": 1,
+    "origin": "real-browser",
+    "status": "kept-fallback-not-rebuilt",
+    "note": ""
+  },
+  {
+    "caseId": "C4-loaded/F03/top/2",
+    "source": "final/C4-loaded.json",
+    "row": 2,
+    "origin": "real-browser",
+    "status": "kept-fallback-not-rebuilt",
+    "note": ""
+  },
+  {
+    "caseId": "C4-loaded/F04/top/3",
+    "source": "final/C4-loaded.json",
+    "row": 3,
+    "origin": "real-browser",
+    "status": "kept-fallback-not-rebuilt",
+    "note": ""
+  },
+  {
+    "caseId": "C4-loaded/F05/top/4",
+    "source": "final/C4-loaded.json",
+    "row": 4,
+    "origin": "real-browser",
+    "status": "kept-fallback-not-rebuilt",
+    "note": ""
+  },
+  {
+    "caseId": "C4-loaded/F06/top/5",
+    "source": "final/C4-loaded.json",
+    "row": 5,
+    "origin": "real-browser",
+    "status": "kept-fallback-not-rebuilt",
+    "note": ""
+  },
+  {
+    "caseId": "C4-loaded/F07/top/6",
+    "source": "final/C4-loaded.json",
+    "row": 6,
+    "origin": "real-browser",
+    "status": "kept-fallback-not-rebuilt",
+    "note": ""
+  },
+  {
+    "caseId": "C4-loaded/F08/top/7",
+    "source": "final/C4-loaded.json",
+    "row": 7,
+    "origin": "real-browser",
+    "status": "kept-fallback-not-rebuilt",
+    "note": ""
+  },
+  {
+    "caseId": "C4-loaded/F01/grid/8",
+    "source": "final/C4-loaded.json",
+    "row": 8,
+    "origin": "real-browser",
+    "status": "kept-fallback-not-rebuilt",
+    "note": ""
+  },
+  {
+    "caseId": "C4-loaded/F02/grid/9",
+    "source": "final/C4-loaded.json",
+    "row": 9,
+    "origin": "real-browser",
+    "status": "kept-fallback-not-rebuilt",
+    "note": ""
+  },
+  {
+    "caseId": "C4-loaded/F03/grid/10",
+    "source": "final/C4-loaded.json",
+    "row": 10,
+    "origin": "real-browser",
+    "status": "kept-fallback-not-rebuilt",
+    "note": ""
+  },
+  {
+    "caseId": "C4-loaded/F04/grid/11",
+    "source": "final/C4-loaded.json",
+    "row": 11,
+    "origin": "real-browser",
+    "status": "kept-fallback-not-rebuilt",
+    "note": ""
+  },
+  {
+    "caseId": "C4-loaded/F05/grid/12",
+    "source": "final/C4-loaded.json",
+    "row": 12,
+    "origin": "real-browser",
+    "status": "kept-fallback-not-rebuilt",
+    "note": ""
+  },
+  {
+    "caseId": "C4-loaded/F06/grid/13",
+    "source": "final/C4-loaded.json",
+    "row": 13,
+    "origin": "real-browser",
+    "status": "kept-fallback-not-rebuilt",
+    "note": ""
+  },
+  {
+    "caseId": "C4-loaded/F07/grid/14",
+    "source": "final/C4-loaded.json",
+    "row": 14,
+    "origin": "real-browser",
+    "status": "kept-fallback-not-rebuilt",
+    "note": ""
+  },
+  {
+    "caseId": "C4-loaded/F08/grid/15",
+    "source": "final/C4-loaded.json",
+    "row": 15,
+    "origin": "real-browser",
+    "status": "kept-fallback-not-rebuilt",
+    "note": ""
+  },
+  {
+    "caseId": "OS-IME",
+    "origin": "unverified",
+    "status": "tool-blocked",
+    "source": null,
+    "note": "不计通过；B03继续阻断"
+  },
+  {
+    "caseId": "native-pointercancel",
+    "origin": "unverified",
+    "status": "tool-blocked",
+    "source": null,
+    "note": "不计通过；B03继续阻断"
+  },
+  {
+    "caseId": "ERR05-natural",
+    "origin": "unverified",
+    "status": "natural-failure-unverified",
+    "source": null,
+    "note": "不计通过；B03继续阻断"
+  }
+]

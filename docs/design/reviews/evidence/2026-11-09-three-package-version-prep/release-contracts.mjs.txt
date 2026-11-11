@@ -1,0 +1,21 @@
+import { strict as assert } from "node:assert";
+import { existsSync, mkdirSync, writeFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+import { BpmnModel, CORE_VERSION, flowableAdapter, parse } from "@flowduet/core";
+import { DingtalkDesigner, exportXml, resolveComponentAppearance, createAppearanceVariables, readHostAppearance } from "@flowduet/designer";
+const output=process.argv[2]; mkdirSync(output,{recursive:true});
+assert.equal(CORE_VERSION,"0.4.0");
+for(const fn of [DingtalkDesigner,exportXml,resolveComponentAppearance,createAppearanceVariables,readHostAppearance]) assert.ok(fn);
+for(const name of ["@flowduet/designer/style.css","@flowduet/form-create/style.css","@flowduet/form-create"]) assert.ok(existsSync(fileURLToPath(import.meta.resolve(name))));
+const scenarios=[];
+for(const mode of ["condition","default"]) {
+ const m=BpmnModel.create({processId:`release_${mode}`,adapter:flowableAdapter}).addStartEvent({id:"s"}).addExclusiveGateway({id:"fork"}).addUserTask({id:"a",name:"首审批",assignee:"alice"}).addUserTask({id:"tail",name:"后续审批",assignee:"bob"}).addUserTask({id:"b",name:"另一支路",assignee:"carol"}).addExclusiveGateway({id:"join"}).addEndEvent({id:"e"}).addSequenceFlow({id:"sf",sourceRef:"s",targetRef:"fork"}).addSequenceFlow({id:"fa",sourceRef:"fork",targetRef:"a",name:"保留支路",...(mode==="default"?{default:true}:{condition:"${amount > 100}"})}).addSequenceFlow({id:"at",sourceRef:"a",targetRef:"tail"}).addSequenceFlow({id:"tj",sourceRef:"tail",targetRef:"join"}).addSequenceFlow({id:"fb",sourceRef:"fork",targetRef:"b",...(mode==="default"?{condition:"${amount <= 100}"}:{default:true})}).addSequenceFlow({id:"bj",sourceRef:"b",targetRef:"join"}).addSequenceFlow({id:"je",sourceRef:"join",targetRef:"e"});
+ const edge=m.elementOf("fa"); assert.equal(m.retargetSequenceFlow("fa","tail"),m);m.removeSequenceFlow("at");m.removeNode("a");
+ assert.equal(m.elementOf("fa"),edge);assert.equal(edge.get("targetRef").get("id"),"tail");assert.deepEqual(m.elementOf("fork").get("outgoing").map(f=>f.get("id")),["fa","fb"]);
+ if(mode==="default")assert.equal(m.elementOf("fork").get("default"),edge);else assert.equal(edge.get("conditionExpression").get("body"),"${amount > 100}");
+ const before=(await m.toXML()).xml;assert.throws(()=>m.retargetSequenceFlow("fa","fork"));assert.equal((await m.toXML()).xml,before);
+ const xml=await exportXml(m);const restored=await parse(xml,{adapter:flowableAdapter});assert.equal(restored.elementOf("fa").get("targetRef").get("id"),"tail");
+ writeFileSync(`${output}/${mode}-retarget.bpmn`,xml);scenarios.push({mode,target:"tail",outgoing:["fa","fb"],rejectedSelfLoop:true,roundtrip:true});
+}
+writeFileSync(`${output}/public-contracts.json`,JSON.stringify({version:CORE_VERSION,scenarios,esm:true,publicJsCssResolution:true,formCreateNodeBoundary:"resolve only; render in Chromium"},null,2));
+console.log(JSON.stringify({version:CORE_VERSION,scenarios}));

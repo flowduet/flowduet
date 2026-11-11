@@ -1,0 +1,18 @@
+{
+  "sourceCommit": "2ef03ef5cfbfa8be45040f2ec648cc609adfb1e2",
+  "executedBeforeCommit": true,
+  "sources": [
+    {
+      "path": "apps/playground/src/test-utils/browser-test-scope.ts",
+      "bytes": 3083,
+      "sha256": "e15cbf2aa8a35f114f0834d16d17cae80e09767f7912de3ac943f4c5ca5acc13",
+      "gitBlob": "37312382ed029ba31d41d3ed725c334036357c2e"
+    },
+    {
+      "path": "apps/playground/src/test-utils/browser-test-scope.test.ts",
+      "bytes": 15648,
+      "sha256": "8f2bfc63c1ff7aecfe2d2b63e87eac5aa28719cd3f096a974503a69a06aa7441",
+      "gitBlob": "3b402aec9039a2a172e839274f0d6be16f75e0a6"
+    }
+  ]
+}

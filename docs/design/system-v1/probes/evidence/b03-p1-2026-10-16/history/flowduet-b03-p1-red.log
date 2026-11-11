@@ -1,0 +1,34 @@
+
+ RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/form-create
+
+ ❯ src/components.test.ts (35 tests | 1 failed | 34 skipped) 1023ms
+   ❯ retained 数值日期与同步捕获 (1)
+     × pending_number_text_survives_navigation 1021ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/components.test.ts > retained 数值日期与同步捕获 > pending_number_text_survives_navigation
+AssertionError: expected 'undefined' to be 'function' // Object.is equality
+
+Expected: "function"
+Received: "undefined"
+
+ ❯ src/components.test.ts:973:40
+    971|     await flushPromises();
+    972|     const vm = wrapper.vm as unknown as { readEditingState?: () => { m…
+    973|     expect(typeof vm.readEditingState).toBe("function");
+       |                                        ^
+    974|     expect(vm.readEditingState!().mode).toBe("retained");
+    975|     expect(typeof vm.captureContent).toBe("function");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 34 skipped (35)
+   Start at  18:13:40
+   Duration  3.82s (import 45%, tests 29%, transform 15%, environment 12%)
+
+undefined
+/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/form-create:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run src/components.test.ts -t pending_number_text_survives_navigation

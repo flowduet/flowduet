@@ -1,0 +1,39 @@
+async page => {
+  page.setDefaultTimeout(7000);await page.getByRole('button',{name:'B03 P0 接缝',exact:true}).click();
+  const rows=[];
+  const events=async()=>JSON.parse(await page.locator('[data-test=seam-events]').textContent());
+  const resetLog=()=>page.locator('[data-test=seam-clear]').click();
+  for(const layout of ['top','grid']) for(let run=1;run<=3;run++) {
+    await page.locator('[data-test=seam-layout]').selectOption(layout);
+    await page.locator('[data-test=seam-load]').click(); await page.locator('[data-seam-owner=A] ._fc-m-drag .el-form-item__label').filter({hasText:'甲数字'}).waitFor(); await resetLog();
+    await page.locator('[data-seam-owner=A] ._fc-m-drag ._fd-drag-tool').filter({has:page.locator('.el-form-item__label',{hasText:'甲数字'})}).last().click();
+    await page.locator('[data-seam-owner=B] ._fc-m-drag ._fd-drag-tool').filter({has:page.locator('.el-form-item__label',{hasText:'甲数字'})}).last().click();
+    const rawA=page.locator('[data-seam-input=A] [data-test=seam-raw]');
+    const rawB=page.locator('[data-seam-input=B] [data-test=seam-raw]');
+    await rawA.fill('-');
+    const before={A:await rawA.inputValue(),B:await rawB.inputValue()};
+    await page.locator('[data-seam-owner=A] [data-test=seam-publish]').click();
+    await page.locator('[data-test=seam-text-A]').click();
+    await page.locator('[data-seam-owner=A] ._fc-m-drag ._fd-drag-tool').filter({has:page.locator('.el-form-item__label',{hasText:'甲数字'})}).last().click();
+    await page.locator('[data-test=seam-clone-A]').click();
+    await page.locator('[data-test=seam-clone-B]').click();
+    const trace=await events();
+    const mounts=trace.filter(e=>e.event==='sample-mounted'&&e.detail.owner==='A').map(e=>e.detail.token);
+    const sources=trace.filter(e=>e.event==='componentRule');
+    const a=sources.find(e=>e.detail.owner==='A'&&e.detail.field==='a_amount');
+    const b=sources.find(e=>e.detail.owner==='B'&&e.detail.field==='a_amount');
+    const clones=trace.filter(e=>e.event==='public-clone');
+    const echo=trace.filter(e=>['before-emit','after-emit-sync','after-emit-nextTick'].includes(e.event));
+    rows.push({case:'injection-token-echo',layout,run,actualMode:'public-seam-sample',source:'native-pointer-keyboard',before,returned:await rawA.inputValue(),mounts,sources,clones,echo,
+      pass:before.A==='-'&&before.B==='0'&&a&&b&&a.detail.token!==b.detail.token&&mounts.length>=2&&new Set(mounts).size===1&&clones.every(e=>e.detail.fields.every(f=>f.sameReference===false))&&echo.some(e=>e.event==='after-emit-sync'&&e.detail.value.prop===0)&&echo.some(e=>e.event==='after-emit-nextTick'&&e.detail.value.prop===37&&e.detail.publicValue===37)});
+    await page.locator('[data-test=seam-date-A]').click();
+    const dateRaw=page.locator('[data-seam-input=A] [data-test=seam-raw]');
+    await dateRaw.fill('2026-'); await page.locator('[data-test=seam-text-A]').click();
+    const dtrace=await events();
+    rows.push({case:'stateless-text-date-blur',layout,run,actualMode:'public-seam-sample',source:'native-pointer-keyboard',trace:dtrace.filter(e=>e.detail?.field==='a_date'),pass:dtrace.some(e=>e.event==='raw-blur'&&e.detail.field==='a_date'&&e.detail.value==='2026-')});
+  }
+  await page.locator('[data-test=seam-mount]').click();
+  const disposed=await events(); rows.push({case:'sample-unmount',trace:disposed.slice(-6),pass:disposed.some(e=>e.event==='observer-references-released')&&await page.locator('[data-seam-input]').count()===0});
+  await page.locator('[data-test=seam-mount]').click();
+  return rows;
+}

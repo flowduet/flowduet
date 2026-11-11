@@ -1,0 +1,14 @@
+{
+  "title": "多行必填",
+  "source": "A09",
+  "method": "Codex内置浏览器真实UI",
+  "startedUTC": "2026-10-12T10:14:11.150Z",
+  "status": "待诊断",
+  "attempts": [],
+  "error": "Timed out after 8000ms waiting for file chooser.",
+  "completedUTC": "2026-10-12T10:14:19.413Z",
+  "evidence": [
+    "U16.ax.txt",
+    "U16.jpg"
+  ]
+}

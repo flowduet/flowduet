@@ -1,0 +1,80 @@
+import { mkdir, writeFile } from 'node:fs/promises';
+import { resolve } from 'node:path';
+import { pathToFileURL } from 'node:url';
+
+const [driverPath, baseUrl, outputDir] = process.argv.slice(2);
+if (!driverPath || !baseUrl || !outputDir) throw new Error('需要驱动、URL 和输出目录参数');
+const { chromium } = await import(pathToFileURL(resolve(driverPath)).href);
+await mkdir(outputDir, { recursive: true });
+const browser = await chromium.launch({
+  headless: true,
+  executablePath: process.env.FLOWDUET_CHROMIUM_PATH || '/Users/l/Library/Caches/ms-playwright/chromium-1248/chrome-mac-x64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing',
+});
+const page = await browser.newPage({ viewport: { width: 1440, height: 1100 } });
+const failures = [];
+const errors = [];
+const results = [];
+page.on('pageerror', error => errors.push(error.message));
+const check = (condition, message) => { if (!condition) failures.push(message); };
+const cases = [
+  { value: '#ff0000', expected: '#FF0000' },
+  { value: '#f00', expected: '#FF0000' },
+  { value: '#ff0000ff', expected: '#FF0000' },
+  { value: 'red', expected: '#FF0000' },
+  { value: 'rgb(100% 0% 0%)', expected: '#FF0000' },
+  { value: 'hsl(0 100% 50%)', expected: '#FF0000' },
+  { value: 'oklch(0.62795536 0.25768331 29.233885)', expected: '#FF0000' },
+  { value: 'color(display-p3 1 0 0)', expected: '#FF0000' },
+  { value: 'rgb(255 0 0 / 50%)', expected: '#FF8080' },
+  { value: '#f008', expected: '#FF7777' },
+  { value: 'currentColor', expected: '#0F6B65' },
+  { value: 'invalid-color', expected: '#409EFF' },
+];
+try {
+  await page.goto(baseUrl, { waitUntil: 'networkidle' });
+  await page.locator('[data-test="appearance-scene-btn"]').click();
+  await page.locator('[data-test="appearance-first-designer"] [data-entity-id="approval"]').click();
+  const drawer = page.locator('[data-test="node-drawer"]:visible');
+  await drawer.waitFor();
+  const input = await drawer.locator('[data-test="drawer-name"]').elementHandle();
+  await input.fill('颜色切换后保留的草稿');
+  const initial = await page.evaluate(() => ({
+    children: document.querySelector('[data-test="appearance-first-designer"]').childElementCount,
+    canvases: document.querySelectorAll('canvas').length,
+  }));
+  for (const item of cases) {
+    await page.evaluate(value => {
+      const host = document.querySelector('[data-test="appearance-first-designer"]');
+      host.style.setProperty('--el-color-primary', value);
+      host.style.setProperty('--el-bg-color', '#fff');
+      host.style.setProperty('--el-text-color-regular', 'hsl(0 0% 40%)');
+      host.style.color = '#0f6b65';
+    }, item.value);
+    await page.selectOption('[data-test="appearance-first-density"]', 'compact');
+    await input.focus();
+    await page.selectOption('[data-test="appearance-first-density"]', 'comfortable');
+    const actual = await drawer.evaluate(element => ({
+      primary: element.style.getPropertyValue('--fd-primary'),
+      secondary: element.style.getPropertyValue('--fd-secondary'),
+      hasEpWrites: element.getAttribute('style').includes('--el-'),
+      value: element.querySelector('[data-test="drawer-name"]').value,
+      focused: document.activeElement === element.querySelector('[data-test="drawer-name"]'),
+      children: document.querySelector('[data-test="appearance-first-designer"]').childElementCount,
+      canvases: document.querySelectorAll('canvas').length,
+    }));
+    results.push({ ...item, actual });
+    check(actual.primary === item.expected, `${item.value}: ${actual.primary} !== ${item.expected}`);
+    check(actual.secondary === '#666666', `${item.value}: 次要文字未跟随宿主`);
+    check(!actual.hasEpWrites, `${item.value}: 回写了 EP 变量`);
+    check(actual.value === '颜色切换后保留的草稿' && actual.focused, `${item.value}: 输入或焦点丢失`);
+    check(actual.children === initial.children && actual.canvases === initial.canvases, `${item.value}: 遗留解析节点`);
+  }
+  check(await input.evaluate(element => element === document.querySelector('[data-test="node-drawer"]:not([aria-hidden="true"]) [data-test="drawer-name"]')), '输入节点被替换');
+  check((await page.locator('[data-test="appearance-first-change-count"]').textContent()).trim() === 'change 0', '主题更新写入模型');
+  check(errors.length === 0, `pageerror: ${errors.join('; ')}`);
+  await writeFile(resolve(outputDir, 'host-colors.json'), JSON.stringify({ browser: await browser.version(), results, errors, failures }, null, 2) + '\n');
+  console.log(JSON.stringify({ cases: results.length, errors, failures }));
+  if (failures.length) process.exitCode = 1;
+} finally {
+  await browser.close();
+}

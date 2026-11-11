@@ -1,0 +1,29 @@
+import { createApp, defineComponent, h, ref } from "vue";
+import FormPreviewAppearanceScene from "./FormPreviewAppearanceScene.vue";
+import "element-plus/dist/index.css";
+import "element-plus/theme-chalk/dark/css-vars.css";
+import "@flowduet/designer/style.css";
+import "@flowduet/form-create/style.css";
+
+const App = defineComponent({
+  setup() {
+    const visible = ref(false);
+    return () =>
+      h("div", [
+        h(
+          "button",
+          {
+            "data-test": "form-appearance-scene-btn",
+            type: "button",
+            onClick: () => {
+              visible.value = true;
+            },
+          },
+          "预览外观",
+        ),
+        visible.value ? h(FormPreviewAppearanceScene) : null,
+      ]);
+  },
+});
+
+createApp(App).mount("#app");

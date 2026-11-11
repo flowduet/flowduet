@@ -1,0 +1,113 @@
+{
+  "recovered_at": "2026-11-04T06:08:27.443640+00:00",
+  "source_conversation": "95efc0a0-a44a-4f70-84d1-46f8589a7718",
+  "target_commit": "7ca2331dfa203dbaec163a2480f9717a7ccb33af",
+  "base_commit": "cd39258b3ab4d3b77f20994e85b58a4519746b4e",
+  "commands": [
+    {
+      "label": "test",
+      "request_step": 255,
+      "result_step": 256,
+      "requested_at": "2026-11-04T02:12:46Z",
+      "initial_result_at": "2026-11-04T02:12:55Z",
+      "command": "pnpm --dir /Users/l/Documents/projects/flowduet-103-property-appearance test",
+      "original_command_argument": "pnpm --dir /Users/l/Documents/projects/flowduet-103-property-appearance test",
+      "log": "logs/test.log",
+      "source_log": "/Users/l/.gemini/antigravity/brain/95efc0a0-a44a-4f70-84d1-46f8589a7718/.system_generated/tasks/task-256.log",
+      "source_log_sha256": "79257cd30d04d0c4bcb7547bfdac3c8200141b9e485413a98625f04615a42f54",
+      "source_log_bytes": 564674,
+      "source_tool_result": "/Users/l/.gemini/antigravity/brain/95efc0a0-a44a-4f70-84d1-46f8589a7718/.system_generated/steps/256/output.txt",
+      "tool_result_prefix": "Command exited with code 0.\n\nCommand output:\n",
+      "source_tool_result_sha256": "f73612cfef6172b44efc68d884035deadd9fff5933e417c83a4d2b127d0db9b2",
+      "exit_code": 0
+    },
+    {
+      "label": "lint_first_failed",
+      "request_step": 270,
+      "result_step": 271,
+      "requested_at": "2026-11-04T02:17:34Z",
+      "initial_result_at": "2026-11-04T02:17:40Z",
+      "command": "pnpm --dir /Users/l/Documents/projects/flowduet-103-property-appearance lint",
+      "original_command_argument": "pnpm --dir /Users/l/Documents/projects/flowduet-103-property-appearance lint",
+      "log": "logs/lint-first-failed.log",
+      "source_log": "/Users/l/.gemini/antigravity/brain/95efc0a0-a44a-4f70-84d1-46f8589a7718/.system_generated/tasks/task-271.log",
+      "source_log_sha256": "2910a1309436f97f61cd33dc5e8fbd1d90cafdcdb05c61433f1ca201ef691a8c",
+      "source_log_bytes": 33332,
+      "source_tool_result": "/Users/l/.gemini/antigravity/brain/95efc0a0-a44a-4f70-84d1-46f8589a7718/.system_generated/steps/271/output.txt",
+      "tool_result_prefix": "Command exited with code 1.\n\nCommand output:\n",
+      "source_tool_result_sha256": "30f2a30708e17dceb17336212ac703f696141493d62fb8c13b6c476430d192a5",
+      "exit_code": 1
+    },
+    {
+      "label": "format_lint_build",
+      "request_step": 274,
+      "result_step": 275,
+      "requested_at": "2026-11-04T02:17:57Z",
+      "initial_result_at": "2026-11-04T02:18:04Z",
+      "command": "pnpm --dir /Users/l/Documents/projects/flowduet-103-property-appearance exec prettier --write . && pnpm --dir /Users/l/Documents/projects/flowduet-103-property-appearance lint && pnpm --dir /Users/l/Documents/projects/flowduet-103-property-appearance build",
+      "original_command_argument": "pnpm --dir /Users/l/Documents/projects/flowduet-103-property-appearance exec prettier --write . && pnpm --dir /Users/l/Documents/projects/flowduet-103-property-appearance lint && pnpm --dir /Users/l/Documents/projects/flowduet-103-property-appearance build",
+      "log": "logs/build.log",
+      "source_log": "/Users/l/.gemini/antigravity/brain/95efc0a0-a44a-4f70-84d1-46f8589a7718/.system_generated/tasks/task-275.log",
+      "source_log_sha256": "4961175781bcc4fdf77136301cce864a26d55a6532e02e8d438b879d5b0a6030",
+      "source_log_bytes": 105627,
+      "source_tool_result": "/Users/l/.gemini/antigravity/brain/95efc0a0-a44a-4f70-84d1-46f8589a7718/.system_generated/steps/275/output.txt",
+      "tool_result_prefix": "Command exited with code 0.\n\nCommand output:\n",
+      "source_tool_result_sha256": "3b155b71934023e3cdf87eadfe50aaf828d76688c15a1366c38f15879bae927d",
+      "exit_code": 0
+    },
+    {
+      "label": "lint_final",
+      "request_step": 297,
+      "result_step": 298,
+      "requested_at": "2026-11-04T02:31:16Z",
+      "initial_result_at": "2026-11-04T02:31:37Z",
+      "command": "bash -c '\nset -euo pipefail\nWORKTREE=\"/Users/l/Documents/projects/flowduet-103-property-appearance\"\npnpm --dir \"$WORKTREE\" exec prettier --write packages/designer/README.md docs/design/system-v1/brand/103-property-drawer-verification.md\npnpm --dir \"$WORKTREE\" lint\n{\n  git -C \"$WORKTREE\" diff cd39258 -- packages apps\n  git -C \"$WORKTREE\" diff --no-index /dev/null \"$WORKTREE/docs/design/system-v1/brand/evidence/103-property-drawer/round2-fixes.json\" || true\n  git -C \"$WORKTREE\" diff --no-index /dev/null \"$WORKTREE/docs/design/system-v1/brand/evidence/103-property-drawer/round2-fixes.mjs.txt\" || true\n} | shasum -a 256\ngit -C \"$WORKTREE\" branch --show-current\ngit -C \"$WORKTREE\" status -s\n'",
+      "original_command_argument": "bash -c '\nset -euo pipefail\nWORKTREE=\"/Users/l/Documents/projects/flowduet-103-property-appearance\"\npnpm --dir \"$WORKTREE\" exec prettier --write packages/designer/README.md docs/design/system-v1/brand/103-property-drawer-verification.md\npnpm --dir \"$WORKTREE\" lint\n{\n  git -C \"$WORKTREE\" diff cd39258 -- packages apps\n  git -C \"$WORKTREE\" diff --no-index /dev/null \"$WORKTREE/docs/design/system-v1/brand/evidence/103-property-drawer/round2-fixes.json\" || true\n  git -C \"$WORKTREE\" diff --no-index /dev/null \"$WORKTREE/docs/design/system-v1/brand/evidence/103-property-drawer/round2-fixes.mjs.txt\" || true\n} | shasum -a 256\ngit -C \"$WORKTREE\" branch --show-current\ngit -C \"$WORKTREE\" status -s\n'",
+      "log": "logs/lint.log",
+      "source_log": "/Users/l/.gemini/antigravity/brain/95efc0a0-a44a-4f70-84d1-46f8589a7718/.system_generated/tasks/task-298.log",
+      "source_log_sha256": "8ac88cc485db9d6ca85fb906af43e6a090496d1f58cda9dcc11c5ee1fc81e44d",
+      "source_log_bytes": 34285,
+      "source_tool_result": "/Users/l/.gemini/antigravity/brain/95efc0a0-a44a-4f70-84d1-46f8589a7718/.system_generated/steps/298/output.txt",
+      "tool_result_prefix": "Command exited with code 0.\n\nCommand output:\n",
+      "source_tool_result_sha256": "12184b6df5109eb73cfce6003e5298312a6b6dd744b180256d61e8011023c995",
+      "exit_code": 0
+    }
+  ],
+  "reviews": [
+    {
+      "axis": "standards",
+      "agent_conversation": "ad736ab1-5a8e-4268-91a7-dae772524e4a",
+      "source_message": "/Users/l/.gemini/antigravity/brain/95efc0a0-a44a-4f70-84d1-46f8589a7718/.system_generated/messages/7158e7e7-20b6-4129-99a2-329652f4b810.json",
+      "source_message_sha256": "6c0c49fd63ae35ffa998eb0bef6c1c0fbdaf10620ce71bd16dd77aa85898560b",
+      "message_timestamp": "2026-11-04T02:30:12.991045Z",
+      "report": "reviews/standards.txt",
+      "report_sha256": "c3bf2c4aa231070b9f59c4c73886540f9de32280c8c81c0bd0f7f8e1900814c3",
+      "counts_as_reported": {
+        "important": 0,
+        "detail": 1,
+        "pre_existing": 1
+      }
+    },
+    {
+      "axis": "spec",
+      "agent_conversation": "632e9939-0960-4d38-aeeb-4a70a61a3704",
+      "source_message": "/Users/l/.gemini/antigravity/brain/95efc0a0-a44a-4f70-84d1-46f8589a7718/.system_generated/messages/833d0719-7026-4712-9793-0ce3feef37ff.json",
+      "source_message_sha256": "1674de2df91feefdfccb36f467c3b31c829d9b9516f7001b8231badf1f7473ad",
+      "message_timestamp": "2026-11-04T02:30:00.308684Z",
+      "report": "reviews/spec.txt",
+      "report_sha256": "d525c54111321641c9e0c66953fdec88c9e638692ba961332f0efa0c8481ec4f",
+      "counts_as_reported": {
+        "important": 0,
+        "detail": 1,
+        "pre_existing": 1
+      }
+    }
+  ],
+  "limitations": [
+    "原始 stdout/stderr 已合并为终端输出，无法恢复为两个独立通道。",
+    "后台任务未单独保存精确进程结束时间；不将后续查询时间伪称为结束时间。",
+    "历史 9ad5…40a1 的范围是 packages/apps 差异及两份新增证据；不是完整工作树的字节快照。",
+    "最终完整快照及逐文件清单由不可变提交 7ca2331 补建，不伪称当时已生成。",
+    "历史完整 Node/pnpm/操作系统/环境变量快照未单独保存；本目录不倒填补证环境为原环境。"
+  ]
+}

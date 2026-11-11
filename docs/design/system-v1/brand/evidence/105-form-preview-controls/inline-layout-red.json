@@ -1,0 +1,30 @@
+{
+  "actual": {
+    "radio": {
+      "style": "--el-color-primary: rgb(18, 52, 86); --el-color-white: rgb(1, 2, 3);",
+      "controlHeight": 48,
+      "controlTop": 1707.515625,
+      "controlBottom": 1755.515625,
+      "labelHeight": 153.5625,
+      "labelTop": 1654.734375,
+      "labelBottom": 1808.296875,
+      "labelWhiteSpace": "normal"
+    },
+    "checkbox": {
+      "style": "--el-checkbox-checked-text-color: rgb(18, 52, 86); --el-checkbox-checked-icon-color: rgb(1, 2, 3);",
+      "controlHeight": 48,
+      "controlTop": 2123.484375,
+      "controlBottom": 2171.484375,
+      "labelHeight": 153.5625,
+      "labelTop": 2070.703125,
+      "labelBottom": 2224.265625,
+      "labelWhiteSpace": "normal"
+    }
+  },
+  "failures": [
+    "单选: 控件高度 48 小于标签 153.5625，发生重叠",
+    "单选: 标签越出控件下边界 1808.296875/1755.515625",
+    "多选: 控件高度 48 小于标签 153.5625，发生重叠",
+    "多选: 标签越出控件下边界 2224.265625/2171.484375"
+  ]
+}

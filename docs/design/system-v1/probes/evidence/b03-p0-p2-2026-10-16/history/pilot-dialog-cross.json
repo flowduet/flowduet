@@ -1,0 +1,2318 @@
+[
+  {
+    "case": "cross-dialog-idle-close",
+    "run": 1,
+    "busyLabel": "A",
+    "state": "hidden",
+    "action": "Enter",
+    "source": "owned-busy-open-protocol-plus-native-action",
+    "busyOwner": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+    "idleOwner": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+    "busyPreserved": true,
+    "trace": [
+      {
+        "sequence": 1,
+        "event": "dialog-blur",
+        "detail": {
+          "ownerKey": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+          "label": "B"
+        }
+      },
+      {
+        "sequence": 2,
+        "event": "dialog-preflight",
+        "detail": {
+          "type": "keydown",
+          "key": "Enter",
+          "busy": false,
+          "active": "dialog-x",
+          "ownerKey": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+          "label": "B"
+        }
+      },
+      {
+        "sequence": 3,
+        "event": "dialog-before-close",
+        "detail": {
+          "busy": false,
+          "refusedGesture": false,
+          "ownerKey": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+          "label": "B"
+        }
+      },
+      {
+        "sequence": 4,
+        "event": "dialog-closed",
+        "detail": {
+          "dialogSerial": 1,
+          "ownerKey": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+          "label": "B"
+        }
+      }
+    ],
+    "pass": true
+  },
+  {
+    "case": "cross-dialog-idle-close",
+    "run": 1,
+    "busyLabel": "A",
+    "state": "hidden",
+    "action": "Space",
+    "source": "owned-busy-open-protocol-plus-native-action",
+    "busyOwner": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+    "idleOwner": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+    "busyPreserved": true,
+    "trace": [
+      {
+        "sequence": 1,
+        "event": "dialog-blur",
+        "detail": {
+          "ownerKey": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+          "label": "B"
+        }
+      },
+      {
+        "sequence": 2,
+        "event": "dialog-preflight",
+        "detail": {
+          "type": "keydown",
+          "key": " ",
+          "busy": false,
+          "active": "dialog-x",
+          "ownerKey": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+          "label": "B"
+        }
+      },
+      {
+        "sequence": 3,
+        "event": "dialog-before-close",
+        "detail": {
+          "busy": false,
+          "refusedGesture": false,
+          "ownerKey": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+          "label": "B"
+        }
+      },
+      {
+        "sequence": 4,
+        "event": "dialog-closed",
+        "detail": {
+          "dialogSerial": 2,
+          "ownerKey": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+          "label": "B"
+        }
+      }
+    ],
+    "pass": true
+  },
+  {
+    "case": "cross-dialog-idle-close",
+    "run": 1,
+    "busyLabel": "A",
+    "state": "hidden",
+    "action": "pointer",
+    "source": "owned-busy-open-protocol-plus-native-action",
+    "busyOwner": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+    "idleOwner": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+    "busyPreserved": true,
+    "trace": [
+      {
+        "sequence": 1,
+        "event": "dialog-preflight",
+        "detail": {
+          "type": "pointerdown",
+          "key": null,
+          "busy": false,
+          "active": "dialog-raw",
+          "ownerKey": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+          "label": "B"
+        }
+      },
+      {
+        "sequence": 2,
+        "event": "dialog-blur",
+        "detail": {
+          "ownerKey": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+          "label": "B"
+        }
+      },
+      {
+        "sequence": 3,
+        "event": "dialog-before-close",
+        "detail": {
+          "busy": false,
+          "refusedGesture": false,
+          "ownerKey": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+          "label": "B"
+        }
+      },
+      {
+        "sequence": 4,
+        "event": "dialog-closed",
+        "detail": {
+          "dialogSerial": 3,
+          "ownerKey": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+          "label": "B"
+        }
+      }
+    ],
+    "pass": true
+  },
+  {
+    "case": "cross-dialog-idle-close",
+    "run": 1,
+    "busyLabel": "A",
+    "state": "open",
+    "action": "Enter",
+    "source": "owned-busy-open-protocol-plus-native-action",
+    "busyOwner": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+    "idleOwner": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+    "busyPreserved": true,
+    "trace": [
+      {
+        "sequence": 1,
+        "event": "dialog-blur",
+        "detail": {
+          "ownerKey": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+          "label": "B"
+        }
+      },
+      {
+        "sequence": 2,
+        "event": "dialog-preflight",
+        "detail": {
+          "type": "keydown",
+          "key": "Enter",
+          "busy": false,
+          "active": "dialog-x",
+          "ownerKey": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+          "label": "B"
+        }
+      },
+      {
+        "sequence": 3,
+        "event": "dialog-before-close",
+        "detail": {
+          "busy": false,
+          "refusedGesture": false,
+          "ownerKey": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+          "label": "B"
+        }
+      },
+      {
+        "sequence": 4,
+        "event": "dialog-closed",
+        "detail": {
+          "dialogSerial": 4,
+          "ownerKey": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+          "label": "B"
+        }
+      }
+    ],
+    "pass": true
+  },
+  {
+    "case": "cross-dialog-idle-close",
+    "run": 1,
+    "busyLabel": "A",
+    "state": "open",
+    "action": "Space",
+    "source": "owned-busy-open-protocol-plus-native-action",
+    "busyOwner": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+    "idleOwner": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+    "busyPreserved": true,
+    "trace": [
+      {
+        "sequence": 1,
+        "event": "dialog-blur",
+        "detail": {
+          "ownerKey": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+          "label": "B"
+        }
+      },
+      {
+        "sequence": 2,
+        "event": "dialog-preflight",
+        "detail": {
+          "type": "keydown",
+          "key": " ",
+          "busy": false,
+          "active": "dialog-x",
+          "ownerKey": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+          "label": "B"
+        }
+      },
+      {
+        "sequence": 3,
+        "event": "dialog-before-close",
+        "detail": {
+          "busy": false,
+          "refusedGesture": false,
+          "ownerKey": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+          "label": "B"
+        }
+      },
+      {
+        "sequence": 4,
+        "event": "dialog-closed",
+        "detail": {
+          "dialogSerial": 5,
+          "ownerKey": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+          "label": "B"
+        }
+      }
+    ],
+    "pass": true
+  },
+  {
+    "case": "cross-dialog-idle-close",
+    "run": 1,
+    "busyLabel": "A",
+    "state": "open",
+    "action": "pointer",
+    "source": "owned-busy-open-protocol-plus-native-action",
+    "busyOwner": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+    "idleOwner": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+    "busyPreserved": true,
+    "trace": [
+      {
+        "sequence": 1,
+        "event": "dialog-preflight",
+        "detail": {
+          "type": "pointerdown",
+          "key": null,
+          "busy": false,
+          "active": "dialog-raw",
+          "ownerKey": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+          "label": "B"
+        }
+      },
+      {
+        "sequence": 2,
+        "event": "dialog-blur",
+        "detail": {
+          "ownerKey": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+          "label": "B"
+        }
+      },
+      {
+        "sequence": 3,
+        "event": "dialog-before-close",
+        "detail": {
+          "busy": false,
+          "refusedGesture": false,
+          "ownerKey": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+          "label": "B"
+        }
+      },
+      {
+        "sequence": 4,
+        "event": "dialog-closed",
+        "detail": {
+          "dialogSerial": 6,
+          "ownerKey": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+          "label": "B"
+        }
+      }
+    ],
+    "pass": true
+  },
+  {
+    "case": "cross-dialog-idle-close",
+    "run": 1,
+    "busyLabel": "B",
+    "state": "hidden",
+    "action": "Enter",
+    "source": "owned-busy-open-protocol-plus-native-action",
+    "busyOwner": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+    "idleOwner": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+    "busyPreserved": true,
+    "trace": [
+      {
+        "sequence": 1,
+        "event": "dialog-blur",
+        "detail": {
+          "ownerKey": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+          "label": "A"
+        }
+      },
+      {
+        "sequence": 2,
+        "event": "dialog-preflight",
+        "detail": {
+          "type": "keydown",
+          "key": "Enter",
+          "busy": false,
+          "active": "dialog-x",
+          "ownerKey": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+          "label": "A"
+        }
+      },
+      {
+        "sequence": 3,
+        "event": "dialog-before-close",
+        "detail": {
+          "busy": false,
+          "refusedGesture": false,
+          "ownerKey": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+          "label": "A"
+        }
+      },
+      {
+        "sequence": 4,
+        "event": "dialog-closed",
+        "detail": {
+          "dialogSerial": 4,
+          "ownerKey": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+          "label": "A"
+        }
+      }
+    ],
+    "pass": true
+  },
+  {
+    "case": "cross-dialog-idle-close",
+    "run": 1,
+    "busyLabel": "B",
+    "state": "hidden",
+    "action": "Space",
+    "source": "owned-busy-open-protocol-plus-native-action",
+    "busyOwner": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+    "idleOwner": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+    "busyPreserved": true,
+    "trace": [
+      {
+        "sequence": 1,
+        "event": "dialog-blur",
+        "detail": {
+          "ownerKey": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+          "label": "A"
+        }
+      },
+      {
+        "sequence": 2,
+        "event": "dialog-preflight",
+        "detail": {
+          "type": "keydown",
+          "key": " ",
+          "busy": false,
+          "active": "dialog-x",
+          "ownerKey": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+          "label": "A"
+        }
+      },
+      {
+        "sequence": 3,
+        "event": "dialog-before-close",
+        "detail": {
+          "busy": false,
+          "refusedGesture": false,
+          "ownerKey": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+          "label": "A"
+        }
+      },
+      {
+        "sequence": 4,
+        "event": "dialog-closed",
+        "detail": {
+          "dialogSerial": 5,
+          "ownerKey": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+          "label": "A"
+        }
+      }
+    ],
+    "pass": true
+  },
+  {
+    "case": "cross-dialog-idle-close",
+    "run": 1,
+    "busyLabel": "B",
+    "state": "hidden",
+    "action": "pointer",
+    "source": "owned-busy-open-protocol-plus-native-action",
+    "busyOwner": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+    "idleOwner": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+    "busyPreserved": true,
+    "trace": [
+      {
+        "sequence": 1,
+        "event": "dialog-preflight",
+        "detail": {
+          "type": "pointerdown",
+          "key": null,
+          "busy": false,
+          "active": "dialog-raw",
+          "ownerKey": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+          "label": "A"
+        }
+      },
+      {
+        "sequence": 2,
+        "event": "dialog-blur",
+        "detail": {
+          "ownerKey": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+          "label": "A"
+        }
+      },
+      {
+        "sequence": 3,
+        "event": "dialog-before-close",
+        "detail": {
+          "busy": false,
+          "refusedGesture": false,
+          "ownerKey": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+          "label": "A"
+        }
+      },
+      {
+        "sequence": 4,
+        "event": "dialog-closed",
+        "detail": {
+          "dialogSerial": 6,
+          "ownerKey": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+          "label": "A"
+        }
+      }
+    ],
+    "pass": true
+  },
+  {
+    "case": "cross-dialog-idle-close",
+    "run": 1,
+    "busyLabel": "B",
+    "state": "open",
+    "action": "Enter",
+    "source": "owned-busy-open-protocol-plus-native-action",
+    "busyOwner": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+    "idleOwner": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+    "busyPreserved": true,
+    "trace": [
+      {
+        "sequence": 1,
+        "event": "dialog-blur",
+        "detail": {
+          "ownerKey": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+          "label": "A"
+        }
+      },
+      {
+        "sequence": 2,
+        "event": "dialog-preflight",
+        "detail": {
+          "type": "keydown",
+          "key": "Enter",
+          "busy": false,
+          "active": "dialog-x",
+          "ownerKey": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+          "label": "A"
+        }
+      },
+      {
+        "sequence": 3,
+        "event": "dialog-before-close",
+        "detail": {
+          "busy": false,
+          "refusedGesture": false,
+          "ownerKey": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+          "label": "A"
+        }
+      },
+      {
+        "sequence": 4,
+        "event": "dialog-closed",
+        "detail": {
+          "dialogSerial": 7,
+          "ownerKey": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+          "label": "A"
+        }
+      }
+    ],
+    "pass": true
+  },
+  {
+    "case": "cross-dialog-idle-close",
+    "run": 1,
+    "busyLabel": "B",
+    "state": "open",
+    "action": "Space",
+    "source": "owned-busy-open-protocol-plus-native-action",
+    "busyOwner": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+    "idleOwner": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+    "busyPreserved": true,
+    "trace": [
+      {
+        "sequence": 1,
+        "event": "dialog-blur",
+        "detail": {
+          "ownerKey": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+          "label": "A"
+        }
+      },
+      {
+        "sequence": 2,
+        "event": "dialog-preflight",
+        "detail": {
+          "type": "keydown",
+          "key": " ",
+          "busy": false,
+          "active": "dialog-x",
+          "ownerKey": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+          "label": "A"
+        }
+      },
+      {
+        "sequence": 3,
+        "event": "dialog-before-close",
+        "detail": {
+          "busy": false,
+          "refusedGesture": false,
+          "ownerKey": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+          "label": "A"
+        }
+      },
+      {
+        "sequence": 4,
+        "event": "dialog-closed",
+        "detail": {
+          "dialogSerial": 8,
+          "ownerKey": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+          "label": "A"
+        }
+      }
+    ],
+    "pass": true
+  },
+  {
+    "case": "cross-dialog-idle-close",
+    "run": 1,
+    "busyLabel": "B",
+    "state": "open",
+    "action": "pointer",
+    "source": "owned-busy-open-protocol-plus-native-action",
+    "busyOwner": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+    "idleOwner": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+    "busyPreserved": true,
+    "trace": [
+      {
+        "sequence": 1,
+        "event": "dialog-preflight",
+        "detail": {
+          "type": "pointerdown",
+          "key": null,
+          "busy": false,
+          "active": "dialog-raw",
+          "ownerKey": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+          "label": "A"
+        }
+      },
+      {
+        "sequence": 2,
+        "event": "dialog-blur",
+        "detail": {
+          "ownerKey": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+          "label": "A"
+        }
+      },
+      {
+        "sequence": 3,
+        "event": "dialog-before-close",
+        "detail": {
+          "busy": false,
+          "refusedGesture": false,
+          "ownerKey": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+          "label": "A"
+        }
+      },
+      {
+        "sequence": 4,
+        "event": "dialog-closed",
+        "detail": {
+          "dialogSerial": 9,
+          "ownerKey": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+          "label": "A"
+        }
+      }
+    ],
+    "pass": true
+  },
+  {
+    "case": "cross-dialog-idle-close",
+    "run": 2,
+    "busyLabel": "A",
+    "state": "hidden",
+    "action": "Enter",
+    "source": "owned-busy-open-protocol-plus-native-action",
+    "busyOwner": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+    "idleOwner": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+    "busyPreserved": true,
+    "trace": [
+      {
+        "sequence": 1,
+        "event": "dialog-blur",
+        "detail": {
+          "ownerKey": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+          "label": "B"
+        }
+      },
+      {
+        "sequence": 2,
+        "event": "dialog-preflight",
+        "detail": {
+          "type": "keydown",
+          "key": "Enter",
+          "busy": false,
+          "active": "dialog-x",
+          "ownerKey": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+          "label": "B"
+        }
+      },
+      {
+        "sequence": 3,
+        "event": "dialog-before-close",
+        "detail": {
+          "busy": false,
+          "refusedGesture": false,
+          "ownerKey": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+          "label": "B"
+        }
+      },
+      {
+        "sequence": 4,
+        "event": "dialog-closed",
+        "detail": {
+          "dialogSerial": 10,
+          "ownerKey": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+          "label": "B"
+        }
+      }
+    ],
+    "pass": true
+  },
+  {
+    "case": "cross-dialog-idle-close",
+    "run": 2,
+    "busyLabel": "A",
+    "state": "hidden",
+    "action": "Space",
+    "source": "owned-busy-open-protocol-plus-native-action",
+    "busyOwner": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+    "idleOwner": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+    "busyPreserved": true,
+    "trace": [
+      {
+        "sequence": 1,
+        "event": "dialog-blur",
+        "detail": {
+          "ownerKey": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+          "label": "B"
+        }
+      },
+      {
+        "sequence": 2,
+        "event": "dialog-preflight",
+        "detail": {
+          "type": "keydown",
+          "key": " ",
+          "busy": false,
+          "active": "dialog-x",
+          "ownerKey": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+          "label": "B"
+        }
+      },
+      {
+        "sequence": 3,
+        "event": "dialog-before-close",
+        "detail": {
+          "busy": false,
+          "refusedGesture": false,
+          "ownerKey": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+          "label": "B"
+        }
+      },
+      {
+        "sequence": 4,
+        "event": "dialog-closed",
+        "detail": {
+          "dialogSerial": 11,
+          "ownerKey": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+          "label": "B"
+        }
+      }
+    ],
+    "pass": true
+  },
+  {
+    "case": "cross-dialog-idle-close",
+    "run": 2,
+    "busyLabel": "A",
+    "state": "hidden",
+    "action": "pointer",
+    "source": "owned-busy-open-protocol-plus-native-action",
+    "busyOwner": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+    "idleOwner": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+    "busyPreserved": true,
+    "trace": [
+      {
+        "sequence": 1,
+        "event": "dialog-preflight",
+        "detail": {
+          "type": "pointerdown",
+          "key": null,
+          "busy": false,
+          "active": "dialog-raw",
+          "ownerKey": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+          "label": "B"
+        }
+      },
+      {
+        "sequence": 2,
+        "event": "dialog-blur",
+        "detail": {
+          "ownerKey": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+          "label": "B"
+        }
+      },
+      {
+        "sequence": 3,
+        "event": "dialog-before-close",
+        "detail": {
+          "busy": false,
+          "refusedGesture": false,
+          "ownerKey": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+          "label": "B"
+        }
+      },
+      {
+        "sequence": 4,
+        "event": "dialog-closed",
+        "detail": {
+          "dialogSerial": 12,
+          "ownerKey": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+          "label": "B"
+        }
+      }
+    ],
+    "pass": true
+  },
+  {
+    "case": "cross-dialog-idle-close",
+    "run": 2,
+    "busyLabel": "A",
+    "state": "open",
+    "action": "Enter",
+    "source": "owned-busy-open-protocol-plus-native-action",
+    "busyOwner": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+    "idleOwner": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+    "busyPreserved": true,
+    "trace": [
+      {
+        "sequence": 1,
+        "event": "dialog-blur",
+        "detail": {
+          "ownerKey": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+          "label": "B"
+        }
+      },
+      {
+        "sequence": 2,
+        "event": "dialog-preflight",
+        "detail": {
+          "type": "keydown",
+          "key": "Enter",
+          "busy": false,
+          "active": "dialog-x",
+          "ownerKey": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+          "label": "B"
+        }
+      },
+      {
+        "sequence": 3,
+        "event": "dialog-before-close",
+        "detail": {
+          "busy": false,
+          "refusedGesture": false,
+          "ownerKey": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+          "label": "B"
+        }
+      },
+      {
+        "sequence": 4,
+        "event": "dialog-closed",
+        "detail": {
+          "dialogSerial": 13,
+          "ownerKey": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+          "label": "B"
+        }
+      }
+    ],
+    "pass": true
+  },
+  {
+    "case": "cross-dialog-idle-close",
+    "run": 2,
+    "busyLabel": "A",
+    "state": "open",
+    "action": "Space",
+    "source": "owned-busy-open-protocol-plus-native-action",
+    "busyOwner": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+    "idleOwner": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+    "busyPreserved": true,
+    "trace": [
+      {
+        "sequence": 1,
+        "event": "dialog-blur",
+        "detail": {
+          "ownerKey": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+          "label": "B"
+        }
+      },
+      {
+        "sequence": 2,
+        "event": "dialog-preflight",
+        "detail": {
+          "type": "keydown",
+          "key": " ",
+          "busy": false,
+          "active": "dialog-x",
+          "ownerKey": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+          "label": "B"
+        }
+      },
+      {
+        "sequence": 3,
+        "event": "dialog-before-close",
+        "detail": {
+          "busy": false,
+          "refusedGesture": false,
+          "ownerKey": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+          "label": "B"
+        }
+      },
+      {
+        "sequence": 4,
+        "event": "dialog-closed",
+        "detail": {
+          "dialogSerial": 14,
+          "ownerKey": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+          "label": "B"
+        }
+      }
+    ],
+    "pass": true
+  },
+  {
+    "case": "cross-dialog-idle-close",
+    "run": 2,
+    "busyLabel": "A",
+    "state": "open",
+    "action": "pointer",
+    "source": "owned-busy-open-protocol-plus-native-action",
+    "busyOwner": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+    "idleOwner": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+    "busyPreserved": true,
+    "trace": [
+      {
+        "sequence": 1,
+        "event": "dialog-preflight",
+        "detail": {
+          "type": "pointerdown",
+          "key": null,
+          "busy": false,
+          "active": "dialog-raw",
+          "ownerKey": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+          "label": "B"
+        }
+      },
+      {
+        "sequence": 2,
+        "event": "dialog-blur",
+        "detail": {
+          "ownerKey": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+          "label": "B"
+        }
+      },
+      {
+        "sequence": 3,
+        "event": "dialog-before-close",
+        "detail": {
+          "busy": false,
+          "refusedGesture": false,
+          "ownerKey": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+          "label": "B"
+        }
+      },
+      {
+        "sequence": 4,
+        "event": "dialog-closed",
+        "detail": {
+          "dialogSerial": 15,
+          "ownerKey": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+          "label": "B"
+        }
+      }
+    ],
+    "pass": true
+  },
+  {
+    "case": "cross-dialog-idle-close",
+    "run": 2,
+    "busyLabel": "B",
+    "state": "hidden",
+    "action": "Enter",
+    "source": "owned-busy-open-protocol-plus-native-action",
+    "busyOwner": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+    "idleOwner": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+    "busyPreserved": true,
+    "trace": [
+      {
+        "sequence": 1,
+        "event": "dialog-blur",
+        "detail": {
+          "ownerKey": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+          "label": "A"
+        }
+      },
+      {
+        "sequence": 2,
+        "event": "dialog-preflight",
+        "detail": {
+          "type": "keydown",
+          "key": "Enter",
+          "busy": false,
+          "active": "dialog-x",
+          "ownerKey": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+          "label": "A"
+        }
+      },
+      {
+        "sequence": 3,
+        "event": "dialog-before-close",
+        "detail": {
+          "busy": false,
+          "refusedGesture": false,
+          "ownerKey": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+          "label": "A"
+        }
+      },
+      {
+        "sequence": 4,
+        "event": "dialog-closed",
+        "detail": {
+          "dialogSerial": 13,
+          "ownerKey": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+          "label": "A"
+        }
+      }
+    ],
+    "pass": true
+  },
+  {
+    "case": "cross-dialog-idle-close",
+    "run": 2,
+    "busyLabel": "B",
+    "state": "hidden",
+    "action": "Space",
+    "source": "owned-busy-open-protocol-plus-native-action",
+    "busyOwner": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+    "idleOwner": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+    "busyPreserved": true,
+    "trace": [
+      {
+        "sequence": 1,
+        "event": "dialog-blur",
+        "detail": {
+          "ownerKey": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+          "label": "A"
+        }
+      },
+      {
+        "sequence": 2,
+        "event": "dialog-preflight",
+        "detail": {
+          "type": "keydown",
+          "key": " ",
+          "busy": false,
+          "active": "dialog-x",
+          "ownerKey": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+          "label": "A"
+        }
+      },
+      {
+        "sequence": 3,
+        "event": "dialog-before-close",
+        "detail": {
+          "busy": false,
+          "refusedGesture": false,
+          "ownerKey": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+          "label": "A"
+        }
+      },
+      {
+        "sequence": 4,
+        "event": "dialog-closed",
+        "detail": {
+          "dialogSerial": 14,
+          "ownerKey": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+          "label": "A"
+        }
+      }
+    ],
+    "pass": true
+  },
+  {
+    "case": "cross-dialog-idle-close",
+    "run": 2,
+    "busyLabel": "B",
+    "state": "hidden",
+    "action": "pointer",
+    "source": "owned-busy-open-protocol-plus-native-action",
+    "busyOwner": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+    "idleOwner": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+    "busyPreserved": true,
+    "trace": [
+      {
+        "sequence": 1,
+        "event": "dialog-preflight",
+        "detail": {
+          "type": "pointerdown",
+          "key": null,
+          "busy": false,
+          "active": "dialog-raw",
+          "ownerKey": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+          "label": "A"
+        }
+      },
+      {
+        "sequence": 2,
+        "event": "dialog-blur",
+        "detail": {
+          "ownerKey": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+          "label": "A"
+        }
+      },
+      {
+        "sequence": 3,
+        "event": "dialog-before-close",
+        "detail": {
+          "busy": false,
+          "refusedGesture": false,
+          "ownerKey": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+          "label": "A"
+        }
+      },
+      {
+        "sequence": 4,
+        "event": "dialog-closed",
+        "detail": {
+          "dialogSerial": 15,
+          "ownerKey": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+          "label": "A"
+        }
+      }
+    ],
+    "pass": true
+  },
+  {
+    "case": "cross-dialog-idle-close",
+    "run": 2,
+    "busyLabel": "B",
+    "state": "open",
+    "action": "Enter",
+    "source": "owned-busy-open-protocol-plus-native-action",
+    "busyOwner": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+    "idleOwner": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+    "busyPreserved": true,
+    "trace": [
+      {
+        "sequence": 1,
+        "event": "dialog-blur",
+        "detail": {
+          "ownerKey": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+          "label": "A"
+        }
+      },
+      {
+        "sequence": 2,
+        "event": "dialog-preflight",
+        "detail": {
+          "type": "keydown",
+          "key": "Enter",
+          "busy": false,
+          "active": "dialog-x",
+          "ownerKey": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+          "label": "A"
+        }
+      },
+      {
+        "sequence": 3,
+        "event": "dialog-before-close",
+        "detail": {
+          "busy": false,
+          "refusedGesture": false,
+          "ownerKey": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+          "label": "A"
+        }
+      },
+      {
+        "sequence": 4,
+        "event": "dialog-closed",
+        "detail": {
+          "dialogSerial": 16,
+          "ownerKey": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+          "label": "A"
+        }
+      }
+    ],
+    "pass": true
+  },
+  {
+    "case": "cross-dialog-idle-close",
+    "run": 2,
+    "busyLabel": "B",
+    "state": "open",
+    "action": "Space",
+    "source": "owned-busy-open-protocol-plus-native-action",
+    "busyOwner": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+    "idleOwner": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+    "busyPreserved": true,
+    "trace": [
+      {
+        "sequence": 1,
+        "event": "dialog-blur",
+        "detail": {
+          "ownerKey": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+          "label": "A"
+        }
+      },
+      {
+        "sequence": 2,
+        "event": "dialog-preflight",
+        "detail": {
+          "type": "keydown",
+          "key": " ",
+          "busy": false,
+          "active": "dialog-x",
+          "ownerKey": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+          "label": "A"
+        }
+      },
+      {
+        "sequence": 3,
+        "event": "dialog-before-close",
+        "detail": {
+          "busy": false,
+          "refusedGesture": false,
+          "ownerKey": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+          "label": "A"
+        }
+      },
+      {
+        "sequence": 4,
+        "event": "dialog-closed",
+        "detail": {
+          "dialogSerial": 17,
+          "ownerKey": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+          "label": "A"
+        }
+      }
+    ],
+    "pass": true
+  },
+  {
+    "case": "cross-dialog-idle-close",
+    "run": 2,
+    "busyLabel": "B",
+    "state": "open",
+    "action": "pointer",
+    "source": "owned-busy-open-protocol-plus-native-action",
+    "busyOwner": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+    "idleOwner": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+    "busyPreserved": true,
+    "trace": [
+      {
+        "sequence": 1,
+        "event": "dialog-preflight",
+        "detail": {
+          "type": "pointerdown",
+          "key": null,
+          "busy": false,
+          "active": "dialog-raw",
+          "ownerKey": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+          "label": "A"
+        }
+      },
+      {
+        "sequence": 2,
+        "event": "dialog-blur",
+        "detail": {
+          "ownerKey": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+          "label": "A"
+        }
+      },
+      {
+        "sequence": 3,
+        "event": "dialog-before-close",
+        "detail": {
+          "busy": false,
+          "refusedGesture": false,
+          "ownerKey": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+          "label": "A"
+        }
+      },
+      {
+        "sequence": 4,
+        "event": "dialog-closed",
+        "detail": {
+          "dialogSerial": 18,
+          "ownerKey": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+          "label": "A"
+        }
+      }
+    ],
+    "pass": true
+  },
+  {
+    "case": "cross-dialog-idle-close",
+    "run": 3,
+    "busyLabel": "A",
+    "state": "hidden",
+    "action": "Enter",
+    "source": "owned-busy-open-protocol-plus-native-action",
+    "busyOwner": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+    "idleOwner": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+    "busyPreserved": true,
+    "trace": [
+      {
+        "sequence": 1,
+        "event": "dialog-blur",
+        "detail": {
+          "ownerKey": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+          "label": "B"
+        }
+      },
+      {
+        "sequence": 2,
+        "event": "dialog-preflight",
+        "detail": {
+          "type": "keydown",
+          "key": "Enter",
+          "busy": false,
+          "active": "dialog-x",
+          "ownerKey": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+          "label": "B"
+        }
+      },
+      {
+        "sequence": 3,
+        "event": "dialog-before-close",
+        "detail": {
+          "busy": false,
+          "refusedGesture": false,
+          "ownerKey": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+          "label": "B"
+        }
+      },
+      {
+        "sequence": 4,
+        "event": "dialog-closed",
+        "detail": {
+          "dialogSerial": 19,
+          "ownerKey": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+          "label": "B"
+        }
+      }
+    ],
+    "pass": true
+  },
+  {
+    "case": "cross-dialog-idle-close",
+    "run": 3,
+    "busyLabel": "A",
+    "state": "hidden",
+    "action": "Space",
+    "source": "owned-busy-open-protocol-plus-native-action",
+    "busyOwner": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+    "idleOwner": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+    "busyPreserved": true,
+    "trace": [
+      {
+        "sequence": 1,
+        "event": "dialog-blur",
+        "detail": {
+          "ownerKey": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+          "label": "B"
+        }
+      },
+      {
+        "sequence": 2,
+        "event": "dialog-preflight",
+        "detail": {
+          "type": "keydown",
+          "key": " ",
+          "busy": false,
+          "active": "dialog-x",
+          "ownerKey": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+          "label": "B"
+        }
+      },
+      {
+        "sequence": 3,
+        "event": "dialog-before-close",
+        "detail": {
+          "busy": false,
+          "refusedGesture": false,
+          "ownerKey": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+          "label": "B"
+        }
+      },
+      {
+        "sequence": 4,
+        "event": "dialog-closed",
+        "detail": {
+          "dialogSerial": 20,
+          "ownerKey": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+          "label": "B"
+        }
+      }
+    ],
+    "pass": true
+  },
+  {
+    "case": "cross-dialog-idle-close",
+    "run": 3,
+    "busyLabel": "A",
+    "state": "hidden",
+    "action": "pointer",
+    "source": "owned-busy-open-protocol-plus-native-action",
+    "busyOwner": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+    "idleOwner": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+    "busyPreserved": true,
+    "trace": [
+      {
+        "sequence": 1,
+        "event": "dialog-preflight",
+        "detail": {
+          "type": "pointerdown",
+          "key": null,
+          "busy": false,
+          "active": "dialog-raw",
+          "ownerKey": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+          "label": "B"
+        }
+      },
+      {
+        "sequence": 2,
+        "event": "dialog-blur",
+        "detail": {
+          "ownerKey": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+          "label": "B"
+        }
+      },
+      {
+        "sequence": 3,
+        "event": "dialog-before-close",
+        "detail": {
+          "busy": false,
+          "refusedGesture": false,
+          "ownerKey": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+          "label": "B"
+        }
+      },
+      {
+        "sequence": 4,
+        "event": "dialog-closed",
+        "detail": {
+          "dialogSerial": 21,
+          "ownerKey": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+          "label": "B"
+        }
+      }
+    ],
+    "pass": true
+  },
+  {
+    "case": "cross-dialog-idle-close",
+    "run": 3,
+    "busyLabel": "A",
+    "state": "open",
+    "action": "Enter",
+    "source": "owned-busy-open-protocol-plus-native-action",
+    "busyOwner": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+    "idleOwner": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+    "busyPreserved": true,
+    "trace": [
+      {
+        "sequence": 1,
+        "event": "dialog-blur",
+        "detail": {
+          "ownerKey": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+          "label": "B"
+        }
+      },
+      {
+        "sequence": 2,
+        "event": "dialog-preflight",
+        "detail": {
+          "type": "keydown",
+          "key": "Enter",
+          "busy": false,
+          "active": "dialog-x",
+          "ownerKey": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+          "label": "B"
+        }
+      },
+      {
+        "sequence": 3,
+        "event": "dialog-before-close",
+        "detail": {
+          "busy": false,
+          "refusedGesture": false,
+          "ownerKey": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+          "label": "B"
+        }
+      },
+      {
+        "sequence": 4,
+        "event": "dialog-closed",
+        "detail": {
+          "dialogSerial": 22,
+          "ownerKey": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+          "label": "B"
+        }
+      }
+    ],
+    "pass": true
+  },
+  {
+    "case": "cross-dialog-idle-close",
+    "run": 3,
+    "busyLabel": "A",
+    "state": "open",
+    "action": "Space",
+    "source": "owned-busy-open-protocol-plus-native-action",
+    "busyOwner": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+    "idleOwner": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+    "busyPreserved": true,
+    "trace": [
+      {
+        "sequence": 1,
+        "event": "dialog-blur",
+        "detail": {
+          "ownerKey": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+          "label": "B"
+        }
+      },
+      {
+        "sequence": 2,
+        "event": "dialog-preflight",
+        "detail": {
+          "type": "keydown",
+          "key": " ",
+          "busy": false,
+          "active": "dialog-x",
+          "ownerKey": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+          "label": "B"
+        }
+      },
+      {
+        "sequence": 3,
+        "event": "dialog-before-close",
+        "detail": {
+          "busy": false,
+          "refusedGesture": false,
+          "ownerKey": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+          "label": "B"
+        }
+      },
+      {
+        "sequence": 4,
+        "event": "dialog-closed",
+        "detail": {
+          "dialogSerial": 23,
+          "ownerKey": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+          "label": "B"
+        }
+      }
+    ],
+    "pass": true
+  },
+  {
+    "case": "cross-dialog-idle-close",
+    "run": 3,
+    "busyLabel": "A",
+    "state": "open",
+    "action": "pointer",
+    "source": "owned-busy-open-protocol-plus-native-action",
+    "busyOwner": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+    "idleOwner": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+    "busyPreserved": true,
+    "trace": [
+      {
+        "sequence": 1,
+        "event": "dialog-preflight",
+        "detail": {
+          "type": "pointerdown",
+          "key": null,
+          "busy": false,
+          "active": "dialog-raw",
+          "ownerKey": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+          "label": "B"
+        }
+      },
+      {
+        "sequence": 2,
+        "event": "dialog-blur",
+        "detail": {
+          "ownerKey": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+          "label": "B"
+        }
+      },
+      {
+        "sequence": 3,
+        "event": "dialog-before-close",
+        "detail": {
+          "busy": false,
+          "refusedGesture": false,
+          "ownerKey": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+          "label": "B"
+        }
+      },
+      {
+        "sequence": 4,
+        "event": "dialog-closed",
+        "detail": {
+          "dialogSerial": 24,
+          "ownerKey": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+          "label": "B"
+        }
+      }
+    ],
+    "pass": true
+  },
+  {
+    "case": "cross-dialog-idle-close",
+    "run": 3,
+    "busyLabel": "B",
+    "state": "hidden",
+    "action": "Enter",
+    "source": "owned-busy-open-protocol-plus-native-action",
+    "busyOwner": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+    "idleOwner": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+    "busyPreserved": true,
+    "trace": [
+      {
+        "sequence": 1,
+        "event": "dialog-blur",
+        "detail": {
+          "ownerKey": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+          "label": "A"
+        }
+      },
+      {
+        "sequence": 2,
+        "event": "dialog-preflight",
+        "detail": {
+          "type": "keydown",
+          "key": "Enter",
+          "busy": false,
+          "active": "dialog-x",
+          "ownerKey": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+          "label": "A"
+        }
+      },
+      {
+        "sequence": 3,
+        "event": "dialog-before-close",
+        "detail": {
+          "busy": false,
+          "refusedGesture": false,
+          "ownerKey": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+          "label": "A"
+        }
+      },
+      {
+        "sequence": 4,
+        "event": "dialog-closed",
+        "detail": {
+          "dialogSerial": 22,
+          "ownerKey": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+          "label": "A"
+        }
+      }
+    ],
+    "pass": true
+  },
+  {
+    "case": "cross-dialog-idle-close",
+    "run": 3,
+    "busyLabel": "B",
+    "state": "hidden",
+    "action": "Space",
+    "source": "owned-busy-open-protocol-plus-native-action",
+    "busyOwner": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+    "idleOwner": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+    "busyPreserved": true,
+    "trace": [
+      {
+        "sequence": 1,
+        "event": "dialog-blur",
+        "detail": {
+          "ownerKey": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+          "label": "A"
+        }
+      },
+      {
+        "sequence": 2,
+        "event": "dialog-preflight",
+        "detail": {
+          "type": "keydown",
+          "key": " ",
+          "busy": false,
+          "active": "dialog-x",
+          "ownerKey": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+          "label": "A"
+        }
+      },
+      {
+        "sequence": 3,
+        "event": "dialog-before-close",
+        "detail": {
+          "busy": false,
+          "refusedGesture": false,
+          "ownerKey": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+          "label": "A"
+        }
+      },
+      {
+        "sequence": 4,
+        "event": "dialog-closed",
+        "detail": {
+          "dialogSerial": 23,
+          "ownerKey": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+          "label": "A"
+        }
+      }
+    ],
+    "pass": true
+  },
+  {
+    "case": "cross-dialog-idle-close",
+    "run": 3,
+    "busyLabel": "B",
+    "state": "hidden",
+    "action": "pointer",
+    "source": "owned-busy-open-protocol-plus-native-action",
+    "busyOwner": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+    "idleOwner": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+    "busyPreserved": true,
+    "trace": [
+      {
+        "sequence": 1,
+        "event": "dialog-preflight",
+        "detail": {
+          "type": "pointerdown",
+          "key": null,
+          "busy": false,
+          "active": "dialog-raw",
+          "ownerKey": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+          "label": "A"
+        }
+      },
+      {
+        "sequence": 2,
+        "event": "dialog-blur",
+        "detail": {
+          "ownerKey": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+          "label": "A"
+        }
+      },
+      {
+        "sequence": 3,
+        "event": "dialog-before-close",
+        "detail": {
+          "busy": false,
+          "refusedGesture": false,
+          "ownerKey": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+          "label": "A"
+        }
+      },
+      {
+        "sequence": 4,
+        "event": "dialog-closed",
+        "detail": {
+          "dialogSerial": 24,
+          "ownerKey": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+          "label": "A"
+        }
+      }
+    ],
+    "pass": true
+  },
+  {
+    "case": "cross-dialog-idle-close",
+    "run": 3,
+    "busyLabel": "B",
+    "state": "open",
+    "action": "Enter",
+    "source": "owned-busy-open-protocol-plus-native-action",
+    "busyOwner": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+    "idleOwner": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+    "busyPreserved": true,
+    "trace": [
+      {
+        "sequence": 1,
+        "event": "dialog-blur",
+        "detail": {
+          "ownerKey": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+          "label": "A"
+        }
+      },
+      {
+        "sequence": 2,
+        "event": "dialog-preflight",
+        "detail": {
+          "type": "keydown",
+          "key": "Enter",
+          "busy": false,
+          "active": "dialog-x",
+          "ownerKey": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+          "label": "A"
+        }
+      },
+      {
+        "sequence": 3,
+        "event": "dialog-before-close",
+        "detail": {
+          "busy": false,
+          "refusedGesture": false,
+          "ownerKey": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+          "label": "A"
+        }
+      },
+      {
+        "sequence": 4,
+        "event": "dialog-closed",
+        "detail": {
+          "dialogSerial": 25,
+          "ownerKey": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+          "label": "A"
+        }
+      }
+    ],
+    "pass": true
+  },
+  {
+    "case": "cross-dialog-idle-close",
+    "run": 3,
+    "busyLabel": "B",
+    "state": "open",
+    "action": "Space",
+    "source": "owned-busy-open-protocol-plus-native-action",
+    "busyOwner": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+    "idleOwner": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+    "busyPreserved": true,
+    "trace": [
+      {
+        "sequence": 1,
+        "event": "dialog-blur",
+        "detail": {
+          "ownerKey": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+          "label": "A"
+        }
+      },
+      {
+        "sequence": 2,
+        "event": "dialog-preflight",
+        "detail": {
+          "type": "keydown",
+          "key": " ",
+          "busy": false,
+          "active": "dialog-x",
+          "ownerKey": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+          "label": "A"
+        }
+      },
+      {
+        "sequence": 3,
+        "event": "dialog-before-close",
+        "detail": {
+          "busy": false,
+          "refusedGesture": false,
+          "ownerKey": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+          "label": "A"
+        }
+      },
+      {
+        "sequence": 4,
+        "event": "dialog-closed",
+        "detail": {
+          "dialogSerial": 26,
+          "ownerKey": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+          "label": "A"
+        }
+      }
+    ],
+    "pass": true
+  },
+  {
+    "case": "cross-dialog-idle-close",
+    "run": 3,
+    "busyLabel": "B",
+    "state": "open",
+    "action": "pointer",
+    "source": "owned-busy-open-protocol-plus-native-action",
+    "busyOwner": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+    "idleOwner": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+    "busyPreserved": true,
+    "trace": [
+      {
+        "sequence": 1,
+        "event": "dialog-preflight",
+        "detail": {
+          "type": "pointerdown",
+          "key": null,
+          "busy": false,
+          "active": "dialog-raw",
+          "ownerKey": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+          "label": "A"
+        }
+      },
+      {
+        "sequence": 2,
+        "event": "dialog-blur",
+        "detail": {
+          "ownerKey": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+          "label": "A"
+        }
+      },
+      {
+        "sequence": 3,
+        "event": "dialog-before-close",
+        "detail": {
+          "busy": false,
+          "refusedGesture": false,
+          "ownerKey": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+          "label": "A"
+        }
+      },
+      {
+        "sequence": 4,
+        "event": "dialog-closed",
+        "detail": {
+          "dialogSerial": 27,
+          "ownerKey": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+          "label": "A"
+        }
+      }
+    ],
+    "pass": true
+  },
+  {
+    "case": "own-dialog-busy-protected",
+    "run": 1,
+    "label": "A",
+    "action": "Enter",
+    "source": "owned-busy-protocol-plus-native-action",
+    "kept": true,
+    "rawKept": true,
+    "focused": false,
+    "trace": [
+      {
+        "sequence": 1,
+        "event": "dialog-blur",
+        "detail": {
+          "ownerKey": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+          "label": "A"
+        }
+      },
+      {
+        "sequence": 2,
+        "event": "dialog-preflight",
+        "detail": {
+          "type": "keydown",
+          "key": "Enter",
+          "busy": true,
+          "active": "dialog-x",
+          "ownerKey": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+          "label": "A"
+        }
+      }
+    ],
+    "pass": true
+  },
+  {
+    "case": "own-dialog-busy-protected",
+    "run": 1,
+    "label": "A",
+    "action": "pointer",
+    "source": "owned-busy-protocol-plus-native-action",
+    "kept": true,
+    "rawKept": true,
+    "focused": true,
+    "trace": [
+      {
+        "sequence": 1,
+        "event": "dialog-preflight",
+        "detail": {
+          "type": "pointerdown",
+          "key": null,
+          "busy": true,
+          "active": "dialog-raw",
+          "ownerKey": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+          "label": "A"
+        }
+      },
+      {
+        "sequence": 2,
+        "event": "dialog-before-close",
+        "detail": {
+          "busy": true,
+          "refusedGesture": true,
+          "ownerKey": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+          "label": "A"
+        }
+      }
+    ],
+    "pass": true
+  },
+  {
+    "case": "own-dialog-busy-protected",
+    "run": 1,
+    "label": "B",
+    "action": "Enter",
+    "source": "owned-busy-protocol-plus-native-action",
+    "kept": true,
+    "rawKept": true,
+    "focused": false,
+    "trace": [
+      {
+        "sequence": 1,
+        "event": "dialog-blur",
+        "detail": {
+          "ownerKey": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+          "label": "B"
+        }
+      },
+      {
+        "sequence": 2,
+        "event": "dialog-preflight",
+        "detail": {
+          "type": "keydown",
+          "key": "Enter",
+          "busy": true,
+          "active": "dialog-x",
+          "ownerKey": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+          "label": "B"
+        }
+      }
+    ],
+    "pass": true
+  },
+  {
+    "case": "own-dialog-busy-protected",
+    "run": 1,
+    "label": "B",
+    "action": "pointer",
+    "source": "owned-busy-protocol-plus-native-action",
+    "kept": true,
+    "rawKept": true,
+    "focused": true,
+    "trace": [
+      {
+        "sequence": 1,
+        "event": "dialog-preflight",
+        "detail": {
+          "type": "pointerdown",
+          "key": null,
+          "busy": true,
+          "active": "dialog-raw",
+          "ownerKey": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+          "label": "B"
+        }
+      },
+      {
+        "sequence": 2,
+        "event": "dialog-before-close",
+        "detail": {
+          "busy": true,
+          "refusedGesture": true,
+          "ownerKey": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+          "label": "B"
+        }
+      }
+    ],
+    "pass": true
+  },
+  {
+    "case": "own-dialog-busy-protected",
+    "run": 2,
+    "label": "A",
+    "action": "Enter",
+    "source": "owned-busy-protocol-plus-native-action",
+    "kept": true,
+    "rawKept": true,
+    "focused": false,
+    "trace": [
+      {
+        "sequence": 1,
+        "event": "dialog-blur",
+        "detail": {
+          "ownerKey": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+          "label": "A"
+        }
+      },
+      {
+        "sequence": 2,
+        "event": "dialog-preflight",
+        "detail": {
+          "type": "keydown",
+          "key": "Enter",
+          "busy": true,
+          "active": "dialog-x",
+          "ownerKey": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+          "label": "A"
+        }
+      }
+    ],
+    "pass": true
+  },
+  {
+    "case": "own-dialog-busy-protected",
+    "run": 2,
+    "label": "A",
+    "action": "pointer",
+    "source": "owned-busy-protocol-plus-native-action",
+    "kept": true,
+    "rawKept": true,
+    "focused": true,
+    "trace": [
+      {
+        "sequence": 1,
+        "event": "dialog-preflight",
+        "detail": {
+          "type": "pointerdown",
+          "key": null,
+          "busy": true,
+          "active": "dialog-raw",
+          "ownerKey": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+          "label": "A"
+        }
+      },
+      {
+        "sequence": 2,
+        "event": "dialog-before-close",
+        "detail": {
+          "busy": true,
+          "refusedGesture": true,
+          "ownerKey": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+          "label": "A"
+        }
+      }
+    ],
+    "pass": true
+  },
+  {
+    "case": "own-dialog-busy-protected",
+    "run": 2,
+    "label": "B",
+    "action": "Enter",
+    "source": "owned-busy-protocol-plus-native-action",
+    "kept": true,
+    "rawKept": true,
+    "focused": false,
+    "trace": [
+      {
+        "sequence": 1,
+        "event": "dialog-blur",
+        "detail": {
+          "ownerKey": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+          "label": "B"
+        }
+      },
+      {
+        "sequence": 2,
+        "event": "dialog-preflight",
+        "detail": {
+          "type": "keydown",
+          "key": "Enter",
+          "busy": true,
+          "active": "dialog-x",
+          "ownerKey": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+          "label": "B"
+        }
+      }
+    ],
+    "pass": true
+  },
+  {
+    "case": "own-dialog-busy-protected",
+    "run": 2,
+    "label": "B",
+    "action": "pointer",
+    "source": "owned-busy-protocol-plus-native-action",
+    "kept": true,
+    "rawKept": true,
+    "focused": true,
+    "trace": [
+      {
+        "sequence": 1,
+        "event": "dialog-preflight",
+        "detail": {
+          "type": "pointerdown",
+          "key": null,
+          "busy": true,
+          "active": "dialog-raw",
+          "ownerKey": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+          "label": "B"
+        }
+      },
+      {
+        "sequence": 2,
+        "event": "dialog-before-close",
+        "detail": {
+          "busy": true,
+          "refusedGesture": true,
+          "ownerKey": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+          "label": "B"
+        }
+      }
+    ],
+    "pass": true
+  },
+  {
+    "case": "own-dialog-busy-protected",
+    "run": 3,
+    "label": "A",
+    "action": "Enter",
+    "source": "owned-busy-protocol-plus-native-action",
+    "kept": true,
+    "rawKept": true,
+    "focused": false,
+    "trace": [
+      {
+        "sequence": 1,
+        "event": "dialog-blur",
+        "detail": {
+          "ownerKey": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+          "label": "A"
+        }
+      },
+      {
+        "sequence": 2,
+        "event": "dialog-preflight",
+        "detail": {
+          "type": "keydown",
+          "key": "Enter",
+          "busy": true,
+          "active": "dialog-x",
+          "ownerKey": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+          "label": "A"
+        }
+      }
+    ],
+    "pass": true
+  },
+  {
+    "case": "own-dialog-busy-protected",
+    "run": 3,
+    "label": "A",
+    "action": "pointer",
+    "source": "owned-busy-protocol-plus-native-action",
+    "kept": true,
+    "rawKept": true,
+    "focused": true,
+    "trace": [
+      {
+        "sequence": 1,
+        "event": "dialog-preflight",
+        "detail": {
+          "type": "pointerdown",
+          "key": null,
+          "busy": true,
+          "active": "dialog-raw",
+          "ownerKey": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+          "label": "A"
+        }
+      },
+      {
+        "sequence": 2,
+        "event": "dialog-before-close",
+        "detail": {
+          "busy": true,
+          "refusedGesture": true,
+          "ownerKey": "f21d7f00-34c8-4ae6-b046-c376d2b151c7",
+          "label": "A"
+        }
+      }
+    ],
+    "pass": true
+  },
+  {
+    "case": "own-dialog-busy-protected",
+    "run": 3,
+    "label": "B",
+    "action": "Enter",
+    "source": "owned-busy-protocol-plus-native-action",
+    "kept": true,
+    "rawKept": true,
+    "focused": false,
+    "trace": [
+      {
+        "sequence": 1,
+        "event": "dialog-blur",
+        "detail": {
+          "ownerKey": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+          "label": "B"
+        }
+      },
+      {
+        "sequence": 2,
+        "event": "dialog-preflight",
+        "detail": {
+          "type": "keydown",
+          "key": "Enter",
+          "busy": true,
+          "active": "dialog-x",
+          "ownerKey": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+          "label": "B"
+        }
+      }
+    ],
+    "pass": true
+  },
+  {
+    "case": "own-dialog-busy-protected",
+    "run": 3,
+    "label": "B",
+    "action": "pointer",
+    "source": "owned-busy-protocol-plus-native-action",
+    "kept": true,
+    "rawKept": true,
+    "focused": true,
+    "trace": [
+      {
+        "sequence": 1,
+        "event": "dialog-preflight",
+        "detail": {
+          "type": "pointerdown",
+          "key": null,
+          "busy": true,
+          "active": "dialog-raw",
+          "ownerKey": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+          "label": "B"
+        }
+      },
+      {
+        "sequence": 2,
+        "event": "dialog-before-close",
+        "detail": {
+          "busy": true,
+          "refusedGesture": true,
+          "ownerKey": "bbb1fafc-f6a6-4536-bc77-cc83bf087658",
+          "label": "B"
+        }
+      }
+    ],
+    "pass": true
+  }
+]

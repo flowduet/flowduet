@@ -1,0 +1,49 @@
+
+ RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground
+
+ ❯ probes/stage-zero/contracts/candidate.test.ts (102 tests | 7 failed | 88 skipped) 122ms
+   ❯ C4 验证重建协议（宿主替身，不冒充FormCreate） (28)
+     × capture_throw_null_invalid_keeps_both_forms 0/throw 24ms
+     × capture_throw_null_invalid_keeps_both_forms 0/null 5ms
+     × capture_throw_null_invalid_keeps_both_forms 0/json 4ms
+     × capture_throw_null_invalid_keeps_both_forms 0/kind 4ms
+     × capture_throw_null_invalid_keeps_both_forms 0/duplicate 6ms
+     × capture_throw_null_invalid_keeps_both_forms 0/range 4ms
+     × capture_throw_null_invalid_keeps_both_forms 0/options 3ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 7 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  probes/stage-zero/contracts/candidate.test.ts > C4 验证重建协议（宿主替身，不冒充FormCreate） > capture_throw_null_invalid_keeps_both_forms 0/throw
+ FAIL  probes/stage-zero/contracts/candidate.test.ts > C4 验证重建协议（宿主替身，不冒充FormCreate） > capture_throw_null_invalid_keeps_both_forms 0/null
+ FAIL  probes/stage-zero/contracts/candidate.test.ts > C4 验证重建协议（宿主替身，不冒充FormCreate） > capture_throw_null_invalid_keeps_both_forms 0/json
+ FAIL  probes/stage-zero/contracts/candidate.test.ts > C4 验证重建协议（宿主替身，不冒充FormCreate） > capture_throw_null_invalid_keeps_both_forms 0/kind
+ FAIL  probes/stage-zero/contracts/candidate.test.ts > C4 验证重建协议（宿主替身，不冒充FormCreate） > capture_throw_null_invalid_keeps_both_forms 0/duplicate
+ FAIL  probes/stage-zero/contracts/candidate.test.ts > C4 验证重建协议（宿主替身，不冒充FormCreate） > capture_throw_null_invalid_keeps_both_forms 0/range
+ FAIL  probes/stage-zero/contracts/candidate.test.ts > C4 验证重建协议（宿主替身，不冒充FormCreate） > capture_throw_null_invalid_keeps_both_forms 0/options
+AssertionError: expected +0 to be 1 // Object.is equality
+
+- Expected
++ Received
+
+- 1
++ 0
+
+ ❯ probes/stage-zero/form-state/rebuild-policy.cases.ts:133:29
+    131|         xml = (await f.c.model.toXML()).xml;
+    132|       const result = await f.policy.select(f.forms[1]!, "rebuild-verif…
+    133|       expect(faultCaptures).toBe(1);
+       |                             ^
+    134|       expect(result).toMatchObject({ ok: true, value: { actual: "kept-…
+    135|       expect(f.entry(a).unmounted).toBe(false);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/7]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  7 failed | 7 passed | 88 skipped (102)
+   Start at  00:41:15
+   Duration  3.68s (import 58%, transform 28%, environment 10%, tests 3%)
+
+undefined
+/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run probes/stage-zero/contracts/candidate.test.ts -t capture_throw_null_invalid_keeps_both_forms

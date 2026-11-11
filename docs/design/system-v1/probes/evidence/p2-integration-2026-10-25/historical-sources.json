@@ -1,0 +1,102 @@
+[
+  {
+    "path": "docs/design/plans/2026-10-14-stage-zero-probes.md",
+    "source": "f6f3a5c2f572800632d014fbb264446d8ba454f3",
+    "sha256": "99293f02436099b115a8fca3755b03dc6fd6db2508b500edb2d998d67c9aae5f"
+  },
+  {
+    "path": "docs/design/plans/2026-10-23-stage-zero-integrated-vendor-repair.md",
+    "source": "f6f3a5c2f572800632d014fbb264446d8ba454f3",
+    "sha256": "a24f36b3d2a172be8069cbb87a53dbc57429c993fcababf4dffb1a37517e3be2"
+  },
+  {
+    "path": "docs/design/system-v1/probes/README.md",
+    "source": "f6f3a5c2f572800632d014fbb264446d8ba454f3",
+    "sha256": "07703c510a680a504616143eecbb52598d52e9b2feaaae24cba9ee9248d5a009"
+  },
+  {
+    "path": "docs/design/2026-10-22-stage-zero-convergence.md",
+    "source": "f6f3a5c2f572800632d014fbb264446d8ba454f3",
+    "sha256": "9a3080e8c10656de2d038a3d5d1d0a40c8ca2d5c483b41243652f38a5d25ae0d"
+  },
+  {
+    "path": "docs/design/2026-10-23-stage-zero-consolidated-route.md",
+    "source": "f6f3a5c2f572800632d014fbb264446d8ba454f3",
+    "sha256": "19e3e29c14fd754cc3bb38bb6056e4d27be050ffa5325ef2ae08fc06794d79f3"
+  },
+  {
+    "path": "docs/design/2026-10-14-design-system-workbench-proposal.md",
+    "source": "f6f3a5c2f572800632d014fbb264446d8ba454f3",
+    "sha256": "cf40823fd3817105ac3391c4b2be85dd1a79bf7b2b11aeb4b9aa5bbedb40a75d"
+  },
+  {
+    "path": "docs/design/plans/2026-10-16-b03-minimal-production-fixes.md",
+    "source": "f6f3a5c2f572800632d014fbb264446d8ba454f3",
+    "sha256": "f231b6db8150cfacc64135e289aa0ef2c353cd9ca44405b87e995084f9d7f46c"
+  },
+  {
+    "path": "docs/design/plans/2026-10-19-stage-zero-remaining-blockers.md",
+    "source": "f6f3a5c2f572800632d014fbb264446d8ba454f3",
+    "sha256": "a359d4db2cf08e03eed462cc868f55b415ba72affa5ea8cc99297b705d4ca4f3"
+  },
+  {
+    "path": "docs/design/plans/2026-10-19-stage-zero-cd-batch.md",
+    "source": "f6f3a5c2f572800632d014fbb264446d8ba454f3",
+    "sha256": "1af809a244a2d38e828022ee4f20f86c08a9edae3a6776eedae16fd52bd33d27"
+  },
+  {
+    "path": "docs/design/2026-10-23-stage-zero-integrated-vendor-repair-design.md",
+    "source": "f6f3a5c2f572800632d014fbb264446d8ba454f3",
+    "sha256": "de1089d84028428b9adc17828103d28fae07f962e0f349dcf692e0d51ad3e05d"
+  },
+  {
+    "path": "docs/design/2026-10-19-stage-zero-remaining-blockers-proposal.md",
+    "source": "f6f3a5c2f572800632d014fbb264446d8ba454f3",
+    "sha256": "201c5d8f4129512a41a857295a93c9753fa622928ab1beb786f5a9c6a58b7002"
+  },
+  {
+    "path": "docs/ROADMAP.md",
+    "source": "f6f3a5c2f572800632d014fbb264446d8ba454f3",
+    "sha256": "22338da4eb588b5a9b2ca9a7e245d8c42f8addadc436aea61e7894a8264e5f3e"
+  },
+  {
+    "path": "docs/design/experience-redesign-discussion.md",
+    "source": "f6f3a5c2f572800632d014fbb264446d8ba454f3",
+    "sha256": "31d56dde4658bc716a88f2c4058266cfdb7e9a25e90afedf43ed57d4a56c08cc"
+  },
+  {
+    "path": "docs/adr/0010-integrated-designer-delivery.md",
+    "source": "f6f3a5c2f572800632d014fbb264446d8ba454f3",
+    "sha256": "eea57575067511990cc4e1ee02b0482accf5fb16b2033f627b280d8ddcc5dbf5"
+  },
+  {
+    "path": "docs/adr/0011-property-editing-containers.md",
+    "source": "f6f3a5c2f572800632d014fbb264446d8ba454f3",
+    "sha256": "3a33a0ac3b21e2c5e2a593cbb7d39e51e22c4b42575fe74c3ab96d44c09728c7"
+  },
+  {
+    "path": "docs/design/system-v1/probes/b03-p2-closeout-2026-10-20.md",
+    "source": "f6f3a5c2f572800632d014fbb264446d8ba454f3",
+    "sha256": "7ab3762953d05f778083ff32e80e3487099944671190b607cd44590ec87a43a8"
+  },
+  {
+    "path": "docs/design/2026-10-23-bounded-g1-repair-result.md",
+    "source": "f6f3a5c2f572800632d014fbb264446d8ba454f3",
+    "sha256": "3b311b0895ace9136392aa9178db21eef4c16f2d59bde1a673722aac1e8da409"
+  },
+  {
+    "path": "docs/design/2026-10-25-task4-capture-closure-result.md",
+    "source": "f6f3a5c2f572800632d014fbb264446d8ba454f3",
+    "sha256": "f5e66b72060ea8abbe0d4dbf1e0a58d8640d052f4543f73c54f1d995e49afe72"
+  },
+  {
+    "path": "docs/design/system-v1/probes/evidence/p2-delivery-2026-10-22/review.md",
+    "source": "f6f3a5c2f572800632d014fbb264446d8ba454f3",
+    "sha256": "6c5eed25501b9cd52e6611af6e69d97a22e006714e2deb57432b570fd9c00d42"
+  },
+  {
+    "path": "docs/design/system-v1/probes/evidence/p2-delivery-2026-10-22/timeout-amendment.json",
+    "source": "f6f3a5c2f572800632d014fbb264446d8ba454f3",
+    "sha256": "3ff73404d6538eff77ff0d71b0c155479415499142cca11475356dea15e397fd"
+  }
+]

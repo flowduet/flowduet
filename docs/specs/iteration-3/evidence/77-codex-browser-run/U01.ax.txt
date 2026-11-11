@@ -1,0 +1,73 @@
+Browser tab: 1, Title: "FlowDuet Playground", URL: "http://127.0.0.1:5173/".
+1 AXWebArea FlowDuet Playground, URL: 127.0.0.1:5173/
+	2 container app
+		3 container
+			4 heading FlowDuet Playground, Value: 1
+				5 text FlowDuet Playground
+			6 Description: radio-group, ID: el-id-2600-37
+				7 container
+					8 radio button (settable, integer) Description: 钉钉式, Value: 1
+					9 text 钉钉式
+				10 container
+					11 radio button (settable, integer) Description: BPMN 视图, Value: 0
+					12 text BPMN 视图
+			13 button 新建设计
+			14 button 打开文档
+			15 button 表单管理
+			16 button 预览表单
+			17 button 保存草稿
+			18 button 下载设计文档
+			19 button 导出 XML
+		20 container
+			21 text 流程默认表单
+			22 pop up button (collapsed, settable) Value: 无, Secondary Actions: Expand
+				23 menu
+					24 (selected) 无
+			25 container
+				26 text 起 开始
+			27 pop up button (collapsed) +, Help: 在此后添加节点, ID: el-id-2600-1, Secondary Actions: Expand
+			28 container
+				29 text 审 经理审批 审批人 ${manager}
+			30 pop up button (collapsed) +, Help: 在此后添加节点, ID: el-id-2600-5, Secondary Actions: Expand
+			31 container
+				32 text 审 合同会签 多人 · 集合 approvers
+			33 pop up button (collapsed) +, Help: 在此后添加节点, ID: el-id-2600-9, Secondary Actions: Expand
+			34 container
+				35 text 抄 抄送法务备案 抄送：张三,李四
+			36 pop up button (collapsed) +, Help: 在此后添加节点, ID: el-id-2600-13, Secondary Actions: Expand
+			37 container
+				38 text 条件分支
+				39 button 默认1, Help: 点击取消默认（其余情况无兜底支路）
+				40 button 默认2, Help: 把该支路设为默认（其余情况走此支路）
+				41 button + 分支, Help: 添加分支
+				42 button 删块, Help: 删除整块（前后直连）
+				43 container
+					44 button 常规审批 其他情况（默认）, Help: 常规审批：其他情况（默认）；点击配置此分支
+						45 text 常规审批
+						46 text 其他情况（默认）
+					47 text 审
+					48 text 总监审批
+					49 text 审批人 ${director}
+					50 pop up button (collapsed) +, Help: 在此后添加节点, ID: el-id-2600-17, Secondary Actions: Expand
+				51 container
+					52 button 大额复核 ${amount > 1000}, Help: 大额复核：${amount > 1000}；点击配置此分支
+						53 text 大额复核
+						54 text ${amount > 1000}
+					55 container
+						56 text 并行分支
+						57 button + 分支, Help: 添加分支
+						58 button 删块, Help: 删除整块（前后直连）
+					59 container
+						60 text 支路 1
+						61 container
+							62 text 审 财务复核 审批人 ${finance}
+						63 pop up button (collapsed) +, Help: 在此后添加节点, ID: el-id-2600-21, Secondary Actions: Expand
+						64 text 支路 2
+						65 container
+							66 text 审 法务复核 审批人 ${legal}
+						67 pop up button (collapsed) +, Help: 在此后添加节点, ID: el-id-2600-25, Secondary Actions: Expand
+			68 container
+				69 text 终 结束
+			70 text 点击「导出 XML」或编辑流程后自动生成
+
+The focused UI element is 1 AXWebArea FlowDuet Playground, URL: 127.0.0.1:5173/

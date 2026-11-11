@@ -1,0 +1,43 @@
+
+ RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground
+
+ ✓ probes/stage-zero/form-state.test.ts > C0 表单状态观察 > value_presence_and_types_are_distinct：{} 3ms
+ ✓ probes/stage-zero/form-state.test.ts > C0 表单状态观察 > value_presence_and_types_are_distinct：{"value":0} 0ms
+ ✓ probes/stage-zero/form-state.test.ts > C0 表单状态观察 > value_presence_and_types_are_distinct：{"value":false} 0ms
+ ✓ probes/stage-zero/form-state.test.ts > C0 表单状态观察 > value_presence_and_types_are_distinct：{"value":[]} 0ms
+ ✓ probes/stage-zero/form-state.test.ts > C0 表单状态观察 > value_presence_and_types_are_distinct：{"value":""} 1ms
+ ✓ probes/stage-zero/form-state.test.ts > C0 表单状态观察 > value_presence_and_types_are_distinct：{"value":null} 0ms
+ ✓ probes/stage-zero/form-state.test.ts > C0 表单状态观察 > 不把不同默认值归一：0 / "0" 13ms
+ ✓ probes/stage-zero/form-state.test.ts > C0 表单状态观察 > 不把不同默认值归一：false / undefined 0ms
+ ✓ probes/stage-zero/form-state.test.ts > C0 表单状态观察 > 不把不同默认值归一：[] / undefined 0ms
+ ✓ probes/stage-zero/form-state.test.ts > C0 表单状态观察 > 不把不同默认值归一："" / undefined 0ms
+ ✓ probes/stage-zero/form-state.test.ts > C0 表单状态观察 > 允许运行态元数据变化，但字段/选项/列顺序变化不等价 1ms
+ ✓ probes/stage-zero/form-state.test.ts > C0 表单状态观察 > observe_does_not_flush_focused_input：读取原生文字/选区不失焦 5ms
+ × probes/stage-zero/form-state.test.ts > C0 表单状态观察 > 真实FormDesigner装载与菜单仍在，不用组件桩证明观察 6843ms
+   → Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  probes/stage-zero/form-state.test.ts > C0 表单状态观察 > 真实FormDesigner装载与菜单仍在，不用组件桩证明观察
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ probes/stage-zero/form-state.test.ts:47:3
+     45|     expect(document.activeElement).toBe(input); expect(blurred).toBe(0…
+     46|   });
+     47|   it("真实FormDesigner装载与菜单仍在，不用组件桩证明观察", async () => {
+       |   ^
+     48|     const view = mount(FormDesigner, { props: { name: "C观察", rules: '[…
+     49|     mounted.push(view); await flushPromises();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 12 passed (13)
+   Start at  17:12:16
+   Duration  9.95s (tests 71%, import 22%, environment 5%, transform 2%)
+
+undefined
+/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/apps/playground:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run probes/stage-zero/form-state.test.ts --reporter=verbose

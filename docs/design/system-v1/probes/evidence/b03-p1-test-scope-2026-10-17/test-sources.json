@@ -1,0 +1,30 @@
+{
+  "sourceCommit": "1c948c0662f63ac8edfc008b8f690596d2650210",
+  "executedBeforeCommit": true,
+  "sources": [
+    {
+      "path": "apps/playground/src/test-utils/browser-test-scope.ts",
+      "sha256": "44d0d18195884e63eeb3a6fd892d91846de43ebc4714db7ac1f57662a1ad9e9c",
+      "bytes": 2009,
+      "gitBlob": "220458dc7c23eeaf14cec827923750d206c0fa3f"
+    },
+    {
+      "path": "apps/playground/src/test-utils/browser-test-scope.test.ts",
+      "sha256": "7771383fcf44e8b75fe825ba21593f9f92c256a615e87000298004caa7854757",
+      "bytes": 8306,
+      "gitBlob": "230c3ef04e7f7f56724745995be6ad02baeedeaf"
+    },
+    {
+      "path": "apps/playground/src/App.integration.test.ts",
+      "sha256": "9b078b013912ea55c39a95515b02102932fb203ba7407f76a6adf188ffa2e3c2",
+      "bytes": 90372,
+      "gitBlob": "dc2fb4c42e3235b6ad843c742a8eeb8ad91417e0"
+    },
+    {
+      "path": "apps/playground/probes/stage-zero/location.test.ts",
+      "sha256": "b29b042c0f13ae2e2efc63e92a8ca32a54b79e25fbe7d2ca2e5903f53adc5fe4",
+      "bytes": 7496,
+      "gitBlob": "57a4e18f152787f9e56023f518c17ed374c16a3f"
+    }
+  ]
+}

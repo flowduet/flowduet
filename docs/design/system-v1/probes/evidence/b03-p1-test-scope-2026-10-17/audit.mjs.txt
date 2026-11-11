@@ -1,0 +1,27 @@
+import fs from 'node:fs';
+import { execFileSync } from 'node:child_process';
+import ts from '/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/node_modules/typescript/lib/typescript.js';
+const files=['apps/playground/src/App.integration.test.ts','apps/playground/probes/stage-zero/location.test.ts'];
+function audit(src) {
+ const sf=ts.createSourceFile('a.ts',src,ts.ScriptTarget.Latest,true);
+ const out={assertions:[],inputs:[],titles:[],timeouts:[]};
+ const normalize=s=>s.replace(/\bwrapper\b/g,'target').replace(/target!/g,'target').replace(/selected\(target\)/g,'selected()').replace(/\s+/g,'');
+ function visit(n) {
+  if(ts.isCallExpression(n)) {
+   let base=n;
+   while(ts.isCallExpression(base)||ts.isPropertyAccessExpression(base)||ts.isNonNullExpression(base))base=base.expression;
+   if(base.getText(sf)==='expect'&&!(ts.isPropertyAccessExpression(n.parent)||ts.isCallExpression(n.parent)))out.assertions.push(normalize(n.getText(sf)));
+   if(ts.isPropertyAccessExpression(n.expression)&&n.expression.name.text==='setValue')out.inputs.push(n.arguments.map(a=>normalize(a.getText(sf))));
+   if(n.arguments[0]&&ts.isStringLiteral(n.arguments[0])&& /^(it|it\.each|describe)/.test(n.expression.getText(sf)))out.titles.push(n.arguments[0].text);
+  }
+  if(ts.isPropertyAssignment(n)&&n.name.getText(sf)==='timeout')out.timeouts.push(n.initializer.getText(sf));
+  ts.forEachChild(n,visit);
+ }
+ visit(sf);return out;
+}
+const results=files.map(file=> {
+ const before=audit(execFileSync('git',['show','bec34c2:'+file],{encoding:'utf8'})),after=audit(fs.readFileSync(file,'utf8'));
+ for(const key of Object.keys(before))if(JSON.stringify(before[key])!==JSON.stringify(after[key])){ console.error(key, JSON.stringify(before[key]),JSON.stringify(after[key])); throw new Error(`${file}: ${key} changed`); }
+ return {file,unchanged:true,counts:Object.fromEntries(Object.entries(before).map(([key,arr])=>[key,arr.length]))};
+});
+console.log(JSON.stringify(results,null,2));

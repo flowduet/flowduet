@@ -1,0 +1,12 @@
+
+> @flowduet/core@0.3.0 test /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/core
+> vitest run src/model/structure-editing.test.ts
+
+
+ RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/core
+
+
+ Test Files  1 passed (1)
+      Tests  20 passed (20)
+   Start at  22:55:38
+   Duration  538ms (tests 48%, transform 38%, import 12%, worker 2%)

@@ -1,0 +1,48 @@
+[
+  {
+    "check": "test",
+    "command": [
+      "pnpm",
+      "test"
+    ],
+    "exit": 1,
+    "seconds": 97.24,
+    "head": "36492446460a226e97c99eb891662fbd0d204608"
+  },
+  {
+    "check": "build",
+    "command": [
+      "pnpm",
+      "build"
+    ],
+    "exit": 0,
+    "seconds": 13.23,
+    "head": "36492446460a226e97c99eb891662fbd0d204608"
+  },
+  {
+    "check": "lint",
+    "command": [
+      "pnpm",
+      "lint"
+    ],
+    "exit": 1,
+    "seconds": 13.34,
+    "head": "36492446460a226e97c99eb891662fbd0d204608"
+  },
+  {
+    "check": "strict",
+    "command": [
+      "pnpm",
+      "--filter",
+      "@flowduet/form-create",
+      "exec",
+      "vue-tsc",
+      "--noEmit",
+      "-p",
+      "../../apps/playground/probes/stage-zero/tsconfig.json"
+    ],
+    "exit": 0,
+    "seconds": 8.23,
+    "head": "36492446460a226e97c99eb891662fbd0d204608"
+  }
+]

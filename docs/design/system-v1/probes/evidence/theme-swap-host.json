@@ -1,0 +1,20 @@
+{
+  "hostBefore": {
+    "color": "rgb(96, 98, 102)",
+    "primary": "#409eff"
+  },
+  "swapped": [
+    {
+      "primary": "#a5b2ff",
+      "theme": "dark"
+    },
+    {
+      "primary": "#2d3e97",
+      "theme": "light"
+    }
+  ],
+  "hostAfter": {
+    "color": "rgb(96, 98, 102)",
+    "primary": "#409eff"
+  }
+}

@@ -1,0 +1,40 @@
+
+ RUN  v5.0.1 /Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/form-create
+
+ ❯ src/editor-input-state.test.ts (22 tests | 2 failed) 26ms
+   × 等价inputNumber输入也先建立等待门再通知订阅者 11ms
+   × 等价datePicker输入也先建立等待门再通知订阅者 2ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/editor-input-state.test.ts > 等价inputNumber输入也先建立等待门再通知订阅者
+ FAIL  src/editor-input-state.test.ts > 等价datePicker输入也先建立等待门再通知订阅者
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ src/editor-input-state.test.ts:123:77
+    121|   const input = state.bind(source);
+    122|   input.input(raw, () => {
+    123|     expect(observations.every((codes) => codes.includes("pending-updat…
+       |                                                                             ^
+    124|   });
+    125|   expect(observations[0]).toEqual(["pending-update"]);
+ ❯ Proxy.input src/components/editor-input-state.ts:77:7
+ ❯ src/editor-input-state.test.ts:122:9
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 20 passed (22)
+   Start at  00:53:35
+   Duration  928ms (environment 67%, transform 15%, import 13%, tests 4%, worker 1%)
+
+undefined
+/Users/l/.codex/worktrees/design-system-stage-zero/flowduet/packages/form-create:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run src/editor-input-state.test.ts

@@ -1,0 +1,88 @@
+import { mkdir, writeFile } from "node:fs/promises";
+import { resolve } from "node:path";
+import { pathToFileURL } from "node:url";
+
+const [driverPath, baseUrl, outputDir] = process.argv.slice(2);
+if (!driverPath || !baseUrl || !outputDir) throw new Error("需要驱动、URL 和输出目录参数");
+const { chromium } = await import(pathToFileURL(resolve(driverPath)).href);
+await mkdir(outputDir, { recursive: true });
+const browser = await chromium.launch({
+  headless: true,
+  executablePath: process.env.FLOWDUET_CHROMIUM_PATH || "/Users/l/Library/Caches/ms-playwright/chromium-1248/chrome-mac-x64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing",
+});
+const page = await browser.newPage({ viewport: { width: 1440, height: 1800 } });
+const failures = [];
+const results = [];
+const errors = [];
+page.on("pageerror", (error) => errors.push(error.message));
+const check = (condition, message) => { if (!condition) failures.push(message); };
+const setSelect = async (test, value) => {
+  await page.locator(`[data-test="${test}"]`).selectOption(value);
+};
+const combinations = [undefined];
+for (const colorSource of ["host", "brand"]) {
+  for (const mode of ["light", "dark"]) {
+    for (const density of ["comfortable", "compact"]) combinations.push({ colorSource, mode, density });
+  }
+}
+try {
+  await page.goto(baseUrl, { waitUntil: "networkidle" });
+  await page.locator('[data-test="form-appearance-scene-btn"]').click();
+  const instance = page.locator('[data-test="form-appearance-second-instance"]');
+  const root = instance.locator('[data-test="form-preview"]');
+  for (const appearance of combinations) {
+    const enabled = page.locator('[data-test="form-appearance-second-enabled"]');
+    await enabled.setChecked(appearance !== undefined);
+    if (appearance) {
+      await page.locator('[data-test="form-appearance-host-dark"]').setChecked(appearance.colorSource === "host" && appearance.mode === "dark");
+      await setSelect("form-appearance-second-source", appearance.colorSource);
+      if (appearance.colorSource === "brand") await setSelect("form-appearance-second-mode", appearance.mode);
+      await setSelect("form-appearance-second-density", appearance.density);
+    }
+    const radio = root.locator(".el-radio-group").nth(1).locator(".el-radio");
+    await radio.nth(0).click();
+    await page.waitForTimeout(350);
+    const actual = await root.evaluate((element) => {
+      const read = (control, kind) => {
+        const inner = control.querySelector(`.el-${kind}__inner`);
+        const mark = getComputedStyle(inner, "::after");
+        return {
+          background: getComputedStyle(inner).backgroundColor,
+          mark: kind === "radio" ? mark.backgroundColor : mark.borderBottomColor,
+          height: control.getBoundingClientRect().height,
+        };
+      };
+      const radioGroup = element.querySelectorAll(".el-radio-group")[1];
+      const checkboxGroup = element.querySelectorAll(".el-checkbox-group")[1];
+      return {
+        radio: read(radioGroup.querySelector(".el-radio"), "radio"),
+        checkbox: read(checkboxGroup.querySelectorAll(".el-checkbox")[0], "checkbox"),
+        checkboxOverride: read(checkboxGroup.querySelectorAll(".el-checkbox")[1], "checkbox"),
+        values: JSON.parse(element.querySelector('[data-test="form-preview-values"]').textContent),
+      };
+    });
+    const id = appearance ? Object.values(appearance).join("-") : "legacy";
+    for (const name of ["radio", "checkbox"]) {
+      check(actual[name].background === "rgb(191, 0, 31)", `${id}: ${name} 字段颜色被覆盖：${actual[name].background}`);
+      check(actual[name].mark === "rgb(10, 20, 30)", `${id}: ${name} 字段标记颜色被覆盖：${actual[name].mark}`);
+    }
+    check(actual.checkboxOverride.background === "rgb(18, 52, 86)" && actual.checkboxOverride.mark === "rgb(1, 2, 3)", `${id}: 多选选项颜色未优先`);
+    check(actual.checkbox.height === 56, `${id}: 字段高度变量未生效：${actual.checkbox.height}`);
+    check(actual.checkboxOverride.height === 72, `${id}: 选项高度变量未优先：${actual.checkboxOverride.height}`);
+    await radio.nth(1).click();
+    await page.waitForTimeout(350);
+    const radioOverride = await radio.nth(1).evaluate((control) => {
+      const inner = control.querySelector(".el-radio__inner");
+      return { background: getComputedStyle(inner).backgroundColor, mark: getComputedStyle(inner, "::after").backgroundColor };
+    });
+    check(radioOverride.background === "rgb(18, 52, 86)" && radioOverride.mark === "rgb(1, 2, 3)", `${id}: 单选选项颜色未优先`);
+    check(actual.values.groupDecision === "yes" && actual.values.groupTags.join(",") === "a,override", `${id}: 外观切换改变试填值`);
+    results.push({ id, actual, radioOverride });
+  }
+  const summary = { browser: browser.version(), results, errors, failures };
+  await writeFile(resolve(outputDir, "explicit-priority.json"), JSON.stringify(summary, null, 2));
+  console.log(JSON.stringify({ combinations: results.length, errors, failures }, null, 2));
+  if (errors.length || failures.length) process.exitCode = 1;
+} finally {
+  await browser.close();
+}
